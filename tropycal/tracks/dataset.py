@@ -26,7 +26,7 @@ class Dataset(Plot):
                  atlantic_url='https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2018-051019.txt',
                  pacific_url='https://www.nhc.noaa.gov/data/hurdat/hurdat2-nepac-1949-2018-071519.txt',
                  ibtracs_url='https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv',
-                 catarina=False):
+                 ibtracs_mode='jtwc',catarina=False,ibtracs_hurdat=False):
         
         r"""
         Creates an instance of a Dataset object containing various cyclone data.
@@ -41,12 +41,23 @@ class Dataset(Plot):
             URL containing the Atlantic HURDAT2 dataset. Can be changed to a local reference file.
         pacific_url : str
             URL containing the Pacific HURDAT2 dataset. Can be changed to a local reference file.
+        catarina : bool
+            Modify the dataset to include cyclone track data for Cyclone Catarina (2004) from literature.
+        ibtracs_hurdat : bool
+            Replace ibtracs data for the North Atlantic and East/Central Pacific basins with HURDAT data.
+        neumann : bool
+            Replace ibtracs data for South Hemisphere storms with data from the Neumann reanalysis where available.
+            
 
         Returns
         -------
         Dataset
             An instance of Dataset.
         """
+        
+        #Error check
+        if ibtracs_mode not in ['wmo','jtwc','jtwc_neumann']:
+            raise ValueError("Error: ibtracs_mode must be either 'wmo', 'jtwc', or 'jtwc_neumann'")
         
         #Store input arguments
         self.proj = None #for plotting
@@ -55,8 +66,19 @@ class Dataset(Plot):
         self.pacific_url = str(pacific_url)
         self.ibtracs_url = str(ibtracs_url)
         self.source = source
-        self.catarina = catarina
         
+        #Modification flags
+        self.catarina = catarina
+        self.ibtracs_mode = ibtracs_mode
+        if ibtracs_mode == 'jtwc_neumann':
+            self.neumann = True
+        else:
+            self.neumann = False
+        
+        #initialize empty dict
+        self.data = {}
+        
+        #Read in from specified data source
         if source == 'hurdat':
             self.__read_hurdat()
         elif source == 'ibtracs':
@@ -64,6 +86,15 @@ class Dataset(Plot):
         else:
             raise ExceptionError("Error: Accepted values for 'source' are 'hurdat' or 'ibtracs'")
             
+        #Replace ibtracs with hurdat for atl/pac basins
+        if source == 'ibtracs' and ibtracs_hurdat == True:
+            if self.basin in ['north_atlantic','east_pacific']:
+                self.__read_hurdat()
+            elif self.basin == 'all':
+                self.basin = 'both'
+                self.__read_hurdat(override_basin=True)
+                self.basin = 'all'
+        
         #Read in best track data
         if include_btk == True and basin in ['north_atlantic','east_pacific']:
             self.__read_btk()
@@ -72,7 +103,7 @@ class Dataset(Plot):
         keys = self.data.keys()
         self.keys = [k for k in keys]
     
-    def __read_hurdat(self):
+    def __read_hurdat(self,override_basin=False):
         
         r"""
         Reads in HURDATv2 data into the Dataset object.
@@ -125,9 +156,6 @@ class Dataset(Plot):
             content = read_hurdat(self.atlantic_url,atl_online)
             content += read_hurdat(self.pacific_url,pac_online)
         
-        #initialize empty dict
-        self.data = {}
-        
         #keep current storm ID for iteration
         current_id = ""
         
@@ -146,9 +174,11 @@ class Dataset(Plot):
                     add_basin = 'east_pacific'
                 elif line[0][0] == 'E':
                     add_basin = 'east_pacific'
+                if override_basin == True:
+                    add_basin = 'all'
                 
                 #add empty entry into dict
-                self.data[line[0]] = {'id':line[0],'operational_id':'','name':line[1],'year':int(line[0][4:]),'basin':add_basin,}
+                self.data[line[0]] = {'id':line[0],'operational_id':'','name':line[1],'year':int(line[0][4:]),'season':int(line[0][4:]),'basin':add_basin,}
                 self.data[line[0]]['source'] = self.source
                 current_id = line[0]
                 
@@ -200,9 +230,9 @@ class Dataset(Plot):
                 self.data[current_id]['mslp'].append(mslp)
                 
                 #Add basin
-                if self.basin == 'north_atlantic':
+                if add_basin == 'north_atlantic':
                     wmo_agency = 'north_atlantic'
-                elif self.basin == 'east_pacific':
+                elif add_basin == 'east_pacific':
                     if lon > 0.0:
                         wmo_agency = 'west_pacific'
                     else:
@@ -328,7 +358,7 @@ class Dataset(Plot):
                 add_basin = 'east_pacific'
 
             #add empty entry into dict
-            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'basin':add_basin,}
+            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,}
             self.data[stormid]['source'] = self.source
 
             #add empty lists
@@ -465,114 +495,335 @@ class Dataset(Plot):
             content = [(i.replace(" ","")).split(",") for i in content]
             f.close()
 
-        self.data = {}
+        #Initialize empty dict for neumann data
+        neumann = {}
+        
+        #ibtracs ID to jtwc ID mapping
+        map_all_id = {}
+        map_id = {}
+        
         for line in content[2:]:
             
             #LANDFALL	IFLAG	USA_AGENCY	USA_ATCF_ID	USA_LAT	USA_LON	USA_RECORD	USA_STATUS	USA_WIND	USA_PRES
 
 
-            if len(line) < 14: continue
+            if len(line) < 150: continue
             #sid, year, adv_number, basin, subbasin, name, time, wmo_type, wmo_lat, wmo_lon, wmo_vmax, wmo_mslp, agency, track_type, dist_land = line[:15]
             
             ibtracs_id, year, adv_number, basin, subbasin, name, time, wmo_type, wmo_lat, wmo_lon, wmo_vmax, wmo_mslp, agency, track_type, dist_land, dist_landfall, iflag, usa_agency, sid, lat, lon, special, stype, vmax, mslp = line[:25]
+            
+            date = dt.strptime(time,'%Y-%m-%d%H:%M:00')
             
             #Fix name to be consistent with HURDAT
             if name == 'NOT_NAMED': name = 'UNNAMED'
             if name[-1] == '-': name = name[:-1]
 
             #Add storm to list of keys
-            if sid not in self.data.keys():
+            if self.ibtracs_mode == 'wmo' and ibtracs_id not in self.data.keys():
 
                 #add empty entry into dict
-                self.data[sid] = {'id':sid,'operational_id':'','name':name,'year':int(year),'basin':self.basin}
-                self.data[sid]['source'] = self.source
-                current_id = sid
+                self.data[ibtracs_id] = {'id':sid,'operational_id':'','name':name,'year':date.year,'season':int(year),'basin':self.basin}
+                self.data[ibtracs_id]['source'] = self.source
+                self.data[ibtracs_id]['source_info'] = 'World Meteorological Organization (official)'
+                self.data[ibtracs_id]['notes'] = "'vmax' = wind converted to 1-minute using the 0.88 conversion factor. 'vmax_orig' = original vmax as assessed by its respective WMO agency."
 
                 #add empty lists
-                #for val in ['date','extra_obs','special','type','ib_type','lat','lon','vmax','mslp']:
+                for val in ['date','extra_obs','special','type','lat','lon','vmax','vmax_orig','mslp','wmo_basin']:
+                    self.data[ibtracs_id][val] = []
+                self.data[ibtracs_id]['ace'] = 0.0
+                
+            elif sid != '' and ibtracs_id not in map_all_id.keys():
+                
+                #ID entry method to use
+                use_id = sid
+                
+                #Add id to list
+                map_all_id[ibtracs_id] = sid
+
+                #add empty entry into dict
+                self.data[use_id] = {'id':sid,'operational_id':'','name':name,'year':date.year,'season':int(year),'basin':self.basin}
+                self.data[use_id]['source'] = self.source
+                self.data[use_id]['source_info'] = 'Joint Typhoon Warning Center (unofficial)'
+                if self.neumann == True: self.data[use_id]['source_info'] += '& Charles Neumann reanalysis for South Hemisphere storms'
+                current_id = use_id
+
+                #add empty lists
                 for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp',
                             'wmo_type','wmo_lat','wmo_lon','wmo_vmax','wmo_mslp','wmo_basin']:
-                    self.data[sid][val] = []
-                self.data[sid]['ace'] = 0.0
+                    self.data[use_id][val] = []
+                self.data[use_id]['ace'] = 0.0
 
-            #if wmo_lat == "" or wmo_lon == "":
-            #    continue
-            #if agency == "" and track_type != "PROVISIONAL": continue
-            if lat == "" or lon == "":
-                continue
-            if usa_agency == "" and track_type != "PROVISIONAL": continue
+            #Get neumann data for storms containing it
+            if self.neumann == True:
+                neumann_lat, neumann_lon, neumann_type, neumann_vmax, neumann_mslp = line[141:146]
+                if neumann_lat != "" and neumann_lon != "":
+                    
+                    #Add storm to list of keys
+                    if ibtracs_id not in neumann.keys():
+                        neumann[ibtracs_id] = {'id':sid,'operational_id':'','name':name,'year':date.year,'season':int(year),'basin':self.basin}
+                        neumann[ibtracs_id]['source'] = self.source
+                        for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
+                            neumann[ibtracs_id][val] = []
+                        neumann[ibtracs_id]['ace'] = 0.0
+                    
+                    #Retrieve data
+                    neumann_date = dt.strptime(time,'%Y-%m-%d%H:%M:00')
+                    neumann_lat = float(wmo_lat)
+                    neumann_lon = float(wmo_lon)
+                    neumann_vmax = np.nan if neumann_vmax == "" else int(neumann_vmax)
+                    neumann_mslp = np.nan if neumann_mslp == "" else int(neumann_mslp)
+                    if neumann_type == 'TC':
+                        if neumann_vmax < 34:
+                            neumann_type = 'TD'
+                        elif neumann_vmax < 64:
+                            neumann_type = 'TS'
+                        else:
+                            neumann_type = 'HU'
+                    elif neumann_type == 'MM' or neumann_type == '':
+                        neumann_type = 'LO'
+                    
+                    neumann[ibtracs_id]['date'].append(neumann_date)
+                    neumann[ibtracs_id]['special'].append(special)
 
-            date = dt.strptime(time,'%Y-%m-%d%H:%M:00')
-            dist_land = int(dist_land)
-            
-            #Properly format WMO variables
-            wmo_lat = float(wmo_lat)
-            wmo_lon = float(wmo_lon)
-            wmo_vmax = np.nan if wmo_vmax == "" else int(wmo_vmax)
-            wmo_mslp = np.nan if wmo_mslp == "" else int(wmo_mslp)
-            
-            #Properly format hurdat-style variables
-            lat = float(lat)
-            lon = float(lon)
-            vmax = np.nan if vmax == "" else int(vmax)
-            mslp = np.nan if mslp == "" else int(mslp)
-            
-            #Convert storm type from ibtracs to hurdat style
-            if stype == "ST" or stype == "TY":
-                stype = "HU"
-            elif stype == "":
-                if np.isnan(vmax) == True:
-                    stype = 'LO'
-                elif vmax < 34:
-                    stype = 'TD'
-                elif vmax < 64:
-                    stype = 'TS'
-                else:
-                    stype = 'HU'
-
-            #Handle missing data
-            if vmax < 0: vmax = np.nan
-            if mslp < 800: mslp = np.nan
-
-            self.data[sid]['date'].append(date)
-            self.data[sid]['special'].append(special)
-            
-            self.data[sid]['wmo_type'].append(wmo_type)
-            self.data[sid]['wmo_lat'].append(wmo_lat)
-            self.data[sid]['wmo_lon'].append(wmo_lon)
-            self.data[sid]['wmo_vmax'].append(wmo_vmax)
-            self.data[sid]['wmo_mslp'].append(wmo_mslp)
-            
-            self.data[sid]['type'].append(stype)
-            self.data[sid]['lat'].append(lat)
-            self.data[sid]['lon'].append(lon)
-            self.data[sid]['vmax'].append(vmax)
-            self.data[sid]['mslp'].append(mslp)
-            
-            #Edit basin
-            basin_reverse = {v: k for k, v in basin_convert.items()}
-            wmo_basin = basin_reverse.get(basin,'')
-            if subbasin in ['WA','EA']:
-                wmo_basin = 'australia'
-            self.data[sid]['wmo_basin'].append(wmo_basin)
-
-            hhmm = date.strftime('%H%M')
-            if hhmm in ['0000','0600','1200','1800']:
-                self.data[sid]['extra_obs'].append(0)
+                    neumann[ibtracs_id]['type'].append(neumann_type)
+                    neumann[ibtracs_id]['lat'].append(neumann_lat)
+                    neumann[ibtracs_id]['lon'].append(neumann_lon)
+                    neumann[ibtracs_id]['vmax'].append(neumann_vmax)
+                    neumann[ibtracs_id]['mslp'].append(neumann_mslp)
+                    
+                    hhmm = neumann_date.strftime('%H%M')
+                    if hhmm in ['0000','0600','1200','1800']:
+                        neumann[ibtracs_id]['extra_obs'].append(0)
+                    else:
+                        neumann[ibtracs_id]['extra_obs'].append(1)
+                    
+                    #Edit basin
+                    basin_reverse = {v: k for k, v in basin_convert.items()}
+                    wmo_basin = basin_reverse.get(basin,'')
+                    if subbasin in ['WA','EA']:
+                        wmo_basin = 'australia'
+                    neumann[ibtracs_id]['wmo_basin'].append(wmo_basin)
+                    
+                    #Calculate ACE & append to storm total
+                    if np.isnan(neumann_vmax) == False:
+                        ace = (10**-4) * (neumann_vmax**2)
+                        if hhmm in ['0000','0600','1200','1800'] and neumann_type in ['SS','TS','HU']:
+                            neumann[ibtracs_id]['ace'] += np.round(ace,4)
+                        
+            #Skip missing entries
+            if self.ibtracs_mode == 'wmo':
+                if wmo_lat == "" or wmo_lon == "":
+                    continue
+                if agency == "": continue
             else:
-                self.data[sid]['extra_obs'].append(1)
+                if lat == "" or lon == "":
+                    continue
+                if usa_agency == "" and track_type != "PROVISIONAL": continue
+            
+            
+            #map JTWC to ibtracs ID (for neumann replacement)
+            if self.neumann == True:
+                if ibtracs_id not in map_id.keys():
+                    map_id[ibtracs_id] = sid
+            
+            #Handle WMO mode
+            if self.ibtracs_mode == 'wmo':
+                
+                #Retrieve data
+                date = dt.strptime(time,'%Y-%m-%d%H:%M:00')
+                dist_land = int(dist_land)
 
-            #Calculate ACE & append to storm total
-            if np.isnan(vmax) == False:
-                ace = (10**-4) * (vmax**2)
-                if hhmm in ['0000','0600','1200','1800'] and stype in ['SS','TS','HU']:
-                    self.data[sid]['ace'] += np.round(ace,4)
+                #Properly format WMO variables
+                wmo_lat = float(wmo_lat)
+                wmo_lon = float(wmo_lon)
+                wmo_vmax = np.nan if wmo_vmax == "" else int(wmo_vmax)
+                wmo_mslp = np.nan if wmo_mslp == "" else int(wmo_mslp)
+                
+                #Edit basin
+                basin_reverse = {v: k for k, v in basin_convert.items()}
+                wmo_basin = basin_reverse.get(basin,'')
+                if subbasin in ['WA','EA']:
+                    wmo_basin = 'australia'
+                self.data[ibtracs_id]['wmo_basin'].append(wmo_basin)
+                
+                #Account for wind discrepancy
+                if wmo_basin not in ['north_atlantic','east_pacific'] and np.isnan(wmo_vmax) == False:
+                    jtwc_vmax = int(wmo_vmax / 0.88)
+                else:
+                    if np.isnan(wmo_vmax) == False:
+                        jtwc_vmax = int(wmo_vmax + 0.0)
+                    else:
+                        jtwc_vmax = np.nan
+                
+                #Convert storm type from ibtracs to hurdat style
+                """
+                DS - Disturbance
+                TS - Tropical
+                ET - Extratropical
+                SS - Subtropical
+                NR - Not reported
+                MX - Mixture (contradicting nature reports from different agencies)
+                """
+                if wmo_type == "DS":
+                    stype = "LO"
+                elif wmo_type == "TS":
+                    if np.isnan(jtwc_vmax) == True:
+                        stype = 'LO'
+                    elif jtwc_vmax < 34:
+                        stype = 'TD'
+                    elif jtwc_vmax < 64:
+                        stype = 'TS'
+                    else:
+                        stype = 'HU'
+                elif wmo_type == 'SS':
+                    if np.isnan(jtwc_vmax) == True:
+                        stype = 'LO'
+                    elif jtwc_vmax < 34:
+                        stype = 'SD'
+                    else:
+                        stype = 'SS'
+                elif wmo_type in ['ET','MX']:
+                    wmo_type = 'EX'
+                else:
+                    stype = 'LO'
+
+                #Handle missing data
+                if wmo_vmax < 0: wmo_vmax = np.nan
+                if wmo_mslp < 800: wmo_mslp = np.nan
+
+                self.data[ibtracs_id]['date'].append(date)
+                self.data[ibtracs_id]['special'].append(special)
+
+                self.data[ibtracs_id]['type'].append(stype)
+                self.data[ibtracs_id]['lat'].append(wmo_lat)
+                self.data[ibtracs_id]['lon'].append(wmo_lon)
+                self.data[ibtracs_id]['vmax'].append(jtwc_vmax)
+                self.data[ibtracs_id]['vmax_orig'].append(wmo_vmax)
+                self.data[ibtracs_id]['mslp'].append(wmo_mslp)
+
+                hhmm = date.strftime('%H%M')
+                if hhmm in ['0000','0600','1200','1800']:
+                    self.data[ibtracs_id]['extra_obs'].append(0)
+                else:
+                    self.data[ibtracs_id]['extra_obs'].append(1)
+
+                #Calculate ACE & append to storm total
+                if np.isnan(jtwc_vmax) == False:
+                    ace = (10**-4) * (jtwc_vmax**2)
+                    if hhmm in ['0000','0600','1200','1800'] and stype in ['SS','TS','HU']:
+                        self.data[ibtracs_id]['ace'] += np.round(ace,4)
+                
+            #Handle non-WMO mode
+            else:
+                if sid == '': continue
+                sid = map_all_id.get(ibtracs_id)
+
+                #Retrieve data
+                date = dt.strptime(time,'%Y-%m-%d%H:%M:00')
+                dist_land = int(dist_land)
+
+                #Properly format WMO variables
+                wmo_lat = float(wmo_lat)
+                wmo_lon = float(wmo_lon)
+                wmo_vmax = np.nan if wmo_vmax == "" else int(wmo_vmax)
+                wmo_mslp = np.nan if wmo_mslp == "" else int(wmo_mslp)
+
+                #Properly format hurdat-style variables
+                lat = float(lat)
+                lon = float(lon)
+                vmax = np.nan if vmax == "" else int(vmax)
+                mslp = np.nan if mslp == "" else int(mslp)
+
+                #Convert storm type from ibtracs to hurdat style
+                if stype == "ST" or stype == "TY":
+                    stype = "HU"
+                elif stype == "":
+                    if wmo_type == 'TS':
+                        if vmax < 34:
+                            stype = 'TD'
+                        elif vmax < 64:
+                            stype = 'TS'
+                        else:
+                            stype = 'HU'
+                    elif wmo_type == 'SS':
+                        if vmax < 34:
+                            stype = 'SD'
+                        else:
+                            stype = 'SS'
+                    elif wmo_type in ['ET','MX']:
+                        wmo_type = 'EX'
+                    elif stype == 'DS':
+                        stype = 'LO'
+                    else:
+                        if np.isnan(vmax) == True:
+                            stype = 'LO'
+                        elif vmax < 34:
+                            stype = 'TD'
+                        elif vmax < 64:
+                            stype = 'TS'
+                        else:
+                            stype = 'HU'
+
+                #Handle missing data
+                if vmax < 0: vmax = np.nan
+                if mslp < 800: mslp = np.nan
+
+                self.data[sid]['date'].append(date)
+                self.data[sid]['special'].append(special)
+
+                self.data[sid]['wmo_type'].append(wmo_type)
+                self.data[sid]['wmo_lat'].append(wmo_lat)
+                self.data[sid]['wmo_lon'].append(wmo_lon)
+                self.data[sid]['wmo_vmax'].append(wmo_vmax)
+                self.data[sid]['wmo_mslp'].append(wmo_mslp)
+
+                self.data[sid]['type'].append(stype)
+                self.data[sid]['lat'].append(lat)
+                self.data[sid]['lon'].append(lon)
+                self.data[sid]['vmax'].append(vmax)
+                self.data[sid]['mslp'].append(mslp)
+
+                #Edit basin
+                basin_reverse = {v: k for k, v in basin_convert.items()}
+                wmo_basin = basin_reverse.get(basin,'')
+                if subbasin in ['WA','EA']:
+                    wmo_basin = 'australia'
+                self.data[sid]['wmo_basin'].append(wmo_basin)
+
+                hhmm = date.strftime('%H%M')
+                if hhmm in ['0000','0600','1200','1800']:
+                    self.data[sid]['extra_obs'].append(0)
+                else:
+                    self.data[sid]['extra_obs'].append(1)
+
+                #Calculate ACE & append to storm total
+                if np.isnan(vmax) == False:
+                    ace = (10**-4) * (vmax**2)
+                    if hhmm in ['0000','0600','1200','1800'] and stype in ['SS','TS','HU']:
+                        self.data[sid]['ace'] += np.round(ace,4)
                     
         #Remove empty entries
         all_keys = [k for k in self.data.keys()]
         for key in all_keys:
             if len(self.data[key]['lat']) == 0:
                 del(self.data[key])
+        
+        #Replace neumann entries
+        if self.neumann == True:
+            
+            #iterate through every neumann entry
+            for key in neumann.keys():
+                
+                #get corresponding JTWC ID
+                jtwc_id = map_id.get(key,'')
+                if jtwc_id == '': continue
+                
+                #plug dict entry
+                old_entry = self.data[jtwc_id]
+                self.data[jtwc_id] = neumann[key]
+                
+                #replace id
+                self.data[jtwc_id]['id'] = jtwc_id
                 
         #Fix cyclone Catarina, if specified & requested
         if 'AL502004' in all_keys and self.catarina == True:
@@ -723,16 +974,13 @@ class Dataset(Plot):
         Parameters
         ----------
         year : int
-            Year to retrieve HURDAT data for.
+            Year to retrieve season data. If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
         
         Returns
         -------
         Season
-            Object containing every HURDAT entry for the given season.
+            Object containing every storm entry for the given season.
         """
-        
-        if self.source == 'ibtracs':
-            warnings.warn("This function is not currently configured to work for the ibtracs dataset in the southern hemisphere.")
         
         #Initialize dict to be populated
         season_dict = {}
@@ -740,16 +988,21 @@ class Dataset(Plot):
         #Search for corresponding entry in keys
         basin_list = []
         for key in self.keys:
-            temp_year = self.data[key]['year']
+            temp_year = self.data[key]['season']
             if temp_year == int(year):
                 temp_basin = self.data[key]['basin']
                 temp_wmo_basin = self.data[key]['wmo_basin']
-                if temp_basin != 'all':
+                if temp_basin == 'all':
+                    if basin == 'all':
+                        season_dict[key] = self.data[key]
+                        basin_list.append('all')
+                    elif basin in temp_wmo_basin:
+                        season_dict[key] = self.data[key]
+                        basin_list.append(self.data[key]['wmo_basin'][0])
+                else:
                     season_dict[key] = self.data[key]
-                    basin_list.append(max(set(self.data[key]['wmo_basin']), key=self.data[key]['wmo_basin'].count))
-                elif basin in temp_wmo_basin:
-                    season_dict[key] = self.data[key]
-                    basin_list.append(max(set(self.data[key]['wmo_basin']), key=self.data[key]['wmo_basin'].count))
+                    basin_list.append(self.data[key]['wmo_basin'][0])
+                    #basin_list.append(max(set(self.data[key]['wmo_basin']), key=self.data[key]['wmo_basin'].count))
                 
         #Error check
         if len(season_dict) == 0:
@@ -1384,7 +1637,7 @@ class Dataset(Plot):
         fig=plt.figure(figsize=(12,9.5),dpi=200)
         
         #Plot climatology
-        CS=plt.pcolor(xedges,yedges,counts**0.3,vmin=0,vmax=2000**.3,cmap='gnuplot2_r')
+        CS=plt.pcolor(xedges,yedges,counts**0.35,vmin=0,vmax=2000**.3,cmap='gnuplot2_r')
         plt.plot(xedges,[testfit(vp,x,2) for x in xedges],'k--',linewidth=2)
         
         #Plot storm, if specified
@@ -1496,6 +1749,59 @@ class Dataset(Plot):
         ranked_ace = {}
         for i,(i_id,i_storm,i_ace) in enumerate(zip(sorted_id,sorted_storm,sorted_ace)):
             ranked_ace[i+1] = [i_ace,i_storm[0],int(i_storm[1]),i_id]
+            
+        #Return both dicts
+        if return_all == True:
+            return ace_dict
+        else:
+            return ranked_ace
+        
+    def rank_storm_by_genesis_latitude(self,subtropical=True,start_year=None,end_year=None,return_all=False):
+        
+        #Determine end year of hurdat dataset
+        if start_year == None: start_year = self.data[self.keys[0]]['year']
+        if end_year == None: end_year = self.data[self.keys[-1]]['year']
+            
+        #Initialize empty dict
+        analyze_dict = {'id':[],'storm':[],'lat':[],'lon':[],'type':[]}
+            
+        #Iterate over every storm in dataset
+        for storm in self.keys:
+            
+            #Get entry for this storm
+            storm_data = self.data[storm]
+            if storm_data['year'] < start_year or storm_data['year'] > end_year: continue
+            if storm_data['ace'] == 0: continue
+            
+            type_array = np.array(storm_data['type'])
+            if subtropical == True:
+                idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+            else:
+                idx = np.where((type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+            if len(idx[0]) == 0: continue
+            lat_tropical = np.array(storm_data['lat'])[idx]
+            lon_tropical = np.array(storm_data['lon'])[idx]
+            type_tropical = np.array(storm_data['type'])[idx]
+            
+            #Retrieve ACE for this event
+            analyze_dict['id'].append(storm)
+            analyze_dict['storm'].append((storm_data['name'],storm_data['year']))
+            analyze_dict['lat'].append(lat_tropical[0])
+            analyze_dict['lon'].append(lon_tropical[0])
+            analyze_dict['type'].append(type_tropical[0])
+            
+        #Sort from largest to smallest
+        arg_idx = np.argsort(analyze_dict['lat'])[::-1]
+        sorted_id = (np.array(analyze_dict['id'])[arg_idx])
+        sorted_storm = (np.array(analyze_dict['storm'])[arg_idx])
+        sorted_lat = (np.array(analyze_dict['lat'])[arg_idx])
+        sorted_lon = (np.array(analyze_dict['lon'])[arg_idx])
+        sorted_type = (np.array(analyze_dict['type'])[arg_idx])
+        
+        #Enter into new dict
+        ranked_ace = {}
+        for i,(i_id,i_storm,i_lat,i_lon,i_type) in enumerate(zip(sorted_id,sorted_storm,sorted_lat,sorted_lon,sorted_type)):
+            ranked_ace[i+1] = [i_lat,i_lon,i_type,i_storm[0],int(i_storm[1]),i_id]
             
         #Return both dicts
         if return_all == True:

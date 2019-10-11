@@ -69,7 +69,6 @@ class Storm:
                 self[key] = self.dict[key]
                 self.coords[key] = self.dict[key]
                 
-        
     def to_dict(self):
         
         r"""

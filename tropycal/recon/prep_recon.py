@@ -17,7 +17,7 @@ from geopy.distance import great_circle
 import matplotlib.dates as mdates
 
 
-class Recon(object):
+class Recon:
 
     #init class
     def __init__(self,stormtuple):
@@ -25,9 +25,11 @@ class Recon(object):
         self.url_prefix = 'http://tropicalatlantic.com/recon/recon.cgi?'
         self.storm = str(stormtuple[0])
         self.year = str(stormtuple[1])
-    
-    def getMission(self,agency,mission_num,url_mission=False):
-        if ~url_mission:
+        self.missiondata = self.allMissions()
+        self.recentered = self.recenter()
+        
+    def getMission(self,agency,mission_num,url_mission=None):
+        if url_mission==None:
             url_mission = f'{self.url_prefix}basin=al&year={self.year}&product=hdob&storm={self.storm}&mission={mission_num}&agency={agency}'
         content = np.array(requests.get(url_mission).content.decode("utf-8").split('\n'))
         obs = [line.split('\"')[1] for line in content if 'option value=' in line][::-1]
@@ -36,10 +38,10 @@ class Recon(object):
             data = pandas.read_html(url_ob)[0]
             data = data.rename(columns = {[name for name in data if 'Time' in name][0]:'Time'})
             if i==0:
-                missiondata = data[:-1]
+                mission = data[:-1]
                 day0 = dt.strptime(self.year+ob[:5],'%Y%m-%d')
             else:
-                missiondata = missiondata.append(data[:-1],ignore_index=True)
+                mission = mission.append(data[:-1],ignore_index=True)
                 
         def getVar(x,name):
             a = np.nan
@@ -74,27 +76,11 @@ class Recon(object):
         varnames = ['Time','Coordinates','Aircraft Static Air Pressure','Aircraft Geo. Height',
                     'Extrapolated Sfc. Pressure','Flight Level Wind (30 sec. Avg.)',
                     'Peak (10 sec. Avg.) Flight Level Wind','SFMR Peak (10s Avg.) Sfc. Wind']
-        missiondata = {name:[getVar(item,name) for item in missiondata[name]] for name in varnames}
-        for i,t in enumerate(missiondata['Time']):
-            missiondata['Time'][i] = day0.replace(hour=int(t[:2]),minute=int(t[3:5]),second=int(t[6:8]))
-            if i>0 and (missiondata['Time'][i]-missiondata['Time'][i-1]).total_seconds()<0:
-                missiondata['Time'][i]+=timedelta(days=1)
-        return missiondata
-
-    def allMissions(self):
-        url_storm = f'{self.url_prefix}basin=al&year={self.year}&storm={self.storm}&product=hdob'
-        missions = pandas.read_html(url_storm)[0]
-        missiondata={}
-        timer_start = dt.now()
-        for i_mission in range(len(missions)):
-            mission_num = str(missions['MissionNumber'][i_mission]).zfill(2)
-            agency = ''.join(filter(str.isalpha, missions['Agency'][i_mission]))
-            missiondata[int(mission_num)] = self.getMission(agency,mission_num)
-            print(mission_num)
-        print('%.2f seconds to get all missions' % (dt.now()-timer_start).total_seconds())
-        return missiondata
-
-    def find_centers(self,mission):
+        mission = {name:[getVar(item,name) for item in mission[name]] for name in varnames}
+        for i,t in enumerate(mission['Time']):
+            mission['Time'][i] = day0.replace(hour=int(t[:2]),minute=int(t[3:5]),second=int(t[6:8]))
+            if i>0 and (mission['Time'][i]-mission['Time'][i-1]).total_seconds()<0:
+                mission['Time'][i]+=timedelta(days=1)
         data={}
         data['lon'],data['lat'] = zip(*mission['Coordinates'])
         data['time'] = mission['Time']
@@ -104,6 +90,23 @@ class Recon(object):
         data['sfmr'] = mission['SFMR Peak (10s Avg.) Sfc. Wind']
         data['plane_p'] = mission['Aircraft Static Air Pressure']
         data['plane_z'] = mission['Aircraft Geo. Height']
+        return pandas.DataFrame.from_dict(data)
+
+    def allMissions(self):
+        url_storm = f'{self.url_prefix}basin=al&year={self.year}&storm={self.storm}&product=hdob'
+        missions = pandas.read_html(url_storm)[0]
+        missiondata={}
+        timer_start = dt.now()
+        print(f'--> Start reading in recon missions')
+        for i_mission in range(len(missions)):
+            mission_num = str(missions['MissionNumber'][i_mission]).zfill(2)
+            agency = ''.join(filter(str.isalpha, missions['Agency'][i_mission]))
+            missiondata[f'{mission_num}_{agency}'] = self.getMission(agency,mission_num)
+            print(f'{mission_num}_{agency}')
+        print('--> Completed reading in recon missions (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
+        return missiondata
+
+    def find_centers(self,data):
         
         def fill_nan(A):
             #Interpolate to fill nan values
@@ -142,22 +145,19 @@ class Recon(object):
             data['iscenter'][i] = 1
         return data
 
-    def stitchMissions(self):
-        list_of_dfs=[]
-        missiondata = self.allMissions()
-        for num in missiondata:
-            mission = missiondata[num]
-            tmp = self.find_centers(mission)
-            list_of_dfs.append( pandas.DataFrame.from_dict(tmp))
-        data_concat = pandas.concat(list_of_dfs,ignore_index=True)
-        self.data_chron = data_concat.sort_values(by='time').reset_index(drop=True)
-        return self.data_chron
-
     def recenter(self): 
-        try:
-            data = self.data_chron.copy()
-        except:
-            data = self.stitchMissions()
+        
+        def stitchMissions():
+            list_of_dfs=[]
+            for name in self.missiondata:
+                mission = self.missiondata[name]
+                tmp = self.find_centers(mission)
+                list_of_dfs.append( tmp )
+            data_concat = pandas.concat(list_of_dfs,ignore_index=True)
+            data_chron = data_concat.sort_values(by='time').reset_index(drop=True)
+            return data_chron
+
+        data = stitchMissions()
         centers = data.loc[data['iscenter']>0]
         
         if len(centers)<2:
@@ -172,14 +172,14 @@ class Recon(object):
             interp_clat = f(mdates.date2num(data['time']))
 
             #Get x,y distance of each ob from coinciding interped center position
-            data['x_dist'] = [great_circle( (interp_clat[i],interp_clon[i]), \
+            data['xdist'] = [great_circle( (interp_clat[i],interp_clon[i]), \
                 (interp_clat[i],data['lon'][i]) ).kilometers* \
-                [1,-1][data['lon'][i] < interp_clon[i]] for i in range(len(data))]
-            data['y_dist'] = [great_circle( (interp_clat[i],interp_clon[i]), \
+                [1,-1][int(data['lon'][i] < interp_clon[i])] for i in range(len(data))]
+            data['ydist'] = [great_circle( (interp_clat[i],interp_clon[i]), \
                 (data['lat'][i],interp_clon[i]) ).kilometers* \
-                [1,-1][data['lat'][i] < interp_clat[i]] for i in range(len(data))]
+                [1,-1][int(data['lat'][i] < interp_clat[i])] for i in range(len(data))]
             
-        print('%.2f seconds to recenter' % (dt.now()-timer_start).total_seconds())
+        print('--> Completed recentering recon data (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
         return data
         
 

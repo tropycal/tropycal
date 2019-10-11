@@ -230,7 +230,7 @@ def cyclone_catarina():
     storm_id = 'AL502004'
     storm_dict = {}
     
-    storm_dict = {'id':'AL502004','operational_id':'','name':'CATARINA','year':2004,'basin':'south_atlantic'}
+    storm_dict = {'id':'AL502004','operational_id':'','name':'CATARINA','season':2004,'year':2004,'basin':'south_atlantic'}
     storm_dict['source'] = 'McTaggart-Cowan et al. (2006): https://doi.org/10.1175/MWR3330.1'
 
     #add empty lists
@@ -269,7 +269,7 @@ def knots_to_mph(wind):
     
     if wind in kts:
         return mphs[kts.index(wind)]
-    return 0
+    return wind
 
 def num_to_str(num):
     d = { 0 : 'zero', 1 : 'one', 2 : 'two', 3 : 'three', 4 : 'four', 5 : 'five',

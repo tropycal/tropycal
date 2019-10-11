@@ -909,8 +909,8 @@ class Plot:
         dot = u"\u2022"
         
         #Get current advisory information
-        if first_fcst_wind == np.nan: first_fcst_wind = "N/A"
-        if first_fcst_mslp == np.nan: first_fcst_mslp = "N/A"
+        first_fcst_wind = "N/A" if np.isnan(first_fcst_wind) == True else int(first_fcst_wind)
+        first_fcst_mslp = "N/A" if np.isnan(first_fcst_mslp) == True else int(first_fcst_mslp)
         
         #Get time of advisory
         fcst_hr = forecast['fhr']
@@ -919,7 +919,7 @@ class Plot:
         forecast_date = (forecast['init']+timedelta(hours=fcst_hr[start_slice])).strftime("%H%M UTC %d %b %Y")
         forecast_id = forecast['advisory_num']
         
-        title_text = f"{knots_to_mph(int(first_fcst_wind))} mph {dot} {int(first_fcst_mslp)} hPa {dot} Forecast #{forecast_id}"
+        title_text = f"{knots_to_mph(first_fcst_wind)} mph {dot} {first_fcst_mslp} hPa {dot} Forecast #{forecast_id}"
         title_text += f"\nForecast Issued: {forecast_date}"
         
         #Add right title
@@ -1077,7 +1077,8 @@ class Plot:
                 
             #Add storm name at start & end (bound_w = -160, bound_e = -120
             display_name = storm_data['name']
-            if display_name.lower() == 'unnamed': display_name = int(storm_data['id'][2:4])
+            if display_name.lower() == 'unnamed':
+                display_name = int(storm_data['id'][2:4]) if len(storm_data['id']) == 8 else 'UNNAMED'
                 
             if lons[0]>(bound_w+0.5) and lons[0]<(bound_e-0.5) and lats[0]>(bound_s-0.5) and lats[0]<(bound_n-0.5):
                 self.ax.text(lons[0],lats[0]+1.0,display_name,alpha=0.7,
@@ -1301,6 +1302,8 @@ class Plot:
             fhr = fhr[:cone_day_cap]
             t = np.array(fhr)/6.0
             interp_fhr_idx = np.arange(interp_fhr_idx[0],t[-1]+0.1,0.1)
+        else:
+            cone_day_cap = len(fhr)
         
         #Account for dateline
         if dateline == True:

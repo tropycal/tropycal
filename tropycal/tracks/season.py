@@ -46,6 +46,50 @@ class Season:
             if isinstance(info[key], list) == False and isinstance(info[key], dict) == False:
                 self[key] = info[key]
                 self.coords[key] = info[key]
+    
+    def to_dataframe(self):
+        
+        r"""
+        Converts the season dict into a pandas DataFrame object.
+        
+        Returns
+        -------
+        xarray Dataset
+            A pandas DataFrame object containing information about the season.
+        """
+        
+        #Try importing xarray
+        try:
+            import pandas as pd
+        except ImportError as e:
+            raise RuntimeError("Error: pandas is not available. Install pandas in order to use this function.") from e
+        
+        #Get season info
+        season_info = self.annual_summary()
+        season_info_keys = season_info['id']
+        
+        #Set up empty dict for dataframe
+        ds = {'id':[],'name':[],'vmax':[],'mslp':[],'category':[],'ace':[],'start_time':[],'end_time':[]}
+        
+        #Add every key containing a list into the dict
+        keys = [k for k in self.dict.keys()]
+        for key in keys:
+            if key in season_info_keys:
+                sidx = season_info_keys.index(key)
+                ds['id'].append(key)
+                ds['name'].append(self.dict[key]['name'])
+                ds['vmax'].append(season_info['max_wspd'][sidx])
+                ds['mslp'].append(season_info['min_mslp'][sidx])
+                ds['category'].append(season_info['category'][sidx])
+                ds['start_time'].append(self.dict[key]['date'][0])
+                ds['end_time'].append(self.dict[key]['date'][-1])
+                ds['ace'].append(np.round(season_info['ace'][sidx],1))
+                    
+        #Convert entire dict to a DataFrame
+        ds = pd.DataFrame(ds)
+
+        #Return dataset
+        return ds
         
     def plot(self,ax=None,cartopy_proj=None,prop={},map_prop={}):
         
@@ -67,19 +111,6 @@ class Season:
         #Create instance of plot object
         self.plot_obj = Plot()
         
-        """
-        #Create cartopy projection
-        if cartopy_proj == None:
-            keys = [key for key in self.dict.keys()]
-            max_lon = max(self.dict[keys[0]]['lon']); min_lon = min(self.dict[keys[0]]['lon'])
-            for key in keys:
-                max_lon = max(self.dict[key]['lon']) if max(self.dict[key]['lon']) > max_lon else max_lon
-                min_lon = min(self.dict[key]['lon']) if min(self.dict[key]['lon']) > min_lon else min_lon
-            if max_lon > 150 or min_lon < -150:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
-            else:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-        """
         if self.basin in ['east_pacific','west_pacific','south_pacific','australia']:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
         else:
@@ -95,17 +126,12 @@ class Season:
     def annual_summary(self):
         
         r"""
-        Generates a summary for a given year with various cumulative statistics.
-        
-        Parameters
-        ----------
-        year : int
-            Year to retrieve HURDAT data for.
+        Generates a summary for this season with various cumulative statistics.
         
         Returns
         -------
         dict
-            Dictionary containing various statistics about the given year.
+            Dictionary containing various statistics about this season.
         """
         
         #Initialize dict with info about all of year's storms
@@ -118,9 +144,7 @@ class Season:
         for key in self.dict.keys():
 
             #Retrieve info about storm
-            storm_basin = key[0:2]
             temp_name = self.dict[key]['name']
-            temp_year = self.dict[key]['year']
             temp_vmax = np.array(self.dict[key]['vmax'])
             temp_mslp = np.array(self.dict[key]['mslp'])
             temp_type = np.array(self.dict[key]['type'])
@@ -161,13 +185,6 @@ class Season:
             hurdat_year['operational_id'].append(self.dict[key]['operational_id'])
             
             #Handle operational vs. non-operational storms
-            """
-            if temp_name == 'UNNAMED' and max_wnd != np.nan and max_wnd >= 34:
-                hurdat_year['operational_id'].append('')
-            else:
-                hurdat_year['operational_id'].append(f'{storm_basin}{str2(iterate_id)}{temp_year}')
-                iterate_id += 1
-            """
 
             #Check for purely subtropical storms
             if 'SS' in temp_type and True not in np.isin(temp_type,['TD','TS','HU']):

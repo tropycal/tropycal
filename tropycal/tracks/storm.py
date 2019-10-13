@@ -132,7 +132,7 @@ class Storm:
             A pandas DataFrame object containing information about the storm.
         """
         
-        #Try importing xarray
+        #Try importing pandas
         try:
             import pandas as pd
         except ImportError as e:

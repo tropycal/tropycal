@@ -9,6 +9,8 @@ from datetime import datetime as dt,timedelta
 
 from .plot import Plot
 from .tools import *
+from ...tropycal import tornado
+from ...tropycal import recon
 
 try:
     import gzip
@@ -189,7 +191,7 @@ class Storm:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        return_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax,prop,map_prop)
+        return_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None: return return_ax
@@ -674,4 +676,61 @@ class Storm:
         
         #Return dict
         return forecasts
+
+    #PLOT FUNCTION FOR TORNADOES
+    def plot_tors(self,Tors=None,zoom="dynamic",plotPPF=False,plot_all=False,\
+                  ax=None,cartopy_proj=None,prop={'PPFcolors':'Wistia'},map_prop={}):
+                
+        r"""
+        Creates a plot of the storm and associated tornado tracks.
+        
+        Parameters
+        ----------
+        zoom : str
+            Zoom for the plot. Can be one of the following:
+            "dynamic" - default. Dynamically focuses the domain using the storm track(s) plotted.
+            "north_atlantic" - North Atlantic Ocean basin
+            "pacific" - East/Central Pacific Ocean basin
+            "lonW/lonE/latS/latN" - Custom plot domain
+        plot_all : bool
+            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        prop : dict
+            Property of storm track lines.
+        map_prop : dict
+            Property of cartopy map.
+        """
+        
+        self.Tors = Tors
+        if self.Tors == None:
+            self.Tors = tornado.Dataset()
+        stormTors = self.Tors.getTCtors(self)
+        
+        #Create instance of plot object
+        self.plot_obj_tc = Plot()
+        self.plot_obj_tor = tornado.Plot()
+        
+        #Create cartopy projection
+        if cartopy_proj == None:
+            if max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
+                self.plot_obj_tor.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+                self.plot_obj_tc.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+            else:
+                self.plot_obj_tor.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+                self.plot_obj_tc.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+                
+        #Plot tornadoes
+        ax,zoom,leg_tor = self.plot_obj_tor.plot_tornadoes(stormTors,zoom,ax=ax,return_ax=True,\
+                                             plotPPF=plotPPF,prop=prop,map_prop=map_prop)
+        
+        #Plot storm
+        return_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,ax=ax,prop=prop,map_prop=map_prop)
+        
+        return_ax.add_artist(leg_tor)
+    
+        #Return axis
+        if ax != None: return return_ax
 

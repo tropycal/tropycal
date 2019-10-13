@@ -7,7 +7,8 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 
-from .plot import Plot
+from ..plot import Plot
+from .plot import TrackPlot
 from .storm import Storm
 from .season import Season
 from .tools import *
@@ -20,7 +21,7 @@ try:
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
-class Dataset(Plot):
+class Dataset(TrackPlot):
     
     def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,
                  atlantic_url='https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2018-051019.txt',
@@ -929,7 +930,7 @@ class Dataset(Plot):
         storm_dict = self.get_storm(storm).dict
         
         #Create instance of plot object
-        self.plot_obj = Plot()
+        self.plot_obj = TrackPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:

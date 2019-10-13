@@ -189,7 +189,7 @@ class Storm:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        return_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax,prop,map_prop)
+        return_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None: return return_ax

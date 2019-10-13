@@ -47,7 +47,6 @@ class Dataset(Plot):
             Replace ibtracs data for the North Atlantic and East/Central Pacific basins with HURDAT data.
         neumann : bool
             Replace ibtracs data for South Hemisphere storms with data from the Neumann reanalysis where available.
-            
 
         Returns
         -------
@@ -940,7 +939,7 @@ class Dataset(Plot):
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        return_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax,prop,map_prop)
+        return_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax=ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None: return return_ax
@@ -1717,98 +1716,173 @@ class Dataset(Plot):
         else:
             return
     
-    def rank_storm_by_ace(self,start_year=None,end_year=None,return_all=False):
+    def rank_storm(self,metric,subset_domain=None,ascending=False,subtropical=True,start_year=None,end_year=None,return_all=False):
         
-        #Determine end year of hurdat dataset
+        r"""
+        Ranks storm by a specified metric.
+        
+        Parameters
+        ----------
+        metric : str
+            Metric to rank storms by. Can be any of the following:
+            "ace" = rank storms by ACE
+            "start_lat" = starting latitude of cyclone
+            "start_lon" = starting longitude of cyclone
+            "end_lat" = ending latitude of cyclone
+            "end_lon" = ending longitude of cyclone
+            "formation_date" = formation date of cyclone
+            "max_wind" = first instance of the maximum sustained wind of cyclone
+            "min_mslp" = first instance of the minimum MSLP of cyclone
+        ascending : bool
+            Whether to return rank in ascending order (True) or descending order (False). Default is False.
+        subset_domain : str
+            String representing either a bounded region 'latS/latN/latW/latE', or a basin name
+        subtropical : bool
+            Whether to include subtropical storms in the ranking. Default is True.
+        start_year : int
+            Year to begin calculating the climatology over. Default is the first year available in the dataset.
+        end_year : int
+            Year to end calculating the climatology over. Default is the latest year available in the dataset.
+        
+        Returns
+        -------
+        pandas.DataFrame
+            Returns a pandas DataFrame containing ranked storms. If pandas is not installed, a dict will be returned instead.
+        """
+        
+        if self.source == 'ibtracs':
+            warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
+        
+        #Error check for metric
+        metric = metric.lower()
+        metric_bank = {'ace':['ace'],
+                       'start_lat':['lat','lon','type'],
+                       'start_lon':['lon','lat','type'],
+                       'end_lat':['lat','lon','type'],
+                       'end_lon':['lon','lat','type'],
+                       'formation_date':['date','lat','lon','type'],
+                       'max_wind':['vmax','mslp','lat','lon'],
+                       'min_mslp':['mslp','vmax','lat','lon'],
+                      }
+        if metric not in metric_bank.keys():
+            raise ValueError("Metric requested for sorting is not available. Please reference the documentation for acceptable entries for 'metric'.")
+        
+        #Determine year range of dataset
         if start_year == None: start_year = self.data[self.keys[0]]['year']
         if end_year == None: end_year = self.data[self.keys[-1]]['year']
             
         #Initialize empty dict
-        ace_dict = {'id':[],'storm':[],'ace':[]}
+        analyze_list = metric_bank[metric]
+        analyze_list.insert(1,'id'); analyze_list.insert(2,'name'); analyze_list.insert(3,'year');
+        analyze_dict = {key:[] for key in analyze_list}
             
         #Iterate over every storm in dataset
         for storm in self.keys:
             
             #Get entry for this storm
             storm_data = self.data[storm]
+            
+            #Filter by year
             if storm_data['year'] < start_year or storm_data['year'] > end_year: continue
-            if storm_data['ace'] == 0: continue
             
-            #Retrieve ACE for this event
-            ace_dict['id'].append(storm)
-            ace_dict['storm'].append((storm_data['name'],storm_data['year']))
-            ace_dict['ace'].append(np.round(storm_data['ace'],4))
-            
-        #Sort from largest to smallest
-        arg_idx = np.argsort(ace_dict['ace'])[::-1]
-        sorted_id = (np.array(ace_dict['id'])[arg_idx])
-        sorted_storm = (np.array(ace_dict['storm'])[arg_idx])
-        sorted_ace = (np.array(ace_dict['ace'])[arg_idx])
-        
-        #Enter into new dict
-        ranked_ace = {}
-        for i,(i_id,i_storm,i_ace) in enumerate(zip(sorted_id,sorted_storm,sorted_ace)):
-            ranked_ace[i+1] = [i_ace,i_storm[0],int(i_storm[1]),i_id]
-            
-        #Return both dicts
-        if return_all == True:
-            return ace_dict
-        else:
-            return ranked_ace
-        
-    def rank_storm_by_genesis_latitude(self,subtropical=True,start_year=None,end_year=None,return_all=False):
-        
-        #Determine end year of hurdat dataset
-        if start_year == None: start_year = self.data[self.keys[0]]['year']
-        if end_year == None: end_year = self.data[self.keys[-1]]['year']
-            
-        #Initialize empty dict
-        analyze_dict = {'id':[],'storm':[],'lat':[],'lon':[],'type':[]}
-            
-        #Iterate over every storm in dataset
-        for storm in self.keys:
-            
-            #Get entry for this storm
-            storm_data = self.data[storm]
-            if storm_data['year'] < start_year or storm_data['year'] > end_year: continue
-            if storm_data['ace'] == 0: continue
-            
+            #Filter for purely tropical/subtropical storm locations
             type_array = np.array(storm_data['type'])
             if subtropical == True:
                 idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
             else:
                 idx = np.where((type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+            
             if len(idx[0]) == 0: continue
             lat_tropical = np.array(storm_data['lat'])[idx]
             lon_tropical = np.array(storm_data['lon'])[idx]
+            date_tropical = np.array(storm_data['date'])[idx]
             type_tropical = np.array(storm_data['type'])[idx]
+            vmax_tropical = np.array(storm_data['vmax'])[idx]
+            mslp_tropical = np.array(storm_data['mslp'])[idx]
+            basin_tropical = np.array(storm_data['wmo_basin'])[idx]
             
-            #Retrieve ACE for this event
+            #Filter geographically
+            if subset_domain != None:
+                if isinstance(subset_domain,str) == False:
+                    raise TypeError("subset_domain must be of type str.")
+                if '/' in subset_domain:
+                    bound_s,bound_n,bound_w,bound_e = [float(i) for i in subset_domain.split("/")]
+                    idx = np.where((lat_tropical >= bound_s) & (lat_tropical <= bound_n) & (lon_tropical >= bound_w) & (lon_tropical <= bound_e))
+                else:
+                    idx = np.where(basin_tropical==subset_domain)
+                if len(idx[0]) == 0: continue
+                lat_tropical = np.array(storm_data['lat'])[idx]
+                lon_tropical = np.array(storm_data['lon'])[idx]
+                date_tropical = np.array(storm_data['date'])[idx]
+                type_tropical = np.array(storm_data['type'])[idx]
+                vmax_tropical = np.array(storm_data['vmax'])[idx]
+                mslp_tropical = np.array(storm_data['mslp'])[idx]
+                basin_tropical = np.array(storm_data['wmo_basin'])[idx]
+            
+            #Filter by requested metric
+            if metric == 'ace':
+                
+                if storm_data['ace'] == 0: continue
+                analyze_dict['ace'].append(np.round(storm_data['ace'],4))
+                
+            elif metric in ['start_lat','end_lat','start_lon','end_lon']:
+                
+                use_idx = 0 if 'start' in metric else -1
+                analyze_dict['lat'].append(lat_tropical[use_idx])
+                analyze_dict['lon'].append(lon_tropical[use_idx])
+                analyze_dict['type'].append(type_tropical[use_idx])
+                
+            elif metric in ['formation_date']:
+                
+                analyze_dict['lat'].append(lat_tropical[0])
+                analyze_dict['lon'].append(lon_tropical[0])
+                analyze_dict['type'].append(type_tropical[0])
+                analyze_dict['date'].append(date_tropical[0].replace(year=2016))
+                
+            elif metric in ['max_wind','min_mslp']:
+                
+                #Find max wind or min MSLP
+                if metric == 'max_wind' and all_nan(vmax_tropical) == True: continue
+                if metric == 'min_mslp' and all_nan(mslp_tropical) == True: continue
+                use_idx = np.where(vmax_tropical==np.nanmax(vmax_tropical))[0][0]
+                if metric == 'min_mslp': use_idx = np.where(mslp_tropical==np.nanmin(mslp_tropical))[0][0]
+                
+                analyze_dict['lat'].append(lat_tropical[use_idx])
+                analyze_dict['lon'].append(lon_tropical[use_idx])
+                analyze_dict['mslp'].append(mslp_tropical[use_idx])
+                analyze_dict['vmax'].append(vmax_tropical[use_idx])
+            
+            #Append generic storm attributes
             analyze_dict['id'].append(storm)
-            analyze_dict['storm'].append((storm_data['name'],storm_data['year']))
-            analyze_dict['lat'].append(lat_tropical[0])
-            analyze_dict['lon'].append(lon_tropical[0])
-            analyze_dict['type'].append(type_tropical[0])
+            analyze_dict['name'].append(storm_data['name'])
+            analyze_dict['year'].append(int(storm_data['year']))
             
-        #Sort from largest to smallest
-        arg_idx = np.argsort(analyze_dict['lat'])[::-1]
-        sorted_id = (np.array(analyze_dict['id'])[arg_idx])
-        sorted_storm = (np.array(analyze_dict['storm'])[arg_idx])
-        sorted_lat = (np.array(analyze_dict['lat'])[arg_idx])
-        sorted_lon = (np.array(analyze_dict['lon'])[arg_idx])
-        sorted_type = (np.array(analyze_dict['type'])[arg_idx])
+        #Error check
+        if len(analyze_dict[analyze_list[0]]) == 0:
+            raise RuntimeError("No storms were found given the requested criteria.")
         
-        #Enter into new dict
-        ranked_ace = {}
-        for i,(i_id,i_storm,i_lat,i_lon,i_type) in enumerate(zip(sorted_id,sorted_storm,sorted_lat,sorted_lon,sorted_type)):
-            ranked_ace[i+1] = [i_lat,i_lon,i_type,i_storm[0],int(i_storm[1]),i_id]
+        #Sort in requested order
+        arg_idx = np.argsort(analyze_dict[analyze_list[0]])
+        if ascending == False: arg_idx = arg_idx[::-1]
             
-        #Return both dicts
-        if return_all == True:
-            return ace_dict
-        else:
-            return ranked_ace
+        #Sort all variables in requested order
+        for key in analyze_dict.keys():
+            analyze_dict[key] = (np.array(analyze_dict[key])[arg_idx])
+        
+        #Enter into new ranked dict
+        ranked_dict = {}
+        for i in range(len(analyze_dict['id'])):
+            ranked_dict[i+1] = {key:analyze_dict[key][i] for key in analyze_list}
+            if 'date' in ranked_dict[i+1].keys():
+                ranked_dict[i+1]['date'] = ranked_dict[i+1]['date'].replace(year=ranked_dict[i+1]['year'])
             
+        #Return ranked dictionary
+        try:
+            import pandas as pd
+            return (pd.DataFrame(ranked_dict).transpose())[analyze_list]
+        except:
+            return ranked_dict
+        
     def storm_ace_vs_season(self,storm,start_year=1950,end_year=None):
         
         r"""

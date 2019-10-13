@@ -438,7 +438,7 @@ class TrackPlot(Plot):
                 cone_lon_2d = new_lons.tolist()
                 new_lons = np.array(cone_lon)
                 new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
-                cone_lon = new_lons.tolist()
+                cone_lon = new_lons.tolist() 
             cone_2d = cone['cone']
             cone_2d = ndimage.gaussian_filter(cone_2d,sigma=0.5,order=0)
             self.ax.contourf(cone_lon_2d,cone_lat_2d,cone_2d,[0.9,1.1],colors=['#ffffff','#ffffff'],alpha=0.6,zorder=2,transform=ccrs.PlateCarree())

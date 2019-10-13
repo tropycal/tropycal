@@ -22,7 +22,7 @@ except:
 
 class Dataset(Plot):
     
-    def __init__(self,basin='atlantic',source='hurdat',include_btk=False,
+    def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,
                  atlantic_url='https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2018-051019.txt',
                  pacific_url='https://www.nhc.noaa.gov/data/hurdat/hurdat2-nepac-1949-2018-071519.txt',
                  ibtracs_url='https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv',

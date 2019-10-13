@@ -321,35 +321,35 @@ class Plot:
             bound_s = 0.0
             bound_n = 65.0
             
-        #West Pacific plot domain
+        #North Indian plot domain
         elif zoom == "north_indian":
             bound_w = 30.0
             bound_e = 110.0
             bound_s = -5.0
             bound_n = 40.0
             
-        #West Pacific plot domain
+        #South Indian plot domain
         elif zoom == "south_indian":
             bound_w = 20.0
             bound_e = 110.0
             bound_s = -50.0
             bound_n = 5.0
             
-        #West Pacific plot domain
+        #Australia plot domain
         elif zoom == "australia":
             bound_w = 90.0
             bound_e = 180.0
             bound_s = -60.0
             bound_n = 0.0
             
-        #West Pacific plot domain
+        #South Pacific plot domain
         elif zoom == "south_pacific":
             bound_w = 140.0
             bound_e = -120.0+360.0
             bound_s = -65.0
             bound_n = 0.0
             
-        #West Pacific plot domain
+        #Global plot domain
         elif zoom == "all":
             bound_w = 0.0
             bound_e = 360.0
@@ -497,8 +497,9 @@ class Plot:
 
         #--------------------------------------------------------------------------------------
         
+        
         #Pre-generated zooms
-        if zoom in ['north_atlantic','east_pacific','west_pacific']:
+        if zoom in ['north_atlantic','east_pacific','west_pacific','south_pacific','south_indian','north_indian','australia','all']:
             bound_w,bound_e,bound_s,bound_n = self.__set_projection(zoom)
             
         #Storm-centered plot domain

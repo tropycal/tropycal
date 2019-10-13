@@ -635,6 +635,7 @@ class Storm:
                 'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
             }
 
+            #Format lat & lon
             fhr = int(fhr)
             if "N" in lat:
                 lat_temp = lat.split("N")[0]
@@ -648,11 +649,20 @@ class Storm:
             elif "E" in lon:
                 lon_temp = lon.split("E")[0]
                 lon = float(lon_temp) * 0.1
-            vmax = int(vmax)
-            if vmax < 10 or vmax > 300: vmax = np.nan
-            mslp = int(mslp)
-            if mslp < 1: mslp = np.nan
+            
+            #Format vmax & MSLP
+            if vmax == '':
+                vmax = np.nan
+            else:
+                vmax = int(vmax)
+                if vmax < 10 or vmax > 300: vmax = np.nan
+            if mslp == '':
+                mslp = np.nan
+            else:
+                mslp = int(mslp)
+                if mslp < 1: mslp = np.nan
 
+            #Add forecast data to dict if forecast hour isn't already there
             if fhr not in forecasts[model][run_init]['fhr']:
                 if model in ['OFCL','OFCI'] and fhr > 120:
                     pass
@@ -665,6 +675,7 @@ class Storm:
                     forecasts[model][run_init]['vmax'].append(vmax)
                     forecasts[model][run_init]['mslp'].append(mslp)
                     
+                    #Get storm type, if it can be determined
                     if stype == '' and vmax != 0 and np.isnan(vmax) == False:
                         stype = get_type(vmax,False)
                     forecasts[model][run_init]['type'].append(stype)

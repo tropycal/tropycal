@@ -34,6 +34,27 @@ class Dataset:
 
     def __init__(self, mag_thresh=0):
         
+        r"""
+        Creates an instance of a Dataset object containing tornado data.
+
+        Parameters
+        ----------
+        mag_thres : int
+            Minimum threshold for tornado rating.
+
+        Returns
+        -------
+        Dataset
+            An instance of Dataset.
+        """
+        
+        #Error check
+        if isinstance(mag_thresh,int) == False:
+            raise TypeError("mag_thresh must be of type int.")
+        elif mag_thresh not in [0,1,2,3,4,5]:
+            raise ValueError("mag_thresh must be between 0 and 5.")
+        
+        #Read in tornado dataset
         timer_start = dt.now()
         yrnow = timer_start.year
         print(f'--> Start reading in tornado track data')
@@ -47,14 +68,15 @@ class Dataset:
                                error_bad_lines=False,parse_dates=[['mo','dy','yr','time']])
         print(f'--> Completed reading in tornado data for 1950-{yrlast} (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
         
-        # Get UTC from timezone (most are 3 = CST, but some 0 and 9 = GMT)
+        #Get UTC from timezone (most are 3 = CST, but some 0 and 9 = GMT)
         tz = np.array([timedelta(hours=9-int(i)) for i in Tors['tz']])
-        Tors = Tors.assign(UTC_time = Tors['mo_dy_yr_time']+tz)
+        tors_dt = [pd.to_datetime(i) for i in Tors['mo_dy_yr_time']]
+        Tors = Tors.assign(UTC_time = tors_dt+tz)
         
-        #filter for only those tors at least F/EF scale mag_thresh.
+        #Filter for only those tors at least F/EF scale mag_thresh.
         Tors = Tors[Tors['mag']>=mag_thresh]
 
-        #clean up lat/lons       
+        #Clean up lat/lons       
         Tors = Tors[(Tors['slat']!=0)|(Tors['slon']!=0)]
         Tors = Tors[(Tors['slat']>=20) & (Tors['slat']<=50)]
         Tors = Tors[(Tors['slon']>=-130) & (Tors['slon']<=-65)]
@@ -65,7 +87,8 @@ class Dataset:
         Tors = Tors.assign(elat = [Tors['slat'].values[u] if i==0 else i for u, i in enumerate(Tors['elat'].values)])
         self.Tors = Tors.assign(elon = [Tors['slon'].values[u] if i==0 else i for u, i in enumerate(Tors['elon'].values)])
 
-    def getTimeTors(self,time):
+    def __getTimeTors(self,time):
+        
         if isinstance(time,list):
             t1=min(time)
             t2=max(time)
@@ -79,6 +102,7 @@ class Dataset:
     def getTCtors(self,storm,dist_thresh=1000):
         self.dist_thresh = dist_thresh
         stormdict = storm.to_dict()
+        self.stormdict = stormdict
     
         stormTors = self.Tors[(self.Tors['UTC_time']>=min(stormdict['date'])) & \
                          (self.Tors['UTC_time']<=max(stormdict['date']))]
@@ -118,10 +142,10 @@ class Dataset:
         # Rotation matrix for +x pointing 90deg right of storm heading
         rot = np.array([[interp_dy,-interp_dx],[interp_dx,interp_dy]])/ds
         
-        oldvec_s = np.array([stormTors['xdist_s'],stormTors['ydist_s']])
+        oldvec_s = np.array([self.stormTors['xdist_s'],self.stormTors['ydist_s']])
         newvec_s = [np.dot(rot[:,:,i],v) for i,v in enumerate(oldvec_s.T)]
         
-        oldvec_e = np.array([stormTors['xdist_e'],stormTors['ydist_e']])
+        oldvec_e = np.array([self.stormTors['xdist_e'],self.stormTors['ydist_e']])
         newvec_e = [np.dot(rot[:,:,i],v) for i,v in enumerate(oldvec_e.T)]
         
         self.stormTors['rot_xdist_s'] = [v[0] for v in newvec_s]
@@ -153,7 +177,7 @@ class Dataset:
         
         Parameters
         ----------
-        dfTors : dataframe
+        tor_info : pandas.DataFrame or dict
             Requested tornadoes
         zoom : str
             Zoom for the plot. Can be one of the following:
@@ -180,7 +204,7 @@ class Dataset:
         elif isinstance(tor_info,dict):
             dfTors = pd.DataFrame.from_dict(tor_info)
         else:
-            dfTors = self.getTimeTors(tor_info)
+            dfTors = self.__getTimeTors(tor_info)
         
         #Create instance of plot object
         self.plot_obj = Plot()

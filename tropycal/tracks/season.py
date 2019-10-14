@@ -111,7 +111,7 @@ class Season:
         #Create instance of plot object
         self.plot_obj = TrackPlot()
         
-        if self.basin in ['east_pacific','west_pacific','south_pacific','australia']:
+        if self.basin in ['east_pacific','west_pacific','south_pacific','australia','all']:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
         else:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)

@@ -191,7 +191,9 @@ class Plot:
             return divisor + (num - (num%divisor))
         
         #Calculate parallels and meridians
-        rthres = 10
+        rthres = 20
+        if new_yrng < 160.0 or new_xrng < 160.0:
+            rthres = 10
         if new_yrng < 40.0 or new_xrng < 40.0:
             rthres = 5
         if new_yrng < 25.0 or new_xrng < 25.0:
@@ -349,7 +351,7 @@ class Plot:
             
         #Global plot domain
         elif zoom == "all":
-            bound_w = 0.0
+            bound_w = 0.1
             bound_e = 360.0
             bound_s = -90.0
             bound_n = 90.0

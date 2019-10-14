@@ -722,35 +722,36 @@ class TrackPlot(Plot):
         self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
         
         #Add storm labels
-        for istorm in storms:
+        if season.basin != 'all':
+            for istorm in storms:
 
-            #Get data for this storm
-            storm_data = season.dict[istorm]
-            
-            #Retrieve storm data
-            lats = storm_data['lat']
-            lons = storm_data['lon']
-            vmax = storm_data['vmax']
-            styp = storm_data['type']
-            sdate = storm_data['date']
+                #Get data for this storm
+                storm_data = season.dict[istorm]
 
-            #Account for cases crossing dateline
-            if self.proj.proj4_params['lon_0'] == 180.0:
-                new_lons = np.array(lons)
-                new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
-                lons = new_lons.tolist()
-                
-            #Add storm name at start & end (bound_w = -160, bound_e = -120
-            display_name = storm_data['name']
-            if display_name.lower() == 'unnamed':
-                display_name = int(storm_data['id'][2:4]) if len(storm_data['id']) == 8 else 'UNNAMED'
-                
-            if lons[0]>(bound_w+0.5) and lons[0]<(bound_e-0.5) and lats[0]>(bound_s-0.5) and lats[0]<(bound_n-0.5):
-                self.ax.text(lons[0],lats[0]+1.0,display_name,alpha=0.7,
-                         fontweight='bold',fontsize=8.5,color='k',ha='center',va='center',transform=ccrs.PlateCarree())
-            if lons[-1]>(bound_w+0.5) and lons[-1]<(bound_e-0.5) and lats[-1]>(bound_s-0.5) and lats[-1]<(bound_n-0.5):
-                self.ax.text(lons[-1],lats[-1]+1.0,display_name,alpha=0.7,
-                         fontweight='bold',fontsize=8.5,color='k',ha='center',va='center',transform=ccrs.PlateCarree())
+                #Retrieve storm data
+                lats = storm_data['lat']
+                lons = storm_data['lon']
+                vmax = storm_data['vmax']
+                styp = storm_data['type']
+                sdate = storm_data['date']
+
+                #Account for cases crossing dateline
+                if self.proj.proj4_params['lon_0'] == 180.0:
+                    new_lons = np.array(lons)
+                    new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
+                    lons = new_lons.tolist()
+
+                #Add storm name at start & end (bound_w = -160, bound_e = -120
+                display_name = storm_data['name']
+                if display_name.lower() == 'unnamed':
+                    display_name = int(storm_data['id'][2:4]) if len(storm_data['id']) == 8 else 'UNNAMED'
+
+                if lons[0]>(bound_w+0.5) and lons[0]<(bound_e-0.5) and lats[0]>(bound_s-0.5) and lats[0]<(bound_n-0.5):
+                    self.ax.text(lons[0],lats[0]+1.0,display_name,alpha=0.7,
+                             fontweight='bold',fontsize=8.5,color='k',ha='center',va='center',transform=ccrs.PlateCarree())
+                if lons[-1]>(bound_w+0.5) and lons[-1]<(bound_e-0.5) and lats[-1]>(bound_s-0.5) and lats[-1]<(bound_n-0.5):
+                    self.ax.text(lons[-1],lats[-1]+1.0,display_name,alpha=0.7,
+                             fontweight='bold',fontsize=8.5,color='k',ha='center',va='center',transform=ccrs.PlateCarree())
         
         #--------------------------------------------------------------------------------------
         

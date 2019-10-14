@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime as dt,timedelta
 from scipy.ndimage import gaussian_filter as gfilt
+import warnings
 
 def getPPF(dfTors,method='total'):
     
@@ -77,8 +78,8 @@ def ppf_colors(ptype,x,clevs):
                       '#912CEE',\
                       '#104E8B']
         else:
-            raise RuntimeWarning('SPC colors only allowed for daily PPF.\n'+\
-                           'Defaulting to plasma colormap.')
+            warnings.warn('SPC colors only allowed for daily PPF.\n'+\
+                          'Defaulting to plasma colormap.')
             x = 'plasma'
     if x!='SPC':
         if isinstance(x,str):

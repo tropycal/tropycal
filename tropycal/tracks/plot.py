@@ -6,7 +6,9 @@ import scipy.interpolate as interp
 import urllib
 import warnings
 from datetime import datetime as dt,timedelta
+import scipy.ndimage as ndimage
 
+from ..plot import Plot
 from .tools import *
 
 try:
@@ -24,343 +26,8 @@ try:
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
-class Plot:
+class TrackPlot(Plot):
     
-    def __check_res(self,res):
-        
-        r"""
-        Converts resolution from basemap notation ('l','m','h') to cartopy notation.
-        
-        Parameters:
-        -----------
-        res : str
-            String representing map resolution ('l','m','h').
-        
-        Returns:
-        --------
-        str
-            String of the equivalent cartopy map resolution. 
-        """
-        
-        #Check input map resolution and return corresponding map resolution
-        compare_dict = {'l':'110m',
-                        'm':'50m',
-                        'h':'10m'}
-        return compare_dict.get(res,'50m')
-    
-    def create_cartopy(self,proj='PlateCarree',mapobj=None,**kwargs):
-        
-        r"""
-        Initialize a cartopy instance passed projection.
-        
-        Parameters:
-        -----------
-        projection
-            String representing the cartopy map projection.
-        ax
-            Axis on which to draw on. Default is None.
-        mapobj
-            Existing cartopy projection. If passed, will be used instead of generating a new one.
-        **kwargs
-            Additional arguments that are passed to those associated with projection.
-        """
-        
-        #Initialize an instance of cartopy if not passed
-        if mapobj == None:
-            self.proj = getattr(ccrs, proj)(**kwargs)
-        else:
-            self.proj = mapobj
-        
-    def __create_geography(self,prop):
-        
-        r"""
-        Set up the map geography and colors.
-        
-        Parameters:
-        -----------
-        prop : dict
-            dict entry containing information about the map geography and colors
-        """
-        
-        #get resolution corresponding to string in prop
-        res = self.__check_res(prop['res'])
-        
-        #fill oceans if specified
-        self.ax.set_facecolor(prop['ocean_color'])
-        ocean_mask = self.ax.add_feature(cfeature.OCEAN.with_scale(res),facecolor=prop['ocean_color'],edgecolor='face')
-        lake_mask = self.ax.add_feature(cfeature.LAKES.with_scale(res),facecolor=prop['ocean_color'],edgecolor='face')
-        continent_mask = self.ax.add_feature(cfeature.LAND.with_scale(res),facecolor=prop['land_color'],edgecolor='face')
-        
-        #draw geography
-        states = self.ax.add_feature(cfeature.STATES.with_scale(res),linewidths=prop['linewidth'],linestyle='solid',edgecolor=prop['linecolor'])
-        countries = self.ax.add_feature(cfeature.BORDERS.with_scale(res),linewidths=prop['linewidth'],linestyle='solid',edgecolor=prop['linecolor'])
-        coastlines = self.ax.add_feature(cfeature.COASTLINE.with_scale(res),linewidths=prop['linewidth'],linestyle='solid',edgecolor=prop['linecolor'])
-        
-    def dynamic_map_extent(self,min_lon,max_lon,min_lat,max_lat):
-        
-        r"""
-        Sets up a dynamic map extent with an aspect ratio of 3:2 given latitude and longitude bounds.
-        
-        Parameters:
-        -----------
-        min_lon : float
-            Minimum longitude bound.
-        max_lon : float
-            Maximum longitude bound.
-        min_lat : float
-            Minimum latitude bound.
-        max_lat : float
-            Maximum latitude bound.
-        
-        Returns:
-        --------
-        list
-            List containing new west, east, north, south map bounds, respectively.
-        """
-
-        #Get lat/lon bounds
-        bound_w = min_lon+0.0
-        bound_e = max_lon+0.0
-        bound_s = min_lat+0.0
-        bound_n = max_lat+0.0
-
-        #Function for fixing map ratio
-        def fix_map_ratio(bound_w,bound_e,bound_n,bound_s,nthres=1.45):
-            xrng = abs(bound_w-bound_e)
-            yrng = abs(bound_n-bound_s)
-            diff = float(xrng) / float(yrng)
-            if diff < nthres: #plot too tall, need to make it wider
-                goal_diff = nthres * (yrng)
-                factor = abs(xrng - goal_diff) / 2.0
-                bound_w = bound_w - factor
-                bound_e = bound_e + factor
-            elif diff > nthres: #plot too wide, need to make it taller
-                goal_diff = xrng / nthres
-                factor = abs(yrng - goal_diff) / 2.0
-                bound_s = bound_s - factor
-                bound_n = bound_n + factor
-            return bound_w,bound_e,bound_n,bound_s
-
-        #First round of fixing ratio
-        bound_w,bound_e,bound_n,bound_s = fix_map_ratio(bound_w,bound_e,bound_n,bound_s,1.45)
-
-        #Adjust map width depending on extent of storm
-        xrng = abs(bound_e-bound_w)
-        yrng = abs(bound_n-bound_s)
-        factor = 0.1
-        if min(xrng,yrng) < 15.0:
-            factor = 0.2
-        if min(xrng,yrng) < 12.0:
-            factor = 0.4
-        if min(xrng,yrng) < 10.0:
-            factor = 0.6
-        if min(xrng,yrng) < 8.0:
-            factor = 0.75
-        if min(xrng,yrng) < 6.0:
-            factor = 0.9
-        bound_w = bound_w-(xrng*factor)
-        bound_e = bound_e+(xrng*factor)
-        bound_s = bound_s-(yrng*factor)
-        bound_n = bound_n+(yrng*factor)
-
-        #Second round of fixing ratio
-        bound_w,bound_e,bound_n,bound_s = fix_map_ratio(bound_w,bound_e,bound_n,bound_s,1.45)
-        
-        #Return map bounds
-        return bound_w,bound_e,bound_s,bound_n
-    
-    def __plot_lat_lon_lines(self,bounds):
-        
-        r"""
-        Plots parallels and meridians that are constrained by the map bounds.
-        
-        Parameters:
-        -----------
-        bounds : list
-            List containing map bounds.
-        """
-        
-        #Retrieve bounds from list
-        bound_w,bound_e,bound_s,bound_n = bounds
-        
-        new_xrng = abs(bound_w-bound_e)
-        new_yrng = abs(bound_n-bound_s)
-        
-        #function to round to nearest number
-        def rdown(num, divisor):
-            return num - (num%divisor)
-        def rup(num, divisor):
-            return divisor + (num - (num%divisor))
-        
-        #Calculate parallels and meridians
-        rthres = 10
-        if new_yrng < 40.0 or new_xrng < 40.0:
-            rthres = 5
-        if new_yrng < 25.0 or new_xrng < 25.0:
-            rthres = 2
-        if new_yrng < 9.0 or new_xrng < 9.0:
-            rthres = 1
-        parallels = np.arange(rdown(bound_s,rthres),rup(bound_n,rthres)+rthres,rthres)
-        meridians = np.arange(rdown(bound_w,rthres),rup(bound_e,rthres)+rthres,rthres)
-        
-        #Fix for dateline crossing
-        if self.proj.proj4_params['lon_0'] == 180.0:
-            
-            #Recalculate parallels and meridians
-            parallels = np.arange(rup(bound_s,rthres),rdown(bound_n,rthres)+rthres,rthres)
-            meridians = np.arange(rup(bound_w,rthres),rdown(bound_e,rthres)+rthres,rthres)
-            meridians2 = np.copy(meridians)
-            meridians2[meridians2>180.0] = meridians2[meridians2>180.0]-360.0
-            all_meridians = np.arange(0.0,360.0+rthres,rthres)
-            all_parallels = np.arange(-90.0,90.0+rthres,rthres)
-            
-            #First call with no labels but gridlines plotted
-            gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,xlocs=all_meridians,ylocs=all_parallels,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted')
-            #Second call with labels but no gridlines
-            gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,xlocs=meridians,ylocs=parallels,linewidth=0.0,color='k',alpha=0.0,linestyle='dotted')
-            gl.xlabels_top = False
-            gl.ylabels_right = False
-            gl.xlocator = mticker.FixedLocator(meridians2)
-            gl.ylocator = mticker.FixedLocator(parallels)
-            gl.xformatter = LONGITUDE_FORMATTER
-            gl.yformatter = LATITUDE_FORMATTER
-
-        else:
-            #Add meridians and parallels
-            gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted')
-            gl.xlabels_top = False
-            gl.ylabels_right = False
-            gl.xlocator = mticker.FixedLocator(meridians)
-            gl.ylocator = mticker.FixedLocator(parallels)
-            gl.xformatter = LONGITUDE_FORMATTER
-            gl.yformatter = LATITUDE_FORMATTER
-        
-        #Reset plot bounds
-        self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
-        
-    def __plot_init(self,ax,map_prop):
-        
-        r"""
-        Initializes the plot by creating a cartopy and axes instance, if one hasn't been created yet, and adds geography.
-        
-        Parameters:
-        -----------
-        ax : axes
-            Instance of axes
-        map_prop : dict
-            Dictionary of map properties
-        """
-
-        #create cartopy projection, if none existing
-        if self.proj == None:
-            self.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-        
-        #create figure
-        if ax == None:
-            self.fig = plt.figure(figsize=map_prop['figsize'],dpi=map_prop['dpi'])
-            self.ax = plt.axes(projection=self.proj)
-        else:
-            self.ax = ax
-        
-        #Attach geography to plot, lat/lon lines, etc.
-        self.__create_geography(map_prop)
-    
-    def __add_prop(self,input_prop,default_prop):
-        
-        r"""
-        Overrides default property dictionary elements with those passed as input arguments.
-        
-        Parameters:
-        -----------
-        input_prop : dict
-            Dictionary to use for overriding default entries.
-        default_prop : dict
-            Dictionary containing default entries.
-        
-        Returns:
-        --------
-        dict
-            Default dictionary overriden by entries in input_prop.
-        """
-        
-        #add kwargs to prop and map_prop
-        for key in input_prop.keys(): default_prop[key] = input_prop[key]
-            
-        #Return prop
-        return default_prop
-    
-    def __set_projection(self,zoom):
-        
-        r"""
-        Sets a predefined map projection zoom.
-        
-        Parameters
-        ----------
-        zoom : str
-            Name of map projection to zoom over.
-        """
-        
-        #North Atlantic plot domain
-        if zoom == "north_atlantic":
-            bound_w = -105.0
-            bound_e = -5.0
-            bound_s = 0.0
-            bound_n = 65.0
-            
-        #East Pacific plot domain
-        elif zoom == "east_pacific":
-            bound_w = -180.0+360.0 
-            bound_e = -80+360.0 
-            bound_s = 0.0
-            bound_n = 65.0
-            
-        #West Pacific plot domain
-        elif zoom == "west_pacific":
-            bound_w = 90.0
-            bound_e = 180.0
-            bound_s = 0.0
-            bound_n = 65.0
-            
-        #North Indian plot domain
-        elif zoom == "north_indian":
-            bound_w = 30.0
-            bound_e = 110.0
-            bound_s = -5.0
-            bound_n = 40.0
-            
-        #South Indian plot domain
-        elif zoom == "south_indian":
-            bound_w = 20.0
-            bound_e = 110.0
-            bound_s = -50.0
-            bound_n = 5.0
-            
-        #Australia plot domain
-        elif zoom == "australia":
-            bound_w = 90.0
-            bound_e = 180.0
-            bound_s = -60.0
-            bound_n = 0.0
-            
-        #South Pacific plot domain
-        elif zoom == "south_pacific":
-            bound_w = 140.0
-            bound_e = -120.0+360.0
-            bound_s = -65.0
-            bound_n = 0.0
-            
-        #Global plot domain
-        elif zoom == "all":
-            bound_w = 0.0
-            bound_e = 360.0
-            bound_s = -90.0
-            bound_n = 90.0
-            
-        #Set map extent
-        self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
-            
-        return bound_w, bound_e, bound_s, bound_n
-                 
     def plot_storm(self,storm,zoom="dynamic",plot_all=False,ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
@@ -393,13 +60,9 @@ class Plot:
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
-        prop = self.__add_prop(prop,default_prop)
-        map_prop = self.__add_prop(map_prop,default_map_prop)
-        self.__plot_init(ax,map_prop)
-        
-        #set default properties
-        input_prop = prop
-        input_map_prop = map_prop
+        prop = self.add_prop(prop,default_prop)
+        map_prop = self.add_prop(map_prop,default_map_prop)
+        self.plot_init(ax,map_prop)
         
         #error check
         if isinstance(zoom,str) == False:
@@ -500,7 +163,7 @@ class Plot:
         
         #Pre-generated zooms
         if zoom in ['north_atlantic','east_pacific','west_pacific','south_pacific','south_indian','north_indian','australia','all']:
-            bound_w,bound_e,bound_s,bound_n = self.__set_projection(zoom)
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
             
         #Storm-centered plot domain
         elif zoom == "dynamic":
@@ -526,7 +189,7 @@ class Plot:
                     raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
         
         #Determine number of lat/lon lines to use for parallels & meridians
-        self.__plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
         
         #--------------------------------------------------------------------------------------
         
@@ -614,13 +277,9 @@ class Plot:
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
-        prop = self.__add_prop(prop,default_prop)
-        map_prop = self.__add_prop(map_prop,default_map_prop)
-        self.__plot_init(ax,map_prop)
-        
-        #set default properties
-        input_prop = prop
-        input_map_prop = map_prop
+        prop = self.add_prop(prop,default_prop)
+        map_prop = self.add_prop(map_prop,default_map_prop)
+        self.plot_init(ax,map_prop)
         
         #--------------------------------------------------------------------------------------
         
@@ -766,7 +425,7 @@ class Plot:
             #Generate forecast cone for forecast data
             dateline = False
             if self.proj.proj4_params['lon_0'] == 180.0: dateline = True
-            cone = self.__generate_nhc_cone(forecast,dateline,cone_days)
+            cone = self.generate_nhc_cone(forecast,dateline,cone_days)
 
             #Contour fill cone & account for dateline crossing
             cone_lon = cone['lon']
@@ -779,9 +438,11 @@ class Plot:
                 cone_lon_2d = new_lons.tolist()
                 new_lons = np.array(cone_lon)
                 new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
-                cone_lon = new_lons.tolist()
-            self.ax.contourf(cone_lon_2d,cone_lat_2d,cone['cone'],[0.9,1.1],colors=['#ffffff','#ffffff'],alpha=0.6,zorder=2,transform=ccrs.PlateCarree())
-            self.ax.contour(cone_lon_2d,cone_lat_2d,cone['cone'],[0.9],linewidths=1.0,colors=['k'],zorder=3,transform=ccrs.PlateCarree())
+                cone_lon = new_lons.tolist() 
+            cone_2d = cone['cone']
+            cone_2d = ndimage.gaussian_filter(cone_2d,sigma=0.5,order=0)
+            self.ax.contourf(cone_lon_2d,cone_lat_2d,cone_2d,[0.9,1.1],colors=['#ffffff','#ffffff'],alpha=0.6,zorder=2,transform=ccrs.PlateCarree())
+            self.ax.contour(cone_lon_2d,cone_lat_2d,cone_2d,[0.9],linewidths=1.0,colors=['k'],zorder=3,transform=ccrs.PlateCarree())
 
             #Plot center line & account for dateline crossing
             center_lon = cone['center_lon']
@@ -860,7 +521,7 @@ class Plot:
                     raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
         
         #Determine number of lat/lon lines to use for parallels & meridians
-        self.__plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
         
         #--------------------------------------------------------------------------------------
         
@@ -982,13 +643,9 @@ class Plot:
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
-        prop = self.__add_prop(prop,default_prop)
-        map_prop = self.__add_prop(map_prop,default_map_prop)
-        self.__plot_init(ax,map_prop)
-        
-        #set default properties
-        input_prop = prop
-        input_map_prop = map_prop
+        prop = self.add_prop(prop,default_prop)
+        map_prop = self.add_prop(map_prop,default_map_prop)
+        self.plot_init(ax,map_prop)
         
         #--------------------------------------------------------------------------------------
         
@@ -1053,10 +710,10 @@ class Plot:
         #--------------------------------------------------------------------------------------
         
         #Pre-generated zooms
-        bound_w,bound_e,bound_s,bound_n = self.__set_projection(season.basin)
+        bound_w,bound_e,bound_s,bound_n = self.set_projection(season.basin)
             
         #Determine number of lat/lon lines to use for parallels & meridians
-        self.__plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
         
         #Add storm labels
         for istorm in storms:
@@ -1122,7 +779,7 @@ class Plot:
             plt.show()
             plt.close()
         
-    def __generate_nhc_cone(self,forecast,dateline,cone_days=5):
+    def generate_nhc_cone(self,forecast,dateline,cone_days=5):
         
         r"""
         Generates a cone of uncertainty using forecast data from NHC.

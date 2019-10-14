@@ -7,7 +7,7 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 
-from .plot import Plot
+from .plot import TrackPlot
 from .tools import *
     
 class Season:
@@ -109,7 +109,7 @@ class Season:
         """
         
         #Create instance of plot object
-        self.plot_obj = Plot()
+        self.plot_obj = TrackPlot()
         
         if self.basin in ['east_pacific','west_pacific','south_pacific','australia']:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)

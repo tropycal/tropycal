@@ -1,2 +1,2 @@
 from .dataset import Dataset
-from .plot import Plot
+from .plot import TornadoPlot

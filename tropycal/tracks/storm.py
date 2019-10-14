@@ -7,7 +7,7 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 
-from .plot import Plot
+from .plot import TrackPlot
 from .tools import *
 from ...tropycal import tornado
 from ...tropycal import recon
@@ -181,7 +181,7 @@ class Storm:
         """
         
         #Create instance of plot object
-        self.plot_obj = Plot()
+        self.plot_obj = TrackPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:
@@ -228,7 +228,7 @@ class Storm:
             raise RuntimeError("Error: NHC data can only be accessed when HURDAT is used as the data source.")
         
         #Create instance of plot object
-        self.plot_obj = Plot()
+        self.plot_obj = TrackPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:
@@ -721,8 +721,8 @@ class Storm:
         stormTors = self.Tors.getTCtors(self)
         
         #Create instance of plot object
-        self.plot_obj_tc = Plot()
-        self.plot_obj_tor = tornado.Plot()
+        self.plot_obj_tc = TrackPlot()
+        self.plot_obj_tor = tornado.TornadoPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:

@@ -26,7 +26,7 @@ try:
 except:
     warnings.warn("Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
 
-from .plot import Plot
+from .plot import TornadoPlot
 from ...tropycal import tracks
 
 
@@ -211,7 +211,7 @@ class Dataset:
             dfTors = self.__getTimeTors(tor_info)
         
         #Create instance of plot object
-        self.plot_obj = Plot()
+        self.plot_obj = TornadoPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:

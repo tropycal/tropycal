@@ -1718,7 +1718,8 @@ class Dataset(TrackPlot):
         else:
             return
     
-    def rank_storm(self,metric,subset_domain=None,ascending=False,subtropical=True,start_year=None,end_year=None,return_all=False):
+    def rank_storm(self,metric,return_df=True,ascending=False,subset_domain=None,subset_time=None,subtropical=True,
+                   start_year=None,end_year=None,return_all=False):
         
         r"""
         Ranks storm by a specified metric.
@@ -1735,10 +1736,14 @@ class Dataset(TrackPlot):
             "formation_date" = formation date of cyclone
             "max_wind" = first instance of the maximum sustained wind of cyclone
             "min_mslp" = first instance of the minimum MSLP of cyclone
+        return_df : bool
+            Whether to return a pandas.DataFrame (True) or dict (False). Default is True.
         ascending : bool
             Whether to return rank in ascending order (True) or descending order (False). Default is False.
         subset_domain : str
-            String representing either a bounded region 'latS/latN/latW/latE', or a basin name
+            String representing either a bounded region 'latW/latE/latS/latN', or a basin name.
+        subset_time : list or tuple
+            List or tuple representing the start and end dates in 'month/day' format (e.g., [6/1,8/15]).
         subtropical : bool
             Whether to include subtropical storms in the ranking. Default is True.
         start_year : int
@@ -1808,18 +1813,34 @@ class Dataset(TrackPlot):
                 if isinstance(subset_domain,str) == False:
                     raise TypeError("subset_domain must be of type str.")
                 if '/' in subset_domain:
-                    bound_s,bound_n,bound_w,bound_e = [float(i) for i in subset_domain.split("/")]
+                    bound_w,bound_e,bound_s,bound_n = [float(i) for i in subset_domain.split("/")]
                     idx = np.where((lat_tropical >= bound_s) & (lat_tropical <= bound_n) & (lon_tropical >= bound_w) & (lon_tropical <= bound_e))
                 else:
                     idx = np.where(basin_tropical==subset_domain)
                 if len(idx[0]) == 0: continue
-                lat_tropical = np.array(storm_data['lat'])[idx]
-                lon_tropical = np.array(storm_data['lon'])[idx]
-                date_tropical = np.array(storm_data['date'])[idx]
-                type_tropical = np.array(storm_data['type'])[idx]
-                vmax_tropical = np.array(storm_data['vmax'])[idx]
-                mslp_tropical = np.array(storm_data['mslp'])[idx]
-                basin_tropical = np.array(storm_data['wmo_basin'])[idx]
+                lat_tropical = lat_tropical[idx]
+                lon_tropical = lon_tropical[idx]
+                date_tropical = date_tropical[idx]
+                type_tropical = type_tropical[idx]
+                vmax_tropical = vmax_tropical[idx]
+                mslp_tropical = mslp_tropical[idx]
+                basin_tropical = basin_tropical[idx]
+            
+            #Filter by time (not working properly yet)
+            """
+            if subset_time != None:
+                start_time = dt.strptime(f"{storm_data['year']}/{subset_time[0]}",'%Y/%m/%d')
+                end_time = dt.strptime(f"{storm_data['year']}/{subset_time[1]}",'%Y/%m/%d')
+                idx = np.array([i for i in range(len(lat_tropical)) if date_tropical[i] >= start_time and date_tropical[i] <= end_time])
+                if len(idx) == 0: continue
+                lat_tropical = lat_tropical[idx]
+                lon_tropical = lon_tropical[idx]
+                date_tropical = date_tropical[idx]
+                type_tropical = type_tropical[idx]
+                vmax_tropical = vmax_tropical[idx]
+                mslp_tropical = mslp_tropical[idx]
+                basin_tropical = basin_tropical[idx]
+             """
             
             #Filter by requested metric
             if metric == 'ace':

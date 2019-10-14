@@ -277,7 +277,7 @@ class Storm:
             
             #Account for old years when hour 0 wasn't included directly
             #if 0 not in hrs and k in carq_forecast_init and 0 in hrs_carq:
-            if self.dict['year'] < 1990 and k in carq_forecast_init and 0 in hrs_carq:
+            if self.dict['year'] < 2000 and k in carq_forecast_init and 0 in hrs_carq:
                 
                 use_carq = True
                 hr_idx = hrs_carq.index(0)
@@ -417,7 +417,7 @@ class Storm:
                 for temp_idx in [slice_idx,slice_idx-1,slice_idx+1,slice_idx-2,slice_idx+2]:
                     try:
                         hr = content[temp_idx].split(" ")[0]
-                        if hr == 'NOON':
+                        if 'NOON' in content[temp_idx]:
                             temp_line = content[temp_idx].replace("NOON","12 PM")
                             zone = temp_line.split(" ")[1]
                             disco_date = dt.strptime(temp_line.rstrip(),f'%I %p {zone} %a %b %d %Y')
@@ -602,17 +602,15 @@ class Storm:
             raise RuntimeError("NHC discussion data is unavailable.")
         return discos
         
-    def get_nhc_discussion(self,time=None,disco_id=None,save_path=None):
+    def get_nhc_discussion(self,forecast,save_path=None):
         
         r"""
         Retrieves a single NHC forecast discussion. Provide either time or disco_id for the input argument.
         
         Parameters:
         -----------
-        time : datetime.datetime
-            Datetime object representing the desired forecast discussion time. If this argument is provided, disco_id must be of type None.
-        disco_id : int
-            Forecast discussion ID. If this argument is provided, time must be of type None.
+        forecast : datetime.datetime or int
+            Datetime object representing the desired forecast discussion time, or integer representing the forecast discussion ID.
         save_path : str
             Directory path to save the forecast discussion text to.
         
@@ -635,17 +633,17 @@ class Storm:
             raise RuntimeError("No NHC operational data is available for this storm.")
         
         #Error check
-        if time != None and disco_id != None:
-            raise RuntimeError("Error: Cannot provide both time and disco_id arguments.")
+        if isinstance(forecast,int) == False and isinstance(forecast,dt) == False:
+            raise TypeError("forecast must be of type int or datetime.datetime")
         
         #Get list of storm discussions
         disco_dict = self.list_nhc_discussions()
         
-        if time != None:
+        if isinstance(forecast,dt) == True:
             #Find closest discussion to the time provided
             disco_times = disco_dict['utc_date']
             disco_ids = [int(i) for i in disco_dict['id']]
-            disco_diff = np.array([(i-time).days + (i-time).seconds/86400 for i in disco_times])
+            disco_diff = np.array([(i-forecast).days + (i-forecast).seconds/86400 for i in disco_times])
             closest_idx = np.abs(disco_diff).argmin()
             closest_diff = disco_diff[closest_idx]
             closest_id = disco_ids[closest_idx]
@@ -653,13 +651,13 @@ class Storm:
         
             #Raise warning if difference is >=1 day
             if np.abs(closest_diff) >= 1.0:
-                warnings.warn(f"The date provided is outside of the duration of the storm. Use the \"list_nhc_discussions()\" function to retrieve a list of available NHC discussions for this storm. Returning the closest available NHC discussion.")
+                warnings.warn(f"The date provided is unavailable or outside of the duration of the storm. Use the \"list_nhc_discussions()\" function to retrieve a list of available NHC discussions for this storm. Returning the closest available NHC discussion.")
                 
-        if disco_id != None:
+        if isinstance(forecast,int) == True:
             #Find closest discussion ID to the one provided
             disco_times = disco_dict['utc_date']
             disco_ids = [int(i) for i in disco_dict['id']]
-            disco_diff = np.array([i-disco_id for i in disco_ids])
+            disco_diff = np.array([i-forecast for i in disco_ids])
             closest_idx = np.abs(disco_diff).argmin()
             closest_diff = disco_diff[closest_idx]
             closest_id = disco_ids[closest_idx]
@@ -667,7 +665,7 @@ class Storm:
         
             #Raise warning if difference is >=1 ids
             if np.abs(closest_diff) >= 2.0:
-                warnings.warn(f"The ID provided is outside of the duration of the storm. Use the \"list_nhc_discussions()\" function to retrieve a list of available NHC discussions for this storm. Returning the closest available NHC discussion.")
+                warnings.warn(f"The ID provided is unavailable or outside of the duration of the storm. Use the \"list_nhc_discussions()\" function to retrieve a list of available NHC discussions for this storm. Returning the closest available NHC discussion.")
 
         #Read content of NHC forecast discussion
         if disco_dict['mode'] == 0:
@@ -842,6 +840,36 @@ class Storm:
         
         #Return dict
         return forecasts
+    
+    def download_tcr(self,dir_path=""):
+        
+        r"""
+        Downloads the NHC offical Tropical Cyclone Report (TCR) for this storm to the requested directory.
+        
+        Parameters
+        ----------
+        dir_path : str
+            Path of directory to download the TCR into. Default is current working directory.
+        """
+        
+        #Error check
+        if self.source != "hurdat":
+            raise RuntimeError("NHC data can only be accessed when HURDAT is used as the data source.")
+        if self.year < 1995:
+            raise RuntimeError("Tropical Cyclone Reports are unavailable prior to 1995.")
+        
+        #Format URL
+        storm_id = self.dict['id'].upper()
+        storm_name = self.dict['name'].title()
+        url = f"https://www.nhc.noaa.gov/data/tcr/{storm_id}_{storm_name}.pdf"
+        
+        #Format filepath
+        if dir_path != "" and dir_path[-1] != "/": dir_path += "/"
+        
+        #Retrieve PDF
+        response = requests.get(url)
+        with open(f"{dir_path}TCR_{storm_id}_{storm_name}.pdf", 'wb') as f:
+            f.write(response.content)
 
     #PLOT FUNCTION FOR TORNADOES
     def plot_tors(self,Tors=None,zoom="dynamic",plotPPF=False,plot_all=False,\

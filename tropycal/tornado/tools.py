@@ -2,10 +2,7 @@ import os, sys
 import numpy as np
 import pandas as pd
 from datetime import datetime as dt,timedelta
-import requests
-import urllib
 from scipy.ndimage import gaussian_filter as gfilt
-
 
 def getPPF(dfTors,method='total'):
     
@@ -36,27 +33,61 @@ def getPPF(dfTors,method='total'):
     
         # get grid count
         grid, _, _ = np.histogram2d(torlats,torlons, bins=[latgrid,longrid])
-        aggregate_grid.append(gfilt((grid>0)*1.0,sigma=1.5)*100)
+        aggregate_grid.append((grid>0)*1.0)
         
     if method == 'daily':
-        PPF = np.mean(aggregate_grid,axis=0)
+        grid = np.mean(aggregate_grid,axis=0)
+        PPF = gfilt(grid,sigma=1.5)*100
     if method == 'total':
-        PPF = np.sum(aggregate_grid,axis=0)
+        grid = np.sum(aggregate_grid,axis=0)
+        PPF = gfilt((grid>0)*1.0,sigma=1.5)*100
         
     return PPF,longrid,latgrid
 
-def ef_color(mag):
-    colors=None
+
+def ef_colors(x):
+    import matplotlib as mlib
+    if x == 'default':
+        colors = ['lightsalmon','tomato','red','firebrick','darkred','purple']
+    elif isinstance(x,str):
+        try:
+            cmap = mlib.cm.get_cmap(x)
+            norm = mlib.colors.Normalize(vmin=0, vmax=5)
+            colors = cmap(norm([0,1,2,3,4,5]))
+        except:
+            colors = [x]*6
+    elif isinstance(x,list):
+        if len(x) == 6:
+            colors = x
+    else:
+        colors = ['lightsalmon','tomato','red','firebrick','darkred','purple']
     return colors
 
-def PPF_color(svrtype):
-    if svrtype == 'tornado':
-        clevs = [2,5,10,15,30,45,60,100]
-        colors = ['#008B00',\
-                  '#8B4726',\
-                  '#FFC800',\
-                  '#FF0000',\
-                  '#FF00FF',\
-                  '#912CEE',\
-                  '#104E8B']
+
+def ppf_colors(ptype,x,clevs):
+    import matplotlib as mlib
+    if x=='SPC':
+        if ptype=='daily':
+            clevs = [2,5,10,15,30,45,60,100]
+            colors = ['#008B00',\
+                      '#8B4726',\
+                      '#FFC800',\
+                      '#FF0000',\
+                      '#FF00FF',\
+                      '#912CEE',\
+                      '#104E8B']
+        else:
+            raise RuntimeWarning('SPC colors only allowed for daily PPF.\n'+\
+                           'Defaulting to plasma colormap.')
+            x = 'plasma'
+    if x!='SPC':
+        if isinstance(x,str):
+            cmap = mlib.cm.get_cmap(x)
+            norm = mlib.colors.Normalize(vmin=min(clevs), vmax=max(clevs[:-1]))
+            colors = cmap(norm(clevs))
+        elif isinstance(x,list):
+            colors = x
+        else:
+            norm = mlib.colors.Normalize(vmin=min(clevs), vmax=max(clevs[:-1]))
+            colors = x(norm(clevs))
     return colors,clevs

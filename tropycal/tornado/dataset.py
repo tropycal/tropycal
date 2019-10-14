@@ -57,7 +57,7 @@ class Dataset:
         #Read in tornado dataset
         timer_start = dt.now()
         yrnow = timer_start.year
-        print(f'--> Start reading in tornado track data')
+        print(f'--> Starting to read in tornado track data')
         try:
             yrlast = yrnow-1
             Tors = pd.read_csv(f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv',\
@@ -172,27 +172,31 @@ class Dataset:
     #PLOT FUNCTION FOR TORNADOES
     def plot_tors(self,tor_info,zoom="conus",plotPPF=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
+        
         r"""
         Creates a plot of a single storm.
         
         Parameters
         ----------
-        tor_info : pandas.DataFrame or dict
+        tor_info : pandas.DataFrame or dict, or datetime or list of start/end datetimes
             Requested tornadoes
         zoom : str
             Zoom for the plot. Can be one of the following:
             "dynamic" - default. Dynamically focuses the domain using the tornado track(s) plotted.
             "north_atlantic" - North Atlantic Ocean basin
-            "conus", "east_conus"
+            "conus" - Contiguous United States
+            "east_conus" - Eastern CONUS
             "lonW/lonE/latS/latN" - Custom plot domain
-        plot_all : bool
-            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
+        plotPPF : False / True / "total" / "daily"
+            True defaults to "total"
+            "total" - probability of a tornado within 25mi of a point during the period of time selected
+            "daily" - average probability of a tornado within 25mi of a point during a day starting at 12 UTC
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
-            Property of storm track lines.
+            Property of tornado tracks.
         map_prop : dict
             Property of cartopy map.
         """

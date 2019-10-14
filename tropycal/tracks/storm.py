@@ -14,6 +14,7 @@ from ...tropycal import tornado
 from ...tropycal import recon
 
 try:
+    import zipfile
     import gzip
     from io import StringIO, BytesIO
     import tarfile
@@ -374,8 +375,82 @@ class Storm:
         #Get list of available NHC advisories & map discussions
         if storm_year == (dt.now()).year:
             pass
+        elif storm_year < 1992:
+            raise RuntimeError("NHC discussion data is unavailable.")
         elif storm_year < 2000:
-            pass
+            #Get directory path of storm and read it in
+            url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+            url = url_disco + f'{storm_id.lower()}_msg.zip'
+            if requests.get(url).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
+            request = urllib.request.Request(url)
+            response = urllib.request.urlopen(request)
+            file_like_object = BytesIO(response.read())
+            tar = zipfile.ZipFile(file_like_object)
+            
+            #Get file list
+            members = '\n'.join([i for i in tar.namelist()])
+            nums = "[0123456789]"
+            search_pattern = f'n{storm_id[0:4].lower()}{str(storm_year)[2:]}.[01]{nums}{nums}'
+            pattern = re.compile(search_pattern)
+            filelist = pattern.findall(members)
+            files = []
+            for file in filelist:
+                if file not in files: files.append(file) #remove duplicates
+            
+            #Read in all NHC forecast discussions
+            discos = {'id':[],'utc_date':[],'url':[],'mode':4}
+            for file in files:
+                
+                #Get info about forecast
+                file_info = file.split(".")
+                disco_number = int(file_info[1])
+                
+                #Open file to get info about time issued
+                members = tar.namelist()
+                members_names = [i for i in members]
+                idx = members_names.index(file)
+                content = (tar.read(members[idx])).decode()
+                content = content.split("\n")
+                
+                #Figure out time issued
+                slice_idx = 5 if storm_year < 1998 else 4
+                for temp_idx in [slice_idx,slice_idx-1,slice_idx+1,slice_idx-2,slice_idx+2]:
+                    try:
+                        hr = content[temp_idx].split(" ")[0]
+                        if hr == 'NOON':
+                            temp_line = content[temp_idx].replace("NOON","12 PM")
+                            zone = temp_line.split(" ")[1]
+                            disco_date = dt.strptime(temp_line.rstrip(),f'%I %p {zone} %a %b %d %Y')
+                        else:
+                            zone = content[temp_idx].split(" ")[2]
+                            disco_date = dt.strptime(content[temp_idx].rstrip(),f'%I %p {zone} %a %b %d %Y')
+                    except:
+                        pass
+                
+                time_zones = {
+                'ADT':-3,
+                'AST':-4,
+                'EDT':-4,
+                'EST':-5,
+                'CDT':-5,
+                'CST':-6,
+                'MDT':-6,
+                'MST':-7,
+                'PDT':-7,
+                'PST':-8,
+                'HDT':-9,
+                'HST':-10}
+                offset = time_zones.get(zone,0)
+                disco_date = disco_date + timedelta(hours=offset*-1)
+                
+                #Add times issued
+                discos['id'].append(disco_number)
+                discos['utc_date'].append(disco_date)
+                discos['url'].append(file)
+                
+            response.close()
+            tar.close()
+            
         elif storm_year == 2000:
             #Get directory path of storm and read it in
             url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
@@ -620,6 +695,23 @@ class Storm:
             f = tar.extractfile(members[idx])
             content = (f.read()).decode()
             f.close()
+            tar.close()
+            response.close()
+            
+        elif disco_dict['mode'] in [4]:
+            #Get directory path of storm and read it in
+            url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+            url = url_disco + f'{storm_id.lower()}_msg.zip'
+            if requests.get(url).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
+            request = urllib.request.Request(url)
+            response = urllib.request.urlopen(request)
+            file_like_object = BytesIO(response.read())
+            tar = zipfile.ZipFile(file_like_object)
+            
+            members = tar.namelist()
+            members_names = [i for i in members]
+            idx = members_names.index(disco_dict['url'][closest_idx])
+            content = (tar.read(members[idx])).decode()
             tar.close()
             response.close()
         

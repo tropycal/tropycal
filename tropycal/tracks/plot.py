@@ -194,17 +194,21 @@ class TrackPlot(Plot):
         #--------------------------------------------------------------------------------------
         
         #Add left title
+        type_array = np.array(storm_data['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        tropical_vmax = np.array(storm_data['vmax'])[idx]
+            
         subtrop = classify_subtrop(np.array(storm_data['type']))
-        peak_idx = storm_data['vmax'].index(np.nanmax(storm_data['vmax']))
+        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
         peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_type(np.nanmax(storm_data['vmax']),subtrop,peak_basin)
+        storm_type = get_storm_type(np.nanmax(tropical_vmax),subtrop,peak_basin)
         self.ax.set_title(f"{storm_type} {storm_data['name']}",loc='left',fontsize=17,fontweight='bold')
 
         #Add right title
         ace = storm_data['ace']
         type_array = np.array(storm_data['type'])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
-
+        
         #Get storm extrema for display
         mslp_key = 'mslp' if 'wmo_mslp' not in storm_data.keys() else 'wmo_mslp'
         if all_nan(np.array(storm_data[mslp_key])[idx]) == True:
@@ -532,7 +536,8 @@ class TrackPlot(Plot):
         if all_nan(first_fcst_wind) == True:
             storm_type = 'Unknown'
         else:
-            subtrop = classify_subtrop(np.array(storm_data['type']))
+            #subtrop = classify_subtrop(np.array(storm_data['type']))
+            subtrop = True if first_fcst_type in ['SD','SS'] else False
             cur_wind = first_fcst_wind + 0
             storm_type = get_storm_type(np.nan_to_num(cur_wind),subtrop,'north_atlantic')
         
@@ -542,11 +547,11 @@ class TrackPlot(Plot):
             if all_nan(first_fcst_wind) == True:
                 storm_name = storm_data['name']
             else:
-                storm_name = num_to_str(int(storm_data['operational_id'][2:4])).upper()
+                storm_name = num_to_str(int(storm_data['id'][2:4])).upper()
                 if first_fcst_wind >= 34 and first_fcst_type in ['TD','SD','SS','TS','HU']: storm_name = storm_data['name'];
                 if first_fcst_type not in ['TD','SD','SS','TS','HU']: storm_type = 'Potential Tropical Cyclone'
         else:
-            storm_name = num_to_str(int(storm_data['operational_id'][2:4])).upper()
+            storm_name = num_to_str(int(storm_data['id'][2:4])).upper()
             storm_type = 'Potential Tropical Cyclone'
             storm_tropical = False
             if all_nan(vmax) == True:
@@ -556,7 +561,8 @@ class TrackPlot(Plot):
                 for i,(iwnd,ityp) in enumerate(zip(vmax,styp)):
                     if ityp in ['SD','SS','TD','TS','HU']:
                         storm_tropical = True
-                        subtrop = classify_subtrop(np.array(storm_data['type']))
+                        #subtrop = classify_subtrop(np.array(storm_data['type']))
+                        subtrop = True if ityp in ['SD','SS'] else False
                         storm_type = get_storm_type(np.nan_to_num(iwnd),subtrop,'north_atlantic')
                         if np.isnan(iwnd) == True: storm_type = 'Unknown'
                     else:

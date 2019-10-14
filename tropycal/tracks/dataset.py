@@ -278,9 +278,10 @@ class Dataset(TrackPlot):
                         current_year_id = 2
                 
             #Estimate operational storm ID (which sometimes differs from HURDAT2 ID)
-            blocked_list = ['AL061988']
+            blocked_list = []#['AL061988']
             potential_tcs = ['AL102017']
-            increment_but_pass = ['AL212005']
+            increment_but_pass = []#['AL212005']
+            
             if storm_name == 'UNNAMED' and max_wnd != np.nan and max_wnd >= 34 and storm_id not in blocked_list:
                 if storm_id in increment_but_pass: current_year_id += 1
                 pass

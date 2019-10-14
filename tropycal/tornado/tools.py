@@ -84,11 +84,11 @@ def ppf_colors(ptype,x,clevs):
     if x!='SPC':
         if isinstance(x,str):
             cmap = mlib.cm.get_cmap(x)
-            norm = mlib.colors.Normalize(vmin=min(clevs), vmax=max(clevs[:-1]))
-            colors = cmap(norm(clevs))
+            norm = mlib.colors.Normalize(vmin=0, vmax=len(clevs)-2)
+            colors = cmap(norm(np.arange(len(clevs))))
         elif isinstance(x,list):
             colors = x
         else:
-            norm = mlib.colors.Normalize(vmin=min(clevs), vmax=max(clevs[:-1]))
-            colors = x(norm(clevs))
+            norm = mlib.colors.Normalize(vmin=0, vmax=len(clevs)-2)
+            colors = x(norm(np.arange(len(clevs))))
     return colors,clevs

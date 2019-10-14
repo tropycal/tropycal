@@ -24,6 +24,8 @@ try:
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
+    import matplotlib.patches as mpatches
+
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
@@ -56,7 +58,7 @@ class TornadoPlot(Plot):
         
         #Set default properties
         default_prop={'plotType':'tracks','PPFcolors':'SPC','PPFlevels':[2,5,10,15,30,45,60,100],\
-                      'EFcolors':'default','linewidth':2.0,'ms':7.5}
+                      'EFcolors':'default','linewidth':1.5,'ms':7.5}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF',\
                           'linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
@@ -182,7 +184,7 @@ class TornadoPlot(Plot):
             end_date = dt.strftime(max(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
             endash = u"\u2013"
             dot = u"\u2022"
-            self.ax.set_title(f'{start_date}\n {endash} {end_date}',loc='right',fontsize=13)
+            self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
         
@@ -191,13 +193,32 @@ class TornadoPlot(Plot):
         for ef,color in enumerate(EFcolors):
             count = len(tornado_data[tornado_data['mag']==ef])
             handles.append(mlines.Line2D([], [], linestyle='-',color=color,label=f'EF-{ef} ({count})'))
-        leg_tor = self.ax.legend(handles=handles,loc='lower left',fontsize=11.5)
+        leg_tor = self.ax.legend(handles=handles,loc='lower left',fancybox=True,framealpha=0,fontsize=11.5)
+        plt.draw()
+
+        # Get the bbox
+        bb = leg_tor.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        bb_ax = self.ax.get_position()
+
+        rectangle = mpatches.Rectangle((bb_ax.x0,bb_ax.y0),bb.width+bb.x0-bb_ax.x0,bb.height+2*bb.y0-2*bb_ax.y0,\
+                                       fc = 'w',edgecolor = '0.8',alpha = 0.8,\
+                                       transform=self.fig.transFigure, zorder=2)
         
         #Add PPF colorbar
         if plotPPF != False:
-            cax = self.fig.add_axes([.235, 0.235, 0.015, 0.155])
-            self.fig.colorbar(cbmap,cax=cax,orientation='vertical')
+            
+            # Define colorbar axis
+            cax = self.fig.add_axes([bb.width + 3*bb.x0 - 2*bb_ax.x0, bb.y0, 0.015, bb.height])
+            cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical')
+            iticks = round(len(clevs)/len(cbar.ax.get_yticks()))
+            cbar.ax.set_yticklabels([round(clevs[i],1) for i in range(0,len(clevs),iticks)],fontsize=11.5,color='k')
         
+            rectangle = mpatches.Rectangle((bb_ax.x0,bb_ax.y0),bb.width+bb.x0-bb_ax.x0+.06,bb.height+2*bb.y0-2*bb_ax.y0,\
+                                           fc = 'w',edgecolor = '0.8',alpha = 0.8,\
+                                           transform=self.fig.transFigure, zorder=2)
+
+        self.ax.add_patch(rectangle)
+            
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:
             return self.ax,'/'.join([str(b) for b in [bound_w,bound_e,bound_s,bound_n]]),leg_tor

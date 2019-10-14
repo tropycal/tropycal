@@ -59,7 +59,6 @@ class TornadoPlot(Plot):
                       'EFcolors':'default','linewidth':2.0,'ms':7.5}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF',\
                           'linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
-        ef_colors = ['lightcoral']*2+['red']*2+['darkred']*2
         
         #Initialize plot
         prop = self.add_prop(prop,default_prop)
@@ -118,31 +117,20 @@ class TornadoPlot(Plot):
 
         #Plot PPF
         if plotPPF in ['total','daily',True]:
-            if plotPPF == True: plotPPF='total'
+            if plotPPF == True: plotPPF='daily'
             PPF,longrid,latgrid = getPPF(tornado_data,method=plotPPF)
-            clevs = prop['PPFlevels']
-            if prop['PPFcolors']=='SPC':
-                colors,clevs = PPF_color('tornado')
-            elif isinstance(prop['PPFcolors'],str):
-                colors = mlib.cm.get_cmap(prop['PPFcolors'])
-                norm = mlib.colors.Normalize(vmin=min(clevs), vmax=max(clevs[:-1]))
-                colors = colors(norm(clevs))
-            elif isinstance(prop['PPFcolors'],list):
-                colors = prop['PPFcolors']
-            else:
-                norm = mlib.colors.Normalize(vmin=min(clevs), vmax=max(clevs[:-1]))
-                try:
-                    colors = prop['PPFcolors'](norm(clevs))
-                except:
-                    colors,clevs = PPF_color('tornado')
-                    raise RuntimeWarning('Invalid PPFcolors. Reverting to defaults')                    
+            
+            colors,clevs = ppf_colors(plotPPF,prop['PPFcolors'],prop['PPFlevels'])
+                    
             cbmap = self.ax.contourf((longrid[:-1]+longrid[1:])*.5,(latgrid[:-1]+latgrid[1:])*.5,PPF,\
-                             levels=clevs,colors=colors,alpha=0.4)
+                             levels=clevs,colors=colors,alpha=0.5)
 
         #Plot tornadoes as specified
+        EFcolors = ef_colors(prop['EFcolors'])
+        
         for _,row in tornado_data.iterrows():
             plt.plot([row['slon'],row['elon']+.01],[row['slat'],row['elat']+.01], \
-                lw=prop['linewidth'],color=ef_colors[row['mag']],zorder=row['mag']+100, \
+                lw=prop['linewidth'],color=EFcolors[row['mag']],zorder=row['mag']+100, \
                 path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*1.5, foreground='w'), path_effects.Normal()])
 
         #--------------------------------------------------------------------------------------
@@ -200,9 +188,9 @@ class TornadoPlot(Plot):
         
         #Add legend
         handles=[]
-        for ef,ef_color in enumerate(ef_colors):
+        for ef,color in enumerate(EFcolors):
             count = len(tornado_data[tornado_data['mag']==ef])
-            handles.append(mlines.Line2D([], [], linestyle='-',color=ef_color,label=f'EF-{ef} ({count})'))
+            handles.append(mlines.Line2D([], [], linestyle='-',color=color,label=f'EF-{ef} ({count})'))
         leg_tor = self.ax.legend(handles=handles,loc='lower left',fontsize=11.5)
         
         #Add PPF colorbar

@@ -6,6 +6,7 @@ import scipy.interpolate as interp
 import urllib
 import warnings
 from datetime import datetime as dt,timedelta
+import requests
 
 from .plot import TrackPlot
 from .tools import *
@@ -245,9 +246,11 @@ class Storm:
 
         #Get all NHC forecast entries
         nhc_forecasts = self.forecast_dict['OFCL']
+        carq_forecasts = self.forecast_dict['CARQ']
 
         #Get list of all NHC forecast initializations
         nhc_forecast_init = [k for k in nhc_forecasts.keys()]
+        carq_forecast_init = [k for k in carq_forecasts.keys()]
 
         #Find closest matching time to the provided forecast date, or time
         if isinstance(forecast,int) == True:
@@ -266,37 +269,73 @@ class Storm:
 
         #Get observed track as per NHC analyses
         track_dict = {'lat':[],'lon':[],'vmax':[],'type':[],'mslp':[],'date':[],'extra_obs':[],'special':[],'ace':0.0}
+        use_carq = True
         for k in nhc_forecast_init:
             hrs = nhc_forecasts[k]['fhr']
-            if 3 in hrs:
-                hr_idx = hrs.index(3)
-                hr_add = 3
+            hrs_carq = carq_forecasts[k]['fhr'] if k in carq_forecast_init else []
+            
+            #Account for old years when hour 0 wasn't included directly
+            #if 0 not in hrs and k in carq_forecast_init and 0 in hrs_carq:
+            if self.dict['year'] < 1990 and k in carq_forecast_init and 0 in hrs_carq:
+                
+                use_carq = True
+                hr_idx = hrs_carq.index(0)
+                track_dict['lat'].append(carq_forecasts[k]['lat'][hr_idx])
+                track_dict['lon'].append(carq_forecasts[k]['lon'][hr_idx])
+                track_dict['vmax'].append(carq_forecasts[k]['vmax'][hr_idx])
+                track_dict['mslp'].append(np.nan)
+                track_dict['date'].append(carq_forecasts[k]['init'])
+
+                itype = carq_forecasts[k]['type'][hr_idx]
+                if itype == "": itype = get_type(carq_forecasts[k]['vmax'][0],False)
+                track_dict['type'].append(itype)
+
+                hr = carq_forecasts[k]['init'].strftime("%H%M")
+                track_dict['extra_obs'].append(0) if hr in ['0300','0900','1500','2100'] else track_dict['extra_obs'].append(1)
+                track_dict['special'].append("")
+                
             else:
-                hr_idx = 0
-                hr_add = 0
-            track_dict['lat'].append(nhc_forecasts[k]['lat'][hr_idx])
-            track_dict['lon'].append(nhc_forecasts[k]['lon'][hr_idx])
-            track_dict['vmax'].append(nhc_forecasts[k]['vmax'][hr_idx])
-            track_dict['mslp'].append(np.nan)
-            track_dict['date'].append(nhc_forecasts[k]['init']+timedelta(hours=hr_add))
-            
-            itype = nhc_forecasts[k]['type'][hr_idx]
-            if itype == "": itype = get_type(nhc_forecasts[k]['vmax'][0],False)
-            track_dict['type'].append(itype)
-            
-            hr = nhc_forecasts[k]['init'].strftime("%H%M")
-            track_dict['extra_obs'].append(0) if hr in ['0300','0900','1500','2100'] else track_dict['extra_obs'].append(1)
-            track_dict['special'].append("")
+                use_carq = False
+                if 3 in hrs:
+                    hr_idx = hrs.index(3)
+                    hr_add = 3
+                else:
+                    hr_idx = 0
+                    hr_add = 0
+                track_dict['lat'].append(nhc_forecasts[k]['lat'][hr_idx])
+                track_dict['lon'].append(nhc_forecasts[k]['lon'][hr_idx])
+                track_dict['vmax'].append(nhc_forecasts[k]['vmax'][hr_idx])
+                track_dict['mslp'].append(np.nan)
+                track_dict['date'].append(nhc_forecasts[k]['init']+timedelta(hours=hr_add))
+
+                itype = nhc_forecasts[k]['type'][hr_idx]
+                if itype == "": itype = get_type(nhc_forecasts[k]['vmax'][0],False)
+                track_dict['type'].append(itype)
+
+                hr = nhc_forecasts[k]['init'].strftime("%H%M")
+                track_dict['extra_obs'].append(0) if hr in ['0300','0900','1500','2100'] else track_dict['extra_obs'].append(1)
+                track_dict['special'].append("")
         
         #Add main elements from storm dict
         for key in ['id','operational_id','name','year']:
             track_dict[key] = self.dict[key]
-        
-        #Cap track, if specified
-        #if cap_track == True:
-        #    forecast_dict['cap_forecast'] = True
-        #else:
-        #    forecast_dict['cap_forecast'] = False
+            
+        #Add carq to forecast dict as hour 0, if available
+        if use_carq == True and forecast_dict['init'] in track_dict['date']:
+            insert_idx = track_dict['date'].index(forecast_dict['init'])
+            if 0 in forecast_dict['fhr']:
+                forecast_dict['lat'][0] = track_dict['lat'][insert_idx]
+                forecast_dict['lon'][0] = track_dict['lon'][insert_idx]
+                forecast_dict['vmax'][0] = track_dict['vmax'][insert_idx]
+                forecast_dict['mslp'][0] = track_dict['mslp'][insert_idx]
+                forecast_dict['type'][0] = track_dict['type'][insert_idx]
+            else:
+                forecast_dict['fhr'].insert(0,0)
+                forecast_dict['lat'].insert(0,track_dict['lat'][insert_idx])
+                forecast_dict['lon'].insert(0,track_dict['lon'][insert_idx])
+                forecast_dict['vmax'].insert(0,track_dict['vmax'][insert_idx])
+                forecast_dict['mslp'].insert(0,track_dict['mslp'][insert_idx])
+                forecast_dict['type'].insert(0,track_dict['type'][insert_idx])
             
         #Add other info to forecast dict
         forecast_dict['advisory_num'] = advisory_num
@@ -341,6 +380,7 @@ class Storm:
             #Get directory path of storm and read it in
             url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
             url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
+            if requests.get(url).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
             request = urllib.request.Request(url)
             response = urllib.request.urlopen(request)
             file_like_object = BytesIO(response.read())
@@ -408,6 +448,7 @@ class Storm:
             url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
             url = url_disco + f'{storm_id.lower()}_msgs.tar.gz'
             if storm_year < 2003: url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
+            if requests.get(url).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
             request = urllib.request.Request(url)
             response = urllib.request.urlopen(request)
             file_like_object = BytesIO(response.read())
@@ -447,6 +488,7 @@ class Storm:
         else:
             #Retrieve list of NHC discussions for this storm
             url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+            if requests.get(url_disco).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
             path_disco = urllib.request.urlopen(url_disco)
             string = path_disco.read().decode('utf-8')
             nums = "[0123456789]"
@@ -476,6 +518,13 @@ class Storm:
                 discos['url'].append(url_disco + file)
                 
         #Return dict entry
+        try:
+            discos
+        except:
+            raise RuntimeError("NHC discussion data is unavailable.")
+            
+        if len(discos['id']) == 0:
+            raise RuntimeError("NHC discussion data is unavailable.")
         return discos
         
     def get_nhc_discussion(self,time=None,disco_id=None,save_path=None):
@@ -505,6 +554,10 @@ class Storm:
         #Get storm ID & corresponding data URL
         storm_id = self.dict['operational_id']
         storm_year = self.dict['year']
+        
+        #Error check
+        if storm_id == '':
+            raise RuntimeError("No NHC operational data is available for this storm.")
         
         #Error check
         if time != None and disco_id != None:
@@ -544,6 +597,7 @@ class Storm:
         #Read content of NHC forecast discussion
         if disco_dict['mode'] == 0:
             url_disco = disco_dict['url'][closest_idx]
+            if requests.get(url_disco).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
             f = urllib.request.urlopen(url_disco)
             content = f.read()
             content = content.decode("utf-8")
@@ -554,6 +608,7 @@ class Storm:
             url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
             url = url_disco + f'{storm_id.lower()}_msgs.tar.gz'
             if disco_dict['mode'] in [2,3]: url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
+            if requests.get(url).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
             request = urllib.request.Request(url)
             response = urllib.request.urlopen(request)
             file_like_object = BytesIO(response.read())
@@ -606,6 +661,11 @@ class Storm:
         #Get storm ID & corresponding data URL
         storm_id = self.dict['operational_id']
         storm_year = self.dict['year']
+        if storm_year <= 2006: storm_id = self.dict['id']
+        
+        #Error check
+        if storm_id == '':
+            raise RuntimeError("No NHC operational data is available for this storm.")
 
         if storm_year == (dt.now()).year:
             url_models = f"https://ftp.nhc.noaa.gov/atcf/aid_public/a{storm_id.lower()}.dat.gz"
@@ -613,15 +673,18 @@ class Storm:
             url_models = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/a{storm_id.lower()}.dat.gz"
 
         #Retrieve model data text
-        request = urllib.request.Request(url_models)
-        response = urllib.request.urlopen(request)
-        sio_buffer = BytesIO(response.read())
-        gzf = gzip.GzipFile(fileobj = sio_buffer)
-        data = gzf.read()
-        content = data.splitlines()
-        content = [(i.decode()).split(",") for i in content]
-        content = [i for i in content if len(i) > 10]
-        response.close()
+        if requests.get(url_models).status_code == 200:
+            request = urllib.request.Request(url_models)
+            response = urllib.request.urlopen(request)
+            sio_buffer = BytesIO(response.read())
+            gzf = gzip.GzipFile(fileobj = sio_buffer)
+            data = gzf.read()
+            content = data.splitlines()
+            content = [(i.decode()).split(",") for i in content]
+            content = [i for i in content if len(i) > 10]
+            response.close()
+        else:
+            raise RuntimeError("No NHC operational data is available for this storm.")
 
         #Iterate through every line in content:
         forecasts = {}
@@ -678,7 +741,7 @@ class Storm:
                     forecasts[model][run_init]['mslp'].append(mslp)
                     
                     #Get storm type, if it can be determined
-                    if stype == '' and vmax != 0 and np.isnan(vmax) == False:
+                    if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
                         stype = get_type(vmax,False)
                     forecasts[model][run_init]['type'].append(stype)
 

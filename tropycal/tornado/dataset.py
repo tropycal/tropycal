@@ -174,7 +174,7 @@ class Dataset:
         
         
         r"""
-        Creates a plot of a single storm.
+        Creates a plot of tornado tracks and PPF.
         
         Parameters
         ----------

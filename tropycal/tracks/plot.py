@@ -7,6 +7,7 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 import scipy.ndimage as ndimage
+import networkx as nx
 
 from ..plot import Plot
 from .tools import *
@@ -248,7 +249,7 @@ class TrackPlot(Plot):
             plt.show()
             plt.close()
         
-    def plot_storm_nhc(self,forecast,track=None,cone_days=5,zoom="dynamic_forecast",ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_storm_nhc(self,forecast,track=None,track_labels='fhr',cone_days=5,zoom="dynamic_forecast",ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of the operational NHC forecast track along with observed track data.
@@ -259,6 +260,12 @@ class TrackPlot(Plot):
             Dict entry containing forecast data.
         track : dict
             Dict entry containing observed track data. Default is none.
+        track_labels : str
+            Label forecast hours with the following methods:
+            '' = no label
+            'fhr' = forecast hour
+            'valid_utc' = UTC valid time
+            'valid_edt' = EDT valid time
         cone_days : int
             Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.
         zoom : str
@@ -457,7 +464,7 @@ class TrackPlot(Plot):
                 center_lon = new_lons.tolist()
             self.ax.plot(center_lon,center_lat,color='k',linewidth=2.0,zorder=4,transform=ccrs.PlateCarree())
 
-            #Plot forecast dots
+            #Retrieve forecast dots
             iter_hr = np.array(forecast['fhr'])[(fcst_hr>=start_slice) & (fcst_hr<=cone_days*24)]
             fcst_lon = np.array(forecast['lon'])[(fcst_hr>=start_slice) & (fcst_hr<=cone_days*24)]
             fcst_lat = np.array(forecast['lat'])[(fcst_hr>=start_slice) & (fcst_hr<=cone_days*24)]
@@ -470,6 +477,7 @@ class TrackPlot(Plot):
                 new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
                 fcst_lon = new_lons.tolist()
 
+            #Plot forecast dots
             for i,(ilon,ilat,itype,iwnd,ihr) in enumerate(zip(fcst_lon,fcst_lat,fcst_type,fcst_vmax,iter_hr)):
                 mtype = '^'
                 if itype in ['SD','SS']:
@@ -486,7 +494,19 @@ class TrackPlot(Plot):
                     mew = 2.0; use_zorder=10
                 self.ax.plot(ilon,ilat,mtype,color=ncol,mec='k',mew=mew,ms=prop['ms']*1.3,transform=ccrs.PlateCarree(),zorder=use_zorder)
 
-            #Add to coordinate extrema
+            #Label forecast dots
+            if track_labels in ['fhr','valid_utc','valid_edt']:
+                valid_dates = [forecast['init']+timedelta(hours=int(i)) for i in iter_hr]
+                if track_labels == 'fhr':
+                    labels = [str(i) for i in iter_hr]
+                if track_labels == 'valid_edt':
+                    labels = [str(int(i.strftime('%I'))) + ' ' + i.strftime('%p %a') for i in [j-timedelta(hours=4) for j in valid_dates]]
+                    edt_warning = True
+                if track_labels == 'valid_utc':
+                    labels = [f"{i.strftime('%H UTC')}\n{str(i.month)}/{str(i.day)}" for i in valid_dates]
+                self.plot_nhc_labels(self.ax, fcst_lon, fcst_lat, labels, k=1.2)
+                
+            #Add cone coordinates to coordinate extrema
             if zoom == "dynamic_forecast" or max_lat == None:
                 max_lat = max(cone_lat)
                 min_lat = min(cone_lat)
@@ -610,11 +630,20 @@ class TrackPlot(Plot):
             c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=category_color(137))
             self.ax.legend(handles=[ex,sb,uk,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
 
+        #Add forecast label warning
+        try:
+            if edt_warning == True:
+                credit_text = "All times displayed are in EDT\n\n"
+            else:
+                credit_text = ""
+        except:
+            credit_text = ""
+            
         #Add credit
         try:
-            credit_text = f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n{plot_credit()}"
+            credit_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n{plot_credit()}"
         except:
-            credit_text = plot_credit()
+            credit_text += plot_credit()
         self.ax.text(0.99,0.01,credit_text,fontsize=9,color='k',alpha=0.7,
                 transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
         
@@ -1015,3 +1044,42 @@ class TrackPlot(Plot):
         return_dict = {'lat':gridlats,'lon':gridlons,'lat2d':gridlats2d,'lon2d':gridlons2d,'cone':griddata,
                        'center_lon':interp_lon,'center_lat':interp_lat,'year':cone_year}
         return return_dict
+    
+    def plot_nhc_labels(self, ax, x, y, labels, k=0.01):
+
+        G = nx.DiGraph()
+        data_nodes = []
+        init_pos = {}
+        for xi, yi, label in zip(x, y, labels):
+            data_str = 'data_{0}'.format(label)
+            G.add_node(data_str)
+            G.add_node(label)
+            G.add_edge(label, data_str)
+            data_nodes.append(data_str)
+            init_pos[data_str] = (xi, yi)
+            init_pos[label] = (xi, yi)
+
+        pos = nx.spring_layout(G, pos=init_pos, fixed=data_nodes, k=k)
+
+        # undo spring_layout's rescaling
+        pos_after = np.vstack([pos[d] for d in data_nodes])
+        pos_before = np.vstack([init_pos[d] for d in data_nodes])
+        scale, shift_x = np.polyfit(pos_after[:,0], pos_before[:,0], 1)
+        scale, shift_y = np.polyfit(pos_after[:,1], pos_before[:,1], 1)
+        shift = np.array([shift_x, shift_y])
+        for key, val in pos.items():
+            pos[key] = (val*scale) + shift
+
+        start = False
+        for label, data_str in G.edges():
+            if start == False:
+                start = True
+                continue
+            self.ax.annotate(label,
+                        xy=pos[data_str], xycoords='data',
+                        xytext=pos[label], textcoords='data', fontweight='bold', ha='center', va='center',
+                        arrowprops=dict(arrowstyle="-",#->
+                                        shrinkA=0, shrinkB=0,
+                                        connectionstyle="arc3", 
+                                        color='k'),
+                        transform=ccrs.PlateCarree())

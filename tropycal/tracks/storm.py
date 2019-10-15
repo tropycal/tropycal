@@ -199,7 +199,8 @@ class Storm:
         if ax != None: return return_ax
         
     #PLOT FUNCTION FOR HURDAT
-    def plot_nhc_forecast(self,forecast,cone_days=5,zoom="dynamic_forecast",ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,zoom="dynamic_forecast",
+                          ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of the operational NHC forecast track along with observed track data.
@@ -208,6 +209,12 @@ class Storm:
         ----------
         forecast : int or datetime.datetime
             Integer representing the forecast number, or datetime object for the closest issued forecast to this date.
+        track_labels : str
+            Label forecast hours with the following methods:
+            '' = no label
+            'fhr' = forecast hour
+            'valid_utc' = UTC valid time
+            'valid_edt' = EDT valid time
         cone_days : int
             Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.
         zoom : str
@@ -243,7 +250,7 @@ class Storm:
         try:
             self.forecast_dict
         except:
-            self.forecast_dict = self.get_operational_forecasts()
+            self.get_operational_forecasts()
 
         #Get all NHC forecast entries
         nhc_forecasts = self.forecast_dict['OFCL']
@@ -343,7 +350,7 @@ class Storm:
         forecast_dict['basin'] = self.basin
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,cone_days,zoom,ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,zoom,ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None: return plot_ax

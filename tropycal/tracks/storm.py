@@ -880,7 +880,7 @@ class Storm:
 
     #PLOT FUNCTION FOR TORNADOES
     def plot_tors(self,Tors=None,zoom="dynamic",plotPPF=False,plot_all=False,\
-                  ax=None,cartopy_proj=None,prop={'PPFcolors':'Wistia'},map_prop={}):
+                  ax=None,cartopy_proj=None,prop={},map_prop={}):
                 
         r"""
         Creates a plot of the storm and associated tornado tracks.
@@ -905,6 +905,12 @@ class Storm:
             Property of cartopy map.
         """
         
+        #Set default colormap for TC plots to Wistia
+        try:
+            prop['PPFcolors']
+        except:
+            prop['PPFcolors']='Wistia'
+        
         self.Tors = Tors
         if self.Tors == None:
             self.Tors = tornado.Dataset()
@@ -924,13 +930,18 @@ class Storm:
                 self.plot_obj_tc.create_cartopy(proj='PlateCarree',central_longitude=0.0)
                 
         #Plot tornadoes
-        ax,zoom,leg_tor = self.plot_obj_tor.plot_tornadoes(stormTors,zoom,ax=ax,return_ax=True,\
+        tor_ax,zoom,leg_tor = self.plot_obj_tor.plot_tornadoes(stormTors,zoom,ax=ax,return_ax=True,\
                                              plotPPF=plotPPF,prop=prop,map_prop=map_prop)
+        tor_title = tor_ax.get_title('left')
         
         #Plot storm
-        return_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,ax=ax,prop=prop,map_prop=map_prop)
+        return_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,ax=tor_ax,prop=prop,map_prop=map_prop)
         
         return_ax.add_artist(leg_tor)
+        
+        storm_title = return_ax.get_title('left')
+        return_ax.set_title(f'{storm_title}\n{tor_title}',loc='left',fontsize=17,fontweight='bold')
+
     
         #Return axis
         if ax != None: return return_ax

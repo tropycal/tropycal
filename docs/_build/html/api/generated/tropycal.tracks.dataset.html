@@ -1,0 +1,489 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dataset &mdash; tropycal </title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.0.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Storm" href="tropycal.tracks.storm.html" />
+    <link rel="prev" title="Tracks" href="tropycal.tracks.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.tracks.html">Tracks</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.storm.html">Storm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.season.html">Season</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="tropycal.tracks.html">Tracks</a> &raquo;</li>
+        
+      <li>Dataset</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/api/generated/tropycal.tracks.dataset.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-tropycal.tracks.dataset">
+<span id="dataset"></span><h1>Dataset<a class="headerlink" href="#module-tropycal.tracks.dataset" title="Permalink to this headline">¶</a></h1>
+<p>Functionality for storing and analyzing an entire cyclone dataset.</p>
+<dl class="class">
+<dt id="tropycal.tracks.dataset.Dataset">
+<em class="property">class </em><code class="descclassname">tropycal.tracks.dataset.</code><code class="descname">Dataset</code><span class="sig-paren">(</span><em>basin='north_atlantic'</em>, <em>source='hurdat'</em>, <em>include_btk=False</em>, <em>atlantic_url='https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2018-051019.txt'</em>, <em>pacific_url='https://www.nhc.noaa.gov/data/hurdat/hurdat2-nepac-1949-2018-071519.txt'</em>, <em>ibtracs_url='https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv'</em>, <em>ibtracs_mode='jtwc'</em>, <em>catarina=False</em>, <em>ibtracs_hurdat=False</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of a Dataset object containing various cyclone data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>basin</strong> (<em>str</em>) – Ocean basin for HURDAT2. Can be “atlantic”, “pacific” or “both”.</li>
+<li><strong>include_btk</strong> (<em>bool</em>) – If True, the best track data from NHC for the current year will be added into the dataset. Default is False.</li>
+<li><strong>atlantic_url</strong> (<em>str</em>) – URL containing the Atlantic HURDAT2 dataset. Can be changed to a local reference file.</li>
+<li><strong>pacific_url</strong> (<em>str</em>) – URL containing the Pacific HURDAT2 dataset. Can be changed to a local reference file.</li>
+<li><strong>catarina</strong> (<em>bool</em>) – Modify the dataset to include cyclone track data for Cyclone Catarina (2004) from literature.</li>
+<li><strong>ibtracs_hurdat</strong> (<em>bool</em>) – Replace ibtracs data for the North Atlantic and East/Central Pacific basins with HURDAT data.</li>
+<li><strong>neumann</strong> (<em>bool</em>) – Replace ibtracs data for South Hemisphere storms with data from the Neumann reanalysis where available.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>Dataset</em> – An instance of Dataset.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="tropycal.tracks.dataset.Dataset.ace_climo">
+<code class="descname">ace_climo</code><span class="sig-paren">(</span><em>plot_year=None</em>, <em>compare_years=None</em>, <em>start_year=1950</em>, <em>rolling_sum=0</em>, <em>return_dict=False</em>, <em>plot=True</em>, <em>save_path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.ace_climo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a climatology of accumulated cyclone energy (ACE).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>plot_year</strong> (<em>int</em>) – Year to highlight. If current year, plot will be drawn through today.</li>
+<li><strong>compare_years</strong> (<em>int</em><em> or </em><em>1D-array</em>) – Seasons to compare against. Can be either a single season (int), or a range or list of seasons (1D-array).</li>
+<li><strong>start_year</strong> (<em>int</em>) – Year to begin calculating the climatology over. Default is 1950.</li>
+<li><strong>rolling_sum</strong> (<em>int</em>) – Days to calculate a running sum over. Default is 0 (annual running sum).</li>
+<li><strong>return_dict</strong> (<em>bool</em>) – Determines whether to return data from this function. Default is False.</li>
+<li><strong>plot</strong> (<em>bool</em>) – Determines whether to generate a plot or not. If False, function simply returns ace dictionary.</li>
+<li><strong>save_path</strong> (<em>str</em>) – Determines the file path to save the image to. If blank or none, image will be directly shown.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>dict</em> – If return_dict is True, a dictionary containing data about the ACE climatology is returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.dataset.Dataset.get_season">
+<code class="descname">get_season</code><span class="sig-paren">(</span><em>year</em>, <em>basin='all'</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.get_season" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a dictionary with all the storms for a given year.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>year</strong> (<em>int</em>) – Year to retrieve season data. If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>Season</em> – Object containing every storm entry for the given season.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.dataset.Dataset.get_storm">
+<code class="descname">get_storm</code><span class="sig-paren">(</span><em>storm</em>, <em>jtwc=False</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.get_storm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a Storm object for the requested storm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>storm</strong> (<em>str</em><em> or </em><em>tuple</em>) – Requested storm. Can be either string of storm ID (e.g., “AL052019”), or tuple with storm name and year (e.g., (“Matthew”,2016)).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>Storm</em> – If one such storm was found, its entry will be returned. If multiple such storms are found,
+a list containing every entry matching the query will be returned.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.dataset.Dataset.get_storm_id">
+<code class="descname">get_storm_id</code><span class="sig-paren">(</span><em>name</em>, <em>year</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.get_storm_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the storm ID (e.g., AL012019) given the storm name and year</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) – String representing the name of the tropical cyclone</li>
+<li><strong>year</strong> (<em>int</em>) – Integer representing the year of the tropical cyclone</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>bool</em> – Boolean, True if string contains digits, otherwise False</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.dataset.Dataset.hurricane_days_climo">
+<code class="descname">hurricane_days_climo</code><span class="sig-paren">(</span><em>plot_year=None</em>, <em>compare_years=None</em>, <em>start_year=1950</em>, <em>rolling_sum=0</em>, <em>category=None</em>, <em>return_dict=False</em>, <em>plot=True</em>, <em>save_path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.hurricane_days_climo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a climatology of tropical storm/hurricane/major hurricane days.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>plot_year</strong> (<em>int</em>) – Year to highlight. If current year, plot will be drawn through today.</li>
+<li><strong>compare_years</strong> (<em>int</em><em> or </em><em>1D-array</em>) – Seasons to compare against. Can be either a single season (int), or a range or list of seasons (1D-array).</li>
+<li><strong>start_year</strong> (<em>int</em>) – Year to begin calculating the climatology over. Default is 1950.</li>
+<li><strong>rolling_sum</strong> (<em>int</em>) – Days to calculate a running sum over. Default is 0 (annual running sum).</li>
+<li><strong>return_dict</strong> (<em>bool</em>) – Determines whether to return data from this function. Default is False.</li>
+<li><strong>plot</strong> (<em>bool</em>) – Determines whether to generate a plot or not. If False, function simply returns ace dictionary.</li>
+<li><strong>save_path</strong> (<em>str</em>) – Determines the file path to save the image to. If blank or none, image will be directly shown.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>dict</em> – If return_dict is True, a dictionary containing data about the ACE climatology is returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.dataset.Dataset.plot_storm">
+<code class="descname">plot_storm</code><span class="sig-paren">(</span><em>storm</em>, <em>zoom='dynamic'</em>, <em>plot_all=False</em>, <em>ax=None</em>, <em>cartopy_proj=None</em>, <em>prop={}</em>, <em>map_prop={}</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.plot_storm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of a single storm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>storm</strong> (<em>str</em><em>, </em><em>tuple</em><em> or </em><em>dict</em>) – Requested storm. Can be either string of storm ID (e.g., “AL052019”), tuple with storm name and year (e.g., (“Matthew”,2016)), or a dict entry.</li>
+<li><strong>zoom</strong> (<em>str</em>) – Zoom for the plot. Can be one of the following:
+“dynamic” - default. Dynamically focuses the domain using the storm track(s) plotted.
+“north_atlantic” - North Atlantic Ocean basin
+“pacific” - East/Central Pacific Ocean basin
+“latW/latE/lonS/lonN” - Custom plot domain</li>
+<li><strong>plot_all</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</li>
+<li><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</li>
+<li><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</li>
+<li><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</li>
+<li><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.dataset.Dataset.rank_storm">
+<code class="descname">rank_storm</code><span class="sig-paren">(</span><em>metric</em>, <em>return_df=True</em>, <em>ascending=False</em>, <em>subset_domain=None</em>, <em>subset_time=None</em>, <em>subtropical=True</em>, <em>start_year=None</em>, <em>end_year=None</em>, <em>return_all=False</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.rank_storm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ranks storm by a specified metric.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>metric</strong> (<em>str</em>) – Metric to rank storms by. Can be any of the following:
+“ace” = rank storms by ACE
+“start_lat” = starting latitude of cyclone
+“start_lon” = starting longitude of cyclone
+“end_lat” = ending latitude of cyclone
+“end_lon” = ending longitude of cyclone
+“formation_date” = formation date of cyclone
+“max_wind” = first instance of the maximum sustained wind of cyclone
+“min_mslp” = first instance of the minimum MSLP of cyclone</li>
+<li><strong>return_df</strong> (<em>bool</em>) – Whether to return a pandas.DataFrame (True) or dict (False). Default is True.</li>
+<li><strong>ascending</strong> (<em>bool</em>) – Whether to return rank in ascending order (True) or descending order (False). Default is False.</li>
+<li><strong>subset_domain</strong> (<em>str</em>) – String representing either a bounded region ‘latW/latE/latS/latN’, or a basin name.</li>
+<li><strong>subset_time</strong> (<em>list</em><em> or </em><em>tuple</em>) – List or tuple representing the start and end dates in ‘month/day’ format (e.g., [6/1,8/15]).</li>
+<li><strong>subtropical</strong> (<em>bool</em>) – Whether to include subtropical storms in the ranking. Default is True.</li>
+<li><strong>start_year</strong> (<em>int</em>) – Year to begin calculating the climatology over. Default is the first year available in the dataset.</li>
+<li><strong>end_year</strong> (<em>int</em>) – Year to end calculating the climatology over. Default is the latest year available in the dataset.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>pandas.DataFrame</em> – Returns a pandas DataFrame containing ranked storms. If pandas is not installed, a dict will be returned instead.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.dataset.Dataset.search_name">
+<code class="descname">search_name</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.search_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for hurricane seasons containing a storm of the requested name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) – Name to search through HURDAT for.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>list</em> – List containing the hurricane seasons where a storm of the requested name was found.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.dataset.Dataset.storm_ace_vs_season">
+<code class="descname">storm_ace_vs_season</code><span class="sig-paren">(</span><em>storm</em>, <em>start_year=1950</em>, <em>end_year=None</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.storm_ace_vs_season" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrives a list of entire hurricane seasons with lower ACE than the storm provided.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>storm</strong> (<em>str</em><em> or </em><em>tuple</em>) – Storm to plot. Can be either string of storm ID (e.g., “AL052019”), or tuple with storm name and year (e.g., (“Matthew”,2016)).</li>
+<li><strong>start_year</strong> (<em>int</em>) – Year to begin searching from. Default is 1950.</li>
+<li><strong>end_year</strong> (<em>int</em>) – Year to end calculating the climatology over. Default is the latest year available in HURDAT/Best Track.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>dict</em> – Dictionary containing the seasons with less ACE than the requested storm.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.dataset.Dataset.wind_pres_relationship">
+<code class="descname">wind_pres_relationship</code><span class="sig-paren">(</span><em>storm=None</em>, <em>start_year=1851</em>, <em>end_year=None</em>, <em>return_dict=False</em>, <em>plot=True</em>, <em>save_path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.wind_pres_relationship" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a climatology of maximum sustained wind speed vs. minimum sea level pressure relationships.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>storm</strong> (<em>str</em><em> or </em><em>tuple</em>) – Storm to plot. Can be either string of storm ID (e.g., “AL052019”), or tuple with storm name and year (e.g., (“Matthew”,2016)).</li>
+<li><strong>start_year</strong> (<em>int</em>) – Year to begin calculating the climatology over. Default is 1851.</li>
+<li><strong>end_year</strong> (<em>int</em>) – Year to end calculating the climatology over. Default is the latest year available in HURDAT/Best Track.</li>
+<li><strong>return_dict</strong> (<em>bool</em>) – Determines whether to return data from this function. Default is False.</li>
+<li><strong>plot</strong> (<em>bool</em>) – Determines whether to generate a plot or not. If False, function simply returns ace dictionary.</li>
+<li><strong>save_path</strong> (<em>str</em>) – Determines the file path to save the image to. If blank or none, image will be directly shown.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>dict</em> – If return_dict is True, a dictionary containing data about the wind vs. MSLP relationship climatology is returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tropycal.tracks.storm.html" class="btn btn-neutral float-right" title="Storm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tropycal.tracks.html" class="btn btn-neutral float-left" title="Tracks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

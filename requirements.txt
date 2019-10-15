@@ -1,1 +1,5 @@
 numpy
+pandas
+scipy
+geopy
+matplotlib

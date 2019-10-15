@@ -1,11 +1,1 @@
-calendar
 numpy
-pandas
-re
-scipy
-urllib
-warnings
-datetime
-requests
-geopy
-matplotlib

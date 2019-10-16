@@ -920,7 +920,7 @@ class Dataset(TrackPlot):
         if isinstance(storm, str) == True:
             key = storm
         elif isinstance(storm, tuple) == True:
-            key = self.get_storm_id(storm[0],storm[1])
+            key = self.get_storm_id((storm[0],storm[1]))
         else:
             raise RuntimeError("Error: Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
         
@@ -1680,7 +1680,7 @@ class Dataset(TrackPlot):
             if isinstance(storm, str) == True:
                 pass
             elif isinstance(storm, tuple) == True:
-                storm = self.get_storm_id(storm[0],storm[1])
+                storm = self.get_storm_id((storm[0],storm[1]))
             else:
                 raise RuntimeError("Error: Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
                 
@@ -1969,7 +1969,7 @@ class Dataset(TrackPlot):
         if isinstance(storm, str) == True:
             pass
         elif isinstance(storm, tuple) == True:
-            storm = self.get_storm_id(storm[0],storm[1])
+            storm = self.get_storm_id((storm[0],storm[1]))
         else:
             raise RuntimeError("Error: Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
             

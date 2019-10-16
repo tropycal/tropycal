@@ -8,7 +8,7 @@ please open an issue on Github_.
 For any other questions or inquiries, feel free to reach out to the
 project developers:
 
-Tomer Burg (tomerburg@ou.edu)
-Sam Lillo (splillo@ou.edu)
+* Tomer Burg (tomerburg@gmail.com)
+* Sam Lillo (splillo@gmail.com)
 
 .. _Github: https://github.com/tropycal/tropycal/issues

@@ -13,6 +13,7 @@ The primary dependencies of tropycal are as follows:
 * scipy >= 1.1.0
 * pandas >= 0.23.4
 * xarray >= 0.11.2
+* geopy >= 1.18.1
 
 ------------
 Installation

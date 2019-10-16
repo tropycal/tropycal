@@ -31,19 +31,40 @@ class Dataset(TrackPlot):
     Parameters
     ----------
     basin : str
-        Ocean basin for HURDAT2. Can be "atlantic", "pacific" or "both".
-    include_btk : bool
-        If True, the best track data from NHC for the current year will be added into the dataset. Default is False.
-    atlantic_url : str
-        URL containing the Atlantic HURDAT2 dataset. Can be changed to a local reference file.
-    pacific_url : str
-        URL containing the Pacific HURDAT2 dataset. Can be changed to a local reference file.
-    catarina : bool
-        Modify the dataset to include cyclone track data for Cyclone Catarina (2004) from literature.
-    ibtracs_hurdat : bool
-        Replace ibtracs data for the North Atlantic and East/Central Pacific basins with HURDAT data.
-    neumann : bool
-        Replace ibtracs data for South Hemisphere storms with data from the Neumann reanalysis where available.
+        Ocean basin to load data for. Can be any of the following.
+        
+        * **north_atlantic** - HURDAT2, ibtracs
+        * **east_pacific** - HURDAT2, ibtracs
+        * **west_pacific** - ibtracs
+        * **north_indian** - ibtracs
+        * **south_indian** - ibtracs
+        * **australia** - ibtracs
+        * **south_pacific** - ibtracs
+        * **south_america** - ibtracs
+        * **all** - ibtracs
+    source : str
+        Data source to read in. Default is HURDAT2.
+    include_btk : bool, optional
+        If True, the best track data from NHC for the current year will be added into the dataset. Valid for "north_atlantic" and "east_pacific" basins. Default is False.
+    
+    Other Parameters
+    ----------------
+    atlantic_url : str, optional
+        URL containing the Atlantic HURDAT2 dataset. Can be changed to a local txt reference file. Default is retrieval from online URL.
+    pacific_url : str, optional
+        URL containing the Pacific HURDAT2 dataset. Can be changed to a local txt reference file. Default is retrieval from online URL.
+    ibtracs_url : str, optional
+        URL containing the ibtracs dataset. Can be changed to a local txt reference file. Can be a regional or all ibtracs file. If regional, the basin should match the argument basin provided earlier. Default is retrieval from online URL.
+    catarina : bool, optional
+        Modify the dataset to include cyclone track data for Cyclone Catarina (2004) from McTaggart-Cowan et al. (2006). Default is False.
+    ibtracs_hurdat : bool, optional
+        Replace ibtracs data for the North Atlantic and East/Central Pacific basins with HURDAT data. Default is False.
+    ibtracs_mode : str, optional
+        Mode of reading ibtracs in:
+        
+        * **jma** = official World Meteorological Organization data. Caveat is sustained wind methodology is inconsistent between basins.
+        * **jtwc** = default. Unofficial data from the Joint Typhoon Warning Center. Caveat is some storms are missing and some storm data is inaccurate.
+        * **jtwc_neumann** = JTWC data modified with the Neumann reanalysis for the Southern Hemisphere. Improves upon some storms (e.g., Cyclone Tracy 1974) while degrading others.
 
     Returns
     -------
@@ -51,11 +72,15 @@ class Dataset(TrackPlot):
         An instance of Dataset.
     """
     
-    def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,
-                 atlantic_url='https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2018-051019.txt',
-                 pacific_url='https://www.nhc.noaa.gov/data/hurdat/hurdat2-nepac-1949-2018-071519.txt',
-                 ibtracs_url='https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv',
-                 ibtracs_mode='jtwc',catarina=False,ibtracs_hurdat=False):
+    def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,**kwargs):
+        
+        #kwargs
+        atlantic_url = kwargs.pop('atlantic_url', 'https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2018-051019.txt')
+        pacific_url = kwargs.pop('pacific_url', 'https://www.nhc.noaa.gov/data/hurdat/hurdat2-nepac-1949-2018-071519.txt')
+        ibtracs_url = kwargs.pop('ibtracs_url', 'https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv')
+        ibtracs_mode = kwargs.pop('ibtracs_mode', 'jtwc')
+        catarina = kwargs.pop('catarina', False)
+        ibtracs_hurdat = kwargs.pop('ibtracs_hurdat', False)
         
         #Error check
         if ibtracs_mode not in ['wmo','jtwc','jtwc_neumann']:

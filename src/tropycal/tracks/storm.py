@@ -623,7 +623,7 @@ class Storm:
     def get_nhc_discussion(self,forecast,save_path=None):
         
         r"""
-        Retrieves a single NHC forecast discussion. Provide either time or disco_id for the input argument.
+        Retrieves a single NHC forecast discussion.
         
         Parameters
         ----------

@@ -180,24 +180,48 @@
 <p>Functionality for storing and analyzing an entire cyclone dataset.</p>
 <dl class="class">
 <dt id="tropycal.tracks.dataset.Dataset">
-<em class="property">class </em><code class="descclassname">tropycal.tracks.dataset.</code><code class="descname">Dataset</code><span class="sig-paren">(</span><em>basin='north_atlantic'</em>, <em>source='hurdat'</em>, <em>include_btk=False</em>, <em>atlantic_url='https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2018-051019.txt'</em>, <em>pacific_url='https://www.nhc.noaa.gov/data/hurdat/hurdat2-nepac-1949-2018-071519.txt'</em>, <em>ibtracs_url='https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv'</em>, <em>ibtracs_mode='jtwc'</em>, <em>catarina=False</em>, <em>ibtracs_hurdat=False</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">tropycal.tracks.dataset.</code><code class="descname">Dataset</code><span class="sig-paren">(</span><em>basin='north_atlantic'</em>, <em>source='hurdat'</em>, <em>include_btk=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of a Dataset object containing various cyclone data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>basin</strong> (<em>str</em>) – Ocean basin for HURDAT2. Can be “atlantic”, “pacific” or “both”.</li>
-<li><strong>include_btk</strong> (<em>bool</em>) – If True, the best track data from NHC for the current year will be added into the dataset. Default is False.</li>
-<li><strong>atlantic_url</strong> (<em>str</em>) – URL containing the Atlantic HURDAT2 dataset. Can be changed to a local reference file.</li>
-<li><strong>pacific_url</strong> (<em>str</em>) – URL containing the Pacific HURDAT2 dataset. Can be changed to a local reference file.</li>
-<li><strong>catarina</strong> (<em>bool</em>) – Modify the dataset to include cyclone track data for Cyclone Catarina (2004) from literature.</li>
-<li><strong>ibtracs_hurdat</strong> (<em>bool</em>) – Replace ibtracs data for the North Atlantic and East/Central Pacific basins with HURDAT data.</li>
-<li><strong>neumann</strong> (<em>bool</em>) – Replace ibtracs data for South Hemisphere storms with data from the Neumann reanalysis where available.</li>
+<li><strong>basin</strong> (<em>str</em>) – <p>Ocean basin to load data for. Can be any of the following.</p>
+<ul>
+<li><strong>north_atlantic</strong> - HURDAT2, ibtracs</li>
+<li><strong>east_pacific</strong> - HURDAT2, ibtracs</li>
+<li><strong>west_pacific</strong> - ibtracs</li>
+<li><strong>north_indian</strong> - ibtracs</li>
+<li><strong>south_indian</strong> - ibtracs</li>
+<li><strong>australia</strong> - ibtracs</li>
+<li><strong>south_pacific</strong> - ibtracs</li>
+<li><strong>south_america</strong> - ibtracs</li>
+<li><strong>all</strong> - ibtracs</li>
+</ul>
+</li>
+<li><strong>source</strong> (<em>str</em>) – Data source to read in. Default is HURDAT2.</li>
+<li><strong>include_btk</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, the best track data from NHC for the current year will be added into the dataset. Valid for “north_atlantic” and “east_pacific” basins. Default is False.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>Dataset</em> – An instance of Dataset.</p>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><strong>atlantic_url</strong> (<em>str, optional</em>) – URL containing the Atlantic HURDAT2 dataset. Can be changed to a local txt reference file. Default is retrieval from online URL.</li>
+<li><strong>pacific_url</strong> (<em>str, optional</em>) – URL containing the Pacific HURDAT2 dataset. Can be changed to a local txt reference file. Default is retrieval from online URL.</li>
+<li><strong>ibtracs_url</strong> (<em>str, optional</em>) – URL containing the ibtracs dataset. Can be changed to a local txt reference file. Can be a regional or all ibtracs file. If regional, the basin should match the argument basin provided earlier. Default is retrieval from online URL.</li>
+<li><strong>catarina</strong> (<em>bool, optional</em>) – Modify the dataset to include cyclone track data for Cyclone Catarina (2004) from McTaggart-Cowan et al. (2006). Default is False.</li>
+<li><strong>ibtracs_hurdat</strong> (<em>bool, optional</em>) – Replace ibtracs data for the North Atlantic and East/Central Pacific basins with HURDAT data. Default is False.</li>
+<li><strong>ibtracs_mode</strong> (<em>str, optional</em>) – Mode of reading ibtracs in:<ul>
+<li><strong>jma</strong> = official World Meteorological Organization data. Caveat is sustained wind methodology is inconsistent between basins.</li>
+<li><strong>jtwc</strong> = default. Unofficial data from the Joint Typhoon Warning Center. Caveat is some storms are missing and some storm data is inaccurate.</li>
+<li><strong>jtwc_neumann</strong> = JTWC data modified with the Neumann reanalysis for the Southern Hemisphere. Improves upon some storms (e.g., Cyclone Tracy 1974) while degrading others.</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>Dataset</em> – An instance of Dataset.</p>
 </td>
 </tr>
 </tbody>

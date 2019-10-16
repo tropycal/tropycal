@@ -45,7 +45,7 @@ class TornadoPlot(Plot):
             "dynamic" - default. Dynamically focuses the domain using the tornado track(s) plotted.
             "north_atlantic" - North Atlantic Ocean basin
             "conus", "east_conus"
-            "latW/latE/lonS/lonN" - Custom plot domain
+            "lonW/lonE/latS/latN" - Custom plot domain
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool

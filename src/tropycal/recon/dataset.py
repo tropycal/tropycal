@@ -9,7 +9,7 @@ from geopy.distance import great_circle
 import matplotlib.dates as mdates
 
 from .plot import ReconPlot
-from ...tropycal import tracks
+#from ..tracks import *
 
 class Dataset:
 

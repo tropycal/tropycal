@@ -263,20 +263,15 @@ a list containing every entry matching the query will be returned.</td>
 
 <dl class="method">
 <dt id="tropycal.tracks.dataset.Dataset.get_storm_id">
-<code class="descname">get_storm_id</code><span class="sig-paren">(</span><em>name</em>, <em>year</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.get_storm_id" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_storm_id</code><span class="sig-paren">(</span><em>storm</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.dataset.Dataset.get_storm_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the storm ID (e.g., AL012019) given the storm name and year</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<em>str</em>) – String representing the name of the tropical cyclone</li>
-<li><strong>year</strong> (<em>int</em>) – Integer representing the year of the tropical cyclone</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>storm</strong> (<em>tuple</em>) – Tuple containing the storm name and year (e.g., (“Matthew”,2016)).</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>bool</em> – Boolean, True if string contains digits, otherwise False</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>str or list</em> – If a single storm was found, returns a string containing its ID. Otherwise returns a list of matching IDs.</td>
 </tr>
 </tbody>
 </table>

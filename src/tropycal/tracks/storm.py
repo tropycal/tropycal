@@ -904,6 +904,10 @@ class Storm:
             "north_atlantic" - North Atlantic Ocean basin
             "pacific" - East/Central Pacific Ocean basin
             "lonW/lonE/latS/latN" - Custom plot domain
+        plotPPF : False / True / "total" / "daily"
+            True defaults to "total"
+            "total" - probability of a tornado within 25mi of a point during the period of time selected
+            "daily" - average probability of a tornado within 25mi of a point during a day starting at 12 UTC
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes

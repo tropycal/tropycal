@@ -832,6 +832,7 @@ class TrackPlot(Plot):
         """
 
         #Source: https://www.nhc.noaa.gov/verification/verify3.shtml
+        #Radii are in nautical miles
         cone_climo_hr = [3,12,24,36,48,72,96,120]
         cone_size_atl = {}
         cone_size_atl[2019] = [16,26,41,54,68,102,151,198]
@@ -924,6 +925,7 @@ class TrackPlot(Plot):
             c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a));
             dist = (r_earth * c)/1000.0
             dist = dist * 0.621371 #to miles
+            dist = dist * 0.868976 #to nautical miles
 
             #Mask out values less than radius
             return_arr[dist <= rad] = 1

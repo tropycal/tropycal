@@ -44,6 +44,9 @@ class Dataset(TrackPlot):
         * **all** - ibtracs
     source : str
         Data source to read in. Default is HURDAT2.
+        
+        * **hurdat** - HURDAT2 data source for the North Atlantic and East/Central Pacific basins
+        * **ibtracs** - ibtracs data source for regional or global data
     include_btk : bool, optional
         If True, the best track data from NHC for the current year will be added into the dataset. Valid for "north_atlantic" and "east_pacific" basins. Default is False.
     
@@ -60,9 +63,9 @@ class Dataset(TrackPlot):
     ibtracs_hurdat : bool, optional
         Replace ibtracs data for the North Atlantic and East/Central Pacific basins with HURDAT data. Default is False.
     ibtracs_mode : str, optional
-        Mode of reading ibtracs in:
+        Mode of reading ibtracs in. Default is "jtwc".
         
-        * **jma** = official World Meteorological Organization data. Caveat is sustained wind methodology is inconsistent between basins.
+        * **wmo** = official World Meteorological Organization data. Caveat is sustained wind methodology is inconsistent between basins.
         * **jtwc** = default. Unofficial data from the Joint Typhoon Warning Center. Caveat is some storms are missing and some storm data is inaccurate.
         * **jtwc_neumann** = JTWC data modified with the Neumann reanalysis for the Southern Hemisphere. Improves upon some storms (e.g., Cyclone Tracy 1974) while degrading others.
 
@@ -865,7 +868,7 @@ class Dataset(TrackPlot):
     def get_storm_id(self,storm):
         
         r"""
-        Returns the storm ID (e.g., AL012019) given the storm name and year
+        Returns the storm ID (e.g., "AL012019") given the storm name and year.
         
         Parameters
         ----------
@@ -912,8 +915,7 @@ class Dataset(TrackPlot):
         Returns
         -------
         Storm
-            If one such storm was found, its entry will be returned. If multiple such storms are found,
-            a list containing every entry matching the query will be returned.
+            Object containing information about the requested storm, and methods for analyzing and plotting the storm.
         """
         
         #Check if storm is str or tuple
@@ -942,11 +944,11 @@ class Dataset(TrackPlot):
         storm : str, tuple or dict
             Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
         zoom : str
-            Zoom for the plot. Can be one of the following:
-            "dynamic" - default. Dynamically focuses the domain using the storm track(s) plotted.
-            "north_atlantic" - North Atlantic Ocean basin
-            "pacific" - East/Central Pacific Ocean basin
-            "lonW/lonE/latS/latN" - Custom plot domain
+            Zoom for the plot. Default is "dynamic". Can be one of the following:
+            
+            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
+            * **(basin_name)** - Any of the acceptable basins (check "Dataset" for a list).
+            * **lonW/lonE/latS/latN** - Custom plot domain.
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
@@ -960,7 +962,10 @@ class Dataset(TrackPlot):
         """
         
         #Retrieve requested storm
-        storm_dict = self.get_storm(storm).dict
+        if inistance(storm_dict,dict) == False:
+            storm_dict = self.get_storm(storm).dict
+        else:
+            storm_dict = storm
         
         #Create instance of plot object
         self.plot_obj = TrackPlot()
@@ -986,7 +991,7 @@ class Dataset(TrackPlot):
         Parameters
         ----------
         name : str
-            Name to search through HURDAT for.
+            Name to search through the dataset for.
         
         Returns
         -------
@@ -1012,7 +1017,7 @@ class Dataset(TrackPlot):
         Returns
         -------
         Season
-            Object containing every storm entry for the given season.
+            Object containing every storm entry for the given season, and methods for analyzing and plotting the season.
         """
         
         #Initialize dict to be populated
@@ -1311,8 +1316,8 @@ class Dataset(TrackPlot):
         ----------
         plot_year : int
             Year to highlight. If current year, plot will be drawn through today.
-        compare_years : int or 1D-array
-            Seasons to compare against. Can be either a single season (int), or a range or list of seasons (1D-array).
+        compare_years : int or list
+            Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).
         start_year : int
             Year to begin calculating the climatology over. Default is 1950.
         rolling_sum : int

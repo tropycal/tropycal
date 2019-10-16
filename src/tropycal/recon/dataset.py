@@ -1,6 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Oct  9 21:32:57 2019
+
+@author: slillo
+"""
+
 import numpy as np
 from datetime import datetime as dt,timedelta
-import pandas
+import pandas as pd
 import requests
 
 from scipy.interpolate import interp1d
@@ -8,12 +16,10 @@ from scipy.ndimage.filters import minimum_filter
 from geopy.distance import great_circle
 import matplotlib.dates as mdates
 
+from .plot import ReconPlot
+from ...tropycal import tracks
 
-class Recon:
-    
-    r"""
-    Retrieve and analyze recon data.
-    """
+class Dataset:
 
     #init class
     def __init__(self,stormtuple):
@@ -31,7 +37,7 @@ class Recon:
         obs = [line.split('\"')[1] for line in content if 'option value=' in line][::-1]
         for i,ob in enumerate(obs):
             url_ob = url_mission+'&ob='+ob
-            data = pandas.read_html(url_ob)[0]
+            data = pd.read_html(url_ob)[0]
             data = data.rename(columns = {[name for name in data if 'Time' in name][0]:'Time'})
             if i==0:
                 mission = data[:-1]
@@ -86,14 +92,17 @@ class Recon:
         data['sfmr'] = mission['SFMR Peak (10s Avg.) Sfc. Wind']
         data['plane_p'] = mission['Aircraft Static Air Pressure']
         data['plane_z'] = mission['Aircraft Geo. Height']
-        return pandas.DataFrame.from_dict(data)
+        return_data = pd.DataFrame.from_dict(data)
+        return_data['time'] = [pd.to_datetime(i) for i in return_data['time']]
+        return return_data
+    
 
     def allMissions(self):
         url_storm = f'{self.url_prefix}basin=al&year={self.year}&storm={self.storm}&product=hdob'
-        missions = pandas.read_html(url_storm)[0]
+        missions = pd.read_html(url_storm)[0]
         missiondata={}
         timer_start = dt.now()
-        print(f'--> Start reading in recon missions')
+        print(f'--> Starting to read in recon missions')
         for i_mission in range(len(missions)):
             mission_num = str(missions['MissionNumber'][i_mission]).zfill(2)
             agency = ''.join(filter(str.isalpha, missions['Agency'][i_mission]))
@@ -149,7 +158,7 @@ class Recon:
                 mission = self.missiondata[name]
                 tmp = self.find_centers(mission)
                 list_of_dfs.append( tmp )
-            data_concat = pandas.concat(list_of_dfs,ignore_index=True)
+            data_concat = pd.concat(list_of_dfs,ignore_index=True)
             data_chron = data_concat.sort_values(by='time').reset_index(drop=True)
             return data_chron
 
@@ -178,7 +187,94 @@ class Recon:
         print('--> Completed recentering recon data (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
         return data
         
+    def __getSubTime(self,time):
+        
+        if isinstance(time,list):
+            t1=min(time)
+            t2=max(time)
+        else:
+            t1 = time-timedelta(hours=6)
+            t2 = time+timedelta(hours=6)
+        subRecon = self.recentered.loc[(self.recentered['time']>=t1) & \
+                               (self.recentered['time']<t2)]
+        return subRecon
+    
+    
+    def findMission(self,time):
+        
+        r"""
+        Return the names of any/all missions that had in-storm observations 
+        during the specified time.
+        """
+        
+        if isinstance(time,list):
+            t1=min(time)
+            t2=max(time)
+        else:
+            t1 = t2 = time
+        selected=[]
+        for name in self.missiondata:
+            t_start = min(self.missiondata[name]['time'])
+            t_end = max(self.missiondata[name]['time'])
+            if (t_start<t1<t_end) or (t_start<t2<t_end) or (t1<t_start<t2):
+                selected.append(name)
+        if len(selected)==0:
+            print('There were no in-storm recon missions during this time')
+        return selected
 
+
+    #PLOT FUNCTION FOR RECON
+    def plot_recon(self,recon_select,zoom="dynamic",ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+        
+        r"""
+        Creates a plot of recon data.
+        
+        Parameters
+        ----------
+        recon_info : Requested recon data
+            pandas.DataFrame or dict, 
+            or string referencing the mission name (e.g. '12_NOAA')
+            or datetime or list of start/end datetimes
+        zoom : str
+            Zoom for the plot. Can be one of the following:
+            "dynamic" - default. Dynamically focuses the domain using the tornado track(s) plotted.
+            "north_atlantic" - North Atlantic Ocean basin
+            "lonW/lonE/latS/latN" - Custom plot domain
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        prop : dict
+            Property of recon plot.
+        map_prop : dict
+            Property of cartopy map.
+        """
+        
+        #Get plot data
+        
+        if isinstance(recon_select,pd.core.frame.DataFrame):
+            dfRecon = recon_select
+        elif isinstance(recon_select,dict):
+            dfRecon = pd.DataFrame.from_dict(recon_select)
+        elif isinstance(recon_select,str):
+            dfRecon = self.missiondata[recon_select]
+        else:
+            dfRecon = self.__getSubTime(recon_select)
+        
+        #Create instance of plot object
+        self.plot_obj = ReconPlot()
+        
+        #Create cartopy projection
+        if cartopy_proj == None:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+            cartopy_proj = self.plot_obj.proj
+        
+        #Plot recon
+        plot_info = self.plot_obj.plot_recon(dfRecon,zoom,ax,return_ax,prop=prop,map_prop=map_prop)
+        
+        #Return axis
+        if ax != None or return_ax==True:
+            return plot_info[0],plot_info[1],plot_info[2]
 
     
     

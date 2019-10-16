@@ -181,8 +181,6 @@ class TornadoPlot(Plot):
         #max_ppf = max(PPF)
         start_date = dt.strftime(min(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
         end_date = dt.strftime(max(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
-        endash = u"\u2013"
-        dot = u"\u2022"
         self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------

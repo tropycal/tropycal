@@ -177,7 +177,7 @@
             
   <div class="section" id="module-tropycal.tracks.storm">
 <span id="storm"></span><h1>Storm<a class="headerlink" href="#module-tropycal.tracks.storm" title="Permalink to this headline">¶</a></h1>
-<p>Functionality for storing and analyzing an idividual storm.</p>
+<p>Functionality for storing and analyzing an individual storm.</p>
 <dl class="class">
 <dt id="tropycal.tracks.storm.Storm">
 <em class="property">class </em><code class="descclassname">tropycal.tracks.storm.</code><code class="descname">Storm</code><span class="sig-paren">(</span><em>storm</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.storm.Storm" title="Permalink to this definition">¶</a></dt>
@@ -325,6 +325,32 @@
 </tbody>
 </table>
 </li>
+<li><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</li>
+<li><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</li>
+<li><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</li>
+<li><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.storm.Storm.plot_recon">
+<code class="descname">plot_recon</code><span class="sig-paren">(</span><em>stormRecon=None</em>, <em>recon_select=None</em>, <em>zoom='dynamic'</em>, <em>barbs=False</em>, <em>scatter=False</em>, <em>plot_all=False</em>, <em>ax=None</em>, <em>cartopy_proj=None</em>, <em>prop={}</em>, <em>map_prop={}</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.tracks.storm.Storm.plot_recon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of the storm and associated recon data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>zoom</strong> (<em>str</em>) – Zoom for the plot. Can be one of the following:
+“dynamic” - default. Dynamically focuses the domain using the storm track(s) plotted.
+“north_atlantic” - North Atlantic Ocean basin
+“pacific” - East/Central Pacific Ocean basin
+“lonW/lonE/latS/latN” - Custom plot domain</li>
+<li><strong>plot_all</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</li>
 <li><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</li>
 <li><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</li>
 <li><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</li>

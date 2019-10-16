@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Oct  9 21:32:57 2019
-
-@author: slillo
-"""
-
 import numpy as np
 from datetime import datetime as dt,timedelta
 import pandas as pd
@@ -20,6 +12,10 @@ from .plot import ReconPlot
 from ...tropycal import tracks
 
 class Dataset:
+
+    r"""
+    Retrieve and analyze recon data.
+    """
 
     #init class
     def __init__(self,stormtuple):

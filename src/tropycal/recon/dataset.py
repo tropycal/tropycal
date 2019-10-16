@@ -227,15 +227,15 @@ class Dataset:
         
         Parameters
         ----------
-        recon_info : Requested recon data
+        recon_select : Requested recon data
             pandas.DataFrame or dict, 
-            or string referencing the mission name (e.g. '12_NOAA')
-            or datetime or list of start/end datetimes
+            or string referencing the mission name (e.g. '12_NOAA'), 
+            or datetime or list of start/end datetimes.
         zoom : str
             Zoom for the plot. Can be one of the following:
-            "dynamic" - default. Dynamically focuses the domain using the tornado track(s) plotted.
-            "north_atlantic" - North Atlantic Ocean basin
-            "lonW/lonE/latS/latN" - Custom plot domain
+            "dynamic" - default - dynamically focuses the domain using the tornado track(s) plotted, 
+            "north_atlantic" - North Atlantic Ocean basin, 
+            "lonW/lonE/latS/latN" - Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs

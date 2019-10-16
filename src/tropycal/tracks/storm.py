@@ -174,7 +174,7 @@ class Storm:
             "dynamic" - default. Dynamically focuses the domain using the storm track(s) plotted.
             "north_atlantic" - North Atlantic Ocean basin
             "pacific" - East/Central Pacific Ocean basin
-            "latW/latE/lonS/lonN" - Custom plot domain
+            "lonW/lonE/latS/latN" - Custom plot domain
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
@@ -230,7 +230,7 @@ class Storm:
                                    | domain on the forecast track.
             "dynamic"              | Dynamically focuses the domain on the
                                    | combined observed and forecast track.
-            "latW/latE/lonS/lonN"  Custom plot domain.
+            "lonW/lonE/latS/latN"  Custom plot domain.
             =====================  ========================================
             
         ax : axes

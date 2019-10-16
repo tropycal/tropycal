@@ -30,7 +30,7 @@ class Dataset():
 
     Parameters
     ----------
-    mag_thres : int
+    mag_thresh : int
         Minimum threshold for tornado rating.
 
     Returns
@@ -83,7 +83,17 @@ class Dataset():
     def getTCtors(self,storm,dist_thresh=1000):
         
         r"""
-        Test function.
+        Retrieves all tornado tracks that occur within a distance threshold (dist_thresh) 
+        of the position of a tropical cyclone along its track.
+        
+        Parameters
+        ----------
+        storm : Storm object containing info on the TC.
+        dist_thresh : threshold distance within which tornadoes are attributed to the TC.
+        
+        Returns
+        -------
+        Dataframe of tornadoes,
         """
         
         self.dist_thresh = dist_thresh
@@ -114,7 +124,9 @@ class Dataset():
     def rotateToHeading(self,storm):
         
         r"""
-        Test function.
+        Rotate tornado tracks to their position relative to the heading of the TC at the time.
+        
+        To be called after getTCtors.
         """
         
         self.stormTors = self.getTCtors(storm)
@@ -147,7 +159,7 @@ class Dataset():
     def makePolarPlot(self):
         
         r"""
-        Test function.
+        Plot tracks of tornadoes relative to the heading of the TC at the time, in the +y direction.
         """
         
         plt.figure(figsize=(7,7))

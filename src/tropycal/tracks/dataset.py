@@ -837,23 +837,28 @@ class Dataset(TrackPlot):
         tsec = str(round(time_elapsed.total_seconds(),2))
         print(f"--> Completed reading in ibtracs data ({tsec} seconds)")
             
-    def get_storm_id(self,name,year):
+    def get_storm_id(self,storm):
         
         r"""
         Returns the storm ID (e.g., AL012019) given the storm name and year
         
         Parameters
         ----------
-        name : str
-            String representing the name of the tropical cyclone
-        year : int
-            Integer representing the year of the tropical cyclone
+        storm : tuple
+            Tuple containing the storm name and year (e.g., ("Matthew",2016)).
             
         Returns
         -------
-        bool
-            Boolean, True if string contains digits, otherwise False
+        str or list
+            If a single storm was found, returns a string containing its ID. Otherwise returns a list of matching IDs.
         """
+        
+        #Error check
+        if isinstance(storm,tuple) == False:
+            raise TypeError("storm must be of type tuple.")
+        if len(storm) != 2:
+            raise ValueError("storm must contain 2 elements, name (str) and year (int)")
+        name,year = storm
         
         #Search for corresponding entry in keys
         keys_use = []

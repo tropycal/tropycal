@@ -1,3 +1,6 @@
 from setuptools import setup
 
-setup(package_dir = { 'tropycal' : 'src/tropycal' })
+setup(name='tropycal',
+      packages=['tropycal'],
+      package_dir = { '' : 'src' },
+)

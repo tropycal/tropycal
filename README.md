@@ -4,7 +4,7 @@ Tropycal intends to simplify the process of retrieving and analyzing cyclone dat
 ## Installation
 The currently recommended method of installation is via cloning the repository:
 
-```
+```sh
 git clone https://github.com/tropycal/tropycal
 cd tropycal
 python setup.py install
@@ -50,11 +50,13 @@ storm.to_xarray()
 storm.to_dataframe()
 ```
 
-Visualize Michael's observed track with the "plot" function:
+Visualize Michael's observed track with the `plot` function:
 
-Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The only cartopy projection currently offered is PlateCarree. Read through the documentation for more customization options.
+Note that you can pass various arguments to the `plot` function, such as customizing the map and track aspects. The only cartopy projection currently offered is PlateCarree. Read through the documentation for more customization options.
 
+```python
 storm.plot()
+```
 
 If this storm was ever in NHC's area of responsibility, you can retrieve operational forecast data for this event provided it is available. Forecast discussions date back to 1992, and forecast tracks date back to 1950.
 

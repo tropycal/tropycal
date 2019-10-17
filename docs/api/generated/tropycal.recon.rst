@@ -1,15 +1,29 @@
-#####
-Recon
-#####
 
-.. currentmodule:: tropycal.recon
+
+recon
+==============
 
 .. automodule:: tropycal.recon
 
-.. autosummary::
-   :toctree:
    
-   tropycal.recon.dataset
+   
+   
 
-* :ref:`modindex`
-* :ref:`genindex`
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree: ./
+
+   
+      ReconDataset
+      ReconPlot
+
+   
+   
+
+   
+   
+   
+

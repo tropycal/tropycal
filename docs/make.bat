@@ -7,11 +7,20 @@ REM Command file for Sphinx documentation
 if "%SPHINXBUILD%" == "" (
 	set SPHINXBUILD=sphinx-build
 )
+if "%SPHINXAUTOGEN%" == "" (
+	set SPHINXAUTOGEN=sphinx-autogen
+)
 set SOURCEDIR=.
 set BUILDDIR=_build
 set SPHINXPROJ=tropycal
 
 if "%1" == "" goto help
+
+if "%1" == "clean" (
+	for /d %%i in (%BUILDDIR%\*) do rmdir /q /s %%i
+	rmdir /q /s %SOURCEDIR%\api\generated\
+	goto end
+)
 
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (
@@ -26,6 +35,8 @@ if errorlevel 9009 (
 	exit /b 1
 )
 
+echo.Running sphinx-autogen
+for %%i in (%SOURCEDIR%\api\*.rst) do %SPHINXAUTOGEN% -i -t %SOURCEDIR%\_templates -o %SOURCEDIR%\api\generated %%i
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS%
 goto end
 

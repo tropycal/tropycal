@@ -27,7 +27,7 @@ As an example, read in the North Atlantic HURDAT2 reanalysis dataset, excluding 
 ```python
 import tropycal.tracks as tracks
 
-hurdat_atl = tracks.Dataset(basin='north_atlantic')
+hurdat = tracks.TrackDataset(basin='north_atlantic')
 ```
 
 ### Individual Storm Analysis

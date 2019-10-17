@@ -11,7 +11,7 @@ import matplotlib.dates as mdates
 from .plot import ReconPlot
 #from ..tracks import *
 
-class Dataset:
+class ReconDataset:
 
     r"""
     Retrieve and analyze recon data.

@@ -1,17 +1,31 @@
-######
-Tracks
-######
 
-.. currentmodule:: tropycal.tracks
+
+tracks
+===============
 
 .. automodule:: tropycal.tracks
 
-.. autosummary::
-   :toctree:
+   
+   
+   
 
-   tropycal.tracks.dataset
-   tropycal.tracks.storm
-   tropycal.tracks.season
+   
+   
+   .. rubric:: Classes
 
-* :ref:`modindex`
-* :ref:`genindex`
+   .. autosummary::
+      :toctree: ./
+
+   
+      Season
+      Storm
+      TrackDataset
+      TrackPlot
+
+   
+   
+
+   
+   
+   
+

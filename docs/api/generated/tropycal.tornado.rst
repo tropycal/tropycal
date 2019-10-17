@@ -1,15 +1,29 @@
-#######
-Tornado
-#######
 
-.. currentmodule:: tropycal.tornado
+
+tornado
+================
 
 .. automodule:: tropycal.tornado
 
-.. autosummary::
-   :toctree:
    
-   tropycal.tornado.dataset
+   
+   
 
-* :ref:`modindex`
-* :ref:`genindex`
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree: ./
+
+   
+      TornadoDataset
+      TornadoPlot
+
+   
+   
+
+   
+   
+   
+

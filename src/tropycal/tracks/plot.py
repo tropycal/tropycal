@@ -20,10 +20,12 @@ except:
     warnings.warn("Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
 
 try:
+    import matplotlib.colors as mcolors
     import matplotlib.lines as mlines
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
+    import matplotlib.patches as mpatches
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
@@ -1085,3 +1087,141 @@ class TrackPlot(Plot):
                                         connectionstyle="arc3", 
                                         color='k'),
                         transform=ccrs.PlateCarree())
+
+    def plot_gridded(self,xcoord,ycoord,zcoord,zoom="north_atlantic",ax=None,return_ax=False,prop={},map_prop={}):
+        
+        r"""
+        Creates a plot of a single storm track.
+        
+        Parameters
+        ----------
+        storm : str, tuple or dict
+            Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
+        zoom : str
+            Zoom for the plot. Can be one of the following:
+            "dynamic" - default. Dynamically focuses the domain using the storm track(s) plotted.
+            "north_atlantic" - North Atlantic Ocean basin
+            "pacific" - East/Central Pacific Ocean basin
+            "lonW/lonE/latS/latN" - Custom plot domain
+        plot_all : bool
+            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
+        prop : dict
+            Property of storm track lines.
+        map_prop : dict
+            Property of cartopy map.
+        """
+        
+        #Set default properties
+        default_prop={'cmap':'category','clevs':None,'left_title':'','right_title':'All storms'}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        
+        #Initialize plot
+        prop = self.add_prop(prop,default_prop)
+        map_prop = self.add_prop(map_prop,default_map_prop)
+        self.plot_init(ax,map_prop)
+        
+        #error check
+        if isinstance(zoom,str) == False:
+            raise TypeError('Error: zoom must be of type str')
+        
+        #Pre-generated zooms
+        if zoom in ['north_atlantic','east_pacific','west_pacific','south_pacific','south_indian','north_indian','australia','all']:
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
+            
+        #Custom plot domain
+        else:
+            
+            #Check to ensure 3 slashes are provided
+            if zoom.count("/") != 3:
+                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+            else:
+                try:
+                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
+                    bound_w = float(bound_w)
+                    bound_e = float(bound_e)
+                    bound_s = float(bound_s)
+                    bound_n = float(bound_n)
+                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
+                except:
+                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+        
+        #Determine number of lat/lon lines to use for parallels & meridians
+        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        
+        #--------------------------------------------------------------------------------------
+        
+        varname = findvar(prop['title_L'])
+        cmap,clevs = make_cmap(varname,prop['cmap'],prop['clevs'])
+        if clevs == None:
+            clevs = [np.nanmin(zcoord),np.nanmax(zcoord)]
+        
+        if len(xcoord.shape) and len(ycoord.shape)==1:
+            xcoord,ycoord = np.meshgrid(xcoord,ycoord)
+        
+        cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs))
+        
+        #--------------------------------------------------------------------------------------
+        
+        #Phantom legend
+        handles=[]
+        for _ in range(12):
+            handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
+        l = self.ax.legend(handles=handles,loc='upper right',fancybox=True,framealpha=0,fontsize=11.5)
+        plt.draw()
+
+        #Get the bbox
+        bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        bb_ax = self.ax.get_position()
+
+        #Define colorbar axis
+        cax = self.fig.add_axes([bb.x0-.3*bb.width, bb.y0-.05*bb.height, 0.015, bb.height])
+        cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical')
+        if len(clevs)>2:
+            cax.yaxis.set_ticks([(i-min(clevs))/(max(clevs)-min(clevs)) for i in clevs])
+            cbar.ax.set_yticklabels(clevs)
+        cbar.ax.tick_params(labelsize=11.5)
+    
+        rect_offset = 0.0
+        if prop['cmap']=='category' and varname=='vmax':
+            cax2 = cax.twinx()
+            cax2.yaxis.set_ticks_position('left')
+            cax2.yaxis.set_ticks([(i-5)/(201-5) for i in np.mean([clevs[:-1],clevs[1:]],axis=0)])
+            cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+            cax2.tick_params('both', length=0, width=0, which='major')
+            cax.yaxis.set_ticks_position('right')
+            
+            rect_offset = 0.5
+            
+        rectangle = mpatches.Rectangle((bb.x0-(1.0+rect_offset)*bb.width,bb.y0-0.1*bb.height),(2.0+rect_offset)*bb.width,1.1*bb.height,\
+                                       fc = 'w',edgecolor = '0.8',alpha = 0.8,\
+                                       transform=self.fig.transFigure, zorder=2)
+        self.ax.add_patch(rectangle)
+            
+        #--------------------------------------------------------------------------------------
+        
+        #Add left title
+        try:
+            self.ax.set_title(prop['title_L'],loc='left',fontsize=17,fontweight='bold')
+        except:
+            pass
+        
+        #Add right title
+        try:
+            self.ax.set_title(prop['title_R'],loc='right',fontsize=13)
+        except:
+            pass
+        
+        #--------------------------------------------------------------------------------------
+        
+        #Return axis if specified, otherwise display figure
+        if ax != None or return_ax == True:
+            return self.ax
+        else:
+            plt.show()
+            plt.close()
+
+

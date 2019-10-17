@@ -4,14 +4,112 @@ import pandas as pd
 from datetime import datetime as dt,timedelta
 import requests
 import urllib
+import matplotlib.dates as mdates
+import warnings
 
-def filter_storms(hurdat,keys,year_min=0,year_max=9999,lat_min=-90,lat_max=90,lon_min=0,lon_max=360):
+def findvar(cmd):
+    cmd=cmd.lower()
+    for name in ['lat','lon','mslp','vmax']:
+        if cmd.find(name)>=0:
+            return name
+    if cmd.find('wind')>=0:
+        return 'vmax'
+    elif cmd.find('pressure')>=0 or cmd.find('slp')>=0:
+        return 'mslp'
+    elif cmd.find('count')>=0 or cmd.find('num')>=0:
+        return 'date'
+    else:
+        raise RuntimeError("Error: Could not decipher variable")
+        
+def findfunc(cmd):
+    cmd=cmd.lower()
+    if cmd.find('max')==0:
+        return 0,lambda x: np.nanmax(x)
+    if cmd.find('min')==0:
+        return 0,lambda x: np.nanmin(x)
+    elif cmd.find('mean')>=0 or cmd.find('average')>=0 or cmd.find('avg')>=0:
+        return 4,lambda x: np.nanmean(x)
+    elif cmd.find('percentile')>=0:
+        ptile = int(''.join([c for c in cmd if c.isdigit()]))
+        return 4,lambda x: np.nanpercentile(x,ptile)
+    elif cmd.find('count')>=0 or cmd.find('num')>=0:
+        return 0,lambda x: len(x)
+    else:
+        raise RuntimeError("Error: Could not decipher function")
+
+def interp_storm(storm_dict,timeres=1/24):
+    new_storm = {}
+    for name in ['date','vmax','mslp','lat','lon']:
+        new_storm[name]=[]
+    times = mdates.date2num(storm_dict['date'])
+    try:
+        targettimes = np.arange(times[0],times[-1]+timeres,timeres)
+        new_storm['date'] = [t.replace(tzinfo=None) for t in mdates.num2date(targettimes)]
+        for name in ['vmax','mslp','lat','lon']:
+            new_storm[name] = np.interp(targettimes,\
+                     [x for x,t in zip(times,storm_dict['type']) if t in ['TD','SD','SS','TS','HU']],\
+                     [x for x,t in zip(storm_dict[name],storm_dict['type']) if t in ['TD','SD','SS','TS','HU']])
+    except:
+        pass
+    return new_storm
+    
+def filter_storms(trackdata,year_range=(0,9999),date_range=('1/1','12/31'),subset_domain=(0,360,-90,90),doInterp=False):
+    r"""
+    trackdata : tracks.Dataset object
+    subset_domain : str
+        String or tuple representing a bounded region, 'latW/latE/latS/latN'
+    Returns : dataframe
+    """
+    
+    if isinstance(subset_domain,str):
+        lon_min,lon_max,lat_min,lat_max = [float(i) for i in subset_domain.split("/")]
+    else:
+        lon_min,lon_max,lat_min,lat_max = subset_domain
+    year_min,year_max = year_range
+    date_min,date_max = [dt.strptime(i,'%m/%d') for i in date_range]
+    date_max += timedelta(days=1,seconds=-1)
+            
+    points={}
+    for name in ['vmax','mslp','type','lat','lon','date','stormid']:
+        points[name]=[]
+    for key in trackdata.keys:
+        istorm = trackdata.data[key].copy()
+        if doInterp:
+            istorm = interp_storm(istorm)
+            istorm['type']=['TD']*len(istorm['date'])
+        for i,(iwind,imslp,itype,ilat,ilon,itime) in \
+        enumerate(zip(istorm['vmax'],istorm['mslp'],istorm['type'],istorm['lat'],istorm['lon'],istorm['date'])):
+            if itype in ['TD','SD','TS','SS','HU'] \
+            and lat_min<=ilat<=lat_max and lon_min<=ilon%360<=lon_max \
+            and year_min<=itime.year<=year_max \
+            and date_min.replace(year=itime.year)<=itime<=date_max.replace(year=itime.year):
+                points['vmax'].append(iwind)
+                points['mslp'].append(imslp)
+                points['type'].append(itype)
+                points['lat'].append(ilat)
+                points['lon'].append(ilon)
+                points['date'].append(itime)
+                points['stormid'].append(key)
+    return pd.DataFrame.from_dict(points)
+
+
+def filter_storms_vp(trackdata,year_min=0,year_max=9999,subset_domain=None):
+    r"""
+    trackdata : tracks.Dataset object
+    subset_domain : str
+        String representing either a bounded region 'latW/latE/latS/latN', or a basin name.
+    """
+    if subset_domain == None:
+        lon_min,lon_max,lat_min,lat_max = [0,360,-90,90]
+    else:
+        lon_min,lon_max,lat_min,lat_max = [float(i) for i in subset_domain.split("/")]
     vp=[]
-    for storm in keys:
-        istorm = hurdat[storm]
-        for i,(iwind,imslp,itype,ilat,ilon,itime) in enumerate(zip(istorm['vmax'],istorm['mslp'],istorm['type'],istorm['lat'],istorm['lon'],istorm['date'])):
+    for key in trackdata.keys:
+        istorm = trackdata.data[key]
+        for i,(iwind,imslp,itype,ilat,ilon,itime) in \
+        enumerate(zip(istorm['vmax'],istorm['mslp'],istorm['type'],istorm['lat'],istorm['lon'],istorm['date'])):
             if np.nan not in [iwind,imslp] and itype in ['TD','TS','SS','HU'] \
-                   and lat_min<=ilat<=lat_max and lon_min<=360+ilon<=lon_max \
+                   and lat_min<=ilat<=lat_max and lon_min<=ilon%360<=lon_max \
                    and year_min<=itime.year<=year_max:
                 vp.append([imslp,iwind])
     return vp
@@ -42,7 +140,28 @@ def months_in_julian(year):
     midpoint_julian = (np.array(months_julian) + np.array(months_julian[1:]+[length_of_year]))/2.0
     return {'start':months_julian,'midpoint':midpoint_julian.tolist(),'name':months_names}
 
-#Convert vmax to category
+#Convert between wind and category
+def wind2cat(wind):
+    w2c = {5:-1,\
+           34:0,\
+           64:1,\
+           83:2,\
+           96:3,\
+           113:4,\
+           137:5}
+    return w2c[wind]
+
+def cat2wind(cat):
+    c2w = {-1:5,\
+           0:34,\
+           1:64,\
+           2:83,\
+           3:96,\
+           4:113,\
+           5:137}
+    return c2w[cat]
+
+
 def convert_category(vmax):
     if vmax >= 137:
         return 5
@@ -204,6 +323,32 @@ def category_color(vmax):
         return '#FF00FC'
     else:
         return '#8B0088'
+
+
+def make_cmap(varname,x,clevs):
+    import matplotlib as mlib
+    import matplotlib.colors as mcolors
+    if x=='category':
+        if varname=='vmax':
+            clevs = [cat2wind(c) for c in range(-1,6)]+[200]
+            colorstack = [mcolors.to_rgba(category_color(lev)) \
+                           for c,lev in enumerate(clevs[:-1]) \
+                           for _ in range((clevs[c+1]-clevs[c])*10)]
+            cmap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colorstack)
+        else:
+            warnings.warn('Saffir Simpson category colors only allowed for wind.\n'+\
+                          'Defaulting to plasma colormap.')
+            x = 'plasma'
+    if x!='category':
+        if isinstance(x,str):
+            cmap = mlib.cm.get_cmap(x)
+        elif isinstance(x,list):
+            colorstack = np.vstack([mcolors.to_rgba(color) for color in x])
+            cmap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colorstack)
+        else:
+            cmap=x
+    return cmap,clevs
+
 
 def str2(a):
     if a < 10:

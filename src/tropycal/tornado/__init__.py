@@ -1,4 +1,7 @@
 r"""Functionality for reading and analyzing tornado data."""
 
 from .dataset import TornadoDataset
-from .plot import TornadoPlot
+
+import sys
+if 'sphinx' not in sys.modules:
+    from .plot import TornadoPlot

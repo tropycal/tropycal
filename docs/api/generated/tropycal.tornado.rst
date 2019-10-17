@@ -18,7 +18,6 @@ tornado
 
    
       TornadoDataset
-      TornadoPlot
 
    
    

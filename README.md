@@ -18,8 +18,6 @@ python setup.py install
 - xarray >= 0.11.2
 - geopy >= 1.18.1
 
-To fully leverage tropycal's plotting capabilities, it is strongly recommended to have cartopy >= 0.17.0 installed.
-
 ## Documentation
 For full documentation, please refer to [Tropycal Documentation](https://tropycal.readthedocs.io/en/latest/).
 
@@ -29,12 +27,12 @@ As an example, read in the North Atlantic HURDAT2 reanalysis dataset, excluding 
 ```python
 import tropycal.tracks as tracks
 
-hurdat_atl = tracks.Dataset(basin='north_atlantic')
+hurdat = tracks.TrackDataset(basin='north_atlantic')
 ```
 
 ### Individual Storm Analysis
 
-Individual storms can be retrieved from the dataset by calling the `get_storm` function, which returns an instance of a Storm object. This can be done by either entering a tuple containing the storm name and year, or by the standard tropical cyclone ID (e.g., AL012019).
+Individual storms can be retrieved from the dataset by calling the "get_storm" function, which returns an instance of a Storm object. This can be done by either entering a tuple containing the storm name and year, or by the standard tropical cyclone ID (e.g., AL012019).
 
 Let's retrieve an instance of Hurricane Michael from 2018:
 
@@ -52,13 +50,11 @@ storm.to_xarray()
 storm.to_dataframe()
 ```
 
-Visualize Michael's observed track with the `plot` function:
+Visualize Michael's observed track with the "plot" function:
 
 Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The only cartopy projection currently offered is PlateCarree. Read through the documentation for more customization options.
 
-```python
 storm.plot()
-```
 
 If this storm was ever in NHC's area of responsibility, you can retrieve operational forecast data for this event provided it is available. Forecast discussions date back to 1992, and forecast tracks date back to 1950.
 

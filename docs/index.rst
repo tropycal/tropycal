@@ -11,6 +11,8 @@ specifically for tropical cyclones.
    install
    support
    api/index
+   sample_usage
+   data
 
 
 Indices and tables

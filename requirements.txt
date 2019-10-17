@@ -4,4 +4,5 @@ scipy
 geopy
 matplotlib
 networkx
+proj
 cartopy

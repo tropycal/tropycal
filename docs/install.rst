@@ -15,6 +15,8 @@ The primary dependencies of tropycal are as follows:
 * xarray >= 0.11.2
 * geopy >= 1.18.1
 
+To fully leverage tropycal's plotting capabilities, it is strongly recommended to have cartopy >= 0.17.0 installed.
+
 ------------
 Installation
 ------------

@@ -14,6 +14,7 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('../src/'))
 
 
@@ -43,7 +44,12 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
 ]
+
+# Turn off code and image links for embedded mpl plots
+plot_html_show_source_link = False
+plot_html_show_formats = False
 
 # Tweak how docs are formatted
 napoleon_use_rtype = False

@@ -1765,14 +1765,14 @@ class Dataset(TrackPlot):
         ----------
         metric : str
             Metric to rank storms by. Can be any of the following:
-            "ace" = rank storms by ACE
-            "start_lat" = starting latitude of cyclone
-            "start_lon" = starting longitude of cyclone
-            "end_lat" = ending latitude of cyclone
-            "end_lon" = ending longitude of cyclone
-            "formation_date" = formation date of cyclone
-            "max_wind" = first instance of the maximum sustained wind of cyclone
-            "min_mslp" = first instance of the minimum MSLP of cyclone
+            * **ace** = rank storms by ACE
+            * **start_lat** = starting latitude of cyclone
+            * **start_lon** = starting longitude of cyclone
+            * **end_lat** = ending latitude of cyclone
+            * **end_lon** = ending longitude of cyclone
+            * **formation_date** = formation date of cyclone
+            * **max_wind** = first instance of the maximum sustained wind of cyclone
+            * **min_mslp** = first instance of the minimum MSLP of cyclone
         return_df : bool
             Whether to return a pandas.DataFrame (True) or dict (False). Default is True.
         ascending : bool

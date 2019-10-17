@@ -74,6 +74,23 @@ class TrackDataset:
     Dataset
         An instance of Dataset.
     """
+ 
+    def __repr__(self):
+         
+        summary = ["<tropycal.tracks.Dataset>"]
+
+        summary.append("Dataset Summary:")
+        summary_keys = {'Basin':self.basin,\
+                        'Source':self.source+[', '+self.ibtracs_mode,''][self.source=='hurdat'],\
+                        'Number of storms':len(self.keys),\
+                        'Maximum wind':np.nanmax([x for stormid in self.keys \
+                                                  for x in self.data[stormid]['vmax']]),\
+                        'Minimum pressure':np.nanmin([x for stormid in self.keys \
+                                                      for x in self.data[stormid]['mslp']])}
+        for key in summary_keys.keys():
+            summary.append(f"{key:>4}: {summary_keys[key]}")
+
+        return "\n".join(summary)
     
     def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,**kwargs):
         
@@ -962,7 +979,7 @@ class TrackDataset:
         """
         
         #Retrieve requested storm
-        if inistance(storm_dict,dict) == False:
+        if isinstance(storm_dict,dict) == False:
             storm_dict = self.get_storm(storm).dict
         else:
             storm_dict = storm
@@ -1084,6 +1101,9 @@ class TrackDataset:
         dict
             If return_dict is True, a dictionary containing data about the ACE climatology is returned.
         """
+        
+        if plot_year<start_year or np.any(np.asarray(compare_years)<start_year):
+            raise RuntimeError("Error: one of the years is before the climatology start_year.")
         
         if self.source == 'ibtracs':
             warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
@@ -1216,14 +1236,14 @@ class TrackDataset:
         
         #Add plot title
         if plot_year == None:
-            title_string = f"{self.basin.title()} Accumulated Cyclone Energy (ACE) Climatology"
+            title_string = f"{self.basin.title().replace('_',' ')} Accumulated Cyclone Energy (ACE) Climatology"
         else:
             cur_year = (dt.now()).year
             if plot_year == cur_year:
                 add_current = f" (through {(dt.now()).strftime('%b %d')})"
             else:
                 add_current = ""
-            title_string = f"{plot_year} {self.basin.title()} Accumulated Cyclone Energy (ACE){add_current}"
+            title_string = f"{plot_year} {self.basin.title().replace('_',' ')} Accumulated Cyclone Energy (ACE){add_current}"
         if rolling_sum != 0:
             title_add = f"\n{rolling_sum}-Day Running Sum"
         else:
@@ -1334,9 +1354,6 @@ class TrackDataset:
         dict
             If return_dict is True, a dictionary containing data about the ACE climatology is returned.
         """
-        
-        if self.source == 'ibtracs':
-            warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
         
         #Create empty dict
         tc_days = {}
@@ -1496,14 +1513,14 @@ class TrackDataset:
         
         #Add plot title
         if plot_year == None:
-            title_string = f"{self.basin.title()} Accumulated {add_str} Days"
+            title_string = f"{self.basin.title().replace('_',' ')} Accumulated {add_str} Days"
         else:
             cur_year = (dt.now()).year
             if plot_year == cur_year:
                 add_current = f" (through {(dt.now()).strftime('%b %d')})"
             else:
                 add_current = ""
-            title_string = f"{plot_year} {self.basin.title()} Accumulated {add_str} Days{add_current}"
+            title_string = f"{plot_year} {self.basin.title().replace('_',' ')} Accumulated {add_str} Days{add_current}"
         if rolling_sum != 0:
             title_add = f"\n{rolling_sum}-Day Running Sum"
         else:
@@ -1621,7 +1638,7 @@ class TrackDataset:
         else:
             return
     
-    def wind_pres_relationship(self,storm=None,start_year=1851,end_year=None,return_dict=False,plot=True,save_path=None):
+    def wind_pres_relationship(self,storm=None,year_range=(None,None),return_dict=False,plot=True,save_path=None):
         
         r"""
         Creates a climatology of maximum sustained wind speed vs. minimum sea level pressure relationships.
@@ -1630,9 +1647,8 @@ class TrackDataset:
         ----------
         storm : str or tuple
             Storm to plot. Can be either string of storm ID (e.g., "AL052019"), or tuple with storm name and year (e.g., ("Matthew",2016)).
-        start_year : int
+        start_year : list or array or tuple
             Year to begin calculating the climatology over. Default is 1851.
-        end_year : int
             Year to end calculating the climatology over. Default is the latest year available in HURDAT/Best Track.
         return_dict : bool
             Determines whether to return data from this function. Default is False.
@@ -1646,17 +1662,16 @@ class TrackDataset:
         dict
             If return_dict is True, a dictionary containing data about the wind vs. MSLP relationship climatology is returned.
         """
-        
-        if self.source == 'ibtracs':
-            warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
-        
+
         relationship = {}
         
         #Determine end year of hurdat dataset
+        start_year,end_year = year_range
+        if start_year == None: start_year = self.data[self.keys[0]]['year']
         if end_year == None: end_year = self.data[self.keys[-1]]['year']
         
-        #Get velocity & pressure pairs for all storms in HURDAT
-        vp = filter_storms(self.data,self.keys,year_min=start_year,year_max=end_year)
+        #Get velocity & pressure pairs for all storms in dataset
+        vp = filter_storms_vp(self,year_min=start_year,year_max=end_year)
         relationship['vp'] = vp
 
         #Create 2D histogram of v+p relationship
@@ -1675,7 +1690,7 @@ class TrackDataset:
         fig=plt.figure(figsize=(12,9.5),dpi=200)
         
         #Plot climatology
-        CS=plt.pcolor(xedges,yedges,counts**0.35,vmin=0,vmax=2000**.3,cmap='gnuplot2_r')
+        CS=plt.pcolor(xedges,yedges,counts**0.3,vmin=0,vmax=np.amax(counts)**.3,cmap='gnuplot2_r')
         plt.plot(xedges,[testfit(vp,x,2) for x in xedges],'k--',linewidth=2)
         
         #Plot storm, if specified
@@ -1700,6 +1715,14 @@ class TrackDataset:
                     return ['#00EE00','palegreen'] #lime
                 else:
                     return ['#00A600','#3BD73B']
+                
+            def getMarker(itype):
+                mtype = '^'
+                if itype in ['SD','SS']:
+                    mtype = 's'
+                elif itype in ['TD','TS','HU']:
+                    mtype = 'o'
+                return mtype
             
             xt_label = False
             tr_label = False
@@ -1731,7 +1754,8 @@ class TrackDataset:
         #Additional plot settings
         plt.xlabel('Maximum sustained winds (kt)',fontsize=14)
         plt.ylabel('Minimum central pressure (hPa)',fontsize=14)
-        plt.title('TC Pressure vs. Wind \n North Atlantic Basin',fontsize=18,fontweight='bold')
+        plt.title(f"TC Pressure vs. Wind \n {self.basin.title().replace('_',' ')} | "+\
+                  f"{start_year}-{end_year}",fontsize=18,fontweight='bold')
         plt.xticks(np.arange(20,200,20))
         plt.yticks(np.arange(880,1040,20))
         plt.tick_params(labelsize=14)
@@ -1740,14 +1764,14 @@ class TrackDataset:
         cbar=fig.colorbar(CS)
         cbar.ax.set_ylabel('Historical Frequency',fontsize=14)
         cbar.ax.tick_params(labelsize=14)
-        cbar.set_ticks(np.asarray([0,5,50,200,500,2000])**0.3, update_ticks=True)
-        cbar.set_ticklabels([0,5,50,200,500,2000], update_ticks=True)
+        cbar.set_ticks(np.array([i for i in [0,5,50,200,500,1000,2000] if i<np.amax(counts)])**0.3, update_ticks=True)
+        cbar.set_ticklabels([i for i in [0,5,50,200,500,1000,2000] if i<np.amax(counts)], update_ticks=True)
         
         #Show/save plot and close
         if save_path == None:
             plt.show()
         else:
-            plt.savefig(savepath,bbox_inches='tight')
+            plt.savefig(save_path,bbox_inches='tight')
         plt.close()
         
         if return_dict == True:
@@ -2002,3 +2026,99 @@ class TrackDataset:
                 ace_rank['ace'].append(year_ace)
                 
         return ace_rank
+
+    def gridded_stats(self,cmd_request,year_range=None,date_range=('1/1','12/31'),binsize=1,\
+                         storm=None,zoom=None,ax=None,cartopy_proj=None,prop={},map_prop={}):
+        
+        r"""
+        Creates a plot of gridded statistics.
+        
+        Parameters
+        ----------
+        cmd_request : string
+            This string can be a descriptor for what you want to plot.
+            It will be used to define the variable (e.g. 'vmax') and the function (e.g. np.max()).
+            Finally this string is also used as the plot title.
+        storm : str, tuple or dict
+            Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
+        zoom : str
+            Zoom for the plot. Default is "dynamic". Can be one of the following:
+            
+            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
+            * **(basin_name)** - Any of the acceptable basins (check "Dataset" for a list).
+            * **lonW/lonE/latS/latN** - Custom plot domain.
+        plot_all : bool
+            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        prop : dict
+            Property of storm track lines.
+        map_prop : dict
+            Property of cartopy map.
+        """
+
+        sample_min,func = findfunc(cmd_request)
+        varname = findvar(cmd_request)
+        
+        if zoom == None:
+            zoom = self.basin
+        
+        if year_range == None:
+            start_year = self.data[self.keys[0]]['year']
+            end_year = self.data[self.keys[-1]]['year']
+            year_range = (start_year,end_year)
+        
+        points = filter_storms(self,year_range,date_range,doInterp=True)
+        
+        #Round lat/lon points down to nearest bin
+        to_bin = lambda x: np.floor(x / binsize) * binsize
+        points["latbin"] = points.lat.map(to_bin)
+        points["lonbin"] = points.lon.map(to_bin)
+        
+        #Group by latbin,lonbin,stormid
+        groups = points.groupby(("latbin", "lonbin","stormid"))
+        #Loops through groups, and apply stat func to storms
+        new_df = {'latbin':[],'lonbin':[],'stormid':[],varname:[]}
+        for g in groups:
+            new_df['latbin'].append(g[0][0])
+            new_df['lonbin'].append(g[0][1])
+            new_df['stormid'].append(g[0][2])
+            new_df[varname].append(func(g[1][varname]))
+        new_df = pd.DataFrame.from_dict(new_df)
+        
+        #Group again, by latbin,lonbin
+        groups = new_df.groupby(("latbin", "lonbin"))
+        zi = [func(g[1][varname]) if len(g[1])>sample_min else np.nan for g in groups]
+        coords = [g[0] for g in groups]
+        
+        xi= np.arange(np.min(points["lonbin"])-binsize,np.max(points["lonbin"])+2*binsize,binsize)
+        yi = np.arange(np.min(points["latbin"])-binsize,np.max(points["latbin"])+2*binsize,binsize)
+        grid_x, grid_y = np.meshgrid(xi,yi)
+        grid_z = np.ones(grid_x.shape)*np.nan
+        for c,z in zip(coords,zi):
+            grid_z[np.where((grid_y==c[0]) & (grid_x==c[1]))]=z
+        
+        #Create instance of plot object
+        self.plot_obj = TrackPlot()
+        
+        #Create cartopy projection
+        if cartopy_proj == None:
+            if max(points['lon']) > 150 or min(points['lon']) < -150:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+            else:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        
+        #Plot
+        endash = u"\u2013"
+        dot = u"\u2022"
+        title_L = cmd_request.title()
+        title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'
+        prop['title_L'],prop['title_R']=title_L,title_R
+        return_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,zoom,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
+                    
+        #Return axis
+        if ax != None: return return_ax
+
+

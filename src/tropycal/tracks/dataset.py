@@ -23,7 +23,7 @@ try:
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
-class Dataset:
+class TrackDataset:
     
     r"""
     Creates an instance of a Dataset object containing various cyclone data.

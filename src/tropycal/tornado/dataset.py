@@ -23,7 +23,7 @@ except:
 from .plot import TornadoPlot
 #from ...tropycal import tracks
 
-class Dataset():
+class TornadoDataset():
     
     r"""
     Creates an instance of a Dataset object containing tornado data.

@@ -12,11 +12,8 @@ import requests
 
 from .plot import TrackPlot
 from .tools import *
-#from ...tropycal import tornado
-#from ...tropycal import recon
-#from ..tornado import Dataset
-#from ..tornado import TornadoPlot
 from ..tornado import *
+from ..recon import *
 
 try:
     import zipfile
@@ -930,12 +927,12 @@ class Storm:
             try:
                 self.stormTors
             except:
-                Tors = tornado.Dataset()
+                Tors = TornadoDataset()
                 self.stormTors = Tors.getTCtors(self)
         
         #Create instance of plot object
         self.plot_obj_tc = TrackPlot()
-        self.plot_obj_tor = tornado.TornadoPlot()
+        self.plot_obj_tor = TornadoPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:
@@ -994,7 +991,7 @@ class Storm:
             try:
                 self.stormRecon
             except:
-                self.stormRecon = recon.Dataset((self.name,self.year))
+                self.stormRecon = ReconDataset((self.name,self.year))
         
         if recon_select == None:
             dfRecon = self.stormRecon.recentered
@@ -1011,7 +1008,7 @@ class Storm:
         
         #Create instance of plot object
         self.plot_obj_tc = TrackPlot()
-        self.plot_obj_rec = recon.ReconPlot()
+        self.plot_obj_rec = ReconPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:

@@ -17,7 +17,6 @@ import sys
 
 import tropycal
 
-#sys.path.insert(0, os.path.abspath('../src/'))
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 
@@ -56,6 +55,7 @@ plot_html_show_formats = False
 
 # Tweak how docs are formatted
 napoleon_use_rtype = False
+napoleon_include_private_with_doc = False
 
 # Control main class documentation
 autoclass_content = 'both'
@@ -82,7 +82,11 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path .
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'plot.py',
+                   'tracks/plot.py',
+                   'tropycal/tracks/plot.py',
+                   'src/tropycal/tracks/plot.py',
+                   '../src/tropycal/tracks/plot.py']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -200,4 +204,3 @@ texinfo_documents = [
 ]
 
 #--------------- autosummary -------------------------------------------------
-

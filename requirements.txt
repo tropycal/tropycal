@@ -4,5 +4,3 @@ scipy
 geopy
 matplotlib
 networkx
-proj==4.9.0
-cartopy

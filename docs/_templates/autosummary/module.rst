@@ -1,4 +1,4 @@
-{% if fullname in ['metpy.calc', 'metpy.plots.ctables', 'metpy.xarray'] %}
+{% if fullname in ['tropycal.tracks.plot', 'tropycal.tracks.TrackPlot', 'metpy.xarray'] %}
 
 {% include 'overrides/' ~ fullname ~ '.rst' with context %}
 

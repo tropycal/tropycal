@@ -15,6 +15,8 @@
 import os
 import sys
 
+import tropycal
+
 sys.path.insert(0, os.path.abspath('../src/'))
 
 
@@ -107,6 +109,9 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+# These paths are either relative to html_static_path
+# or fully qualified paths (eg. https://...)
+html_css_files = ['css/theme.css']
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -195,4 +200,3 @@ texinfo_documents = [
 
 #--------------- autosummary -------------------------------------------------
 
-autosummary_generate=True

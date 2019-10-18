@@ -910,7 +910,7 @@ class Storm:
             f.write(response.content)
 
     #PLOT FUNCTION FOR TORNADOES
-    def plot_tors(self,Tors=None,zoom="dynamic",plotPPF=False,plot_all=False,\
+    def plot_tors(self,dist_thresh=1000,Tors=None,zoom="dynamic",plotPPF=False,plot_all=False,\
                   ax=None,cartopy_proj=None,prop={},map_prop={}):
                 
         r"""
@@ -955,14 +955,11 @@ class Storm:
                 self.stormTors
             except:
                 Tors = TornadoDataset()
-                self.stormTors = Tors.getTCtors(self)
+                self.stormTors = Tors.getTCtors(self,dist_thresh)
     
-        if len(self.stormTors)==0:
-            warnings.warn("No tornadoes were found with this storm.")
-            flag = True
-            zoom = 'north_atlantic'
-        else:
-            flag = False
+        if len(self.stormTors)<5:
+            warnings.warn(f"{len(self.stormTors)} tornadoes were found with this storm. Default zoom to east_conus.")
+            zoom = 'east_conus'
     
         #Create instance of plot object
         self.plot_obj_tc = TrackPlot()
@@ -983,8 +980,6 @@ class Storm:
         tor_title = tor_ax.get_title('left')
         
         #Plot storm
-        if flag:
-            zoom = 'dynamic'
         return_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,plot_all,ax=tor_ax,prop=prop,map_prop=map_prop)
         
         return_ax.add_artist(leg_tor)

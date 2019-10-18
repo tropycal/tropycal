@@ -42,10 +42,12 @@ class TornadoPlot(Plot):
             Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
         zoom : str
             Zoom for the plot. Can be one of the following:
-            "dynamic" - default. Dynamically focuses the domain using the tornado track(s) plotted.
-            "north_atlantic" - North Atlantic Ocean basin
-            "conus", "east_conus"
-            "lonW/lonE/latS/latN" - Custom plot domain
+            
+            * **dynamic** - default. Dynamically focuses the domain using the tornado track(s) plotted.
+            * **north_atlantic** - North Atlantic Ocean basin.
+            * **conus** - Contiguous United States.
+            * **east_conus** - Eastern Contiguous United States and western Atlantic.
+            * **lonW/lonE/latS/latN** - Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -87,7 +89,7 @@ class TornadoPlot(Plot):
         try:
             tornado_data = tornado
         except:
-            raise RuntimeError("Error: Storm must be dataframe")
+            raise RuntimeError("Error: tornado must be dataframe")
 
         #Retrieve storm data
         slat = tornado_data['slat']
@@ -130,9 +132,10 @@ class TornadoPlot(Plot):
         #Plot tornadoes as specified
         EFcolors = ef_colors(prop['EFcolors'])
         
+        tornado_data = tornado_data.sort_values('mag')
         for _,row in tornado_data.iterrows():
             plt.plot([row['slon'],row['elon']+.01],[row['slat'],row['elat']+.01], \
-                lw=prop['linewidth'],color=EFcolors[row['mag']],zorder=row['mag']+100, \
+                lw=prop['linewidth'],color=EFcolors[row['mag']], \
                 path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*1.5, foreground='w'), path_effects.Normal()])
 
         #--------------------------------------------------------------------------------------
@@ -191,6 +194,7 @@ class TornadoPlot(Plot):
             count = len(tornado_data[tornado_data['mag']==ef])
             handles.append(mlines.Line2D([], [], linestyle='-',color=color,label=f'EF-{ef} ({count})'))
         leg_tor = self.ax.legend(handles=handles,loc='lower left',fancybox=True,framealpha=0,fontsize=11.5)
+        leg_tor.set_zorder(101)
         plt.draw()
 
         # Get the bbox
@@ -199,7 +203,7 @@ class TornadoPlot(Plot):
 
         rectangle = mpatches.Rectangle((bb_ax.x0,bb_ax.y0),bb.width+bb.x0-bb_ax.x0,bb.height+2*bb.y0-2*bb_ax.y0,\
                                        fc = 'w',edgecolor = '0.8',alpha = 0.8,\
-                                       transform=self.fig.transFigure, zorder=2)
+                                       transform=self.fig.transFigure, zorder=100)
         
         #Add PPF colorbar
         if plotPPF != False:
@@ -212,7 +216,7 @@ class TornadoPlot(Plot):
         
             rectangle = mpatches.Rectangle((bb_ax.x0,bb_ax.y0),bb.width+bb.x0-bb_ax.x0+.06,bb.height+2*bb.y0-2*bb_ax.y0,\
                                            fc = 'w',edgecolor = '0.8',alpha = 0.8,\
-                                           transform=self.fig.transFigure, zorder=2)
+                                           transform=self.fig.transFigure, zorder=100)
 
         self.ax.add_patch(rectangle)
             

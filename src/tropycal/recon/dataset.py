@@ -24,13 +24,13 @@ class ReconDataset:
     Returns
     -------
     Dataset
-        An instance of ReconDataset, initialized with the following.
+        An instance of ReconDataset, initialized with the following:
+        
         * **missiondata** - A dictionary of missions.
             Each entry is a dateframe from a single mission.
             Dictionary keys are given by mission number and agency (e.g. '15_NOAA').
         * **recentered** - A dataframe with all missions concatenated together, and columns 'xdist' and 'ydist'
             indicating the distance (km) of the ob from the interpolated center of the storm.
-        
     """
 
     #init class
@@ -214,15 +214,18 @@ class ReconDataset:
     
     def findMission(self,time):
         
-    r"""
+        r"""
+        Returns the name of a mission or list of missions given a specified time.
+        
         Parameters
         ----------
-        time : datetime object or list of datetimes
+        time : datetime.datetime or list
+            Datetime object or list of datetime objects representing the time of the requested mission.
         
         Returns
         -------
-        The names of any/all missions that had in-storm observations
-        during the specified time.
+        list
+            The names of any/all missions that had in-storm observations during the specified time.
         """
         
         if isinstance(time,list):
@@ -242,7 +245,7 @@ class ReconDataset:
 
 
     #PLOT FUNCTION FOR RECON
-    def plot_recon(self,recon_select,zoom="dynamic",ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot_recon(self,recon_select,zoom="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of recon data.
@@ -262,11 +265,18 @@ class ReconDataset:
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+            
+        Additional Parameters
+        ---------------------
         prop : dict
             Property of recon plot.
         map_prop : dict
             Property of cartopy map.
         """
+        
+        #Pop kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Get plot data
         

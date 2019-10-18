@@ -18,9 +18,8 @@ TornadoDataset
    
       ~TornadoDataset.__init__
       ~TornadoDataset.getTCtors
-      ~TornadoDataset.makePolarPlot
+      ~TornadoDataset.plot_TCtors_rotated
       ~TornadoDataset.plot_tors
-      ~TornadoDataset.rotateToHeading
 
    
    
@@ -37,9 +36,8 @@ TornadoDataset
    
    .. automethod:: __init__
    .. automethod:: getTCtors
-   .. automethod:: makePolarPlot
+   .. automethod:: plot_TCtors_rotated
    .. automethod:: plot_tors
-   .. automethod:: rotateToHeading
 
    
    

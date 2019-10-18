@@ -21,6 +21,7 @@ except:
     warnings.warn("Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
 
 from .plot import TornadoPlot
+from .tools import *
 #from ...tropycal import tracks
 
 class TornadoDataset():
@@ -80,7 +81,7 @@ class TornadoDataset():
         Tors = Tors.assign(elat = [Tors['slat'].values[u] if i==0 else i for u, i in enumerate(Tors['elat'].values)])
         self.Tors = Tors.assign(elon = [Tors['slon'].values[u] if i==0 else i for u, i in enumerate(Tors['elon'].values)])
 
-    def getTCtors(self,storm,dist_thresh=1000):
+    def getTCtors(self,storm,dist_thresh):
         
         r"""
         Retrieves all tornado tracks that occur within a distance threshold (dist_thresh) 
@@ -89,14 +90,13 @@ class TornadoDataset():
         Parameters
         ----------
         storm : Storm object containing info on the TC.
-        dist_thresh : threshold distance within which tornadoes are attributed to the TC.
+        dist_thresh : threshold distance (km) within which tornadoes are attributed to the TC.
         
         Returns
         -------
         Dataframe of tornadoes,
         """
         
-        self.dist_thresh = dist_thresh
         stormdict = storm.to_dict()
         self.stormdict = stormdict
     
@@ -118,19 +118,15 @@ class TornadoDataset():
         stormTors = stormTors.assign(ydist_e = [great_circle((lat1,.5*(lon1+lon2)),(lat2,.5*(lon1+lon2))).kilometers \
                  for lat1,lon1,lat2,lon2 in zip(interp_clat,interp_clon,stormTors['elat'],stormTors['elon'])])
         
-        self.stormTors = stormTors[stormTors['xdist_s']**2 + stormTors['ydist_s']**2 < dist_thresh**2]
-        return self.stormTors
+        stormTors = stormTors[stormTors['xdist_s']**2 + stormTors['ydist_s']**2 < dist_thresh**2]
+        return stormTors
 
-    def rotateToHeading(self,storm):
+    def __rotateToHeading(self):
         
         r"""
         Rotate tornado tracks to their position relative to the heading of the TC at the time.
-        
-        To be called after getTCtors.
         """
-        
-        self.stormTors = self.getTCtors(storm)
-        
+                
         dx = np.gradient(self.stormdict['lon'])
         dy = np.gradient(self.stormdict['lat'])
         
@@ -156,28 +152,44 @@ class TornadoDataset():
         self.stormTors['rot_ydist_e'] = [v[1] for v in newvec_e]
         
 
-    def makePolarPlot(self):
+    def plot_TCtors_rotated(self,storm,dist_thresh=1000):
         
         r"""
         Plot tracks of tornadoes relative to the heading of the TC at the time, in the +y direction.
         """
         
-        plt.figure(figsize=(7,7))
+        self.stormTors = self.getTCtors(storm,dist_thresh)
+        self.__rotateToHeading()
+        
+        plt.figure(figsize=(9,9))
         ax = plt.subplot()
+        
+        EFcolors = ef_colors('default')
+        
         for _,row in self.stormTors.iterrows():
-            plt.plot([row['rot_xdist_s'],row['rot_xdist_e']+.01],[row['rot_ydist_s'],row['rot_ydist_e']+.01],lw=2,c='r')
+            plt.plot([row['rot_xdist_s'],row['rot_xdist_e']+.01],[row['rot_ydist_s'],row['rot_ydist_e']+.01],\
+                     lw=2,c=EFcolors[row['mag']])
         an = np.linspace(0, 2 * np.pi, 100)
-        ax.plot(self.dist_thresh * np.cos(an), self.dist_thresh * np.sin(an),'k')
-        ax.plot([-self.dist_thresh,self.dist_thresh],[0,0],'k--',lw=.5)
-        ax.plot([0,0],[-self.dist_thresh,self.dist_thresh],'k--',lw=.5)
-        plt.arrow(0, -self.dist_thresh*.1, 0, self.dist_thresh*.2, length_includes_head=True,
+        ax.plot(dist_thresh * np.cos(an), dist_thresh * np.sin(an),'k')
+        ax.plot([-dist_thresh,dist_thresh],[0,0],'k--',lw=.5)
+        ax.plot([0,0],[-dist_thresh,dist_thresh],'k--',lw=.5)
+        plt.arrow(0, -dist_thresh*.1, 0, dist_thresh*.2, length_includes_head=True,
           head_width=45, head_length=45,fc='k')
         ax.set_aspect('equal', 'box')
-        plt.savefig(''.join([str(i) for i in stormtuple])+'polartors.png')
-
+        ax.set_xlabel('Left/Right of Storm Heading (km)',fontsize=13)
+        ax.set_ylabel('Behind/Ahead of Storm Heading (km)',fontsize=13)
+        ax.set_title(f'{storm.name} {storm.year} tornadoes relative to heading',fontsize=17)
+        ax.tick_params(axis='both', which='major', labelsize=11.5)
+        #Add legend
+        handles=[]
+        for ef,color in enumerate(EFcolors):
+            count = len(self.stormTors[self.stormTors['mag']==ef])
+            handles.append(mlines.Line2D([], [], linestyle='-',color=color,label=f'EF-{ef} ({count})'))
+        ax.legend(handles=handles,loc='lower left',fontsize=11.5)
+        
 
     #PLOT FUNCTION FOR TORNADOES
-    def plot_tors(self,tor_info,zoom="conus",plotPPF=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot_tors(self,tor_info,zoom="conus",plotPPF=False,ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of tornado tracks and PPF.
@@ -188,11 +200,13 @@ class TornadoDataset():
             Requested tornadoes
         zoom : str
             Zoom for the plot. Can be one of the following:
+            
             * **dynamic** - default. Dynamically focuses the domain using the tornado track(s) plotted.
             * **conus** - Contiguous United States
             * **east_conus** - Eastern CONUS
             * **lonW/lonE/latS/latN** - Custom plot domain
         plotPPF : bool or str
+        
             * **False** - no PPF plot
             * **True** - defaults to "total"
             * **total** - probability of a tornado within 25mi of a point during the period of time selected.
@@ -207,6 +221,9 @@ class TornadoDataset():
             Property of cartopy map.
         """
         
+        prop = kwargs.pop("prop",{})
+        map_prop = kwargs.pop("map_prop",{})
+        
         #Get plot data
         
         if isinstance(tor_info,pd.core.frame.DataFrame):
@@ -215,7 +232,28 @@ class TornadoDataset():
             dfTors = pd.DataFrame.from_dict(tor_info)
         else:
             dfTors = self.__getTimeTors(tor_info)
-        
+            if isinstance(tor_info,list):
+                try:
+                    if prop['PPFcolors']=='SPC':
+                        warnings.warn('SPC colors only allowed for daily PPF.\n Defaulting to plasma colormap.')
+                        prop['PPFcolors']='plasma'
+                except:
+                    warnings.warn('SPC colors only allowed for daily PPF. Defaulting to plasma colormap.')
+                    prop['PPFcolors']='plasma'
+                    
+                if plotPPF!='total':
+                    try:
+                        prop['PPFlevels']
+                    except:
+                        t_int = (max(tor_info)-min(tor_info)).days
+                        if t_int>1:
+                            new_levs=[i*t_int**-.7 \
+                                for i in [2,5,10,15,30,45,60,100]]
+                            for i,_ in enumerate(new_levs[:-1]):
+                                new_levs[i] = max([new_levs[i],0.1])
+                                new_levs[i+1] = new_levs[i]+max([new_levs[i+1]-new_levs[i],.1])
+                            prop['PPFlevels']=new_levs
+    
         #Create instance of plot object
         self.plot_obj = TornadoPlot()
         

@@ -21,6 +21,7 @@ TrackDataset
       ~TrackDataset.get_season
       ~TrackDataset.get_storm
       ~TrackDataset.get_storm_id
+      ~TrackDataset.gridded_stats
       ~TrackDataset.hurricane_days_climo
       ~TrackDataset.plot_storm
       ~TrackDataset.rank_storm
@@ -46,6 +47,7 @@ TrackDataset
    .. automethod:: get_season
    .. automethod:: get_storm
    .. automethod:: get_storm_id
+   .. automethod:: gridded_stats
    .. automethod:: hurricane_days_climo
    .. automethod:: plot_storm
    .. automethod:: rank_storm

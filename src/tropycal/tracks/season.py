@@ -15,7 +15,7 @@ from .tools import *
 class Season:
     
     r"""
-    Initializes an instance of Season.
+    Initializes an instance of Season, retrieved via ``TrackDataset.get_season()``.
 
     Parameters
     ----------
@@ -35,6 +35,37 @@ class Season:
         
     def __getitem__(self, key):
         return self.__dict__[key]
+    
+    def __repr__(self):
+         
+        #Label object
+        summary = ["<tropycal.tracks.Season>"]
+        
+        #Format keys for summary
+        season_summary = self.annual_summary()
+        summary_keys = {'Total Storms':season_summary['season_storms'],
+                        'Named Storms':season_summary['season_named'],
+                        'Hurricanes':season_summary['season_hurricane'],
+                        'Major Hurricanes':season_summary['season_major'],
+                        'Season ACE':season_summary['season_ace']}
+
+        #Add season summary
+        summary.append("Season Summary:")
+        add_space = np.max([len(key) for key in summary_keys.keys()])+3
+        for key in summary_keys.keys():
+            key_name = key+":"
+            val = '%0.1f'%(summary_keys[key]) if key == 'Season ACE' else summary_keys[key]
+            summary.append(f'{" "*4}{key_name:<{add_space}}{val}')
+        
+        #Add additional information
+        summary.append("\nMore Information:")
+        add_space = np.max([len(key) for key in self.coords.keys()])+3
+        for key in self.coords.keys():
+            key_name = key+":"
+            val = '%0.1f'%(self.coords[key]) if key == 'ace' else self.coords[key]
+            summary.append(f'{" "*4}{key_name:<{add_space}}{val}')
+
+        return "\n".join(summary)
     
     def __init__(self,season,info):
         

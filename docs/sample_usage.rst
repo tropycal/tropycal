@@ -1,6 +1,6 @@
-=============
+#############
 Example Usage
-=============
+#############
 
 This sample script illustrates how to retrieve a single storm from the HURDAT2 dataset, and make plots and analyses of this storm.
 

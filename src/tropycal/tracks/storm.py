@@ -919,7 +919,8 @@ class Storm:
         Parameters
         ----------
         Tors : pandas.DataFrame
-            DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase.
+            DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm
+                for future use.
         zoom : str
             Zoom for the plot. Can be one of the following:
             
@@ -955,7 +956,14 @@ class Storm:
             except:
                 Tors = TornadoDataset()
                 self.stormTors = Tors.getTCtors(self)
-        
+    
+        if len(self.stormTors)==0:
+            warnings.warn("No tornadoes were found with this storm.")
+            flag = True
+            zoom = 'north_atlantic'
+        else:
+            flag = False
+    
         #Create instance of plot object
         self.plot_obj_tc = TrackPlot()
         self.plot_obj_tor = TornadoPlot()
@@ -975,6 +983,8 @@ class Storm:
         tor_title = tor_ax.get_title('left')
         
         #Plot storm
+        if flag:
+            zoom = 'dynamic'
         return_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,plot_all,ax=tor_ax,prop=prop,map_prop=map_prop)
         
         return_ax.add_artist(leg_tor)

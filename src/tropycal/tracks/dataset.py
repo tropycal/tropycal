@@ -2072,25 +2072,23 @@ class TrackDataset:
         return ace_rank
 
     def gridded_stats(self,cmd_request,year_range=None,date_range=('1/1','12/31'),binsize=1,\
-                         storm=None,zoom=None,ax=None,cartopy_proj=None,prop={},map_prop={}):
+                         zoom=None,ax=None,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of gridded statistics.
         
         Parameters
         ----------
-        cmd_request : string
-            This string can be a descriptor for what you want to plot.
-            It will be used to define the variable (e.g. 'vmax') and the function (e.g. np.max()).
+        cmd_request : str
+            This string is a descriptor for what you want to plot.
+            It will be used to define the variable (e.g. 'wind' --> 'vmax') and the function (e.g. 'maximum' --> np.max()).
             Finally this string is also used as the plot title.
         year_range : list or tuple
             List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
         date_range : list or tuple
-            List or tuple representing the start and end dates in 'month/day' format (e.g., (6/1,8/15)). Default is entire year.
+            List or tuple representing the start and end dates as a string in 'month/day' format (e.g., ('6/1','8/15')). Default is ('1/1','12/31') or full year.
         binsize : float
             Grid resolution in degrees. Default is 1 degree.
-        storm : str, tuple or dict
-            Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
         zoom : str
             Zoom for the plot. Default is "dynamic". Can be one of the following:
             

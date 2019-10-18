@@ -188,15 +188,15 @@ class TornadoDataset():
             Requested tornadoes
         zoom : str
             Zoom for the plot. Can be one of the following:
-            "dynamic" - default. Dynamically focuses the domain using the tornado track(s) plotted.
-            "north_atlantic" - North Atlantic Ocean basin
-            "conus" - Contiguous United States
-            "east_conus" - Eastern CONUS
-            "lonW/lonE/latS/latN" - Custom plot domain
-        plotPPF : False / True / "total" / "daily"
-            True defaults to "total"
-            "total" - probability of a tornado within 25mi of a point during the period of time selected
-            "daily" - average probability of a tornado within 25mi of a point during a day starting at 12 UTC
+            * **dynamic** - default. Dynamically focuses the domain using the tornado track(s) plotted.
+            * **conus** - Contiguous United States
+            * **east_conus** - Eastern CONUS
+            * **lonW/lonE/latS/latN** - Custom plot domain
+        plotPPF : bool or str
+            * **False** - no PPF plot
+            * **True** - defaults to "total"
+            * **total** - probability of a tornado within 25mi of a point during the period of time selected.
+            * **daily** - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs

@@ -14,7 +14,23 @@ from .plot import ReconPlot
 class ReconDataset:
 
     r"""
-    Retrieve and analyze recon data.
+    Creates an instance of a ReconDataset object containing all recon data for a single storm.
+    
+    Parameters
+    ----------
+    stormtuple : tuple or list
+        Requested storm. Can be either tuple or list containing storm name and year (e.g., ("Matthew",2016)).
+        
+    Returns
+    -------
+    Dataset
+        An instance of ReconDataset, initialized with the following.
+        * **missiondata** - A dictionary of missions.
+            Each entry is a dateframe from a single mission.
+            Dictionary keys are given by mission number and agency (e.g. '15_NOAA').
+        * **recentered** - A dataframe with all missions concatenated together, and columns 'xdist' and 'ydist'
+            indicating the distance (km) of the ob from the interpolated center of the storm.
+        
     """
 
     #init class
@@ -198,8 +214,14 @@ class ReconDataset:
     
     def findMission(self,time):
         
-        r"""
-        Return the names of any/all missions that had in-storm observations 
+    r"""
+        Parameters
+        ----------
+        time : datetime object or list of datetimes
+        
+        Returns
+        -------
+        The names of any/all missions that had in-storm observations
         during the specified time.
         """
         
@@ -228,7 +250,7 @@ class ReconDataset:
         Parameters
         ----------
         recon_select : Requested recon data
-            pandas.DataFrame or dict, 
+            pandas.DataFrame or dict,
             or string referencing the mission name (e.g. '12_NOAA'), 
             or datetime or list of start/end datetimes.
         zoom : str

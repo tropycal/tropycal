@@ -19,7 +19,7 @@ class Season:
 
     Parameters
     ----------
-    storm : dict
+    season : dict
         Dict entry containing all storms within the requested season.
     info : dict
         Dict entry containing general information about the season.

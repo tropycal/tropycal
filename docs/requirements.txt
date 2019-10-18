@@ -1,6 +1,6 @@
-numpy
-pandas
-scipy
-geopy
-matplotlib
+numpy >= 1.15.4
+pandas >= 0.23.4
+scipy >= 1.1.0
+geopy >= 1.18.1
+matplotlib >= 3.0.0
 networkx

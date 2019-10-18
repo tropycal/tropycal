@@ -26,7 +26,7 @@ except:
 class TrackDataset:
     
     r"""
-    Creates an instance of a Dataset object containing various cyclone data.
+    Creates an instance of a TrackDataset object containing various cyclone data.
 
     Parameters
     ----------
@@ -48,7 +48,7 @@ class TrackDataset:
         * **hurdat** - HURDAT2 data source for the North Atlantic and East/Central Pacific basins
         * **ibtracs** - ibtracs data source for regional or global data
     include_btk : bool, optional
-        If True, the best track data from NHC for the current year will be added into the dataset. Valid for "north_atlantic" and "east_pacific" basins. Default is False.
+        If True, the best track data from NHC for the most recent years where it doesn't exist in HURDAT2 will be added into the dataset. Valid for "north_atlantic" and "east_pacific" basins. Default is False.
     
     Other Parameters
     ----------------
@@ -79,16 +79,20 @@ class TrackDataset:
          
         summary = ["<tropycal.tracks.Dataset>"]
 
-        summary.append("Dataset Summary:")
+        #Add general summary
+        emdash = '\u2014'
         summary_keys = {'Basin':self.basin,\
                         'Source':self.source+[', '+self.ibtracs_mode,''][self.source=='hurdat'],\
                         'Number of storms':len(self.keys),\
-                        'Maximum wind':np.nanmax([x for stormid in self.keys \
-                                                  for x in self.data[stormid]['vmax']]),\
-                        'Minimum pressure':np.nanmin([x for stormid in self.keys \
-                                                      for x in self.data[stormid]['mslp']])}
+                        'Maximum wind':f"{int(np.nanmax([x for stormid in self.keys for x in self.data[stormid]['vmax']]))} knots",
+                        'Minimum pressure':f"{int(np.nanmin([x for stormid in self.keys for x in self.data[stormid]['mslp']]))} hPa",
+                        'Year range':f"{self.data[self.keys[0]]['year']} {emdash} {self.data[self.keys[-1]]['year']}"}
+        #Add dataset summary
+        summary.append("Dataset Summary:")
+        add_space = np.max([len(key) for key in summary_keys.keys()])+3
         for key in summary_keys.keys():
-            summary.append(f"{key:>4}: {summary_keys[key]}")
+            key_name = key+":"
+            summary.append(f'{" "*4}{key_name:<{add_space}}{summary_keys[key]}')
 
         return "\n".join(summary)
     
@@ -104,7 +108,7 @@ class TrackDataset:
         
         #Error check
         if ibtracs_mode not in ['wmo','jtwc','jtwc_neumann']:
-            raise ValueError("Error: ibtracs_mode must be either 'wmo', 'jtwc', or 'jtwc_neumann'")
+            raise ValueError("ibtracs_mode must be either 'wmo', 'jtwc', or 'jtwc_neumann'")
         
         #Store input arguments
         self.proj = None #for plotting
@@ -131,7 +135,7 @@ class TrackDataset:
         elif source == 'ibtracs':
             self.__read_ibtracs()
         else:
-            raise ExceptionError("Error: Accepted values for 'source' are 'hurdat' or 'ibtracs'")
+            raise ExceptionError("Accepted values for 'source' are 'hurdat' or 'ibtracs'")
             
         #Replace ibtracs with hurdat for atl/pac basins
         if source == 'ibtracs' and ibtracs_hurdat == True:
@@ -166,12 +170,12 @@ class TrackDataset:
         fcheck = "https://www.nhc.noaa.gov/data/hurdat/"
         if fcheck not in self.atlantic_url:
             if "http" in self.atlantic_url:
-                raise RuntimeError("Error: URL provided is not via NHC")
+                raise RuntimeError("URL provided is not via NHC")
             else:
                 atl_online = False
         if fcheck not in self.pacific_url:
             if "http" in self.pacific_url:
-                raise RuntimeError("Error: URL provided is not via NHC")
+                raise RuntimeError("URL provided is not via NHC")
             else:
                 pac_online = False
         
@@ -513,7 +517,7 @@ class TrackDataset:
         fcheck = "https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/"
         if fcheck not in self.ibtracs_url:
             if "http" in self.ibtracs_url:
-                raise RuntimeError("Error: URL provided is not via NCEI")
+                raise RuntimeError("URL provided is not via NCEI")
             else:
                 ibtracs_online = False
 
@@ -919,7 +923,7 @@ class TrackDataset:
         if len(keys_use) == 0: raise RuntimeError("Storm not found")
         return keys_use
     
-    def get_storm(self,storm,jtwc=False):
+    def get_storm(self,storm):
         
         r"""
         Retrieves a Storm object for the requested storm.
@@ -941,14 +945,14 @@ class TrackDataset:
         elif isinstance(storm, tuple) == True:
             key = self.get_storm_id((storm[0],storm[1]))
         else:
-            raise RuntimeError("Error: Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
+            raise RuntimeError("Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
         
         #Retrieve key of given storm
         if isinstance(key, str) == True:
             return Storm(self.data[key])
         else:
             error_message = ''.join([f"\n{i}" for i in key])
-            error_message = f"Error: Multiple IDs were identified for the requested storm. Choose one of the following storm IDs and provide it as the 'storm' argument instead of a tuple:{error_message}"
+            error_message = f"Multiple IDs were identified for the requested storm. Choose one of the following storm IDs and provide it as the 'storm' argument instead of a tuple:{error_message}"
             raise RuntimeError(error_message)
     
     def plot_storm(self,storm,zoom="dynamic",plot_all=False,ax=None,cartopy_proj=None,prop={},map_prop={}):
@@ -964,7 +968,7 @@ class TrackDataset:
             Zoom for the plot. Default is "dynamic". Can be one of the following:
             
             * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
-            * **(basin_name)** - Any of the acceptable basins (check "Dataset" for a list).
+            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
             * **lonW/lonE/latS/latN** - Custom plot domain.
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
@@ -1024,12 +1028,14 @@ class TrackDataset:
     def get_season(self,year,basin='all'):
         
         r"""
-        Retrieves a dictionary with all the storms for a given year.
+        Retrieves a Season object for the requested season.
         
         Parameters
         ----------
         year : int
             Year to retrieve season data. If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
+        basin : str, optional
+            If using a global ibtracs dataset, this specifies which basin to load in. Otherwise this argument is ignored.
         
         Returns
         -------
@@ -1061,7 +1067,7 @@ class TrackDataset:
                 
         #Error check
         if len(season_dict) == 0:
-            raise RuntimeError("Error: No storms were identified for the given year in the given basin.")
+            raise RuntimeError("No storms were identified for the given year in the given basin.")
                 
         #Add attributes
         first_key = [k for k in season_dict.keys()][0]
@@ -1083,12 +1089,12 @@ class TrackDataset:
         ----------
         plot_year : int
             Year to highlight. If current year, plot will be drawn through today.
-        compare_years : int or 1D-array
-            Seasons to compare against. Can be either a single season (int), or a range or list of seasons (1D-array).
+        compare_years : int or list
+            Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).
         start_year : int
             Year to begin calculating the climatology over. Default is 1950.
         rolling_sum : int
-            Days to calculate a running sum over. Default is 0 (annual running sum).
+            Days to calculate a rolling sum over. Default is 0 (annual running sum).
         return_dict : bool
             Determines whether to return data from this function. Default is False.
         plot : bool
@@ -1098,12 +1104,12 @@ class TrackDataset:
         
         Returns
         -------
-        dict
+        None or dict
             If return_dict is True, a dictionary containing data about the ACE climatology is returned.
         """
         
         if plot_year<start_year or np.any(np.asarray(compare_years)<start_year):
-            raise RuntimeError("Error: one of the years is before the climatology start_year.")
+            raise ValueError("One of the years is before the climatology start_year.")
         
         if self.source == 'ibtracs':
             warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
@@ -1341,7 +1347,7 @@ class TrackDataset:
         start_year : int
             Year to begin calculating the climatology over. Default is 1950.
         rolling_sum : int
-            Days to calculate a running sum over. Default is 0 (annual running sum).
+            Days to calculate a rolling sum over. Default is 0 (annual running sum).
         return_dict : bool
             Determines whether to return data from this function. Default is False.
         plot : bool
@@ -1351,7 +1357,7 @@ class TrackDataset:
         
         Returns
         -------
-        dict
+        None or dict
             If return_dict is True, a dictionary containing data about the ACE climatology is returned.
         """
         
@@ -1641,15 +1647,14 @@ class TrackDataset:
     def wind_pres_relationship(self,storm=None,year_range=(None,None),return_dict=False,plot=True,save_path=None):
         
         r"""
-        Creates a climatology of maximum sustained wind speed vs. minimum sea level pressure relationships.
+        Creates a climatology of maximum sustained wind speed vs minimum MSLP relationships.
         
         Parameters
         ----------
         storm : str or tuple
             Storm to plot. Can be either string of storm ID (e.g., "AL052019"), or tuple with storm name and year (e.g., ("Matthew",2016)).
-        start_year : list or array or tuple
-            Year to begin calculating the climatology over. Default is 1851.
-            Year to end calculating the climatology over. Default is the latest year available in HURDAT/Best Track.
+        year_range : list or tuple
+            List or tuple representing the start and end years (e.g., (1950,2018)). Default is the start and end of dataset.
         return_dict : bool
             Determines whether to return data from this function. Default is False.
         plot : bool
@@ -1664,6 +1669,20 @@ class TrackDataset:
         """
 
         relationship = {}
+        
+        #Determine year range of dataset
+        if year_range == None:
+            start_year = self.data[self.keys[0]]['year']
+            end_year = self.data[self.keys[-1]]['year']
+        elif isinstance(year_range,(list,tuple)) == True:
+            if len(year_range) != 2:
+                raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
+            start_year = int(year_range[0])
+            if start_year < self.data[self.keys[0]]['year']: start_year = self.data[self.keys[0]]['year']
+            end_year = int(year_range[1])
+            if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
+        else:
+            raise TypeError("year_range must be of type tuple or list")
         
         #Determine end year of hurdat dataset
         start_year,end_year = year_range
@@ -1702,7 +1721,7 @@ class TrackDataset:
             elif isinstance(storm, tuple) == True:
                 storm = self.get_storm_id((storm[0],storm[1]))
             else:
-                raise RuntimeError("Error: Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
+                raise RuntimeError("Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
                 
             #Plot storm
             storm_data = self.data[storm]
@@ -1779,8 +1798,7 @@ class TrackDataset:
         else:
             return
     
-    def rank_storm(self,metric,return_df=True,ascending=False,subset_domain=None,subset_time=None,subtropical=True,
-                   start_year=None,end_year=None,return_all=False):
+    def rank_storm(self,metric,return_df=True,ascending=False,subset_domain=None,year_range=None,date_range=None,subtropical=True):
         
         r"""
         Ranks storm by a specified metric.
@@ -1789,12 +1807,14 @@ class TrackDataset:
         ----------
         metric : str
             Metric to rank storms by. Can be any of the following:
+            
             * **ace** = rank storms by ACE
             * **start_lat** = starting latitude of cyclone
             * **start_lon** = starting longitude of cyclone
             * **end_lat** = ending latitude of cyclone
             * **end_lon** = ending longitude of cyclone
-            * **formation_date** = formation date of cyclone
+            * **start_date** = formation date of cyclone
+            * **start_date_indomain** = first time step a cyclone entered the domain
             * **max_wind** = first instance of the maximum sustained wind of cyclone
             * **min_mslp** = first instance of the minimum MSLP of cyclone
         return_df : bool
@@ -1802,15 +1822,13 @@ class TrackDataset:
         ascending : bool
             Whether to return rank in ascending order (True) or descending order (False). Default is False.
         subset_domain : str
-            String representing either a bounded region 'latW/latE/latS/latN', or a basin name.
-        subset_time : list or tuple
-            List or tuple representing the start and end dates in 'month/day' format (e.g., [6/1,8/15]).
+            String representing either a bounded region 'latW/latE/latS/latN', or a basin name. Default is entire basin.
+        year_range : list or tuple
+            List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
+        date_range : list or tuple
+            List or tuple representing the start and end dates in 'month/day' format (e.g., (6/1,8/15)). Default is entire year.
         subtropical : bool
             Whether to include subtropical storms in the ranking. Default is True.
-        start_year : int
-            Year to begin calculating the climatology over. Default is the first year available in the dataset.
-        end_year : int
-            Year to end calculating the climatology over. Default is the latest year available in the dataset.
         
         Returns
         -------
@@ -1823,24 +1841,33 @@ class TrackDataset:
         
         #Error check for metric
         metric = metric.lower()
-        metric_bank = {'ace':['ace'],
-                       'start_lat':['lat','lon','type'],
-                       'start_lon':['lon','lat','type'],
-                       'end_lat':['lat','lon','type'],
-                       'end_lon':['lon','lat','type'],
-                       'formation_date':['date','lat','lon','type'],
-                       'max_wind':['vmax','mslp','lat','lon'],
-                       'min_mslp':['mslp','vmax','lat','lon'],
+        metric_bank = {'ace':{'output':['ace'],'subset_type':'domain'},
+                       'start_lat':{'output':['lat','lon','type'],'subset_type':'start'},
+                       'start_lon':{'output':['lon','lat','type'],'subset_type':'start'},
+                       'end_lat':{'output':['lat','lon','type'],'subset_type':'end'},
+                       'end_lon':{'output':['lon','lat','type'],'subset_type':'end'},
+                       'start_date':{'output':['date','lat','lon','type'],'subset_type':'start'},
+                       'start_date_indomain':{'output':['date','lat','lon','type'],'subset_type':'domain'},
+                       'max_wind':{'output':['vmax','mslp','lat','lon'],'subset_type':'domain'},
+                       'min_mslp':{'output':['mslp','vmax','lat','lon'],'subset_type':'domain'},
                       }
         if metric not in metric_bank.keys():
             raise ValueError("Metric requested for sorting is not available. Please reference the documentation for acceptable entries for 'metric'.")
         
         #Determine year range of dataset
-        if start_year == None: start_year = self.data[self.keys[0]]['year']
-        if end_year == None: end_year = self.data[self.keys[-1]]['year']
+        if year_range == None:
+            start_year = self.data[self.keys[0]]['year']
+            end_year = self.data[self.keys[-1]]['year']
+        elif isinstance(year_range,(list,tuple)) == True:
+            if len(year_range) != 2:
+                raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
+            start_year = int(year_range[0])
+            end_year = int(year_range[1])
+        else:
+            raise TypeError("year_range must be of type tuple or list")
             
         #Initialize empty dict
-        analyze_list = metric_bank[metric]
+        analyze_list = metric_bank[metric]['output']
         analyze_list.insert(1,'id'); analyze_list.insert(2,'name'); analyze_list.insert(3,'year');
         analyze_dict = {key:[] for key in analyze_list}
             
@@ -1879,29 +1906,35 @@ class TrackDataset:
                 else:
                     idx = np.where(basin_tropical==subset_domain)
                 if len(idx[0]) == 0: continue
-                lat_tropical = lat_tropical[idx]
-                lon_tropical = lon_tropical[idx]
-                date_tropical = date_tropical[idx]
-                type_tropical = type_tropical[idx]
-                vmax_tropical = vmax_tropical[idx]
-                mslp_tropical = mslp_tropical[idx]
-                basin_tropical = basin_tropical[idx]
+                
+                #Check for subset type
+                subset_type = metric_bank[metric]['subset_type']
+                if subset_type == 'domain':
+                    lat_tropical = lat_tropical[idx]
+                    lon_tropical = lon_tropical[idx]
+                    date_tropical = date_tropical[idx]
+                    type_tropical = type_tropical[idx]
+                    vmax_tropical = vmax_tropical[idx]
+                    mslp_tropical = mslp_tropical[idx]
+                    basin_tropical = basin_tropical[idx]
             
-            #Filter by time (not working properly yet)
-            """
-            if subset_time != None:
-                start_time = dt.strptime(f"{storm_data['year']}/{subset_time[0]}",'%Y/%m/%d')
-                end_time = dt.strptime(f"{storm_data['year']}/{subset_time[1]}",'%Y/%m/%d')
+            #Filter by time
+            if date_range != None:
+                start_time = dt.strptime(f"{storm_data['year']}/{date_range[0]}",'%Y/%m/%d')
+                end_time = dt.strptime(f"{storm_data['year']}/{date_range[1]}",'%Y/%m/%d')
                 idx = np.array([i for i in range(len(lat_tropical)) if date_tropical[i] >= start_time and date_tropical[i] <= end_time])
                 if len(idx) == 0: continue
-                lat_tropical = lat_tropical[idx]
-                lon_tropical = lon_tropical[idx]
-                date_tropical = date_tropical[idx]
-                type_tropical = type_tropical[idx]
-                vmax_tropical = vmax_tropical[idx]
-                mslp_tropical = mslp_tropical[idx]
-                basin_tropical = basin_tropical[idx]
-             """
+                
+                #Check for subset type
+                subset_type = metric_bank[metric]['subset_type']
+                if subset_type == 'domain':
+                    lat_tropical = lat_tropical[idx]
+                    lon_tropical = lon_tropical[idx]
+                    date_tropical = date_tropical[idx]
+                    type_tropical = type_tropical[idx]
+                    vmax_tropical = vmax_tropical[idx]
+                    mslp_tropical = mslp_tropical[idx]
+                    basin_tropical = basin_tropical[idx]
             
             #Filter by requested metric
             if metric == 'ace':
@@ -1916,7 +1949,7 @@ class TrackDataset:
                 analyze_dict['lon'].append(lon_tropical[use_idx])
                 analyze_dict['type'].append(type_tropical[use_idx])
                 
-            elif metric in ['formation_date']:
+            elif metric in ['start_date']:
                 
                 analyze_dict['lat'].append(lat_tropical[0])
                 analyze_dict['lon'].append(lon_tropical[0])
@@ -1967,7 +2000,7 @@ class TrackDataset:
         except:
             return ranked_dict
         
-    def storm_ace_vs_season(self,storm,start_year=1950,end_year=None):
+    def storm_ace_vs_season(self,storm,year_range=None):
         
         r"""
         Retrives a list of entire hurricane seasons with lower ACE than the storm provided.
@@ -1975,11 +2008,9 @@ class TrackDataset:
         Parameters
         ----------
         storm : str or tuple
-            Storm to plot. Can be either string of storm ID (e.g., "AL052019"), or tuple with storm name and year (e.g., ("Matthew",2016)).
-        start_year : int
-            Year to begin searching from. Default is 1950.
-        end_year : int
-            Year to end calculating the climatology over. Default is the latest year available in HURDAT/Best Track.
+            Storm to rank seasons against. Can be either string of storm ID (e.g., "AL052019"), or tuple with storm name and year (e.g., ("Matthew",2016)).
+        year_range : list or tuple
+            List or tuple representing the start and end years (e.g., (1950,2018)). Default is 1950 through the last year in the dataset.
         
         Returns
         -------
@@ -1987,12 +2018,25 @@ class TrackDataset:
             Dictionary containing the seasons with less ACE than the requested storm.
         """
         
+        #Warning for ibtracs
         if self.source == 'ibtracs':
-            warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
-    
-        #Determine end year of hurdat dataset
-        if start_year == None: start_year = self.data[self.keys[0]]['year']
-        if end_year == None: end_year = self.data[self.keys[-1]]['year']
+            warning_str = "This function is not currently configured to optimally work for the ibtracs dataset."
+            warnings.warn(warning_str)
+
+        #Determine year range of dataset
+        if year_range == None:
+            start_year = self.data[self.keys[0]]['year']
+            if start_year < 1950: start_year = 1950
+            end_year = self.data[self.keys[-1]]['year']
+        elif isinstance(year_range,(list,tuple)) == True:
+            if len(year_range) != 2:
+                raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
+            start_year = int(year_range[0])
+            if start_year < self.data[self.keys[0]]['year']: start_year = self.data[self.keys[0]]['year']
+            end_year = int(year_range[1])
+            if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
+        else:
+            raise TypeError("year_range must be of type tuple or list")
             
         #Check if storm is str or tuple
         if isinstance(storm, str) == True:
@@ -2000,7 +2044,7 @@ class TrackDataset:
         elif isinstance(storm, tuple) == True:
             storm = self.get_storm_id((storm[0],storm[1]))
         else:
-            raise RuntimeError("Error: Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
+            raise RuntimeError("Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
             
         #Get ACE for this storm
         storm_data = self.data[storm]
@@ -2039,16 +2083,20 @@ class TrackDataset:
             This string can be a descriptor for what you want to plot.
             It will be used to define the variable (e.g. 'vmax') and the function (e.g. np.max()).
             Finally this string is also used as the plot title.
+        year_range : list or tuple
+            List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
+        date_range : list or tuple
+            List or tuple representing the start and end dates in 'month/day' format (e.g., (6/1,8/15)). Default is entire year.
+        binsize : float
+            Grid resolution in degrees. Default is 1 degree.
         storm : str, tuple or dict
             Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
         zoom : str
             Zoom for the plot. Default is "dynamic". Can be one of the following:
             
             * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
-            * **(basin_name)** - Any of the acceptable basins (check "Dataset" for a list).
+            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
             * **lonW/lonE/latS/latN** - Custom plot domain.
-        plot_all : bool
-            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs

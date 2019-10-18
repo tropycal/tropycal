@@ -27,7 +27,7 @@ except:
 class Storm:
     
     r"""
-    Initializes an instance of Storm.
+    Initializes an instance of Storm, retrieved via ``TrackDataset.get_storm()``.
 
     Parameters
     ----------
@@ -48,17 +48,40 @@ class Storm:
     
     def __repr__(self):
          
-        summary = ["<tropycal.Storm>"]
-
-        summary.append("Storm Summary:")
-        summary_keys = {'Maximum Wind':np.nanmax(self.dict['vmax']),
-                        'Minimum pressure':np.nanmin(self.dict['mslp'])}
-        for key in summary_keys.keys():
-            summary.append(f"{key:>4}: {summary_keys[key]}")
+        #Label object
+        summary = ["<tropycal.tracks.Storm>"]
         
+        #Format keys for summary
+        max_wind = 'N/A' if all_nan(self.dict['vmax']) == True else np.nanmax(self.dict['vmax'])
+        min_mslp = 'N/A' if all_nan(self.dict['mslp']) == True else np.nanmin(self.dict['mslp'])
+        type_array = np.array(self.dict['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        if len(idx[0]) == 0:
+            start_date = 'N/A'
+            end_date = 'N/A'
+        else:
+            time_tropical = np.array(self.dict['date'])[idx]
+            start_date = time_tropical[0].strftime("%H00 UTC %d %B %Y")
+            end_date = time_tropical[-1].strftime("%H00 UTC %d %B %Y")
+        summary_keys = {'Maximum Wind':f"{max_wind} knots",
+                        'Minimum Pressure':f"{min_mslp} hPa",
+                        'Start Date':start_date,
+                        'End Date':end_date}
+
+        #Add storm summary
+        summary.append("Storm Summary:")
+        add_space = np.max([len(key) for key in summary_keys.keys()])+3
+        for key in summary_keys.keys():
+            key_name = key+":"
+            summary.append(f'{" "*4}{key_name:<{add_space}}{summary_keys[key]}')
+        
+        #Add additional information
         summary.append("\nMore Information:")
+        add_space = np.max([len(key) for key in self.coords.keys()])+3
         for key in self.coords.keys():
-            summary.append(f"{key:>4}: {self.coords[key]}")
+            key_name = key+":"
+            val = '%0.1f'%(self.coords[key]) if key == 'ace' else self.coords[key]
+            summary.append(f'{" "*4}{key_name:<{add_space}}{val}')
 
         return "\n".join(summary)
     
@@ -91,12 +114,12 @@ class Storm:
         
     def to_xarray(self):
         
-        r""" Numpydoc (generate autodoc/autosummary)
+        r"""
         Converts the storm dict into an xarray Dataset object.
         
         Returns
         -------
-        xarray Dataset
+        xarray.Dataset
             An xarray Dataset object containing information about the storm.
         """
         
@@ -132,7 +155,7 @@ class Storm:
         
         Returns
         -------
-        xarray Dataset
+        pandas.DataFrame
             A pandas DataFrame object containing information about the storm.
         """
         
@@ -162,16 +185,16 @@ class Storm:
     def plot(self,zoom="dynamic",plot_all=False,ax=None,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
-        Creates a plot of the storm.
+        Creates a plot of the observed track of the storm.
         
         Parameters
         ----------
         zoom : str
             Zoom for the plot. Can be one of the following:
-            "dynamic" - default. Dynamically focuses the domain using the storm track(s) plotted.
-            "north_atlantic" - North Atlantic Ocean basin
-            "pacific" - East/Central Pacific Ocean basin
-            "lonW/lonE/latS/latN" - Custom plot domain
+            
+            * **dynamic** - default. Dynamically focuses the domain using the storm track plotted.
+            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
+            * **lonW/lonE/latS/latN** - Custom plot domain
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
@@ -213,23 +236,19 @@ class Storm:
             Integer representing the forecast number, or datetime object for the closest issued forecast to this date.
         track_labels : str
             Label forecast hours with the following methods:
-            '' = no label
-            'fhr' = forecast hour
-            'valid_utc' = UTC valid time
-            'valid_edt' = EDT valid time
+            
+            * **""** = no label
+            * **"fhr"** = forecast hour (default)
+            * **"valid_utc"** = UTC valid time
+            * **"valid_edt"** = EDT valid time
         cone_days : int
             Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.
         zoom : str
             Zoom for the plot. Can be one of the following:
             
-            =====================  ========================================
-            "dynamic_forecast"     | Default. Dynamically focuses the
-                                   | domain on the forecast track.
-            "dynamic"              | Dynamically focuses the domain on the
-                                   | combined observed and forecast track.
-            "lonW/lonE/latS/latN"  Custom plot domain.
-            =====================  ========================================
-            
+            * **dynamic_forecast** Default. Dynamically focuses the domain on the forecast track.
+            * **dynamic** - Dynamically focuses the domain on the combined observed and forecast track.
+            * **lonW/lonE/latS/latN** Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
@@ -626,8 +645,8 @@ class Storm:
         ----------
         forecast : datetime.datetime or int
             Datetime object representing the desired forecast discussion time, or integer representing the forecast discussion ID.
-        save_path : str
-            Directory path to save the forecast discussion text to.
+        save_path : str, optional
+            Directory path to save the forecast discussion text to. If None (default), forecast won't be saved.
         
         Returns
         -------
@@ -744,7 +763,6 @@ class Storm:
 
         r"""
         Retrieves operational model and NHC forecasts throughout the entire life duration of the storm.
-        https://www.ftp.ncep.noaa.gov/data/nccf/com/ens_tracker/prod/
 
         Returns
         -------
@@ -752,9 +770,12 @@ class Storm:
             Dictionary containing all forecast entries.
         """
         
+        #Real time ensemble data:
+        #https://www.ftp.ncep.noaa.gov/data/nccf/com/ens_tracker/prod/
+        
         #Check to ensure the data source is HURDAT
         if self.source != "hurdat":
-            raise RuntimeError("Error: NHC data can only be accessed when HURDAT is used as the data source.")
+            raise RuntimeError("NHC data can only be accessed when HURDAT is used as the data source.")
             
         #If forecasts dict already exist, simply return the dict
         try:
@@ -767,6 +788,8 @@ class Storm:
         storm_id = self.dict['operational_id']
         storm_year = self.dict['year']
         if storm_year <= 2006: storm_id = self.dict['id']
+        if storm_year < 1954:
+            raise RuntimeError("Forecast data is unavailable for storms prior to 1954.")
         
         #Error check
         if storm_id == '':
@@ -895,16 +918,19 @@ class Storm:
         
         Parameters
         ----------
+        Tors : pandas.DataFrame
+            DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase.
         zoom : str
             Zoom for the plot. Can be one of the following:
-            "dynamic" - default. Dynamically focuses the domain using the storm track(s) plotted.
-            "north_atlantic" - North Atlantic Ocean basin
-            "pacific" - East/Central Pacific Ocean basin
-            "lonW/lonE/latS/latN" - Custom plot domain
+            
+            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted and tornadoes it produced.
+            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
+            * **lonW/lonE/latS/latN** - Custom plot domain
         plotPPF : False / True / "total" / "daily"
-            True defaults to "total"
-            "total" - probability of a tornado within 25mi of a point during the period of time selected
-            "daily" - average probability of a tornado within 25mi of a point during a day starting at 12 UTC
+            Whether to plot practically perfect forecast (PPF). True defaults to "total". Default is False.
+            
+            * **total** - probability of a tornado within 25 miles of a point during the period of time selected.
+            * **daily** - average probability of a tornado within 25 miles of a point during a day starting at 1200 UTC.
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
@@ -965,16 +991,18 @@ class Storm:
                   ax=None,cartopy_proj=None,prop={},map_prop={}):
                 
         r"""
-        Creates a plot of the storm and associated recon data
+        Creates a plot of the storm and associated recon data.
         
         Parameters
         ----------
+        StormRecon : tropycal.recon.ReconDataset
+            An instance of ReconDataset for this storm. If none, one will be generated.
         zoom : str
             Zoom for the plot. Can be one of the following:
-            "dynamic" - default. Dynamically focuses the domain using the storm track(s) plotted.
-            "north_atlantic" - North Atlantic Ocean basin
-            "pacific" - East/Central Pacific Ocean basin
-            "lonW/lonE/latS/latN" - Custom plot domain
+            
+            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
+            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
+            * **lonW/lonE/latS/latN** - Custom plot domain
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes

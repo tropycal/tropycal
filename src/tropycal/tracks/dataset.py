@@ -1671,7 +1671,7 @@ class TrackDataset:
         relationship = {}
         
         #Determine year range of dataset
-        if year_range == None:
+        if year_range == (None,None):
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
         elif isinstance(year_range,(list,tuple)) == True:
@@ -2100,8 +2100,10 @@ class TrackDataset:
             Property of cartopy map.
         """
 
-        sample_min,func = findfunc(cmd_request)
+        threshs,func = findfunc(cmd_request)
         varname = findvar(cmd_request)
+        
+        V_min,P_max,sample_min = threshs
         
         if zoom == None:
             zoom = self.basin
@@ -2111,6 +2113,7 @@ class TrackDataset:
             end_year = self.data[self.keys[-1]]['year']
             year_range = (start_year,end_year)
         
+        print("--> Starting to get filtered storm tracks")
         points = filter_storms(self,year_range,date_range,doInterp=True)
         
         #Round lat/lon points down to nearest bin
@@ -2119,23 +2122,30 @@ class TrackDataset:
         points["lonbin"] = points.lon.map(to_bin)
         
         #Group by latbin,lonbin,stormid
-        groups = points.groupby(("latbin", "lonbin","stormid"))
+        groups = points.groupby(["latbin", "lonbin","stormid"])
         #Loops through groups, and apply stat func to storms
-        new_df = {'latbin':[],'lonbin':[],'stormid':[],varname:[]}
+        new_df = {'latbin':[],'lonbin':[],'stormid':[],varname:[],'V_max':[],'P_min':[]}
         for g in groups:
             new_df['latbin'].append(g[0][0])
             new_df['lonbin'].append(g[0][1])
             new_df['stormid'].append(g[0][2])
             new_df[varname].append(func(g[1][varname]))
+            new_df['V_max'].append(np.nanmax(g[1]['vmax']))
+            new_df['P_min'].append(np.nanmin(g[1]['mslp']))
         new_df = pd.DataFrame.from_dict(new_df)
         
         #Group again, by latbin,lonbin
-        groups = new_df.groupby(("latbin", "lonbin"))
-        zi = [func(g[1][varname]) if len(g[1])>sample_min else np.nan for g in groups]
+        groups = new_df.groupby(["latbin", "lonbin"])
+        if not np.isnan(V_min):
+            zi = [func([i for i,j in zip(g[1][varname],g[1]['V_max']) if j>V_min]) if len(g[1])>sample_min and np.nanmax(g[1]['V_max'])>V_min else np.nan for g in groups]
+        elif not np.isnan(P_max):            
+            zi = [func([i for i,j in zip(g[1][varname],g[1]['P_min']) if j<P_max]) if len(g[1])>sample_min and np.nanmin(g[1]['P_min'])<P_max else np.nan for g in groups]
+        else:
+            zi = [func(g[1][varname]) if len(g[1])>sample_min else np.nan for g in groups]
         coords = [g[0] for g in groups]
         
-        xi= np.arange(np.min(points["lonbin"])-binsize,np.max(points["lonbin"])+2*binsize,binsize)
-        yi = np.arange(np.min(points["latbin"])-binsize,np.max(points["latbin"])+2*binsize,binsize)
+        xi= np.arange(np.nanmin(points["lonbin"])-binsize,np.nanmax(points["lonbin"])+2*binsize,binsize)
+        yi = np.arange(np.nanmin(points["latbin"])-binsize,np.nanmax(points["latbin"])+2*binsize,binsize)
         grid_x, grid_y = np.meshgrid(xi,yi)
         grid_z = np.ones(grid_x.shape)*np.nan
         for c,z in zip(coords,zi):
@@ -2154,7 +2164,7 @@ class TrackDataset:
         #Plot
         endash = u"\u2013"
         dot = u"\u2022"
-        title_L = cmd_request.title()
+        title_L = cmd_request[0].upper()+cmd_request[1:]
         title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'
         prop['title_L'],prop['title_R']=title_L,title_R
         return_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,zoom,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)

@@ -1168,9 +1168,9 @@ class TrackPlot(Plot):
         
         #Phantom legend
         handles=[]
-        for _ in range(12):
+        for _ in range(10):
             handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
-        l = self.ax.legend(handles=handles,loc='upper right',fancybox=True,framealpha=0,fontsize=11.5)
+        l = self.ax.legend(handles=handles,loc='upper left',fancybox=True,framealpha=0,fontsize=11.5)
         plt.draw()
 
         #Get the bbox
@@ -1178,25 +1178,25 @@ class TrackPlot(Plot):
         bb_ax = self.ax.get_position()
 
         #Define colorbar axis
-        cax = self.fig.add_axes([bb.x0-.3*bb.width, bb.y0-.05*bb.height, 0.015, bb.height])
+        cax = self.fig.add_axes([bb.x0+bb.width, bb.y0-.05*bb.height, 0.015, bb.height])
         cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical')
         if len(clevs)>2:
-            cax.yaxis.set_ticks([(i-min(clevs))/(max(clevs)-min(clevs)) for i in clevs])
-            cbar.ax.set_yticklabels(clevs)
+            cbar.ax.yaxis.set_ticks(clevs)
         cbar.ax.tick_params(labelsize=11.5)
+        cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
         if prop['cmap']=='category' and varname=='vmax':
             cax2 = cax.twinx()
-            cax2.yaxis.set_ticks_position('left')
+            cax2.yaxis.set_ticks_position('right')
             cax2.yaxis.set_ticks([(i-5)/(201-5) for i in np.mean([clevs[:-1],clevs[1:]],axis=0)])
             cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
             cax2.tick_params('both', length=0, width=0, which='major')
-            cax.yaxis.set_ticks_position('right')
+            cax.yaxis.set_ticks_position('left')
             
-            rect_offset = 0.5
+            rect_offset = 0.7
             
-        rectangle = mpatches.Rectangle((bb.x0-(1.0+rect_offset)*bb.width,bb.y0-0.1*bb.height),(2.0+rect_offset)*bb.width,1.1*bb.height,\
+        rectangle = mpatches.Rectangle((bb.x0,bb.y0-0.1*bb.height),(1.8+rect_offset)*bb.width,1.1*bb.height,\
                                        fc = 'w',edgecolor = '0.8',alpha = 0.8,\
                                        transform=self.fig.transFigure, zorder=2)
         self.ax.add_patch(rectangle)

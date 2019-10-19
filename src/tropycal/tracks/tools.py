@@ -9,49 +9,56 @@ import warnings
 
 def findvar(cmd):
     cmd=cmd.lower()
-    for name in ['lat','lon','mslp','vmax']:
-        if cmd.find(name)>=0:
-            return name
-    if cmd.find('wind')>=0:
+    if cmd.find('count')>=0 or cmd.find('num')>=0:
+        return 'date'
+    if cmd.find('wind')>=0 or cmd.find('vmax')>=0:
         return 'vmax'
     elif cmd.find('pressure')>=0 or cmd.find('slp')>=0:
         return 'mslp'
-    elif cmd.find('count')>=0 or cmd.find('num')>=0:
-        return 'date'
     else:
         raise RuntimeError("Error: Could not decipher variable")
         
 def findfunc(cmd):
     cmd=cmd.lower()
+    Pthresh = np.nan
+    Vthresh = np.nan
     if cmd.find('max')==0:
-        return 0,lambda x: np.nanmax(x)
+        return (Vthresh,Pthresh,0),lambda x: np.nanmax(x)
     if cmd.find('min')==0:
-        return 0,lambda x: np.nanmin(x)
+        return (Vthresh,Pthresh,0),lambda x: np.nanmin(x)
     elif cmd.find('mean')>=0 or cmd.find('average')>=0 or cmd.find('avg')>=0:
-        return 4,lambda x: np.nanmean(x)
+        return (Vthresh,Pthresh,4),lambda x: np.nanmean(x)
     elif cmd.find('percentile')>=0:
         ptile = int(''.join([c for c in cmd if c.isdigit()]))
-        return 4,lambda x: np.nanpercentile(x,ptile)
+        return (Vthresh,Pthresh,4),lambda x: np.nanpercentile(x,ptile)
     elif cmd.find('count')>=0 or cmd.find('num')>=0:
-        return 0,lambda x: len(x)
+        if cmd.find('kt')>=0 or cmd.find('wind')>=0:
+            Vthresh = int(''.join([c for c in cmd if c.isdigit()]))
+        if cmd.find('hpa')>=0 or cmd.find('pressure')>=0:
+            Pthresh = int(''.join([c for c in cmd if c.isdigit()]))
+        return (Vthresh,Pthresh,0),lambda x: len(x)
     else:
         raise RuntimeError("Error: Could not decipher function")
 
 def interp_storm(storm_dict,timeres=1/24):
     new_storm = {}
-    for name in ['date','vmax','mslp','lat','lon']:
+    for name in ['date','vmax','mslp','lat','lon','type']:
         new_storm[name]=[]
     times = mdates.date2num(storm_dict['date'])
+    storm_dict['type']=np.asarray(storm_dict['type'])
     try:
         targettimes = np.arange(times[0],times[-1]+timeres,timeres)
         new_storm['date'] = [t.replace(tzinfo=None) for t in mdates.num2date(targettimes)]
+        stormtype = np.ones(len(storm_dict['type']))*-99
+        stormtype[np.where((storm_dict['type']=='TD') | (storm_dict['type']=='SD') | (storm_dict['type']=='TS') | \
+                           (storm_dict['type']=='SS') | (storm_dict['type']=='HU'))] = 0
+        new_storm['type'] = np.interp(targettimes,times,stormtype)
+        new_storm['type'] = np.where(new_storm['type']<0,'NT','TD')
         for name in ['vmax','mslp','lat','lon']:
-            new_storm[name] = np.interp(targettimes,\
-                     [x for x,t in zip(times,storm_dict['type']) if t in ['TD','SD','SS','TS','HU']],\
-                     [x for x,t in zip(storm_dict[name],storm_dict['type']) if t in ['TD','SD','SS','TS','HU']])
+            new_storm[name] = np.interp(targettimes,times,storm_dict[name])
+        return new_storm
     except:
-        pass
-    return new_storm
+        return storm_dict
     
 def filter_storms(trackdata,year_range=(0,9999),date_range=('1/1','12/31'),subset_domain=(0,360,-90,90),doInterp=False):
     r"""
@@ -76,7 +83,6 @@ def filter_storms(trackdata,year_range=(0,9999),date_range=('1/1','12/31'),subse
         istorm = trackdata.data[key].copy()
         if doInterp:
             istorm = interp_storm(istorm)
-            istorm['type']=['TD']*len(istorm['date'])
         for i,(iwind,imslp,itype,ilat,ilon,itime) in \
         enumerate(zip(istorm['vmax'],istorm['mslp'],istorm['type'],istorm['lat'],istorm['lon'],istorm['date'])):
             if itype in ['TD','SD','TS','SS','HU'] \

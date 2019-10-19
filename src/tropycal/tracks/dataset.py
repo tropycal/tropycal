@@ -135,7 +135,7 @@ class TrackDataset:
         elif source == 'ibtracs':
             self.__read_ibtracs()
         else:
-            raise ExceptionError("Accepted values for 'source' are 'hurdat' or 'ibtracs'")
+            raise RuntimeError("Accepted values for 'source' are 'hurdat' or 'ibtracs'")
             
         #Replace ibtracs with hurdat for atl/pac basins
         if source == 'ibtracs' and ibtracs_hurdat == True:
@@ -1644,7 +1644,7 @@ class TrackDataset:
         else:
             return
     
-    def wind_pres_relationship(self,storm=None,year_range=(None,None),return_dict=False,plot=True,save_path=None):
+    def wind_pres_relationship(self,storm=None,year_range=None,return_dict=False,plot=True,save_path=None):
         
         r"""
         Creates a climatology of maximum sustained wind speed vs minimum MSLP relationships.
@@ -1683,11 +1683,6 @@ class TrackDataset:
             if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
         else:
             raise TypeError("year_range must be of type tuple or list")
-        
-        #Determine end year of hurdat dataset
-        start_year,end_year = year_range
-        if start_year == None: start_year = self.data[self.keys[0]]['year']
-        if end_year == None: end_year = self.data[self.keys[-1]]['year']
         
         #Get velocity & pressure pairs for all storms in dataset
         vp = filter_storms_vp(self,year_min=start_year,year_max=end_year)

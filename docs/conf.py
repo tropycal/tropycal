@@ -139,6 +139,8 @@ html_title = ' '.join((project, version))
 # of the sidebar.
 html_logo = os.path.join('_static', 'logo.png')
 
+html_favicon = os.path.join('_static', 'logo_32.ico')
+
 html_context = {
     'doc_path': 'docs',
     'api_dir': 'api/generated',

@@ -26,6 +26,7 @@ try:
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
     import matplotlib.patches as mpatches
+    from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
@@ -229,6 +230,12 @@ class TrackPlot(Plot):
         self.ax.set_title(f"{start_date} {endash} {end_date}\n{max_wind} kt {dot} {min_pres} hPa {dot} {ace:.1f} ACE",loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
+        
+        #Add plot credit
+        text = self.plot_credit()
+        if storm_data['source'] == 'ibtracs' and storm_data['source_info'] == 'World Meteorological Organization (official)':
+            text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n{text}"
+        self.add_credit(text)
         
         #Add legend
         if prop['fillcolor'] == 'category' or prop['linecolor'] == 'category':
@@ -795,6 +802,12 @@ class TrackPlot(Plot):
         self.ax.set_title(f"{sinfo['season_named']} named {dot} {sinfo['season_hurricane']} hurricanes {dot} {sinfo['season_major']} major\n{sinfo['season_ace']:.1f} Cumulative ACE",loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
+        
+        #Add plot credit
+        text = self.plot_credit()
+        if season.source == 'ibtracs' and season.source_info == 'World Meteorological Organization (official)':
+            text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n{text}"
+        self.add_credit(text)
         
         #Add legend
         if prop['fillcolor'] == 'category' or prop['linecolor'] == 'category':

@@ -106,6 +106,10 @@ class ReconDataset:
         data['plane_z'] = mission['Aircraft Geo. Height']
         return_data = pd.DataFrame.from_dict(data)
         return_data['time'] = [pd.to_datetime(i) for i in return_data['time']]
+        
+        #remove nan's for lat/lon coordinates
+        return_data = return_data.dropna(subset=['lat', 'lon'])
+        
         return return_data
     
 
@@ -182,6 +186,7 @@ class ReconDataset:
         else:
             print(f'Found {len(centers)} center passes!')
             timer_start = dt.now()
+            
             #Interpolate center position to time of each ob
             f = interp1d(mdates.date2num(centers['time']),centers['lon'],fill_value='extrapolate',kind='linear')
             interp_clon = f(mdates.date2num(data['time']))
@@ -195,6 +200,8 @@ class ReconDataset:
             data['ydist'] = [great_circle( (interp_clat[i],interp_clon[i]), \
                 (data['lat'][i],interp_clon[i]) ).kilometers* \
                 [1,-1][int(data['lat'][i] < interp_clat[i])] for i in range(len(data))]
+            
+            print(data['xdist'])
             
         print('--> Completed recentering recon data (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
         return data

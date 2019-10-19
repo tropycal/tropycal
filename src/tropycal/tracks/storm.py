@@ -216,6 +216,8 @@ class Storm:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        else:
+            self.plot_obj.proj = cartopy_proj
             
         #Plot storm
         return_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax,prop=prop,map_prop=map_prop)
@@ -1020,6 +1022,7 @@ class Storm:
             Property of cartopy map.
         """
 
+        #Read in reconaissance data for the storm
         if stormRecon == None and not isinstance(recon_select,pd.core.frame.DataFrame):
             try:
                 self.stormRecon

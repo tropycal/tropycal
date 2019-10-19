@@ -994,7 +994,7 @@ class Storm:
 
 
     #PLOT FUNCTION FOR RECON
-    def plot_recon(self,stormRecon=None,recon_select=None,zoom="dynamic",barbs=False,scatter=False,plot_all=False,\
+    def plot_recon(self,stormRecon=None,recon_select=None,zoom="dynamic",barbs=True,scatter=False,plot_all=False,\
                   ax=None,cartopy_proj=None,prop={},map_prop={}):
                 
         r"""

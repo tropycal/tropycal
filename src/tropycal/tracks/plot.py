@@ -794,7 +794,17 @@ class TrackPlot(Plot):
         #--------------------------------------------------------------------------------------
         
         #Add left title
-        self.ax.set_title(f"{season.year} Atlantic Hurricane Season",loc='left',fontsize=17,fontweight='bold')
+        emdash = u"\u2014"
+        basin_name = ((season.basin).replace("_"," ")).title()
+        if season.basin == 'all':
+            season_title = f"{season.year} Global Tropical Cyclone Season"
+        elif season.basin in ['south_indian','south_atlantic','australia','south_pacific']:
+            season_title = f"{season.year-1}{emdash}{season.year} {basin_name} Tropical Cyclone Season"
+        elif season.basin in ['west_pacific']:
+            season_title = f"{season.year} {basin_name.split(' ')[1]} Typhoon Season"
+        else:
+            season_title = f"{season.year} {basin_name.split(' ')[1]} Hurricane Season"
+        self.ax.set_title(season_title,loc='left',fontsize=17,fontweight='bold')
 
         #Add right title
         endash = u"\u2013"

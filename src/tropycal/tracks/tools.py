@@ -48,10 +48,6 @@ def findfunc(cmd,thresh):
         thresh['sample_min']=max([5,thresh['sample_min']])
         return thresh,lambda x: np.nanpercentile(x,ptile)
     elif cmd.find('count')>=0 or cmd.find('num')>=0:
-        if cmd.find('kt')>=0 or cmd.find('wind')>=0:
-            thresh['V_min'] = int(''.join([c for c in cmd if c.isdigit()]))
-        if cmd.find('hpa')>=0 or cmd.find('pressure')>=0:
-            thresh['P_max'] = int(''.join([c for c in cmd if c.isdigit()]))
         return thresh,lambda x: len(x)
     else:
         raise RuntimeError("Error: Could not decipher function")

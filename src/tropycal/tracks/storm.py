@@ -216,6 +216,8 @@ class Storm:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        else:
+            self.plot_obj.proj = cartopy_proj
             
         #Plot storm
         return_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax,prop=prop,map_prop=map_prop)
@@ -879,6 +881,7 @@ class Storm:
         #Return dict
         return forecasts
     
+    
     def download_tcr(self,dir_path=""):
         
         r"""
@@ -909,7 +912,7 @@ class Storm:
         with open(f"{dir_path}TCR_{storm_id}_{storm_name}.pdf", 'wb') as f:
             f.write(response.content)
 
-    #PLOT FUNCTION FOR TORNADOES
+            
     def plot_tors(self,dist_thresh=1000,Tors=None,zoom="dynamic",plotPPF=False,plot_all=False,\
                   ax=None,cartopy_proj=None,prop={},map_prop={}):
                 
@@ -927,11 +930,13 @@ class Storm:
             * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted and tornadoes it produced.
             * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
             * **lonW/lonE/latS/latN** - Custom plot domain
-        plotPPF : False / True / "total" / "daily"
+        plotPPF : bool or str
             Whether to plot practically perfect forecast (PPF). True defaults to "total". Default is False.
-            
-            * **total** - probability of a tornado within 25 miles of a point during the period of time selected.
-            * **daily** - average probability of a tornado within 25 miles of a point during a day starting at 1200 UTC.
+        
+            * **False** - no PPF plot.
+            * **True** - defaults to "total".
+            * **"total"** - probability of a tornado within 25mi of a point during the period of time selected.
+            * **"daily"** - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
@@ -991,8 +996,7 @@ class Storm:
         if ax != None: return return_ax
 
 
-    #PLOT FUNCTION FOR RECON
-    def plot_recon(self,stormRecon=None,recon_select=None,zoom="dynamic",barbs=False,scatter=False,plot_all=False,\
+    def plot_recon(self,stormRecon=None,recon_select=None,zoom="dynamic",barbs=True,scatter=False,plot_all=False,\
                   ax=None,cartopy_proj=None,prop={},map_prop={}):
                 
         r"""
@@ -1020,6 +1024,7 @@ class Storm:
             Property of cartopy map.
         """
 
+        #Read in reconaissance data for the storm
         if stormRecon == None and not isinstance(recon_select,pd.core.frame.DataFrame):
             try:
                 self.stormRecon

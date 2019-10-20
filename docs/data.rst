@@ -12,7 +12,7 @@ The HURDAT2_ reanalysis is an actively updated reanalysis dataset for tropical c
 
 * The "Satellite Era" is generally considered to have begun in 1979 with consistent, reliable satellite observations. Satellite data was generally available before then but on a more limited basis. As such, there are more storms in earlier years that were detected post-operationally from the `HURDAT2 Re-analysis Project`_. Because of a higher likelihood of missed storms in earlier years, some climatological analyses, such as accumulated cyclone energy (ACE) or count of major hurricanes, should be started from a more recent year (e.g., 1950) as opposed to 1851.
 
-* The methodology for identifying and naming subtropical cyclones has changed over the years. Some decades had more frequent subtropical cyclones (e.g., 1970s) than others. The current methodology of naming subtropical storms using the same naming list as tropical storms dates back to 2002. Keep this caveat in mind when using tropycal to analyze subtropical cyclones.
+* The methodology for identifying and naming subtropical cyclones has changed over the years. Some decades had more frequent subtropical cyclones identified in HURDAT2 (e.g., 1970s) than others. The current methodology of naming subtropical storms using the same naming list as tropical storms dates back to 2002. Keep this caveat in mind when using tropycal to analyze subtropical cyclones.
 
 .. _HURDAT2: https://www.nhc.noaa.gov/data/#hurdat
 .. _HURDAT2 Re-analysis Project: https://www.aoml.noaa.gov/hrd/data_sub/re_anal.html
@@ -21,11 +21,11 @@ The HURDAT2_ reanalysis is an actively updated reanalysis dataset for tropical c
 
 ibtracs
 -------
-The ibtracs_ reanalysis is a comprehensive dataset combining tropical cyclone data from multiple worldwide WMO agencies across the world. ibtracs contains many data sources, some which have advantages over others, which can result in discrepancies such as storm tracks, storms that were or were not tropical, or sustained wind measurement that vary between agency. tropycal offers 3 modes of reading in ibtracs data, with the pros and cons of each method listed below.
+The ibtracs_ reanalysis is a comprehensive dataset combining tropical cyclone data from multiple WMO agencies across the world. ibtracs contains many data sources, some which have advantages over others. This results in discrepancies in storm tracks, storms that were or were not tropical, or sustained wind measurement that vary between agency. tropycal offers 3 modes of reading in ibtracs data, with the pros and cons of each method listed below.
 
 **General Caveats:**
 
-* Subtropical cyclones are not identified by every basin.
+* Subtropical cyclones are not identified by every WMO agency. For the North Atlantic basin, refer to the HURDAT2 subtropical cyclone caveats listed above.
 
 * Cyclone Catarina (2004) was not officially tracked by any WMO agency in real time. A more thorough reanalysis exists in literature using McTaggart-Cowan et al. (2006). This data can be read into ibtracs using the ``catarina=True`` flag when declaring an instance of TrackDataset.
 

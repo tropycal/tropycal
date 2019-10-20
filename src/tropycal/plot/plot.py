@@ -6,6 +6,8 @@ import scipy.interpolate as interp
 import urllib
 import warnings
 from datetime import datetime as dt,timedelta
+import pkg_resources
+import posixpath
 
 try:
     import cartopy.feature as cfeature
@@ -19,6 +21,7 @@ try:
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
+    from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
@@ -378,5 +381,11 @@ class Plot:
     def plot_credit(self):
         
         return "Plot generated using troPYcal"
-         
+    
+    def add_credit(self,text):
+        
+        a = self.ax.text(0.99,0.01,text,fontsize=10,color='k',alpha=0.7,fontweight='bold',
+                transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
+        a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='white'),
+                       path_effects.Normal()])
         

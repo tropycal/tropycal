@@ -229,7 +229,7 @@ class TrackDataset:
                     add_basin = 'all'
                 
                 #add empty entry into dict
-                self.data[line[0]] = {'id':line[0],'operational_id':'','name':line[1],'year':int(line[0][4:]),'season':int(line[0][4:]),'basin':add_basin,}
+                self.data[line[0]] = {'id':line[0],'operational_id':'','name':line[1],'year':int(line[0][4:]),'season':int(line[0][4:]),'basin':add_basin,'source_info':'NHC Hurricane Database'}
                 self.data[line[0]]['source'] = self.source
                 current_id = line[0]
                 
@@ -410,7 +410,7 @@ class TrackDataset:
                 add_basin = 'east_pacific'
 
             #add empty entry into dict
-            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,}
+            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'NHC Hurricane Database'}
             self.data[stormid]['source'] = self.source
 
             #add empty lists
@@ -614,6 +614,7 @@ class TrackDataset:
                     if ibtracs_id not in neumann.keys():
                         neumann[ibtracs_id] = {'id':sid,'operational_id':'','name':name,'year':date.year,'season':int(year),'basin':self.basin}
                         neumann[ibtracs_id]['source'] = self.source
+                        neumann[ibtracs_id]['source_info'] = 'Joint Typhoon Warning Center (unofficial) & Charles Neumann reanalysis for South Hemisphere storms'
                         for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
                             neumann[ibtracs_id][val] = []
                         neumann[ibtracs_id]['ace'] = 0.0
@@ -983,7 +984,7 @@ class TrackDataset:
         """
         
         #Retrieve requested storm
-        if isinstance(storm_dict,dict) == False:
+        if isinstance(storm,dict) == False:
             storm_dict = self.get_storm(storm).dict
         else:
             storm_dict = storm
@@ -997,6 +998,8 @@ class TrackDataset:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        else:
+            self.plot_obj.proj = cartopy_proj
             
         #Plot storm
         return_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax=ax,prop=prop,map_prop=map_prop)
@@ -1004,6 +1007,46 @@ class TrackDataset:
         #Return axis
         if ax != None: return return_ax
         
+    def plot_season(self,year,ax=None,cartopy_proj=None,prop={},map_prop={}):
+        
+        r"""
+        Creates a plot of a single season.
+        
+        Parameters
+        ----------
+        year : int
+            Year to retrieve season data. If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        prop : dict
+            Property of storm track lines.
+        map_prop : dict
+            Property of cartopy map.
+        """
+        
+        #Retrieve season object
+        season = self.get_season(year)
+        
+        #Create instance of plot object
+        self.plot_obj = TrackPlot()
+        
+        #Create cartopy projection
+        if cartopy_proj == None:
+            if season.basin in ['east_pacific','west_pacific','south_pacific','australia','all']:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+            else:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        else:
+            self.plot_obj.proj = cartopy_proj
+            
+        #Plot season
+        return_ax = self.plot_obj.plot_season(season,ax,prop=prop,map_prop=map_prop)
+        
+        #Return axis
+        if ax != None: return return_ax
+    
     def search_name(self,name):
         
         r"""
@@ -1076,6 +1119,7 @@ class TrackDataset:
         season_info['basin'] = max(set(basin_list), key=basin_list.count)
         season_info['source_basin'] = season_dict[first_key]['basin']
         season_info['source'] = season_dict[first_key]['source']
+        season_info['source_info'] = season_dict[first_key]['source_info']
                 
         #Return object
         return Season(season_dict,season_info)
@@ -2083,6 +2127,8 @@ class TrackDataset:
             This string is a descriptor for what you want to plot.
             It will be used to define the variable (e.g. 'wind' --> 'vmax') and the function (e.g. 'maximum' --> np.max()).
             Finally this string is also used as the plot title.
+        thresh : dict
+            
         year_range : list or tuple
             List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
         date_range : list or tuple
@@ -2093,7 +2139,7 @@ class TrackDataset:
             Zoom for the plot. Default is "dynamic". Can be one of the following:
             
             * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
-            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
+            * **(basin_name)** - Any of the acceptable basins (check ``TrackDataset()`` for a list).
             * **lonW/lonE/latS/latN** - Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.

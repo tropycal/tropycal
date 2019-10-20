@@ -2190,9 +2190,39 @@ class TrackDataset:
         cmd_request : str
             This string is a descriptor for what you want to plot.
             It will be used to define the variable (e.g. 'wind' --> 'vmax') and the function (e.g. 'maximum' --> np.max()).
-            Finally this string is also used as the plot title.
-        thresh : dict
+            This string is also used as the plot title.
             
+            Variable words to use in cmd_request:
+                
+            * **wind** - (kt)
+            * **pressure** - (hPa)
+            * **wind change** - (kt). Must be followed by an integer value denoting the length of the time window '__ hours'.
+            * **pressure change** - (hPa). Must be followed by an integer value denoting the length of the time window '__ hours'.
+            
+            Units of all wind variables are knots and pressure variables are hPa. These are added to the cmd_request string for the title.
+            
+            Function words to use in cmd_request:
+                
+            * **maximum**
+            * **minimum**
+            * **average** 
+            * **percentile** - Percentile must be preceded by an integer [0,100].
+            * **number** - Number of storms in grid box satisfying filter thresholds.
+            
+        thresh : dict
+            Keywords include:
+                
+            * **sample_min** - minimum number of storms in a grid box for the cmd_request to be applied.
+            For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
+
+            * **V_min** - minimum wind for a given point to be included in the cmd_request.
+            * **P_max** - maximum pressure for a given point to be included in the cmd_request.
+            * **dV_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.
+            * **dP_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.
+            * **dt_window** - time window over which change variables are calculated (hours). Default is 24.
+            
+            Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.
+
         year_range : list or tuple
             List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
         date_range : list or tuple
@@ -2202,15 +2232,15 @@ class TrackDataset:
         zoom : str
             Zoom for the plot. Default is "dynamic". Can be one of the following:
             
-            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
             * **(basin_name)** - Any of the acceptable basins (check ``TrackDataset()`` for a list).
             * **lonW/lonE/latS/latN** - Custom plot domain.
+            
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
-            Property of storm track lines.
+            Property of plot, e.g. 'cmap' and 'clevs'
         map_prop : dict
             Property of cartopy map.
         """

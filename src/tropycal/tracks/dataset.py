@@ -2125,6 +2125,75 @@ class TrackDataset:
                 
         return ace_rank
 
+    def filter_storms(self,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},subset_domain=(0,360,-90,90),doInterp=False,return_keys=True):
+        r"""
+        trackdata : tracks.TrackDataset object
+        subset_domain : str
+            String or tuple representing a bounded region, 'latW/latE/latS/latN'
+        Returns : dataframe
+        """
+
+        default_thresh={'sample_min':1,'P_max':9999,'V_min':0,'dV_min':-9999,'dP_max':9999,'dt_window':24}
+        for key in thresh:
+            default_thresh[key] = thresh[key]
+        thresh = default_thresh
+
+        if isinstance(subset_domain,str):
+            lon_min,lon_max,lat_min,lat_max = [float(i) for i in subset_domain.split("/")]
+        else:
+            lon_min,lon_max,lat_min,lat_max = subset_domain
+        year_min,year_max = year_range
+        date_min,date_max = [dt.strptime(i,'%m/%d') for i in date_range]
+        date_max += timedelta(days=1,seconds=-1)
+        
+        def date_range_test(t,t_min,t_max):
+            if date_min<date_max:
+                test1 = (t>=t_min.replace(year=t.year))
+                test2 = (t<=t_max.replace(year=t.year))
+                return test1 & test2
+            else:
+                test1 = (t_min.replace(year=t.year)<=t<dt(t.year+1,1,1))
+                test2 = (dt(t.year,1,1)<=t<=t_max.replace(year=t.year))
+                return test1 | test2
+        
+        points={}
+        for name in ['vmax','mslp','type','lat','lon','date','stormid']+['dmslp_dt','dvmax_dt']*int(doInterp):
+            points[name]=[]
+        for key in self.keys:
+            istorm = self.data[key].copy()
+            if doInterp:
+                istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'])
+            for i in range(len(istorm['date'])):
+                if istorm['type'][i] in ['TD','SD','TS','SS','HU'] \
+                and lat_min<=istorm['lat'][i]<=lat_max and lon_min<=istorm['lon'][i]%360<=lon_max \
+                and year_min<=istorm['date'][i].year<=year_max \
+                and date_range_test(istorm['date'][i],date_min,date_max):
+                    points['vmax'].append(istorm['vmax'][i])
+                    points['mslp'].append(istorm['mslp'][i])
+                    points['type'].append(istorm['type'][i])
+                    points['lat'].append(istorm['lat'][i])
+                    points['lon'].append(istorm['lon'][i])
+                    points['date'].append(istorm['date'][i])
+                    points['stormid'].append(key)
+                    if doInterp:
+                        points['dvmax_dt'].append(istorm['dvmax_dt'][i])
+                        points['dmslp_dt'].append(istorm['dmslp_dt'][i])
+        p = pd.DataFrame.from_dict(points)
+        if thresh['V_min']>0:
+            p = p.loc[(p['vmax']>=thresh['V_min'])]
+        if thresh['P_max']<9999:
+            p = p.loc[(p['mslp']<=thresh['P_max'])]
+        if doInterp:
+            if thresh['dV_min']>0:
+                p = p.loc[(p['dvmax_dt']>=thresh['dV_min'])]
+            if thresh['dP_max']<9999:
+                p = p.loc[(p['dmslp_dt']>=thresh['dP_max'])]
+            
+        if return_keys:
+            return [g[0] for g in points.groupby("stormid")]
+        else:
+            return p
+
     def gridded_stats(self,cmd_request,thresh={},year_range=None,date_range=('1/1','12/31'),binsize=1,\
                          zoom=None,ax=None,cartopy_proj=None,prop={},map_prop={}):
         
@@ -2136,9 +2205,39 @@ class TrackDataset:
         cmd_request : str
             This string is a descriptor for what you want to plot.
             It will be used to define the variable (e.g. 'wind' --> 'vmax') and the function (e.g. 'maximum' --> np.max()).
-            Finally this string is also used as the plot title.
-        thresh : dict
+            This string is also used as the plot title.
             
+            Variable words to use in cmd_request:
+                
+            * **wind** - (kt)
+            * **pressure** - (hPa)
+            * **wind change** - (kt). Must be followed by an integer value denoting the length of the time window '__ hours'.
+            * **pressure change** - (hPa). Must be followed by an integer value denoting the length of the time window '__ hours'.
+            
+            Units of all wind variables are knots and pressure variables are hPa. These are added to the cmd_request string for the title.
+            
+            Function words to use in cmd_request:
+                
+            * **maximum**
+            * **minimum**
+            * **average** 
+            * **percentile** - Percentile must be preceded by an integer [0,100].
+            * **number** - Number of storms in grid box satisfying filter thresholds.
+            
+        thresh : dict
+            Keywords include:
+                
+            * **sample_min** - minimum number of storms in a grid box for the cmd_request to be applied.
+            For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
+
+            * **V_min** - minimum wind for a given point to be included in the cmd_request.
+            * **P_max** - maximum pressure for a given point to be included in the cmd_request.
+            * **dV_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.
+            * **dP_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.
+            * **dt_window** - time window over which change variables are calculated (hours). Default is 24.
+            
+            Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.
+
         year_range : list or tuple
             List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
         date_range : list or tuple
@@ -2148,20 +2247,20 @@ class TrackDataset:
         zoom : str
             Zoom for the plot. Default is "dynamic". Can be one of the following:
             
-            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
             * **(basin_name)** - Any of the acceptable basins (check ``TrackDataset()`` for a list).
             * **lonW/lonE/latS/latN** - Custom plot domain.
+            
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
-            Property of storm track lines.
+            Property of plot, e.g. 'cmap' and 'clevs'
         map_prop : dict
             Property of cartopy map.
         """
 
-        default_thresh={'sample_min':np.nan,'P_max':np.nan,'V_min':np.nan,'dV_min':np.nan,'dP_max':np.nan,'dt_window':24}
+        default_thresh={'sample_min':None,'P_max':None,'V_min':None,'dV_min':None,'dP_max':None,'dt_window':24}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
@@ -2177,7 +2276,7 @@ class TrackDataset:
             year_range = (start_year,end_year)
         
         print("--> Getting filtered storm tracks")
-        points = filter_storms(self,year_range,date_range,thresh=thresh,doInterp=True)
+        points = self.filter_storms(year_range,date_range,thresh=thresh,doInterp=True,return_keys=False)
         
         #Round lat/lon points down to nearest bin
         to_bin = lambda x: np.floor(x / binsize) * binsize
@@ -2199,7 +2298,7 @@ class TrackDataset:
         #Group again, by latbin,lonbin
         groups = new_df.groupby(["latbin", "lonbin"])
         
-        zi = [func(g[1][varname]) if len(g[1])>thresh['sample_min'] else np.nan for g in groups]
+        zi = [func(g[1][varname]) if len(g[1])>=thresh['sample_min'] else np.nan for g in groups]
     
         coords = [g[0] for g in groups]
         
@@ -2228,7 +2327,11 @@ class TrackDataset:
         #Plot
         endash = u"\u2013"
         dot = u"\u2022"
-        title_L = cmd_request[0].upper()+cmd_request[1:]+plot_subtitle
+        title_L = cmd_request.replace('wind','wind (kt)')
+        title_L = title_L.replace('vmax','wind (kt)')
+        title_L = title_L.replace('pressure','pressure (hPa)')
+        title_L = title_L.replace('mslp','pressure (hPa)')
+        title_L = title_L[0].upper()+title_L[1:]+plot_subtitle
         date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
         title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'
         prop['title_L'],prop['title_R']=title_L,title_R

@@ -14,6 +14,7 @@ from .plot import TrackPlot
 from .storm import Storm
 from .season import Season
 from .tools import *
+from ..tornado import *
 
 try:
     import matplotlib.lines as mlines
@@ -153,6 +154,12 @@ class TrackDataset:
         #Add keys of all storms to object
         keys = self.data.keys()
         self.keys = [k for k in keys]
+        
+        #Create array of zero-ones for existence of tornado data for a given storm
+        self.keys_tors = [0 for key in self.keys]
+        
+        #Add dict to store all storm-specific tornado data in
+        self.data_tors = {}
     
     def __read_hurdat(self,override_basin=False):
         
@@ -950,7 +957,15 @@ class TrackDataset:
         
         #Retrieve key of given storm
         if isinstance(key, str) == True:
-            return Storm(self.data[key])
+            
+            #Check to see if tornado data exists for this storm
+            if np.max(self.keys_tors) == 1:
+                if key in self.data_tors.keys():
+                    return Storm(self.data[key],{'data':self.data_tors[key],'dist_thresh':self.tornado_dist_thresh})
+                else:
+                    return Storm(self.data[key])
+            else:
+                return Storm(self.data[key])
         else:
             error_message = ''.join([f"\n{i}" for i in key])
             error_message = f"Multiple IDs were identified for the requested storm. Choose one of the following storm IDs and provide it as the 'storm' argument instead of a tuple:{error_message}"
@@ -2222,4 +2237,168 @@ class TrackDataset:
         #Return axis
         if ax != None: return return_ax
 
+    
+    def assign_storm_tornadoes(self,dist_thresh=1000,tornado_path='spc'):
+        
+        r"""
+        Assigns tornadoes to all North Atlantic tropical cyclones from TornadoDataset.
+        
+        Parameters
+        ----------
+        dist_thresh : int
+            Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km.
+        tornado_path : str
+            Source to read tornado data from. Default is "spc", which reads from the online Storm Prediction Center (SPC) 1950-present tornado database. Can change this to a local file.
+        
+        Notes
+        -----
+        If you intend on analyzing tornadoes for multiple tropical cyclones using a Storm object, it is recommended to run this function first to avoid the need to re-read the entire tornado database for each Storm object.
+        """
+        
+        #Check to ensure data source is over North Atlantic
+        if self.basin != "north_atlantic":
+            raise RuntimeError("Tropical cyclone tornado data is only available for the North Atlantic basin.")
+        
+        #Check to see if tornado data already exists in this instance
+        self.TorDataset = TornadoDataset(tornado_path=tornado_path)
+        self.tornado_dist_thresh = dist_thresh
+        
+        #Iterate through all storms in dataset and assign them tornadoes, if they exist
+        timer_start = dt.now()
+        print(f'--> Starting to assign tornadoes to storms')
+        for i,key in enumerate(self.keys):
+            
+            #Skip years prior to 1950
+            if self.data[key]['year'] < 1950: continue
+                
+            #Get tornado data for storm
+            storm_obj = self.get_storm(key)
+            tor_data = self.TorDataset.get_storm_tornadoes(storm_obj,dist_thresh=dist_thresh)
+            tor_data = self.TorDataset.rotateToHeading(storm_obj,tor_data)
+            self.data_tors[key] = tor_data
+            
+            #Check if storm contains tornadoes
+            if len(tor_data) > 0:
+                self.keys_tors[i] = 1
+                
+        #Update user on status
+        print(f'--> Completed assigning tornadoes to storm (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
+        
+    def plot_TCtors_rotated(self,storms,mag_thresh=0,return_ax=False,return_df=False):
+        
+        r"""
+        Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.
+        
+        Parameters
+        ----------
+        storms : list or str
+            Storm(s) for which to plot motion-relative tornado data for. Can be either a list of storm IDs/tuples for which to create a composite of, or a string "all" for all storms containing tornado data.
+        mag_thresh : int
+            Minimum threshold for tornado rating.
+        return_ax : bool
+            Whether to return the axis plotted. Default is False.
+        return_df : bool
+            Whether to return the pandas DataFrame containing the composite tornado data. Default is False.
+        
+        Returns
+        -------
+        None or dict
+            If either "return_ax" or "return_df" are set to True, returns a dict containing their respective data.
+        
+        Notes
+        -----
+        The motion vector is oriented upwards (in the +y direction).
+        """
+        
+        #Error check
+        try:
+            self.TorDataset
+        except:
+            raise RuntimeError("No tornado data has been attributed to this dataset. Please run \"TrackDataset.assign_storm_tornadoes()\" first.")
+        
+        #Error check
+        if isinstance(mag_thresh,int) == False:
+            raise TypeError("mag_thresh must be of type int.")
+        elif mag_thresh not in [0,1,2,3,4,5]:
+            raise ValueError("mag_thresh must be between 0 and 5.")
+        
+        #Get IDs of all storms to composite
+        if storms == 'all':
+            storms = [self.keys[i] for i in range(len(self.keys)) if self.keys_tors[i] == 1]
+        else:
+            use_storms = [i if isinstance(i,str) == True else self.get_storm_id(i) for i in storms]
+            storms = [i for i in use_storms if i in self.keys and self.keys_tors[self.keys.index(i)] == 1]
+            
+        if len(storms) == 0:
+            raise RuntimeError("None of the requested storms produced any tornadoes.")
+        
+        #Get stormTors formatted with requested storm(s)
+        stormTors = (self.data_tors[storms[0]]).copy()
+        stormTors['storm_id'] = [storms[0]]*len(stormTors)
+        if len(storms) > 1:
+            for storm in storms[1:]:
+                storm_df = self.data_tors[storm]
+                storm_df['storm_id'] = [storm]*len(storm_df)
+                stormTors = stormTors.append(storm_df)
+        
+        #Create figure for plotting
+        plt.figure(figsize=(9,9),dpi=150)
+        ax = plt.subplot()
+        
+        #Default EF color scale
+        EFcolors = ef_colors('default')
+        
+        #Number of storms exceeding mag_thresh
+        num_storms = len(np.unique(stormTors.loc[stormTors['mag']>=mag_thresh]['storm_id'].values))
+        
+        #Plot all tornado tracks in motion relative coords
+        for _,row in stormTors.iterrows():
+            if row['mag'] >= mag_thresh:
+                plt.plot([row['rot_xdist_s'],row['rot_xdist_e']+.01],[row['rot_ydist_s'],row['rot_ydist_e']+.01],\
+                         lw=2,c=EFcolors[row['mag']])
+            
+        #Plot dist_thresh radius
+        dist_thresh = self.tornado_dist_thresh
+        ax.set_facecolor('#F6F6F6')
+        circle = plt.Circle((0,0), dist_thresh, color='w')
+        ax.add_artist(circle)
+        an = np.linspace(0, 2 * np.pi, 100)
+        ax.plot(dist_thresh * np.cos(an), dist_thresh * np.sin(an),'k')
+        ax.plot([-dist_thresh,dist_thresh],[0,0],'k--',lw=.5)
+        ax.plot([0,0],[-dist_thresh,dist_thresh],'k--',lw=.5)
+        
+        #Plot motion vector
+        plt.arrow(0, -dist_thresh*.1, 0, dist_thresh*.2, length_includes_head=True,
+          head_width=45, head_length=45,fc='k',lw=2,zorder=100)
+        
+        #Labels
+        ax.set_aspect('equal', 'box')
+        ax.set_xlabel('Left/Right of Storm Heading (km)',fontsize=13)
+        ax.set_ylabel('Behind/Ahead of Storm Heading (km)',fontsize=13)
+        ax.set_title(f'Composite motion-relative tornadoes\nMin threshold: EF-{mag_thresh} | n={num_storms} storms',fontsize=14,fontweight='bold')
+        ax.tick_params(axis='both', which='major', labelsize=11.5)
+        
+        #Add legend
+        handles=[]
+        for ef,color in enumerate(EFcolors):
+            if ef >= mag_thresh:
+                count = len(stormTors[stormTors['mag']==ef])
+                handles.append(mlines.Line2D([], [], linestyle='-',color=color,label=f'EF-{ef} ({count})'))
+        ax.legend(handles=handles,loc='lower left',fontsize=11.5)
+        
+        #Add attribution
+        ax.text(0.99,0.01,plot_credit(),fontsize=8,color='k',alpha=0.7,
+                transform=ax.transAxes,ha='right',va='bottom',zorder=10)
+        
+        #Return axis or show figure
+        return_dict = {}
+        if return_ax == True:
+            return_dict['ax'] = ax
+        else:
+            plt.show()
+            plt.close()
 
+        if return_df == True:
+            return_dict['df'] = stormTors
+        if len(return_dict) > 0:
+            return return_dict

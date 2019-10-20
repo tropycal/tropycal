@@ -881,6 +881,7 @@ class Storm:
         #Return dict
         return forecasts
     
+    
     def download_tcr(self,dir_path=""):
         
         r"""
@@ -911,7 +912,7 @@ class Storm:
         with open(f"{dir_path}TCR_{storm_id}_{storm_name}.pdf", 'wb') as f:
             f.write(response.content)
 
-    #PLOT FUNCTION FOR TORNADOES
+            
     def plot_tors(self,dist_thresh=1000,Tors=None,zoom="dynamic",plotPPF=False,plot_all=False,\
                   ax=None,cartopy_proj=None,prop={},map_prop={}):
                 
@@ -993,7 +994,6 @@ class Storm:
         if ax != None: return return_ax
 
 
-    #PLOT FUNCTION FOR RECON
     def plot_recon(self,stormRecon=None,recon_select=None,zoom="dynamic",barbs=True,scatter=False,plot_all=False,\
                   ax=None,cartopy_proj=None,prop={},map_prop={}):
                 

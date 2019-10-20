@@ -27,7 +27,7 @@ from .tools import *
 class TornadoDataset():
     
     r"""
-    Creates an instance of a Dataset object containing tornado data.
+    Creates an instance of a TornadoDataset object containing tornado data.
 
     Parameters
     ----------
@@ -36,8 +36,8 @@ class TornadoDataset():
 
     Returns
     -------
-    Dataset
-        An instance of Dataset.
+    TornadoDataset
+        An instance of TornadoDataset.
     """
 
     def __init__(self, mag_thresh=0):
@@ -84,17 +84,19 @@ class TornadoDataset():
     def getTCtors(self,storm,dist_thresh):
         
         r"""
-        Retrieves all tornado tracks that occur within a distance threshold (dist_thresh) 
-        of the position of a tropical cyclone along its track.
+        Retrieves all tornado tracks that occur along the track of a tropical cyclone.
         
         Parameters
         ----------
-        storm : Storm object containing info on the TC.
-        dist_thresh : threshold distance (km) within which tornadoes are attributed to the TC.
+        storm : tropycal.tracks.Storm
+            Instance of a Storm object.
+        dist_thresh : int
+            Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC.
         
         Returns
         -------
-        Dataframe of tornadoes,
+        pandas.DataFrame
+            Pandas DataFrame object containing data about the tornadoes associated with this tropical cyclone.
         """
         
         stormdict = storm.to_dict()
@@ -152,10 +154,23 @@ class TornadoDataset():
         self.stormTors['rot_ydist_e'] = [v[1] for v in newvec_e]
         
 
-    def plot_TCtors_rotated(self,storm,dist_thresh=1000):
+    def plot_TCtors_rotated(self,storm,dist_thresh=1000,return_ax=False):
         
         r"""
-        Plot tracks of tornadoes relative to the heading of the TC at the time, in the +y direction.
+        Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.
+        
+        Parameters
+        ----------
+        storm : tropycal.tracks.Storm
+            Instance of a Storm object.
+        dist_thresh : int
+            Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC.
+        return_ax : bool
+            Whether to return the axis plotted. Default is False.
+        
+        Notes
+        -----
+        The motion vector is oriented upwards (in the +y direction).
         """
         
         self.stormTors = self.getTCtors(storm,dist_thresh)
@@ -187,17 +202,27 @@ class TornadoDataset():
             handles.append(mlines.Line2D([], [], linestyle='-',color=color,label=f'EF-{ef} ({count})'))
         ax.legend(handles=handles,loc='lower left',fontsize=11.5)
         
+        if return_ax == True:
+            return ax
+        else:
+            plt.show()
+            plt.close()
+        
 
-    #PLOT FUNCTION FOR TORNADOES
     def plot_tors(self,tor_info,zoom="conus",plotPPF=False,ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
-        Creates a plot of tornado tracks and PPF.
+        Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).
         
         Parameters
         ----------
-        tor_info : pandas.DataFrame or dict, or datetime or list of start/end datetimes
-            Requested tornadoes
+        tor_info : pandas.DataFrame / dict / datetime.datetime / list
+            Requested tornadoes to plot. Can be either of the following:
+            
+            * **Pandas DataFrame** containing the requested tornadoes to plot.
+            * **dict** entry containing the requested tornadoes to plot.
+            * **datetime.datetime** object for a single day to plot tornadoes.
+            * **list** with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.
         zoom : str
             Zoom for the plot. Can be one of the following:
             

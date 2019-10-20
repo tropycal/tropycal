@@ -13,7 +13,6 @@ import requests
 from .plot import TrackPlot
 from .tools import *
 from ..tornado import *
-from ..recon import *
 
 try:
     import zipfile
@@ -1101,80 +1100,3 @@ class Storm:
             plt.show()
             plt.close()
     
-    def plot_recon(self,stormRecon=None,recon_select=None,zoom="dynamic",barbs=True,scatter=False,plot_all=False,\
-                  ax=None,cartopy_proj=None,prop={},map_prop={}):
-                
-        r"""
-        Creates a plot of the storm and associated recon data.
-        
-        Parameters
-        ----------
-        StormRecon : tropycal.recon.ReconDataset
-            An instance of ReconDataset for this storm. If none, one will be generated.
-        zoom : str
-            Zoom for the plot. Can be one of the following:
-            
-            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
-            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
-            * **lonW/lonE/latS/latN** - Custom plot domain
-        plot_all : bool
-            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
-        ax : axes
-            Instance of axes to plot on. If none, one will be generated. Default is none.
-        cartopy_proj : ccrs
-            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
-        prop : dict
-            Property of storm track lines.
-        map_prop : dict
-            Property of cartopy map.
-        """
-
-        #Read in reconaissance data for the storm
-        if stormRecon == None and not isinstance(recon_select,pd.core.frame.DataFrame):
-            try:
-                self.stormRecon
-            except:
-                self.stormRecon = ReconDataset((self.name,self.year))
-        
-        if recon_select == None:
-            dfRecon = self.stormRecon.recentered
-        else:
-            if isinstance(recon_select,pd.core.frame.DataFrame):
-                dfRecon = recon_select
-            elif isinstance(recon_select,dict):
-                dfRecon = pd.DataFrame.from_dict(recon_select)
-            elif isinstance(recon_select,str):
-                dfRecon = self.stormRecon.missiondata[recon_select]
-            else:
-                dfRecon = self.stormRecon.__getSubTime(recon_select)
-        
-        
-        #Create instance of plot object
-        self.plot_obj_tc = TrackPlot()
-        self.plot_obj_rec = ReconPlot()
-        
-        #Create cartopy projection
-        if cartopy_proj == None:
-            if max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
-                self.plot_obj_rec.create_cartopy(proj='PlateCarree',central_longitude=180.0)
-                self.plot_obj_tc.create_cartopy(proj='PlateCarree',central_longitude=180.0)
-            else:
-                self.plot_obj_rec.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-                self.plot_obj_tc.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-                
-        #Plot recon
-        rec_ax,zoom = self.plot_obj_rec.plot_points(dfRecon,barbs=barbs,scatter=scatter,zoom=zoom,\
-                                                    ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
-        rec_title = rec_ax.get_title('left')
-        
-        #Plot storm
-        return_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,plot_all,ax=rec_ax,prop=prop,map_prop=map_prop)
-                
-        storm_title = return_ax.get_title('left')
-        return_ax.set_title(f'{storm_title}\n{rec_title}',loc='left',fontsize=17,fontweight='bold')
-
-    
-        #Return axis
-        if ax != None: return return_ax
-
-

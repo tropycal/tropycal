@@ -456,6 +456,24 @@ def knots_to_mph(wind):
         return mphs[kts.index(wind)]
     return wind
 
+def ef_colors(x):
+    import matplotlib as mlib
+    if x == 'default':
+        colors = ['lightsalmon','tomato','red','firebrick','darkred','purple']
+    elif isinstance(x,str):
+        try:
+            cmap = mlib.cm.get_cmap(x)
+            norm = mlib.colors.Normalize(vmin=0, vmax=5)
+            colors = cmap(norm([0,1,2,3,4,5]))
+        except:
+            colors = [x]*6
+    elif isinstance(x,list):
+        if len(x) == 6:
+            colors = x
+    else:
+        colors = ['lightsalmon','tomato','red','firebrick','darkred','purple']
+    return colors
+
 def num_to_str(num):
     d = { 0 : 'zero', 1 : 'one', 2 : 'two', 3 : 'three', 4 : 'four', 5 : 'five',
           6 : 'six', 7 : 'seven', 8 : 'eight', 9 : 'nine', 10 : 'ten',

@@ -34,6 +34,8 @@ class TornadoDataset():
     ----------
     mag_thresh : int
         Minimum threshold for tornado rating.
+    tornado_path : str
+        Source to read tornado data from. Default is "spc", which reads from the online Storm Prediction Center (SPC) 1950-present tornado database. Can change this to a local file.
 
     Returns
     -------
@@ -41,7 +43,7 @@ class TornadoDataset():
         An instance of TornadoDataset.
     """
 
-    def __init__(self, mag_thresh=0):
+    def __init__(self, mag_thresh=0, tornado_path='spc'):
         
         #Error check
         if isinstance(mag_thresh,int) == False:
@@ -53,15 +55,20 @@ class TornadoDataset():
         timer_start = dt.now()
         yrnow = timer_start.year
         print(f'--> Starting to read in tornado track data')
-        try:
-            yrlast = yrnow-1
-            Tors = pd.read_csv(f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv',\
+        if tornado_path == 'spc':
+            try:
+                yrlast = yrnow-1
+                Tors = pd.read_csv(f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv',\
+                                   error_bad_lines=False,parse_dates=[['mo','dy','yr','time']])
+            except:
+                yrlast = yrnow-2
+                Tors = pd.read_csv(f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv',\
+                                   error_bad_lines=False,parse_dates=[['mo','dy','yr','time']])
+            print(f'--> Completed reading in tornado data for 1950-{yrlast} (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
+        else:
+            Tors = pd.read_csv(tornado_path,\
                                error_bad_lines=False,parse_dates=[['mo','dy','yr','time']])
-        except:
-            yrlast = yrnow-2
-            Tors = pd.read_csv(f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv',\
-                               error_bad_lines=False,parse_dates=[['mo','dy','yr','time']])
-        print(f'--> Completed reading in tornado data for 1950-{yrlast} (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
+            print(f'--> Completed reading in tornado data from local file (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
         
         #Get UTC from timezone (most are 3 = CST, but some 0 and 9 = GMT)
         tz = np.array([timedelta(hours=9-int(i)) for i in Tors['tz']])
@@ -82,7 +89,7 @@ class TornadoDataset():
         Tors = Tors.assign(elat = [Tors['slat'].values[u] if i==0 else i for u, i in enumerate(Tors['elat'].values)])
         self.Tors = Tors.assign(elon = [Tors['slon'].values[u] if i==0 else i for u, i in enumerate(Tors['elon'].values)])
 
-    def getTCtors(self,storm,dist_thresh):
+    def get_storm_tornadoes(self,storm,dist_thresh):
         
         r"""
         Retrieves all tornado tracks that occur along the track of a tropical cyclone.
@@ -100,17 +107,19 @@ class TornadoDataset():
             Pandas DataFrame object containing data about the tornadoes associated with this tropical cyclone.
         """
         
+        #Get storm dict from object
         stormdict = storm.to_dict()
-        self.stormdict = stormdict
     
         stormTors = self.Tors[(self.Tors['UTC_time']>=min(stormdict['date'])) & \
                          (self.Tors['UTC_time']<=max(stormdict['date']))]
         
+        #Interpolate storm track time to the time of each tornado
         f = interp1d(mdates.date2num(stormdict['date']),stormdict['lon'])
         interp_clon = f(mdates.date2num(stormTors['UTC_time']))
         f = interp1d(mdates.date2num(stormdict['date']),stormdict['lat'])
         interp_clat = f(mdates.date2num(stormTors['UTC_time']))
         
+        #Retrieve x&y distance of each tornado from TC center
         stormTors = stormTors.assign(xdist_s = [great_circle((.5*(lat1+lat2),lon1),(.5*(lat1+lat2),lon2)).kilometers \
                  for lat1,lon1,lat2,lon2 in zip(interp_clat,interp_clon,stormTors['slat'],stormTors['slon'])])
         stormTors = stormTors.assign(ydist_s = [great_circle((lat1,.5*(lon1+lon2)),(lat2,.5*(lon1+lon2))).kilometers \
@@ -121,38 +130,68 @@ class TornadoDataset():
         stormTors = stormTors.assign(ydist_e = [great_circle((lat1,.5*(lon1+lon2)),(lat2,.5*(lon1+lon2))).kilometers \
                  for lat1,lon1,lat2,lon2 in zip(interp_clat,interp_clon,stormTors['elat'],stormTors['elon'])])
         
+        #Assign tornado within specified distance threshold to this storm
         stormTors = stormTors[stormTors['xdist_s']**2 + stormTors['ydist_s']**2 < dist_thresh**2]
+        
+        #Return DataFrame
         return stormTors
 
-    def __rotateToHeading(self):
+    def rotateToHeading(self,storm,stormTors):
         
         r"""
         Rotate tornado tracks to their position relative to the heading of the TC at the time.
-        """
-                
-        dx = np.gradient(self.stormdict['lon'])
-        dy = np.gradient(self.stormdict['lat'])
         
-        f = interp1d(mdates.date2num(self.stormdict['date']),dx)
-        interp_dx = f(mdates.date2num(self.stormTors['UTC_time']))
-        f = interp1d(mdates.date2num(self.stormdict['date']),dy)
-        interp_dy = f(mdates.date2num(self.stormTors['UTC_time']))
+        Parameters
+        ----------
+        stormTors : pandas.DataFrame
+            Pandas DataFrame containing tornado tracks.
+        
+        Returns
+        -------
+        pandas.DataFrame
+            StormTors modified to include motion relative coordinates.
+        """
+        
+        #Check to make sure there's enough tornadoes
+        if len(stormTors) == 0:
+            stormTors['rot_xdist_s'] = []
+            stormTors['rot_xdist_e'] = []
+            stormTors['rot_ydist_s'] = []
+            stormTors['rot_ydist_e'] = []
+            return stormTors
+        
+        #Get storm dict from object
+        stormdict = storm.to_dict()
+        
+        #Temporal interpolation of storm track
+        dx = np.gradient(stormdict['lon'])
+        dy = np.gradient(stormdict['lat'])
+        
+        f = interp1d(mdates.date2num(stormdict['date']),dx)
+        interp_dx = f(mdates.date2num(stormTors['UTC_time']))
+        f = interp1d(mdates.date2num(stormdict['date']),dy)
+        interp_dy = f(mdates.date2num(stormTors['UTC_time']))
         
         ds = np.hypot(interp_dx,interp_dy)
         
         # Rotation matrix for +x pointing 90deg right of storm heading
+        ds[ds == 0.0] = ds[ds == 0.0] + 0.01 #avoid warnings for divide by zero
         rot = np.array([[interp_dy,-interp_dx],[interp_dx,interp_dy]])/ds
         
-        oldvec_s = np.array([self.stormTors['xdist_s'],self.stormTors['ydist_s']])
+        oldvec_s = np.array([stormTors['xdist_s'].values,stormTors['ydist_s'].values])
         newvec_s = [np.dot(rot[:,:,i],v) for i,v in enumerate(oldvec_s.T)]
         
-        oldvec_e = np.array([self.stormTors['xdist_e'],self.stormTors['ydist_e']])
+        oldvec_e = np.array([stormTors['xdist_e'].values,stormTors['ydist_e'].values])
         newvec_e = [np.dot(rot[:,:,i],v) for i,v in enumerate(oldvec_e.T)]
         
-        self.stormTors['rot_xdist_s'] = [v[0] for v in newvec_s]
-        self.stormTors['rot_xdist_e'] = [v[0] for v in newvec_e]
-        self.stormTors['rot_ydist_s'] = [v[1] for v in newvec_s]
-        self.stormTors['rot_ydist_e'] = [v[1] for v in newvec_e]
+        #Enter motion relative coordinates into stormTors dict
+        stormTors['rot_xdist_s'] = [v[0] for v in newvec_s]
+        stormTors['rot_xdist_e'] = [v[0] for v in newvec_e]
+        stormTors['rot_ydist_s'] = [v[1] for v in newvec_s]
+        stormTors['rot_ydist_e'] = [v[1] for v in newvec_e]
+        
+        #return modified stormtors
+        return stormTors
         
 
     def plot_TCtors_rotated(self,storm,dist_thresh=1000,return_ax=False):
@@ -174,35 +213,55 @@ class TornadoDataset():
         The motion vector is oriented upwards (in the +y direction).
         """
         
-        self.stormTors = self.getTCtors(storm,dist_thresh)
-        self.__rotateToHeading()
+        #Retrieve tornadoes for the requested storm
+        try:
+            stormTors = storm.StormTors
+        except:
+            stormTors = self.get_storm_tornadoes(storm,dist_thresh)
         
-        plt.figure(figsize=(9,9))
+        #Add motion vector relative coordinates
+        stormTors = self.rotateToHeading(storm,stormTors)
+        
+        #Create figure for plotting
+        plt.figure(figsize=(9,9),dpi=150)
         ax = plt.subplot()
         
+        #Default EF color scale
         EFcolors = ef_colors('default')
         
-        for _,row in self.stormTors.iterrows():
+        #Plot all tornado tracks in motion relative coords
+        for _,row in stormTors.iterrows():
             plt.plot([row['rot_xdist_s'],row['rot_xdist_e']+.01],[row['rot_ydist_s'],row['rot_ydist_e']+.01],\
                      lw=2,c=EFcolors[row['mag']])
+            
+        #Plot dist_thresh radius
+        ax.set_facecolor('#F6F6F6')
+        circle = plt.Circle((0,0), dist_thresh, color='w')
+        ax.add_artist(circle)
         an = np.linspace(0, 2 * np.pi, 100)
         ax.plot(dist_thresh * np.cos(an), dist_thresh * np.sin(an),'k')
         ax.plot([-dist_thresh,dist_thresh],[0,0],'k--',lw=.5)
         ax.plot([0,0],[-dist_thresh,dist_thresh],'k--',lw=.5)
+        
+        #Plot motion vector
         plt.arrow(0, -dist_thresh*.1, 0, dist_thresh*.2, length_includes_head=True,
-          head_width=45, head_length=45,fc='k')
+          head_width=45, head_length=45,fc='k',lw=2)
+        
+        #Labels
         ax.set_aspect('equal', 'box')
         ax.set_xlabel('Left/Right of Storm Heading (km)',fontsize=13)
         ax.set_ylabel('Behind/Ahead of Storm Heading (km)',fontsize=13)
         ax.set_title(f'{storm.name} {storm.year} tornadoes relative to heading',fontsize=17)
         ax.tick_params(axis='both', which='major', labelsize=11.5)
+        
         #Add legend
         handles=[]
         for ef,color in enumerate(EFcolors):
-            count = len(self.stormTors[self.stormTors['mag']==ef])
+            count = len(stormTors[stormTors['mag']==ef])
             handles.append(mlines.Line2D([], [], linestyle='-',color=color,label=f'EF-{ef} ({count})'))
         ax.legend(handles=handles,loc='lower left',fontsize=11.5)
         
+        #Return axis or show figure
         if return_ax == True:
             return ax
         else:

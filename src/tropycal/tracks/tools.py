@@ -14,7 +14,8 @@ def findvar(cmd,thresh):
     if cmd.find('wind')>=0 or cmd.find('vmax')>=0:
         if cmd.find('change')>=0:
             try:
-                thresh['dt_window'] = int(''.join([c for c in cmd if c.isdigit()]))
+                thresh['dt_window'] = int(''.join([c for i,c in enumerate(cmd) \
+                      if c.isdigit() and i>cmd.find('hour')-4]))
             except:
                 raise RuntimeError("Error: specify time interval (hours)")
             return thresh,'dvmax_dt'
@@ -23,7 +24,8 @@ def findvar(cmd,thresh):
     elif cmd.find('pressure')>=0 or cmd.find('slp')>=0:
         if cmd.find('change')>=0:
             try:
-                thresh['dt_window'] = int(''.join([c for c in cmd if c.isdigit()]))
+                thresh['dt_window'] = int(''.join([c for i,c in enumerate(cmd) \
+                      if c.isdigit() and i>cmd.find('hour')-4]))
             except:
                 raise RuntimeError("Error: specify time interval (hours)")
             return thresh,'dmslp_dt'
@@ -42,7 +44,7 @@ def findfunc(cmd,thresh):
         thresh['sample_min']=max([5,thresh['sample_min']])
         return thresh,lambda x: np.nanmean(x)
     elif cmd.find('percentile')>=0:
-        ptile = int(''.join([c for c in cmd if c.isdigit()]))
+        ptile = int(''.join([c for i,c in enumerate(cmd) if c.isdigit() and i<cmd.find('percentile')]))
         thresh['sample_min']=max([5,thresh['sample_min']])
         return thresh,lambda x: np.nanpercentile(x,ptile)
     elif cmd.find('count')>=0 or cmd.find('num')>=0:
@@ -58,27 +60,27 @@ def construct_title(thresh):
     plot_subtitle = []
     gteq = u"\u2265"
     lteq = u"\u2264"
-    if not np.isnan(thresh['sample_min']):
+    if thresh['sample_min']!=None:
         plot_subtitle.append(f"{gteq} {thresh['sample_min']} storms/bin")
     else:
         thresh['sample_min']=0
         
-    if not np.isnan(thresh['V_min']):
+    if thresh['V_min']!=None:
         plot_subtitle.append(f"{gteq} {thresh['V_min']}kt")
     else:
         thresh['V_min']=0
         
-    if not np.isnan(thresh['P_max']):
+    if thresh['P_max']!=None:
         plot_subtitle.append(f"{lteq} {thresh['P_max']}hPa")            
     else:
         thresh['P_max']=9999
 
-    if not np.isnan(thresh['dV_min']):
+    if thresh['dV_min']!=None:
         plot_subtitle.append(f"{gteq} {thresh['dV_min']}kt / {thresh['dt_window']}hr")            
     else:
         thresh['dV_min']=-9999
 
-    if not np.isnan(thresh['dP_max']):
+    if thresh['dP_max']!=None:
         plot_subtitle.append(f"{lteq} {thresh['dP_max']}hPa / {thresh['dt_window']}hr")            
     else:
         thresh['dP_max']=9999

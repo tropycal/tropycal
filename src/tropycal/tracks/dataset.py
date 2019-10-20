@@ -2215,7 +2215,7 @@ class TrackDataset:
             Property of cartopy map.
         """
 
-        default_thresh={'sample_min':np.nan,'P_max':np.nan,'V_min':np.nan,'dV_min':np.nan,'dP_max':np.nan,'dt_window':24}
+        default_thresh={'sample_min':None,'P_max':None,'V_min':None,'dV_min':None,'dP_max':None,'dt_window':24}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
@@ -2282,7 +2282,11 @@ class TrackDataset:
         #Plot
         endash = u"\u2013"
         dot = u"\u2022"
-        title_L = cmd_request[0].upper()+cmd_request[1:]+plot_subtitle
+        title_L = cmd_request.replace('wind','wind (kt)')
+        title_L = title_L.replace('vmax','wind (kt)')
+        title_L = title_L.replace('pressure','pressure (hPa)')
+        title_L = title_L.replace('mslp','pressure (hPa)')
+        title_L = title_L[0].upper()+title_L[1:]+plot_subtitle
         date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
         title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'
         prop['title_L'],prop['title_R']=title_L,title_R

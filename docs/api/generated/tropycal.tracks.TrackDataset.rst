@@ -18,11 +18,14 @@ TrackDataset
    
       ~TrackDataset.__init__
       ~TrackDataset.ace_climo
+      ~TrackDataset.assign_storm_tornadoes
+      ~TrackDataset.filter_storms
       ~TrackDataset.get_season
       ~TrackDataset.get_storm
       ~TrackDataset.get_storm_id
       ~TrackDataset.gridded_stats
       ~TrackDataset.hurricane_days_climo
+      ~TrackDataset.plot_TCtors_rotated
       ~TrackDataset.plot_season
       ~TrackDataset.plot_storm
       ~TrackDataset.rank_storm
@@ -45,11 +48,14 @@ TrackDataset
    
    .. automethod:: __init__
    .. automethod:: ace_climo
+   .. automethod:: assign_storm_tornadoes
+   .. automethod:: filter_storms
    .. automethod:: get_season
    .. automethod:: get_storm
    .. automethod:: get_storm_id
    .. automethod:: gridded_stats
    .. automethod:: hurricane_days_climo
+   .. automethod:: plot_TCtors_rotated
    .. automethod:: plot_season
    .. automethod:: plot_storm
    .. automethod:: rank_storm

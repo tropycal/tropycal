@@ -22,6 +22,7 @@ Storm
       ~Storm.get_operational_forecasts
       ~Storm.list_nhc_discussions
       ~Storm.plot
+      ~Storm.plot_TCtors_rotated
       ~Storm.plot_nhc_forecast
       ~Storm.plot_recon
       ~Storm.plot_tors
@@ -48,6 +49,7 @@ Storm
    .. automethod:: get_operational_forecasts
    .. automethod:: list_nhc_discussions
    .. automethod:: plot
+   .. automethod:: plot_TCtors_rotated
    .. automethod:: plot_nhc_forecast
    .. automethod:: plot_recon
    .. automethod:: plot_tors

@@ -1744,7 +1744,7 @@ class TrackDataset:
             raise TypeError("year_range must be of type tuple or list")
         
         #Get velocity & pressure pairs for all storms in dataset
-        vp = self.filter_storms_vp(year_min=start_year,year_max=end_year)
+        vp = filter_storms_vp(self,year_min=start_year,year_max=end_year)
         relationship['vp'] = vp
 
         #Create 2D histogram of v+p relationship

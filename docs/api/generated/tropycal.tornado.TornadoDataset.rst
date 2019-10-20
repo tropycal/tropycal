@@ -17,9 +17,10 @@ TornadoDataset
    .. autosummary::
    
       ~TornadoDataset.__init__
-      ~TornadoDataset.getTCtors
+      ~TornadoDataset.get_storm_tornadoes
       ~TornadoDataset.plot_TCtors_rotated
       ~TornadoDataset.plot_tors
+      ~TornadoDataset.rotateToHeading
 
    
    
@@ -35,9 +36,10 @@ TornadoDataset
 
    
    .. automethod:: __init__
-   .. automethod:: getTCtors
+   .. automethod:: get_storm_tornadoes
    .. automethod:: plot_TCtors_rotated
    .. automethod:: plot_tors
+   .. automethod:: rotateToHeading
 
    
    

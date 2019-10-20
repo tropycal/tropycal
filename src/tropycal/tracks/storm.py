@@ -930,11 +930,13 @@ class Storm:
             * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted and tornadoes it produced.
             * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
             * **lonW/lonE/latS/latN** - Custom plot domain
-        plotPPF : False / True / "total" / "daily"
+        plotPPF : bool or str
             Whether to plot practically perfect forecast (PPF). True defaults to "total". Default is False.
-            
-            * **total** - probability of a tornado within 25 miles of a point during the period of time selected.
-            * **daily** - average probability of a tornado within 25 miles of a point during a day starting at 1200 UTC.
+        
+            * **False** - no PPF plot.
+            * **True** - defaults to "total".
+            * **"total"** - probability of a tornado within 25mi of a point during the period of time selected.
+            * **"daily"** - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes

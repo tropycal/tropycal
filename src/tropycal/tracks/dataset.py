@@ -2127,6 +2127,8 @@ class TrackDataset:
             This string is a descriptor for what you want to plot.
             It will be used to define the variable (e.g. 'wind' --> 'vmax') and the function (e.g. 'maximum' --> np.max()).
             Finally this string is also used as the plot title.
+        thresh : dict
+            
         year_range : list or tuple
             List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
         date_range : list or tuple
@@ -2137,7 +2139,7 @@ class TrackDataset:
             Zoom for the plot. Default is "dynamic". Can be one of the following:
             
             * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
-            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
+            * **(basin_name)** - Any of the acceptable basins (check ``TrackDataset()`` for a list).
             * **lonW/lonE/latS/latN** - Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.

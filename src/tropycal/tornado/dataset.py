@@ -18,7 +18,8 @@ try:
     from cartopy import crs as ccrs
     from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 except:
-    warnings.warn("Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
+    warn_message = "Warning: Cartopy is not installed in your python environment. Plotting functions will not work."
+    warnings.warn(warn_message)
 
 from .plot import TornadoPlot
 from .tools import *
@@ -217,7 +218,7 @@ class TornadoDataset():
         Parameters
         ----------
         tor_info : pandas.DataFrame / dict / datetime.datetime / list
-            Requested tornadoes to plot. Can be either of the following:
+            Requested tornadoes to plot. Can be one of the following:
             
             * **Pandas DataFrame** containing the requested tornadoes to plot.
             * **dict** entry containing the requested tornadoes to plot.
@@ -231,11 +232,12 @@ class TornadoDataset():
             * **east_conus** - Eastern CONUS
             * **lonW/lonE/latS/latN** - Custom plot domain
         plotPPF : bool or str
+            Whether to plot practically perfect forecast (PPF). True defaults to "total". Default is False.
         
-            * **False** - no PPF plot
-            * **True** - defaults to "total"
-            * **total** - probability of a tornado within 25mi of a point during the period of time selected.
-            * **daily** - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.
+            * **False** - no PPF plot.
+            * **True** - defaults to "total".
+            * **"total"** - probability of a tornado within 25mi of a point during the period of time selected.
+            * **"daily"** - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
@@ -260,10 +262,12 @@ class TornadoDataset():
             if isinstance(tor_info,list):
                 try:
                     if prop['PPFcolors']=='SPC':
-                        warnings.warn('SPC colors only allowed for daily PPF.\n Defaulting to plasma colormap.')
+                        warning_message = 'SPC colors only allowed for daily PPF. Defaulting to plasma colormap.'
+                        warnings.warn(warning_message)
                         prop['PPFcolors']='plasma'
                 except:
-                    warnings.warn('SPC colors only allowed for daily PPF. Defaulting to plasma colormap.')
+                    warning_message = 'SPC colors only allowed for daily PPF. Defaulting to plasma colormap.'
+                    warnings.warn(warning_message)
                     prop['PPFcolors']='plasma'
                     
                 if plotPPF!='total':

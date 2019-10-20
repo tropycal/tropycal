@@ -39,11 +39,11 @@ def findfunc(cmd,thresh):
     if cmd.find('min')==0:
         return thresh,lambda x: np.nanmin(x)
     elif cmd.find('mean')>=0 or cmd.find('average')>=0 or cmd.find('avg')>=0:
-        thresh['sample_min']=max([4,thresh['sample_min']])
+        thresh['sample_min']=max([5,thresh['sample_min']])
         return thresh,lambda x: np.nanmean(x)
     elif cmd.find('percentile')>=0:
         ptile = int(''.join([c for c in cmd if c.isdigit()]))
-        thresh['sample_min']=max([4,thresh['sample_min']])
+        thresh['sample_min']=max([5,thresh['sample_min']])
         return thresh,lambda x: np.nanpercentile(x,ptile)
     elif cmd.find('count')>=0 or cmd.find('num')>=0:
         if cmd.find('kt')>=0 or cmd.find('wind')>=0:
@@ -56,28 +56,30 @@ def findfunc(cmd,thresh):
 
 def construct_title(thresh):
     plot_subtitle = []
+    gteq = u"\u2265"
+    lteq = u"\u2264"
     if not np.isnan(thresh['sample_min']):
-        plot_subtitle.append(f"> {thresh['sample_min']} storms/bin")
+        plot_subtitle.append(f"{gteq} {thresh['sample_min']} storms/bin")
     else:
         thresh['sample_min']=0
         
     if not np.isnan(thresh['V_min']):
-        plot_subtitle.append(f"> {thresh['V_min']}kt")
+        plot_subtitle.append(f"{gteq} {thresh['V_min']}kt")
     else:
         thresh['V_min']=0
         
     if not np.isnan(thresh['P_max']):
-        plot_subtitle.append(f"< {thresh['P_max']}hPa")            
+        plot_subtitle.append(f"{lteq} {thresh['P_max']}hPa")            
     else:
         thresh['P_max']=9999
 
     if not np.isnan(thresh['dV_min']):
-        plot_subtitle.append(f"> {thresh['dV_min']}kt / {thresh['dt_window']}hr")            
+        plot_subtitle.append(f"{gteq} {thresh['dV_min']}kt / {thresh['dt_window']}hr")            
     else:
         thresh['dV_min']=-9999
 
     if not np.isnan(thresh['dP_max']):
-        plot_subtitle.append(f"> {thresh['dP_max']}hPa / {thresh['dt_window']}hr")            
+        plot_subtitle.append(f"{lteq} {thresh['dP_max']}hPa / {thresh['dt_window']}hr")            
     else:
         thresh['dP_max']=9999
     
@@ -116,8 +118,11 @@ def interp_storm(storm_dict,timeres=1,dt_window=24):
         new_storm['dy_dt'] = [np.nan]+list((new_storm['lat'][1:]-new_storm['lat'][:-1])* \
                  rE/timeres)
         
-        for name in ['dvmax_dt','dmslp_dt','dx_dt','dy_dt']:
+        for name in ['dvmax_dt','dmslp_dt']:
             tmp = np.convolve(new_storm[name],[1]*int(dt_window/timeres),mode='valid')
+            new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
+        for name in ['dx_dt','dy_dt']:
+            tmp = np.convolve(new_storm[name],[timeres/dt_window]*int(dt_window/timeres),mode='valid')
             new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
             
         return new_storm
@@ -128,54 +133,6 @@ def interp_storm(storm_dict,timeres=1,dt_window=24):
             except:
                 storm_dict[name]=np.ones(len(new_storm[name]))*np.nan
         return storm_dict
-    
-def filter_storms(trackdata,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},subset_domain=(0,360,-90,90),doInterp=False):
-    r"""
-    trackdata : tracks.TrackDataset object
-    subset_domain : str
-        String or tuple representing a bounded region, 'latW/latE/latS/latN'
-    Returns : dataframe
-    """
-    
-    if isinstance(subset_domain,str):
-        lon_min,lon_max,lat_min,lat_max = [float(i) for i in subset_domain.split("/")]
-    else:
-        lon_min,lon_max,lat_min,lat_max = subset_domain
-    year_min,year_max = year_range
-    date_min,date_max = [dt.strptime(i,'%m/%d') for i in date_range]
-    date_max += timedelta(days=1,seconds=-1)
-    
-    points={}
-    for name in ['vmax','mslp','type','lat','lon','date','stormid','dmslp_dt','dvmax_dt']:
-        points[name]=[]
-    for key in trackdata.keys:
-        istorm = trackdata.data[key].copy()
-        if doInterp:
-            istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'])
-        for i in range(len(istorm['date'])):
-            if istorm['type'][i] in ['TD','SD','TS','SS','HU'] \
-            and lat_min<=istorm['lat'][i]<=lat_max and lon_min<=istorm['lon'][i]%360<=lon_max \
-            and year_min<=istorm['date'][i].year<=year_max \
-            and date_min.replace(year=istorm['date'][i].year)<=istorm['date'][i]<=date_max.replace(year=istorm['date'][i].year):
-                points['vmax'].append(istorm['vmax'][i])
-                points['mslp'].append(istorm['mslp'][i])
-                points['type'].append(istorm['type'][i])
-                points['lat'].append(istorm['lat'][i])
-                points['lon'].append(istorm['lon'][i])
-                points['date'].append(istorm['date'][i])
-                points['stormid'].append(key)
-                points['dvmax_dt'].append(istorm['dvmax_dt'][i])
-                points['dmslp_dt'].append(istorm['dmslp_dt'][i])
-    p = pd.DataFrame.from_dict(points)
-    if thresh['V_min']>0:
-        p = p.loc[(p['vmax']>thresh['V_min'])]
-    if thresh['P_max']<9999:
-        p = p.loc[(p['mslp']<thresh['P_max'])]
-    if thresh['dV_min']>0:
-        p = p.loc[(p['dvmax_dt']>thresh['dV_min'])]
-    if thresh['dP_max']<9999:
-        p = p.loc[(p['dmslp_dt']>thresh['dP_max'])]
-    return p
 
 
 def filter_storms_vp(trackdata,year_min=0,year_max=9999,subset_domain=None):

@@ -2110,6 +2110,75 @@ class TrackDataset:
                 
         return ace_rank
 
+    def filter_storms(self,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},subset_domain=(0,360,-90,90),doInterp=False,return_keys=True):
+        r"""
+        trackdata : tracks.TrackDataset object
+        subset_domain : str
+            String or tuple representing a bounded region, 'latW/latE/latS/latN'
+        Returns : dataframe
+        """
+
+        default_thresh={'sample_min':1,'P_max':9999,'V_min':0,'dV_min':-9999,'dP_max':9999,'dt_window':24}
+        for key in thresh:
+            default_thresh[key] = thresh[key]
+        thresh = default_thresh
+
+        if isinstance(subset_domain,str):
+            lon_min,lon_max,lat_min,lat_max = [float(i) for i in subset_domain.split("/")]
+        else:
+            lon_min,lon_max,lat_min,lat_max = subset_domain
+        year_min,year_max = year_range
+        date_min,date_max = [dt.strptime(i,'%m/%d') for i in date_range]
+        date_max += timedelta(days=1,seconds=-1)
+        
+        def date_range_test(t,t_min,t_max):
+            if date_min<date_max:
+                test1 = (t>=t_min.replace(year=t.year))
+                test2 = (t<=t_max.replace(year=t.year))
+                return test1 & test2
+            else:
+                test1 = (t_min.replace(year=t.year)<=t<dt(t.year+1,1,1))
+                test2 = (dt(t.year,1,1)<=t<=t_max.replace(year=t.year))
+                return test1 | test2
+        
+        points={}
+        for name in ['vmax','mslp','type','lat','lon','date','stormid']+['dmslp_dt','dvmax_dt']*int(doInterp):
+            points[name]=[]
+        for key in self.keys:
+            istorm = self.data[key].copy()
+            if doInterp:
+                istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'])
+            for i in range(len(istorm['date'])):
+                if istorm['type'][i] in ['TD','SD','TS','SS','HU'] \
+                and lat_min<=istorm['lat'][i]<=lat_max and lon_min<=istorm['lon'][i]%360<=lon_max \
+                and year_min<=istorm['date'][i].year<=year_max \
+                and date_range_test(istorm['date'][i],date_min,date_max):
+                    points['vmax'].append(istorm['vmax'][i])
+                    points['mslp'].append(istorm['mslp'][i])
+                    points['type'].append(istorm['type'][i])
+                    points['lat'].append(istorm['lat'][i])
+                    points['lon'].append(istorm['lon'][i])
+                    points['date'].append(istorm['date'][i])
+                    points['stormid'].append(key)
+                    if doInterp:
+                        points['dvmax_dt'].append(istorm['dvmax_dt'][i])
+                        points['dmslp_dt'].append(istorm['dmslp_dt'][i])
+        p = pd.DataFrame.from_dict(points)
+        if thresh['V_min']>0:
+            p = p.loc[(p['vmax']>=thresh['V_min'])]
+        if thresh['P_max']<9999:
+            p = p.loc[(p['mslp']<=thresh['P_max'])]
+        if doInterp:
+            if thresh['dV_min']>0:
+                p = p.loc[(p['dvmax_dt']>=thresh['dV_min'])]
+            if thresh['dP_max']<9999:
+                p = p.loc[(p['dmslp_dt']>=thresh['dP_max'])]
+            
+        if return_keys:
+            return [g[0] for g in points.groupby("stormid")]
+        else:
+            return p
+
     def gridded_stats(self,cmd_request,thresh={},year_range=None,date_range=('1/1','12/31'),binsize=1,\
                          zoom=None,ax=None,cartopy_proj=None,prop={},map_prop={}):
         
@@ -2162,7 +2231,7 @@ class TrackDataset:
             year_range = (start_year,end_year)
         
         print("--> Getting filtered storm tracks")
-        points = filter_storms(self,year_range,date_range,thresh=thresh,doInterp=True)
+        points = self.filter_storms(year_range,date_range,thresh=thresh,doInterp=True,return_keys=False)
         
         #Round lat/lon points down to nearest bin
         to_bin = lambda x: np.floor(x / binsize) * binsize
@@ -2184,7 +2253,7 @@ class TrackDataset:
         #Group again, by latbin,lonbin
         groups = new_df.groupby(["latbin", "lonbin"])
         
-        zi = [func(g[1][varname]) if len(g[1])>thresh['sample_min'] else np.nan for g in groups]
+        zi = [func(g[1][varname]) if len(g[1])>=thresh['sample_min'] else np.nan for g in groups]
     
         coords = [g[0] for g in groups]
         

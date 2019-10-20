@@ -1744,7 +1744,7 @@ class TrackDataset:
             raise TypeError("year_range must be of type tuple or list")
         
         #Get velocity & pressure pairs for all storms in dataset
-        vp = filter_storms_vp(self,year_min=start_year,year_max=end_year)
+        vp = self.filter_storms_vp(year_min=start_year,year_max=end_year)
         relationship['vp'] = vp
 
         #Create 2D histogram of v+p relationship
@@ -2126,11 +2126,38 @@ class TrackDataset:
         return ace_rank
 
     def filter_storms(self,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},subset_domain=(0,360,-90,90),doInterp=False,return_keys=True):
+        
         r"""
-        trackdata : tracks.TrackDataset object
+        Filters all storms by various thresholds.
+        
+        Parameters
+        ----------
+        year_range : list or tuple
+            List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
+        date_range : list or tuple
+            List or tuple representing the start and end dates as a string in 'month/day' format (e.g., ('6/1','8/15')). Default is ('1/1','12/31') or full year.
+        thresh : dict
+            Keywords include:
+                
+            * **sample_min** - minimum number of storms in a grid box for the cmd_request to be applied. For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
+            * **V_min** - minimum wind for a given point to be included in the cmd_request.
+            * **P_max** - maximum pressure for a given point to be included in the cmd_request.
+            * **dV_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.
+            * **dP_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.
+            * **dt_window** - time window over which change variables are calculated (hours). Default is 24.
+            
+            Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.
         subset_domain : str
-            String or tuple representing a bounded region, 'latW/latE/latS/latN'
-        Returns : dataframe
+            String or tuple representing a bounded region, 'latW/latE/latS/latN'.
+        doInterp : bool
+            Whether to interpolate track data to hourly. Default is False.
+        return_keys : bool
+            If True, returns a list of storm IDs that match the specified criteria. Otherwise returns a pandas.DataFrame object with all matching data points. Default is True.
+        
+        Returns
+        -------
+        list or pandas.DataFrame
+            Check return_keys for more information.
         """
 
         default_thresh={'sample_min':1,'P_max':9999,'V_min':0,'dV_min':-9999,'dP_max':9999,'dt_window':24}
@@ -2209,12 +2236,12 @@ class TrackDataset:
             
             Variable words to use in cmd_request:
                 
-            * **wind** - (kt)
-            * **pressure** - (hPa)
-            * **wind change** - (kt). Must be followed by an integer value denoting the length of the time window '__ hours'.
-            * **pressure change** - (hPa). Must be followed by an integer value denoting the length of the time window '__ hours'.
+            * **wind** - (kt). Sustained wind.
+            * **pressure** - (hPa). Minimum pressure.
+            * **wind change** - (kt/time). Must be followed by an integer value denoting the length of the time window '__ hours' (e.g., "wind change in 24 hours").
+            * **pressure change** - (hPa/time). Must be followed by an integer value denoting the length of the time window '__ hours' (e.g., "pressure change in 24 hours").
             
-            Units of all wind variables are knots and pressure variables are hPa. These are added to the cmd_request string for the title.
+            Units of all wind variables are knots and pressure variables are hPa. These are added into the title.
             
             Function words to use in cmd_request:
                 
@@ -2224,12 +2251,12 @@ class TrackDataset:
             * **percentile** - Percentile must be preceded by an integer [0,100].
             * **number** - Number of storms in grid box satisfying filter thresholds.
             
+            Example usage: "maximum wind change in 24 hours", "50th percentile wind", "number of storms"
+            
         thresh : dict
             Keywords include:
                 
-            * **sample_min** - minimum number of storms in a grid box for the cmd_request to be applied.
-            For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
-
+            * **sample_min** - minimum number of storms in a grid box for the cmd_request to be applied. For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
             * **V_min** - minimum wind for a given point to be included in the cmd_request.
             * **P_max** - maximum pressure for a given point to be included in the cmd_request.
             * **dV_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.

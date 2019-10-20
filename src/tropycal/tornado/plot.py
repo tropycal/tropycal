@@ -136,7 +136,8 @@ class TornadoPlot(Plot):
         for _,row in tornado_data.iterrows():
             plt.plot([row['slon'],row['elon']+.01],[row['slat'],row['elat']+.01], \
                 lw=prop['linewidth'],color=EFcolors[row['mag']], \
-                path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*1.5, foreground='w'), path_effects.Normal()])
+                path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*1.5, foreground='w'), path_effects.Normal()],\
+                transform=ccrs.PlateCarree())
 
         #--------------------------------------------------------------------------------------
         

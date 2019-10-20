@@ -7,47 +7,96 @@ import urllib
 import matplotlib.dates as mdates
 import warnings
 
-def findvar(cmd):
+def findvar(cmd,thresh):
     cmd=cmd.lower()
     if cmd.find('count')>=0 or cmd.find('num')>=0:
-        return 'date'
+        return thresh,'date'
     if cmd.find('wind')>=0 or cmd.find('vmax')>=0:
-        return 'vmax'
+        if cmd.find('change')>=0:
+            try:
+                thresh['dt_window'] = int(''.join([c for c in cmd if c.isdigit()]))
+            except:
+                raise RuntimeError("Error: specify time interval (hours)")
+            return thresh,'dvmax_dt'
+        else:
+            return thresh,'vmax'
     elif cmd.find('pressure')>=0 or cmd.find('slp')>=0:
-        return 'mslp'
+        if cmd.find('change')>=0:
+            try:
+                thresh['dt_window'] = int(''.join([c for c in cmd if c.isdigit()]))
+            except:
+                raise RuntimeError("Error: specify time interval (hours)")
+            return thresh,'dmslp_dt'
+        else:
+            return thresh,'mslp'
     else:
         raise RuntimeError("Error: Could not decipher variable")
         
-def findfunc(cmd):
+def findfunc(cmd,thresh):
     cmd=cmd.lower()
-    Pthresh = np.nan
-    Vthresh = np.nan
     if cmd.find('max')==0:
-        return (Vthresh,Pthresh,0),lambda x: np.nanmax(x)
+        return thresh,lambda x: np.nanmax(x)
     if cmd.find('min')==0:
-        return (Vthresh,Pthresh,0),lambda x: np.nanmin(x)
+        return thresh,lambda x: np.nanmin(x)
     elif cmd.find('mean')>=0 or cmd.find('average')>=0 or cmd.find('avg')>=0:
-        return (Vthresh,Pthresh,4),lambda x: np.nanmean(x)
+        thresh['sample_min']=max([4,thresh['sample_min']])
+        return thresh,lambda x: np.nanmean(x)
     elif cmd.find('percentile')>=0:
         ptile = int(''.join([c for c in cmd if c.isdigit()]))
-        return (Vthresh,Pthresh,4),lambda x: np.nanpercentile(x,ptile)
+        thresh['sample_min']=max([4,thresh['sample_min']])
+        return thresh,lambda x: np.nanpercentile(x,ptile)
     elif cmd.find('count')>=0 or cmd.find('num')>=0:
         if cmd.find('kt')>=0 or cmd.find('wind')>=0:
-            Vthresh = int(''.join([c for c in cmd if c.isdigit()]))
+            thresh['V_min'] = int(''.join([c for c in cmd if c.isdigit()]))
         if cmd.find('hpa')>=0 or cmd.find('pressure')>=0:
-            Pthresh = int(''.join([c for c in cmd if c.isdigit()]))
-        return (Vthresh,Pthresh,0),lambda x: len(x)
+            thresh['P_max'] = int(''.join([c for c in cmd if c.isdigit()]))
+        return thresh,lambda x: len(x)
     else:
         raise RuntimeError("Error: Could not decipher function")
 
-def interp_storm(storm_dict,timeres=1/24):
+def construct_title(thresh):
+    plot_subtitle = []
+    if not np.isnan(thresh['sample_min']):
+        plot_subtitle.append(f"> {thresh['sample_min']} storms/bin")
+    else:
+        thresh['sample_min']=0
+        
+    if not np.isnan(thresh['V_min']):
+        plot_subtitle.append(f"> {thresh['V_min']}kt")
+    else:
+        thresh['V_min']=0
+        
+    if not np.isnan(thresh['P_max']):
+        plot_subtitle.append(f"< {thresh['P_max']}hPa")            
+    else:
+        thresh['P_max']=9999
+
+    if not np.isnan(thresh['dV_min']):
+        plot_subtitle.append(f"> {thresh['dV_min']}kt / {thresh['dt_window']}hr")            
+    else:
+        thresh['dV_min']=-9999
+
+    if not np.isnan(thresh['dP_max']):
+        plot_subtitle.append(f"> {thresh['dP_max']}hPa / {thresh['dt_window']}hr")            
+    else:
+        thresh['dP_max']=9999
+    
+    if len(plot_subtitle)>0:
+        plot_subtitle = '\n'+', '.join(plot_subtitle)
+    else:
+        plot_subtitle = ''
+    return thresh,plot_subtitle
+
+
+def interp_storm(storm_dict,timeres=1,dt_window=24):
     new_storm = {}
     for name in ['date','vmax','mslp','lat','lon','type']:
         new_storm[name]=[]
     times = mdates.date2num(storm_dict['date'])
     storm_dict['type']=np.asarray(storm_dict['type'])
+    storm_dict['lon'] = np.array(storm_dict['lon'])%360
     try:
-        targettimes = np.arange(times[0],times[-1]+timeres,timeres)
+        targettimes = np.arange(times[0],times[-1]+timeres/24,timeres/24)
         new_storm['date'] = [t.replace(tzinfo=None) for t in mdates.num2date(targettimes)]
         stormtype = np.ones(len(storm_dict['type']))*-99
         stormtype[np.where((storm_dict['type']=='TD') | (storm_dict['type']=='SD') | (storm_dict['type']=='TS') | \
@@ -56,13 +105,33 @@ def interp_storm(storm_dict,timeres=1/24):
         new_storm['type'] = np.where(new_storm['type']<0,'NT','TD')
         for name in ['vmax','mslp','lat','lon']:
             new_storm[name] = np.interp(targettimes,times,storm_dict[name])
+        
+        new_storm['dvmax_dt'] = [np.nan]+list((new_storm['vmax'][1:]-new_storm['vmax'][:-1])/timeres)
+
+        new_storm['dmslp_dt'] = [np.nan]+list((new_storm['mslp'][1:]-new_storm['mslp'][:-1])/timeres)
+
+        rE = 6.371e3 #km
+        new_storm['dx_dt'] = [np.nan]+list((new_storm['lon'][1:]-new_storm['lon'][:-1])* \
+                 rE*np.cos(np.mean([new_storm['lat'][1:],new_storm['lat'][:-1]],axis=0)*np.pi/180.)/timeres)
+        new_storm['dy_dt'] = [np.nan]+list((new_storm['lat'][1:]-new_storm['lat'][:-1])* \
+                 rE/timeres)
+        
+        for name in ['dvmax_dt','dmslp_dt','dx_dt','dy_dt']:
+            tmp = np.convolve(new_storm[name],[1]*int(dt_window/timeres),mode='valid')
+            new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
+            
         return new_storm
     except:
+        for name in new_storm.keys():
+            try:
+                storm_dict[name]
+            except:
+                storm_dict[name]=np.ones(len(new_storm[name]))*np.nan
         return storm_dict
     
-def filter_storms(trackdata,year_range=(0,9999),date_range=('1/1','12/31'),subset_domain=(0,360,-90,90),doInterp=False):
+def filter_storms(trackdata,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},subset_domain=(0,360,-90,90),doInterp=False):
     r"""
-    trackdata : tracks.Dataset object
+    trackdata : tracks.TrackDataset object
     subset_domain : str
         String or tuple representing a bounded region, 'latW/latE/latS/latN'
     Returns : dataframe
@@ -75,28 +144,38 @@ def filter_storms(trackdata,year_range=(0,9999),date_range=('1/1','12/31'),subse
     year_min,year_max = year_range
     date_min,date_max = [dt.strptime(i,'%m/%d') for i in date_range]
     date_max += timedelta(days=1,seconds=-1)
-            
+    
     points={}
-    for name in ['vmax','mslp','type','lat','lon','date','stormid']:
+    for name in ['vmax','mslp','type','lat','lon','date','stormid','dmslp_dt','dvmax_dt']:
         points[name]=[]
     for key in trackdata.keys:
         istorm = trackdata.data[key].copy()
         if doInterp:
-            istorm = interp_storm(istorm)
-        for i,(iwind,imslp,itype,ilat,ilon,itime) in \
-        enumerate(zip(istorm['vmax'],istorm['mslp'],istorm['type'],istorm['lat'],istorm['lon'],istorm['date'])):
-            if itype in ['TD','SD','TS','SS','HU'] \
-            and lat_min<=ilat<=lat_max and lon_min<=ilon%360<=lon_max \
-            and year_min<=itime.year<=year_max \
-            and date_min.replace(year=itime.year)<=itime<=date_max.replace(year=itime.year):
-                points['vmax'].append(iwind)
-                points['mslp'].append(imslp)
-                points['type'].append(itype)
-                points['lat'].append(ilat)
-                points['lon'].append(ilon)
-                points['date'].append(itime)
+            istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'])
+        for i in range(len(istorm['date'])):
+            if istorm['type'][i] in ['TD','SD','TS','SS','HU'] \
+            and lat_min<=istorm['lat'][i]<=lat_max and lon_min<=istorm['lon'][i]%360<=lon_max \
+            and year_min<=istorm['date'][i].year<=year_max \
+            and date_min.replace(year=istorm['date'][i].year)<=istorm['date'][i]<=date_max.replace(year=istorm['date'][i].year):
+                points['vmax'].append(istorm['vmax'][i])
+                points['mslp'].append(istorm['mslp'][i])
+                points['type'].append(istorm['type'][i])
+                points['lat'].append(istorm['lat'][i])
+                points['lon'].append(istorm['lon'][i])
+                points['date'].append(istorm['date'][i])
                 points['stormid'].append(key)
-    return pd.DataFrame.from_dict(points)
+                points['dvmax_dt'].append(istorm['dvmax_dt'][i])
+                points['dmslp_dt'].append(istorm['dmslp_dt'][i])
+    p = pd.DataFrame.from_dict(points)
+    if thresh['V_min']>0:
+        p = p.loc[(p['vmax']>thresh['V_min'])]
+    if thresh['P_max']<9999:
+        p = p.loc[(p['mslp']<thresh['P_max'])]
+    if thresh['dV_min']>0:
+        p = p.loc[(p['dvmax_dt']>thresh['dV_min'])]
+    if thresh['dP_max']<9999:
+        p = p.loc[(p['dmslp_dt']>thresh['dP_max'])]
+    return p
 
 
 def filter_storms_vp(trackdata,year_min=0,year_max=9999,subset_domain=None):
@@ -342,7 +421,7 @@ def make_cmap(varname,x,clevs):
                            for _ in range((clevs[c+1]-clevs[c])*10)]
             cmap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colorstack)
         else:
-            warnings.warn('Saffir Simpson category colors only allowed for wind.\n'+\
+            warnings.warn('Saffir Simpson category colors only allowed for wind. '+\
                           'Defaulting to plasma colormap.')
             x = 'plasma'
     if x!='category':

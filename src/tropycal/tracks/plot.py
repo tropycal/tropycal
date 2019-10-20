@@ -1139,7 +1139,7 @@ class TrackPlot(Plot):
         """
         
         #Set default properties
-        default_prop={'cmap':'category','clevs':None,'left_title':'','right_title':'All storms'}
+        default_prop={'cmap':'category','clevs':[np.nanmin(zcoord),np.nanmax(zcoord)],'left_title':'','right_title':'All storms'}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
@@ -1177,15 +1177,14 @@ class TrackPlot(Plot):
         
         #--------------------------------------------------------------------------------------
         
-        varname = findvar(prop['title_L'])
+        _,varname = findvar(prop['title_L'],{})
         cmap,clevs = make_cmap(varname,prop['cmap'],prop['clevs'])
-        if clevs == None:
-            clevs = [np.nanmin(zcoord),np.nanmax(zcoord)]
         
         if len(xcoord.shape) and len(ycoord.shape)==1:
             xcoord,ycoord = np.meshgrid(xcoord,ycoord)
         
-        cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs))
+        cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+                               transform=ccrs.PlateCarree())
         
         #--------------------------------------------------------------------------------------
         
@@ -1234,7 +1233,7 @@ class TrackPlot(Plot):
         
         #Add right title
         try:
-            self.ax.set_title(prop['title_R'],loc='right',fontsize=13)
+            self.ax.set_title(prop['title_R'],loc='right',fontsize=15)
         except:
             pass
         

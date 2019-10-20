@@ -1688,7 +1688,7 @@ class TrackDataset:
         else:
             return
     
-    def wind_pres_relationship(self,storm=None,year_range=None,return_dict=False,plot=True,save_path=None):
+    def wind_pres_relationship(self,storm=None,year_range=(None,None),return_dict=False,plot=True,save_path=None):
         
         r"""
         Creates a climatology of maximum sustained wind speed vs minimum MSLP relationships.
@@ -1727,6 +1727,11 @@ class TrackDataset:
             if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
         else:
             raise TypeError("year_range must be of type tuple or list")
+        
+        #Determine end year of hurdat dataset
+        start_year,end_year = year_range
+        if start_year == None: start_year = self.data[self.keys[0]]['year']
+        if end_year == None: end_year = self.data[self.keys[-1]]['year']
         
         #Get velocity & pressure pairs for all storms in dataset
         vp = filter_storms_vp(self,year_min=start_year,year_max=end_year)
@@ -2110,7 +2115,7 @@ class TrackDataset:
                 
         return ace_rank
 
-    def gridded_stats(self,cmd_request,year_range=None,date_range=('1/1','12/31'),binsize=1,\
+    def gridded_stats(self,cmd_request,thresh={},year_range=None,date_range=('1/1','12/31'),binsize=1,\
                          zoom=None,ax=None,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
@@ -2144,48 +2149,46 @@ class TrackDataset:
             Property of cartopy map.
         """
 
-        threshs,func = findfunc(cmd_request)
-        varname = findvar(cmd_request)
-        
-        V_min,P_max,sample_min = threshs
-        
-        if zoom == None:
-            zoom = self.basin
-        
+        default_thresh={'sample_min':np.nan,'P_max':np.nan,'V_min':np.nan,'dV_min':np.nan,'dP_max':np.nan,'dt_window':24}
+        for key in thresh:
+            default_thresh[key] = thresh[key]
+        thresh = default_thresh
+
+        thresh,func = findfunc(cmd_request,thresh)
+        thresh,varname = findvar(cmd_request,thresh)
+
+        thresh,plot_subtitle = construct_title(thresh)
+            
         if year_range == None:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
             year_range = (start_year,end_year)
         
-        print("--> Starting to get filtered storm tracks")
-        points = filter_storms(self,year_range,date_range,doInterp=True)
+        print("--> Getting filtered storm tracks")
+        points = filter_storms(self,year_range,date_range,thresh=thresh,doInterp=True)
         
         #Round lat/lon points down to nearest bin
         to_bin = lambda x: np.floor(x / binsize) * binsize
         points["latbin"] = points.lat.map(to_bin)
         points["lonbin"] = points.lon.map(to_bin)
         
+        print("--> Grouping by lat/lon/storm")
         #Group by latbin,lonbin,stormid
         groups = points.groupby(["latbin", "lonbin","stormid"])
         #Loops through groups, and apply stat func to storms
-        new_df = {'latbin':[],'lonbin':[],'stormid':[],varname:[],'V_max':[],'P_min':[]}
+        new_df = {'latbin':[],'lonbin':[],'stormid':[],varname:[]}
         for g in groups:
+            new_df[varname].append(func(g[1][varname].values))
             new_df['latbin'].append(g[0][0])
             new_df['lonbin'].append(g[0][1])
             new_df['stormid'].append(g[0][2])
-            new_df[varname].append(func(g[1][varname]))
-            new_df['V_max'].append(np.nanmax(g[1]['vmax']))
-            new_df['P_min'].append(np.nanmin(g[1]['mslp']))
         new_df = pd.DataFrame.from_dict(new_df)
         
         #Group again, by latbin,lonbin
         groups = new_df.groupby(["latbin", "lonbin"])
-        if not np.isnan(V_min):
-            zi = [func([i for i,j in zip(g[1][varname],g[1]['V_max']) if j>V_min]) if len(g[1])>sample_min and np.nanmax(g[1]['V_max'])>V_min else np.nan for g in groups]
-        elif not np.isnan(P_max):            
-            zi = [func([i for i,j in zip(g[1][varname],g[1]['P_min']) if j<P_max]) if len(g[1])>sample_min and np.nanmin(g[1]['P_min'])<P_max else np.nan for g in groups]
-        else:
-            zi = [func(g[1][varname]) if len(g[1])>sample_min else np.nan for g in groups]
+        
+        zi = [func(g[1][varname]) if len(g[1])>thresh['sample_min'] else np.nan for g in groups]
+    
         coords = [g[0] for g in groups]
         
         xi= np.arange(np.nanmin(points["lonbin"])-binsize,np.nanmax(points["lonbin"])+2*binsize,binsize)
@@ -2195,10 +2198,15 @@ class TrackDataset:
         for c,z in zip(coords,zi):
             grid_z[np.where((grid_y==c[0]) & (grid_x==c[1]))]=z
         
+        if varname == 'date':
+            grid_z[np.where(grid_z==0)]=np.nan
+        
         #Create instance of plot object
         self.plot_obj = TrackPlot()
         
         #Create cartopy projection
+        if zoom == None:
+            zoom = self.basin
         if cartopy_proj == None:
             if max(points['lon']) > 150 or min(points['lon']) < -150:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
@@ -2208,7 +2216,8 @@ class TrackDataset:
         #Plot
         endash = u"\u2013"
         dot = u"\u2022"
-        title_L = cmd_request[0].upper()+cmd_request[1:]
+        title_L = cmd_request[0].upper()+cmd_request[1:]+plot_subtitle
+        date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
         title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'
         prop['title_L'],prop['title_R']=title_L,title_R
         return_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,zoom,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)

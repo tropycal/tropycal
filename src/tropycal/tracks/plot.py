@@ -232,10 +232,14 @@ class TrackPlot(Plot):
         #--------------------------------------------------------------------------------------
         
         #Add plot credit
-        text = self.plot_credit()
         if storm_data['source'] == 'ibtracs' and storm_data['source_info'] == 'World Meteorological Organization (official)':
-            text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n{text}"
-        self.add_credit(text)
+            warning_text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n"
+        
+        self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
+        transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
+        
+        credit_text = self.plot_credit()
+        self.add_credit(credit_text)
         
         #Add legend
         if prop['fillcolor'] == 'category' or prop['linecolor'] == 'category':
@@ -642,19 +646,21 @@ class TrackPlot(Plot):
         #Add forecast label warning
         try:
             if edt_warning == True:
-                credit_text = "All times displayed are in EDT\n\n"
+                warning_text = "All times displayed are in EDT\n\n"
             else:
-                credit_text = ""
+                warning_text = ""
         except:
-            credit_text = ""
-            
-        #Add credit
+            warning_text = ""
         try:
-            credit_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n{plot_credit()}"
+            warning_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n"
         except:
-            credit_text += plot_credit()
-        self.ax.text(0.99,0.01,credit_text,fontsize=9,color='k',alpha=0.7,
+            pass
+        
+        self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
                 transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
+        
+        credit_text = self.plot_credit()
+        self.add_credit(credit_text)
         
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:
@@ -814,10 +820,14 @@ class TrackPlot(Plot):
         #--------------------------------------------------------------------------------------
         
         #Add plot credit
-        text = self.plot_credit()
         if season.source == 'ibtracs' and season.source_info == 'World Meteorological Organization (official)':
-            text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n{text}"
-        self.add_credit(text)
+            warning_text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n"
+        
+        self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
+        transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
+        
+        credit_text = self.plot_credit()
+        self.add_credit(credit_text)
         
         #Add legend
         if prop['fillcolor'] == 'category' or prop['linecolor'] == 'category':

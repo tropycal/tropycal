@@ -178,14 +178,14 @@ Note that the observed track here differs from the HURDAT2 track plotted previou
    :width: 75%
    :align: center
 
-ibtracs Dataset
+IBTrACS Dataset
 ---------------
 
-We can also read in ibtracs data and use it the same way as we would use HURDAT2 data. There are caveats to using ibtracs data, however, which are described more in depth in the :doc:`../data` page. We'll retrieve the global ibtracs dataset, using the Joint Typhoon Warning Center (JTWC) data, modified with the Neumann reanalysis for southern hemisphere storms, and including a special reanalysis for Cyclone Catarina (2004) in Brazil.
+We can also read in IBTrACS data and use it the same way as we would use HURDAT2 data. There are caveats to using IBTrACS data, however, which are described more in depth in the :doc:`../data` page. We'll retrieve the global IBTrACS dataset, using the Joint Typhoon Warning Center (JTWC) data, modified with the Neumann reanalysis for southern hemisphere storms, and including a special reanalysis for Cyclone Catarina (2004) in Brazil.
 
 .. warning::
 
-    By default, ibtracs data is read in from an online source. If you're reading in the global ibtracs dataset, this could be quite slow. For global ibtracs, it is recommended to have the CSV file saved locally (`link to data`_), then set the flag ``ibtracs_url="local_path"``.
+    By default, IBTrACS data is read in from an online source. If you're reading in the global IBTrACS dataset, this could be quite slow. For global IBTrACS, it is recommended to have the CSV file saved locally (`link to data`_), then set the flag ``ibtracs_url="local_path"``.
 
 .. _link to data: https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ALL.list.v04r00.csv
 
@@ -193,7 +193,7 @@ We can also read in ibtracs data and use it the same way as we would use HURDAT2
 
     ibtracs = tracks.TrackDataset(basin='all',source='ibtracs',ibtracs_mode='jtwc_neumann',catarina=True)
 
-The functionality for handling storms in ibtracs is the same as with using HURDAT2, the only limitation being no NHC and operational model data can be accessed when using ibtracs as the data source.
+The functionality for handling storms in IBTrACS is the same as with using HURDAT2, the only limitation being no NHC and operational model data can be accessed when using IBTrACS as the data source.
 
 `Super Typhoon Haiyan`_ (2013) was a catastrophic storm in the West Pacific basin, having made landfall in the Philippines. With estimated sustained winds of 195 mph (170 kt), it is among one of the most powerful tropical cyclones in recorded history. We can illustrate this by making a plot of Haiyan's observed track and intensity, from JTWC data:
 
@@ -208,7 +208,7 @@ The functionality for handling storms in ibtracs is the same as with using HURDA
    :width: 75%
    :align: center
 
-`Cyclone Catarina`_ (2004) was an extremely rare hurricane-force tropical cyclone that developed in the South Atlantic basin, which normally doesn't see tropical cyclone activity, and subsequently made landfall in Brazil. The "Catarina" name is unofficial; it was not assigned a name in real time, and JTWC assigned it the ID "AL502004". Recall that when reading in the ibtracs dataset previously, we set ``Catarina=True``. This read in data for Cyclone Catarina from a special post-storm reanalysis from McTaggart-Cowan et al. (2006). Let's make a plot of Catarina's observed track and intensity per this reanalysis:
+`Cyclone Catarina`_ (2004) was an extremely rare hurricane-force tropical cyclone that developed in the South Atlantic basin, which normally doesn't see tropical cyclone activity, and subsequently made landfall in Brazil. The "Catarina" name is unofficial; it was not assigned a name in real time, and JTWC assigned it the ID "AL502004". Recall that when reading in the IBTrACS dataset previously, we set ``Catarina=True``. This read in data for Cyclone Catarina from a special post-storm reanalysis from McTaggart-Cowan et al. (2006). Let's make a plot of Catarina's observed track and intensity per this reanalysis:
 
 .. _Cyclone Catarina: https://en.wikipedia.org/wiki/Hurricane_Catarina
 
@@ -221,7 +221,7 @@ The functionality for handling storms in ibtracs is the same as with using HURDA
    :width: 75%
    :align: center
 
-If we were to read in ibtracs without setting ``Catarina=True`` (which sets it to False by default) and plot the track for "AL502004", we would get the following:
+If we were to read in IBTrACS without setting ``Catarina=True`` (which sets it to False by default) and plot the track for "AL502004", we would get the following:
 
 .. code-block:: python
 

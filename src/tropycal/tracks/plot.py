@@ -1237,7 +1237,7 @@ class TrackPlot(Plot):
                                        fc = 'w',edgecolor = '0.8',alpha = 0.8,\
                                        transform=self.fig.transFigure, zorder=2)
         self.ax.add_patch(rectangle)
-            
+        
         #--------------------------------------------------------------------------------------
         
         #Add left title
@@ -1253,6 +1253,9 @@ class TrackPlot(Plot):
             pass
         
         #--------------------------------------------------------------------------------------
+        
+        text = self.plot_credit()
+        self.add_credit(text)
         
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:

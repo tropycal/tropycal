@@ -1111,7 +1111,7 @@ class TrackPlot(Plot):
                                         color='k'),
                         transform=ccrs.PlateCarree())
 
-    def plot_gridded(self,xcoord,ycoord,zcoord,zoom="north_atlantic",ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_gridded(self,xcoord,ycoord,zcoord,VEC_FLAG=False,zoom="north_atlantic",ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -1183,7 +1183,22 @@ class TrackPlot(Plot):
         if len(xcoord.shape) and len(ycoord.shape)==1:
             xcoord,ycoord = np.meshgrid(xcoord,ycoord)
         
-        cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+        if VEC_FLAG:
+            mag = np.hypot(*zcoord)
+            clevs = [np.nanmin(mag),np.nanmax(mag)]
+            cbmap = self.ax.pcolor(xcoord,ycoord,mag,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+                               transform=ccrs.PlateCarree())            
+            zcoord = zcoord/mag*abs(xcoord[0,0]-xcoord[0,1])
+            x_center = (xcoord[:-1,:-1]+xcoord[1:,1:])*.5
+            y_center = (ycoord[:-1,:-1]+ycoord[1:,1:])*.5
+            u = zcoord[0][:-1,:-1]
+            v = zcoord[1][:-1,:-1]
+            self.ax.quiver(x_center,y_center,u,v,color='w',alpha=0.6,transform=ccrs.PlateCarree(),\
+                           pivot='mid',width=.001,headwidth=3.5,headlength=4.5,headaxislength=4)
+            zcoord = mag
+        
+        else:
+            cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
                                transform=ccrs.PlateCarree())
         
         #--------------------------------------------------------------------------------------

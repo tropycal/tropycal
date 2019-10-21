@@ -31,6 +31,8 @@ def findvar(cmd,thresh):
             return thresh,'dmslp_dt'
         else:
             return thresh,'mslp'
+    elif cmd.find('heading')>=0 or cmd.find('movement')>=0 or cmd.find('motion')>=0:
+        return thresh,('dx_dt','dy_dt')
     else:
         raise RuntimeError("Error: Could not decipher variable")
         
@@ -111,9 +113,10 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
         new_storm['dmslp_dt'] = [np.nan]+list((new_storm['mslp'][1:]-new_storm['mslp'][:-1])/timeres)
 
         rE = 6.371e3 #km
-        new_storm['dx_dt'] = [np.nan]+list((new_storm['lon'][1:]-new_storm['lon'][:-1])* \
-                 rE*np.cos(np.mean([new_storm['lat'][1:],new_storm['lat'][:-1]],axis=0)*np.pi/180.)/timeres)
-        new_storm['dy_dt'] = [np.nan]+list((new_storm['lat'][1:]-new_storm['lat'][:-1])* \
+        d2r = np.pi/180.
+        new_storm['dx_dt'] = [np.nan]+list(d2r*(new_storm['lon'][1:]-new_storm['lon'][:-1])* \
+                 rE*np.cos(d2r*np.mean([new_storm['lat'][1:],new_storm['lat'][:-1]],axis=0))/timeres)
+        new_storm['dy_dt'] = [np.nan]+list(d2r*(new_storm['lat'][1:]-new_storm['lat'][:-1])* \
                  rE/timeres)
         
         for name in ['dvmax_dt','dmslp_dt']:

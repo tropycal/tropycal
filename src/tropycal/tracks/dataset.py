@@ -2460,7 +2460,10 @@ class TrackDataset:
         if storms == 'all':
             storms = [self.keys[i] for i in range(len(self.keys)) if self.keys_tors[i] == 1]
         else:
-            use_storms = [i if isinstance(i,str) == True else self.get_storm_id(i) for i in storms]
+            if len(storms)==2 and isinstance(storms[-1],int):
+                use_storms = [self.get_storm_id(storms)]
+            else:
+                use_storms = [i if isinstance(i,str) == True else self.get_storm_id(i) for i in storms]
             storms = [i for i in use_storms if i in self.keys and self.keys_tors[self.keys.index(i)] == 1]
             
         if len(storms) == 0:
@@ -2485,11 +2488,13 @@ class TrackDataset:
         #Number of storms exceeding mag_thresh
         num_storms = len(np.unique(stormTors.loc[stormTors['mag']>=mag_thresh]['storm_id'].values))
         
+        #Filter for mag >= mag_thresh, and sort by mag so highest will be plotted on top
+        stormTors = stormTors.loc[stormTors['mag']>=mag_thresh].sort_values('mag')
+
         #Plot all tornado tracks in motion relative coords
         for _,row in stormTors.iterrows():
-            if row['mag'] >= mag_thresh:
-                plt.plot([row['rot_xdist_s'],row['rot_xdist_e']+.01],[row['rot_ydist_s'],row['rot_ydist_e']+.01],\
-                         lw=2,c=EFcolors[row['mag']])
+            plt.plot([row['rot_xdist_s'],row['rot_xdist_e']+.01],[row['rot_ydist_s'],row['rot_ydist_e']+.01],\
+                     lw=2,c=EFcolors[row['mag']])
             
         #Plot dist_thresh radius
         dist_thresh = self.tornado_dist_thresh

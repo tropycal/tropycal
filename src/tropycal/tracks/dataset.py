@@ -2145,6 +2145,7 @@ class TrackDataset:
             * **dV_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.
             * **dP_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.
             * **dt_window** - time window over which change variables are calculated (hours). Default is 24.
+            * **dt_align** - alignment of dt_window for change variables -- 'start','middle','end' -- e.g. 'end' for dt_window=24 associates a TC point with change over the past 24 hours. Default is middle.
             
             Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.
         subset_domain : str
@@ -2160,7 +2161,7 @@ class TrackDataset:
             Check return_keys for more information.
         """
 
-        default_thresh={'sample_min':1,'P_max':9999,'V_min':0,'dV_min':-9999,'dP_max':9999,'dt_window':24}
+        default_thresh={'sample_min':1,'P_max':9999,'V_min':0,'dV_min':-9999,'dP_max':9999,'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
@@ -2189,7 +2190,7 @@ class TrackDataset:
         for key in self.keys:
             istorm = self.data[key].copy()
             if doInterp:
-                istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'])
+                istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
             for i in range(len(istorm['date'])):
                 if istorm['type'][i] in ['TD','SD','TS','SS','HU'] \
                 and lat_min<=istorm['lat'][i]<=lat_max and lon_min<=istorm['lon'][i]%360<=lon_max \
@@ -2262,6 +2263,7 @@ class TrackDataset:
             * **dV_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.
             * **dP_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.
             * **dt_window** - time window over which change variables are calculated (hours). Default is 24.
+            * **dt_align** - alignment of dt_window for change variables -- 'start','middle','end' -- e.g. 'end' for dt_window=24 associates a TC point with change over the past 24 hours. Default is middle.
             
             Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.
 
@@ -2287,7 +2289,7 @@ class TrackDataset:
             Property of cartopy map.
         """
 
-        default_thresh={'sample_min':None,'P_max':None,'V_min':None,'dV_min':None,'dP_max':None,'dt_window':24}
+        default_thresh={'sample_min':np.nan,'P_max':np.nan,'V_min':np.nan,'dV_min':np.nan,'dP_max':np.nan,'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
@@ -2358,6 +2360,8 @@ class TrackDataset:
         title_L = title_L.replace('vmax','wind (kt)')
         title_L = title_L.replace('pressure','pressure (hPa)')
         title_L = title_L.replace('mslp','pressure (hPa)')
+        if cmd_request.lower().find('change')>=0:
+            title_L = title_L+f", {thresh['dt_align']}"
         title_L = title_L[0].upper()+title_L[1:]+plot_subtitle
         date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
         title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'

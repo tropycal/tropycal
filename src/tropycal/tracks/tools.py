@@ -56,27 +56,27 @@ def construct_title(thresh):
     plot_subtitle = []
     gteq = u"\u2265"
     lteq = u"\u2264"
-    if thresh['sample_min']!=None:
+    if not np.isnan(thresh['sample_min']):
         plot_subtitle.append(f"{gteq} {thresh['sample_min']} storms/bin")
     else:
         thresh['sample_min']=0
         
-    if thresh['V_min']!=None:
+    if not np.isnan(thresh['V_min']):
         plot_subtitle.append(f"{gteq} {thresh['V_min']}kt")
     else:
         thresh['V_min']=0
         
-    if thresh['P_max']!=None:
+    if not np.isnan(thresh['P_max']):
         plot_subtitle.append(f"{lteq} {thresh['P_max']}hPa")            
     else:
         thresh['P_max']=9999
 
-    if thresh['dV_min']!=None:
+    if not np.isnan(thresh['dV_min']):
         plot_subtitle.append(f"{gteq} {thresh['dV_min']}kt / {thresh['dt_window']}hr")            
     else:
         thresh['dV_min']=-9999
 
-    if thresh['dP_max']!=None:
+    if not np.isnan(thresh['dP_max']):
         plot_subtitle.append(f"{lteq} {thresh['dP_max']}hPa / {thresh['dt_window']}hr")            
     else:
         thresh['dP_max']=9999
@@ -88,7 +88,7 @@ def construct_title(thresh):
     return thresh,plot_subtitle
 
 
-def interp_storm(storm_dict,timeres=1,dt_window=24):
+def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
     new_storm = {}
     for name in ['date','vmax','mslp','lat','lon','type']:
         new_storm[name]=[]
@@ -117,11 +117,24 @@ def interp_storm(storm_dict,timeres=1,dt_window=24):
                  rE/timeres)
         
         for name in ['dvmax_dt','dmslp_dt']:
-            tmp = np.convolve(new_storm[name],[1]*int(dt_window/timeres),mode='valid')
-            new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
+            tmp = np.convolve(new_storm[name],[1]*int(dt_window/timeres),mode='valid')            
+            if dt_align=='end':
+                new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
+            if dt_align=='middle':
+                tmp2 = [np.nan]*int((len(new_storm[name])-len(tmp))//2)+list(tmp)
+                new_storm[name] = tmp2+[np.nan]*(len(new_storm[name])-len(tmp2))
+            if dt_align=='start':
+                new_storm[name] = list(tmp)+[np.nan]*(len(new_storm[name])-len(tmp))
+                
         for name in ['dx_dt','dy_dt']:
             tmp = np.convolve(new_storm[name],[timeres/dt_window]*int(dt_window/timeres),mode='valid')
-            new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
+            if dt_align=='end':
+                new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
+            if dt_align=='middle':
+                tmp2 = [np.nan]*int((len(new_storm[name])-len(tmp))//2)+list(tmp)
+                new_storm[name] = tmp2+[np.nan]*(len(new_storm[name])-len(tmp2))
+            if dt_align=='start':
+                new_storm[name] = list(tmp)+[np.nan]*(len(new_storm[name])-len(tmp))
             
         return new_storm
     except:

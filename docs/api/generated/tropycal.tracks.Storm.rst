@@ -24,7 +24,6 @@ Storm
       ~Storm.plot
       ~Storm.plot_TCtors_rotated
       ~Storm.plot_nhc_forecast
-      ~Storm.plot_recon
       ~Storm.plot_tors
       ~Storm.to_dataframe
       ~Storm.to_dict
@@ -51,7 +50,6 @@ Storm
    .. automethod:: plot
    .. automethod:: plot_TCtors_rotated
    .. automethod:: plot_nhc_forecast
-   .. automethod:: plot_recon
    .. automethod:: plot_tors
    .. automethod:: to_dataframe
    .. automethod:: to_dict

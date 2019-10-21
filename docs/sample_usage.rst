@@ -11,6 +11,7 @@ Choose from one of the following examples for how to use Tropycal for performing
    :maxdepth: 1
 
    examples/tracks.storm
+   examples/tracks.tornado
    examples/tracks.TrackDataset
 
 * :ref:`modindex`

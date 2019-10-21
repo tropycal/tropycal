@@ -16,6 +16,7 @@ install:
   - pip install sphinx
   - pip install sphinx-gallery
   - pip install .
+  - pip install proj==4.9.0
   - pip install cartopy
 
 script:

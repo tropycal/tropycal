@@ -2185,7 +2185,8 @@ class TrackDataset:
                 return test1 | test2
         
         points={}
-        for name in ['vmax','mslp','type','lat','lon','date','stormid']+['dmslp_dt','dvmax_dt']*int(doInterp):
+        for name in ['vmax','mslp','type','lat','lon','date','stormid']+ \
+                    ['dmslp_dt','dvmax_dt','dx_dt','dy_dt']*int(doInterp):
             points[name]=[]
         for key in self.keys:
             istorm = self.data[key].copy()
@@ -2206,6 +2207,8 @@ class TrackDataset:
                     if doInterp:
                         points['dvmax_dt'].append(istorm['dvmax_dt'][i])
                         points['dmslp_dt'].append(istorm['dmslp_dt'][i])
+                        points['dx_dt'].append(istorm['dx_dt'][i])
+                        points['dy_dt'].append(istorm['dy_dt'][i])
         p = pd.DataFrame.from_dict(points)
         if thresh['V_min']>0:
             p = p.loc[(p['vmax']>=thresh['V_min'])]
@@ -2241,6 +2244,7 @@ class TrackDataset:
             * **pressure** - (hPa). Minimum pressure.
             * **wind change** - (kt/time). Must be followed by an integer value denoting the length of the time window '__ hours' (e.g., "wind change in 24 hours").
             * **pressure change** - (hPa/time). Must be followed by an integer value denoting the length of the time window '__ hours' (e.g., "pressure change in 24 hours").
+            * **storm motion** - (km/hour). Can be followed a length of time window. Otherwise defaults to 24 hours.
             
             Units of all wind variables are knots and pressure variables are hPa. These are added into the title.
             
@@ -2296,6 +2300,8 @@ class TrackDataset:
 
         thresh,func = findfunc(cmd_request,thresh)
         thresh,varname = findvar(cmd_request,thresh)
+        
+        VEC_FLAG = isinstance(varname,tuple)
 
         thresh,plot_subtitle = construct_title(thresh)
             
@@ -2318,7 +2324,10 @@ class TrackDataset:
         #Loops through groups, and apply stat func to storms
         new_df = {'latbin':[],'lonbin':[],'stormid':[],varname:[]}
         for g in groups:
-            new_df[varname].append(func(g[1][varname].values))
+            if VEC_FLAG:
+                new_df[varname].append([func(g[1][v].values) for v in varname])
+            else:
+                new_df[varname].append(func(g[1][varname].values))
             new_df['latbin'].append(g[0][0])
             new_df['lonbin'].append(g[0][1])
             new_df['stormid'].append(g[0][2])
@@ -2327,16 +2336,28 @@ class TrackDataset:
         #Group again, by latbin,lonbin
         groups = new_df.groupby(["latbin", "lonbin"])
         
-        zi = [func(g[1][varname]) if len(g[1])>=thresh['sample_min'] else np.nan for g in groups]
+        if VEC_FLAG:
+            zi = [[func(v) for v in zip(*g[1][varname])] if len(g[1])>=thresh['sample_min'] else [np.nan]*2 for g in groups]
+        else:
+            zi = [func(g[1][varname]) if len(g[1])>=thresh['sample_min'] else np.nan for g in groups]
     
         coords = [g[0] for g in groups]
         
         xi= np.arange(np.nanmin(points["lonbin"])-binsize,np.nanmax(points["lonbin"])+2*binsize,binsize)
         yi = np.arange(np.nanmin(points["latbin"])-binsize,np.nanmax(points["latbin"])+2*binsize,binsize)
         grid_x, grid_y = np.meshgrid(xi,yi)
-        grid_z = np.ones(grid_x.shape)*np.nan
-        for c,z in zip(coords,zi):
-            grid_z[np.where((grid_y==c[0]) & (grid_x==c[1]))]=z
+        
+        if VEC_FLAG:
+            grid_z_u = np.ones(grid_x.shape)*np.nan
+            grid_z_v = np.ones(grid_x.shape)*np.nan
+            for c,z in zip(coords,zi):
+                grid_z_u[np.where((grid_y==c[0]) & (grid_x==c[1]))]=z[0]
+                grid_z_v[np.where((grid_y==c[0]) & (grid_x==c[1]))]=z[1]
+            grid_z = [grid_z_u,grid_z_v]
+        else:
+            grid_z = np.ones(grid_x.shape)*np.nan
+            for c,z in zip(coords,zi):
+                grid_z[np.where((grid_y==c[0]) & (grid_x==c[1]))]=z
         
         if varname == 'date':
             grid_z[np.where(grid_z==0)]=np.nan
@@ -2356,17 +2377,20 @@ class TrackDataset:
         #Plot
         endash = u"\u2013"
         dot = u"\u2022"
-        title_L = cmd_request.replace('wind','wind (kt)')
-        title_L = title_L.replace('vmax','wind (kt)')
-        title_L = title_L.replace('pressure','pressure (hPa)')
-        title_L = title_L.replace('mslp','pressure (hPa)')
+        for name in ['wind','vmax']:
+            title_L = cmd_request.replace(name,'wind (kt)')
+        for name in ['pressure','mslp']:
+            title_L = title_L.replace(name,'pressure (hPa)')
+        for name in ['heading','motion','movement']:
+            title_L = title_L.replace(name,f'heading (km/hr) over {thresh["dt_window"]} hours')
         if cmd_request.lower().find('change')>=0:
             title_L = title_L+f", {thresh['dt_align']}"
         title_L = title_L[0].upper()+title_L[1:]+plot_subtitle
         date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
         title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'
         prop['title_L'],prop['title_R']=title_L,title_R
-        return_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,zoom,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
+        
+        return_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,VEC_FLAG,zoom,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
                     
         #Return axis
         if ax != None: return return_ax

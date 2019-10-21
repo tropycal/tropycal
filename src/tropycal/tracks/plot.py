@@ -1239,6 +1239,9 @@ class TrackPlot(Plot):
         
         #--------------------------------------------------------------------------------------
         
+        #Add plot credit
+        self.add_credit(self.plot_credit())
+        
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:
             return self.ax

@@ -2,7 +2,7 @@
 TC Dataset Analysis
 ###################
 
-This sample script illustrates how to create climatological analyses using HURDAT2 and ibtracs.
+This sample script illustrates how to create climatological analyses using HURDAT2 and IBTrACS.
 
 .. code-block:: python
 
@@ -103,14 +103,29 @@ This function plots the climatological correlation and distribution of wind-MSLP
    :width: 75%
    :align: center
 
-ibtracs Dataset
+Gridded Analyses
+----------------
+
+Tropycal also offers the capability of gridding tropical cyclone data into a structured latitude / longitude grid. This is done via the ``TrackDataset.gridded_stats()`` method. This method accepts multiple input arguments for various types of analyses. This example will show some of these capabilities.
+
+Let's construct a 1 degree grid and plot the maximum sustained wind recorded at each gridpoint:
+
+.. code-block:: python
+
+    hurdat_atl.gridded_stats(cmd_request="maximum wind")
+
+.. image:: ../_static/grid_example_1.png
+   :width: 75%
+   :align: center
+
+IBTrACS Dataset
 ---------------
 
-We can also read in ibtracs data and use it the same way as we would use HURDAT2 data. There are caveats to using ibtracs data, however, which are described more in depth in the :doc:`../data` page. We'll retrieve the global ibtracs dataset, using the Joint Typhoon Warning Center (JTWC) data, modified with the Neumann reanalysis for southern hemisphere storms, and including a special reanalysis for Cyclone Catarina (2004) in Brazil.
+We can also read in IBTrACS data and use it the same way as we would use HURDAT2 data. There are caveats to using IBTrACS data, however, which are described more in depth in the :doc:`../data` page. We'll retrieve the global IBTrACS dataset, using the Joint Typhoon Warning Center (JTWC) data, modified with the Neumann reanalysis for southern hemisphere storms, and including a special reanalysis for Cyclone Catarina (2004) in Brazil.
 
 .. warning::
 
-    By default, ibtracs data is read in from an online source. If you're reading in the global ibtracs dataset, this could be quite slow. For global ibtracs, it is recommended to have the CSV file saved locally (`link to data`_), then set the flag ``ibtracs_url="local_path"``.
+    By default, IBTrACS data is read in from an online source. If you're reading in the global IBTrACS dataset, this could be quite slow. For global IBTrACS, it is recommended to have the CSV file saved locally (`link to data`_), then set the flag ``ibtracs_url="local_path"``.
 
 .. _link to data: https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ALL.list.v04r00.csv
 
@@ -118,4 +133,4 @@ We can also read in ibtracs data and use it the same way as we would use HURDAT2
 
     ibtracs = tracks.TrackDataset(basin='all',source='ibtracs',ibtracs_mode='jtwc_neumann',catarina=True)
 
-In its current form, tropycal is not configured to support all types of analyses for global ibtracs, particularly near the dateline. Future updates will work to improve this functionality.
+In its current form, tropycal is not configured to support all types of analyses for global IBTrACS, particularly near the dateline. Future updates will work to improve this functionality.

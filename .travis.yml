@@ -14,12 +14,19 @@ env:
 # This is the script to build the docs on travis, then deploy
 install:
   - pip install sphinx
+  - pip install sphinx-gallery
   - pip install .
+  - pip install cartopy
 
 script:
   - set -e
   - pip install doctr
   - cd docs
+  - python
+  - import numpy as np
+  - import tropycal
+  - import tropycal.recon
+  - quit()
   - make html
   - cd ..
   - doctr deploy . --built-docs path/to/built/html/

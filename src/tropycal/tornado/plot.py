@@ -220,7 +220,11 @@ class TornadoPlot(Plot):
                                            transform=self.fig.transFigure, zorder=100)
 
         self.ax.add_patch(rectangle)
-            
+        
+        #add credit
+        text = self.plot_credit()
+        self.add_credit(text)
+        
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:
             return self.ax,'/'.join([str(b) for b in [bound_w,bound_e,bound_s,bound_n]]),leg_tor

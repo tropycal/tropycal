@@ -1761,7 +1761,7 @@ class TrackDataset:
         
         #Create figure
         fig=plt.figure(figsize=(12,9.5),dpi=200)
-        
+
         #Plot climatology
         CS=plt.pcolor(xedges,yedges,counts**0.3,vmin=0,vmax=np.amax(counts)**.3,cmap='gnuplot2_r')
         plt.plot(xedges,[testfit(vp,x,2) for x in xedges],'k--',linewidth=2)
@@ -1839,6 +1839,11 @@ class TrackDataset:
         cbar.ax.tick_params(labelsize=14)
         cbar.set_ticks(np.array([i for i in [0,5,50,200,500,1000,2000] if i<np.amax(counts)])**0.3, update_ticks=True)
         cbar.set_ticklabels([i for i in [0,5,50,200,500,1000,2000] if i<np.amax(counts)], update_ticks=True)
+
+        #add credit
+        credit_text = Plot().plot_credit()        
+        plt.text(0.99,0.01,credit_text,fontsize=9,color='k',alpha=0.7,backgroundcolor='w',\
+                transform=plt.gca().transAxes,ha='right',va='bottom',zorder=10)        
         
         #Show/save plot and close
         if save_path == None:

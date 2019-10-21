@@ -18,6 +18,6 @@ help:
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
-echo Running sphinx-autogen
+	echo Running sphinx-autogen
 	@$(SPHINXAUTOGEN) -i -t $(SOURCEDIR)/_templates -o $(SOURCEDIR)/api/generated $(SOURCEDIR)/api/*.rst
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

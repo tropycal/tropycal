@@ -233,13 +233,13 @@ class TrackPlot(Plot):
         
         #Add plot credit
         if storm_data['source'] == 'ibtracs' and storm_data['source_info'] == 'World Meteorological Organization (official)':
-            text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n{text}"
-            a = self.ax.text(0.01,0.01,text,fontsize=10,color='k',alpha=0.7,fontweight='bold',
-                transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
-            a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='white'),
-                           path_effects.Normal()])
+             warning_text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n"
         
-        self.add_credit(self.plot_credit())
+        self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
+        transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
+        
+        credit_text = self.plot_credit()
+        self.add_credit(credit_text)
         
         #Add legend
         if prop['fillcolor'] == 'category' or prop['linecolor'] == 'category':
@@ -646,19 +646,21 @@ class TrackPlot(Plot):
         #Add forecast label warning
         try:
             if edt_warning == True:
-                credit_text = "All times displayed are in EDT\n\n"
+                warning_text = "All times displayed are in EDT\n\n"
             else:
-                credit_text = ""
+                warning_text = ""
         except:
-            credit_text = ""
-            
-        #Add credit
+            warning_text = ""
         try:
-            credit_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n{plot_credit()}"
+            warning_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n"
         except:
-            credit_text += plot_credit()
-        self.ax.text(0.99,0.01,credit_text,fontsize=9,color='k',alpha=0.7,
+            pass
+        
+        self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
                 transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
+        
+        credit_text = self.plot_credit()
+        self.add_credit(credit_text)
         
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:
@@ -819,13 +821,13 @@ class TrackPlot(Plot):
 
         #Add plot credit
         if season.source == 'ibtracs' and season.source_info == 'World Meteorological Organization (official)':
-            text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n{text}"
-            a = self.ax.text(0.01,0.01,text,fontsize=10,color='k',alpha=0.7,fontweight='bold',
-                transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
-            a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='white'),
-                           path_effects.Normal()])
+            warning_text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n"
         
-        self.add_credit(self.plot_credit())
+        self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
+        transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
+        
+        credit_text = self.plot_credit()
+        self.add_credit(credit_text)
         
         #Add legend
         if prop['fillcolor'] == 'category' or prop['linecolor'] == 'category':
@@ -1119,7 +1121,7 @@ class TrackPlot(Plot):
                                         color='k'),
                         transform=ccrs.PlateCarree())
 
-    def plot_gridded(self,xcoord,ycoord,zcoord,zoom="north_atlantic",ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_gridded(self,xcoord,ycoord,zcoord,VEC_FLAG=False,zoom="north_atlantic",ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -1191,7 +1193,22 @@ class TrackPlot(Plot):
         if len(xcoord.shape) and len(ycoord.shape)==1:
             xcoord,ycoord = np.meshgrid(xcoord,ycoord)
         
-        cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+        if VEC_FLAG:
+            mag = np.hypot(*zcoord)
+            clevs = [np.nanmin(mag),np.nanmax(mag)]
+            cbmap = self.ax.pcolor(xcoord,ycoord,mag,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+                               transform=ccrs.PlateCarree())            
+            zcoord = zcoord/mag*abs(xcoord[0,0]-xcoord[0,1])
+            x_center = (xcoord[:-1,:-1]+xcoord[1:,1:])*.5
+            y_center = (ycoord[:-1,:-1]+ycoord[1:,1:])*.5
+            u = zcoord[0][:-1,:-1]
+            v = zcoord[1][:-1,:-1]
+            self.ax.quiver(x_center,y_center,u,v,color='w',alpha=0.6,transform=ccrs.PlateCarree(),\
+                           pivot='mid',width=.001,headwidth=3.5,headlength=4.5,headaxislength=4)
+            zcoord = mag
+        
+        else:
+            cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
                                transform=ccrs.PlateCarree())
         
         #--------------------------------------------------------------------------------------
@@ -1230,7 +1247,7 @@ class TrackPlot(Plot):
                                        fc = 'w',edgecolor = '0.8',alpha = 0.8,\
                                        transform=self.fig.transFigure, zorder=2)
         self.ax.add_patch(rectangle)
-            
+        
         #--------------------------------------------------------------------------------------
         
         #Add left title
@@ -1248,7 +1265,8 @@ class TrackPlot(Plot):
         #--------------------------------------------------------------------------------------
         
         #Add plot credit
-        self.add_credit(self.plot_credit())
+        text = self.plot_credit()
+        self.add_credit(text)
         
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:

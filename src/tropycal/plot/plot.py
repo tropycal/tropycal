@@ -215,7 +215,7 @@ class Plot:
             meridians2 = np.copy(meridians)
             meridians2[meridians2>180.0] = meridians2[meridians2>180.0]-360.0
             all_meridians = np.arange(0.0,360.0+rthres,rthres)
-            all_parallels = np.arange(-90.0,90.0+rthres,rthres)
+            all_parallels = np.arange(rdown(-90.0,rthres),90.0+rthres,rthres)
             
             #First call with no labels but gridlines plotted
             gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,xlocs=all_meridians,ylocs=all_parallels,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted')

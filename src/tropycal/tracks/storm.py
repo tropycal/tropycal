@@ -950,10 +950,10 @@ class Storm:
             * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
             * **lonW/lonE/latS/latN** - Custom plot domain
         plotPPF : bool or str
-            Whether to plot practically perfect forecast (PPF). True defaults to "total". Default is False.
+            Whether to plot practically perfect forecast (PPF). True defaults to "daily". Default is False.
         
             * **False** - no PPF plot.
-            * **True** - defaults to "total".
+            * **True** - defaults to "daily".
             * **"total"** - probability of a tornado within 25mi of a point during the period of time selected.
             * **"daily"** - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.
         plot_all : bool

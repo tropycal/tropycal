@@ -81,6 +81,16 @@ def construct_title(thresh):
     else:
         thresh['dP_max']=9999
     
+    if not np.isnan(thresh['dV_max']):
+        plot_subtitle.append(f"{lteq} {thresh['dV_max']}kt / {thresh['dt_window']}hr")            
+    else:
+        thresh['dV_max']=9999
+
+    if not np.isnan(thresh['dP_min']):
+        plot_subtitle.append(f"{gteq} {thresh['dP_min']}hPa / {thresh['dt_window']}hr")            
+    else:
+        thresh['dP_min']=-9999
+    
     if len(plot_subtitle)>0:
         plot_subtitle = '\n'+', '.join(plot_subtitle)
     else:

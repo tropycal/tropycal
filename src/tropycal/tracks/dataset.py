@@ -886,7 +886,10 @@ class TrackDataset:
                 self.data[jtwc_id]['id'] = jtwc_id
                 
         #Fix cyclone Catarina, if specified & requested
-        if 'AL502004' in all_keys and self.catarina == True:
+        all_keys = [k for k in self.data.keys()]
+        if '2004086S29318' in all_keys and self.catarina == True:
+            self.data['2004086S29318'] = cyclone_catarina()
+        elif 'AL502004' in all_keys and self.catarina == True:
             self.data['AL502004'] = cyclone_catarina()
         
         #Determine time elapsed
@@ -2161,7 +2164,8 @@ class TrackDataset:
             Check return_keys for more information.
         """
 
-        default_thresh={'sample_min':1,'P_max':9999,'V_min':0,'dV_min':-9999,'dP_max':9999,'dt_window':24,'dt_align':'middle'}
+        default_thresh={'sample_min':1,'P_max':9999,'V_min':0,'dV_min':-9999,'dP_max':9999,'dV_max':9999,'dP_min':-9999,
+                        'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
@@ -2216,6 +2220,10 @@ class TrackDataset:
                 p = p.loc[(p['dvmax_dt']>=thresh['dV_min'])]
             if thresh['dP_max']<9999:
                 p = p.loc[(p['dmslp_dt']>=thresh['dP_max'])]
+            if thresh['dV_max']<9999:
+                p = p.loc[(p['dvmax_dt']<=thresh['dV_max'])]
+            if thresh['dP_min']>0:
+                p = p.loc[(p['dmslp_dt']<=thresh['dP_min'])]
             
         if return_keys:
             return [g[0] for g in points.groupby("stormid")]
@@ -2289,7 +2297,7 @@ class TrackDataset:
             Property of cartopy map.
         """
 
-        default_thresh={'sample_min':np.nan,'P_max':np.nan,'V_min':np.nan,'dV_min':np.nan,'dP_max':np.nan,'dt_window':24,'dt_align':'middle'}
+        default_thresh={'sample_min':np.nan,'P_max':np.nan,'V_min':np.nan,'dV_min':np.nan,'dP_max':np.nan,'dV_max':np.nan,'dP_min':np.nan,'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh

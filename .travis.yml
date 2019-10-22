@@ -34,6 +34,7 @@ before_install:
     fi;
   - export PKG_CONFIG_PATH="$HOME/local/lib/pkgconfig";
   - export LD_LIBRARY_PATH="$HOME/local/lib";
+  - which python
   - python -m pip install Cython
 
 # This is the script to build the docs on travis, then deploy
@@ -47,6 +48,8 @@ script:
   - set -e
   - python -m pip install doctr
   - cd docs
+  - which python
+  - python test.py
   - make html
   - touch _build/html/.nojekyll
   - cd ..

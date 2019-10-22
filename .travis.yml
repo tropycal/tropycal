@@ -17,6 +17,9 @@ env:
     # Doctr deploy key for tropycal/tropycal
     - secure: "M+pGusgityaczioRiQ2TotKz/WVjsIT9eshKfH7vq0n00hzql9emdi7MNf6TtI5PyzsvEksoj7hVemc7B1cXeKCN/hyR6l+BoODlazPj1at/qv+WySBlYexeZ/BFS+FC1ub7TeogP2yH6RVr+sVsWLzCcbr0BKVnWl/s1jwc7RIdjQto8UPiFfYLBzuP/g/5FoMiENpWgpq6gVoA6M3ol5zoZlEmo8gIHgbpjsoUdQTgvNxPQ4NKy6QVNPGdqeTC3SqFy1Qllu/KP/haT0nTy0IC/cviLU8vX6Wcbw3NEUxA0mtfn2W7WIVRVHAvoY7/maJgZ2zgQ+JS2dJzNsoQKUtM6un2KFLRc+e3VCCNW3H+sfs7OUzX+hfvYDExe+QXtJqopG8sWk/3yMw6+sAvHHx35Er5BztjrTTRhP+VahcD4QmV0tD1iiWWqjUPaIYTNiVob9vWZyrOVSGsF8l3fD9L78pl3o8mq+wsA1Hj7hgVX5TuO4fAJqSR7SUyR6A2MeFvyyvhq90VJmK5frGaFXqsCDyuCeRgaPPMpToh6knjJVdisC30o3OvFzXi9+pFrqvDglBwu1ii+9AyiQzFtC5+nbb7wSjRO0zsV7s7zJ9OaE5S6GxjOoiCphLydTXIeKKH0SR8AOL9RJWm4nUHkT2YXnlPisrzDRS8T8gGSSY="
 
+cache:
+  - pip
+
 before_install:
   - python -m pip install --upgrade pip;
   - if [[ ! -f $HOME/local/lib/libproj.so ]]; then

@@ -11,7 +11,7 @@ addons:
     - libproj-dev
 
 # This gives Doctr the key we've generated
-sudo: false
+sudo: required
 env:
   global:
     # Doctr deploy key for tropycal/tropycal
@@ -32,6 +32,8 @@ before_install:
         make install;
         popd;
     fi;
+  - export PKG_CONFIG_PATH="$HOME/local/lib/pkgconfig";
+  - export LD_LIBRARY_PATH="$HOME/local/lib";
   - python -m pip install Cython
 
 # This is the script to build the docs on travis, then deploy
@@ -46,4 +48,5 @@ script:
   - python -m pip install doctr
   - cd docs
   - make html
+  - touch _build/html/.nojekyll
   - cd ..

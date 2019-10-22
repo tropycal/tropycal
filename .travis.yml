@@ -41,6 +41,7 @@ before_install:
 install:
   - python -m pip install sphinx
   - python -m pip install sphinx-gallery
+  - python -m pip install sphinx-rtd-theme
   - python -m pip install .
   - python -m pip install cartopy
   - python -m pip install networkx
@@ -51,6 +52,7 @@ script:
   - cd docs
   - which python
   - python test.py
+  - make clean html
   - make html
   - touch _build/html/.nojekyll
   - cd ..

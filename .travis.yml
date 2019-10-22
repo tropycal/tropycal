@@ -29,18 +29,18 @@ before_install:
         make install;
         popd;
     fi;
-  - pip install Cython
+  - python -m pip install Cython
 
 # This is the script to build the docs on travis, then deploy
 install:
-  - pip install sphinx
-  - pip install sphinx-gallery
-  - pip install .
-  - pip install cartopy
+  - python -m pip install sphinx
+  - python -m pip install sphinx-gallery
+  - python -m pip install .
+  - python -m pip install cartopy
 
 script:
   - set -e
-  - pip install doctr
+  - python -m pip install doctr
   - cd docs
   - make html
   - cd ..

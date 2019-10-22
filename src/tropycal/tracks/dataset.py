@@ -1170,7 +1170,9 @@ class TrackDataset:
             If return_dict is True, a dictionary containing data about the ACE climatology is returned.
         """
         
-        if plot_year<start_year or np.any(np.asarray(compare_years)<start_year):
+        if plot_year!=None and plot_year<start_year:
+            raise ValueError("One of the years is before the climatology start_year.")            
+        if compare_years!=None and np.any(np.asarray(compare_years)<start_year):
             raise ValueError("One of the years is before the climatology start_year.")
         
         if self.source == 'ibtracs':

@@ -1048,7 +1048,8 @@ class Storm:
             warn_message = "Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run \"TrackDataset.assign_storm_tornadoes()\" to avoid this warning in the future."
             warnings.warn(warn_message)
             Tors = TornadoDataset()
-            self.stormTors = Tors.get_storm_tornadoes(self,dist_thresh)
+            stormTors = Tors.get_storm_tornadoes(self,dist_thresh)
+            self.stormTorsRotated = Tors.rotateToHeading(self,stormTors)
         
         #Create figure for plotting
         plt.figure(figsize=(9,9),dpi=150)
@@ -1058,7 +1059,7 @@ class Storm:
         EFcolors = ef_colors('default')
         
         #Plot all tornado tracks in motion relative coords
-        for _,row in self.stormTors.iterrows():
+        for _,row in self.stormTorsRotated.iterrows():
             plt.plot([row['rot_xdist_s'],row['rot_xdist_e']+.01],[row['rot_ydist_s'],row['rot_ydist_e']+.01],\
                      lw=2,c=EFcolors[row['mag']])
             

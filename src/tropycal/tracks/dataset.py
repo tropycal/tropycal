@@ -2392,13 +2392,14 @@ class TrackDataset:
         #Plot
         endash = u"\u2013"
         dot = u"\u2022"
+        title_L=cmd_request.lower()
         for name in ['wind','vmax']:
-            title_L = cmd_request.replace(name,'wind (kt)')
+            title_L = title_L.replace(name,'wind (kt)')
         for name in ['pressure','mslp']:
             title_L = title_L.replace(name,'pressure (hPa)')
         for name in ['heading','motion','movement']:
             title_L = title_L.replace(name,f'heading (km/hr) over {thresh["dt_window"]} hours')
-        if cmd_request.lower().find('change')>=0:
+        if cmd_request.find('change')>=0:
             title_L = title_L+f", {thresh['dt_align']}"
         title_L = title_L[0].upper()+title_L[1:]+plot_subtitle
         date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]

@@ -50,7 +50,7 @@ HURDAT data is not available for the most recent hurricane seasons. To include t
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (3.28 seconds)
+    --> Completed reading in HURDAT2 data (2.65 seconds)
 
 
 
@@ -234,18 +234,8 @@ Note: There is currently a bug with this function that outputs 2 axes, a filled 
 
 
 
-.. rst-class:: sphx-glr-horizontal
-
-
-    *
-
-      .. image:: /examples/images/sphx_glr_tracks.storm_002.png
-            :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /examples/images/sphx_glr_tracks.storm_003.png
-            :class: sphx-glr-multi-img
+.. image:: /examples/images/sphx_glr_tracks.storm_002.png
+    :class: sphx-glr-single-img
 
 
 .. rst-class:: sphx-glr-script-out
@@ -257,7 +247,7 @@ Note: There is currently a bug with this function that outputs 2 axes, a filled 
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/storm.py:982: UserWarning: Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run "TrackDataset.assign_storm_tornadoes()" to avoid this warning in the future.
       warnings.warn(warn_message)
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (11.84 seconds)
+    --> Completed reading in tornado data for 1950-2018 (10.35 seconds)
 
 
 
@@ -417,7 +407,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (58.26 seconds)
+    --> Completed reading in ibtracs data (50.31 seconds)
 
 
 
@@ -437,7 +427,7 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
 
 
 
-.. image:: /examples/images/sphx_glr_tracks.storm_004.png
+.. image:: /examples/images/sphx_glr_tracks.storm_003.png
     :class: sphx-glr-single-img
 
 
@@ -457,7 +447,7 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
 
 
 
-.. image:: /examples/images/sphx_glr_tracks.storm_005.png
+.. image:: /examples/images/sphx_glr_tracks.storm_004.png
     :class: sphx-glr-single-img
 
 
@@ -468,7 +458,7 @@ If we were to read in IBTrACS without setting ``Catarina=True`` (which sets it t
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  39.813 seconds)
+   **Total running time of the script:** ( 1 minutes  28.427 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.storm.py:

@@ -49,7 +49,7 @@ Let's start by creating an instance of a TornadoDataset object. By default, this
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (11.89 seconds)
+    --> Completed reading in tornado data for 1950-2018 (10.43 seconds)
 
 
 
@@ -105,7 +105,7 @@ We can also use TornadoDataset to assess tornadoes associated with tropical cycl
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (3.49 seconds)
+    --> Completed reading in HURDAT2 data (2.96 seconds)
 
 
 
@@ -132,9 +132,9 @@ This code block will take a while to run, as it will iterate over every storm in
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (11.67 seconds)
+    --> Completed reading in tornado data for 1950-2018 (10.24 seconds)
     --> Starting to assign tornadoes to storms
-    --> Completed assigning tornadoes to storm (20.32 seconds)
+    --> Completed assigning tornadoes to storm (18.89 seconds)
 
 
 
@@ -206,18 +206,8 @@ Let's plot all the tornado tracks, and daily PPF, associated with Hurricane Ivan
 
 
 
-.. rst-class:: sphx-glr-horizontal
-
-
-    *
-
-      .. image:: /examples/images/sphx_glr_tracks.tornado_004.png
-            :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /examples/images/sphx_glr_tracks.tornado_005.png
-            :class: sphx-glr-multi-img
+.. image:: /examples/images/sphx_glr_tracks.tornado_004.png
+    :class: sphx-glr-single-img
 
 
 
@@ -232,7 +222,7 @@ Let's make a plot of the tornadoes in storm motion relative coordinates:
 
 
 
-.. image:: /examples/images/sphx_glr_tracks.tornado_006.png
+.. image:: /examples/images/sphx_glr_tracks.tornado_005.png
     :class: sphx-glr-single-img
 
 
@@ -241,7 +231,7 @@ Let's make a plot of the tornadoes in storm motion relative coordinates:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  18.011 seconds)
+   **Total running time of the script:** ( 1 minutes  13.364 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.tornado.py:

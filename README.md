@@ -30,7 +30,7 @@ python setup.py install
 To fully leverage tropycal's plotting capabilities, it is strongly recommended to have cartopy >= 0.17.0 installed.
 
 ## Documentation
-For full documentation and examples, please refer to [Tropycal Documentation](https://tropycal.readthedocs.io/en/latest/).
+For full documentation and examples, please refer to [Tropycal Documentation](https://tropycal.github.io/tropycal/).
 
 ## Sample Usage
 As an example, read in the North Atlantic HURDAT2 reanalysis dataset, excluding Best Track (current year's storms):

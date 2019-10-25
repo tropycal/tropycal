@@ -56,24 +56,24 @@ hurdat_atl.plot_storm(('michael',2018),return_ax=True)
 # 
 # Let's look at the cumulative year-to-date accumulated cyclone energy, with 2018 highlighted and compared against 2017:
 
-hurdat_atl.ace_climo(plot_year=2018,compare_years=2017,return_ax=True)
+hurdat_atl.ace_climo(plot_year=2018,compare_years=2017)
 
 ###########################################
 # We can use the same function to perform a rolling sum, rather than a year-to-date sum. This highlights particularly active periods of tropical cyclone activity. We'll use the same function as before, but with a ``rolling_sum=30`` argument provided:
 
-hurdat_atl.ace_climo(rolling_sum=30,plot_year=2018,compare_years=2017,return_ax=True)
+hurdat_atl.ace_climo(rolling_sum=30,plot_year=2018,compare_years=2017)
 
 ###########################################
 # Plot cumulative hurricane days for all categories, with 2018 highlighted:
 
-hurdat_atl.hurricane_days_climo(plot_year=2018,return_ax=True)
+hurdat_atl.hurricane_days_climo(plot_year=2018)
 
 ###########################################
 # Another climatological analysis available is a climatological correlation between maximum sustained wind and minimum mean sea level pressure (MSLP). While both variables are generally well correlated, factors such as background MSLP and MSLP gradient can affect this relationship.
 # 
 # This function plots the climatological correlation and distribution of wind-MSLP relationship, and can also plot individual storms for comparison against the climatology. We'll look at Hurricane Sandy (2012), which started out with a fairly typical wind-MSLP relationship, but towards the end of its life cycle ended up with an anomalously low MSLP given its sustained wind speed as it substantially grew in size.
 
-hurdat_atl.wind_pres_relationship(storm=('sandy',2012),return_ax=True)
+hurdat_atl.wind_pres_relationship(storm=('sandy',2012))
 
 ###########################################
 # Gridded Analyses

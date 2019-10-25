@@ -124,7 +124,7 @@ class Season:
         #Return dataset
         return ds
         
-    def plot(self,ax=None,cartopy_proj=None,prop={},map_prop={}):
+    def plot(self,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of this season.
@@ -151,10 +151,10 @@ class Season:
             
             
         #Plot storm
-        return_ax = self.plot_obj.plot_season(self,ax,prop=prop,map_prop=map_prop)
+        return_ax = self.plot_obj.plot_season(self,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None: return return_ax
+        if ax != None or return_ax == True: return return_ax
         
     def annual_summary(self):
         

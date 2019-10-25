@@ -1,5 +1,5 @@
 r"""Functionality for reading and analyzing recon data."""
-print("in recon")
+
 from .dataset import ReconDataset
 
 import sys

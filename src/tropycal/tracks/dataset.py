@@ -974,7 +974,7 @@ class TrackDataset:
             error_message = f"Multiple IDs were identified for the requested storm. Choose one of the following storm IDs and provide it as the 'storm' argument instead of a tuple:{error_message}"
             raise RuntimeError(error_message)
     
-    def plot_storm(self,storm,zoom="dynamic",plot_all=False,ax=None,cartopy_proj=None,prop={},map_prop={}):
+    def plot_storm(self,storm,zoom="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm.
@@ -1020,12 +1020,12 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        return_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax=ax,prop=prop,map_prop=map_prop)
+        return_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None: return return_ax
+        if ax != None or return_ax == True: return return_ax
         
-    def plot_season(self,year,ax=None,cartopy_proj=None,prop={},map_prop={}):
+    def plot_season(self,year,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single season.
@@ -1060,10 +1060,10 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot season
-        return_ax = self.plot_obj.plot_season(season,ax,prop=prop,map_prop=map_prop)
+        return_ax = self.plot_obj.plot_season(season,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None: return return_ax
+        if ax != None or return_ax == True: return return_ax
     
     def search_name(self,name):
         

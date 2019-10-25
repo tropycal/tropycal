@@ -233,10 +233,10 @@ class TrackPlot(Plot):
         
         #Add plot credit
         if storm_data['source'] == 'ibtracs' and storm_data['source_info'] == 'World Meteorological Organization (official)':
-             warning_text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n"
+            warning_text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n"
         
-        self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
-        transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
+            self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
+            transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
         
         credit_text = self.plot_credit()
         self.add_credit(credit_text)
@@ -823,8 +823,8 @@ class TrackPlot(Plot):
         if season.source == 'ibtracs' and season.source_info == 'World Meteorological Organization (official)':
             warning_text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n"
         
-        self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
-        transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
+            self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
+            transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
         
         credit_text = self.plot_credit()
         self.add_credit(credit_text)

@@ -199,7 +199,7 @@ class Storm:
         return ds
     
     #PLOT FUNCTION FOR HURDAT
-    def plot(self,zoom="dynamic",plot_all=False,ax=None,cartopy_proj=None,prop={},map_prop={}):
+    def plot(self,zoom="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of the observed track of the storm.
@@ -237,10 +237,10 @@ class Storm:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        return_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax,prop=prop,map_prop=map_prop)
+        return_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None: return return_ax
+        if ax != None or return_ax == True: return return_ax
         
     #PLOT FUNCTION FOR HURDAT
     def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,zoom="dynamic_forecast",
@@ -399,7 +399,7 @@ class Storm:
         plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,zoom,ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None: return plot_ax
+        if ax != None or return_ax == True: return plot_ax
         
     
     def list_nhc_discussions(self):
@@ -931,7 +931,7 @@ class Storm:
 
             
     def plot_tors(self,dist_thresh=1000,Tors=None,zoom="dynamic",plotPPF=False,plot_all=False,\
-                  ax=None,cartopy_proj=None,prop={},map_prop={}):
+                  ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
                 
         r"""
         Creates a plot of the storm and associated tornado tracks.
@@ -1020,7 +1020,7 @@ class Storm:
         return_ax.set_title(f'{storm_title}\n{tor_title}',loc='left',fontsize=17,fontweight='bold')
 
         #Return axis
-        if ax != None: return return_ax
+        if ax != None or return_ax == True: return return_ax
 
 
     def plot_TCtors_rotated(self,dist_thresh=1000,return_ax=False):

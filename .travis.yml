@@ -34,7 +34,6 @@ before_install:
     fi;
   - export PKG_CONFIG_PATH="$HOME/local/lib/pkgconfig";
   - export LD_LIBRARY_PATH="$HOME/local/lib";
-  - which python
   - python -m pip install Cython
 
 # This is the script to build the docs on travis, then deploy
@@ -45,14 +44,23 @@ install:
   - python -m pip install .
   - python -m pip install cartopy
   - python -m pip install networkx
+  - python -m pip install pytest
 
 script:
+  - pytest tests/tracks.py
   - set -e
   - python -m pip install doctr
   - cd docs
-  - which python
-  - python test.py
   - make clean html
   - make html
   - touch _build/html/.nojekyll
   - cd ..
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: ci/deploy_key.enc  # Set in travis-ci.org dashboard, marked secure
+  keep-history: true
+  on:
+    branch: master
+  local_dir: docs/_build/html/

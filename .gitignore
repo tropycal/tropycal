@@ -2,8 +2,9 @@
 .DS_Store
 *.pyc
 
+docs/examples/
 docs/_build/
-docs/_api/generated
+docs/_api/generated/
 
 *.egg-info
 .eggs/

@@ -2,23 +2,64 @@
 language: python
 python:
   - 3.6
-  - 3.7
+
+addons:
+  apt:
+    packages: &base_build
+    - gfortran
+    - libproj-dev
 
 # This gives Doctr the key we've generated
-sudo: false
+sudo: required
 env:
   global:
     # Doctr deploy key for tropycal/tropycal
     - secure: "M+pGusgityaczioRiQ2TotKz/WVjsIT9eshKfH7vq0n00hzql9emdi7MNf6TtI5PyzsvEksoj7hVemc7B1cXeKCN/hyR6l+BoODlazPj1at/qv+WySBlYexeZ/BFS+FC1ub7TeogP2yH6RVr+sVsWLzCcbr0BKVnWl/s1jwc7RIdjQto8UPiFfYLBzuP/g/5FoMiENpWgpq6gVoA6M3ol5zoZlEmo8gIHgbpjsoUdQTgvNxPQ4NKy6QVNPGdqeTC3SqFy1Qllu/KP/haT0nTy0IC/cviLU8vX6Wcbw3NEUxA0mtfn2W7WIVRVHAvoY7/maJgZ2zgQ+JS2dJzNsoQKUtM6un2KFLRc+e3VCCNW3H+sfs7OUzX+hfvYDExe+QXtJqopG8sWk/3yMw6+sAvHHx35Er5BztjrTTRhP+VahcD4QmV0tD1iiWWqjUPaIYTNiVob9vWZyrOVSGsF8l3fD9L78pl3o8mq+wsA1Hj7hgVX5TuO4fAJqSR7SUyR6A2MeFvyyvhq90VJmK5frGaFXqsCDyuCeRgaPPMpToh6knjJVdisC30o3OvFzXi9+pFrqvDglBwu1ii+9AyiQzFtC5+nbb7wSjRO0zsV7s7zJ9OaE5S6GxjOoiCphLydTXIeKKH0SR8AOL9RJWm4nUHkT2YXnlPisrzDRS8T8gGSSY="
 
-# This is the script to build the docs on travis, then deploy
-script:
-  - set -e
-  - pip install doctr
-  - cd docs
-  - make html
-  - cd ..
-  - doctr deploy . --built-docs path/to/built/html/
+cache:
+  - pip
 
+before_install:
+  - python -m pip install --upgrade pip;
+  - if [[ ! -f $HOME/local/lib/libproj.so ]]; then
+        wget http://download.osgeo.org/proj/proj-4.9.3.tar.gz;
+        tar xf proj-4.9.3.tar.gz;
+        pushd proj-4.9.3;
+        ./configure --prefix=$HOME/local;
+        make;
+        sed -i "" -e s/-I// proj.pc;
+        make install;
+        popd;
+    fi;
+  - export PKG_CONFIG_PATH="$HOME/local/lib/pkgconfig";
+  - export LD_LIBRARY_PATH="$HOME/local/lib";
+  - python -m pip install Cython
+
+# This is the script to build the docs on travis, then deploy
 install:
-  - pip install .
+  - python -m pip install sphinx
+  - python -m pip install sphinx-gallery
+  - python -m pip install sphinx-rtd-theme
+  - python -m pip install .
+  - python -m pip install cartopy
+  - python -m pip install networkx
+  - python -m pip install pytest
+
+script:
+  - pytest tests/tracks.py
+  - set -e
+  - python -m pip install doctr
+  - cd docs
+  - make clean html
+  - make html
+  - touch _build/html/.nojekyll
+  - cd ..
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: ci/deploy_key.enc  # Set in travis-ci.org dashboard, marked secure
+  keep-history: true
+  on:
+    branch: master
+  local_dir: docs/_build/html/

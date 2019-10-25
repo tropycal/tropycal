@@ -199,7 +199,7 @@ class Storm:
         return ds
     
     #PLOT FUNCTION FOR HURDAT
-    def plot(self,zoom="dynamic",plot_all=False,ax=None,cartopy_proj=None,prop={},map_prop={}):
+    def plot(self,zoom="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of the observed track of the storm.
@@ -237,10 +237,10 @@ class Storm:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        return_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None: return return_ax
+        if ax != None or return_ax == True: return plot_ax
         
     #PLOT FUNCTION FOR HURDAT
     def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,zoom="dynamic_forecast",
@@ -399,7 +399,7 @@ class Storm:
         plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,zoom,ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None: return plot_ax
+        if ax != None or return_ax == True: return plot_ax
         
     
     def list_nhc_discussions(self):
@@ -931,7 +931,7 @@ class Storm:
 
             
     def plot_tors(self,dist_thresh=1000,Tors=None,zoom="dynamic",plotPPF=False,plot_all=False,\
-                  ax=None,cartopy_proj=None,prop={},map_prop={}):
+                  ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
                 
         r"""
         Creates a plot of the storm and associated tornado tracks.
@@ -995,7 +995,11 @@ class Storm:
     
         #Create instance of plot object
         self.plot_obj_tc = TrackPlot()
-        self.plot_obj_tor = TornadoPlot()
+        try:
+            self.plot_obj_tor = TornadoPlot()
+        except:
+            from ..tornado.plot import TornadoPlot
+            self.plot_obj_tor = TornadoPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:
@@ -1012,15 +1016,15 @@ class Storm:
         tor_title = tor_ax.get_title('left')
         
         #Plot storm
-        return_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,plot_all,ax=tor_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,plot_all,ax=tor_ax,prop=prop,map_prop=map_prop)
         
-        return_ax.add_artist(leg_tor)
+        plot_ax.add_artist(leg_tor)
         
-        storm_title = return_ax.get_title('left')
-        return_ax.set_title(f'{storm_title}\n{tor_title}',loc='left',fontsize=17,fontweight='bold')
-
+        storm_title = plot_ax.get_title('left')
+        plot_ax.set_title(f'{storm_title}\n{tor_title}',loc='left',fontsize=17,fontweight='bold')
+        
         #Return axis
-        if ax != None: return return_ax
+        if ax != None or return_ax == True: return plot_ax
 
 
     def plot_TCtors_rotated(self,dist_thresh=1000,return_ax=False):
@@ -1048,7 +1052,8 @@ class Storm:
             warn_message = "Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run \"TrackDataset.assign_storm_tornadoes()\" to avoid this warning in the future."
             warnings.warn(warn_message)
             Tors = TornadoDataset()
-            self.stormTors = Tors.get_storm_tornadoes(self,dist_thresh)
+            stormTors = Tors.get_storm_tornadoes(self,dist_thresh)
+            self.stormTors = Tors.rotateToHeading(self,stormTors)
         
         #Create figure for plotting
         plt.figure(figsize=(9,9),dpi=150)

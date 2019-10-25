@@ -10,9 +10,9 @@ Choose from one of the following examples for how to use Tropycal for performing
 .. toctree::
    :maxdepth: 1
 
-   examples/tracks.storm
-   examples/tracks.tornado
-   examples/tracks.TrackDataset
+   samples/tracks.storm
+   samples/tracks.tornado
+   samples/tracks.TrackDataset
 
 * :ref:`modindex`
 * :ref:`genindex`

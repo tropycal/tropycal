@@ -946,7 +946,7 @@ class TrackDataset:
         
         Returns
         -------
-        Storm
+        tropycal.tracks.Storm
             Object containing information about the requested storm, and methods for analyzing and plotting the storm.
         """
         
@@ -974,7 +974,7 @@ class TrackDataset:
             error_message = f"Multiple IDs were identified for the requested storm. Choose one of the following storm IDs and provide it as the 'storm' argument instead of a tuple:{error_message}"
             raise RuntimeError(error_message)
     
-    def plot_storm(self,storm,zoom="dynamic",plot_all=False,ax=None,cartopy_proj=None,prop={},map_prop={}):
+    def plot_storm(self,storm,zoom="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm.
@@ -1020,12 +1020,12 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        return_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax=ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None: return return_ax
+        if ax != None or return_ax == True: return plot_ax
         
-    def plot_season(self,year,ax=None,cartopy_proj=None,prop={},map_prop={}):
+    def plot_season(self,year,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single season.
@@ -1060,10 +1060,10 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot season
-        return_ax = self.plot_obj.plot_season(season,ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_season(season,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None: return return_ax
+        if ax != None or return_ax == True: return plot_ax
     
     def search_name(self,name):
         
@@ -1100,7 +1100,7 @@ class TrackDataset:
         
         Returns
         -------
-        Season
+        tropycal.tracks.Season
             Object containing every storm entry for the given season, and methods for analyzing and plotting the season.
         """
         
@@ -2241,7 +2241,7 @@ class TrackDataset:
             return p
 
     def gridded_stats(self,cmd_request,thresh={},year_range=None,date_range=('1/1','12/31'),binsize=1,\
-                         zoom=None,ax=None,cartopy_proj=None,prop={},map_prop={}):
+                         zoom=None,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of gridded statistics.
@@ -2392,23 +2392,24 @@ class TrackDataset:
         #Plot
         endash = u"\u2013"
         dot = u"\u2022"
+        title_L=cmd_request.lower()
         for name in ['wind','vmax']:
-            title_L = cmd_request.replace(name,'wind (kt)')
+            title_L = title_L.replace(name,'wind (kt)')
         for name in ['pressure','mslp']:
             title_L = title_L.replace(name,'pressure (hPa)')
         for name in ['heading','motion','movement']:
             title_L = title_L.replace(name,f'heading (km/hr) over {thresh["dt_window"]} hours')
-        if cmd_request.lower().find('change')>=0:
+        if cmd_request.find('change')>=0:
             title_L = title_L+f", {thresh['dt_align']}"
         title_L = title_L[0].upper()+title_L[1:]+plot_subtitle
         date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
         title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'
         prop['title_L'],prop['title_R']=title_L,title_R
         
-        return_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,VEC_FLAG,zoom,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,VEC_FLAG,zoom,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
                     
         #Return axis
-        if ax != None: return return_ax
+        if ax != None or return_ax == True: return plot_ax
 
     
     def assign_storm_tornadoes(self,dist_thresh=1000,tornado_path='spc'):

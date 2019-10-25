@@ -19,6 +19,10 @@ import tropycal
 
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
+sys.path.insert(0, os.path.abspath('../tracks'))
+sys.path.insert(0, os.path.abspath('../tornado'))
+sys.path.insert(0, os.path.abspath('../recon'))
+sys.path.insert(0, os.path.abspath('../plot'))
 
 # -- Project information -----------------------------------------------------
 
@@ -29,7 +33,7 @@ author = 'Tropycal Developers'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.1.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -47,7 +51,21 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'sphinx_gallery.gen_gallery',
+    'matplotlib.sphinxext.plot_directive',
 ]
+
+sphinx_gallery_conf = {
+    'doc_module': ('tropycal',),
+    'reference_url': {
+        'tropycal': None,
+    },
+    'examples_dirs': [os.path.join('..', 'examples')],
+    'gallery_dirs': ['examples'],
+    'filename_pattern': r'\.py',
+    'backreferences_dir': os.path.join('api', 'generated'),
+    'abort_on_example_error': True
+}
 
 # Turn off code and image links for embedded mpl plots
 plot_html_show_source_link = False
@@ -143,6 +161,9 @@ html_favicon = os.path.join('_static', 'logo_32.ico')
 
 html_context = {
     'doc_path': 'docs',
+    'galleries': sphinx_gallery_conf['gallery_dirs'],
+    'gallery_dir': dict(zip(sphinx_gallery_conf['gallery_dirs'],
+                            sphinx_gallery_conf['examples_dirs'])),
     'api_dir': 'api/generated',
     'github_repo': 'tropycal/tropycal',
     'github_version': 'master',  # Make changes to the master branch

@@ -263,6 +263,7 @@ class Plot:
             self.fig = plt.figure(figsize=map_prop['figsize'],dpi=map_prop['dpi'])
             self.ax = plt.axes(projection=self.proj)
         else:
+            self.fig = plt.figure(figsize=map_prop['figsize'],dpi=map_prop['dpi'])
             self.ax = ax
         
         #Attach geography to plot, lat/lon lines, etc.

@@ -1,0 +1,498 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Individual Storm Analysis &mdash; tropycal </title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/logo_32.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="TC Dataset Analysis" href="tracks.TrackDataset.html" />
+    <link rel="prev" title="Tornado Analyses" href="tracks.tornado.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Example Scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tracks.tornado.html">Tornado Analyses</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Individual Storm Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hurtdat2-dataset">HURTDAT2 Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Individual storm analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ibtracs-dataset">IBTrACS Dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.TrackDataset.html">TC Dataset Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data.html">Data Sources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Examples</a> &raquo;</li>
+        
+      <li>Individual Storm Analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/examples/tracks.storm.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-tracks-storm-py"><span class="std std-ref">here</span></a> to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="individual-storm-analysis">
+<span id="sphx-glr-examples-tracks-storm-py"></span><h1>Individual Storm Analysis<a class="headerlink" href="#individual-storm-analysis" title="Permalink to this headline">¶</a></h1>
+<p>This sample script illustrates how to retrieve a single storm from the HURDAT2 dataset, and make plots and analyses of this storm.</p>
+<p>For documentation generation purposes, return_ax must be set True for plotting functions. You don’t need to have this extra argument in every plotting function call (e.g., “storm.plot(return_ax=True)” will produce the same output as “storm.plot()”).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="k">as</span> <span class="nn">tracks</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+</pre></div>
+</div>
+<div class="section" id="hurtdat2-dataset">
+<h2>HURTDAT2 Dataset<a class="headerlink" href="#hurtdat2-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Let’s start by creating an instance of a TrackDataset object. By default, this reads in the HURDAT2 dataset from the National Hurricane  Center (NHC) website. For this example we’ll be using the HURDAT2 dataset over the North Atlantic basin.</p>
+<p>HURDAT data is not available for the most recent hurricane seasons. To include the latest data up through today, the “include_btk” flag  would need to be set to True, which reads in preliminary best track data from the NHC website.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="View documentation for tropycal.tracks.TrackDataset"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
+--&gt; Completed reading in HURDAT2 data (3.28 seconds)
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>Individual storm analysis<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Individual storms can be retrieved from the dataset by calling the <code class="docutils literal notranslate"><span class="pre">get_storm()</span></code> function, which returns an instance of a Storm object. This can be done by either entering a tuple containing the storm name and year, or by the standard tropical cyclone ID (e.g., “AL012019”).</p>
+<p>Let’s retrieve an instance of Hurricane Michael from 2018:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span> <span class="o">=</span> <span class="n">hurdat_atl</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This instance of Storm contains several methods that return the storm data back in different data types. The following examples will show # how to retrieve 3 different data types.</p>
+<p>Retrieve a dictionary of Michael’s data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">storm</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;id&#39;: &#39;AL142018&#39;, &#39;operational_id&#39;: &#39;AL142018&#39;, &#39;name&#39;: &#39;MICHAEL&#39;, &#39;year&#39;: 2018, &#39;season&#39;: 2018, &#39;basin&#39;: &#39;north_atlantic&#39;, &#39;source_info&#39;: &#39;NHC Hurricane Database&#39;, &#39;source&#39;: &#39;hurdat&#39;, &#39;date&#39;: [datetime.datetime(2018, 10, 6, 18, 0), datetime.datetime(2018, 10, 7, 0, 0), datetime.datetime(2018, 10, 7, 6, 0), datetime.datetime(2018, 10, 7, 12, 0), datetime.datetime(2018, 10, 7, 18, 0), datetime.datetime(2018, 10, 8, 0, 0), datetime.datetime(2018, 10, 8, 6, 0), datetime.datetime(2018, 10, 8, 12, 0), datetime.datetime(2018, 10, 8, 18, 0), datetime.datetime(2018, 10, 9, 0, 0), datetime.datetime(2018, 10, 9, 6, 0), datetime.datetime(2018, 10, 9, 12, 0), datetime.datetime(2018, 10, 9, 18, 0), datetime.datetime(2018, 10, 10, 0, 0), datetime.datetime(2018, 10, 10, 6, 0), datetime.datetime(2018, 10, 10, 12, 0), datetime.datetime(2018, 10, 10, 17, 30), datetime.datetime(2018, 10, 10, 18, 0), datetime.datetime(2018, 10, 11, 0, 0), datetime.datetime(2018, 10, 11, 6, 0), datetime.datetime(2018, 10, 11, 12, 0), datetime.datetime(2018, 10, 11, 18, 0), datetime.datetime(2018, 10, 12, 0, 0), datetime.datetime(2018, 10, 12, 6, 0), datetime.datetime(2018, 10, 12, 12, 0), datetime.datetime(2018, 10, 12, 18, 0), datetime.datetime(2018, 10, 13, 0, 0), datetime.datetime(2018, 10, 13, 6, 0), datetime.datetime(2018, 10, 13, 12, 0), datetime.datetime(2018, 10, 13, 18, 0), datetime.datetime(2018, 10, 14, 0, 0), datetime.datetime(2018, 10, 14, 6, 0), datetime.datetime(2018, 10, 14, 12, 0), datetime.datetime(2018, 10, 14, 18, 0), datetime.datetime(2018, 10, 15, 0, 0), datetime.datetime(2018, 10, 15, 6, 0), datetime.datetime(2018, 10, 15, 12, 0), datetime.datetime(2018, 10, 15, 18, 0)], &#39;extra_obs&#39;: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], &#39;special&#39;: [&#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;L&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;, &#39;&#39;], &#39;type&#39;: [&#39;LO&#39;, &#39;LO&#39;, &#39;TD&#39;, &#39;TS&#39;, &#39;TS&#39;, &#39;TS&#39;, &#39;TS&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;TS&#39;, &#39;TS&#39;, &#39;TS&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;, &#39;EX&#39;], &#39;lat&#39;: [17.8, 18.1, 18.4, 18.8, 19.1, 19.7, 20.2, 20.9, 21.7, 22.7, 23.7, 24.6, 25.6, 26.6, 27.7, 29.0, 30.0, 30.2, 31.5, 32.8, 34.1, 35.6, 36.5, 37.3, 39.1, 41.1, 43.1, 44.8, 46.4, 47.6, 48.4, 48.8, 48.6, 47.5, 45.9, 44.4, 42.8, 41.2], &#39;lon&#39;: [-86.6, -86.9, -86.8, -86.4, -85.7, -85.5, -85.4, -85.1, -85.1, -85.2, -85.8, -86.2, -86.4, -86.5, -86.6, -86.3, -85.5, -85.4, -84.5, -83.2, -81.7, -80.0, -77.7, -75.0, -70.6, -66.1, -61.5, -55.7, -48.2, -40.7, -33.1, -26.1, -20.7, -16.4, -13.5, -11.4, -10.3, -10.0], &#39;vmax&#39;: [25, 25, 30, 35, 45, 50, 60, 65, 75, 85, 85, 90, 100, 110, 120, 125, 140, 135, 80, 50, 45, 45, 50, 60, 60, 60, 65, 65, 65, 65, 65, 65, 60, 55, 55, 50, 35, 35], &#39;mslp&#39;: [1006, 1004, 1004, 1003, 999, 996, 984, 982, 977, 971, 973, 968, 961, 952, 945, 934, 919, 920, 957, 979, 987, 991, 988, 983, 980, 977, 975, 975, 975, 975, 975, 975, 975, 978, 982, 989, 996, 1001], &#39;wmo_basin&#39;: [&#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;, &#39;north_atlantic&#39;], &#39;ace&#39;: 12.505000000000003}
+</pre></div>
+</div>
+<p>Retrieve xarray Dataset object with Michael’s data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">storm</span><span class="o">.</span><span class="n">to_xarray</span><span class="p">())</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;xarray.Dataset&gt;
+Dimensions:    (time: 38)
+Coordinates:
+  * time       (time) datetime64[ns] 2018-10-06T18:00:00 ... 2018-10-15T18:00:00
+Data variables:
+    extra_obs  (time) int64 0 0 0 0 0 0 0 0 0 0 0 0 ... 0 0 0 0 0 0 0 0 0 0 0 0
+    special    (time) &lt;U1 &#39;&#39; &#39;&#39; &#39;&#39; &#39;&#39; &#39;&#39; &#39;&#39; &#39;&#39; &#39;&#39; &#39;&#39; ... &#39;&#39; &#39;&#39; &#39;&#39; &#39;&#39; &#39;&#39; &#39;&#39; &#39;&#39; &#39;&#39;
+    type       (time) &lt;U2 &#39;LO&#39; &#39;LO&#39; &#39;TD&#39; &#39;TS&#39; &#39;TS&#39; ... &#39;EX&#39; &#39;EX&#39; &#39;EX&#39; &#39;EX&#39; &#39;EX&#39;
+    lat        (time) float64 17.8 18.1 18.4 18.8 19.1 ... 45.9 44.4 42.8 41.2
+    lon        (time) float64 -86.6 -86.9 -86.8 -86.4 ... -11.4 -10.3 -10.0
+    vmax       (time) int64 25 25 30 35 45 50 60 65 ... 65 65 60 55 55 50 35 35
+    mslp       (time) int64 1006 1004 1004 1003 999 996 ... 978 982 989 996 1001
+    wmo_basin  (time) &lt;U14 &#39;north_atlantic&#39; ... &#39;north_atlantic&#39;
+Attributes:
+    id:              AL142018
+    operational_id:  AL142018
+    name:            MICHAEL
+    year:            2018
+    season:          2018
+    basin:           north_atlantic
+    source_info:     NHC Hurricane Database
+    source:          hurdat
+    ace:             12.505000000000003
+</pre></div>
+</div>
+<p>Retrieve pandas DataFrame object with Michael’s data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">storm</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">())</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>                  date  extra_obs special  ... vmax  mslp       wmo_basin
+0  2018-10-06 18:00:00          0          ...   25  1006  north_atlantic
+1  2018-10-07 00:00:00          0          ...   25  1004  north_atlantic
+2  2018-10-07 06:00:00          0          ...   30  1004  north_atlantic
+3  2018-10-07 12:00:00          0          ...   35  1003  north_atlantic
+4  2018-10-07 18:00:00          0          ...   45   999  north_atlantic
+5  2018-10-08 00:00:00          0          ...   50   996  north_atlantic
+6  2018-10-08 06:00:00          0          ...   60   984  north_atlantic
+7  2018-10-08 12:00:00          0          ...   65   982  north_atlantic
+8  2018-10-08 18:00:00          0          ...   75   977  north_atlantic
+9  2018-10-09 00:00:00          0          ...   85   971  north_atlantic
+10 2018-10-09 06:00:00          0          ...   85   973  north_atlantic
+11 2018-10-09 12:00:00          0          ...   90   968  north_atlantic
+12 2018-10-09 18:00:00          0          ...  100   961  north_atlantic
+13 2018-10-10 00:00:00          0          ...  110   952  north_atlantic
+14 2018-10-10 06:00:00          0          ...  120   945  north_atlantic
+15 2018-10-10 12:00:00          0          ...  125   934  north_atlantic
+16 2018-10-10 17:30:00          1       L  ...  140   919  north_atlantic
+17 2018-10-10 18:00:00          0          ...  135   920  north_atlantic
+18 2018-10-11 00:00:00          0          ...   80   957  north_atlantic
+19 2018-10-11 06:00:00          0          ...   50   979  north_atlantic
+20 2018-10-11 12:00:00          0          ...   45   987  north_atlantic
+21 2018-10-11 18:00:00          0          ...   45   991  north_atlantic
+22 2018-10-12 00:00:00          0          ...   50   988  north_atlantic
+23 2018-10-12 06:00:00          0          ...   60   983  north_atlantic
+24 2018-10-12 12:00:00          0          ...   60   980  north_atlantic
+25 2018-10-12 18:00:00          0          ...   60   977  north_atlantic
+26 2018-10-13 00:00:00          0          ...   65   975  north_atlantic
+27 2018-10-13 06:00:00          0          ...   65   975  north_atlantic
+28 2018-10-13 12:00:00          0          ...   65   975  north_atlantic
+29 2018-10-13 18:00:00          0          ...   65   975  north_atlantic
+30 2018-10-14 00:00:00          0          ...   65   975  north_atlantic
+31 2018-10-14 06:00:00          0          ...   65   975  north_atlantic
+32 2018-10-14 12:00:00          0          ...   60   975  north_atlantic
+33 2018-10-14 18:00:00          0          ...   55   978  north_atlantic
+34 2018-10-15 00:00:00          0          ...   55   982  north_atlantic
+35 2018-10-15 06:00:00          0          ...   50   989  north_atlantic
+36 2018-10-15 12:00:00          0          ...   35   996  north_atlantic
+37 2018-10-15 18:00:00          0          ...   35  1001  north_atlantic
+
+[38 rows x 9 columns]
+</pre></div>
+</div>
+<p>Visualize Michael’s observed track with the “plot” function:</p>
+<p>Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The only cartopy projection # currently offered is PlateCarree. Read through the documentation for more customization options.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/sphx_glr_tracks.storm_001.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_001.png" />
+<p>Plot the tornado tracks associated with Michael, along with the accompanying daily practically perfect forecast (PPF):</p>
+<p>Note: There is currently a bug with this function that outputs 2 axes, a filled one and a blank one. This will be fixed in future updates.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_tors</span><span class="p">(</span><span class="n">plotPPF</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="sphx-glr-horizontal">
+<li><img alt="../_images/sphx_glr_tracks.storm_002.png" class="sphx-glr-multi-img" src="../_images/sphx_glr_tracks.storm_002.png" />
+</li>
+<li><img alt="../_images/sphx_glr_tracks.storm_003.png" class="sphx-glr-multi-img" src="../_images/sphx_glr_tracks.storm_003.png" />
+</li>
+</ul>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/storm.py:982: UserWarning: Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run &quot;TrackDataset.assign_storm_tornadoes()&quot; to avoid this warning in the future.
+  warnings.warn(warn_message)
+--&gt; Starting to read in tornado track data
+--&gt; Completed reading in tornado data for 1950-2018 (11.84 seconds)
+</pre></div>
+</div>
+<p>If this storm was ever in NHC’s area of responsibility, you can retrieve operational NHC forecast data for this event provided it is available. Forecast discussions date back to 1992, and forecast tracks date back to 1954.</p>
+<p>Retrieve a single forecast discussion for Michael:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Method 1: Specify date closest to desired discussion</span>
+<span class="n">disco</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">get_nhc_discussion</span><span class="p">(</span><span class="n">forecast</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">disco</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
+
+<span class="c1">#Method 2: Specify forecast discussion ID</span>
+<span class="n">disco</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">get_nhc_discussion</span><span class="p">(</span><span class="n">forecast</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1">#print(disco[&#39;text&#39;]) printing this would show the same output</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>ZCZC MIATCDAT4 ALL
+TTAA00 KNHC DDHHMM
+
+Potential Tropical Cyclone Fourteen Discussion Number   2
+NWS National Hurricane Center Miami FL       AL142018
+1000 PM CDT Sat Oct 06 2018
+
+The cloud pattern has improved in organization and surface pressures
+are gradually falling, but there is no evidence that the system is
+a tropical cyclone at this time.  All indications are, however, that
+a tropical depression will likely form at any time soon. Strong wind
+shear is expected to affect the disturbance, and the SHIPS model
+only show a modest strengthening. This is in contrast to some global
+models and the HWRF, which are more aggressive in developing this
+system.  Since the environment is marginally favorable, the NHC
+forecast only gradually strengthens the system at the rate of the
+intensity consensus IVCN.  However, the forecast is highly uncertain
+given the solution of the global models.
+
+Since the system does not have a well-defined center, the initial
+motion is also uncertain. The best estimate is toward the north or
+360 degrees at 6 kt. Over the next 2 or 3 days, the cyclone will be
+embedded within the deep southerly flow between a strong subtropical
+ridge over the western Atlantic and a sharp mid-latitude trough
+advancing eastward over the United States.  This flow pattern will
+force the system to move northward at 5 to 10 kt across the
+eastern Gulf of Mexico for the next 2 to 3 days. By day 4, the
+system should have moved inland and be weakening. It should
+then race northeastward farther inland across the eastern U.S.  The
+track guidance envelope is remarkably quite tight. This increases
+the confidence in the track forecast primarily after the cyclone
+forms.
+
+Key Messages for Potential Tropical Cyclone Fourteen:
+
+1.  This system is producing heavy rainfall and flash flooding over
+portions of Central America, and these rains will spread over
+western Cuba and the northeastern Yucatan Peninsula of Mexico during
+the next couple of days.
+
+2.  The system is forecast to become a tropical storm by late
+Sunday, and tropical storm conditions are expected over portions of
+western Cuba, where a Tropical Storm Warning is in effect.
+
+3.  The system could bring storm surge, rainfall, and wind impacts
+to portions of the northern Gulf Coast by mid-week, although it is
+too soon to specify the exact location and magnitude of these
+impacts.  Residents in these areas should monitor the progress of
+this system.
+
+
+FORECAST POSITIONS AND MAX WINDS
+
+INIT  07/0300Z 18.8N  86.6W   25 KT  30 MPH...POTENTIAL TROP CYCLONE
+ 12H  07/1200Z 19.5N  86.5W   30 KT  35 MPH...TROPICAL CYCLONE
+ 24H  08/0000Z 21.0N  86.2W   35 KT  40 MPH
+ 36H  08/1200Z 22.3N  86.1W   40 KT  45 MPH
+ 48H  09/0000Z 23.8N  86.3W   45 KT  50 MPH
+ 72H  10/0000Z 27.4N  87.2W   55 KT  65 MPH
+ 96H  11/0000Z 32.0N  85.0W   30 KT  35 MPH...INLAND
+120H  12/0000Z 38.5N  77.5W   30 KT  35 MPH...INLAND
+
+$$
+Forecaster Avila
+
+NNNN
+</pre></div>
+</div>
+<p>NHC also archives forecast tracks, albeit in a different format than the official advisory data, so the operational forecast IDs here differ from the discussion IDs. As such, the forecast cone is not directly retrieved from NHC, but is generated using an algorithm that yields a cone closely resembling the official NHC cone.</p>
+<p>Let’s plot Michael’s second forecast cone:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_nhc_forecast</span><span class="p">(</span><span class="n">forecast</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now let’s look at the 12th forecast for Michael.</p>
+<p>Note that the observed track here differs from the HURDAT2 track plotted previously! This is because this plot displays the operationally analyzed location and intensity, rather than the post-storm analysis data. This is done to account for differences between HURDAT2 and operational data.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_nhc_forecast</span><span class="p">(</span><span class="n">forecast</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ibtracs-dataset">
+<h2>IBTrACS Dataset<a class="headerlink" href="#ibtracs-dataset" title="Permalink to this headline">¶</a></h2>
+<p>We can also read in IBTrACS data and use it the same way as we would use HURDAT2 data. There are caveats to using IBTrACS data, however, which are described more in depth in the <a class="reference internal" href="../data.html"><span class="doc">Data Sources</span></a> page. We’ll retrieve the global IBTrACS dataset, using the Joint Typhoon Warning Center (JTWC) data, modified with the Neumann reanalysis for southern hemisphere storms, and including a special reanalysis for Cyclone Catarina (2004) in Brazil.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>By default, IBTrACS data is read in from an online source. If you’re reading in the global IBTrACS dataset, this could be quite slow.  For global IBTrACS, it is recommended to have the CSV file saved locally (<a class="reference external" href="https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ALL.list.v04r00.csv">link to data</a>), then set the flag <code class="docutils literal notranslate"><span class="pre">ibtracs_url=&quot;local_path&quot;</span></code>.</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ibtracs</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="View documentation for tropycal.tracks.TrackDataset"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;ibtracs&#39;</span><span class="p">,</span><span class="n">ibtracs_mode</span><span class="o">=</span><span class="s1">&#39;jtwc_neumann&#39;</span><span class="p">,</span><span class="n">catarina</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in ibtracs data
+--&gt; Completed reading in ibtracs data (58.26 seconds)
+</pre></div>
+</div>
+<p>The functionality for handling storms in IBTrACS is the same as with using HURDAT2, the only limitation being no NHC and operational model data can be accessed when using IBTrACS as the data source.</p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Typhoon_Haiyan">Super Typhoon Haiyan</a> (2013) was a catastrophic storm in the West Pacific basin, having made landfall in the Philippines. With estimated sustained winds of 195 mph (170 kt), it is among one of the most powerful tropical cyclones in recorded history. We can illustrate this by making a plot of Haiyan’s observed track and intensity, from JTWC data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span> <span class="o">=</span> <span class="n">ibtracs</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;haiyan&#39;</span><span class="p">,</span><span class="mi">2013</span><span class="p">))</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/sphx_glr_tracks.storm_004.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_004.png" />
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Hurricane_Catarina">Cyclone Catarina</a> (2004) was an extremely rare hurricane-force tropical cyclone that developed in the South Atlantic basin, which normally doesn’t see tropical cyclone activity, and subsequently made landfall in Brazil. The “Catarina” name is unofficial; it was not assigned a name in real time, and JTWC assigned it the ID “AL502004”. Recall that when reading in the IBTrACS dataset previously, we set <code class="docutils literal notranslate"><span class="pre">Catarina=True</span></code>. This read in data for Cyclone Catarina from a special post-storm reanalysis from McTaggart-Cowan et al. (2006). Let’s make a plot of Catarina’s observed track and intensity per this reanalysis:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span> <span class="o">=</span> <span class="n">ibtracs</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;catarina&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">))</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/sphx_glr_tracks.storm_005.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_005.png" />
+<p>If we were to read in IBTrACS without setting <code class="docutils literal notranslate"><span class="pre">Catarina=True</span></code> (which sets it to False by default) and plot the track for “AL502004”, we would get a noticeably different (shorter) and weaker track.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  39.813 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-storm-py">
+<div class="sphx-glr-download docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/a7588acf5ac89aa72efd0525273570d7/tracks.storm.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.storm.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/1cabf6445ffc888033a0fa032b26b5e4/tracks.storm.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tracks.storm.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tracks.TrackDataset.html" class="btn btn-neutral float-right" title="TC Dataset Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tracks.tornado.html" class="btn btn-neutral float-left" title="Tornado Analyses" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

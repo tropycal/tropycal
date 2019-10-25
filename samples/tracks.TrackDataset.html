@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>TC Dataset Analysis &mdash; tropycal </title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/logo_32.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data Sources" href="../data.html" />
+    <link rel="prev" title="Tornado Analyses" href="tracks.tornado.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sample_usage.html">Example Gallery</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tracks.storm.html">Individual Storm Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.tornado.html">Tornado Analyses</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">TC Dataset Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hurtdat2-dataset">HURTDAT2 Dataset</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#retrieving-storms-and-seasons">Retrieving storms and seasons</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#climatological-analyses">Climatological analyses</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#gridded-analyses">Gridded Analyses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ibtracs-dataset">IBTrACS Dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data.html">Data Sources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sample_usage.html">Example Gallery</a> &raquo;</li>
+        
+      <li>TC Dataset Analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/samples/tracks.TrackDataset.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tc-dataset-analysis">
+<h1>TC Dataset Analysis<a class="headerlink" href="#tc-dataset-analysis" title="Permalink to this headline">¶</a></h1>
+<p>This sample script illustrates how to create climatological analyses using HURDAT2 and IBTrACS.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="kn">as</span> <span class="nn">tracks</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
+</pre></div>
+</div>
+<div class="section" id="hurtdat2-dataset">
+<h2>HURTDAT2 Dataset<a class="headerlink" href="#hurtdat2-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Let’s start with the HURDAT2 dataset by loading it into memory. By default, this reads in the HURDAT dataset from the National Hurricane Center (NHC) website, unless you specify a local file path using either <code class="docutils literal notranslate"><span class="pre">atlantic_url</span></code> for the North Atlantic basin on <code class="docutils literal notranslate"><span class="pre">pacific_url</span></code> for the East &amp; Central Pacific basin.</p>
+<p>HURDAT data is not available for the most recent hurricane seasons. To include the latest data up through today, the “include_btk” flag would need to be set to True, which reads in preliminary best track data from the NHC website.</p>
+<p>Let’s create an instance of a TrackDataset object, which will store the North Atlantic HURDAT2 dataset in memory. Once we have this we can use its methods for various types of analyses.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="retrieving-storms-and-seasons">
+<h3>Retrieving storms and seasons<a class="headerlink" href="#retrieving-storms-and-seasons" title="Permalink to this headline">¶</a></h3>
+<p>A TrackDataset object can be used to retrieve individual storms and seasons, using the following functionality:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve Hurricane Michael from 2018</span>
+<span class="n">storm</span> <span class="o">=</span> <span class="n">hurdat_atl</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+
+<span class="c1">#Retrieve the 2017 Atlantic hurricane season</span>
+<span class="n">season</span> <span class="o">=</span> <span class="n">hurdat_atl</span><span class="o">.</span><span class="n">get_season</span><span class="p">(</span><span class="mi">2017</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you remember the name of a storm but not the year, there is functionality to search for a list of years containing a storm of the requested name:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">search_name</span><span class="p">(</span><span class="s1">&#39;Michael&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">2012</span><span class="p">,</span> <span class="mi">2018</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The previous example for a Storm object illustrated how to retrieve a single storm and make a plot of its observed track. This can also be done from a TrackDataset object, using the <code class="docutils literal notranslate"><span class="pre">plot_storm()</span></code> method.</p>
+<p>Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The only cartopy projection currently offered is PlateCarree. Read through the documentation for more customization options.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/michael_example_1.png"><img alt="../_images/michael_example_1.png" class="align-center" src="../_images/michael_example_1.png" style="width: 75%;" /></a>
+</div>
+<div class="section" id="climatological-analyses">
+<h3>Climatological analyses<a class="headerlink" href="#climatological-analyses" title="Permalink to this headline">¶</a></h3>
+<p>A TrackDataset object can also be used to perform various climatological analyses. We’ll start off with doing simple Accumulated Cyclone Energy (ACE) analyses.</p>
+<p>Let’s look at the cumulative year-to-date accumulated cyclone energy, with 2018 highlighted and compared against 2017:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">ace_climo</span><span class="p">(</span><span class="n">plot_year</span><span class="o">=</span><span class="mi">2018</span><span class="p">,</span><span class="n">compare_years</span><span class="o">=</span><span class="mi">2017</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/trackdataset_example_1.png"><img alt="../_images/trackdataset_example_1.png" class="align-center" src="../_images/trackdataset_example_1.png" style="width: 75%;" /></a>
+<p>We can use the same function to perform a rolling sum, rather than a year-to-date sum. This highlights particularly active periods of tropical cyclone activity. We’ll use the same function as before, but with a <code class="docutils literal notranslate"><span class="pre">rolling_sum=30</span></code> argument provided:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">ace_climo</span><span class="p">(</span><span class="n">rolling_sum</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">plot_year</span><span class="o">=</span><span class="mi">2018</span><span class="p">,</span><span class="n">compare_years</span><span class="o">=</span><span class="mi">2017</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/trackdataset_example_2.png"><img alt="../_images/trackdataset_example_2.png" class="align-center" src="../_images/trackdataset_example_2.png" style="width: 75%;" /></a>
+<p>Plot cumulative hurricane days for all categories, with 2018 highlighted:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">hurricane_days_climo</span><span class="p">(</span><span class="n">plot_year</span><span class="o">=</span><span class="mi">2018</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/trackdataset_example_3.png"><img alt="../_images/trackdataset_example_3.png" class="align-center" src="../_images/trackdataset_example_3.png" style="width: 75%;" /></a>
+<p>Another climatological analysis available is a climatological correlation between maximum sustained wind and minimum mean sea level pressure (MSLP). While both variables are generally well correlated, factors such as background MSLP and MSLP gradient can affect this relationship.</p>
+<p>This function plots the climatological correlation and distribution of wind-MSLP relationship, and can also plot individual storms for comparison against the climatology. We’ll look at Hurricane Sandy (2012), which started out with a fairly typical wind-MSLP relationship, but towards the end of its life cycle ended up with an anomalously low MSLP given its sustained wind speed as it substantially grew in size.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">wind_pres_relationship</span><span class="p">(</span><span class="n">storm</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;sandy&#39;</span><span class="p">,</span><span class="mi">2012</span><span class="p">))</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/trackdataset_example_4.png"><img alt="../_images/trackdataset_example_4.png" class="align-center" src="../_images/trackdataset_example_4.png" style="width: 75%;" /></a>
+</div>
+</div>
+<div class="section" id="gridded-analyses">
+<h2>Gridded Analyses<a class="headerlink" href="#gridded-analyses" title="Permalink to this headline">¶</a></h2>
+<p>Tropycal also offers the capability of gridding tropical cyclone data into a structured latitude / longitude grid. This is done via the <code class="docutils literal notranslate"><span class="pre">TrackDataset.gridded_stats()</span></code> method. This method accepts multiple input arguments for various types of analyses. This example will show some of these capabilities.</p>
+<p>Let’s construct a 1 degree grid and plot the maximum sustained wind recorded at each gridpoint:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">gridded_stats</span><span class="p">(</span><span class="n">cmd_request</span><span class="o">=</span><span class="s2">&quot;maximum wind&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/grid_example_1.png"><img alt="../_images/grid_example_1.png" class="align-center" src="../_images/grid_example_1.png" style="width: 75%;" /></a>
+</div>
+<div class="section" id="ibtracs-dataset">
+<h2>IBTrACS Dataset<a class="headerlink" href="#ibtracs-dataset" title="Permalink to this headline">¶</a></h2>
+<p>We can also read in IBTrACS data and use it the same way as we would use HURDAT2 data. There are caveats to using IBTrACS data, however, which are described more in depth in the <a class="reference internal" href="../data.html"><span class="doc">Data Sources</span></a> page. We’ll retrieve the global IBTrACS dataset, using the Joint Typhoon Warning Center (JTWC) data, modified with the Neumann reanalysis for southern hemisphere storms, and including a special reanalysis for Cyclone Catarina (2004) in Brazil.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>By default, IBTrACS data is read in from an online source. If you’re reading in the global IBTrACS dataset, this could be quite slow. For global IBTrACS, it is recommended to have the CSV file saved locally (<a class="reference external" href="https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ALL.list.v04r00.csv">link to data</a>), then set the flag <code class="docutils literal notranslate"><span class="pre">ibtracs_url=&quot;local_path&quot;</span></code>.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ibtracs</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;ibtracs&#39;</span><span class="p">,</span><span class="n">ibtracs_mode</span><span class="o">=</span><span class="s1">&#39;jtwc_neumann&#39;</span><span class="p">,</span><span class="n">catarina</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In its current form, tropycal is not configured to support all types of analyses for global IBTrACS, particularly near the dateline. Future updates will work to improve this functionality.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../data.html" class="btn btn-neutral float-right" title="Data Sources" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tracks.tornado.html" class="btn btn-neutral float-left" title="Tornado Analyses" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

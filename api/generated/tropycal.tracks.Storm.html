@@ -1,0 +1,493 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Storm &mdash; tropycal </title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="TrackDataset" href="tropycal.tracks.TrackDataset.html" />
+    <link rel="prev" title="Season" href="tropycal.tracks.Season.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.tracks.html">tracks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Season.html">Season</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Storm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">TrackDataset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="tropycal.tracks.html">tracks</a> &raquo;</li>
+        
+      <li>Storm</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/api/generated/tropycal.tracks.Storm.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="storm">
+<h1>Storm<a class="headerlink" href="#storm" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="tropycal.tracks.Storm">
+<em class="property">class </em><code class="sig-prename descclassname">tropycal.tracks.</code><code class="sig-name descname">Storm</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">stormTors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes an instance of Storm, retrieved via <code class="docutils literal notranslate"><span class="pre">TrackDataset.get_storm()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>storm</strong> (<em>dict</em>) – Dict entry of the requested storm.</p></li>
+<li><p><strong>Parameters</strong> (<em>Additional</em>) – </p></li>
+<li><p><strong>---------------------</strong> – </p></li>
+<li><p><strong>stormTors</strong> (<em>dict</em>) – Dict entry containing tornado data assicated with the storm. Populated directly from tropycal.tracks.TrackDataset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>Storm</em> – Instance of a Storm object.</p>
+</dd>
+</dl>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.__init__" title="tropycal.tracks.Storm.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(storm[, stormTors])</p></td>
+<td><p>Initialize self.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.download_tcr" title="tropycal.tracks.Storm.download_tcr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_tcr</span></code></a>([dir_path])</p></td>
+<td><p>Downloads the NHC offical Tropical Cyclone Report (TCR) for this storm to the requested directory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.get_nhc_discussion" title="tropycal.tracks.Storm.get_nhc_discussion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nhc_discussion</span></code></a>(forecast[, save_path])</p></td>
+<td><p>Retrieves a single NHC forecast discussion.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.get_operational_forecasts" title="tropycal.tracks.Storm.get_operational_forecasts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_operational_forecasts</span></code></a>()</p></td>
+<td><p>Retrieves operational model and NHC forecasts throughout the entire life duration of the storm.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.list_nhc_discussions" title="tropycal.tracks.Storm.list_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_nhc_discussions</span></code></a>()</p></td>
+<td><p>Retrieves a list of NHC forecast discussions for this storm, archived on <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/archive/">https://ftp.nhc.noaa.gov/atcf/archive/</a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([zoom, plot_all, ax, return_ax, …])</p></td>
+<td><p>Creates a plot of the observed track of the storm.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.plot_TCtors_rotated" title="tropycal.tracks.Storm.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_TCtors_rotated</span></code></a>([dist_thresh, return_ax])</p></td>
+<td><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.plot_nhc_forecast" title="tropycal.tracks.Storm.plot_nhc_forecast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_nhc_forecast</span></code></a>(forecast[, track_labels, …])</p></td>
+<td><p>Creates a plot of the operational NHC forecast track along with observed track data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.plot_tors" title="tropycal.tracks.Storm.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_tors</span></code></a>([dist_thresh, Tors, zoom, …])</p></td>
+<td><p>Creates a plot of the storm and associated tornado tracks.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.to_dataframe" title="tropycal.tracks.Storm.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dataframe</span></code></a>()</p></td>
+<td><p>Converts the storm dict into a pandas DataFrame object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.to_dict" title="tropycal.tracks.Storm.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code></a>()</p></td>
+<td><p>Returns the dict entry for the storm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.to_xarray" title="tropycal.tracks.Storm.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_xarray</span></code></a>()</p></td>
+<td><p>Converts the storm dict into an xarray Dataset object.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="tropycal.tracks.Storm.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">stormTors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Storm.download_tcr">
+<code class="sig-name descname">download_tcr</code><span class="sig-paren">(</span><em class="sig-param">dir_path=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.download_tcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.download_tcr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads the NHC offical Tropical Cyclone Report (TCR) for this storm to the requested directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dir_path</strong> (<em>str</em>) – Path of directory to download the TCR into. Default is current working directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Storm.get_nhc_discussion">
+<code class="sig-name descname">get_nhc_discussion</code><span class="sig-paren">(</span><em class="sig-param">forecast</em>, <em class="sig-param">save_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_nhc_discussion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_nhc_discussion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a single NHC forecast discussion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>forecast</strong> (<em>datetime.datetime</em><em> or </em><em>int</em>) – Datetime object representing the desired forecast discussion time, or integer representing the forecast discussion ID.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory path to save the forecast discussion text to. If None (default), forecast won’t be saved.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>dict</em> – Dictionary containing the forecast discussion text and accompanying information about this discussion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Storm.get_operational_forecasts">
+<code class="sig-name descname">get_operational_forecasts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_operational_forecasts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_operational_forecasts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves operational model and NHC forecasts throughout the entire life duration of the storm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – Dictionary containing all forecast entries.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Storm.list_nhc_discussions">
+<code class="sig-name descname">list_nhc_discussions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.list_nhc_discussions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.list_nhc_discussions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a list of NHC forecast discussions for this storm, archived on <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/archive/">https://ftp.nhc.noaa.gov/atcf/archive/</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – Dictionary containing entries for each forecast discussion for this storm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Storm.plot">
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">zoom='dynamic'</em>, <em class="sig-param">plot_all=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of the observed track of the storm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zoom</strong> (<em>str</em>) – <p>Zoom for the plot. Can be one of the following:</p>
+<ul>
+<li><p><strong>dynamic</strong> - default. Dynamically focuses the domain using the storm track plotted.</p></li>
+<li><p><strong>(basin_name)</strong> - Any of the acceptable basins (check “TrackDataset” for a list).</p></li>
+<li><p><strong>lonW/lonE/latS/latN</strong> - Custom plot domain</p></li>
+</ul>
+</p></li>
+<li><p><strong>plot_all</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Storm.plot_TCtors_rotated">
+<code class="sig-name descname">plot_TCtors_rotated</code><span class="sig-paren">(</span><em class="sig-param">dist_thresh=1000</em>, <em class="sig-param">return_ax=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_TCtors_rotated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist_thresh</strong> (<em>int</em>) – Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km. Ignored if tornado data was passed into Storm from TrackDataset.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – Whether to return the axis plotted. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The motion vector is oriented upwards (in the +y direction).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Storm.plot_nhc_forecast">
+<code class="sig-name descname">plot_nhc_forecast</code><span class="sig-paren">(</span><em class="sig-param">forecast</em>, <em class="sig-param">track_labels='fhr'</em>, <em class="sig-param">cone_days=5</em>, <em class="sig-param">zoom='dynamic_forecast'</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_nhc_forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_nhc_forecast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of the operational NHC forecast track along with observed track data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>forecast</strong> (<em>int</em><em> or </em><em>datetime.datetime</em>) – Integer representing the forecast number, or datetime object for the closest issued forecast to this date.</p></li>
+<li><p><strong>track_labels</strong> (<em>str</em>) – <p>Label forecast hours with the following methods:</p>
+<ul>
+<li><p><strong>””</strong> = no label</p></li>
+<li><p><strong>”fhr”</strong> = forecast hour (default)</p></li>
+<li><p><strong>”valid_utc”</strong> = UTC valid time</p></li>
+<li><p><strong>”valid_edt”</strong> = EDT valid time</p></li>
+</ul>
+</p></li>
+<li><p><strong>cone_days</strong> (<em>int</em>) – Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.</p></li>
+<li><p><strong>zoom</strong> (<em>str</em>) – <p>Zoom for the plot. Can be one of the following:</p>
+<ul>
+<li><p><strong>dynamic_forecast</strong> Default. Dynamically focuses the domain on the forecast track.</p></li>
+<li><p><strong>dynamic</strong> - Dynamically focuses the domain on the combined observed and forecast track.</p></li>
+<li><p><strong>lonW/lonE/latS/latN</strong> Custom plot domain.</p></li>
+</ul>
+</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Storm.plot_tors">
+<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param">dist_thresh=1000</em>, <em class="sig-param">Tors=None</em>, <em class="sig-param">zoom='dynamic'</em>, <em class="sig-param">plotPPF=False</em>, <em class="sig-param">plot_all=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={'PPFcolors': 'Wistia'}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_tors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of the storm and associated tornado tracks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist_thresh</strong> (<em>int</em>) – Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km.</p></li>
+<li><p><strong>Tors</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm</dt><dd><p>for future use.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>zoom</strong> (<em>str</em>) – <p>Zoom for the plot. Can be one of the following:</p>
+<ul>
+<li><p><strong>dynamic</strong> - default. Dynamically focuses the domain using the storm track(s) plotted and tornadoes it produced.</p></li>
+<li><p><strong>(basin_name)</strong> - Any of the acceptable basins (check “TrackDataset” for a list).</p></li>
+<li><p><strong>lonW/lonE/latS/latN</strong> - Custom plot domain</p></li>
+</ul>
+</p></li>
+<li><p><strong>plotPPF</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPF). True defaults to “daily”. Default is False.</p>
+<ul>
+<li><p><strong>False</strong> - no PPF plot.</p></li>
+<li><p><strong>True</strong> - defaults to “daily”.</p></li>
+<li><p><strong>”total”</strong> - probability of a tornado within 25mi of a point during the period of time selected.</p></li>
+<li><p><strong>”daily”</strong> - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.</p></li>
+</ul>
+</p></li>
+<li><p><strong>plot_all</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Storm.to_dataframe">
+<code class="sig-name descname">to_dataframe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.to_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.to_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the storm dict into a pandas DataFrame object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>pandas.DataFrame</em> – A pandas DataFrame object containing information about the storm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Storm.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the dict entry for the storm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – A dictionary containing information about the storm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Storm.to_xarray">
+<code class="sig-name descname">to_xarray</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.to_xarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.to_xarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the storm dict into an xarray Dataset object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>xarray.Dataset</em> – An xarray Dataset object containing information about the storm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div style='clear:both'></div></div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tropycal.tracks.TrackDataset.html" class="btn btn-neutral float-right" title="TrackDataset" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tropycal.tracks.Season.html" class="btn btn-neutral float-left" title="Season" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,571 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tropycal.tornado.dataset &mdash; tropycal </title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/logo_32.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">Data Sources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tropycal.tornado.dataset</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tropycal.tornado.dataset</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Functionality for reading and analyzing SPC tornado dataset.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">geopy.distance</span> <span class="k">import</span> <span class="n">great_circle</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">interp1d</span>
+<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.lines</span> <span class="k">as</span> <span class="nn">mlines</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patheffects</span> <span class="k">as</span> <span class="nn">patheffects</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
+    <span class="kn">from</span> <span class="nn">cartopy</span> <span class="k">import</span> <span class="n">crs</span> <span class="k">as</span> <span class="n">ccrs</span>
+    <span class="kn">from</span> <span class="nn">cartopy.mpl.gridliner</span> <span class="k">import</span> <span class="n">LONGITUDE_FORMATTER</span><span class="p">,</span> <span class="n">LATITUDE_FORMATTER</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">warn_message</span> <span class="o">=</span> <span class="s2">&quot;Warning: Cartopy is not installed in your python environment. Plotting functions will not work.&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn_message</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.plot</span> <span class="k">import</span> <span class="n">TornadoPlot</span>
+<span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="o">*</span>
+<span class="c1">#from ...tropycal import tracks</span>
+
+<div class="viewcode-block" id="TornadoDataset"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset">[docs]</a><span class="k">class</span> <span class="nc">TornadoDataset</span><span class="p">():</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates an instance of a TornadoDataset object containing tornado data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mag_thresh : int</span>
+<span class="sd">        Minimum threshold for tornado rating.</span>
+<span class="sd">    tornado_path : str</span>
+<span class="sd">        Source to read tornado data from. Default is &quot;spc&quot;, which reads from the online Storm Prediction Center (SPC) 1950-present tornado database. Can change this to a local file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    TornadoDataset</span>
+<span class="sd">        An instance of TornadoDataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TornadoDataset.__init__"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mag_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tornado_path</span><span class="o">=</span><span class="s1">&#39;spc&#39;</span><span class="p">):</span>
+        
+        <span class="c1">#Error check</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mag_thresh</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;mag_thresh must be of type int.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mag_thresh</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mag_thresh must be between 0 and 5.&quot;</span><span class="p">)</span>
+        
+        <span class="c1">#Read in tornado dataset</span>
+        <span class="n">timer_start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">yrnow</span> <span class="o">=</span> <span class="n">timer_start</span><span class="o">.</span><span class="n">year</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;--&gt; Starting to read in tornado track data&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tornado_path</span> <span class="o">==</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">yrlast</span> <span class="o">=</span> <span class="n">yrnow</span><span class="o">-</span><span class="mi">1</span>
+                <span class="n">Tors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;https://www.spc.noaa.gov/wcm/data/1950-</span><span class="si">{yrlast}</span><span class="s1">_actual_tornadoes.csv&#39;</span><span class="p">,</span>\
+                                   <span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">parse_dates</span><span class="o">=</span><span class="p">[[</span><span class="s1">&#39;mo&#39;</span><span class="p">,</span><span class="s1">&#39;dy&#39;</span><span class="p">,</span><span class="s1">&#39;yr&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">]])</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">yrlast</span> <span class="o">=</span> <span class="n">yrnow</span><span class="o">-</span><span class="mi">2</span>
+                <span class="n">Tors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;https://www.spc.noaa.gov/wcm/data/1950-</span><span class="si">{yrlast}</span><span class="s1">_actual_tornadoes.csv&#39;</span><span class="p">,</span>\
+                                   <span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">parse_dates</span><span class="o">=</span><span class="p">[[</span><span class="s1">&#39;mo&#39;</span><span class="p">,</span><span class="s1">&#39;dy&#39;</span><span class="p">,</span><span class="s1">&#39;yr&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">]])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;--&gt; Completed reading in tornado data for 1950-</span><span class="si">{yrlast}</span><span class="s1"> (</span><span class="si">%.2f</span><span class="s1"> seconds)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timer_start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Tors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">tornado_path</span><span class="p">,</span>\
+                               <span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">parse_dates</span><span class="o">=</span><span class="p">[[</span><span class="s1">&#39;mo&#39;</span><span class="p">,</span><span class="s1">&#39;dy&#39;</span><span class="p">,</span><span class="s1">&#39;yr&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">]])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;--&gt; Completed reading in tornado data from local file (</span><span class="si">%.2f</span><span class="s1"> seconds)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timer_start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+        
+        <span class="c1">#Get UTC from timezone (most are 3 = CST, but some 0 and 9 = GMT)</span>
+        <span class="n">tz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">9</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;tz&#39;</span><span class="p">]])</span>
+        <span class="n">tors_dt</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;mo_dy_yr_time&#39;</span><span class="p">]]</span>
+        <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">UTC_time</span> <span class="o">=</span> <span class="n">tors_dt</span><span class="o">+</span><span class="n">tz</span><span class="p">)</span>
+        
+        <span class="c1">#Filter for only those tors at least F/EF scale mag_thresh.</span>
+        <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="p">[</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">mag_thresh</span><span class="p">]</span>
+
+        <span class="c1">#Clean up lat/lons       </span>
+        <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="p">[(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;slat&#39;</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;slon&#39;</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">)]</span>
+        <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="p">[(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;slat&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="mi">20</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;slat&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="mi">50</span><span class="p">)]</span>
+        <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="p">[(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;slon&#39;</span><span class="p">]</span><span class="o">&gt;=-</span><span class="mi">130</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;slon&#39;</span><span class="p">]</span><span class="o">&lt;=-</span><span class="mi">65</span><span class="p">)]</span>
+        <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="p">[(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="mi">20</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">)]</span>
+        <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="p">[(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="mi">50</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">)]</span>
+        <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="p">[(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elon&#39;</span><span class="p">]</span><span class="o">&gt;=-</span><span class="mi">130</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">)]</span>
+        <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="p">[(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elon&#39;</span><span class="p">]</span><span class="o">&lt;=-</span><span class="mi">65</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">)]</span>
+        <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">elat</span> <span class="o">=</span> <span class="p">[</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;slat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="n">i</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">elon</span> <span class="o">=</span> <span class="p">[</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;slon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="n">i</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)])</span></div>
+
+<div class="viewcode-block" id="TornadoDataset.get_storm_tornadoes"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.get_storm_tornadoes">[docs]</a>    <span class="k">def</span> <span class="nf">get_storm_tornadoes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">dist_thresh</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves all tornado tracks that occur along the track of a tropical cyclone.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        storm : tropycal.tracks.Storm</span>
+<span class="sd">            Instance of a Storm object.</span>
+<span class="sd">        dist_thresh : int</span>
+<span class="sd">            Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            Pandas DataFrame object containing data about the tornadoes associated with this tropical cyclone.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Get storm dict from object</span>
+        <span class="n">stormdict</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    
+        <span class="n">stormTors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Tors</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;UTC_time&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="nb">min</span><span class="p">(</span><span class="n">stormdict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]))</span> <span class="o">&amp;</span> \
+                         <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;UTC_time&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="nb">max</span><span class="p">(</span><span class="n">stormdict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]))]</span>
+        
+        <span class="c1">#Interpolate storm track time to the time of each tornado</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">stormdict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]),</span><span class="n">stormdict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+        <span class="n">interp_clon</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;UTC_time&#39;</span><span class="p">]))</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">stormdict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]),</span><span class="n">stormdict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">])</span>
+        <span class="n">interp_clat</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;UTC_time&#39;</span><span class="p">]))</span>
+        
+        <span class="c1">#Retrieve x&amp;y distance of each tornado from TC center</span>
+        <span class="n">stormTors</span> <span class="o">=</span> <span class="n">stormTors</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">xdist_s</span> <span class="o">=</span> <span class="p">[</span><span class="n">great_circle</span><span class="p">((</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="n">lat1</span><span class="o">+</span><span class="n">lat2</span><span class="p">),</span><span class="n">lon1</span><span class="p">),(</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="n">lat1</span><span class="o">+</span><span class="n">lat2</span><span class="p">),</span><span class="n">lon2</span><span class="p">))</span><span class="o">.</span><span class="n">kilometers</span> \
+                 <span class="k">for</span> <span class="n">lat1</span><span class="p">,</span><span class="n">lon1</span><span class="p">,</span><span class="n">lat2</span><span class="p">,</span><span class="n">lon2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">interp_clat</span><span class="p">,</span><span class="n">interp_clon</span><span class="p">,</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;slat&#39;</span><span class="p">],</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;slon&#39;</span><span class="p">])])</span>
+        <span class="n">stormTors</span> <span class="o">=</span> <span class="n">stormTors</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">ydist_s</span> <span class="o">=</span> <span class="p">[</span><span class="n">great_circle</span><span class="p">((</span><span class="n">lat1</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="n">lon1</span><span class="o">+</span><span class="n">lon2</span><span class="p">)),(</span><span class="n">lat2</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="n">lon1</span><span class="o">+</span><span class="n">lon2</span><span class="p">)))</span><span class="o">.</span><span class="n">kilometers</span> \
+                 <span class="k">for</span> <span class="n">lat1</span><span class="p">,</span><span class="n">lon1</span><span class="p">,</span><span class="n">lat2</span><span class="p">,</span><span class="n">lon2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">interp_clat</span><span class="p">,</span><span class="n">interp_clon</span><span class="p">,</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;slat&#39;</span><span class="p">],</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;slon&#39;</span><span class="p">])])</span>
+
+        <span class="n">stormTors</span> <span class="o">=</span> <span class="n">stormTors</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">xdist_e</span> <span class="o">=</span> <span class="p">[</span><span class="n">great_circle</span><span class="p">((</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="n">lat1</span><span class="o">+</span><span class="n">lat2</span><span class="p">),</span><span class="n">lon1</span><span class="p">),(</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="n">lat1</span><span class="o">+</span><span class="n">lat2</span><span class="p">),</span><span class="n">lon2</span><span class="p">))</span><span class="o">.</span><span class="n">kilometers</span> \
+                 <span class="k">for</span> <span class="n">lat1</span><span class="p">,</span><span class="n">lon1</span><span class="p">,</span><span class="n">lat2</span><span class="p">,</span><span class="n">lon2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">interp_clat</span><span class="p">,</span><span class="n">interp_clon</span><span class="p">,</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">],</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;elon&#39;</span><span class="p">])])</span>
+        <span class="n">stormTors</span> <span class="o">=</span> <span class="n">stormTors</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">ydist_e</span> <span class="o">=</span> <span class="p">[</span><span class="n">great_circle</span><span class="p">((</span><span class="n">lat1</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="n">lon1</span><span class="o">+</span><span class="n">lon2</span><span class="p">)),(</span><span class="n">lat2</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="n">lon1</span><span class="o">+</span><span class="n">lon2</span><span class="p">)))</span><span class="o">.</span><span class="n">kilometers</span> \
+                 <span class="k">for</span> <span class="n">lat1</span><span class="p">,</span><span class="n">lon1</span><span class="p">,</span><span class="n">lat2</span><span class="p">,</span><span class="n">lon2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">interp_clat</span><span class="p">,</span><span class="n">interp_clon</span><span class="p">,</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">],</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;elon&#39;</span><span class="p">])])</span>
+        
+        <span class="c1">#Assign tornado within specified distance threshold to this storm</span>
+        <span class="n">stormTors</span> <span class="o">=</span> <span class="n">stormTors</span><span class="p">[</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;xdist_s&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;ydist_s&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;</span> <span class="n">dist_thresh</span><span class="o">**</span><span class="mi">2</span><span class="p">]</span>
+        
+        <span class="c1">#Return DataFrame</span>
+        <span class="k">return</span> <span class="n">stormTors</span></div>
+
+<div class="viewcode-block" id="TornadoDataset.rotateToHeading"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.rotateToHeading">[docs]</a>    <span class="k">def</span> <span class="nf">rotateToHeading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">stormTors</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rotate tornado tracks to their position relative to the heading of the TC at the time.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stormTors : pandas.DataFrame</span>
+<span class="sd">            Pandas DataFrame containing tornado tracks.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            StormTors modified to include motion relative coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Check to make sure there&#39;s enough tornadoes</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stormTors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;rot_xdist_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;rot_xdist_e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;rot_ydist_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;rot_ydist_e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="n">stormTors</span>
+        
+        <span class="c1">#Get storm dict from object</span>
+        <span class="n">stormdict</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        
+        <span class="c1">#Temporal interpolation of storm track</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">stormdict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">stormdict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">])</span>
+        
+        <span class="n">f</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">stormdict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]),</span><span class="n">dx</span><span class="p">)</span>
+        <span class="n">interp_dx</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;UTC_time&#39;</span><span class="p">]))</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">stormdict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]),</span><span class="n">dy</span><span class="p">)</span>
+        <span class="n">interp_dy</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;UTC_time&#39;</span><span class="p">]))</span>
+        
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">interp_dx</span><span class="p">,</span><span class="n">interp_dy</span><span class="p">)</span>
+        
+        <span class="c1"># Rotation matrix for +x pointing 90deg right of storm heading</span>
+        <span class="n">ds</span><span class="p">[</span><span class="n">ds</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">ds</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.01</span> <span class="c1">#avoid warnings for divide by zero</span>
+        <span class="n">rot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">interp_dy</span><span class="p">,</span><span class="o">-</span><span class="n">interp_dx</span><span class="p">],[</span><span class="n">interp_dx</span><span class="p">,</span><span class="n">interp_dy</span><span class="p">]])</span><span class="o">/</span><span class="n">ds</span>
+        
+        <span class="n">oldvec_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;xdist_s&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;ydist_s&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
+        <span class="n">newvec_s</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rot</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">],</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">oldvec_s</span><span class="o">.</span><span class="n">T</span><span class="p">)]</span>
+        
+        <span class="n">oldvec_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;xdist_e&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;ydist_e&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
+        <span class="n">newvec_e</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rot</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">],</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">oldvec_e</span><span class="o">.</span><span class="n">T</span><span class="p">)]</span>
+        
+        <span class="c1">#Enter motion relative coordinates into stormTors dict</span>
+        <span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;rot_xdist_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">newvec_s</span><span class="p">]</span>
+        <span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;rot_xdist_e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">newvec_e</span><span class="p">]</span>
+        <span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;rot_ydist_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">newvec_s</span><span class="p">]</span>
+        <span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;rot_ydist_e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">newvec_e</span><span class="p">]</span>
+        
+        <span class="c1">#return modified stormtors</span>
+        <span class="k">return</span> <span class="n">stormTors</span></div>
+        
+
+<div class="viewcode-block" id="TornadoDataset.plot_TCtors_rotated"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.plot_TCtors_rotated">[docs]</a>    <span class="k">def</span> <span class="nf">plot_TCtors_rotated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">dist_thresh</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        storm : tropycal.tracks.Storm</span>
+<span class="sd">            Instance of a Storm object.</span>
+<span class="sd">        dist_thresh : int</span>
+<span class="sd">            Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC.</span>
+<span class="sd">        return_ax : bool</span>
+<span class="sd">            Whether to return the axis plotted. Default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The motion vector is oriented upwards (in the +y direction).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Retrieve tornadoes for the requested storm</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">stormTors</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">StormTors</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">stormTors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_storm_tornadoes</span><span class="p">(</span><span class="n">storm</span><span class="p">,</span><span class="n">dist_thresh</span><span class="p">)</span>
+        
+        <span class="c1">#Add motion vector relative coordinates</span>
+        <span class="n">stormTors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotateToHeading</span><span class="p">(</span><span class="n">storm</span><span class="p">,</span><span class="n">stormTors</span><span class="p">)</span>
+        
+        <span class="c1">#Create figure for plotting</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">()</span>
+        
+        <span class="c1">#Default EF color scale</span>
+        <span class="n">EFcolors</span> <span class="o">=</span> <span class="n">ef_colors</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+        
+        <span class="c1">#Plot all tornado tracks in motion relative coords</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">stormTors</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;rot_xdist_s&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;rot_xdist_e&#39;</span><span class="p">]</span><span class="o">+.</span><span class="mi">01</span><span class="p">],[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;rot_ydist_s&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;rot_ydist_e&#39;</span><span class="p">]</span><span class="o">+.</span><span class="mi">01</span><span class="p">],</span>\
+                     <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">EFcolors</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">]])</span>
+            
+        <span class="c1">#Plot dist_thresh radius</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;#F6F6F6&#39;</span><span class="p">)</span>
+        <span class="n">circle</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dist_thresh</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">circle</span><span class="p">)</span>
+        <span class="n">an</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dist_thresh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">an</span><span class="p">),</span> <span class="n">dist_thresh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">an</span><span class="p">),</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="o">-</span><span class="n">dist_thresh</span><span class="p">,</span><span class="n">dist_thresh</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="s1">&#39;k--&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="o">-</span><span class="n">dist_thresh</span><span class="p">,</span><span class="n">dist_thresh</span><span class="p">],</span><span class="s1">&#39;k--&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+        
+        <span class="c1">#Plot motion vector</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">dist_thresh</span><span class="o">*.</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="o">*.</span><span class="mi">2</span><span class="p">,</span> <span class="n">length_includes_head</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+          <span class="n">head_width</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">head_length</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span><span class="n">fc</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        
+        <span class="c1">#Labels</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">,</span> <span class="s1">&#39;box&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Left/Right of Storm Heading (km)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Behind/Ahead of Storm Heading (km)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{storm.name}</span><span class="s1"> </span><span class="si">{storm.year}</span><span class="s1"> tornadoes relative to heading&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mf">11.5</span><span class="p">)</span>
+        
+        <span class="c1">#Add legend</span>
+        <span class="n">handles</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ef</span><span class="p">,</span><span class="n">color</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">EFcolors</span><span class="p">):</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stormTors</span><span class="p">[</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">ef</span><span class="p">])</span>
+            <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mlines</span><span class="o">.</span><span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;EF-</span><span class="si">{ef}</span><span class="s1"> (</span><span class="si">{count}</span><span class="s1">)&#39;</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mf">11.5</span><span class="p">)</span>
+        
+        <span class="c1">#Return axis or show figure</span>
+        <span class="k">if</span> <span class="n">return_ax</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ax</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+        
+
+<div class="viewcode-block" id="TornadoDataset.plot_tors"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.plot_tors">[docs]</a>    <span class="k">def</span> <span class="nf">plot_tors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tor_info</span><span class="p">,</span><span class="n">zoom</span><span class="o">=</span><span class="s2">&quot;conus&quot;</span><span class="p">,</span><span class="n">plotPPF</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tor_info : pandas.DataFrame / dict / datetime.datetime / list</span>
+<span class="sd">            Requested tornadoes to plot. Can be one of the following:</span>
+<span class="sd">            </span>
+<span class="sd">            * **Pandas DataFrame** containing the requested tornadoes to plot.</span>
+<span class="sd">            * **dict** entry containing the requested tornadoes to plot.</span>
+<span class="sd">            * **datetime.datetime** object for a single day to plot tornadoes.</span>
+<span class="sd">            * **list** with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.</span>
+<span class="sd">        zoom : str</span>
+<span class="sd">            Zoom for the plot. Can be one of the following:</span>
+<span class="sd">            </span>
+<span class="sd">            * **dynamic** - default. Dynamically focuses the domain using the tornado track(s) plotted.</span>
+<span class="sd">            * **conus** - Contiguous United States</span>
+<span class="sd">            * **east_conus** - Eastern CONUS</span>
+<span class="sd">            * **lonW/lonE/latS/latN** - Custom plot domain</span>
+<span class="sd">        plotPPF : bool or str</span>
+<span class="sd">            Whether to plot practically perfect forecast (PPF). True defaults to &quot;daily&quot;. Default is False.</span>
+<span class="sd">        </span>
+<span class="sd">            * **False** - no PPF plot.</span>
+<span class="sd">            * **True** - defaults to &quot;daily&quot;.</span>
+<span class="sd">            * **&quot;total&quot;** - probability of a tornado within 25mi of a point during the period of time selected.</span>
+<span class="sd">            * **&quot;daily&quot;** - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.</span>
+<span class="sd">        ax : axes</span>
+<span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        cartopy_proj : ccrs</span>
+<span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
+<span class="sd">        prop : dict</span>
+<span class="sd">            Property of tornado tracks.</span>
+<span class="sd">        map_prop : dict</span>
+<span class="sd">            Property of cartopy map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prop&quot;</span><span class="p">,{})</span>
+        <span class="n">map_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;map_prop&quot;</span><span class="p">,{})</span>
+        
+        <span class="c1">#Get plot data</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tor_info</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">dfTors</span> <span class="o">=</span> <span class="n">tor_info</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tor_info</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+            <span class="n">dfTors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">tor_info</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dfTors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getTimeTors</span><span class="p">(</span><span class="n">tor_info</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tor_info</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;PPFcolors&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;SPC&#39;</span><span class="p">:</span>
+                        <span class="n">warning_message</span> <span class="o">=</span> <span class="s1">&#39;SPC colors only allowed for daily PPF. Defaulting to plasma colormap.&#39;</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
+                        <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;PPFcolors&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;plasma&#39;</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">warning_message</span> <span class="o">=</span> <span class="s1">&#39;SPC colors only allowed for daily PPF. Defaulting to plasma colormap.&#39;</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warning_message</span><span class="p">)</span>
+                    <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;PPFcolors&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;plasma&#39;</span>
+                    
+                <span class="k">if</span> <span class="n">plotPPF</span><span class="o">!=</span><span class="s1">&#39;total&#39;</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;PPFlevels&#39;</span><span class="p">]</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">t_int</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">tor_info</span><span class="p">)</span><span class="o">-</span><span class="nb">min</span><span class="p">(</span><span class="n">tor_info</span><span class="p">))</span><span class="o">.</span><span class="n">days</span>
+                        <span class="k">if</span> <span class="n">t_int</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+                            <span class="n">new_levs</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">t_int</span><span class="o">**-.</span><span class="mi">7</span> \
+                                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">100</span><span class="p">]]</span>
+                            <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">new_levs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                                <span class="n">new_levs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">new_levs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="mf">0.1</span><span class="p">])</span>
+                                <span class="n">new_levs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_levs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="nb">max</span><span class="p">([</span><span class="n">new_levs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">new_levs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="o">.</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;PPFlevels&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">new_levs</span>
+    
+        <span class="c1">#Create instance of plot object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TornadoPlot</span><span class="p">()</span>
+        
+        <span class="c1">#Create cartopy projection</span>
+        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">cartopy_proj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span>
+        
+        <span class="c1">#Plot tornadoes</span>
+        <span class="n">plot_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_tornadoes</span><span class="p">(</span><span class="n">dfTors</span><span class="p">,</span><span class="n">zoom</span><span class="p">,</span><span class="n">plotPPF</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        
+        <span class="c1">#Return axis</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">plot_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">plot_info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">plot_info</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">__getTimeTors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time</span><span class="p">):</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">t1</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+            <span class="n">t2</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+            <span class="n">t2</span> <span class="o">=</span> <span class="n">t1</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+        <span class="n">subTors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Tors</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;UTC_time&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">t1</span><span class="p">)</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;UTC_time&#39;</span><span class="p">]</span><span class="o">&lt;</span><span class="n">t2</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">subTors</span></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

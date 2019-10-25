@@ -1,0 +1,514 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tropycal.recon.dataset &mdash; tropycal </title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/logo_32.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">Data Sources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tropycal.recon.dataset</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tropycal.recon.dataset</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="k">import</span> <span class="n">minimum_filter</span>
+<span class="kn">from</span> <span class="nn">geopy.distance</span> <span class="k">import</span> <span class="n">great_circle</span>
+<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
+
+<span class="kn">from</span> <span class="nn">.plot</span> <span class="k">import</span> <span class="n">ReconPlot</span>
+<span class="c1">#from ..tracks import *</span>
+
+<div class="viewcode-block" id="ReconDataset"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset">[docs]</a><span class="k">class</span> <span class="nc">ReconDataset</span><span class="p">:</span>
+
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates an instance of a ReconDataset object containing all recon data for a single storm.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stormtuple : tuple or list</span>
+<span class="sd">        Requested storm. Can be either tuple or list containing storm name and year (e.g., (&quot;Matthew&quot;,2016)).</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dataset</span>
+<span class="sd">        An instance of ReconDataset, initialized with the following:</span>
+<span class="sd">        </span>
+<span class="sd">        * **missiondata** - A dictionary of missions.</span>
+<span class="sd">            Each entry is a dateframe from a single mission.</span>
+<span class="sd">            Dictionary keys are given by mission number and agency (e.g. &#39;15_NOAA&#39;).</span>
+<span class="sd">        * **recentered** - A dataframe with all missions concatenated together, and columns &#39;xdist&#39; and &#39;ydist&#39;</span>
+<span class="sd">            indicating the distance (km) of the ob from the interpolated center of the storm.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#init class</span>
+<div class="viewcode-block" id="ReconDataset.__init__"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stormtuple</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">url_prefix</span> <span class="o">=</span> <span class="s1">&#39;http://tropicalatlantic.com/recon/recon.cgi?&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storm</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">stormtuple</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">stormtuple</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allMissions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recentered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recenter</span><span class="p">()</span></div>
+        
+<div class="viewcode-block" id="ReconDataset.getMission"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.getMission">[docs]</a>    <span class="k">def</span> <span class="nf">getMission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">agency</span><span class="p">,</span><span class="n">mission_num</span><span class="p">,</span><span class="n">url_mission</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">url_mission</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
+            <span class="n">url_mission</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.url_prefix}</span><span class="s1">basin=al&amp;year=</span><span class="si">{self.year}</span><span class="s1">&amp;product=hdob&amp;storm=</span><span class="si">{self.storm}</span><span class="s1">&amp;mission=</span><span class="si">{mission_num}</span><span class="s1">&amp;agency=</span><span class="si">{agency}</span><span class="s1">&#39;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_mission</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span> <span class="k">if</span> <span class="s1">&#39;option value=&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">ob</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">obs</span><span class="p">):</span>
+            <span class="n">url_ob</span> <span class="o">=</span> <span class="n">url_mission</span><span class="o">+</span><span class="s1">&#39;&amp;ob=&#39;</span><span class="o">+</span><span class="n">ob</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_html</span><span class="p">(</span><span class="n">url_ob</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="s1">&#39;Time&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="s1">&#39;Time&#39;</span><span class="p">})</span>
+            <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">mission</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">day0</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="o">+</span><span class="n">ob</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span><span class="s1">&#39;%Y%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mission</span> <span class="o">=</span> <span class="n">mission</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                
+        <span class="k">def</span> <span class="nf">getVar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">!=</span><span class="s1">&#39;-&#39;</span> <span class="ow">and</span> <span class="s1">&#39;*&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">x</span><span class="o">!=</span><span class="s1">&#39;No Wind&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Time&#39;</span><span class="p">:</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Coordinates&#39;</span><span class="p">:</span>
+                    <span class="n">lat</span><span class="p">,</span><span class="n">lon</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+                    <span class="n">lat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lat</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">lat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;S&#39;</span><span class="p">]</span>
+                    <span class="n">lon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lon</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">lon</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;W&#39;</span><span class="p">]</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">lon</span><span class="p">,</span><span class="n">lat</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Aircraft Static Air Pressure&#39;</span><span class="p">:</span>
+                    <span class="n">a</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; mb&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Aircraft Geo. Height&#39;</span><span class="p">:</span>
+                    <span class="n">a</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; meters&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Extrapolated Sfc. Pressure&#39;</span><span class="p">:</span>
+                    <span class="n">a</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; mb&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Flight Level Wind (30 sec. Avg.)&#39;</span><span class="p">:</span>
+                    <span class="n">a</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+                    <span class="n">wdir</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">wspd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">wdir</span><span class="p">,</span><span class="n">wspd</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Peak (10 sec. Avg.) Flight Level Wind&#39;</span><span class="p">:</span>
+                    <span class="n">a</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; knots&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;SFMR Peak (10s Avg.) Sfc. Wind&#39;</span><span class="p">:</span>
+                    <span class="n">a</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; knots&#39;</span><span class="p">)</span>
+                    <span class="n">a</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Coordinates&#39;</span><span class="p">,</span><span class="s1">&#39;Flight Level Wind (30 sec. Avg.)&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">==</span><span class="nb">float</span><span class="p">:</span>
+                <span class="n">a</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span>
+    
+        <span class="n">varnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span><span class="s1">&#39;Coordinates&#39;</span><span class="p">,</span><span class="s1">&#39;Aircraft Static Air Pressure&#39;</span><span class="p">,</span><span class="s1">&#39;Aircraft Geo. Height&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Extrapolated Sfc. Pressure&#39;</span><span class="p">,</span><span class="s1">&#39;Flight Level Wind (30 sec. Avg.)&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Peak (10 sec. Avg.) Flight Level Wind&#39;</span><span class="p">,</span><span class="s1">&#39;SFMR Peak (10s Avg.) Sfc. Wind&#39;</span><span class="p">]</span>
+        <span class="n">mission</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:[</span><span class="n">getVar</span><span class="p">(</span><span class="n">item</span><span class="p">,</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">mission</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">varnames</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]):</span>
+            <span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">day0</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">[:</span><span class="mi">2</span><span class="p">]),</span><span class="n">minute</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">]),</span><span class="n">second</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="n">i</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">][</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{}</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Coordinates&#39;</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;p_sfc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Extrapolated Sfc. Pressure&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;wdir&#39;</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;wspd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Flight Level Wind (30 sec. Avg.)&#39;</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;pkwnd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Peak (10 sec. Avg.) Flight Level Wind&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;sfmr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission</span><span class="p">[</span><span class="s1">&#39;SFMR Peak (10s Avg.) Sfc. Wind&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;plane_p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Aircraft Static Air Pressure&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;plane_z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission</span><span class="p">[</span><span class="s1">&#39;Aircraft Geo. Height&#39;</span><span class="p">]</span>
+        <span class="n">return_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">return_data</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">return_data</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]]</span>
+        
+        <span class="c1">#remove nan&#39;s for lat/lon coordinates</span>
+        <span class="n">return_data</span> <span class="o">=</span> <span class="n">return_data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+        
+        <span class="k">return</span> <span class="n">return_data</span></div>
+    
+
+<div class="viewcode-block" id="ReconDataset.allMissions"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.allMissions">[docs]</a>    <span class="k">def</span> <span class="nf">allMissions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">url_storm</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{self.url_prefix}</span><span class="s1">basin=al&amp;year=</span><span class="si">{self.year}</span><span class="s1">&amp;storm=</span><span class="si">{self.storm}</span><span class="s1">&amp;product=hdob&#39;</span>
+        <span class="n">missions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_html</span><span class="p">(</span><span class="n">url_storm</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">missiondata</span><span class="o">=</span><span class="p">{}</span>
+        <span class="n">timer_start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;--&gt; Starting to read in recon missions&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i_mission</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">missions</span><span class="p">)):</span>
+            <span class="n">mission_num</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">missions</span><span class="p">[</span><span class="s1">&#39;MissionNumber&#39;</span><span class="p">][</span><span class="n">i_mission</span><span class="p">])</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">agency</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isalpha</span><span class="p">,</span> <span class="n">missions</span><span class="p">[</span><span class="s1">&#39;Agency&#39;</span><span class="p">][</span><span class="n">i_mission</span><span class="p">]))</span>
+            <span class="n">missiondata</span><span class="p">[</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{mission_num}</span><span class="s1">_</span><span class="si">{agency}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getMission</span><span class="p">(</span><span class="n">agency</span><span class="p">,</span><span class="n">mission_num</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{mission_num}</span><span class="s1">_</span><span class="si">{agency}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--&gt; Completed reading in recon missions (</span><span class="si">%.2f</span><span class="s1"> seconds)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timer_start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">missiondata</span></div>
+
+<div class="viewcode-block" id="ReconDataset.find_centers"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.find_centers">[docs]</a>    <span class="k">def</span> <span class="nf">find_centers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
+        
+        <span class="k">def</span> <span class="nf">fill_nan</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+            <span class="c1">#Interpolate to fill nan values</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+            <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+            <span class="n">good</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">good</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">inds</span><span class="p">[</span><span class="n">good</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">good</span><span class="p">],</span><span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cubic&#39;</span><span class="p">)</span>
+                <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">A</span><span class="p">)[</span><span class="n">good</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="n">good</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
+                             <span class="n">A</span><span class="p">[</span><span class="n">good</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="n">good</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
+                             <span class="n">f</span><span class="p">(</span><span class="n">inds</span><span class="p">[</span><span class="n">good</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="n">good</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span><span class="o">*</span><span class="n">good</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="o">+</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">inds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">good</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+        
+        <span class="c1">#Check that sfc pressure spread is big enough to identify real minima</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;p_sfc&#39;</span><span class="p">],</span><span class="mi">90</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;p_sfc&#39;</span><span class="p">],</span><span class="mi">10</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">8</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;p_sfc&#39;</span><span class="p">][:</span><span class="mi">20</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span><span class="o">*</span><span class="mi">20</span> <span class="c1">#NaN out the first 10 minutes of the flight</span>
+            <span class="n">p_sfc_interp</span> <span class="o">=</span> <span class="n">fill_nan</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;p_sfc&#39;</span><span class="p">])</span> <span class="c1">#Interp p_sfc across missing data</span>
+            <span class="n">wspd_interp</span> <span class="o">=</span> <span class="n">fill_nan</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;wspd&#39;</span><span class="p">])</span> <span class="c1">#Interp wspd across missing data</span>
+            <span class="c1">#Smooth p_sfc and wspd</span>
+            <span class="n">p_sfc_smooth</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span><span class="o">*</span><span class="mi">1</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">p_sfc_interp</span><span class="p">,[</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;valid&#39;</span><span class="p">))</span><span class="o">+</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span><span class="o">*</span><span class="mi">1</span>
+            <span class="n">wspd_smooth</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span><span class="o">*</span><span class="mi">1</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">wspd_interp</span><span class="p">,[</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;valid&#39;</span><span class="p">))</span><span class="o">+</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span><span class="o">*</span><span class="mi">1</span>
+            <span class="c1">#Add wspd to p_sfc to encourage finding p mins with wspd mins </span>
+            <span class="c1">#and prevent finding p mins in intense thunderstorms</span>
+            <span class="n">pw_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p_sfc_smooth</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">wspd_smooth</span><span class="p">)</span><span class="o">*.</span><span class="mi">1</span>
+            <span class="c1">#Find mins in 15-minute windows</span>
+            <span class="n">imin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">pw_test</span> <span class="o">==</span> <span class="n">minimum_filter</span><span class="p">(</span><span class="n">pw_test</span><span class="p">,</span><span class="mi">30</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1">#Only use mins if below 20th %ile of mission p_sfc data and when plane p is 500-900mb</span>
+            <span class="n">imin</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">imin</span> <span class="k">if</span> <span class="mi">800</span><span class="o">&lt;</span><span class="n">p_sfc_interp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;p_sfc&#39;</span><span class="p">],</span><span class="mi">20</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="mi">500</span><span class="o">&lt;</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;plane_p&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">900</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">imin</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;iscenter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;p_sfc&#39;</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">imin</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;iscenter&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="ReconDataset.recenter"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.recenter">[docs]</a>    <span class="k">def</span> <span class="nf">recenter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        
+        <span class="k">def</span> <span class="nf">stitchMissions</span><span class="p">():</span>
+            <span class="n">list_of_dfs</span><span class="o">=</span><span class="p">[]</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span><span class="p">:</span>
+                <span class="n">mission</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_centers</span><span class="p">(</span><span class="n">mission</span><span class="p">)</span>
+                <span class="n">list_of_dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">tmp</span> <span class="p">)</span>
+            <span class="n">data_concat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">list_of_dfs</span><span class="p">,</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">data_chron</span> <span class="o">=</span> <span class="n">data_concat</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data_chron</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">stitchMissions</span><span class="p">()</span>
+        <span class="n">centers</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;iscenter&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">centers</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sorry, less than 2 center passes&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Found {len(centers)} center passes!&#39;</span><span class="p">)</span>
+            <span class="n">timer_start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            
+            <span class="c1">#Interpolate center position to time of each ob</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">centers</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]),</span><span class="n">centers</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">],</span><span class="n">fill_value</span><span class="o">=</span><span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+            <span class="n">interp_clon</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]))</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">centers</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]),</span><span class="n">centers</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span><span class="n">fill_value</span><span class="o">=</span><span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+            <span class="n">interp_clat</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]))</span>
+
+            <span class="c1">#Get x,y distance of each ob from coinciding interped center position</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;xdist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">great_circle</span><span class="p">(</span> <span class="p">(</span><span class="n">interp_clat</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">interp_clon</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> \
+                <span class="p">(</span><span class="n">interp_clat</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="p">)</span><span class="o">.</span><span class="n">kilometers</span><span class="o">*</span> \
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">interp_clon</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ydist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">great_circle</span><span class="p">(</span> <span class="p">(</span><span class="n">interp_clat</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">interp_clon</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> \
+                <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span><span class="n">interp_clon</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">)</span><span class="o">.</span><span class="n">kilometers</span><span class="o">*</span> \
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">interp_clat</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))]</span>
+            
+            <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;xdist&#39;</span><span class="p">])</span>
+            
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--&gt; Completed recentering recon data (</span><span class="si">%.2f</span><span class="s1"> seconds)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timer_start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+        
+    <span class="k">def</span> <span class="nf">__getSubTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time</span><span class="p">):</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">t1</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+            <span class="n">t2</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">-</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+            <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+        <span class="n">subRecon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recentered</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">recentered</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">t1</span><span class="p">)</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recentered</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">&lt;</span><span class="n">t2</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">subRecon</span>
+    
+    
+<div class="viewcode-block" id="ReconDataset.findMission"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.findMission">[docs]</a>    <span class="k">def</span> <span class="nf">findMission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the name of a mission or list of missions given a specified time.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time : datetime.datetime or list</span>
+<span class="sd">            Datetime object or list of datetime objects representing the time of the requested mission.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The names of any/all missions that had in-storm observations during the specified time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">t1</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+            <span class="n">t2</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t1</span> <span class="o">=</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span>
+        <span class="n">selected</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span><span class="p">:</span>
+            <span class="n">t_start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+            <span class="n">t_end</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">t_start</span><span class="o">&lt;</span><span class="n">t1</span><span class="o">&lt;</span><span class="n">t_end</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">t_start</span><span class="o">&lt;</span><span class="n">t2</span><span class="o">&lt;</span><span class="n">t_end</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">t1</span><span class="o">&lt;</span><span class="n">t_start</span><span class="o">&lt;</span><span class="n">t2</span><span class="p">):</span>
+                <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There were no in-storm recon missions during this time&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">selected</span></div>
+
+
+    <span class="c1">#PLOT FUNCTION FOR RECON</span>
+<div class="viewcode-block" id="ReconDataset.plot_recon"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_recon">[docs]</a>    <span class="k">def</span> <span class="nf">plot_recon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="p">,</span><span class="n">zoom</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a plot of recon data.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        recon_select : Requested recon data</span>
+<span class="sd">            pandas.DataFrame or dict,</span>
+<span class="sd">            or string referencing the mission name (e.g. &#39;12_NOAA&#39;), </span>
+<span class="sd">            or datetime or list of start/end datetimes.</span>
+<span class="sd">        zoom : str</span>
+<span class="sd">            Zoom for the plot. Can be one of the following:</span>
+<span class="sd">            &quot;dynamic&quot; - default - dynamically focuses the domain using the tornado track(s) plotted, </span>
+<span class="sd">            &quot;north_atlantic&quot; - North Atlantic Ocean basin, </span>
+<span class="sd">            &quot;lonW/lonE/latS/latN&quot; - Custom plot domain.</span>
+<span class="sd">        ax : axes</span>
+<span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        cartopy_proj : ccrs</span>
+<span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
+<span class="sd">            </span>
+<span class="sd">        Additional Parameters</span>
+<span class="sd">        ---------------------</span>
+<span class="sd">        prop : dict</span>
+<span class="sd">            Property of recon plot.</span>
+<span class="sd">        map_prop : dict</span>
+<span class="sd">            Property of cartopy map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Pop kwargs</span>
+        <span class="n">prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prop&#39;</span><span class="p">,{})</span>
+        <span class="n">map_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;map_prop&#39;</span><span class="p">,{})</span>
+        
+        <span class="c1">#Get plot data</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recon_select</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">dfRecon</span> <span class="o">=</span> <span class="n">recon_select</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recon_select</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+            <span class="n">dfRecon</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">recon_select</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recon_select</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">dfRecon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span><span class="p">[</span><span class="n">recon_select</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dfRecon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getSubTime</span><span class="p">(</span><span class="n">recon_select</span><span class="p">)</span>
+        
+        <span class="c1">#Create instance of plot object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">ReconPlot</span><span class="p">()</span>
+        
+        <span class="c1">#Create cartopy projection</span>
+        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="n">cartopy_proj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span>
+        
+        <span class="c1">#Plot recon</span>
+        <span class="n">plot_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_recon</span><span class="p">(</span><span class="n">dfRecon</span><span class="p">,</span><span class="n">zoom</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        
+        <span class="c1">#Return axis</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">plot_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">plot_info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">plot_info</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span></div></div>
+
+    
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

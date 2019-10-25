@@ -1,6 +1,0 @@
-{
-  "examples/tracks/dataset.py::test_trackdataset": true,
-  "src/tropycal/tornado/plot.py::testfit": true,
-  "src/tropycal/tracks/dataset.py::testfit": true,
-  "src/tropycal/tracks/storm.py::testfit": true
-}

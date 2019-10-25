@@ -18,6 +18,7 @@ For an example on how to use Tropycal in a Python script, please refer to the :d
 
    install
    support
+   Example Scripts <examples/index>
    api/index
    sample_usage
    data

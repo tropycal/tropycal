@@ -946,7 +946,7 @@ class TrackDataset:
         
         Returns
         -------
-        Storm
+        tropycal.tracks.Storm
             Object containing information about the requested storm, and methods for analyzing and plotting the storm.
         """
         
@@ -1020,10 +1020,10 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        return_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return return_ax
+        if ax != None or return_ax == True: return plot_ax
         
     def plot_season(self,year,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
@@ -1060,10 +1060,10 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot season
-        return_ax = self.plot_obj.plot_season(season,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_season(season,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return return_ax
+        if ax != None or return_ax == True: return plot_ax
     
     def search_name(self,name):
         
@@ -1100,7 +1100,7 @@ class TrackDataset:
         
         Returns
         -------
-        Season
+        tropycal.tracks.Season
             Object containing every storm entry for the given season, and methods for analyzing and plotting the season.
         """
         
@@ -2241,7 +2241,7 @@ class TrackDataset:
             return p
 
     def gridded_stats(self,cmd_request,thresh={},year_range=None,date_range=('1/1','12/31'),binsize=1,\
-                         zoom=None,ax=None,cartopy_proj=None,prop={},map_prop={}):
+                         zoom=None,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of gridded statistics.
@@ -2406,10 +2406,10 @@ class TrackDataset:
         title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'
         prop['title_L'],prop['title_R']=title_L,title_R
         
-        return_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,VEC_FLAG,zoom,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,VEC_FLAG,zoom,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
                     
         #Return axis
-        if ax != None: return return_ax
+        if ax != None or return_ax == True: return plot_ax
 
     
     def assign_storm_tornadoes(self,dist_thresh=1000,tornado_path='spc'):

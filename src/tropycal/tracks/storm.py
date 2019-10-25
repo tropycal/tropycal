@@ -237,10 +237,10 @@ class Storm:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        return_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return return_ax
+        if ax != None or return_ax == True: return plot_ax
         
     #PLOT FUNCTION FOR HURDAT
     def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,zoom="dynamic_forecast",
@@ -995,7 +995,11 @@ class Storm:
     
         #Create instance of plot object
         self.plot_obj_tc = TrackPlot()
-        self.plot_obj_tor = TornadoPlot()
+        try:
+            self.plot_obj_tor = TornadoPlot()
+        except:
+            from ..tornado.plot import TornadoPlot
+            self.plot_obj_tor = TornadoPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:
@@ -1012,15 +1016,15 @@ class Storm:
         tor_title = tor_ax.get_title('left')
         
         #Plot storm
-        return_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,plot_all,ax=tor_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,plot_all,ax=tor_ax,prop=prop,map_prop=map_prop)
         
-        return_ax.add_artist(leg_tor)
+        plot_ax.add_artist(leg_tor)
         
-        storm_title = return_ax.get_title('left')
-        return_ax.set_title(f'{storm_title}\n{tor_title}',loc='left',fontsize=17,fontweight='bold')
-
+        storm_title = plot_ax.get_title('left')
+        plot_ax.set_title(f'{storm_title}\n{tor_title}',loc='left',fontsize=17,fontweight='bold')
+        
         #Return axis
-        if ax != None or return_ax == True: return return_ax
+        if ax != None or return_ax == True: return plot_ax
 
 
     def plot_TCtors_rotated(self,dist_thresh=1000,return_ax=False):

@@ -67,6 +67,7 @@ deploy:
     username: __token__
     password:
       secure: $PYPI_TOKEN
+    distributions: sdist bdist_wheel
     on:
       python: 3.6
       tags: true

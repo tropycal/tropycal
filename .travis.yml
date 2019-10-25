@@ -50,9 +50,8 @@ script:
   - set -e
   - python -m pip install doctr
   - cd docs
-  - make clean html
   - rm -rf examples/
-  - make html
+  - make clean html
   - touch _build/html/.nojekyll
   - cd ..
 

@@ -17,6 +17,7 @@ except:
     warnings.warn("Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
 
 try:
+    import matplotlib as mlib
     import matplotlib.lines as mlines
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
@@ -263,7 +264,10 @@ class Plot:
             self.fig = plt.figure(figsize=map_prop['figsize'],dpi=map_prop['dpi'])
             self.ax = plt.axes(projection=self.proj)
         else:
-            self.fig = plt.figure(figsize=map_prop['figsize'],dpi=map_prop['dpi'])
+            # get the figure numbers of all existing figures
+            fig_numbers = [x.num for x in mlib._pylab_helpers.Gcf.get_all_fig_managers()]
+            # set figure as last figure number
+            self.fig = plt.figure(fig_numbers[-1])
             self.ax = ax
         
         #Attach geography to plot, lat/lon lines, etc.

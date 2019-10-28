@@ -1881,6 +1881,7 @@ class TrackDataset:
             * **start_date_indomain** = first time step a cyclone entered the domain
             * **max_wind** = first instance of the maximum sustained wind of cyclone
             * **min_mslp** = first instance of the minimum MSLP of cyclone
+            * **wind_ge_XX** = first instance of wind greater than/equal to a certain threshold (knots)
         return_df : bool
             Whether to return a pandas.DataFrame (True) or dict (False). Default is True.
         ascending : bool
@@ -1903,6 +1904,11 @@ class TrackDataset:
         if self.source == 'ibtracs':
             warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
         
+        #Revise metric if threshold included
+        if 'wind_ge' in metric:
+            thresh = int(metric.split("_")[2])
+            metric = 'wind_ge'
+        
         #Error check for metric
         metric = metric.lower()
         metric_bank = {'ace':{'output':['ace'],'subset_type':'domain'},
@@ -1914,6 +1920,7 @@ class TrackDataset:
                        'start_date_indomain':{'output':['date','lat','lon','type'],'subset_type':'domain'},
                        'max_wind':{'output':['vmax','mslp','lat','lon'],'subset_type':'domain'},
                        'min_mslp':{'output':['mslp','vmax','lat','lon'],'subset_type':'domain'},
+                       'wind_ge':{'output':['lat','lon','mslp','vmax','date'],'subset_type':'start'},
                       }
         if metric not in metric_bank.keys():
             raise ValueError("Metric requested for sorting is not available. Please reference the documentation for acceptable entries for 'metric'.")
@@ -2030,6 +2037,19 @@ class TrackDataset:
                 
                 analyze_dict['lat'].append(lat_tropical[use_idx])
                 analyze_dict['lon'].append(lon_tropical[use_idx])
+                analyze_dict['mslp'].append(mslp_tropical[use_idx])
+                analyze_dict['vmax'].append(vmax_tropical[use_idx])
+            
+            elif metric in ['wind_ge']:
+                
+                #Find max wind or min MSLP
+                if metric == 'wind_ge' and all_nan(vmax_tropical) == True: continue
+                if metric == 'wind_ge' and np.nanmax(vmax_tropical) < thresh: continue
+                use_idx = np.where(vmax_tropical>=thresh)[0][0]
+                
+                analyze_dict['lat'].append(lat_tropical[use_idx])
+                analyze_dict['lon'].append(lon_tropical[use_idx])
+                analyze_dict['date'].append(date_tropical[use_idx])
                 analyze_dict['mslp'].append(mslp_tropical[use_idx])
                 analyze_dict['vmax'].append(vmax_tropical[use_idx])
             

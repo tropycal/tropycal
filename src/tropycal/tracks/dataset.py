@@ -1389,7 +1389,7 @@ class TrackDataset:
         if save_path == None:
             plt.show()
         else:
-            plt.savefig(savepath,bbox_inches='tight')
+            plt.savefig(save_path,bbox_inches='tight')
         plt.close()
         
         if return_dict == True:
@@ -1700,7 +1700,7 @@ class TrackDataset:
         if save_path == None:
             plt.show()
         else:
-            plt.savefig(savepath,bbox_inches='tight')
+            plt.savefig(save_path,bbox_inches='tight')
         plt.close()
         
         if return_dict == True:

@@ -396,7 +396,7 @@ class Storm:
         forecast_dict['basin'] = self.basin
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,zoom,ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,zoom,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
@@ -1011,12 +1011,12 @@ class Storm:
                 self.plot_obj_tc.create_cartopy(proj='PlateCarree',central_longitude=0.0)
                 
         #Plot tornadoes
-        tor_ax,zoom,leg_tor = self.plot_obj_tor.plot_tornadoes(self.stormTors,zoom,ax=ax,return_ax=True,\
+        plot_ax,zoom,leg_tor = self.plot_obj_tor.plot_tornadoes(self.stormTors,zoom,ax=ax,return_ax=True,\
                                              plotPPF=plotPPF,prop=prop,map_prop=map_prop)
-        tor_title = tor_ax.get_title('left')
-        
+        tor_title = plot_ax.get_title('left')
+
         #Plot storm
-        plot_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,plot_all,ax=tor_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,plot_all,ax=plot_ax,return_ax=True,prop=prop,map_prop=map_prop)
         
         plot_ax.add_artist(leg_tor)
         
@@ -1024,7 +1024,11 @@ class Storm:
         plot_ax.set_title(f'{storm_title}\n{tor_title}',loc='left',fontsize=17,fontweight='bold')
         
         #Return axis
-        if ax != None or return_ax == True: return plot_ax
+        if ax != None or return_ax == True: 
+            return plot_ax
+        else:
+            plt.show()
+            plt.close()
 
 
     def plot_TCtors_rotated(self,dist_thresh=1000,return_ax=False):

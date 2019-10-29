@@ -191,7 +191,7 @@
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (2.88 seconds)
+--&gt; Completed reading in HURDAT2 data (2.8 seconds)
 </pre></div>
 </div>
 </div>
@@ -300,12 +300,11 @@ Attributes:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_tors</span><span class="p">(</span><span class="n">plotPPF</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.storm_002.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_002.png" />
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/storm.py:982: UserWarning: Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run &quot;TrackDataset.assign_storm_tornadoes()&quot; to avoid this warning in the future.
   warnings.warn(warn_message)
 --&gt; Starting to read in tornado track data
---&gt; Completed reading in tornado data for 1950-2018 (10.44 seconds)
+--&gt; Completed reading in tornado data for 1950-2018 (10.43 seconds)
 </pre></div>
 </div>
 <p>If this storm was ever in NHC’s area of responsibility, you can retrieve operational NHC forecast data for this event provided it is available. Forecast discussions date back to 1992, and forecast tracks date back to 1954.</p>
@@ -393,11 +392,13 @@ NNNN
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_nhc_forecast</span><span class="p">(</span><span class="n">forecast</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+<img alt="../_images/sphx_glr_tracks.storm_002.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_002.png" />
 <p>Now let’s look at the 12th forecast for Michael.</p>
 <p>Note that the observed track here differs from the HURDAT2 track plotted previously! This is because this plot displays the operationally analyzed location and intensity, rather than the post-storm analysis data. This is done to account for differences between HURDAT2 and operational data.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_nhc_forecast</span><span class="p">(</span><span class="n">forecast</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
+<img alt="../_images/sphx_glr_tracks.storm_003.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_003.png" />
 </div>
 <div class="section" id="ibtracs-dataset">
 <h2>IBTrACS Dataset<a class="headerlink" href="#ibtracs-dataset" title="Permalink to this headline">¶</a></h2>
@@ -411,7 +412,7 @@ NNNN
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in ibtracs data
---&gt; Completed reading in ibtracs data (50.21 seconds)
+--&gt; Completed reading in ibtracs data (53.87 seconds)
 </pre></div>
 </div>
 <p>The functionality for handling storms in IBTrACS is the same as with using HURDAT2, the only limitation being no NHC and operational model data can be accessed when using IBTrACS as the data source.</p>
@@ -420,15 +421,15 @@ NNNN
 <span class="n">storm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.storm_003.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_003.png" />
+<img alt="../_images/sphx_glr_tracks.storm_004.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_004.png" />
 <p><a class="reference external" href="https://en.wikipedia.org/wiki/Hurricane_Catarina">Cyclone Catarina</a> (2004) was an extremely rare hurricane-force tropical cyclone that developed in the South Atlantic basin, which normally doesn’t see tropical cyclone activity, and subsequently made landfall in Brazil. The “Catarina” name is unofficial; it was not assigned a name in real time, and JTWC assigned it the ID “AL502004”. Recall that when reading in the IBTrACS dataset previously, we set <code class="docutils literal notranslate"><span class="pre">Catarina=True</span></code>. This read in data for Cyclone Catarina from a special post-storm reanalysis from McTaggart-Cowan et al. (2006). Let’s make a plot of Catarina’s observed track and intensity per this reanalysis:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span> <span class="o">=</span> <span class="n">ibtracs</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;catarina&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">))</span>
 <span class="n">storm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.storm_004.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_004.png" />
+<img alt="../_images/sphx_glr_tracks.storm_005.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_005.png" />
 <p>If we were to read in IBTrACS without setting <code class="docutils literal notranslate"><span class="pre">Catarina=True</span></code> (which sets it to False by default) and plot the track for “AL502004”, we would get a noticeably different (shorter) and weaker track.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  28.369 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  32.953 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-storm-py">
 <div class="sphx-glr-download docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/a7588acf5ac89aa72efd0525273570d7/tracks.storm.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.storm.py</span></code></a></p>

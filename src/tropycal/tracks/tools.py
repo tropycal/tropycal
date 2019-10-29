@@ -130,7 +130,7 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
                  rE/timeres)
         
         for name in ['dvmax_dt','dmslp_dt']:
-            tmp = np.convolve(new_storm[name],[1]*int(dt_window/timeres),mode='valid')            
+            tmp = np.round(np.convolve(new_storm[name],[1]*int(dt_window/timeres),mode='valid'),1)         
             if dt_align=='end':
                 new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
             if dt_align=='middle':
@@ -423,6 +423,14 @@ def str2(a):
 
 def plot_credit():
     return "Plot generated using troPYcal"
+
+def add_credit(ax,text):
+    import matplotlib.patheffects as path_effects    
+    a = ax.text(0.99,0.01,text,fontsize=9,color='k',alpha=0.7,fontweight='bold',
+            transform=ax.transAxes,ha='right',va='bottom',zorder=10)
+    a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='white'),
+                   path_effects.Normal()])
+        
 
 def all_nan(arr):
     arr_copy = np.array(arr)

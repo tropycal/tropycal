@@ -1380,9 +1380,10 @@ class TrackDataset:
         #Add legend & plot credit
         ax.legend(loc=2)
         endash = u"\u2013"
-        ax.text(0.99,0.01,plot_credit(),fontsize=6,color='k',alpha=0.7,
-                transform=ax.transAxes,ha='right',va='bottom',zorder=10)
-        ax.text(0.99,0.99,f'Climatology from {start_year}{endash}{end_year}',fontsize=8,color='k',alpha=0.7,
+        
+        credit_text = plot_credit()
+        add_credit(ax,credit_text)
+        ax.text(0.99,0.99,f'Climatology from {start_year}{endash}{end_year}',fontsize=9,color='k',alpha=0.7,
                 transform=ax.transAxes,ha='right',va='top',zorder=10)
         
         #Show/save plot and close
@@ -2236,7 +2237,7 @@ class TrackDataset:
                 p = p.loc[(p['dmslp_dt']<=thresh['dP_min'])]
             
         if return_keys:
-            return [g[0] for g in points.groupby("stormid")]
+            return [g[0] for g in p.groupby("stormid")]
         else:
             return p
 

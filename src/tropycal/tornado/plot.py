@@ -126,7 +126,7 @@ class TornadoPlot(Plot):
             
             colors,clevs = ppf_colors(plotPPF,prop['PPFcolors'],prop['PPFlevels'])
                     
-            cbmap = self.ax.contourf((longrid[:-1]+longrid[1:])*.5,(latgrid[:-1]+latgrid[1:])*.5,PPF,\
+            cbmap = self.ax.contourf(longrid,latgrid,PPF,\
                              levels=clevs,colors=colors,alpha=0.5)
 
         #Plot tornadoes as specified

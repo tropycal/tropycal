@@ -5,8 +5,8 @@
 
 Computation times
 =================
-**10:28.060** total execution time for **examples** files:
+**11:43.687** total execution time for **examples** files:
 
-- **07:39.349**: :ref:`sphx_glr_examples_tracks.TrackDataset.py` (``tracks.TrackDataset.py``)
-- **01:35.156**: :ref:`sphx_glr_examples_tracks.storm.py` (``tracks.storm.py``)
-- **01:13.555**: :ref:`sphx_glr_examples_tracks.tornado.py` (``tracks.tornado.py``)
+- **08:55.759**: :ref:`sphx_glr_examples_tracks.TrackDataset.py` (``tracks.TrackDataset.py``)
+- **01:34.978**: :ref:`sphx_glr_examples_tracks.storm.py` (``tracks.storm.py``)
+- **01:12.950**: :ref:`sphx_glr_examples_tracks.tornado.py` (``tracks.tornado.py``)

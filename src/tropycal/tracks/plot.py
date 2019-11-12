@@ -1197,16 +1197,17 @@ class TrackPlot(Plot):
         
         if VEC_FLAG:
             mag = np.hypot(*zcoord)
+            binsize = abs(xcoord[0,0]-xcoord[0,1])
             clevs = [np.nanmin(mag),np.nanmax(mag)]
             cbmap = self.ax.pcolor(xcoord,ycoord,mag,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
                                transform=ccrs.PlateCarree())            
-            zcoord = zcoord/mag*abs(xcoord[0,0]-xcoord[0,1])
+            zcoord = zcoord/mag*binsize
             x_center = (xcoord[:-1,:-1]+xcoord[1:,1:])*.5
             y_center = (ycoord[:-1,:-1]+ycoord[1:,1:])*.5
             u = zcoord[0][:-1,:-1]
             v = zcoord[1][:-1,:-1]
             self.ax.quiver(x_center,y_center,u,v,color='w',alpha=0.6,transform=ccrs.PlateCarree(),\
-                           pivot='mid',width=.001,headwidth=3.5,headlength=4.5,headaxislength=4)
+                           pivot='mid',width=.001*binsize,headwidth=3.5,headlength=4.5,headaxislength=4)
             zcoord = mag
         
         else:

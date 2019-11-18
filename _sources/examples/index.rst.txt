@@ -19,9 +19,9 @@ Examples of using tropycal to generate images and text.
 
 .. only:: html
 
-    .. figure:: /examples/images/thumb/sphx_glr_tracks.tornado_thumb.png
+ .. figure:: /examples/images/thumb/sphx_glr_tracks.tornado_thumb.png
 
-        :ref:`sphx_glr_examples_tracks.tornado.py`
+     :ref:`sphx_glr_examples_tracks.tornado.py`
 
 .. raw:: html
 
@@ -39,9 +39,9 @@ Examples of using tropycal to generate images and text.
 
 .. only:: html
 
-    .. figure:: /examples/images/thumb/sphx_glr_tracks.storm_thumb.png
+ .. figure:: /examples/images/thumb/sphx_glr_tracks.storm_thumb.png
 
-        :ref:`sphx_glr_examples_tracks.storm.py`
+     :ref:`sphx_glr_examples_tracks.storm.py`
 
 .. raw:: html
 
@@ -59,9 +59,9 @@ Examples of using tropycal to generate images and text.
 
 .. only:: html
 
-    .. figure:: /examples/images/thumb/sphx_glr_tracks.TrackDataset_thumb.png
+ .. figure:: /examples/images/thumb/sphx_glr_tracks.TrackDataset_thumb.png
 
-        :ref:`sphx_glr_examples_tracks.TrackDataset.py`
+     :ref:`sphx_glr_examples_tracks.TrackDataset.py`
 
 .. raw:: html
 
@@ -74,7 +74,7 @@ Examples of using tropycal to generate images and text.
    /examples/tracks.TrackDataset
 .. raw:: html
 
-    <div style='clear:both'></div>
+    <div class="sphx-glr-clear"></div>
 
 
 

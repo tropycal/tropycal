@@ -27,6 +27,7 @@ For documentation generation purposes, return_ax must be set True for plotting f
 
 
 
+
 HURTDAT2 Dataset
 ----------------
 Let's start by creating an instance of a TrackDataset object. By default, this reads in the HURDAT2 dataset from the National Hurricane  Center (NHC) website. For this example we'll be using the HURDAT2 dataset over the North Atlantic basin.
@@ -50,7 +51,8 @@ HURDAT data is not available for the most recent hurricane seasons. To include t
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (3.02 seconds)
+    --> Completed reading in HURDAT2 data (2.71 seconds)
+
 
 
 
@@ -65,6 +67,7 @@ Let's retrieve an instance of Hurricane Michael from 2018:
 
 
     storm = hurdat_atl.get_storm(('michael',2018))
+
 
 
 
@@ -93,6 +96,7 @@ Retrieve a dictionary of Michael's data:
  .. code-block:: none
 
     {'id': 'AL142018', 'operational_id': 'AL142018', 'name': 'MICHAEL', 'year': 2018, 'season': 2018, 'basin': 'north_atlantic', 'source_info': 'NHC Hurricane Database', 'source': 'hurdat', 'date': [datetime.datetime(2018, 10, 6, 18, 0), datetime.datetime(2018, 10, 7, 0, 0), datetime.datetime(2018, 10, 7, 6, 0), datetime.datetime(2018, 10, 7, 12, 0), datetime.datetime(2018, 10, 7, 18, 0), datetime.datetime(2018, 10, 8, 0, 0), datetime.datetime(2018, 10, 8, 6, 0), datetime.datetime(2018, 10, 8, 12, 0), datetime.datetime(2018, 10, 8, 18, 0), datetime.datetime(2018, 10, 9, 0, 0), datetime.datetime(2018, 10, 9, 6, 0), datetime.datetime(2018, 10, 9, 12, 0), datetime.datetime(2018, 10, 9, 18, 0), datetime.datetime(2018, 10, 10, 0, 0), datetime.datetime(2018, 10, 10, 6, 0), datetime.datetime(2018, 10, 10, 12, 0), datetime.datetime(2018, 10, 10, 17, 30), datetime.datetime(2018, 10, 10, 18, 0), datetime.datetime(2018, 10, 11, 0, 0), datetime.datetime(2018, 10, 11, 6, 0), datetime.datetime(2018, 10, 11, 12, 0), datetime.datetime(2018, 10, 11, 18, 0), datetime.datetime(2018, 10, 12, 0, 0), datetime.datetime(2018, 10, 12, 6, 0), datetime.datetime(2018, 10, 12, 12, 0), datetime.datetime(2018, 10, 12, 18, 0), datetime.datetime(2018, 10, 13, 0, 0), datetime.datetime(2018, 10, 13, 6, 0), datetime.datetime(2018, 10, 13, 12, 0), datetime.datetime(2018, 10, 13, 18, 0), datetime.datetime(2018, 10, 14, 0, 0), datetime.datetime(2018, 10, 14, 6, 0), datetime.datetime(2018, 10, 14, 12, 0), datetime.datetime(2018, 10, 14, 18, 0), datetime.datetime(2018, 10, 15, 0, 0), datetime.datetime(2018, 10, 15, 6, 0), datetime.datetime(2018, 10, 15, 12, 0), datetime.datetime(2018, 10, 15, 18, 0)], 'extra_obs': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'special': ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'L', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], 'type': ['LO', 'LO', 'TD', 'TS', 'TS', 'TS', 'TS', 'HU', 'HU', 'HU', 'HU', 'HU', 'HU', 'HU', 'HU', 'HU', 'HU', 'HU', 'HU', 'TS', 'TS', 'TS', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX'], 'lat': [17.8, 18.1, 18.4, 18.8, 19.1, 19.7, 20.2, 20.9, 21.7, 22.7, 23.7, 24.6, 25.6, 26.6, 27.7, 29.0, 30.0, 30.2, 31.5, 32.8, 34.1, 35.6, 36.5, 37.3, 39.1, 41.1, 43.1, 44.8, 46.4, 47.6, 48.4, 48.8, 48.6, 47.5, 45.9, 44.4, 42.8, 41.2], 'lon': [-86.6, -86.9, -86.8, -86.4, -85.7, -85.5, -85.4, -85.1, -85.1, -85.2, -85.8, -86.2, -86.4, -86.5, -86.6, -86.3, -85.5, -85.4, -84.5, -83.2, -81.7, -80.0, -77.7, -75.0, -70.6, -66.1, -61.5, -55.7, -48.2, -40.7, -33.1, -26.1, -20.7, -16.4, -13.5, -11.4, -10.3, -10.0], 'vmax': [25, 25, 30, 35, 45, 50, 60, 65, 75, 85, 85, 90, 100, 110, 120, 125, 140, 135, 80, 50, 45, 45, 50, 60, 60, 60, 65, 65, 65, 65, 65, 65, 60, 55, 55, 50, 35, 35], 'mslp': [1006, 1004, 1004, 1003, 999, 996, 984, 982, 977, 971, 973, 968, 961, 952, 945, 934, 919, 920, 957, 979, 987, 991, 988, 983, 980, 977, 975, 975, 975, 975, 975, 975, 975, 978, 982, 989, 996, 1001], 'wmo_basin': ['north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic', 'north_atlantic'], 'ace': 12.505000000000003}
+
 
 
 
@@ -137,6 +141,7 @@ Retrieve xarray Dataset object with Michael's data:
         source_info:     NHC Hurricane Database
         source:          hurdat
         ace:             12.505000000000003
+
 
 
 
@@ -202,6 +207,7 @@ Retrieve pandas DataFrame object with Michael's data:
 
 
 
+
 Visualize Michael's observed track with the "plot" function:
 
 Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The only cartopy projection # currently offered is PlateCarree. Read through the documentation for more customization options.
@@ -218,6 +224,15 @@ Note that you can pass various arguments to the plot function, such as customizi
 .. image:: /examples/images/sphx_glr_tracks.storm_001.png
     :class: sphx-glr-single-img
 
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa9141f46d8>
 
 
 
@@ -244,7 +259,8 @@ Note: There is currently a bug with this function that outputs 2 axes, a filled 
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/storm.py:982: UserWarning: Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run "TrackDataset.assign_storm_tornadoes()" to avoid this warning in the future.
       warnings.warn(warn_message)
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (10.52 seconds)
+    --> Completed reading in tornado data for 1950-2018 (10.44 seconds)
+
 
 
 
@@ -344,6 +360,7 @@ Retrieve a single forecast discussion for Michael:
 
 
 
+
 NHC also archives forecast tracks, albeit in a different format than the official advisory data, so the operational forecast IDs here differ from the discussion IDs. As such, the forecast cone is not directly retrieved from NHC, but is generated using an algorithm that yields a cone closely resembling the official NHC cone.
 
 Let's plot Michael's second forecast cone:
@@ -360,6 +377,15 @@ Let's plot Michael's second forecast cone:
 .. image:: /examples/images/sphx_glr_tracks.storm_002.png
     :class: sphx-glr-single-img
 
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa9145722b0>
 
 
 
@@ -379,6 +405,15 @@ Note that the observed track here differs from the HURDAT2 track plotted previou
 .. image:: /examples/images/sphx_glr_tracks.storm_003.png
     :class: sphx-glr-single-img
 
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa914671c50>
 
 
 
@@ -410,7 +445,8 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (53.67 seconds)
+    --> Completed reading in ibtracs data (61.17 seconds)
+
 
 
 
@@ -434,6 +470,15 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
     :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa914645fd0>
+
 
 
 `Cyclone Catarina`_ (2004) was an extremely rare hurricane-force tropical cyclone that developed in the South Atlantic basin, which normally doesn't see tropical cyclone activity, and subsequently made landfall in Brazil. The "Catarina" name is unofficial; it was not assigned a name in real time, and JTWC assigned it the ID "AL502004". Recall that when reading in the IBTrACS dataset previously, we set ``Catarina=True``. This read in data for Cyclone Catarina from a special post-storm reanalysis from McTaggart-Cowan et al. (2006). Let's make a plot of Catarina's observed track and intensity per this reanalysis:
@@ -454,6 +499,15 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
     :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa9145766a0>
+
 
 
 If we were to read in IBTrACS without setting ``Catarina=True`` (which sets it to False by default) and plot the track for "AL502004", we would get a noticeably different (shorter) and weaker track.
@@ -461,7 +515,7 @@ If we were to read in IBTrACS without setting ``Catarina=True`` (which sets it t
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  33.508 seconds)
+   **Total running time of the script:** ( 1 minutes  39.889 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.storm.py:

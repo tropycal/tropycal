@@ -27,6 +27,7 @@ For documentation generation purposes, return_ax must be set True for plotting f
 
 
 
+
 HURTDAT2 Dataset
 ----------------
 Let's start with the HURDAT2 dataset by loading it into memory. By default, this reads in the HURDAT dataset from the National Hurricane Center (NHC) website, unless you specify a local file path using either ``atlantic_url`` for the North Atlantic basin on ``pacific_url`` for the East & Central Pacific basin.
@@ -52,7 +53,8 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (3.07 seconds)
+    --> Completed reading in HURDAT2 data (2.85 seconds)
+
 
 
 
@@ -104,6 +106,7 @@ A TrackDataset object can be used to retrieve individual storms and seasons, usi
 
 
 
+
 If you remember the name of a storm but not the year, there is functionality to search for a list of years containing a storm of the requested name:
 
 
@@ -126,6 +129,7 @@ If you remember the name of a storm but not the year, there is functionality to 
 
 
 
+
 The previous example for a Storm object illustrated how to retrieve a single storm and make a plot of its observed track. This can also be done from a TrackDataset object, using the ``plot_storm()`` method.
 
 Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The only cartopy projection currently offered is PlateCarree. Read through the documentation for more customization options.
@@ -142,6 +146,15 @@ Note that you can pass various arguments to the plot function, such as customizi
 .. image:: /examples/images/sphx_glr_tracks.TrackDataset_001.png
     :class: sphx-glr-single-img
 
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa91453b8d0>
 
 
 
@@ -164,6 +177,7 @@ Let's look at the cumulative year-to-date accumulated cyclone energy, with 2018 
 
 
 
+
 We can use the same function to perform a rolling sum, rather than a year-to-date sum. This highlights particularly active periods of tropical cyclone activity. We'll use the same function as before, but with a ``rolling_sum=30`` argument provided:
 
 
@@ -171,6 +185,7 @@ We can use the same function to perform a rolling sum, rather than a year-to-dat
 
 
     hurdat_atl.ace_climo(rolling_sum=30,plot_year=2018,compare_years=2017)
+
 
 
 
@@ -192,6 +207,7 @@ Plot cumulative hurricane days for all categories, with 2018 highlighted:
 
 
 
+
 Another climatological analysis available is a climatological correlation between maximum sustained wind and minimum mean sea level pressure (MSLP). While both variables are generally well correlated, factors such as background MSLP and MSLP gradient can affect this relationship.
 
 This function plots the climatological correlation and distribution of wind-MSLP relationship, and can also plot individual storms for comparison against the climatology. We'll look at Hurricane Sandy (2012), which started out with a fairly typical wind-MSLP relationship, but towards the end of its life cycle ended up with an anomalously low MSLP given its sustained wind speed as it substantially grew in size.
@@ -201,6 +217,7 @@ This function plots the climatological correlation and distribution of wind-MSLP
 
 
     hurdat_atl.wind_pres_relationship(storm=('sandy',2012))
+
 
 
 
@@ -259,6 +276,8 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:47: RuntimeWarning: Mean of empty slice
       return thresh,lambda x: np.nanmean(x)
 
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa912c59518>
+
 
 
 IBTrACS Dataset
@@ -289,7 +308,8 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (52.07 seconds)
+    --> Completed reading in ibtracs data (50.72 seconds)
+
 
 
 
@@ -319,6 +339,8 @@ Let's make a plot of the maximum sustained wind of TCs globally:
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
 
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa910335fd0>
+
 
 
 Make a plot of the total number of storms per 1 degree gridbox worldwide:
@@ -344,6 +366,7 @@ Make a plot of the total number of storms per 1 degree gridbox worldwide:
 
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
+
 
 
 
@@ -373,9 +396,10 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 
 
+
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 7 minutes  35.305 seconds)
+   **Total running time of the script:** ( 7 minutes  36.551 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:

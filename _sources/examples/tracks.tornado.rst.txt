@@ -28,6 +28,7 @@ For documentation generation purposes, return_ax must be set True for plotting f
 
 
 
+
 Using TornadoDataset
 --------------------
 Let's start by creating an instance of a TornadoDataset object. By default, this reads in the SPC tornado database from their website.
@@ -49,7 +50,8 @@ Let's start by creating an instance of a TornadoDataset object. By default, this
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (10.55 seconds)
+    --> Completed reading in tornado data for 1950-2018 (10.89 seconds)
+
 
 
 
@@ -82,6 +84,8 @@ We can use a TornadoDataset object to analyze both tornadoes associated with tro
     See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
       dfTors['SPC_time'] = dfTors['UTC_time'] - timedelta(hours=12)
 
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa913fbba58>
+
 
 
 Using TrackDataset
@@ -105,7 +109,8 @@ We can also use TornadoDataset to assess tornadoes associated with tropical cycl
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (3.4 seconds)
+    --> Completed reading in HURDAT2 data (3.13 seconds)
+
 
 
 
@@ -132,9 +137,10 @@ This code block will take a while to run, as it will iterate over every storm in
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (10.50 seconds)
+    --> Completed reading in tornado data for 1950-2018 (10.45 seconds)
     --> Starting to assign tornadoes to storms
-    --> Completed assigning tornadoes to storm (18.18 seconds)
+    --> Completed assigning tornadoes to storm (18.88 seconds)
+
 
 
 
@@ -155,6 +161,15 @@ Most tornadoes associated with tropical cyclones occur in the front right quadra
     :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7fa9130750b8>}
+
 
 
 We can also make the same plot for a composite subset of tropical cyclones, given either their IDs (e.g., "AL052004"), or a storm tuple. For instance, let's composite the four hurricanes that made landfall in Florida in 2004:
@@ -171,6 +186,15 @@ We can also make the same plot for a composite subset of tropical cyclones, give
 .. image:: /examples/images/sphx_glr_tracks.tornado_003.png
     :class: sphx-glr-single-img
 
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7fa912d7d358>}
 
 
 
@@ -195,6 +219,7 @@ Tropical cyclone tornado analyses can also be done via a Storm object. Let's get
 
 
 
+
 Let's plot all the tornado tracks, and daily PPF, associated with Hurricane Ivan:
 
 
@@ -209,6 +234,15 @@ Let's plot all the tornado tracks, and daily PPF, associated with Hurricane Ivan
 .. image:: /examples/images/sphx_glr_tracks.tornado_004.png
     :class: sphx-glr-single-img
 
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa912cda518>
 
 
 
@@ -226,12 +260,21 @@ Let's make a plot of the tornadoes in storm motion relative coordinates:
     :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fa912c06390>
+
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  11.816 seconds)
+   **Total running time of the script:** ( 1 minutes  13.889 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.tornado.py:

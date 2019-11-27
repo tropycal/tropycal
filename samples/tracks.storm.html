@@ -173,15 +173,15 @@
   <div class="section" id="individual-storm-analysis">
 <h1>Individual Storm Analysis<a class="headerlink" href="#individual-storm-analysis" title="Permalink to this headline">¶</a></h1>
 <p>This sample script illustrates how to retrieve a single storm from the HURDAT2 dataset, and make plots and analyses of this storm.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="kn">as</span> <span class="nn">tracks</span>
-<span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="k">as</span> <span class="nn">tracks</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 </pre></div>
 </div>
 <div class="section" id="hurtdat2-dataset">
 <h2>HURTDAT2 Dataset<a class="headerlink" href="#hurtdat2-dataset" title="Permalink to this headline">¶</a></h2>
 <p>Let’s start by creating an instance of a TrackDataset object. By default, this reads in the HURDAT2 dataset from the National Hurricane Center (NHC) website. For this example we’ll be using the HURDAT2 dataset over the North Atlantic basin.</p>
 <p>HURDAT data is not available for the most recent hurricane seasons. To include the latest data up through today, the “include_btk” flag would need to be set to True, which reads in preliminary best track data from the NHC website.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -212,7 +212,7 @@
 </div>
 <a class="reference internal image-reference" href="../_images/michael_example_1.png"><img alt="../_images/michael_example_1.png" class="align-center" src="../_images/michael_example_1.png" style="width: 75%;" /></a>
 <p>Plot the tornado tracks associated with Michael, along with the accompanying daily practically perfect forecast (PPF):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_tors</span><span class="p">(</span><span class="n">plotPPF</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_tors</span><span class="p">(</span><span class="n">plotPPF</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../_images/michael_example_2.png"><img alt="../_images/michael_example_2.png" class="align-center" src="../_images/michael_example_2.png" style="width: 75%;" /></a>
@@ -220,7 +220,7 @@
 <p>Retrieve a single forecast discussion for Michael:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Method 1: Specify date closest to desired discussion</span>
 <span class="n">disco</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">get_nhc_discussion</span><span class="p">(</span><span class="n">forecast</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="n">disco</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">disco</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
 
 <span class="c1">#Method 2: Specify forecast discussion ID</span>
 <span class="n">disco</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">get_nhc_discussion</span><span class="p">(</span><span class="n">forecast</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -315,7 +315,7 @@ NNNN
 <p class="admonition-title">Warning</p>
 <p>By default, IBTrACS data is read in from an online source. If you’re reading in the global IBTrACS dataset, this could be quite slow. For global IBTrACS, it is recommended to have the CSV file saved locally (<a class="reference external" href="https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ALL.list.v04r00.csv">link to data</a>), then set the flag <code class="docutils literal notranslate"><span class="pre">ibtracs_url=&quot;local_path&quot;</span></code>.</p>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ibtracs</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;ibtracs&#39;</span><span class="p">,</span><span class="n">ibtracs_mode</span><span class="o">=</span><span class="s1">&#39;jtwc_neumann&#39;</span><span class="p">,</span><span class="n">catarina</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ibtracs</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;ibtracs&#39;</span><span class="p">,</span><span class="n">ibtracs_mode</span><span class="o">=</span><span class="s1">&#39;jtwc_neumann&#39;</span><span class="p">,</span><span class="n">catarina</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The functionality for handling storms in IBTrACS is the same as with using HURDAT2, the only limitation being no NHC and operational model data can be accessed when using IBTrACS as the data source.</p>

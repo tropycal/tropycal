@@ -164,10 +164,10 @@
 <span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">interp</span>
 <span class="kn">import</span> <span class="nn">urllib</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
 
-<span class="kn">from</span> <span class="nn">.plot</span> <span class="k">import</span> <span class="n">TrackPlot</span>
-<span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.plot</span> <span class="kn">import</span> <span class="n">TrackPlot</span>
+<span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="o">*</span>
     
 <div class="viewcode-block" id="Season"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season">[docs]</a><span class="k">class</span> <span class="nc">Season</span><span class="p">:</span>
     
@@ -187,13 +187,13 @@
 <span class="sd">        Instance of a Season object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
     
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
          
         <span class="c1">#Label object</span>
         <span class="n">summary</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&lt;tropycal.tracks.Season&gt;&quot;</span><span class="p">]</span>
@@ -212,7 +212,7 @@
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">summary_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">key_name</span> <span class="o">=</span> <span class="n">key</span><span class="o">+</span><span class="s2">&quot;:&quot;</span>
             <span class="n">val</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%0.1f</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">summary_keys</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;Season ACE&#39;</span> <span class="k">else</span> <span class="n">summary_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-            <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{&quot; &quot;*4}{key_name:&lt;</span><span class="si">{add_space}</span><span class="s1">}</span><span class="si">{val}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;{&quot; &quot;*4}{key_name:&lt;</span><span class="si">{add_space}</span><span class="s1">}</span><span class="si">{val}</span><span class="s1">&#39;</span><span class="p">)</span>
         
         <span class="c1">#Add additional information</span>
         <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">More Information:&quot;</span><span class="p">)</span>
@@ -220,11 +220,11 @@
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">key_name</span> <span class="o">=</span> <span class="n">key</span><span class="o">+</span><span class="s2">&quot;:&quot;</span>
             <span class="n">val</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%0.1f</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;ace&#39;</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-            <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{&quot; &quot;*4}{key_name:&lt;</span><span class="si">{add_space}</span><span class="s1">}</span><span class="si">{val}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;{&quot; &quot;*4}{key_name:&lt;</span><span class="si">{add_space}</span><span class="s1">}</span><span class="si">{val}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
     
-<div class="viewcode-block" id="Season.__init__"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">season</span><span class="p">,</span><span class="n">info</span><span class="p">):</span>
+<div class="viewcode-block" id="Season.__init__"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">season</span><span class="p">,</span><span class="n">info</span><span class="p">):</span>
         
         <span class="c1">#Save the dict entry of the season</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dict</span> <span class="o">=</span> <span class="n">season</span>

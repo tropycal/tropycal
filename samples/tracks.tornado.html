@@ -173,9 +173,9 @@
   <div class="section" id="tornado-analyses">
 <h1>Tornado Analyses<a class="headerlink" href="#tornado-analyses" title="Permalink to this headline">¶</a></h1>
 <p>This sample script illustrates how to retrieve and analyze the Storm Prediction Center (SPC) tornado database (1950-present), using both the tornado and tracks modules.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="kn">as</span> <span class="nn">tracks</span>
-<span class="kn">import</span> <span class="nn">tropycal.tornado</span> <span class="kn">as</span> <span class="nn">tornado</span>
-<span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="k">as</span> <span class="nn">tracks</span>
+<span class="kn">import</span> <span class="nn">tropycal.tornado</span> <span class="k">as</span> <span class="nn">tornado</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 </pre></div>
 </div>
 <div class="section" id="using-tornadodataset">
@@ -185,7 +185,7 @@
 </pre></div>
 </div>
 <p>We can use a TornadoDataset object to analyze both tornadoes associated with tropical cyclones and non-TC tornadoes. As an example of the latter, we can make a plot of all tornadoes during the 27 April 2011 tornado outbreak, along with the Practically Perfect Forecast (PPF) in filled contours:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tor_data</span><span class="o">.</span><span class="n">plot_tors</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2011</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">27</span><span class="p">),</span><span class="n">plotPPF</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tor_data</span><span class="o">.</span><span class="n">plot_tors</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2011</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">27</span><span class="p">),</span><span class="n">plotPPF</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../_images/tornado_example_1.png"><img alt="../_images/tornado_example_1.png" class="align-center" src="../_images/tornado_example_1.png" style="width: 75%;" /></a>
@@ -193,7 +193,7 @@
 <div class="section" id="using-trackdataset">
 <h2>Using TrackDataset<a class="headerlink" href="#using-trackdataset" title="Permalink to this headline">¶</a></h2>
 <p>We can also use TornadoDataset to assess tornadoes associated with tropical cyclones. First off let’s get an instance of TrackDataset for the North Atlantic HURDAT2 basin:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This instance of Storm contains several methods that return the storm data back in different data types. The following examples will show how to retrieve 3 different data types.</p>
@@ -225,7 +225,7 @@
 </pre></div>
 </div>
 <p>Let’s plot all the tornado tracks, and daily PPF, associated with Hurricane Ivan:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_tors</span><span class="p">(</span><span class="n">plotPPF</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_tors</span><span class="p">(</span><span class="n">plotPPF</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="samples/../_static/tornado_example_4.png"><img alt="samples/../_static/tornado_example_4.png" class="align-center" src="samples/../_static/tornado_example_4.png" style="width: 75%;" /></a>

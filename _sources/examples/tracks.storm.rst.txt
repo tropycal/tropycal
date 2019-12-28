@@ -51,7 +51,7 @@ HURDAT data is not available for the most recent hurricane seasons. To include t
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.5 seconds)
+    --> Completed reading in HURDAT2 data (2.44 seconds)
 
 
 
@@ -232,7 +232,7 @@ Note that you can pass various arguments to the plot function, such as customizi
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f94c935f278>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f1135af90f0>
 
 
 
@@ -259,7 +259,7 @@ Note: There is currently a bug with this function that outputs 2 axes, a filled 
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/storm.py:982: UserWarning: Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run "TrackDataset.assign_storm_tornadoes()" to avoid this warning in the future.
       warnings.warn(warn_message)
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.81 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.76 seconds)
 
 
 
@@ -385,7 +385,7 @@ Let's plot Michael's second forecast cone:
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f94c92e7c18>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f11366856d8>
 
 
 
@@ -413,7 +413,7 @@ Note that the observed track here differs from the HURDAT2 track plotted previou
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f94c1dd0208>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f112c337860>
 
 
 
@@ -445,7 +445,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (41.27 seconds)
+    --> Completed reading in ibtracs data (40.85 seconds)
 
 
 
@@ -477,7 +477,7 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f94c1ddc9b0>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f113164fef0>
 
 
 
@@ -506,7 +506,7 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f94c3601b38>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f112eab7a90>
 
 
 
@@ -515,7 +515,7 @@ If we were to read in IBTrACS without setting ``Catarina=True`` (which sets it t
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  17.038 seconds)
+   **Total running time of the script:** ( 1 minutes  15.789 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.storm.py:

@@ -192,8 +192,12 @@ class TrackPlot(Plot):
                 except:
                     raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
         
-        #Determine number of lat/lon lines to use for parallels & meridians
-        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        #Plot parallels and meridians
+        #This is currently not supported for all cartopy projections.
+        try:
+            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        except:
+            pass
         
         #--------------------------------------------------------------------------------------
         
@@ -228,6 +232,215 @@ class TrackPlot(Plot):
         endash = u"\u2013"
         dot = u"\u2022"
         self.ax.set_title(f"{start_date} {endash} {end_date}\n{max_wind} kt {dot} {min_pres} hPa {dot} {ace:.1f} ACE",loc='right',fontsize=13)
+
+        #--------------------------------------------------------------------------------------
+        
+        #Add plot credit
+        warning_text=""
+        if storm_data['source'] == 'ibtracs' and storm_data['source_info'] == 'World Meteorological Organization (official)':
+            warning_text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n"
+
+            self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
+            transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
+        
+        credit_text = self.plot_credit()
+        self.add_credit(credit_text)
+        
+        #Add legend
+        if prop['fillcolor'] == 'category' or prop['linecolor'] == 'category':
+            
+            ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
+            sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=category_color(33))
+            ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=category_color(34))
+            c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=category_color(64))
+            c2 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 2', marker='o', color=category_color(83))
+            c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=category_color(96))
+            c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=category_color(113))
+            c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=category_color(137))
+            self.ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
+
+        #Return axis if specified, otherwise display figure
+        if ax != None or return_ax == True:
+            return self.ax
+        else:
+            plt.show()
+            plt.close()
+    
+    def plot_storms(self,storms,zoom="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,prop={},map_prop={}):
+        
+        r"""
+        Creates a plot of multiple storm tracks.
+        
+        Parameters
+        ----------
+        storms : list
+            List of requested storms. List can contain either strings of storm ID (e.g., "AL052019"), tuples with storm name and year (e.g., ("Matthew",2016)), or dict entries.
+        zoom : str
+            Zoom for the plot. Can be one of the following:
+            "dynamic" - default. Dynamically focuses the domain using the storm track(s) plotted.
+            "north_atlantic" - North Atlantic Ocean basin
+            "pacific" - East/Central Pacific Ocean basin
+            "lonW/lonE/latS/latN" - Custom plot domain
+        plot_all_dots : bool
+            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
+        prop : dict
+            Property of storm track lines.
+        map_prop : dict
+            Property of cartopy map.
+        """
+        
+        #Set default properties
+        default_prop={'dots':True,'fillcolor':'category','linecolor':'k','category_colors':'default','linewidth':1.0,'ms':7.5}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        
+        #Initialize plot
+        prop = self.add_prop(prop,default_prop)
+        map_prop = self.add_prop(map_prop,default_map_prop)
+        self.plot_init(ax,map_prop)
+        
+        #error check
+        if isinstance(zoom,str) == False:
+            raise TypeError('Error: zoom must be of type str')
+        
+        #--------------------------------------------------------------------------------------
+        
+        #Keep record of lat/lon coordinate extrema
+        max_lat = None
+        min_lat = None
+        max_lon = None
+        min_lon = None
+        
+        #Iterate through all storms provided
+        for storm in storms:
+
+            #Check for storm type, then get data for storm
+            if isinstance(storm, str) == True:
+                storm_data = self.data[storm]
+            elif isinstance(storm, tuple) == True:
+                storm = self.get_storm_id(storm[0],storm[1])
+                storm_data = self.data[storm]
+            elif isinstance(storm, dict) == True:
+                storm_data = storm
+            else:
+                raise RuntimeError("Error: Storm must be a string (e.g., 'AL052019'), tuple (e.g., ('Matthew',2016)), or dict.")
+
+            #Retrieve storm data
+            lats = storm_data['lat']
+            lons = storm_data['lon']
+            vmax = storm_data['vmax']
+            styp = storm_data['type']
+            sdate = storm_data['date']
+
+            #Account for cases crossing dateline
+            if self.proj.proj4_params['lon_0'] == 180.0:
+                new_lons = np.array(lons)
+                new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
+                lons = new_lons.tolist()
+
+            #Add to coordinate extrema
+            if max_lat == None:
+                max_lat = max(lats)
+            else:
+                if max(lats) > max_lat: max_lat = max(lats)
+            if min_lat == None:
+                min_lat = min(lats)
+            else:
+                if min(lats) < min_lat: min_lat = min(lats)
+            if max_lon == None:
+                max_lon = max(lons)
+            else:
+                if max(lons) > max_lon: max_lon = max(lons)
+            if min_lon == None:
+                min_lon = min(lons)
+            else:
+                if min(lons) < min_lon: min_lon = min(lons)
+
+            #Plot storm line as specified
+            if prop['linecolor'] == 'category':
+                type_line = np.array(styp)
+                for i in (np.arange(len(lats[1:]))+1):
+                    ltype = 'solid'
+                    if type_line[i] not in ['SS','SD','TD','TS','HU']: ltype = 'dotted'
+                    self.ax.plot([lons[i-1],lons[i]],[lats[i-1],lats[i]],
+                                  '-',color=category_color(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
+                                  transform=ccrs.PlateCarree(),
+                                  path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*0.2, foreground='k'), path_effects.Normal()])
+            else:
+                self.ax.plot(lons,lats,'-',color=prop['linecolor'],linewidth=prop['linewidth'],transform=ccrs.PlateCarree())
+
+            #Plot storm dots as specified
+            if prop['dots'] == True:
+                #filter dots to only 6 hour intervals
+                time_hr = np.array([i.strftime('%H%M') for i in sdate])
+                if plot_all_dots == False:
+                    time_idx = np.where((time_hr == '0000') | (time_hr == '0600') | (time_hr == '1200') | (time_hr == '1800'))
+                    lat_dots = np.array(lats)[time_idx]
+                    lon_dots = np.array(lons)[time_idx]
+                    vmax_dots = np.array(vmax)[time_idx]
+                    type_dots = np.array(styp)[time_idx]
+                else:
+                    lat_dots = np.array(lats)
+                    lon_dots = np.array(lons)
+                    vmax_dots = np.array(vmax)
+                    type_dots = np.array(styp)
+                for i,(ilon,ilat,iwnd,itype) in enumerate(zip(lon_dots,lat_dots,vmax_dots,type_dots)):
+                    mtype = '^'
+                    if itype in ['SD','SS']:
+                        mtype = 's'
+                    elif itype in ['TD','TS','HU']:
+                        mtype = 'o'
+                    if prop['fillcolor'] == 'category':
+                        ncol = category_color(np.nan_to_num(iwnd))
+                    else:
+                        ncol = 'k'
+                    self.ax.plot(ilon,ilat,mtype,color=ncol,mec='k',mew=0.5,ms=prop['ms'],transform=ccrs.PlateCarree())
+
+        #--------------------------------------------------------------------------------------
+        
+        
+        #Pre-generated zooms
+        if zoom in ['north_atlantic','east_pacific','west_pacific','south_pacific','south_indian','north_indian','australia','all']:
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
+            
+        #Storm-centered plot domain
+        elif zoom == "dynamic":
+            
+            bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
+            self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
+            
+        #Custom plot domain
+        else:
+            
+            #Check to ensure 3 slashes are provided
+            if zoom.count("/") != 3:
+                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+            else:
+                try:
+                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
+                    bound_w = float(bound_w)
+                    bound_e = float(bound_e)
+                    bound_s = float(bound_s)
+                    bound_n = float(bound_n)
+                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
+                except:
+                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+        
+        #Plot parallels and meridians
+        #This is currently not supported for all cartopy projections.
+        try:
+            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        except:
+            pass
+        
+        #--------------------------------------------------------------------------------------
+        
+        #Add left title
+        if title_text != "": self.ax.set_title(f"{title_text}",loc='left',fontsize=17,fontweight='bold')
 
         #--------------------------------------------------------------------------------------
         
@@ -558,8 +771,12 @@ class TrackPlot(Plot):
                 except:
                     raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
         
-        #Determine number of lat/lon lines to use for parallels & meridians
-        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        #Plot parallels and meridians
+        #This is currently not supported for all cartopy projections.
+        try:
+            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        except:
+            pass
         
         #--------------------------------------------------------------------------------------
         
@@ -763,8 +980,12 @@ class TrackPlot(Plot):
         #Pre-generated zooms
         bound_w,bound_e,bound_s,bound_n = self.set_projection(season.basin)
             
-        #Determine number of lat/lon lines to use for parallels & meridians
-        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        #Plot parallels and meridians
+        #This is currently not supported for all cartopy projections.
+        try:
+            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        except:
+            pass
         
         #Add storm labels
         if season.basin != 'all':
@@ -1184,8 +1405,12 @@ class TrackPlot(Plot):
                 except:
                     raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
         
-        #Determine number of lat/lon lines to use for parallels & meridians
-        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        #Plot parallels and meridians
+        #This is currently not supported for all cartopy projections.
+        try:
+            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        except:
+            pass
         
         #--------------------------------------------------------------------------------------
         

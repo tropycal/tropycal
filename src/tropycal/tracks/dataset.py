@@ -155,6 +155,18 @@ class TrackDataset:
         keys = self.data.keys()
         self.keys = [k for k in keys]
         
+        #Placeholder for 2006 Pacific cyclone
+        """
+        if 'EP182006' in self.keys:
+            data = {}
+            for key in keys:
+                data[key] = self.data[key]
+                if key == 'EP182006':
+                    data['CP052006'] = pac_2006_cyclone()
+            self.data = data
+            self.keys = [k for k in self.data.keys()]
+         """
+        
         #Create array of zero-ones for existence of tornado data for a given storm
         self.keys_tors = [0 for key in self.keys]
         
@@ -993,6 +1005,8 @@ class TrackDataset:
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
@@ -1021,6 +1035,70 @@ class TrackDataset:
             
         #Plot storm
         plot_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        
+        #Return axis
+        if ax != None or return_ax == True: return plot_ax
+    
+    def plot_storms(self,storms,zoom="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+        
+        r"""
+        Creates a plot of multiple storms.
+        
+        Parameters
+        ----------
+        storms : list
+            List of requested storms. List can contain either strings of storm ID (e.g., "AL052019"), tuples with storm name and year (e.g., ("Matthew",2016)), or dict entries.
+        zoom : str
+            Zoom for the plot. Default is "dynamic". Can be one of the following:
+            
+            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
+            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
+            * **lonW/lonE/latS/latN** - Custom plot domain.
+        plot_all_dots : bool
+            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        prop : dict
+            Property of storm track lines.
+        map_prop : dict
+            Property of cartopy map.
+        """
+        
+        #Create instance of plot object
+        self.plot_obj = TrackPlot()
+        
+        #Identify plot domain for all requested storms
+        max_lon = -9999
+        min_lon = 9999
+        storm_dicts = []
+        for storm in storms:
+            
+            #Retrieve requested storm
+            if isinstance(storm,dict) == False:
+                storm_dict = self.get_storm(storm).dict
+            else:
+                storm_dict = storm
+            storm_dicts.append(storm_dict)
+            
+            #Add to array of max/min lat/lons
+            if max(storm_dict['lon']) > max_lon: max_lon = max(storm_dict['lon'])
+            if min(storm_dict['lon']) < min_lon: min_lon = min(storm_dict['lon'])
+            
+        #Create cartopy projection
+        if cartopy_proj == None:
+            if max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+            else:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        else:
+            self.plot_obj.proj = cartopy_proj
+            
+        #Plot storm
+        plot_ax = self.plot_obj.plot_storms(storm_dicts,zoom,title_text,filter_dates,plot_all_dots,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax

@@ -439,6 +439,52 @@ def all_nan(arr):
     else:
         return False
 
+def pac_2006_cyclone():
+    
+    """
+    Data for 2006 Central Pacific cyclone obtained from a simple MSLP minimum based tracker applied to the ERA-5 reanalysis dataset. Sustained wind values from the duration of the storm's subtropical and tropical stages were obtained from an estimate from Dr. Karl Hoarau of the Cergy-Pontoise University in Paris:
+    
+    https://australiasevereweather.com/cyclones/2007/trak0611.htm
+    """
+    
+    #add empty entry into dict
+    storm_id = 'CP052006'
+    storm_dict = {}
+    
+    storm_dict = {'id':'CP052006','operational_id':'','name':'UNNAMED','season':2006,'year':2006,'basin':'east_pacific'}
+    storm_dict['source'] = 'hurdat'
+    storm_dict['source_info'] = 'ERA5 Reanalysis'
+
+    #add empty lists
+    for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
+        storm_dict[val] = []
+    storm_dict['ace'] = 0.0
+    
+    #Add obs from reference
+    storm_dict['date'] = ['2006102812', '2006102815', '2006102818', '2006102821', '2006102900', '2006102903', '2006102906', '2006102909', '2006102912', '2006102915', '2006102918', '2006102921', '2006103000', '2006103003', '2006103006', '2006103009', '2006103012', '2006103015', '2006103018', '2006103021', '2006103100', '2006103103', '2006103106', '2006103109', '2006103112', '2006103115', '2006103118', '2006103121', '2006110100', '2006110103', '2006110106', '2006110109', '2006110112', '2006110115', '2006110118', '2006110121', '2006110200', '2006110203', '2006110206', '2006110209', '2006110212', '2006110215', '2006110218', '2006110221', '2006110300', '2006110303', '2006110306', '2006110309', '2006110312', '2006110315', '2006110318']
+    storm_dict['lat'] = [36.0, 37.75, 38.25, 38.5, 39.5, 39.75, 40.0, 40.0, 39.25, 38.5, 37.5, 37.0, 36.75, 36.75, 36.25, 36.0, 36.0, 36.25, 36.75, 37.25, 37.75, 38.5, 38.75, 39.25, 39.75, 40.25, 40.75, 41.25, 42.0, 42.5, 42.75, 42.75, 42.75, 42.75, 42.5, 42.25, 42.25, 42.0, 42.0, 42.25, 42.5, 42.75, 43.0, 43.5, 44.0, 44.5, 45.5, 46.25, 46.75, 47.75, 48.5]
+    storm_dict['lon'] = [-148.25, -147.75, -148.25, -148.25, -148.5, -148.75, -149.75, -150.5, -151.5, -151.75, -151.75, -151.0, -150.25, -150.0, -149.5, -148.5, -147.5, -146.5, -145.5, -144.75, -144.0, -143.5, -143.25, -143.0, -142.75, -142.5, -142.5, -143.0, -143.5, -144.0, -144.75, -145.5, -146.0, -146.25, -146.0, -145.75, -145.25, -144.25, -143.25, -142.25, -140.75, -139.5, -138.0, -136.5, -135.0, -133.5, -132.0, -130.5, -128.5, -126.75, -126.0]
+    storm_dict['mslp'] = [1007, 1003, 999, 995, 992, 989, 990, 990, 991, 991, 992, 993, 993, 992, 994, 994, 994, 994, 995, 995, 993, 993, 994, 993, 993, 993, 993, 993, 990, 989, 989, 989, 988, 988, 989, 989, 988, 989, 990, 991, 991, 991, 993, 994, 993, 994, 995, 996, 996, 996, 997]
+    storm_dict['vmax'] = [30, 40, 50, 45, 45, 45, 40, 40, 40, 40, 35, 35, 35, 35, 35, 35, 30, 30, 35, 35, 35, 40, 45, 45, 40, 40, 45, 45, 45, 45, 50, 50, 55, 55, 50, 50, 50, 50, 50, 50, 45, 40, 35, 35, 30, 30, 25, 25, 30, 30, 25]
+    storm_dict['vmax_era5'] = [31, 38, 47, 46, 47, 45, 38, 42, 43, 40, 37, 36, 35, 33, 35, 35, 33, 31, 33, 32, 31, 29, 28, 30, 28, 28, 29, 29, 30, 32, 31, 29, 28, 26, 25, 26, 28, 27, 28, 29, 28, 27, 27, 27, 28, 26, 27, 27, 31, 30, 26]
+    storm_dict['type'] = ['EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX']
+    storm_dict['date'] = [dt.strptime(i,'%Y%m%d%H') for i in storm_dict['date']]
+    
+    #Add other variables
+    storm_dict['extra_obs'] = [0 if i.hour in [0,6,12,18] else 1 for i in storm_dict['date']]
+    storm_dict['special'] = ['' for i in storm_dict['date']]
+    storm_dict['wmo_basin'] = ['east_pacific' for i in storm_dict['date']]
+    
+    #Calculate ACE
+    for i,(vmax,storm_type,idate) in enumerate(zip(storm_dict['vmax'],storm_dict['type'],storm_dict['date'])):
+        ace = (10**-4) * (vmax**2)
+        hhmm = idate.strftime('%H%M')
+        if hhmm in ['0000','0600','1200','1800'] and storm_type in ['SS','TS','HU']:
+            storm_dict['ace'] += ace
+    
+    #Replace original entry with this
+    return storm_dict
+
 def cyclone_catarina():
     
     """

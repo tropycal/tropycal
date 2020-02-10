@@ -155,6 +155,18 @@ class TrackDataset:
         keys = self.data.keys()
         self.keys = [k for k in keys]
         
+        #Placeholder for 2006 Pacific cyclone
+        """
+        if 'EP182006' in self.keys:
+            data = {}
+            for key in keys:
+                data[key] = self.data[key]
+                if key == 'EP182006':
+                    data['CP052006'] = pac_2006_cyclone()
+            self.data = data
+            self.keys = [k for k in self.data.keys()]
+         """
+        
         #Create array of zero-ones for existence of tornado data for a given storm
         self.keys_tors = [0 for key in self.keys]
         
@@ -993,6 +1005,8 @@ class TrackDataset:
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
@@ -1021,6 +1035,70 @@ class TrackDataset:
             
         #Plot storm
         plot_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        
+        #Return axis
+        if ax != None or return_ax == True: return plot_ax
+    
+    def plot_storms(self,storms,zoom="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+        
+        r"""
+        Creates a plot of multiple storms.
+        
+        Parameters
+        ----------
+        storms : list
+            List of requested storms. List can contain either strings of storm ID (e.g., "AL052019"), tuples with storm name and year (e.g., ("Matthew",2016)), or dict entries.
+        zoom : str
+            Zoom for the plot. Default is "dynamic". Can be one of the following:
+            
+            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
+            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
+            * **lonW/lonE/latS/latN** - Custom plot domain.
+        plot_all_dots : bool
+            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        prop : dict
+            Property of storm track lines.
+        map_prop : dict
+            Property of cartopy map.
+        """
+        
+        #Create instance of plot object
+        self.plot_obj = TrackPlot()
+        
+        #Identify plot domain for all requested storms
+        max_lon = -9999
+        min_lon = 9999
+        storm_dicts = []
+        for storm in storms:
+            
+            #Retrieve requested storm
+            if isinstance(storm,dict) == False:
+                storm_dict = self.get_storm(storm).dict
+            else:
+                storm_dict = storm
+            storm_dicts.append(storm_dict)
+            
+            #Add to array of max/min lat/lons
+            if max(storm_dict['lon']) > max_lon: max_lon = max(storm_dict['lon'])
+            if min(storm_dict['lon']) < min_lon: min_lon = min(storm_dict['lon'])
+            
+        #Create cartopy projection
+        if cartopy_proj == None:
+            if max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+            else:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        else:
+            self.plot_obj.proj = cartopy_proj
+            
+        #Plot storm
+        plot_ax = self.plot_obj.plot_storms(storm_dicts,zoom,title_text,filter_dates,plot_all_dots,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
@@ -1882,6 +1960,7 @@ class TrackDataset:
             * **start_date_indomain** = first time step a cyclone entered the domain
             * **max_wind** = first instance of the maximum sustained wind of cyclone
             * **min_mslp** = first instance of the minimum MSLP of cyclone
+            * **wind_ge_XX** = first instance of wind greater than/equal to a certain threshold (knots)
         return_df : bool
             Whether to return a pandas.DataFrame (True) or dict (False). Default is True.
         ascending : bool
@@ -1904,6 +1983,11 @@ class TrackDataset:
         if self.source == 'ibtracs':
             warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
         
+        #Revise metric if threshold included
+        if 'wind_ge' in metric:
+            thresh = int(metric.split("_")[2])
+            metric = 'wind_ge'
+        
         #Error check for metric
         metric = metric.lower()
         metric_bank = {'ace':{'output':['ace'],'subset_type':'domain'},
@@ -1915,6 +1999,7 @@ class TrackDataset:
                        'start_date_indomain':{'output':['date','lat','lon','type'],'subset_type':'domain'},
                        'max_wind':{'output':['vmax','mslp','lat','lon'],'subset_type':'domain'},
                        'min_mslp':{'output':['mslp','vmax','lat','lon'],'subset_type':'domain'},
+                       'wind_ge':{'output':['lat','lon','mslp','vmax','date'],'subset_type':'start'},
                       }
         if metric not in metric_bank.keys():
             raise ValueError("Metric requested for sorting is not available. Please reference the documentation for acceptable entries for 'metric'.")
@@ -2031,6 +2116,19 @@ class TrackDataset:
                 
                 analyze_dict['lat'].append(lat_tropical[use_idx])
                 analyze_dict['lon'].append(lon_tropical[use_idx])
+                analyze_dict['mslp'].append(mslp_tropical[use_idx])
+                analyze_dict['vmax'].append(vmax_tropical[use_idx])
+            
+            elif metric in ['wind_ge']:
+                
+                #Find max wind or min MSLP
+                if metric == 'wind_ge' and all_nan(vmax_tropical) == True: continue
+                if metric == 'wind_ge' and np.nanmax(vmax_tropical) < thresh: continue
+                use_idx = np.where(vmax_tropical>=thresh)[0][0]
+                
+                analyze_dict['lat'].append(lat_tropical[use_idx])
+                analyze_dict['lon'].append(lon_tropical[use_idx])
+                analyze_dict['date'].append(date_tropical[use_idx])
                 analyze_dict['mslp'].append(mslp_tropical[use_idx])
                 analyze_dict['vmax'].append(vmax_tropical[use_idx])
             

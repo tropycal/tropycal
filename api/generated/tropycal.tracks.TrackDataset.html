@@ -23,10 +23,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -269,16 +269,19 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.TrackDataset.plot_storm" title="tropycal.tracks.TrackDataset.plot_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_storm</span></code></a>(storm[, zoom, plot_all, ax, …])</p></td>
 <td><p>Creates a plot of a single storm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.TrackDataset.rank_storm" title="tropycal.tracks.TrackDataset.rank_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rank_storm</span></code></a>(metric[, return_df, ascending, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.TrackDataset.plot_storms" title="tropycal.tracks.TrackDataset.plot_storms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_storms</span></code></a>(storms[, zoom, title_text, …])</p></td>
+<td><p>Creates a plot of multiple storms.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.TrackDataset.rank_storm" title="tropycal.tracks.TrackDataset.rank_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rank_storm</span></code></a>(metric[, return_df, ascending, …])</p></td>
 <td><p>Ranks storm by a specified metric.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.TrackDataset.search_name" title="tropycal.tracks.TrackDataset.search_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search_name</span></code></a>(name)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.TrackDataset.search_name" title="tropycal.tracks.TrackDataset.search_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search_name</span></code></a>(name)</p></td>
 <td><p>Searches for hurricane seasons containing a storm of the requested name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.TrackDataset.storm_ace_vs_season" title="tropycal.tracks.TrackDataset.storm_ace_vs_season"><code class="xref py py-obj docutils literal notranslate"><span class="pre">storm_ace_vs_season</span></code></a>(storm[, year_range])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.TrackDataset.storm_ace_vs_season" title="tropycal.tracks.TrackDataset.storm_ace_vs_season"><code class="xref py py-obj docutils literal notranslate"><span class="pre">storm_ace_vs_season</span></code></a>(storm[, year_range])</p></td>
 <td><p>Retrives a list of entire hurricane seasons with lower ACE than the storm provided.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.TrackDataset.wind_pres_relationship" title="tropycal.tracks.TrackDataset.wind_pres_relationship"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_pres_relationship</span></code></a>([storm, year_range, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.TrackDataset.wind_pres_relationship" title="tropycal.tracks.TrackDataset.wind_pres_relationship"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_pres_relationship</span></code></a>([storm, year_range, …])</p></td>
 <td><p>Creates a climatology of maximum sustained wind speed vs minimum MSLP relationships.</p></td>
 </tr>
 </tbody>
@@ -541,6 +544,33 @@ This string is also used as the plot title.</p>
 </p></li>
 <li><p><strong>plot_all</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.TrackDataset.plot_storms">
+<code class="sig-name descname">plot_storms</code><span class="sig-paren">(</span><em class="sig-param">storms</em>, <em class="sig-param">zoom='dynamic'</em>, <em class="sig-param">title_text='TC Track Composite'</em>, <em class="sig-param">filter_dates=('1/1'</em>, <em class="sig-param">'12/31')</em>, <em class="sig-param">plot_all_dots=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_storms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_storms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of multiple storms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>storms</strong> (<em>list</em>) – List of requested storms. List can contain either strings of storm ID (e.g., “AL052019”), tuples with storm name and year (e.g., (“Matthew”,2016)), or dict entries.</p></li>
+<li><p><strong>zoom</strong> (<em>str</em>) – <p>Zoom for the plot. Default is “dynamic”. Can be one of the following:</p>
+<ul>
+<li><p><strong>dynamic</strong> - default. Dynamically focuses the domain using the storm track(s) plotted.</p></li>
+<li><p><strong>(basin_name)</strong> - Any of the acceptable basins (check “TrackDataset” for a list).</p></li>
+<li><p><strong>lonW/lonE/latS/latN</strong> - Custom plot domain.</p></li>
+</ul>
+</p></li>
+<li><p><strong>plot_all_dots</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.</p></li>
 <li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</p></li>
 <li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
@@ -567,6 +597,7 @@ This string is also used as the plot title.</p>
 <li><p><strong>start_date_indomain</strong> = first time step a cyclone entered the domain</p></li>
 <li><p><strong>max_wind</strong> = first instance of the maximum sustained wind of cyclone</p></li>
 <li><p><strong>min_mslp</strong> = first instance of the minimum MSLP of cyclone</p></li>
+<li><p><strong>wind_ge_XX</strong> = first instance of wind greater than/equal to a certain threshold (knots)</p></li>
 </ul>
 </p></li>
 <li><p><strong>return_df</strong> (<em>bool</em>) – Whether to return a pandas.DataFrame (True) or dict (False). Default is True.</p></li>

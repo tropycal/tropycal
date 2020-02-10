@@ -28,6 +28,7 @@ TrackDataset
       ~TrackDataset.plot_TCtors_rotated
       ~TrackDataset.plot_season
       ~TrackDataset.plot_storm
+      ~TrackDataset.plot_storms
       ~TrackDataset.rank_storm
       ~TrackDataset.search_name
       ~TrackDataset.storm_ace_vs_season
@@ -58,6 +59,7 @@ TrackDataset
    .. automethod:: plot_TCtors_rotated
    .. automethod:: plot_season
    .. automethod:: plot_storm
+   .. automethod:: plot_storms
    .. automethod:: rank_storm
    .. automethod:: search_name
    .. automethod:: storm_ace_vs_season

@@ -23,10 +23,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -311,6 +311,18 @@
         <span class="c1">#Add keys of all storms to object</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
+        
+        <span class="c1">#Placeholder for 2006 Pacific cyclone</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        if &#39;EP182006&#39; in self.keys:</span>
+<span class="sd">            data = {}</span>
+<span class="sd">            for key in keys:</span>
+<span class="sd">                data[key] = self.data[key]</span>
+<span class="sd">                if key == &#39;EP182006&#39;:</span>
+<span class="sd">                    data[&#39;CP052006&#39;] = pac_2006_cyclone()</span>
+<span class="sd">            self.data = data</span>
+<span class="sd">            self.keys = [k for k in self.data.keys()]</span>
+<span class="sd">         &quot;&quot;&quot;</span>
         
         <span class="c1">#Create array of zero-ones for existence of tornado data for a given storm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keys_tors</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">]</span>
@@ -1150,6 +1162,8 @@
 <span class="sd">            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</span>
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        return_ax : bool</span>
+<span class="sd">            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.</span>
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">        prop : dict</span>
@@ -1178,6 +1192,70 @@
             
         <span class="c1">#Plot storm</span>
         <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><span class="n">storm_dict</span><span class="p">,</span><span class="n">zoom</span><span class="p">,</span><span class="n">plot_all</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        
+        <span class="c1">#Return axis</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">return</span> <span class="n">plot_ax</span></div>
+    
+<div class="viewcode-block" id="TrackDataset.plot_storms"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.plot_storms">[docs]</a>    <span class="k">def</span> <span class="nf">plot_storms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storms</span><span class="p">,</span><span class="n">zoom</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">title_text</span><span class="o">=</span><span class="s2">&quot;TC Track Composite&quot;</span><span class="p">,</span><span class="n">filter_dates</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1/1&#39;</span><span class="p">,</span><span class="s1">&#39;12/31&#39;</span><span class="p">),</span><span class="n">plot_all_dots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a plot of multiple storms.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        storms : list</span>
+<span class="sd">            List of requested storms. List can contain either strings of storm ID (e.g., &quot;AL052019&quot;), tuples with storm name and year (e.g., (&quot;Matthew&quot;,2016)), or dict entries.</span>
+<span class="sd">        zoom : str</span>
+<span class="sd">            Zoom for the plot. Default is &quot;dynamic&quot;. Can be one of the following:</span>
+<span class="sd">            </span>
+<span class="sd">            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.</span>
+<span class="sd">            * **(basin_name)** - Any of the acceptable basins (check &quot;TrackDataset&quot; for a list).</span>
+<span class="sd">            * **lonW/lonE/latS/latN** - Custom plot domain.</span>
+<span class="sd">        plot_all_dots : bool</span>
+<span class="sd">            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</span>
+<span class="sd">        ax : axes</span>
+<span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        return_ax : bool</span>
+<span class="sd">            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.</span>
+<span class="sd">        cartopy_proj : ccrs</span>
+<span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
+<span class="sd">        prop : dict</span>
+<span class="sd">            Property of storm track lines.</span>
+<span class="sd">        map_prop : dict</span>
+<span class="sd">            Property of cartopy map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Create instance of plot object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
+        
+        <span class="c1">#Identify plot domain for all requested storms</span>
+        <span class="n">max_lon</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
+        <span class="n">min_lon</span> <span class="o">=</span> <span class="mi">9999</span>
+        <span class="n">storm_dicts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">storm</span> <span class="ow">in</span> <span class="n">storms</span><span class="p">:</span>
+            
+            <span class="c1">#Retrieve requested storm</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">storm</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">storm_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_storm</span><span class="p">(</span><span class="n">storm</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">storm_dict</span> <span class="o">=</span> <span class="n">storm</span>
+            <span class="n">storm_dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">storm_dict</span><span class="p">)</span>
+            
+            <span class="c1">#Add to array of max/min lat/lons</span>
+            <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">storm_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">max_lon</span><span class="p">:</span> <span class="n">max_lon</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">storm_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">storm_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">min_lon</span><span class="p">:</span> <span class="n">min_lon</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">storm_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+            
+        <span class="c1">#Create cartopy projection</span>
+        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">storm_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">150</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">(</span><span class="n">storm_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">150</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">cartopy_proj</span>
+            
+        <span class="c1">#Plot storm</span>
+        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storms</span><span class="p">(</span><span class="n">storm_dicts</span><span class="p">,</span><span class="n">zoom</span><span class="p">,</span><span class="n">title_text</span><span class="p">,</span><span class="n">filter_dates</span><span class="p">,</span><span class="n">plot_all_dots</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
         
         <span class="c1">#Return axis</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">return</span> <span class="n">plot_ax</span></div>
@@ -2039,6 +2117,7 @@
 <span class="sd">            * **start_date_indomain** = first time step a cyclone entered the domain</span>
 <span class="sd">            * **max_wind** = first instance of the maximum sustained wind of cyclone</span>
 <span class="sd">            * **min_mslp** = first instance of the minimum MSLP of cyclone</span>
+<span class="sd">            * **wind_ge_XX** = first instance of wind greater than/equal to a certain threshold (knots)</span>
 <span class="sd">        return_df : bool</span>
 <span class="sd">            Whether to return a pandas.DataFrame (True) or dict (False). Default is True.</span>
 <span class="sd">        ascending : bool</span>
@@ -2061,6 +2140,11 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ibtracs&#39;</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This function is not currently configured to work for the ibtracs dataset.&quot;</span><span class="p">)</span>
         
+        <span class="c1">#Revise metric if threshold included</span>
+        <span class="k">if</span> <span class="s1">&#39;wind_ge&#39;</span> <span class="ow">in</span> <span class="n">metric</span><span class="p">:</span>
+            <span class="n">thresh</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">metric</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">metric</span> <span class="o">=</span> <span class="s1">&#39;wind_ge&#39;</span>
+        
         <span class="c1">#Error check for metric</span>
         <span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">metric_bank</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ace&#39;</span><span class="p">:{</span><span class="s1">&#39;output&#39;</span><span class="p">:[</span><span class="s1">&#39;ace&#39;</span><span class="p">],</span><span class="s1">&#39;subset_type&#39;</span><span class="p">:</span><span class="s1">&#39;domain&#39;</span><span class="p">},</span>
@@ -2072,6 +2156,7 @@
                        <span class="s1">&#39;start_date_indomain&#39;</span><span class="p">:{</span><span class="s1">&#39;output&#39;</span><span class="p">:[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span><span class="s1">&#39;type&#39;</span><span class="p">],</span><span class="s1">&#39;subset_type&#39;</span><span class="p">:</span><span class="s1">&#39;domain&#39;</span><span class="p">},</span>
                        <span class="s1">&#39;max_wind&#39;</span><span class="p">:{</span><span class="s1">&#39;output&#39;</span><span class="p">:[</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;mslp&#39;</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">],</span><span class="s1">&#39;subset_type&#39;</span><span class="p">:</span><span class="s1">&#39;domain&#39;</span><span class="p">},</span>
                        <span class="s1">&#39;min_mslp&#39;</span><span class="p">:{</span><span class="s1">&#39;output&#39;</span><span class="p">:[</span><span class="s1">&#39;mslp&#39;</span><span class="p">,</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">],</span><span class="s1">&#39;subset_type&#39;</span><span class="p">:</span><span class="s1">&#39;domain&#39;</span><span class="p">},</span>
+                       <span class="s1">&#39;wind_ge&#39;</span><span class="p">:{</span><span class="s1">&#39;output&#39;</span><span class="p">:[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span><span class="s1">&#39;mslp&#39;</span><span class="p">,</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span><span class="s1">&#39;subset_type&#39;</span><span class="p">:</span><span class="s1">&#39;start&#39;</span><span class="p">},</span>
                       <span class="p">}</span>
         <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metric_bank</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Metric requested for sorting is not available. Please reference the documentation for acceptable entries for &#39;metric&#39;.&quot;</span><span class="p">)</span>
@@ -2188,6 +2273,19 @@
                 
                 <span class="n">analyze_dict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lat_tropical</span><span class="p">[</span><span class="n">use_idx</span><span class="p">])</span>
                 <span class="n">analyze_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lon_tropical</span><span class="p">[</span><span class="n">use_idx</span><span class="p">])</span>
+                <span class="n">analyze_dict</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mslp_tropical</span><span class="p">[</span><span class="n">use_idx</span><span class="p">])</span>
+                <span class="n">analyze_dict</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vmax_tropical</span><span class="p">[</span><span class="n">use_idx</span><span class="p">])</span>
+            
+            <span class="k">elif</span> <span class="n">metric</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;wind_ge&#39;</span><span class="p">]:</span>
+                
+                <span class="c1">#Find max wind or min MSLP</span>
+                <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s1">&#39;wind_ge&#39;</span> <span class="ow">and</span> <span class="n">all_nan</span><span class="p">(</span><span class="n">vmax_tropical</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s1">&#39;wind_ge&#39;</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">vmax_tropical</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">:</span> <span class="k">continue</span>
+                <span class="n">use_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">vmax_tropical</span><span class="o">&gt;=</span><span class="n">thresh</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                
+                <span class="n">analyze_dict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lat_tropical</span><span class="p">[</span><span class="n">use_idx</span><span class="p">])</span>
+                <span class="n">analyze_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lon_tropical</span><span class="p">[</span><span class="n">use_idx</span><span class="p">])</span>
+                <span class="n">analyze_dict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">date_tropical</span><span class="p">[</span><span class="n">use_idx</span><span class="p">])</span>
                 <span class="n">analyze_dict</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mslp_tropical</span><span class="p">[</span><span class="n">use_idx</span><span class="p">])</span>
                 <span class="n">analyze_dict</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vmax_tropical</span><span class="p">[</span><span class="n">use_idx</span><span class="p">])</span>
             

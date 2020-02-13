@@ -13,6 +13,7 @@ import requests
 from .plot import TrackPlot
 from .tools import *
 from ..tornado import *
+from ..recon import *
 
 try:
     import zipfile
@@ -114,6 +115,8 @@ class Storm:
             self.stormTors = stormTors['data']
             self.tornado_dist_thresh = stormTors['dist_thresh']
             self.coords['Tornado Count'] = len(stormTors['data'])
+        
+        self.get_archer()
                 
     def to_dict(self):
         
@@ -373,7 +376,8 @@ class Storm:
         #Add main elements from storm dict
         for key in ['id','operational_id','name','year']:
             track_dict[key] = self.dict[key]
-            
+
+        
         #Add carq to forecast dict as hour 0, if available
         if use_carq == True and forecast_dict['init'] in track_dict['date']:
             insert_idx = track_dict['date'].index(forecast_dict['init'])
@@ -395,6 +399,8 @@ class Storm:
         forecast_dict['advisory_num'] = advisory_num
         forecast_dict['basin'] = self.basin
             
+        track_dict = self.dict
+        
         #Plot storm
         plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,zoom,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
@@ -897,7 +903,8 @@ class Storm:
         
         #Return dict
         return forecasts
-    
+
+
     
     def download_tcr(self,dir_path=""):
         
@@ -1016,7 +1023,7 @@ class Storm:
         tor_title = plot_ax.get_title('left')
 
         #Plot storm
-        plot_ax = self.plot_obj_tc.plot_storm(self.dict,zoom,plot_all,ax=plot_ax,return_ax=True,prop=prop,map_prop=map_prop)
+        plot_ax,_ = self.plot_obj_tc.plot_storm(self.dict,zoom,plot_all,ax=plot_ax,return_ax=True,prop=prop,map_prop=map_prop)
         
         plot_ax.add_artist(leg_tor)
         
@@ -1108,4 +1115,27 @@ class Storm:
         else:
             plt.show()
             plt.close()
+            
+    def get_recon(self):
+        
+        self.recon = ReconDataset((self.name,self.year))
+                
+    def get_archer(self):
+        URL=f'http://tropic.ssec.wisc.edu/real-time/adt/archive{self.year}/{self.id[2:4]}{self.id[1]}-list.txt'
+        a = requests.get(URL).content.decode("utf-8") 
+        content = [[c.strip() for c in b.split()] for b in a.split('\n')]
+        #data = [[dt.strptime(line[0]+'/'+line[1][:4],'%Y%b%d/%H%M'),-1*float(line[-4]),float(line[-5])] for line in content[-100:-3]]
+        archer = {}
+        for name in ['time','lat','lon','mnCldTmp']:
+            archer[name]=[]
+        for i,line in enumerate(content):
+            try:
+                ndx = ('MWinit' in line[-1])
+                archer['time'].append(dt.strptime(line[0]+'/'+line[1][:4],'%Y%b%d/%H%M'))
+                archer['lat'].append(float(line[-5-ndx]))
+                archer['lon'].append(-1*float(line[-4-ndx]))
+                archer['mnCldTmp'].append(float(line[-9-ndx]))
+            except:
+                continue
+        self.archer = archer
     

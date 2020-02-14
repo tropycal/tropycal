@@ -43,7 +43,7 @@ class TornadoDataset():
         An instance of TornadoDataset.
     """
 
-    def __init__(self, mag_thresh=0, tornado_path='spc'):
+    def __init__(self, mag_thresh=0, len_thresh=0, tornado_path='spc'):
         
         #Error check
         if isinstance(mag_thresh,int) == False:
@@ -74,10 +74,15 @@ class TornadoDataset():
         tz = np.array([timedelta(hours=9-int(i)) for i in Tors['tz']])
         tors_dt = [pd.to_datetime(i) for i in Tors['mo_dy_yr_time']]
         Tors = Tors.assign(UTC_time = tors_dt+tz)
+        Tors = Tors.assign(UTC_year = [t.year for t in tors_dt+tz])
+        Tors = Tors.assign(SPC_time = Tors['UTC_time'] - timedelta(hours=12))
         
         #Filter for only those tors at least F/EF scale mag_thresh.
         Tors = Tors[Tors['mag']>=mag_thresh]
 
+        #Filter for only those tors at least F/EF scale mag_thresh.
+        Tors = Tors[Tors['len']>=len_thresh]
+        
         #Clean up lat/lons       
         Tors = Tors[(Tors['slat']!=0)|(Tors['slon']!=0)]
         Tors = Tors[(Tors['slat']>=20) & (Tors['slat']<=50)]
@@ -87,8 +92,10 @@ class TornadoDataset():
         Tors = Tors[(Tors['elon']>=-130)|(Tors['elat']==0)]
         Tors = Tors[(Tors['elon']<=-65)|(Tors['elat']==0)]
         Tors = Tors.assign(elat = [Tors['slat'].values[u] if i==0 else i for u, i in enumerate(Tors['elat'].values)])
-        self.Tors = Tors.assign(elon = [Tors['slon'].values[u] if i==0 else i for u, i in enumerate(Tors['elon'].values)])
-
+        Tors = Tors.assign(elon = [Tors['slon'].values[u] if i==0 else i for u, i in enumerate(Tors['elon'].values)])
+                
+        self.Tors = Tors
+        
     def get_storm_tornadoes(self,storm,dist_thresh):
         
         r"""
@@ -269,7 +276,8 @@ class TornadoDataset():
             plt.close()
         
 
-    def plot_tors(self,tor_info,zoom="conus",plotPPF=False,ax=None,return_ax=False,cartopy_proj=None,**kwargs):
+    def plot_tors(self,tor_info,zoom="conus",plotPPF=False,\
+                  ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).
@@ -357,6 +365,88 @@ class TornadoDataset():
         if ax != None or return_ax==True:
             return plot_info[0],plot_info[1],plot_info[2]
 
+
+    def plot_climo(self,date_range,year_range,zoom="conus",plotPPF='Daily',\
+                  ax=None,return_ax=False,cartopy_proj=None,**kwargs):
+        
+        r"""
+        Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).
+        
+        Parameters
+        ----------
+        tor_info : pandas.DataFrame / dict / datetime.datetime / list
+            Requested tornadoes to plot. Can be one of the following:
+            
+            * **Pandas DataFrame** containing the requested tornadoes to plot.
+            * **dict** entry containing the requested tornadoes to plot.
+            * **datetime.datetime** object for a single day to plot tornadoes.
+            * **list** with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.
+        zoom : str
+            Zoom for the plot. Can be one of the following:
+            
+            * **dynamic** - default. Dynamically focuses the domain using the tornado track(s) plotted.
+            * **conus** - Contiguous United States
+            * **east_conus** - Eastern CONUS
+            * **lonW/lonE/latS/latN** - Custom plot domain
+        plotPPF : bool or str
+            Whether to plot practically perfect forecast (PPF). True defaults to "daily". Default is False.
+        
+            * **False** - no PPF plot.
+            * **True** - defaults to "daily".
+            * **"total"** - probability of a tornado within 25mi of a point during the period of time selected.
+            * **"daily"** - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        prop : dict
+            Property of tornado tracks.
+        map_prop : dict
+            Property of cartopy map.
+        """
+        
+        prop = kwargs.pop("prop",{})
+        map_prop = kwargs.pop("map_prop",{})
+        
+        #Get plot data
+        
+        climo = {}
+        climo['date_range']=date_range
+        climo['year_range']=year_range
+        dfTors = self.__getClimo(date_range,year_range)
+        if plotPPF!='maximum':
+            warning_message = 'SPC colors only allowed for daily PPF. Defaulting to plasma colormap.'
+            warnings.warn(warning_message)
+            prop['PPFcolors']='plasma'
+        if plotPPF!='maximum':
+            try:
+                prop['PPFlevels']
+            except:
+                t_int = 50
+                if t_int>1:
+                    new_levs=[i*t_int**-.7 \
+                        for i in [2,5,10,15,30,45,60,100]]
+                    for i,_ in enumerate(new_levs[:-1]):
+                        new_levs[i] = max([new_levs[i],0.1])
+                        new_levs[i+1] = new_levs[i]+max([new_levs[i+1]-new_levs[i],.1])
+                    prop['PPFlevels']=new_levs
+
+        #Create instance of plot object
+        self.plot_obj = TornadoPlot()
+        
+        #Create cartopy projection
+        if cartopy_proj == None:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+            cartopy_proj = self.plot_obj.proj
+        
+        #Plot tornadoes
+        plot_info = self.plot_obj.plot_tornadoes(dfTors,zoom,plotPPF,ax,return_ax,climo=climo,prop=prop,map_prop=map_prop)
+        
+        #Return axis
+        if ax != None or return_ax==True:
+            return plot_info[0],plot_info[1],plot_info[2]
+
+
     def __getTimeTors(self,time):
         
         if isinstance(time,list):
@@ -369,4 +459,25 @@ class TornadoDataset():
                                (self.Tors['UTC_time']<t2)]
         return subTors
 
+    def __getClimo(self,date_range,year_range):
+        
+        year_min,year_max = year_range
+        date_min,date_max = [dt.strptime(i,'%m/%d') for i in date_range]
+        date_min += timedelta(hours=12)
+        date_max += timedelta(days=1,hours=12,seconds=-1)
+        date_max = date_max.replace(year=date_min.year)
+        
+        def date_range_test(t,t_min,t_max,yr_min,yr_max):
+            if t_min<t_max:
+                test1 = (t>=t_min.replace(year=t.year))
+                test2 = (t<=t_max.replace(year=t.year))
+                return (test1 & test2) & (t.year>=yr_min) & (t.year<=yr_max)
+            else:
+                test1 = (t_min.replace(year=t.year)<=t<dt(t.year+1,1,1))
+                test2 = (dt(t.year,1,1)<=t<=t_max.replace(year=t.year))
+                return (test1 | test2) & (t.year>=yr_min) & (t.year<=yr_max)
+        
+        TorDateTest = np.array([date_range_test(t,date_min,date_max,year_min,year_max) for t in self.Tors['UTC_time']])
+        subTors = self.Tors.loc[TorDateTest]
+        return subTors
 

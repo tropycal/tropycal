@@ -31,7 +31,7 @@ except:
 
 class TornadoPlot(Plot):
                  
-    def plot_tornadoes(self,tornado,zoom="east_conus",plotPPF=False,ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_tornadoes(self,tornado,zoom="east_conus",plotPPF=False,ax=None,return_ax=False,climo=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -120,9 +120,15 @@ class TornadoPlot(Plot):
             if min(mnlon) < min_lon: min_lon = min(mnlon)
 
         #Plot PPF
-        if plotPPF in ['total','daily',True]:
+        if plotPPF in ['total','daily','maximum',True]:
             if plotPPF == True: plotPPF='daily'
-            PPF,longrid,latgrid = getPPF(tornado_data,method=plotPPF)
+            groups = tornado_data.groupby('UTC_year')
+            allPPF=[]
+            for g in groups:
+                PPF,longrid,latgrid = getPPF(g[1],method=plotPPF)
+                allPPF.append(PPF)
+            
+            PPF = np.mean(allPPF,axis=0)
             
             colors,clevs = ppf_colors(plotPPF,prop['PPFcolors'],prop['PPFlevels'])
                     
@@ -132,12 +138,13 @@ class TornadoPlot(Plot):
         #Plot tornadoes as specified
         EFcolors = ef_colors(prop['EFcolors'])
         
-        tornado_data = tornado_data.sort_values('mag')
-        for _,row in tornado_data.iterrows():
-            plt.plot([row['slon'],row['elon']+.01],[row['slat'],row['elat']+.01], \
-                lw=prop['linewidth'],color=EFcolors[row['mag']], \
-                path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*1.5, foreground='w'), path_effects.Normal()],\
-                transform=ccrs.PlateCarree())
+        if climo is None:
+            tornado_data = tornado_data.sort_values('mag')
+            for _,row in tornado_data.iterrows():
+                plt.plot([row['slon'],row['elon']+.01],[row['slat'],row['elat']+.01], \
+                    lw=prop['linewidth'],color=EFcolors[row['mag']], \
+                    path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*1.5, foreground='w'), path_effects.Normal()],\
+                    transform=ccrs.PlateCarree())
 
         #--------------------------------------------------------------------------------------
         
@@ -172,20 +179,39 @@ class TornadoPlot(Plot):
         self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
         
         #--------------------------------------------------------------------------------------
-        
-        #Add left title
-        ppf_title = ''
-        if plotPPF in ['total',True]:
-            ppf_title = ' and total PPF (%)'
-        if plotPPF == 'daily':
-            ppf_title = ' and daily PPF (%)'
-        self.ax.set_title('Tornado tracks'+ppf_title,loc='left',fontsize=17,fontweight='bold')
 
-        #Add right title
-        #max_ppf = max(PPF)
-        start_date = dt.strftime(min(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
-        end_date = dt.strftime(max(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
-        self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
+        if climo is None:
+            #Add left title
+            ppf_title = ''
+            if plotPPF == 'total':
+                ppf_title = ' and total PPH (%)'
+            if plotPPF in ['daily',True]:
+                ppf_title = ' and daily PPH (%)'
+            self.ax.set_title('Tornado tracks'+ppf_title,loc='left',fontsize=17,fontweight='bold')
+    
+            #Add right title
+            #max_ppf = max(PPF)
+            start_date = dt.strftime(min(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
+            end_date = dt.strftime(max(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
+            self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
+
+        else:
+            #Add left title
+            if plotPPF == 'maximum':
+                ppf_title = 'Maximum daily PPH (%)'
+            if plotPPF == 'daily':
+                ppf_title = 'Average daily PPH (%)'
+            if plotPPF == 'total':
+                ppf_title = 'Average total PPH (%)'
+            self.ax.set_title(ppf_title,loc='left',fontsize=17,fontweight='bold')
+    
+            #Add right title
+            endash = u"\u2013"
+            dot = u"\u2022"
+            date_range=climo['date_range']
+            year_range=climo['year_range']
+            title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'
+            self.ax.set_title(title_R,loc='right',fontsize=15)
 
         #--------------------------------------------------------------------------------------
         

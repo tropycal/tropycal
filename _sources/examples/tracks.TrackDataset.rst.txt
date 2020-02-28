@@ -53,7 +53,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (3.08 seconds)
+    --> Completed reading in HURDAT2 data (2.36 seconds)
 
 
 
@@ -154,7 +154,7 @@ Note that you can pass various arguments to the plot function, such as customizi
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f0ae562fb00>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f9198b75b38>
 
 
 
@@ -276,7 +276,7 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:47: RuntimeWarning: Mean of empty slice
       return thresh,lambda x: np.nanmean(x)
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f0ae6efc550>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f9198f43ac8>
 
 
 
@@ -308,7 +308,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (45.2 seconds)
+    --> Completed reading in ibtracs data (41.91 seconds)
 
 
 
@@ -339,7 +339,7 @@ Let's make a plot of the maximum sustained wind of TCs globally:
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f0ae8cac940>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f919b41e940>
 
 
 
@@ -399,7 +399,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 6 minutes  35.670 seconds)
+   **Total running time of the script:** ( 6 minutes  12.181 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:

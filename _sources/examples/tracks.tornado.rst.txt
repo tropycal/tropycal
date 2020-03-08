@@ -50,7 +50,7 @@ Let's start by creating an instance of a TornadoDataset object. By default, this
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.96 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.92 seconds)
 
 
 
@@ -84,7 +84,7 @@ We can use a TornadoDataset object to analyze both tornadoes associated with tro
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
       dfTors['SPC_time'] = dfTors['UTC_time'] - timedelta(hours=12)
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f9c3591ac18>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f00960195c0>
 
 
 
@@ -109,7 +109,7 @@ We can also use TornadoDataset to assess tornadoes associated with tropical cycl
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.71 seconds)
+    --> Completed reading in HURDAT2 data (2.94 seconds)
 
 
 
@@ -137,9 +137,9 @@ This code block will take a while to run, as it will iterate over every storm in
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.96 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.86 seconds)
     --> Starting to assign tornadoes to storms
-    --> Completed assigning tornadoes to storm (11.30 seconds)
+    --> Completed assigning tornadoes to storm (11.11 seconds)
 
 
 
@@ -168,7 +168,7 @@ Most tornadoes associated with tropical cyclones occur in the front right quadra
  .. code-block:: none
 
 
-    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7f9c33c02470>}
+    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7f00950c1208>}
 
 
 
@@ -194,7 +194,7 @@ We can also make the same plot for a composite subset of tropical cyclones, give
  .. code-block:: none
 
 
-    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7f9c338b62b0>}
+    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7f0094d76208>}
 
 
 
@@ -242,7 +242,7 @@ Let's plot all the tornado tracks, and daily PPF, associated with Hurricane Ivan
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f9c338b9eb8>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f0094d508d0>
 
 
 
@@ -267,14 +267,14 @@ Let's make a plot of the tornadoes in storm motion relative coordinates:
  .. code-block:: none
 
 
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7f9c33965f28>
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7f0094e24c88>
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  51.329 seconds)
+   **Total running time of the script:** ( 0 minutes  51.169 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.tornado.py:

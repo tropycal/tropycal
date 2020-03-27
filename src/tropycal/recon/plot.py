@@ -6,6 +6,7 @@ import scipy.interpolate as interp
 import urllib
 import warnings
 from datetime import datetime as dt,timedelta
+from scipy.ndimage import gaussian_filter as gfilt
 
 from ..plot import Plot
 from .tools import *
@@ -21,7 +22,7 @@ except:
 try:
     import matplotlib as mlib
     import matplotlib.lines as mlines
-    import matplotlib.patheffects as path_effects
+    import matplotlib.patheffects as patheffects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
     import matplotlib.patches as mpatches
@@ -31,7 +32,7 @@ except:
 
 class ReconPlot(Plot):
                  
-    def plot_points(self,recon_data,zoom="dynamic",varname='wspd',barbs=False,scatter=False,\
+    def plot_points(self,storm,recon_data,zoom="dynamic",varname='wspd',barbs=False,scatter=False,\
                     ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
@@ -57,8 +58,11 @@ class ReconPlot(Plot):
             Property of cartopy map.
         """
         
+        if not barbs and not scatter:
+            scatter = True
+        
         #Set default properties
-        default_prop={'obs_colors':'plasma','obs_levels':np.arange(30,151,10),'sortby':varname,'linewidth':1.5,'ms':7.5}
+        default_prop={'cmap':'category','levels':None,'sortby':varname,'linewidth':1.5,'ms':7.5}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF',\
                           'linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
@@ -83,7 +87,14 @@ class ReconPlot(Plot):
         max_lon = None
         min_lon = None
 
-        #Check for storm type, then get data for storm
+        #Retrieve storm data
+        storm_data = storm.dict
+        vmax = storm_data['vmax']
+        styp = storm_data['type']
+        sdate = storm_data['date']
+
+
+        #Check recon_data type
         if isinstance(recon_data,pd.core.frame.DataFrame):
             pass
         else:
@@ -113,24 +124,35 @@ class ReconPlot(Plot):
 
         #Plot recon data as specified
         
+        if prop['levels'] is None:
+            prop['levels'] = np.arange(np.floor(np.min(recon_data[varname])/10)*10,
+                            np.ceil(np.max(recon_data[varname])/10)*10+1,10)
+        cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
+        
         if barbs:
             
             dataSort = recon_data.sort_values(by='wspd').reset_index(drop=True)
-            norm = mlib.colors.Normalize(vmin=min(prop['obs_levels']), vmax=max(prop['obs_levels']))
-            cmap = mlib.cm.get_cmap(prop['obs_colors'])
+            norm = mlib.colors.Normalize(vmin=min(prop['levels']), vmax=max(prop['levels']))
+            cmap = mlib.cm.get_cmap(prop['cmap'])
             colors = cmap(norm(dataSort['wspd'].values))
             colors = [tuple(i) for i in colors]
             qv = plt.barbs(dataSort['lon'],dataSort['lat'],\
                        *uv_from_wdir(dataSort['wspd'],dataSort['wdir']),color=colors,length=5,linewidth=0.5)
-        
+            
+#            qv.set_path_effects([patheffects.Stroke(linewidth=2, foreground='white'),
+#                       patheffects.Normal()])
+#    
         if scatter:
                         
             dataSort = recon_data.sort_values(by=prop['sortby'],ascending=(prop['sortby']!='p_sfc')).reset_index(drop=True)
-            prop['obs_levels']=np.linspace(min(dataSort[varname]),max(dataSort[varname]),256)
-            cmap = mlib.cm.get_cmap(prop['obs_colors'])
+#            prop['obs_levels']=np.linspace(min(dataSort[varname]),max(dataSort[varname]),256)
+#            norm = mlib.colors.Normalize(vmin=min(prop['obs_levels']), vmax=max(prop['obs_levels']))
+#            cmap = mlib.colors.LinearSegmentedColormap.from_list(
+#                'Custom cmap', colors,len(colors))
+            norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
+#            cmap = mlib.cm.get_cmap(prop['obs_colors'])
             
-            sc = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],cmap = cmap,\
-                             vmin=min(prop['obs_levels']), vmax=max(prop['obs_levels']), s=prop['ms'])
+            cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],cmap=cmap,norm=norm, s=prop['ms'])
 
         #--------------------------------------------------------------------------------------
         
@@ -167,20 +189,23 @@ class ReconPlot(Plot):
         #--------------------------------------------------------------------------------------
         
         #Add left title
+        type_array = np.array(storm_data['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        tropical_vmax = np.array(storm_data['vmax'])[idx]
+            
+        subtrop = classify_subtrop(np.array(storm_data['type']))
+        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+        peak_basin = storm_data['wmo_basin'][peak_idx]
+        storm_type = get_storm_type(np.nanmax(tropical_vmax),subtrop,peak_basin)
+        
         dot = u"\u2022"
         if barbs:
-            vartitle = f'{dot} flight level wind'
+            vartitle = get_recon_title('wspd')
         if scatter:
-            if varname == 'sfmr':
-                vartitle = f'{dot} SFMR surface wind'
-            if varname == 'wspd':
-                vartitle = f'{dot} flight level wind'
-            if varname == 'p_sfc':
-                vartitle = f'{dot} surface pressure'
-        self.ax.set_title('Recon '+vartitle,loc='left',fontsize=17,fontweight='bold')
+            vartitle = get_recon_title(varname)
+        self.ax.set_title(f"{storm_type} {storm_data['name']}\n" + 'Recon: '+' '.join(vartitle),loc='left',fontsize=17,fontweight='bold')
 
         #Add right title
-        #max_ppf = max(PPF)
         start_date = dt.strftime(min(recon_data['time']),'%H:%M UTC %d %b %Y')
         end_date = dt.strftime(max(recon_data['time']),'%H:%M UTC %d %b %Y')
         self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
@@ -189,17 +214,255 @@ class ReconPlot(Plot):
         
         #Add legend
 
-        #Add colorbar
+        #Phantom legend
+        handles=[]
+        for _ in range(10):
+            handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
+        l = self.ax.legend(handles=handles,loc='upper left',fancybox=True,framealpha=0,fontsize=11.5)
+        plt.draw()
+
+        #Get the bbox
+        bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        bb_ax = self.ax.get_position()
+
+        #Define colorbar axis
+        cax = self.fig.add_axes([bb.x0+bb.width, bb.y0-.05*bb.height, 0.015, bb.height])
+#        cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
+        cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
+                                 ticks=clevs)
+        if len(prop['levels'])>2:
+#            [(c-min(clevs))/(max(clevs)-min(clevs)) for c in clevs]
+            cax.yaxis.set_ticks(np.linspace(0,1,len(clevs)))
+        cax.tick_params(labelsize=11.5)
+        cax.yaxis.set_ticks_position('left')
+    
+        rect_offset = 0.0
+        if prop['cmap']=='category' and varname=='sfmr':
+            cax2 = cax.twinx()
+            cax2.yaxis.set_ticks_position('right')
+            cax2.yaxis.set_ticks((np.linspace(0,1,len(clevs))[:-1]+np.linspace(0,1,len(clevs))[1:])*.5)
+            cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+            cax2.tick_params('both', length=0, width=0, which='major')
+            cax.yaxis.set_ticks_position('left')
             
+            rect_offset = 0.7
+            
+        rectangle = mpatches.Rectangle((bb.x0,bb.y0-0.1*bb.height),(1.8+rect_offset)*bb.width,1.1*bb.height,\
+                                       fc = 'w',edgecolor = '0.8',alpha = 0.8,\
+                                       transform=self.fig.transFigure, zorder=2)
+        self.ax.add_patch(rectangle)
+        
+        
+
+
+        #Add colorbar
+        
+        
+        
+        #Add plot credit
+        text = self.plot_credit()
+        self.add_credit(text)
+        
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:
             return self.ax,'/'.join([str(b) for b in [bound_w,bound_e,bound_s,bound_n]])
         else:
             plt.show()
             plt.close()
+        
+
+    def plot_swath(self,storm,Maps,varname,swathfunc,track_dict,radlim=200,\
+                   zoom="dynamic",ax=None,return_ax=False,prop={},map_prop={}):
+
+        #Set default properties
+        default_prop={'cmap':'category','levels':None,'left_title':'','right_title':'All storms','pcolor':True}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+                          
+        #Initialize plot
+        prop = self.add_prop(prop,default_prop)
+        map_prop = self.add_prop(map_prop,default_map_prop)
+        self.plot_init(ax,map_prop)
+                
+        #Keep record of lat/lon coordinate extrema
+        max_lat = None
+        min_lat = None
+        max_lon = None
+        min_lon = None
+
+        #Retrieve recon data
+        lats = Maps['center_lat']
+        lons = Maps['center_lon']
+        
+        #Retrieve storm data
+        storm_data = storm.dict
+        vmax = storm_data['vmax']
+        styp = storm_data['type']
+        sdate = storm_data['date']
+
+        #Add to coordinate extrema
+        if max_lat == None:
+            max_lat = max(lats)+2.5
+        else:
+            if max(lats) > max_lat: max_lat = max(lats)
+        if min_lat == None:
+            min_lat = min(lats)-2.5
+        else:
+            if min(lats) < min_lat: min_lat = min(lats)
+        if max_lon == None:
+            max_lon = max(lons)+2.5
+        else:
+            if max(lons) > max_lon: max_lon = max(lons)
+        if min_lon == None:
+            min_lon = min(lons)-2.5
+        else:
+            if min(lons) < min_lon: min_lon = min(lons)      
+        
+        bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
+                
+        distproj = ccrs.LambertConformal()
+        out = distproj.transform_points(ccrs.PlateCarree(),np.array([bound_w,bound_w,bound_e,bound_e]),\
+                                        np.array([bound_s,bound_n,bound_s,bound_n]))
+        grid_res = 1*1e3 #m
+        xi = np.arange(int(min(out[:,0])/grid_res)*grid_res,int(max(out[:,0])/grid_res)*grid_res+grid_res,grid_res)
+        yi = np.arange(int(min(out[:,1])/grid_res)*grid_res,int(max(out[:,1])/grid_res)*grid_res+grid_res,grid_res)
+        xmgrid,ymgrid = np.meshgrid(xi,yi)
+        
+        out = distproj.transform_points(ccrs.PlateCarree(),Maps['center_lon'],Maps['center_lat'])
+        
+        cx = np.rint(gfilt(out[:,0],1)/grid_res)*grid_res
+        cy = np.rint(gfilt(out[:,1],1)/grid_res)*grid_res
+        aggregate_grid=np.ones(xmgrid.shape)*np.nan
+
+        def nanfunc(func,a,b):
+            c = np.concatenate([a[None],b[None]])
+            c = np.ma.array(c, mask=np.isnan(c))
+            d = func(c,axis=0)
+            e = d.data
+            e[d.mask] = np.nan
+            return e
+
+        for t,(x_center,y_center,var) in enumerate(zip(cx,cy,Maps['maps'])):
+            x_fromc = x_center+Maps['grid_x']*1e3
+            y_fromc = y_center+Maps['grid_y']*1e3
+            inrecon = np.where((xmgrid>=np.min(x_fromc)) & (xmgrid<=np.max(x_fromc)) & \
+                           (ymgrid>=np.min(y_fromc)) & (ymgrid<=np.max(y_fromc)))
+            inmap = np.where((x_fromc>=np.min(xmgrid)) & (x_fromc<=np.max(xmgrid)) & \
+                           (y_fromc>=np.min(ymgrid)) & (y_fromc<=np.max(ymgrid)))
+            aggregate_grid[inrecon] = nanfunc(swathfunc,aggregate_grid[inrecon],var[inmap])
+        
+    
+        if prop['levels'] is None:
+            prop['levels'] = np.arange(np.floor(np.nanmin(aggregate_grid)/10)*10,
+                            np.ceil(np.nanmax(aggregate_grid)/10)*10+1,10)
+        cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
+                
+        out = self.proj.transform_points(distproj,xmgrid,ymgrid)
+        lons = out[:,:,0]
+        lats = out[:,:,1]
+        
+        norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
+        cbmap = self.ax.contourf(lons,lats,aggregate_grid,cmap=cmap,norm=norm,levels=clevs,transform=ccrs.PlateCarree())
+        
+        #Pre-generated zooms
+        if zoom in ['north_atlantic','conus','east_conus']:
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
+            
+        #Storm-centered plot domain
+        elif zoom == "dynamic":
+            
+            self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
+            
+        #Custom plot domain
+        else:
+            
+            #Check to ensure 3 slashes are provided
+            if zoom.count("/") != 3:
+                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+            else:
+                try:
+                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
+                    bound_w = float(bound_w)
+                    bound_e = float(bound_e)
+                    bound_s = float(bound_s)
+                    bound_n = float(bound_n)
+                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
+                except:
+                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+        
+        #Determine number of lat/lon lines to use for parallels & meridians
+        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+
+        #--------------------------------------------------------------------------------------
+                
+        #Add left title
+        type_array = np.array(storm_data['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        tropical_vmax = np.array(storm_data['vmax'])[idx]
+            
+        subtrop = classify_subtrop(np.array(storm_data['type']))
+        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+        peak_basin = storm_data['wmo_basin'][peak_idx]
+        storm_type = get_storm_type(np.nanmax(tropical_vmax),subtrop,peak_basin)
+        
+        dot = u"\u2022"
+        vartitle = get_recon_title(varname)
+        self.ax.set_title(f"{storm_type} {storm_data['name']}\n" + 'Recon: '+' '.join(vartitle),loc='left',fontsize=17,fontweight='bold')
+
+        #Add right title
+        #max_ppf = max(PPF)
+        start_date = dt.strftime(min(Maps['time']),'%H:%M UTC %d %b %Y')
+        end_date = dt.strftime(max(Maps['time']),'%H:%M UTC %d %b %Y')
+        self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
+
+        #--------------------------------------------------------------------------------------
+        
+        #Add legend
+
+        #Phantom legend
+        handles=[]
+        for _ in range(10):
+            handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
+        l = self.ax.legend(handles=handles,loc='upper left',fancybox=True,framealpha=0,fontsize=11.5)
+        plt.draw()
+
+        #Get the bbox
+        bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        bb_ax = self.ax.get_position()
+
+        #Define colorbar axis
+        cax = self.fig.add_axes([bb.x0+bb.width, bb.y0-.05*bb.height, 0.015, bb.height])
+#        cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
+        cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
+                                 ticks=clevs)
+        if len(prop['levels'])>2:
+#            [(c-min(clevs))/(max(clevs)-min(clevs)) for c in clevs]
+            cax.yaxis.set_ticks(np.linspace(0,1,len(clevs)))
+        cax.tick_params(labelsize=11.5)
+        cax.yaxis.set_ticks_position('left')
+    
+        rect_offset = 0.0
+        if prop['cmap']=='category' and varname=='sfmr':
+            cax2 = cax.twinx()
+            cax2.yaxis.set_ticks_position('right')
+            cax2.yaxis.set_ticks((np.linspace(0,1,len(clevs))[:-1]+np.linspace(0,1,len(clevs))[1:])*.5)
+            cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+            cax2.tick_params('both', length=0, width=0, which='major')
+            cax.yaxis.set_ticks_position('left')
+            
+            rect_offset = 0.7
+            
+        rectangle = mpatches.Rectangle((bb.x0,bb.y0-0.1*bb.height),(1.8+rect_offset)*bb.width,1.1*bb.height,\
+                                       fc = 'w',edgecolor = '0.8',alpha = 0.8,\
+                                       transform=self.fig.transFigure, zorder=2)
+        self.ax.add_patch(rectangle)
+ 
+        #Add plot credit
+        text = self.plot_credit()
+        self.add_credit(text)
 
 
-    def plot_interp(self,dfRecon,radlim=150,ax=None,return_ax=False,prop={}):
+    
+    def plot_polar(self,dfRecon,track_dict,time=None,reconInterp=None,radlim=150,ax=None,return_ax=False,prop={}):
 
         r"""
         Creates a plot of storm-centered recon data interpolated to a grid
@@ -225,20 +488,18 @@ class ReconPlot(Plot):
         prop = self.add_prop(prop,default_prop)
         
         mlib.rcParams.update({'font.size': 16})
-        
-        #Interpolate recon segment
-        
-        grid_x,grid_y,grid_z = interpRecon(dfRecon,radlim=radlim)
-        
+
         fig = plt.figure(figsize=prop['figsize'])
         if ax==None:
             self.ax = plt.subplot()
         else:
             self.ax = ax
         
-        colors,clevs = recon_colors(varname,prop['colors'],prop['levels'])
-            
-        plt.contourf(grid_x,grid_y,grid_z,clevs,colors=colors)
+        cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['clevs'])
+        norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
+        cbmap = self.ax.contourf(Maps_dict['grid_x'],Maps_dict['grid_y'],Maps_dict['maps'],\
+                                 cmap=cmap,norm=norm,levels=clevs,transform=ccrs.PlateCarree())
+        
         rightarrow = u"\u2192"
         plt.xlabel(f'W {rightarrow} E Distance (km)')
         plt.ylabel(f'S {rightarrow} N Distance (km)')
@@ -259,6 +520,10 @@ class ReconPlot(Plot):
         end_date = dt.strftime(max(dfRecon['time']),'%H:%M UTC %d %b %Y')
         self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
 
+        #Add plot credit
+        text = self.plot_credit()
+        self.add_credit(text)
+
         #--------------------------------------------------------------------------------------
            
         #Return axis if specified, otherwise display figure
@@ -267,7 +532,158 @@ class ReconPlot(Plot):
         else:
             plt.show()
             plt.close()
+     
+    def plot_maps(self,storm,Maps_dict,varname,recon_stats=None,\
+                  zoom='dynamic',ax=None,return_ax=False,prop={},map_prop={}):
 
-    
+        r"""
+        Creates a plot of storm-centered recon data interpolated to a grid
+        
+        Parameters
+        ----------
+        recon_data : dataframe
+        radlim : int
+            Radius (km) from the center of the storm that interpolation is calculated,
+            and field plotted ... axis limits will be [-radlim,radlim,-radlim,radlim]
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
+        prop : dict
+            Properties of plot
+        """
+
+        #Set default properties
+        default_prop={'cmap':'category','levels':np.arange(20,161,20),'left_title':'','right_title':'','pcolor':True}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(12.5,8.5),'dpi':120}
+        
+        #Initialize plot
+        prop = self.add_prop(prop,default_prop)
+        map_prop = self.add_prop(map_prop,default_map_prop)
+        self.plot_init(ax,map_prop)
+
+        grid_res = 1*1e3 #m
+        clon = Maps_dict['center_lon']
+        clat = Maps_dict['center_lat']
+        distproj = ccrs.LambertConformal()
+        out = distproj.transform_points(ccrs.PlateCarree(),np.array([clon]),np.array([clat]))        
+        cx = np.rint(out[:,0]/grid_res)*grid_res
+        cy = np.rint(out[:,1]/grid_res)*grid_res
+        xmgrid = cx+Maps_dict['grid_x']*grid_res
+        ymgrid = cy+Maps_dict['grid_y']*grid_res
+        out = self.proj.transform_points(distproj,xmgrid,ymgrid)
+        lons = out[:,:,0]
+        lats = out[:,:,1]
+        
+        mlib.rcParams.update({'font.size': 16})
+
+        if prop['levels'] is None:
+            prop['levels'] = np.arange(np.floor(np.nanmin(aggregate_grid)/10)*10,
+                            np.ceil(np.nanmax(aggregate_grid)/10)*10+1,10)
+        cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
+
+        norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
+        cbmap = self.ax.contourf(lons,lats,Maps_dict['maps'],\
+                                 cmap=cmap,norm=norm,levels=clevs,transform=ccrs.PlateCarree())
+
+        #Pre-generated zooms
+        if zoom in ['north_atlantic','conus','east_conus']:
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
             
-    
+        #Storm-centered plot domain
+        elif zoom == "dynamic":
+            
+#            bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(np.amin(lons),np.amax(lons),np.amin(lats),np.amax(lats))
+            bound_w,bound_e,bound_s,bound_n = np.amin(lons)-.1,np.amax(lons)+.1,np.amin(lats)-.1,np.amax(lats)+.1
+            self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
+            
+        #Custom plot domain
+        else:
+            
+            #Check to ensure 3 slashes are provided
+            if zoom.count("/") != 3:
+                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+            else:
+                try:
+                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
+                    bound_w = float(bound_w)
+                    bound_e = float(bound_e)
+                    bound_s = float(bound_s)
+                    bound_n = float(bound_n)
+                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
+                except:
+                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+
+
+        #Determine number of lat/lon lines to use for parallels & meridians
+        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        
+#        rightarrow = u"\u2192"
+#        plt.xlabel(f'W {rightarrow} E Distance (km)')
+#        plt.ylabel(f'S {rightarrow} N Distance (km)')
+#        plt.axis([-radlim,radlim,-radlim,radlim])
+#        plt.axis('equal')
+        
+        cbar = self.fig.colorbar(cbmap,orientation='vertical',\
+                                 ticks=clevs)
+#        cbar.set_label('wind (kt)')
+                
+        #--------------------------------------------------------------------------------------
+
+        storm_data = storm.dict
+        #Add left title
+        type_array = np.array(storm_data['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        tropical_vmax = np.array(storm_data['vmax'])[idx]
+            
+        subtrop = classify_subtrop(np.array(storm_data['type']))
+        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+        peak_basin = storm_data['wmo_basin'][peak_idx]
+        storm_type = get_storm_type(np.nanmax(tropical_vmax),subtrop,peak_basin)
+        
+        vartitle = get_recon_title(varname)
+        title_left = f"{storm_type} {storm_data['name']}\n" + 'Recon: '+' '.join(vartitle)
+        self.ax.set_title(title_left,loc='left',fontsize=17,fontweight='bold')
+
+        #Add right title
+        self.ax.set_title(Maps_dict['time'].strftime('%H:%M UTC %-d %b %Y'),loc='right',fontsize=13)
+
+        #Add stats
+        if recon_stats is not None:
+            a = self.ax.text(0.8,0.97,f"Max FL Wind: {int(recon_stats['pkwnd_max'])} kt\n"+\
+                                       f"Max SFMR: {int(recon_stats['sfmr_max'])} kt\n"+\
+                                       f"Min SLP: {int(recon_stats['p_min'])} hPa",fontsize=9.5,color='k',\
+                                       bbox=dict(facecolor='0.9', edgecolor='black', boxstyle='round,pad=1'),\
+                                       transform=self.ax.transAxes,ha='left',va='top',zorder=10)
+
+        #Add plot credit
+        text = self.plot_credit()
+        self.add_credit(text)
+
+        return self.ax
+
+    def plot_hovmoller(self,storm,Hov,varname):
+        
+        storm_data = storm.dict
+        #Add left title
+        type_array = np.array(storm_data['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        tropical_vmax = np.array(storm_data['vmax'])[idx]
+            
+        subtrop = classify_subtrop(np.array(storm_data['type']))
+        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+        peak_basin = storm_data['wmo_basin'][peak_idx]
+        storm_type = get_storm_type(np.nanmax(tropical_vmax),subtrop,peak_basin)
+        
+        dot = u"\u2022"
+        vartitle = get_recon_title(varname)
+
+        title_left = f"{storm_type} {storm_data['name']}\n" + 'Recon: '+' '.join(vartitle)
+
+        #Add right title
+        #max_ppf = max(PPF)
+        start_date = dt.strftime(min(Hov['time']),'%H:%M UTC %d %b %Y')
+        end_date = dt.strftime(max(Hov['time']),'%H:%M UTC %d %b %Y')
+        title_right = f'Start ... {start_date}\nEnd ... {end_date}'
+
+        return title_left,title_right

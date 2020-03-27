@@ -1,14 +1,26 @@
+import os
 import numpy as np
 from datetime import datetime as dt,timedelta
 import pandas as pd
 import requests
 
 from scipy.interpolate import interp1d
+from scipy.ndimage import gaussian_filter as gfilt,gaussian_filter1d as gfilt1d
 from scipy.ndimage.filters import minimum_filter
 from geopy.distance import great_circle
 import matplotlib.dates as mdates
 
+try:
+    import matplotlib as mlib
+    import matplotlib.lines as mlines
+    import matplotlib.patheffects as path_effects
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker as mticker
+except:
+    warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
+
 from .plot import ReconPlot
+from .tools import * 
 #from ..tracks import *
 
 class ReconDataset:
@@ -34,16 +46,17 @@ class ReconDataset:
     """
 
     #init class
-    def __init__(self,stormtuple):
+    def __init__(self,storm):
         
         self.url_prefix = 'http://tropicalatlantic.com/recon/recon.cgi?'
-        self.storm = str(stormtuple[0])
-        self.year = str(stormtuple[1])
+        self.storm_obj = storm
+        self.storm = str(storm.name)
+        self.year = str(storm.year)
         self.missiondata = self.allMissions()
         self.recentered = self.recenter()
         
     def getMission(self,agency,mission_num,url_mission=None):
-        if url_mission==None:
+        if url_mission is None:
             url_mission = f'{self.url_prefix}basin=al&year={self.year}&product=hdob&storm={self.storm}&mission={mission_num}&agency={agency}'
         content = np.array(requests.get(url_mission).content.decode("utf-8").split('\n'))
         obs = [line.split('\"')[1] for line in content if 'option value=' in line][::-1]
@@ -134,8 +147,9 @@ class ReconDataset:
             A = np.array(A)
             inds = np.arange(len(A))
             good = np.where(np.isfinite(A))
+            good_grad = np.gradient(good[0])
             if len(good[0])>=3:
-                f = interp1d(inds[good], A[good],bounds_error=False,kind='cubic')
+                f = interp1d(inds[good], A[good],bounds_error=False,kind='quadratic')
                 B = np.where(np.isfinite(A)[good[0][0]:good[0][-1]+1],
                              A[good[0][0]:good[0][-1]+1],
                              f(inds[good[0][0]:good[0][-1]+1]))
@@ -156,24 +170,26 @@ class ReconDataset:
             pw_test = np.array(p_sfc_smooth)+np.array(wspd_smooth)*.1
             #Find mins in 15-minute windows
             imin = np.nonzero(pw_test == minimum_filter(pw_test,30))[0]
-            #Only use mins if below 20th %ile of mission p_sfc data and when plane p is 500-900mb
-            imin = [i for i in imin if 800<p_sfc_interp[i]<np.nanpercentile(data['p_sfc'],20) and \
-                    500<data['plane_p'][i]<900]
+            #Only use mins if below 15th %ile of mission p_sfc data and when plane p is 500-900mb
+            imin = [i for i in imin if 800<p_sfc_interp[i]<np.nanpercentile(data['p_sfc'],15) and \
+                    550<data['plane_p'][i]<900]
         else:
             imin=[]
         data['iscenter'] = np.zeros(len(data['p_sfc']))
         for i in imin:
-            data['iscenter'][i] = 1
+            j = data.index.values[i]
+            data['iscenter'][j] = 1
         return data
 
-    def recenter(self): 
-        
+    def recenter(self,use='all'): 
+        self.use = use        
         def stitchMissions():
             list_of_dfs=[]
             for name in self.missiondata:
-                mission = self.missiondata[name]
-                tmp = self.find_centers(mission)
-                list_of_dfs.append( tmp )
+                if self.use == 'all' or self.use in name:
+                    mission = self.missiondata[name]
+                    tmp = self.find_centers(mission)
+                    list_of_dfs.append( tmp )
             data_concat = pd.concat(list_of_dfs,ignore_index=True)
             data_chron = data_concat.sort_values(by='time').reset_index(drop=True)
             return data_chron
@@ -188,10 +204,10 @@ class ReconDataset:
             timer_start = dt.now()
             
             #Interpolate center position to time of each ob
-            f = interp1d(mdates.date2num(centers['time']),centers['lon'],fill_value='extrapolate',kind='linear')
-            interp_clon = f(mdates.date2num(data['time']))
-            f = interp1d(mdates.date2num(centers['time']),centers['lat'],fill_value='extrapolate',kind='linear')
-            interp_clat = f(mdates.date2num(data['time']))
+            f1 = interp1d(mdates.date2num(centers['time']),centers['lon'],fill_value='extrapolate',kind='linear')
+            interp_clon = f1(mdates.date2num(data['time']))
+            f2 = interp1d(mdates.date2num(centers['time']),centers['lat'],fill_value='extrapolate',kind='linear')
+            interp_clat = f2(mdates.date2num(data['time']))
 
             #Get x,y distance of each ob from coinciding interped center position
             data['xdist'] = [great_circle( (interp_clat[i],interp_clon[i]), \
@@ -200,15 +216,13 @@ class ReconDataset:
             data['ydist'] = [great_circle( (interp_clat[i],interp_clon[i]), \
                 (data['lat'][i],interp_clon[i]) ).kilometers* \
                 [1,-1][int(data['lat'][i] < interp_clat[i])] for i in range(len(data))]
-            
-            print(data['xdist'])
-            
-        print('--> Completed recentering recon data (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
+                        
+            print('--> Completed recentering recon data (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
         return data
         
     def __getSubTime(self,time):
         
-        if isinstance(time,list):
+        if isinstance(time,(tuple,list)):
             t1=min(time)
             t2=max(time)
         else:
@@ -251,11 +265,11 @@ class ReconDataset:
         return selected
 
 
-    #PLOT FUNCTION FOR RECON
-    def plot_recon(self,recon_select,zoom="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
+    #PLOT FUNCTION FOR RECON POINTS
+    def plot_points(self,recon_select=None,varname='wspd',zoom="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
-        Creates a plot of recon data.
+        Creates a plot of recon data points.
         
         Parameters
         ----------
@@ -263,6 +277,12 @@ class ReconDataset:
             pandas.DataFrame or dict,
             or string referencing the mission name (e.g. '12_NOAA'), 
             or datetime or list of start/end datetimes.
+        varname : str
+            Variable to plot. Can be one of the following keys in recon_select dataframe:
+            "sfmr" - SFMR surface wind
+            "wspd" - 30-second flight level wind 
+            "pkwnd" - 10-second flight level wind
+            "p_sfc" - extrapolated surface pressure
         zoom : str
             Zoom for the plot. Can be one of the following:
             "dynamic" - default - dynamically focuses the domain using the tornado track(s) plotted, 
@@ -287,7 +307,9 @@ class ReconDataset:
         
         #Get plot data
         
-        if isinstance(recon_select,pd.core.frame.DataFrame):
+        if recon_select is None:
+            dfRecon = self.recentered
+        elif isinstance(recon_select,pd.core.frame.DataFrame):
             dfRecon = recon_select
         elif isinstance(recon_select,dict):
             dfRecon = pd.DataFrame.from_dict(recon_select)
@@ -305,11 +327,301 @@ class ReconDataset:
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        plot_info = self.plot_obj.plot_recon(dfRecon,zoom,ax,return_ax,prop=prop,map_prop=map_prop)
+        plot_info = self.plot_obj.plot_points(self.storm_obj,dfRecon,zoom,varname=varname,\
+                                              ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax==True:
-            return plot_info[0],plot_info[1],plot_info[2]
+            return plot_info
 
+
+    #PLOT FUNCTION FOR RECON HOVMOLLER
+    def plot_hovmoller(self,recon_select=None,varname='wspd',radlim=None,track_dict=None,\
+                       ax=None,return_ax=False,**kwargs):
+        
+        r"""
+        Creates a hovmoller of azimuthally-averaged recon data.
+        
+        Parameters
+        ----------
+        recon_select : Requested recon data
+            pandas.DataFrame or dict,
+            or string referencing the mission name (e.g. '12_NOAA'), 
+            or datetime or list of start/end datetimes.
+        varname : Variable to average and plot (e.g. 'wspd').
+            String
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+            
+        Additional Parameters
+        ---------------------
+        prop : dict
+            Property of recon plot.
+        """
+        
+        #Pop kwargs
+        prop = kwargs.pop('prop',{'cmap':'category','levels':None})  
+
+        #Get plot data
+        
+        if recon_select is None:
+            dfRecon = self.recentered
+        elif isinstance(recon_select,pd.core.frame.DataFrame):
+            dfRecon = recon_select
+        elif isinstance(recon_select,dict):
+            dfRecon = pd.DataFrame.from_dict(recon_select)
+        elif isinstance(recon_select,str):
+            dfRecon = self.recentered[recon_select]
+        else:
+            dfRecon = self.__getSubTime(recon_select)
+        
+        if track_dict is None:
+            track_dict = self.storm_obj.dict
+        
+        iRecon = interpRecon(dfRecon,varname,radlim)
+        Hov_dict = iRecon.interpHovmoller(track_dict)
+
+        title = get_recon_title(varname)
+        if prop['levels'] is None:
+            prop['levels'] = np.arange(np.floor(np.nanmin(Hov_dict['hovmoller'])/10)*10,
+                            np.ceil(np.nanmax(Hov_dict['hovmoller'])/10)*10+1,10)
+        cmap,levels = get_cmap_levels(varname,prop['cmap'],prop['levels'],linear=True)
+        
+        time = Hov_dict['time']
+        radius = Hov_dict['radius']
+        vardata = Hov_dict['hovmoller']
+        
+        #Create plot        
+        plt.figure(figsize=(9,11),dpi=150)
+        ax=plt.subplot()
+        cf=ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),\
+                     levels=levels,cmap=cmap)
+        ax.axis([0,max(radius),min(time),max(time)])
+        
+        ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d %H'))
+        
+        ax.set_ylabel('UTC Time (MM-DD HH)')
+        ax.set_xlabel('Radius (km)')
+        plt.colorbar(cf,orientation='horizontal',pad=0.1)
+
+        mlib.rcParams.update({'font.size': 16})
+        
+        #--------------------------------------------------------------------------------------
+        
+        title_left,title_right = ReconPlot().plot_hovmoller(self.storm_obj,Hov_dict,varname)
+        ax.set_title(title_left,loc='left',fontsize=17,fontweight='bold')
+        ax.set_title(title_right,loc='right',fontsize=13)
+        
+        #Return axis
+        if return_ax:
+            return ax
+
+
+    #PLOT FUNCTION FOR RECON MAPS
+    def plot_maps(self,recon_select=None,varname='wspd',track_dict=None,recon_stats=None,zoom="dynamic",\
+                  ax=None,return_ax=False,savetopath=None,cartopy_proj=None,**kwargs):
+        
+        r"""
+        Creates maps of interpolated recon data. 
+        
+        Parameters
+        ----------
+        recon_select : Requested recon data
+            pandas.DataFrame or dict,
+            or string referencing the mission name (e.g. '12_NOAA'), 
+            or datetime or list of start/end datetimes.
+        varname : str
+            Variable to plot. Can be one of the following keys in recon_select dataframe:
+            "sfmr" - SFMR surface wind
+            "wspd" - 30-second flight level wind 
+            "pkwnd" - 10-second flight level wind
+            "p_sfc" - extrapolated surface pressure
+        zoom : str
+            Zoom for the plot. Can be one of the following:
+            "dynamic" - default - dynamically focuses the domain around , 
+            "north_atlantic" - North Atlantic Ocean basin, 
+            "lonW/lonE/latS/latN" - Custom plot domain.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+            
+        Additional Parameters
+        ---------------------
+        prop : dict
+            Property of recon plot.
+        map_prop : dict
+            Property of cartopy map.
+        """
+        
+        #Pop kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
+        
+        #Get plot data
+
+        if recon_select is None:
+            dfRecon = self.recentered        
+        elif isinstance(recon_select,pd.core.frame.DataFrame):
+            dfRecon = recon_select
+        elif isinstance(recon_select,dict):
+            dfRecon = pd.DataFrame.from_dict(recon_select)
+        elif isinstance(recon_select,str):
+            dfRecon = self.missiondata[recon_select]
+        else:
+            dfRecon = self.__getSubTime(recon_select)
+            if not isinstance(recon_select,(tuple,list)):
+                ONE_MAP = True
+        
+        if track_dict is None:
+            track_dict = self.storm_obj.dict
+        if ONE_MAP:
+            clon = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lon'])
+            clat = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lat'])
+            track_dict = {'time':recon_select,'lon':clon,'lat':clat}
+        
+        iRecon = interpRecon(dfRecon,varname)
+        Maps = iRecon.interpMaps(track_dict)
+                
+        titlename,units = get_recon_title(varname)
+        
+        if not ONE_MAP:
+            if savetopath is True:
+                savetopath = f'{self.storm}{self.year}_{varname}_maps'
+            try:
+                os.system(f'mkdir {savetopath}')
+            except:
+                pass
+            
+            figs = []
+            for i,t in enumerate(Maps['time']):
+                Maps_sub = {'time':t,'grid_x':Maps['grid_x'],'grid_y':Maps['grid_y'],'maps':Maps['maps'][i],\
+                            'center_lon':Maps['center_lon'][i],'center_lat':Maps['center_lat'][i],'stats':Maps['stats']}
+
+                #Create instance of plot object
+                self.plot_obj = ReconPlot()
+                
+                #Create cartopy projection
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+                cartopy_proj = self.plot_obj.proj
+                
+                #Plot recon
+                plot_info = self.plot_obj.plot_maps(self.storm_obj,Maps_sub,varname,recon_stats,\
+                                                    zoom,ax,return_ax=True,prop=prop,map_prop=map_prop)
+                
+                figs.append(plot_info)
+                
+                if savetopath is not None:
+                    plt.savefig(f'{savetopath}/{t.strftime("%Y%m%d%H%M")}')
+                plt.close()
+                
+            if savetopath is None:
+                return figs
+            
+
+        else:
+            #Create instance of plot object
+            self.plot_obj = ReconPlot()
+            
+            #Create cartopy projection
+            if cartopy_proj is None:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+                cartopy_proj = self.plot_obj.proj
+            
+            #Plot recon
+            plot_info = self.plot_obj.plot_maps(self.storm_obj,Maps,varname,recon_stats,\
+                                                zoom,ax,return_ax,prop=prop,map_prop=map_prop)
+            
+            #Return axis
+            if ax is not None or return_ax:
+                return plot_info
+            
+ 
+    
+    #PLOT FUNCTION FOR RECON SWATH
+    def plot_swath(self,recon_select=None,varname='wspd',swathfunc=None,track_dict=None,radlim=None,\
+                   zoom="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
+        
+        r"""
+        Creates a map plot of a swath of interpolated recon data.
+        
+        Parameters
+        ----------
+        recon_select : Requested recon data
+            pandas.DataFrame or dict,
+            or string referencing the mission name (e.g. '12_NOAA'), 
+            or datetime or list of start/end datetimes.
+        varname : str
+            Variable to plot. Can be one of the following keys in recon_select dataframe:
+            "sfmr" - SFMR surface wind
+            "wspd" - 30-second flight level wind 
+            "pkwnd" - 10-second flight level wind
+            "p_sfc" - extrapolated surface pressure
+        swathfunc : function
+            Function to operate on interpolated recon data.
+            e.g. np.max, np.min, or percentile function
+        zoom : str
+            Zoom for the plot. Can be one of the following:
+            "dynamic" - default - dynamically focuses the domain using the tornado track(s) plotted, 
+            "north_atlantic" - North Atlantic Ocean basin, 
+            "lonW/lonE/latS/latN" - Custom plot domain.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+            
+        Additional Parameters
+        ---------------------
+        prop : dict
+            Property of recon plot.
+        map_prop : dict
+            Property of cartopy map.
+        """
+        
+        #Pop kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
+        
+        #Get plot data
+
+        if recon_select is None:
+            dfRecon = self.recentered        
+        elif isinstance(recon_select,pd.core.frame.DataFrame):
+            dfRecon = recon_select
+        elif isinstance(recon_select,dict):
+            dfRecon = pd.DataFrame.from_dict(recon_select)
+        elif isinstance(recon_select,str):
+            dfRecon = self.missiondata[recon_select]
+        else:
+            dfRecon = self.__getSubTime(recon_select)
+
+        if track_dict is None:
+            track_dict = self.storm_obj.dict
+        
+        if swathfunc is None:
+            if varname == 'p_sfc':
+                swathfunc = np.min
+            else:
+                swathfunc = np.max
+        
+        iRecon = interpRecon(dfRecon,varname)
+        Maps = iRecon.interpMaps(track_dict,interval=.2)
+        
+        #Create instance of plot object
+        self.plot_obj = ReconPlot()
+        
+        #Create cartopy projection
+        if cartopy_proj == None:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+            cartopy_proj = self.plot_obj.proj
+        
+        #Plot recon
+        plot_info = self.plot_obj.plot_swath(self.storm_obj,Maps,varname,swathfunc,track_dict,radlim,\
+                                             zoom,ax,return_ax,prop=prop,map_prop=map_prop)
     
     
+        #Return axis
+        if ax != None or return_ax==True:
+            return plot_info

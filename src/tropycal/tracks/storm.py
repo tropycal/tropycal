@@ -1118,7 +1118,7 @@ class Storm:
             
     def get_recon(self):
         
-        self.recon = ReconDataset((self.name,self.year))
+        self.recon = ReconDataset(self)
                 
     def get_archer(self):
         URL=f'http://tropic.ssec.wisc.edu/real-time/adt/archive{self.year}/{self.id[2:4]}{self.id[1]}-list.txt'

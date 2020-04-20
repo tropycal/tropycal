@@ -3,6 +3,7 @@ import numpy as np
 from datetime import datetime as dt,timedelta
 import pandas as pd
 import requests
+import pickle
 
 from scipy.interpolate import interp1d
 from scipy.ndimage import gaussian_filter as gfilt,gaussian_filter1d as gfilt1d
@@ -46,14 +47,24 @@ class ReconDataset:
     """
 
     #init class
-    def __init__(self,storm):
+    def __init__(self,storm,save_path="",read_path=""):
+        
+        if save_path != "" and read_path != "":
+            raise ValueError("Error: Cannot read in and save a file at the same time.")
         
         self.url_prefix = 'http://tropicalatlantic.com/recon/recon.cgi?'
         self.storm_obj = storm
         self.storm = str(storm.name)
         self.year = str(storm.year)
-        self.missiondata = self.allMissions()
+        
+        if read_path != "":
+            self.missiondata = pickle.load(open(read_path,'rb'))
+        else:
+            self.missiondata = self.allMissions()
+            if save_path != "": pickle.dump(self.missiondata,open(save_path,'wb'),-1)
+        
         self.recentered = self.recenter()
+            
         
     def getMission(self,agency,mission_num,url_mission=None):
         if url_mission is None:
@@ -266,6 +277,7 @@ class ReconDataset:
 
 
     #PLOT FUNCTION FOR RECON POINTS
+    #Passed!
     def plot_points(self,recon_select=None,varname='wspd',zoom="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
@@ -336,6 +348,7 @@ class ReconDataset:
 
 
     #PLOT FUNCTION FOR RECON HOVMOLLER
+    #Passed!
     def plot_hovmoller(self,recon_select=None,varname='wspd',radlim=None,track_dict=None,\
                        ax=None,return_ax=False,**kwargs):
         
@@ -346,7 +359,6 @@ class ReconDataset:
         ----------
         recon_select : Requested recon data
             pandas.DataFrame or dict,
-            or string referencing the mission name (e.g. '12_NOAA'), 
             or datetime or list of start/end datetimes.
         varname : Variable to average and plot (e.g. 'wspd').
             String
@@ -372,8 +384,6 @@ class ReconDataset:
             dfRecon = recon_select
         elif isinstance(recon_select,dict):
             dfRecon = pd.DataFrame.from_dict(recon_select)
-        elif isinstance(recon_select,str):
-            dfRecon = self.recentered[recon_select]
         else:
             dfRecon = self.__getSubTime(recon_select)
         
@@ -392,6 +402,9 @@ class ReconDataset:
         time = Hov_dict['time']
         radius = Hov_dict['radius']
         vardata = Hov_dict['hovmoller']
+        
+        #Error check time
+        time = [dt.strptime((i.strftime('%Y%m%d%H%M')),'%Y%m%d%H%M') for i in time]
         
         #Create plot        
         plt.figure(figsize=(9,11),dpi=150)
@@ -422,6 +435,8 @@ class ReconDataset:
     #PLOT FUNCTION FOR RECON MAPS
     def plot_maps(self,recon_select=None,varname='wspd',track_dict=None,recon_stats=None,zoom="dynamic",\
                   ax=None,return_ax=False,savetopath=None,cartopy_proj=None,**kwargs):
+    
+        #plot_time, plot_mission (only for dots)
         
         r"""
         Creates maps of interpolated recon data. 
@@ -461,7 +476,7 @@ class ReconDataset:
         map_prop = kwargs.pop('map_prop',{})
         
         #Get plot data
-
+        ONE_MAP = False
         if recon_select is None:
             dfRecon = self.recentered        
         elif isinstance(recon_select,pd.core.frame.DataFrame):
@@ -477,6 +492,11 @@ class ReconDataset:
         
         if track_dict is None:
             track_dict = self.storm_obj.dict
+            
+            #Error check for time dimension name
+            if 'time' not in track_dict.keys():
+                track_dict['time'] = track_dict['date']
+                
         if ONE_MAP:
             clon = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lon'])
             clat = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lat'])
@@ -487,7 +507,12 @@ class ReconDataset:
                 
         titlename,units = get_recon_title(varname)
         
+        if 'levels' not in prop.keys() or 'levels' in prop.keys() and prop['levels'] is None:
+            prop['levels'] = np.arange(np.floor(np.nanmin(Maps['maps'])/10)*10,
+                             np.ceil(np.nanmax(Maps['maps'])/10)*10+1,10)
+        
         if not ONE_MAP:
+            
             if savetopath is True:
                 savetopath = f'{self.storm}{self.year}_{varname}_maps'
             try:

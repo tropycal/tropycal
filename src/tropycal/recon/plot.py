@@ -535,7 +535,7 @@ class ReconPlot(Plot):
      
     def plot_maps(self,storm,Maps_dict,varname,recon_stats=None,\
                   zoom='dynamic',ax=None,return_ax=False,prop={},map_prop={}):
-
+        
         r"""
         Creates a plot of storm-centered recon data interpolated to a grid
         
@@ -554,7 +554,7 @@ class ReconPlot(Plot):
         """
 
         #Set default properties
-        default_prop={'cmap':'category','levels':np.arange(20,161,20),'left_title':'','right_title':'','pcolor':True}
+        default_prop={'cmap':'category','levels':None,'left_title':'','right_title':'','pcolor':True}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(12.5,8.5),'dpi':120}
         
         #Initialize plot
@@ -577,9 +577,6 @@ class ReconPlot(Plot):
         
         mlib.rcParams.update({'font.size': 16})
 
-        if prop['levels'] is None:
-            prop['levels'] = np.arange(np.floor(np.nanmin(aggregate_grid)/10)*10,
-                            np.ceil(np.nanmax(aggregate_grid)/10)*10+1,10)
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
 
         norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
@@ -646,7 +643,7 @@ class ReconPlot(Plot):
         self.ax.set_title(title_left,loc='left',fontsize=17,fontweight='bold')
 
         #Add right title
-        self.ax.set_title(Maps_dict['time'].strftime('%H:%M UTC %-d %b %Y'),loc='right',fontsize=13)
+        self.ax.set_title(Maps_dict['time'].strftime('%H:%M UTC %d %b %Y'),loc='right',fontsize=13)
 
         #Add stats
         if recon_stats is not None:

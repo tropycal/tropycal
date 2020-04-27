@@ -46,6 +46,7 @@ install:
   - python -m pip install Shapely==1.6.4.post2
   - python -m pip install networkx
   - python -m pip install pytest
+  - python -m pip install Pillow
 
 script:
   - pytest tests/tracks.py

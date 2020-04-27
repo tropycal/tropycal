@@ -8,6 +8,7 @@ import warnings
 from datetime import datetime as dt,timedelta
 import scipy.ndimage as ndimage
 import networkx as nx
+from scipy.ndimage import gaussian_filter as gfilt
 
 from ..plot import Plot
 from .tools import *
@@ -32,7 +33,7 @@ except:
 
 class TrackPlot(Plot):
     
-    def plot_storm(self,storm,zoom="dynamic",plot_all=False,ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_storm(self,storm,zoom="dynamic",plot_all=False,ax=None,return_ax=False,track_labels=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -131,7 +132,7 @@ class TrackPlot(Plot):
                 self.ax.plot([lons[i-1],lons[i]],[lats[i-1],lats[i]],
                               '-',color=category_color(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
                               transform=ccrs.PlateCarree(),
-                              path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*0.2, foreground='k'), path_effects.Normal()])
+                              path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*1.2, foreground='k'), path_effects.Normal()])
         else:
             self.ax.plot(lons,lats,'-',color=prop['linecolor'],linewidth=prop['linewidth'],transform=ccrs.PlateCarree())
 
@@ -161,9 +162,18 @@ class TrackPlot(Plot):
                 else:
                     ncol = 'k'
                 self.ax.plot(ilon,ilat,mtype,color=ncol,mec='k',mew=0.5,ms=prop['ms'],transform=ccrs.PlateCarree())
+            
+            #Label track dots
+            if track_labels in ['valid_utc']:
+                if track_labels == 'valid_utc':
+                    strformat = '%H UTC \n%-m/%-d'
+                    labels = {t.strftime(strformat):(x,y) for t,x,y in zip(sdate,lons,lats) if t.hour==0}
+                    track = {t.strftime(strformat):(x,y) for t,x,y in zip(sdate,lons,lats)}
+                self.plot_track_labels(self.ax, labels, track, k=.9)
+
 
         #--------------------------------------------------------------------------------------
-        
+
         
         #Pre-generated zooms
         if zoom in ['north_atlantic','east_pacific','west_pacific','south_pacific','south_indian','north_indian','australia','all']:
@@ -470,8 +480,7 @@ class TrackPlot(Plot):
             self.ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
 
         #Return axis if specified, otherwise display figure
-        if ax != None or return_ax == True:
-            return self.ax
+            return self.ax,'/'.join([str(i) for i in [bound_w,bound_e,bound_s,bound_n]])
         else:
             plt.show()
             plt.close()
@@ -511,7 +520,7 @@ class TrackPlot(Plot):
         """
         
         #Set default properties
-        default_prop={'dots':True,'fillcolor':'category','linecolor':'k','category_colors':'default','linewidth':1.0,'ms':7.5}
+        default_prop={'dots':True,'fillcolor':'category','linecolor':'k','category_colors':'default','linewidth':1.0,'ms':7.5,'cone_lw':1.0,'cone_alpha':0.6}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
@@ -614,7 +623,7 @@ class TrackPlot(Plot):
                         self.ax.plot([lons[i-1],lons[i]],[lats[i-1],lats[i]],
                                       '-',color=category_color(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
                                       transform=ccrs.PlateCarree(),
-                                      path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*0.2, foreground='k'), path_effects.Normal()])
+                                      path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*1.25, foreground='k'), path_effects.Normal()])
                 else:
                     self.ax.plot(lons,lats,'-',color=prop['linecolor'],linewidth=prop['linewidth'],transform=ccrs.PlateCarree())
 
@@ -679,8 +688,8 @@ class TrackPlot(Plot):
                 cone_lon = new_lons.tolist() 
             cone_2d = cone['cone']
             cone_2d = ndimage.gaussian_filter(cone_2d,sigma=0.5,order=0)
-            self.ax.contourf(cone_lon_2d,cone_lat_2d,cone_2d,[0.9,1.1],colors=['#ffffff','#ffffff'],alpha=0.6,zorder=2,transform=ccrs.PlateCarree())
-            self.ax.contour(cone_lon_2d,cone_lat_2d,cone_2d,[0.9],linewidths=1.0,colors=['k'],zorder=3,transform=ccrs.PlateCarree())
+            self.ax.contourf(cone_lon_2d,cone_lat_2d,cone_2d,[0.9,1.1],colors=['#ffffff','#ffffff'],alpha=prop['cone_alpha'],zorder=2,transform=ccrs.PlateCarree())
+            self.ax.contour(cone_lon_2d,cone_lat_2d,cone_2d,[0.9],linewidths=prop['cone_lw'],colors=['k'],zorder=3,transform=ccrs.PlateCarree())
 
             #Plot center line & account for dateline crossing
             center_lon = cone['center_lon']
@@ -747,8 +756,12 @@ class TrackPlot(Plot):
 
         #--------------------------------------------------------------------------------------
 
+        #Pre-generated zooms
+        if zoom in ['north_atlantic','east_pacific','west_pacific','south_pacific','south_indian','north_indian','australia','all']:
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
+
         #Storm-centered plot domain
-        if zoom == "dynamic" or zoom == 'dynamic_forecast':
+        elif zoom == "dynamic" or zoom == 'dynamic_forecast':
             
             bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
 
@@ -980,12 +993,8 @@ class TrackPlot(Plot):
         #Pre-generated zooms
         bound_w,bound_e,bound_s,bound_n = self.set_projection(season.basin)
             
-        #Plot parallels and meridians
-        #This is currently not supported for all cartopy projections.
-        try:
-            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
-        except:
-            pass
+        #Determine number of lat/lon lines to use for parallels & meridians
+        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
         
         #Add storm labels
         if season.basin != 'all':
@@ -1228,12 +1237,19 @@ class TrackPlot(Plot):
             subtract_by = t[0]
             t = t - t[0]
             interp_fhr_idx = np.arange(t[0],t[-1]+0.1,0.1) - t[0]
-        elif 3 in forecast['fhr'] and 0 in forecast['fhr']:
-            fcst_lon = forecast['lon'][1:]
-            fcst_lat = forecast['lat'][1:]
-            fhr = forecast['fhr'][1:]
+        elif 3 in forecast['fhr'] and 1 in forecast['fhr'] and 0 in forecast['fhr']:
+            fcst_lon = forecast['lon'][2:]
+            fcst_lat = forecast['lat'][2:]
+            fhr = forecast['fhr'][2:]
             t = np.array(fhr)/6.0
-            interp_fhr_idx = np.arange(t[0],t[-1]+0.1,0.1)
+            interp_fhr_idx = np.arange(t[0],t[-1]+0.01,0.1)
+        elif 3 in forecast['fhr'] and 0 in forecast['fhr']:
+            idx = np.array([i for i,j in enumerate(forecast['fhr']) if j in cone_climo_hr])
+            fcst_lon = np.array(forecast['lon'])[idx]
+            fcst_lat = np.array(forecast['lat'])[idx]
+            fhr = np.array(forecast['fhr'])[idx]
+            t = np.array(fhr)/6.0
+            interp_fhr_idx = np.arange(t[0],t[-1]+0.01,0.1)
         elif forecast['fhr'][1] < 12:
             cone_climo_hr[0] = 0
             fcst_lon = [forecast['lon'][0]]+forecast['lon'][2:]
@@ -1251,7 +1267,7 @@ class TrackPlot(Plot):
 
         #Determine index of forecast day cap
         if (cone_days*24) in fhr:
-            cone_day_cap = fhr.index(cone_days*24)+1
+            cone_day_cap = list(fhr).index(cone_days*24)+1
             fcst_lon = fcst_lon[:cone_day_cap]
             fcst_lat = fcst_lat[:cone_day_cap]
             fhr = fhr[:cone_day_cap]
@@ -1304,6 +1320,53 @@ class TrackPlot(Plot):
         return_dict = {'lat':gridlats,'lon':gridlons,'lat2d':gridlats2d,'lon2d':gridlons2d,'cone':griddata,
                        'center_lon':interp_lon,'center_lat':interp_lat,'year':cone_year}
         return return_dict
+
+    def plot_track_labels(self, ax, labels, track, k=0.01):
+
+        label_nodes = list(labels.keys())
+        labels['place1'] = (2*labels[label_nodes[0]][0]-labels[label_nodes[1]][0],\
+                          2*labels[label_nodes[0]][1]-labels[label_nodes[1]][1])
+        labels['place2'] = (2*labels[label_nodes[-1]][0]-labels[label_nodes[-2]][0],\
+                          2*labels[label_nodes[-1]][1]-labels[label_nodes[-2]][1])
+        track['place1'] = labels['place1']
+        track['place2'] = labels['place2']
+        
+        G = nx.DiGraph()
+        track_nodes = []
+        init_pos = {}
+        
+        for lab in track.keys():
+            labG = 'track_{0}'.format(lab)
+            G.add_node(labG)
+            track_nodes.append(labG)
+            init_pos[labG] = track[lab]
+            
+        for lab in labels.keys():
+            G.add_node(lab)
+            G.add_edge(lab,'track_{0}'.format(lab))
+            init_pos[lab] = labels[lab]
+            
+        pos = nx.spring_layout(G, pos=init_pos, fixed=track_nodes, k=k)
+
+        # undo spring_layout's rescaling
+        pos_after = np.vstack([pos[d] for d in track_nodes])
+        pos_before = np.vstack([init_pos[d] for d in track_nodes])
+        scale, shift_x = np.polyfit(pos_after[:,0], pos_before[:,0], 1)
+        scale, shift_y = np.polyfit(pos_after[:,1], pos_before[:,1], 1)
+        shift = np.array([shift_x, shift_y])
+        for key, val in pos.items():
+            pos[key] = (val*scale) + shift
+
+        for label, _ in G.edges():
+            if 'place' not in label:
+                self.ax.annotate(label,
+                            xy=init_pos[label], xycoords='data',
+                            xytext=pos[label], textcoords='data', fontweight='bold', ha='center', va='center',
+                            arrowprops=dict(arrowstyle="-",#->
+                                            shrinkA=0, shrinkB=0,
+                                            connectionstyle="arc3", 
+                                            color='k'),
+                            transform=ccrs.PlateCarree())
     
     def plot_nhc_labels(self, ax, x, y, labels, k=0.01):
 
@@ -1372,7 +1435,7 @@ class TrackPlot(Plot):
         """
         
         #Set default properties
-        default_prop={'cmap':'category','clevs':[np.nanmin(zcoord),np.nanmax(zcoord)],'left_title':'','right_title':'All storms'}
+        default_prop={'cmap':'category','clevs':[np.nanmin(zcoord),np.nanmax(zcoord)],'left_title':'','right_title':'All storms','pcolor':True,'smooth':None}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
@@ -1414,7 +1477,10 @@ class TrackPlot(Plot):
         
         #--------------------------------------------------------------------------------------
         
-        _,varname = findvar(prop['title_L'],{})
+        try:
+            _,varname = findvar(prop['title_L'],{})
+        except:
+            varname = 'date'
         cmap,clevs = make_cmap(varname,prop['cmap'],prop['clevs'])
         
         if len(xcoord.shape) and len(ycoord.shape)==1:
@@ -1436,10 +1502,22 @@ class TrackPlot(Plot):
             zcoord = mag
         
         else:
-            cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+            print('doing the plotting')
+            if prop['pcolor']:
+                if varname=='date' and prop['smooth'] is not None:
+                    zcoord[np.isnan(zcoord)]=0
+                    zcoord=gfilt(zcoord,sigma=prop['smooth'])
+                    zcoord[zcoord<min(clevs)]=np.nan
+                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+                               transform=ccrs.PlateCarree())
+            else:
+                clevs = prop['clevs']
+                cmap = prop['cmap']
+                cbmap = self.ax.contourf(xcoord,ycoord,zcoord,clevs,cmap = cmap,
                                transform=ccrs.PlateCarree())
         
         #--------------------------------------------------------------------------------------
+
         
         #Phantom legend
         handles=[]
@@ -1454,8 +1532,9 @@ class TrackPlot(Plot):
 
         #Define colorbar axis
         cax = self.fig.add_axes([bb.x0+bb.width, bb.y0-.05*bb.height, 0.015, bb.height])
-        cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical')
-        if len(clevs)>2:
+        cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
+                                 ticks=clevs)
+        if len(clevs)>2 and prop['pcolor']:
             cbar.ax.yaxis.set_ticks(clevs)
         cbar.ax.tick_params(labelsize=11.5)
         cax.yaxis.set_ticks_position('left')

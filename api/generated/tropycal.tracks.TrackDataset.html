@@ -35,8 +35,10 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="tornado" href="tropycal.tornado.html" />
@@ -177,9 +179,9 @@
             
   <div class="section" id="trackdataset">
 <h1>TrackDataset<a class="headerlink" href="#trackdataset" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="tropycal.tracks.TrackDataset">
-<em class="property">class </em><code class="sig-prename descclassname">tropycal.tracks.</code><code class="sig-name descname">TrackDataset</code><span class="sig-paren">(</span><em class="sig-param">basin='north_atlantic'</em>, <em class="sig-param">source='hurdat'</em>, <em class="sig-param">include_btk=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">tropycal.tracks.</code><code class="sig-name descname">TrackDataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basin</span><span class="o">=</span><span class="default_value">'north_atlantic'</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">'hurdat'</span></em>, <em class="sig-param"><span class="n">include_btk</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of a TrackDataset object containing various cyclone data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -287,15 +289,15 @@
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">basin='north_atlantic'</em>, <em class="sig-param">source='hurdat'</em>, <em class="sig-param">include_btk=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basin</span><span class="o">=</span><span class="default_value">'north_atlantic'</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">'hurdat'</span></em>, <em class="sig-param"><span class="n">include_btk</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.ace_climo">
-<code class="sig-name descname">ace_climo</code><span class="sig-paren">(</span><em class="sig-param">plot_year=None</em>, <em class="sig-param">compare_years=None</em>, <em class="sig-param">start_year=1950</em>, <em class="sig-param">rolling_sum=0</em>, <em class="sig-param">return_dict=False</em>, <em class="sig-param">plot=True</em>, <em class="sig-param">save_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.ace_climo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.ace_climo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ace_climo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plot_year</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">compare_years</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_year</span><span class="o">=</span><span class="default_value">1950</span></em>, <em class="sig-param"><span class="n">rolling_sum</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">return_dict</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">save_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.ace_climo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.ace_climo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a climatology of accumulated cyclone energy (ACE).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -315,9 +317,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.assign_storm_tornadoes">
-<code class="sig-name descname">assign_storm_tornadoes</code><span class="sig-paren">(</span><em class="sig-param">dist_thresh=1000</em>, <em class="sig-param">tornado_path='spc'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.assign_storm_tornadoes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.assign_storm_tornadoes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">assign_storm_tornadoes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dist_thresh</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">tornado_path</span><span class="o">=</span><span class="default_value">'spc'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.assign_storm_tornadoes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.assign_storm_tornadoes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assigns tornadoes to all North Atlantic tropical cyclones from TornadoDataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -331,9 +333,9 @@
 <p>If you intend on analyzing tornadoes for multiple tropical cyclones using a Storm object, it is recommended to run this function first to avoid the need to re-read the entire tornado database for each Storm object.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.filter_storms">
-<code class="sig-name descname">filter_storms</code><span class="sig-paren">(</span><em class="sig-param">year_range=(0</em>, <em class="sig-param">9999)</em>, <em class="sig-param">date_range=('1/1'</em>, <em class="sig-param">'12/31')</em>, <em class="sig-param">thresh={}</em>, <em class="sig-param">subset_domain=(0</em>, <em class="sig-param">360</em>, <em class="sig-param">-90</em>, <em class="sig-param">90)</em>, <em class="sig-param">doInterp=False</em>, <em class="sig-param">return_keys=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.filter_storms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.filter_storms" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">filter_storms</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">year_range</span><span class="o">=</span><span class="default_value">0, 9999</span></em>, <em class="sig-param"><span class="n">date_range</span><span class="o">=</span><span class="default_value">'1/1', '12/31'</span></em>, <em class="sig-param"><span class="n">thresh</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">subset_domain</span><span class="o">=</span><span class="default_value">0, 360, - 90, 90</span></em>, <em class="sig-param"><span class="n">doInterp</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">return_keys</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.filter_storms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.filter_storms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filters all storms by various thresholds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -363,9 +365,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.get_season">
-<code class="sig-name descname">get_season</code><span class="sig-paren">(</span><em class="sig-param">year</em>, <em class="sig-param">basin='all'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.get_season"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.get_season" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_season</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">year</span></em>, <em class="sig-param"><span class="n">basin</span><span class="o">=</span><span class="default_value">'all'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.get_season"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.get_season" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves a Season object for the requested season.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -380,9 +382,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.get_storm">
-<code class="sig-name descname">get_storm</code><span class="sig-paren">(</span><em class="sig-param">storm</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.get_storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.get_storm" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_storm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.get_storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.get_storm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves a Storm object for the requested storm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -394,9 +396,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.get_storm_id">
-<code class="sig-name descname">get_storm_id</code><span class="sig-paren">(</span><em class="sig-param">storm</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.get_storm_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.get_storm_id" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_storm_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.get_storm_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.get_storm_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the storm ID (e.g., “AL012019”) given the storm name and year.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -408,9 +410,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.gridded_stats">
-<code class="sig-name descname">gridded_stats</code><span class="sig-paren">(</span><em class="sig-param">cmd_request</em>, <em class="sig-param">thresh={}</em>, <em class="sig-param">year_range=None</em>, <em class="sig-param">date_range=('1/1'</em>, <em class="sig-param">'12/31')</em>, <em class="sig-param">binsize=1</em>, <em class="sig-param">zoom=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={'title_L': 'Maximum wind (kt)'</em>, <em class="sig-param">'title_R': 'Jan/01 – Dec/31 • 1851 – 2020'}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.gridded_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.gridded_stats" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">gridded_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cmd_request</span></em>, <em class="sig-param"><span class="n">thresh</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">year_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">date_range</span><span class="o">=</span><span class="default_value">'1/1', '12/31'</span></em>, <em class="sig-param"><span class="n">binsize</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">zoom</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{'title_L': 'Maximum wind (kt)', 'title_R': 'Jan/01 – Dec/31 • 1851 – 2020'}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.gridded_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.gridded_stats" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of gridded statistics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -467,9 +469,9 @@ This string is also used as the plot title.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.hurricane_days_climo">
-<code class="sig-name descname">hurricane_days_climo</code><span class="sig-paren">(</span><em class="sig-param">plot_year=None</em>, <em class="sig-param">compare_years=None</em>, <em class="sig-param">start_year=1950</em>, <em class="sig-param">rolling_sum=0</em>, <em class="sig-param">category=None</em>, <em class="sig-param">return_dict=False</em>, <em class="sig-param">plot=True</em>, <em class="sig-param">save_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.hurricane_days_climo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.hurricane_days_climo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">hurricane_days_climo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plot_year</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">compare_years</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_year</span><span class="o">=</span><span class="default_value">1950</span></em>, <em class="sig-param"><span class="n">rolling_sum</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">category</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_dict</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">save_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.hurricane_days_climo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.hurricane_days_climo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a climatology of tropical storm/hurricane/major hurricane days.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -489,9 +491,9 @@ This string is also used as the plot title.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.plot_TCtors_rotated">
-<code class="sig-name descname">plot_TCtors_rotated</code><span class="sig-paren">(</span><em class="sig-param">storms</em>, <em class="sig-param">mag_thresh=0</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">return_df=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_TCtors_rotated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_TCtors_rotated</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storms</span></em>, <em class="sig-param"><span class="n">mag_thresh</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">return_df</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_TCtors_rotated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -510,9 +512,9 @@ This string is also used as the plot title.</p>
 <p>The motion vector is oriented upwards (in the +y direction).</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.plot_season">
-<code class="sig-name descname">plot_season</code><span class="sig-paren">(</span><em class="sig-param">year</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_season"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_season" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_season</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">year</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_season"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_season" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of a single season.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -527,9 +529,9 @@ This string is also used as the plot title.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.plot_storm">
-<code class="sig-name descname">plot_storm</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">zoom='dynamic'</em>, <em class="sig-param">plot_all=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_storm" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_storm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em>, <em class="sig-param"><span class="n">zoom</span><span class="o">=</span><span class="default_value">'dynamic'</span></em>, <em class="sig-param"><span class="n">plot_all</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_storm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of a single storm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -553,9 +555,9 @@ This string is also used as the plot title.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.plot_storms">
-<code class="sig-name descname">plot_storms</code><span class="sig-paren">(</span><em class="sig-param">storms</em>, <em class="sig-param">zoom='dynamic'</em>, <em class="sig-param">title_text='TC Track Composite'</em>, <em class="sig-param">filter_dates=('1/1'</em>, <em class="sig-param">'12/31')</em>, <em class="sig-param">plot_all_dots=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_storms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_storms" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_storms</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storms</span></em>, <em class="sig-param"><span class="n">zoom</span><span class="o">=</span><span class="default_value">'dynamic'</span></em>, <em class="sig-param"><span class="n">title_text</span><span class="o">=</span><span class="default_value">'TC Track Composite'</span></em>, <em class="sig-param"><span class="n">filter_dates</span><span class="o">=</span><span class="default_value">'1/1', '12/31'</span></em>, <em class="sig-param"><span class="n">plot_all_dots</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_storms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_storms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of multiple storms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -579,9 +581,9 @@ This string is also used as the plot title.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.rank_storm">
-<code class="sig-name descname">rank_storm</code><span class="sig-paren">(</span><em class="sig-param">metric</em>, <em class="sig-param">return_df=True</em>, <em class="sig-param">ascending=False</em>, <em class="sig-param">subset_domain=None</em>, <em class="sig-param">year_range=None</em>, <em class="sig-param">date_range=None</em>, <em class="sig-param">subtropical=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.rank_storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.rank_storm" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">rank_storm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metric</span></em>, <em class="sig-param"><span class="n">return_df</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">ascending</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">subset_domain</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">year_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">date_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">subtropical</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.rank_storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.rank_storm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ranks storm by a specified metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -614,9 +616,9 @@ This string is also used as the plot title.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.search_name">
-<code class="sig-name descname">search_name</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.search_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.search_name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">search_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.search_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.search_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Searches for hurricane seasons containing a storm of the requested name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -628,9 +630,9 @@ This string is also used as the plot title.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.storm_ace_vs_season">
-<code class="sig-name descname">storm_ace_vs_season</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">year_range=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.storm_ace_vs_season"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.storm_ace_vs_season" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">storm_ace_vs_season</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em>, <em class="sig-param"><span class="n">year_range</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.storm_ace_vs_season"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.storm_ace_vs_season" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrives a list of entire hurricane seasons with lower ACE than the storm provided.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -645,9 +647,9 @@ This string is also used as the plot title.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.wind_pres_relationship">
-<code class="sig-name descname">wind_pres_relationship</code><span class="sig-paren">(</span><em class="sig-param">storm=None</em>, <em class="sig-param">year_range=None</em>, <em class="sig-param">return_dict=False</em>, <em class="sig-param">plot=True</em>, <em class="sig-param">save_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.wind_pres_relationship"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.wind_pres_relationship" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">wind_pres_relationship</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">year_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_dict</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">save_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.wind_pres_relationship"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.wind_pres_relationship" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a climatology of maximum sustained wind speed vs minimum MSLP relationships.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

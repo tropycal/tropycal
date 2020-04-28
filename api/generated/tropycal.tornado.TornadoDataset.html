@@ -35,8 +35,10 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="recon" href="tropycal.recon.html" />
@@ -175,9 +177,9 @@
             
   <div class="section" id="tornadodataset">
 <h1>TornadoDataset<a class="headerlink" href="#tornadodataset" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="tropycal.tornado.TornadoDataset">
-<em class="property">class </em><code class="sig-prename descclassname">tropycal.tornado.</code><code class="sig-name descname">TornadoDataset</code><span class="sig-paren">(</span><em class="sig-param">mag_thresh=0</em>, <em class="sig-param">tornado_path='spc'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">tropycal.tornado.</code><code class="sig-name descname">TornadoDataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mag_thresh</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">tornado_path</span><span class="o">=</span><span class="default_value">'spc'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of a TornadoDataset object containing tornado data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -215,15 +217,15 @@
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tornado.TornadoDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">mag_thresh=0</em>, <em class="sig-param">tornado_path='spc'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mag_thresh</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">tornado_path</span><span class="o">=</span><span class="default_value">'spc'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tornado.TornadoDataset.get_storm_tornadoes">
-<code class="sig-name descname">get_storm_tornadoes</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">dist_thresh</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.get_storm_tornadoes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.get_storm_tornadoes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_storm_tornadoes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em>, <em class="sig-param"><span class="n">dist_thresh</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.get_storm_tornadoes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.get_storm_tornadoes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves all tornado tracks that occur along the track of a tropical cyclone.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -238,9 +240,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tornado.TornadoDataset.plot_TCtors_rotated">
-<code class="sig-name descname">plot_TCtors_rotated</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">dist_thresh=1000</em>, <em class="sig-param">return_ax=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_TCtors_rotated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_TCtors_rotated</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em>, <em class="sig-param"><span class="n">dist_thresh</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_TCtors_rotated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -255,9 +257,9 @@
 <p>The motion vector is oriented upwards (in the +y direction).</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tornado.TornadoDataset.plot_tors">
-<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param">tor_info</em>, <em class="sig-param">zoom='conus'</em>, <em class="sig-param">plotPPF=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_tors" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tor_info</span></em>, <em class="sig-param"><span class="n">zoom</span><span class="o">=</span><span class="default_value">'conus'</span></em>, <em class="sig-param"><span class="n">plotPPF</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_tors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -295,9 +297,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tornado.TornadoDataset.rotateToHeading">
-<code class="sig-name descname">rotateToHeading</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">stormTors</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.rotateToHeading"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.rotateToHeading" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">rotateToHeading</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em>, <em class="sig-param"><span class="n">stormTors</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.rotateToHeading"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.rotateToHeading" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rotate tornado tracks to their position relative to the heading of the TC at the time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

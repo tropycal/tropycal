@@ -1,10 +1,12 @@
-.. note::
-    :class: sphx-glr-download-link-note
+.. only:: html
 
-    Click :ref:`here <sphx_glr_download_examples_tracks.TrackDataset.py>` to download the full example code
-.. rst-class:: sphx-glr-example-title
+    .. note::
+        :class: sphx-glr-download-link-note
 
-.. _sphx_glr_examples_tracks.TrackDataset.py:
+        Click :ref:`here <sphx_glr_download_examples_tracks.TrackDataset.py>`     to download the full example code
+    .. rst-class:: sphx-glr-example-title
+
+    .. _sphx_glr_examples_tracks.TrackDataset.py:
 
 
 ===================
@@ -53,7 +55,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (3.88 seconds)
+    --> Completed reading in HURDAT2 data (3.55 seconds)
 
 
 
@@ -154,7 +156,7 @@ Note that you can pass various arguments to the plot function, such as customizi
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f69e4dba7f0>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f60c7825358>
 
 
 
@@ -271,12 +273,14 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
       return thresh,lambda x: np.nanmax(x)
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:42: RuntimeWarning: All-NaN axis encountered
       return thresh,lambda x: np.nanmax(x)
+    doing the plotting
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:47: RuntimeWarning: Mean of empty slice
       return thresh,lambda x: np.nanmean(x)
+    doing the plotting
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f69dded8080>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f60bdfb7a90>
 
 
 
@@ -308,7 +312,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (42.55 seconds)
+    --> Completed reading in ibtracs data (74.28 seconds)
 
 
 
@@ -338,8 +342,9 @@ Let's make a plot of the maximum sustained wind of TCs globally:
 
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
+    doing the plotting
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f69e430a860>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f60be197048>
 
 
 
@@ -366,6 +371,7 @@ Make a plot of the total number of storms per 1 degree gridbox worldwide:
 
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
+    doing the plotting
 
 
 
@@ -392,6 +398,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
+    doing the plotting
 
 
 
@@ -399,7 +406,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 6 minutes  19.796 seconds)
+   **Total running time of the script:** ( 6 minutes  41.813 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:
@@ -412,13 +419,13 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 
 
-  .. container:: sphx-glr-download
+  .. container:: sphx-glr-download sphx-glr-download-python
 
      :download:`Download Python source code: tracks.TrackDataset.py <tracks.TrackDataset.py>`
 
 
 
-  .. container:: sphx-glr-download
+  .. container:: sphx-glr-download sphx-glr-download-jupyter
 
      :download:`Download Jupyter notebook: tracks.TrackDataset.ipynb <tracks.TrackDataset.ipynb>`
 

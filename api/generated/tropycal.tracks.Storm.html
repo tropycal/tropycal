@@ -35,8 +35,10 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="TrackDataset" href="tropycal.tracks.TrackDataset.html" />
@@ -177,9 +179,9 @@
             
   <div class="section" id="storm">
 <h1>Storm<a class="headerlink" href="#storm" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="tropycal.tracks.Storm">
-<em class="property">class </em><code class="sig-prename descclassname">tropycal.tracks.</code><code class="sig-name descname">Storm</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">stormTors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">tropycal.tracks.</code><code class="sig-name descname">Storm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em>, <em class="sig-param"><span class="n">stormTors</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes an instance of Storm, retrieved via <code class="docutils literal notranslate"><span class="pre">TrackDataset.get_storm()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -207,11 +209,17 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.download_tcr" title="tropycal.tracks.Storm.download_tcr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_tcr</span></code></a>([dir_path])</p></td>
 <td><p>Downloads the NHC offical Tropical Cyclone Report (TCR) for this storm to the requested directory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.get_nhc_discussion" title="tropycal.tracks.Storm.get_nhc_discussion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nhc_discussion</span></code></a>(forecast[, save_path])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.get_archer" title="tropycal.tracks.Storm.get_archer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_archer</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.get_nhc_discussion" title="tropycal.tracks.Storm.get_nhc_discussion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nhc_discussion</span></code></a>(forecast[, save_path])</p></td>
 <td><p>Retrieves a single NHC forecast discussion.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.get_operational_forecasts" title="tropycal.tracks.Storm.get_operational_forecasts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_operational_forecasts</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.get_operational_forecasts" title="tropycal.tracks.Storm.get_operational_forecasts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_operational_forecasts</span></code></a>()</p></td>
 <td><p>Retrieves operational model and NHC forecasts throughout the entire life duration of the storm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.get_recon" title="tropycal.tracks.Storm.get_recon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_recon</span></code></a>([save_path, read_path])</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.list_nhc_discussions" title="tropycal.tracks.Storm.list_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_nhc_discussions</span></code></a>()</p></td>
 <td><p>Retrieves a list of NHC forecast discussions for this storm, archived on <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/archive/">https://ftp.nhc.noaa.gov/atcf/archive/</a>.</p></td>
@@ -240,15 +248,15 @@
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">stormTors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em>, <em class="sig-param"><span class="n">stormTors</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.download_tcr">
-<code class="sig-name descname">download_tcr</code><span class="sig-paren">(</span><em class="sig-param">dir_path=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.download_tcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.download_tcr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">download_tcr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dir_path</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.download_tcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.download_tcr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads the NHC offical Tropical Cyclone Report (TCR) for this storm to the requested directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -257,9 +265,14 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="tropycal.tracks.Storm.get_archer">
+<code class="sig-name descname">get_archer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_archer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_archer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.get_nhc_discussion">
-<code class="sig-name descname">get_nhc_discussion</code><span class="sig-paren">(</span><em class="sig-param">forecast</em>, <em class="sig-param">save_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_nhc_discussion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_nhc_discussion" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_nhc_discussion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">forecast</span></em>, <em class="sig-param"><span class="n">save_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_nhc_discussion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_nhc_discussion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves a single NHC forecast discussion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -274,7 +287,7 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.get_operational_forecasts">
 <code class="sig-name descname">get_operational_forecasts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_operational_forecasts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_operational_forecasts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves operational model and NHC forecasts throughout the entire life duration of the storm.</p>
@@ -285,7 +298,12 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="tropycal.tracks.Storm.get_recon">
+<code class="sig-name descname">get_recon</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_path</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">read_path</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_recon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_recon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.list_nhc_discussions">
 <code class="sig-name descname">list_nhc_discussions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.list_nhc_discussions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.list_nhc_discussions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves a list of NHC forecast discussions for this storm, archived on <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/archive/">https://ftp.nhc.noaa.gov/atcf/archive/</a>.</p>
@@ -296,9 +314,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">zoom='dynamic'</em>, <em class="sig-param">plot_all=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">zoom</span><span class="o">=</span><span class="default_value">'dynamic'</span></em>, <em class="sig-param"><span class="n">plot_all</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of the observed track of the storm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -320,9 +338,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.plot_TCtors_rotated">
-<code class="sig-name descname">plot_TCtors_rotated</code><span class="sig-paren">(</span><em class="sig-param">dist_thresh=1000</em>, <em class="sig-param">return_ax=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_TCtors_rotated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_TCtors_rotated</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dist_thresh</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_TCtors_rotated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -336,9 +354,9 @@
 <p>The motion vector is oriented upwards (in the +y direction).</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.plot_nhc_forecast">
-<code class="sig-name descname">plot_nhc_forecast</code><span class="sig-paren">(</span><em class="sig-param">forecast</em>, <em class="sig-param">track_labels='fhr'</em>, <em class="sig-param">cone_days=5</em>, <em class="sig-param">zoom='dynamic_forecast'</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_nhc_forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_nhc_forecast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_nhc_forecast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">forecast</span></em>, <em class="sig-param"><span class="n">track_labels</span><span class="o">=</span><span class="default_value">'fhr'</span></em>, <em class="sig-param"><span class="n">cone_days</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">zoom</span><span class="o">=</span><span class="default_value">'dynamic_forecast'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_nhc_forecast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_nhc_forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of the operational NHC forecast track along with observed track data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -369,9 +387,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.plot_tors">
-<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param">dist_thresh=1000</em>, <em class="sig-param">Tors=None</em>, <em class="sig-param">zoom='dynamic'</em>, <em class="sig-param">plotPPF=False</em>, <em class="sig-param">plot_all=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={'PPFcolors': 'Wistia'}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_tors" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dist_thresh</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">Tors</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zoom</span><span class="o">=</span><span class="default_value">'dynamic'</span></em>, <em class="sig-param"><span class="n">plotPPF</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_all</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{'PPFcolors': 'Wistia'}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_tors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of the storm and associated tornado tracks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -407,7 +425,7 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.to_dataframe">
 <code class="sig-name descname">to_dataframe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.to_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.to_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts the storm dict into a pandas DataFrame object.</p>
@@ -418,7 +436,7 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.to_dict">
 <code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.to_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the dict entry for the storm.</p>
@@ -429,7 +447,7 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="tropycal.tracks.Storm.to_xarray">
 <code class="sig-name descname">to_xarray</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.to_xarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.to_xarray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts the storm dict into an xarray Dataset object.</p>

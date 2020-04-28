@@ -18,8 +18,10 @@ Storm
    
       ~Storm.__init__
       ~Storm.download_tcr
+      ~Storm.get_archer
       ~Storm.get_nhc_discussion
       ~Storm.get_operational_forecasts
+      ~Storm.get_recon
       ~Storm.list_nhc_discussions
       ~Storm.plot
       ~Storm.plot_TCtors_rotated
@@ -44,8 +46,10 @@ Storm
    
    .. automethod:: __init__
    .. automethod:: download_tcr
+   .. automethod:: get_archer
    .. automethod:: get_nhc_discussion
    .. automethod:: get_operational_forecasts
+   .. automethod:: get_recon
    .. automethod:: list_nhc_discussions
    .. automethod:: plot
    .. automethod:: plot_TCtors_rotated

@@ -21,7 +21,10 @@ ReconDataset
       ~ReconDataset.findMission
       ~ReconDataset.find_centers
       ~ReconDataset.getMission
-      ~ReconDataset.plot_recon
+      ~ReconDataset.plot_hovmoller
+      ~ReconDataset.plot_maps
+      ~ReconDataset.plot_points
+      ~ReconDataset.plot_swath
       ~ReconDataset.recenter
 
    
@@ -42,7 +45,10 @@ ReconDataset
    .. automethod:: findMission
    .. automethod:: find_centers
    .. automethod:: getMission
-   .. automethod:: plot_recon
+   .. automethod:: plot_hovmoller
+   .. automethod:: plot_maps
+   .. automethod:: plot_points
+   .. automethod:: plot_swath
    .. automethod:: recenter
 
    

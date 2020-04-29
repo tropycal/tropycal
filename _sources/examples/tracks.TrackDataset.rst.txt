@@ -55,7 +55,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (3.55 seconds)
+    --> Completed reading in HURDAT2 data (2.77 seconds)
 
 
 
@@ -156,7 +156,7 @@ Note that you can pass various arguments to the plot function, such as customizi
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f60c7825358>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f166f047668>
 
 
 
@@ -280,7 +280,7 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
       return thresh,lambda x: np.nanmean(x)
     doing the plotting
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f60bdfb7a90>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f166d70e0b8>
 
 
 
@@ -312,7 +312,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (74.28 seconds)
+    --> Completed reading in ibtracs data (43.06 seconds)
 
 
 
@@ -344,7 +344,7 @@ Let's make a plot of the maximum sustained wind of TCs globally:
     --> Grouping by lat/lon/storm
     doing the plotting
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f60be197048>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f1668c554a8>
 
 
 
@@ -406,7 +406,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 6 minutes  41.813 seconds)
+   **Total running time of the script:** ( 6 minutes  20.403 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:

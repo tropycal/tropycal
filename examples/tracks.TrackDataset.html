@@ -198,7 +198,7 @@
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (2.39 seconds)
+--&gt; Completed reading in HURDAT2 data (2.32 seconds)
 </pre></div>
 </div>
 <div class="section" id="retrieving-storms-and-seasons">
@@ -249,7 +249,12 @@ More Information:
 </div>
 <img alt="../_images/sphx_glr_tracks.TrackDataset_001.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_001.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f94beae66d8&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
+  warnings.warn(&#39;The .xlabels_top attribute is deprecated. Please &#39;
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
+  warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
+
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fc2cc9df518&gt;
 </pre></div>
 </div>
 </div>
@@ -299,6 +304,10 @@ More Information:
   return thresh,lambda x: np.nanmax(x)
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:42: RuntimeWarning: All-NaN axis encountered
   return thresh,lambda x: np.nanmax(x)
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
+  warnings.warn(&#39;The .xlabels_top attribute is deprecated. Please &#39;
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
+  warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
 doing the plotting
 --&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
@@ -306,7 +315,7 @@ doing the plotting
   return thresh,lambda x: np.nanmean(x)
 doing the plotting
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f94b8a85518&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fc2cec024a8&gt;
 </pre></div>
 </div>
 </div>
@@ -322,7 +331,7 @@ doing the plotting
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in ibtracs data
---&gt; Completed reading in ibtracs data (42.57 seconds)
+--&gt; Completed reading in ibtracs data (42.97 seconds)
 </pre></div>
 </div>
 <p>In its current form, tropycal is not configured to support all types of analyses for global IBTrACS, particularly near the dateline. Future updates will work to improve this functionality.</p>
@@ -336,7 +345,7 @@ doing the plotting
 --&gt; Grouping by lat/lon/storm
 doing the plotting
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f94b94948d0&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fc2ce8ff128&gt;
 </pre></div>
 </div>
 <p>Make a plot of the total number of storms per 1 degree gridbox worldwide:</p>
@@ -361,7 +370,7 @@ doing the plotting
 doing the plotting
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  6.382 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  3.919 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-trackdataset-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/8e0af267200996c0b90c20030c99ca74/tracks.TrackDataset.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.TrackDataset.py</span></code></a></p>

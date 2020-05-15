@@ -106,7 +106,7 @@ def test_code():
     #ax = season.plot(return_ax=True)
     
     #Annual summary
-    season.annual_summary()
+    season.summary()
     
     #Dataframe
     season.to_dataframe()

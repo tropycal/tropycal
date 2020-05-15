@@ -64,21 +64,30 @@ class Storm:
         summary = ["<tropycal.tracks.Storm>"]
         
         #Format keys for summary
-        max_wind = 'N/A' if all_nan(self.dict['vmax']) == True else np.nanmax(self.dict['vmax'])
-        min_mslp = 'N/A' if all_nan(self.dict['mslp']) == True else np.nanmin(self.dict['mslp'])
         type_array = np.array(self.dict['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
-        if len(idx[0]) == 0:
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))[0]
+        if len(idx) == 0:
             start_date = 'N/A'
             end_date = 'N/A'
+            max_wind = 'N/A'
+            min_mslp = 'N/A'
         else:
             time_tropical = np.array(self.dict['date'])[idx]
             start_date = time_tropical[0].strftime("%H00 UTC %d %B %Y")
             end_date = time_tropical[-1].strftime("%H00 UTC %d %B %Y")
+            max_wind = 'N/A' if all_nan(np.array(self.dict['vmax'])[idx]) == True else np.nanmax(np.array(self.dict['vmax'])[idx])
+            min_mslp = 'N/A' if all_nan(np.array(self.dict['mslp'])[idx]) == True else np.nanmin(np.array(self.dict['mslp'])[idx])
         summary_keys = {'Maximum Wind':f"{max_wind} knots",
                         'Minimum Pressure':f"{min_mslp} hPa",
                         'Start Date':start_date,
                         'End Date':end_date}
+        
+        #Format keys for coordinates
+        variable_keys = {}
+        for key in self.vars.keys():
+            dtype = type(self.vars[key][0]).__name__
+            dtype = dtype.replace("_","")
+            variable_keys[key] = f"({dtype}) [{self.vars[key][0]} .... {self.vars[key][-1]}]"
 
         #Add storm summary
         summary.append("Storm Summary:")
@@ -86,6 +95,13 @@ class Storm:
         for key in summary_keys.keys():
             key_name = key+":"
             summary.append(f'{" "*4}{key_name:<{add_space}}{summary_keys[key]}')
+        
+        #Add coordinates
+        summary.append("\nVariables:")
+        add_space = np.max([len(key) for key in variable_keys.keys()])+3
+        for key in variable_keys.keys():
+            key_name = key
+            summary.append(f'{" "*4}{key_name:<{add_space}}{variable_keys[key]}')
         
         #Add additional information
         summary.append("\nMore Information:")
@@ -105,10 +121,14 @@ class Storm:
         #Add other attributes about the storm
         keys = self.dict.keys()
         self.coords = {}
+        self.vars = {}
         for key in keys:
             if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
                 self[key] = self.dict[key]
                 self.coords[key] = self.dict[key]
+            if isinstance(self.dict[key], list) == True and isinstance(self.dict[key], dict) == False:
+                self.vars[key] = np.array(self.dict[key])
+                self[key] = np.array(self.dict[key])
                 
         #Assign tornado data
         if stormTors != None and isinstance(stormTors,dict) == True:
@@ -116,7 +136,76 @@ class Storm:
             self.tornado_dist_thresh = stormTors['dist_thresh']
             self.coords['Tornado Count'] = len(stormTors['data'])
         
+        #Get Archer track data for this storm, if it exists
         self.get_archer()
+    
+    def sel_time(self,start_time,end_time=None):
+        
+        r"""
+        Subset this storm's data by a range of times or for a single time.
+        
+        Parameters
+        ----------
+        start_time : datetime.datetime
+            Datetime object representing the start time for subsetting. If `end_time` is not passed, data will be returned for the closest time to start_time.
+        end_time : datetime.datetime (optional)
+            Datetime object representing the end time for subsetting. If specified, will return data for this range of times.
+        
+        Returns
+        -------
+        dict
+            A dictionary containing information about the storm, subsetted by the specified time range.
+        """
+        
+        #single DateTime object
+        if end_time == None:
+            
+            #Error check for data type
+            if isinstance(start_time,dt) == False:
+                msg = '\'start_time\' must be of type datetime.datetime.'
+                raise TypeError(msg)
+            
+            #Identify requested index
+            time_diff = np.array([(i-time).days + (i-time).seconds/86400 for i in self.date])
+            idx = np.abs(time_diff).argmin()
+            
+            #Construct new Storm dict with subset elements
+            temp_dict = {}
+            for key in self.dict.keys():
+                if isinstance(self.dict[key], list) == True:
+                    temp_dict[key] = self.dict[key][idx]
+                else:
+                    temp_dict[key] = self.dict[key]
+            
+            #Return new dict
+            return temp_dict
+        
+        #range of dates
+        else:
+            
+            #Error check for data type in list/tuple
+            if isinstance(start_time,dt) == False or isinstance(end_time,dt) == False:
+                msg = 'Passed arguments must be of type datetime.datetime.'
+                raise TypeError(msg)
+            
+            #Identify start index
+            time_diff = np.array([(i-start_time).days + (i-start_time).seconds/86400 for i in self.date])
+            start_idx = np.abs(time_diff).argmin()
+            
+            #Identify end index
+            time_diff = np.array([(i-end_time).days + (i-end_time).seconds/86400 for i in self.date])
+            end_idx = np.abs(time_diff).argmin() + 1
+            
+            #Construct new Storm dict with subset elements
+            temp_dict = {}
+            for key in self.dict.keys():
+                if isinstance(self.dict[key], list) == True:
+                    temp_dict[key] = self.dict[key][start_idx:end_idx]
+                else:
+                    temp_dict[key] = self.dict[key]
+            
+            #Return new dict
+            return temp_dict
                 
     def to_dict(self):
         
@@ -202,15 +291,15 @@ class Storm:
         return ds
     
     #PLOT FUNCTION FOR HURDAT
-    def plot(self,zoom="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot(self,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of the observed track of the storm.
         
         Parameters
         ----------
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+        domain : str
+            Domain for the plot. Can be one of the following:
             
             * **dynamic** - default. Dynamically focuses the domain using the storm track plotted.
             * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
@@ -219,6 +308,8 @@ class Storm:
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
@@ -228,7 +319,10 @@ class Storm:
         """
         
         #Create instance of plot object
-        self.plot_obj = TrackPlot()
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:
@@ -240,13 +334,13 @@ class Storm:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(self.dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(self.dict,domain,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
         
     #PLOT FUNCTION FOR HURDAT
-    def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,zoom="dynamic_forecast",
+    def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
                           ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
@@ -265,14 +359,16 @@ class Storm:
             * **"valid_edt"** = EDT valid time
         cone_days : int
             Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+        domain : str
+            Domain for the plot. Can be one of the following:
             
             * **dynamic_forecast** Default. Dynamically focuses the domain on the forecast track.
             * **dynamic** - Dynamically focuses the domain on the combined observed and forecast track.
             * **lonW/lonE/latS/latN** Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
@@ -286,7 +382,10 @@ class Storm:
             raise RuntimeError("Error: NHC data can only be accessed when HURDAT is used as the data source.")
         
         #Create instance of plot object
-        self.plot_obj = TrackPlot()
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:
@@ -402,7 +501,7 @@ class Storm:
         track_dict = self.dict
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,zoom,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
@@ -669,7 +768,7 @@ class Storm:
         Parameters
         ----------
         forecast : datetime.datetime or int
-            Datetime object representing the desired forecast discussion time, or integer representing the forecast discussion ID.
+            Datetime object representing the desired forecast discussion time (in UTC), or integer representing the forecast discussion ID.
         save_path : str, optional
             Directory path to save the forecast discussion text to. If None (default), forecast won't be saved.
         
@@ -681,7 +780,8 @@ class Storm:
         
         #Check to ensure the data source is HURDAT
         if self.source != "hurdat":
-            raise RuntimeError("Error: NHC data can only be accessed when HURDAT is used as the data source.")
+            msg = "Error: NHC data can only be accessed when HURDAT is used as the data source."
+            raise RuntimeError(msg)
         
         #Get storm ID & corresponding data URL
         storm_id = self.dict['operational_id']
@@ -689,11 +789,13 @@ class Storm:
         
         #Error check
         if storm_id == '':
-            raise RuntimeError("No NHC operational data is available for this storm.")
+            msg = "No NHC operational data is available for this storm."
+            raise RuntimeError(msg)
         
         #Error check
         if isinstance(forecast,int) == False and isinstance(forecast,dt) == False:
-            raise TypeError("forecast must be of type int or datetime.datetime")
+            msg = "forecast must be of type int or datetime.datetime"
+            raise TypeError(msg)
         
         #Get list of storm discussions
         disco_dict = self.list_nhc_discussions()
@@ -782,7 +884,71 @@ class Storm:
         
         #Return text of NHC forecast discussion
         return {'id':closest_id,'time_issued':closest_time,'text':content}
+    
+    
+    def query_nhc_discussions(self,query):
         
+        r"""
+        Searches for the given word or phrase through all NHC forecast discussions for this storm.
+        
+        Parameters
+        ----------
+        query : str or list
+            String or list representing a word(s) or phrase(s) to search for within the NHC forecast discussions (e.g., "rapid intensification"). Query is case insensitive.
+        
+        Returns
+        -------
+        list
+            List of dictionaries containing all relevant forecast discussions.
+        """
+        
+        #Check to ensure the data source is HURDAT
+        if self.source != "hurdat":
+            msg = "Error: NHC data can only be accessed when HURDAT is used as the data source."
+            raise RuntimeError(msg)
+        
+        #Get storm ID & corresponding data URL
+        storm_id = self.dict['operational_id']
+        storm_year = self.dict['year']
+        
+        #Error check
+        if storm_id == '':
+            msg = "No NHC operational data is available for this storm."
+            raise RuntimeError(msg)
+        if isinstance(query,str) == False and isinstance(query,list) == False:
+            msg = "'query' must be of type str or list."
+            raise TypeError(msg)
+        if isinstance(query,list) == True:
+            for i in query:
+                if isinstance(i,str) == False:
+                    msg = "Entries of list 'query' must be of type str."
+                    raise TypeError(msg)
+        
+        #Get list of storm discussions
+        disco_dict = self.list_nhc_discussions()
+        
+        #Iterate over every entry to retrieve its discussion text
+        output = []
+        for idx,forecast_date in enumerate(disco_dict['utc_date']):
+            
+            #Get forecast discussion
+            forecast = self.get_nhc_discussion(forecast=forecast_date)
+            
+            #Get forecast text and query for word
+            text = forecast['text'].lower()
+            
+            #If found, add into list
+            if isinstance(query,str) == True:
+                if text.find(query.lower()) >= 0: output.append(forecast)
+            else:
+                found = False
+                for i_query in query:
+                    if text.find(i_query.lower()) >= 0: found = True
+                if found == True: output.append(forecast)
+            
+        #Return list
+        return output
+    
 
     def get_operational_forecasts(self):
 
@@ -800,7 +966,8 @@ class Storm:
         
         #Check to ensure the data source is HURDAT
         if self.source != "hurdat":
-            raise RuntimeError("NHC data can only be accessed when HURDAT is used as the data source.")
+            msg = "NHC data can only be accessed when HURDAT is used as the data source."
+            raise RuntimeError(msg)
             
         #If forecasts dict already exist, simply return the dict
         try:
@@ -814,16 +981,18 @@ class Storm:
         storm_year = self.dict['year']
         if storm_year <= 2006: storm_id = self.dict['id']
         if storm_year < 1954:
-            raise RuntimeError("Forecast data is unavailable for storms prior to 1954.")
+            msg = "Forecast data is unavailable for storms prior to 1954."
+            raise RuntimeError(msg)
         
         #Error check
         if storm_id == '':
-            raise RuntimeError("No NHC operational data is available for this storm.")
+            msg = "No NHC operational data is available for this storm."
+            raise RuntimeError(msg)
 
-        if storm_year == (dt.now()).year:
+        #Check if archive directory exists for requested year, if not redirect to realtime directory
+        url_models = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/a{storm_id.lower()}.dat.gz"
+        if requests.get(url_models).status_code != 200:
             url_models = f"https://ftp.nhc.noaa.gov/atcf/aid_public/a{storm_id.lower()}.dat.gz"
-        else:
-            url_models = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/a{storm_id.lower()}.dat.gz"
 
         #Retrieve model data text
         if requests.get(url_models).status_code == 200:
@@ -904,40 +1073,48 @@ class Storm:
         #Return dict
         return forecasts
 
-
     
-    def download_tcr(self,dir_path=""):
+    def download_tcr(self,save_path=""):
         
         r"""
-        Downloads the NHC offical Tropical Cyclone Report (TCR) for this storm to the requested directory.
+        Downloads the NHC offical Tropical Cyclone Report (TCR) for the requested storm to the requested directory. Available only for storms with advisories issued by the National Hurricane Center.
         
         Parameters
         ----------
-        dir_path : str
+        save_path : str
             Path of directory to download the TCR into. Default is current working directory.
         """
         
         #Error check
         if self.source != "hurdat":
-            raise RuntimeError("NHC data can only be accessed when HURDAT is used as the data source.")
+            msg = "NHC data can only be accessed when HURDAT is used as the data source."
+            raise RuntimeError(msg)
         if self.year < 1995:
-            raise RuntimeError("Tropical Cyclone Reports are unavailable prior to 1995.")
+            msg = "Tropical Cyclone Reports are unavailable prior to 1995."
+            raise RuntimeError(msg)
+        if isinstance(save_path,str) == False:
+            msg = "'save_path' must be of type str."
+            raise TypeError(msg)
         
         #Format URL
         storm_id = self.dict['id'].upper()
         storm_name = self.dict['name'].title()
         url = f"https://www.nhc.noaa.gov/data/tcr/{storm_id}_{storm_name}.pdf"
         
-        #Format filepath
-        if dir_path != "" and dir_path[-1] != "/": dir_path += "/"
+        #Check to make sure PDF is available
+        request = requests.get(url)
+        if request.status_code != 200:
+            msg = "This tropical cyclone does not have a Tropical Cyclone Report (TCR) available."
+            raise RuntimeError(msg)
         
         #Retrieve PDF
         response = requests.get(url)
-        with open(f"{dir_path}TCR_{storm_id}_{storm_name}.pdf", 'wb') as f:
+        full_path = os.path.join(save_path,f"TCR_{storm_id}_{storm_name}.pdf")
+        with open(full_path, 'wb') as f:
             f.write(response.content)
 
             
-    def plot_tors(self,dist_thresh=1000,Tors=None,zoom="dynamic",plotPPF=False,plot_all=False,\
+    def plot_tors(self,dist_thresh=1000,Tors=None,domain="dynamic",plotPPF=False,plot_all=False,\
                   ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
                 
         r"""
@@ -950,8 +1127,8 @@ class Storm:
         Tors : pandas.DataFrame
             DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm
                 for future use.
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+        domain : str
+            Domain for the plot. Can be one of the following:
             
             * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted and tornadoes it produced.
             * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
@@ -967,6 +1144,8 @@ class Storm:
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
@@ -996,9 +1175,9 @@ class Storm:
     
         #Warning if few tornadoes were found
         if len(self.stormTors) < 5:
-            warn_message = f"{len(self.stormTors)} tornadoes were found with this storm. Default zoom to east_conus."
+            warn_message = f"{len(self.stormTors)} tornadoes were found with this storm. Default domain to east_conus."
             warnings.warn(warn_message)
-            zoom = 'east_conus'
+            domain = 'east_conus'
     
         #Create instance of plot object
         self.plot_obj_tc = TrackPlot()
@@ -1018,7 +1197,7 @@ class Storm:
                 self.plot_obj_tc.create_cartopy(proj='PlateCarree',central_longitude=0.0)
                 
         #Plot tornadoes
-        plot_ax,zoom,leg_tor = self.plot_obj_tor.plot_tornadoes(self.stormTors,zoom,ax=ax,return_ax=True,\
+        plot_ax,domain,leg_tor = self.plot_obj_tor.plot_tornadoes(self.stormTors,domain,ax=ax,return_ax=True,\
                                              plotPPF=plotPPF,prop=prop,map_prop=map_prop)
         tor_title = plot_ax.get_title('left')
 
@@ -1047,7 +1226,7 @@ class Storm:
         dist_thresh : int
             Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km. Ignored if tornado data was passed into Storm from TrackDataset.
         return_ax : bool
-            Whether to return the axis plotted. Default is False.
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         
         Notes
         -----

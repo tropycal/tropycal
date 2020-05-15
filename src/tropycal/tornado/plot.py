@@ -30,8 +30,12 @@ except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
 class TornadoPlot(Plot):
+    
+    def __init__(self):
+        
+        self.use_credit = True
                  
-    def plot_tornadoes(self,tornado,zoom="east_conus",plotPPF=False,ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_tornadoes(self,tornado,domain="east_conus",plotPPF=False,ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -40,8 +44,8 @@ class TornadoPlot(Plot):
         ----------
         storm : str, tuple or dict
             Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+        domain : str
+            Domain for the plot. Can be one of the following:
             
             * **dynamic** - default. Dynamically focuses the domain using the tornado track(s) plotted.
             * **north_atlantic** - North Atlantic Ocean basin.
@@ -72,10 +76,6 @@ class TornadoPlot(Plot):
         #set default properties
         input_prop = prop
         input_map_prop = map_prop
-        
-        #error check
-        if isinstance(zoom,str) == False:
-            raise TypeError('Error: zoom must be of type str')
         
         #--------------------------------------------------------------------------------------
         
@@ -141,32 +141,15 @@ class TornadoPlot(Plot):
 
         #--------------------------------------------------------------------------------------
         
-        #Pre-generated zooms
-        if zoom in ['north_atlantic','conus','east_conus']:
-            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
-            
         #Storm-centered plot domain
-        elif zoom == "dynamic":
+        if domain == "dynamic":
             
             bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
             self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
             
-        #Custom plot domain
+        #Pre-generated or custom domain
         else:
-            
-            #Check to ensure 3 slashes are provided
-            if zoom.count("/") != 3:
-                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
-            else:
-                try:
-                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
-                    bound_w = float(bound_w)
-                    bound_e = float(bound_e)
-                    bound_s = float(bound_s)
-                    bound_n = float(bound_n)
-                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
-                except:
-                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
         
         #Determine number of lat/lon lines to use for parallels & meridians
         self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])

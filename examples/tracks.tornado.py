@@ -21,7 +21,7 @@ tor_data = tornado.TornadoDataset()
 ###########################################
 # We can use a TornadoDataset object to analyze both tornadoes associated with tropical cyclones and non-TC tornadoes. As an example of the latter, we can make a plot of all tornadoes during the 27 April 2011 tornado outbreak, along with the Practically Perfect Forecast (PPF) in filled contours:
 
-tor_ax,zoom,leg_tor = tor_data.plot_tors(dt.datetime(2011,4,27),plotPPF=True,return_ax=True)
+tor_ax,domain,leg_tor = tor_data.plot_tors(dt.datetime(2011,4,27),plotPPF=True,return_ax=True)
 tor_ax
 
 ###########################################

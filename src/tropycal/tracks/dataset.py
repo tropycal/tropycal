@@ -79,14 +79,28 @@ class TrackDataset:
     def __repr__(self):
          
         summary = ["<tropycal.tracks.Dataset>"]
+        
+        #Find maximum wind and minimum pressure
+        max_wind = int(np.nanmax([x for stormid in self.keys for x in self.data[stormid]['vmax']]))
+        max_wind_name = ""
+        min_mslp = int(np.nanmin([x for stormid in self.keys for x in self.data[stormid]['mslp']]))
+        min_mslp_name = ""
+        
+        for key in self.keys[::-1]:
+            array_vmax = np.array(self.data[key]['vmax'])
+            array_mslp = np.array(self.data[key]['mslp'])
+            if len(array_vmax[~np.isnan(array_vmax)]) > 0 and np.nanmax(array_vmax) == max_wind:
+                max_wind_name = f"{self.data[key]['name'].title()} {self.data[key]['year']}"
+            if len(array_mslp[~np.isnan(array_mslp)]) > 0 and np.nanmin(array_mslp) == min_mslp:
+                min_mslp_name = f"{self.data[key]['name'].title()} {self.data[key]['year']}"
 
         #Add general summary
         emdash = '\u2014'
         summary_keys = {'Basin':self.basin,\
                         'Source':self.source+[', '+self.ibtracs_mode,''][self.source=='hurdat'],\
                         'Number of storms':len(self.keys),\
-                        'Maximum wind':f"{int(np.nanmax([x for stormid in self.keys for x in self.data[stormid]['vmax']]))} knots",
-                        'Minimum pressure':f"{int(np.nanmin([x for stormid in self.keys for x in self.data[stormid]['mslp']]))} hPa",
+                        'Maximum wind':f"{max_wind} knots ({max_wind_name})",
+                        'Minimum pressure':f"{min_mslp} hPa ({min_mslp_name})",
                         'Year range':f"{self.data[self.keys[0]]['year']} {emdash} {self.data[self.keys[-1]]['year']}"}
         #Add dataset summary
         summary.append("Dataset Summary:")
@@ -97,11 +111,12 @@ class TrackDataset:
 
         return "\n".join(summary)
     
+    
     def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,**kwargs):
         
         #kwargs
-        atlantic_url = kwargs.pop('atlantic_url', 'https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2018-051019.txt')
-        pacific_url = kwargs.pop('pacific_url', 'https://www.nhc.noaa.gov/data/hurdat/hurdat2-nepac-1949-2018-071519.txt')
+        atlantic_url = kwargs.pop('atlantic_url', 'https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2019-042820.txt')
+        pacific_url = kwargs.pop('pacific_url', 'https://www.nhc.noaa.gov/data/hurdat/hurdat2-nepac-1949-2019-042320.txt')
         ibtracs_url = kwargs.pop('ibtracs_url', 'https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv')
         ibtracs_mode = kwargs.pop('ibtracs_mode', 'jtwc')
         catarina = kwargs.pop('catarina', False)
@@ -172,6 +187,7 @@ class TrackDataset:
         
         #Add dict to store all storm-specific tornado data in
         self.data_tors = {}
+    
     
     def __read_hurdat(self,override_basin=False):
         
@@ -376,6 +392,7 @@ class TrackDataset:
         tsec = str(round(time_elapsed.total_seconds(),2))
         print(f"--> Completed reading in HURDAT2 data ({tsec} seconds)")
     
+    
     def __read_btk(self):
         
         r"""
@@ -521,6 +538,7 @@ class TrackDataset:
         tsec = str(round(time_elapsed.total_seconds(),2))
         print(f"--> Completed reading in best track data ({tsec} seconds)")
 
+        
     def __read_ibtracs(self):
         
         r"""
@@ -909,6 +927,7 @@ class TrackDataset:
         tsec = str(round(time_elapsed.total_seconds(),2))
         print(f"--> Completed reading in ibtracs data ({tsec} seconds)")
             
+            
     def get_storm_id(self,storm):
         
         r"""
@@ -945,6 +964,7 @@ class TrackDataset:
         if len(keys_use) == 1: keys_use = keys_use[0]
         if len(keys_use) == 0: raise RuntimeError("Storm not found")
         return keys_use
+    
     
     def get_storm(self,storm):
         
@@ -986,7 +1006,8 @@ class TrackDataset:
             error_message = f"Multiple IDs were identified for the requested storm. Choose one of the following storm IDs and provide it as the 'storm' argument instead of a tuple:{error_message}"
             raise RuntimeError(error_message)
     
-    def plot_storm(self,storm,zoom="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    
+    def plot_storm(self,storm,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm.
@@ -995,8 +1016,8 @@ class TrackDataset:
         ----------
         storm : str, tuple or dict
             Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
-        zoom : str
-            Zoom for the plot. Default is "dynamic". Can be one of the following:
+        domain : str
+            Domain for the plot. Default is "dynamic". Can be one of the following:
             
             * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
             * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
@@ -1006,7 +1027,7 @@ class TrackDataset:
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
-            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
@@ -1022,7 +1043,10 @@ class TrackDataset:
             storm_dict = storm
         
         #Create instance of plot object
-        self.plot_obj = TrackPlot()
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:
@@ -1034,12 +1058,13 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm_dict,zoom,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
     
-    def plot_storms(self,storms,zoom="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    
+    def plot_storms(self,storms,domain="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of multiple storms.
@@ -1048,8 +1073,8 @@ class TrackDataset:
         ----------
         storms : list
             List of requested storms. List can contain either strings of storm ID (e.g., "AL052019"), tuples with storm name and year (e.g., ("Matthew",2016)), or dict entries.
-        zoom : str
-            Zoom for the plot. Default is "dynamic". Can be one of the following:
+        domain : str
+            Domain for the plot. Default is "dynamic". Can be one of the following:
             
             * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
             * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
@@ -1059,7 +1084,7 @@ class TrackDataset:
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
-            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
@@ -1069,7 +1094,10 @@ class TrackDataset:
         """
         
         #Create instance of plot object
-        self.plot_obj = TrackPlot()
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
         
         #Identify plot domain for all requested storms
         max_lon = -9999
@@ -1098,10 +1126,11 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storms(storm_dicts,zoom,title_text,filter_dates,plot_all_dots,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title_text,filter_dates,plot_all_dots,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
+        
         
     def plot_season(self,year,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
@@ -1114,6 +1143,8 @@ class TrackDataset:
             Year to retrieve season data. If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
@@ -1126,7 +1157,10 @@ class TrackDataset:
         season = self.get_season(year)
         
         #Create instance of plot object
-        self.plot_obj = TrackPlot()
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
         
         #Create cartopy projection
         if cartopy_proj == None:
@@ -1142,6 +1176,7 @@ class TrackDataset:
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
+    
     
     def search_name(self,name):
         
@@ -1164,23 +1199,56 @@ class TrackDataset:
         
         return years
     
-    def get_season(self,year,basin='all'):
+    
+    def download_tcr(self,storm,save_path=""):
         
         r"""
-        Retrieves a Season object for the requested season.
+        Downloads the NHC offical Tropical Cyclone Report (TCR) for the requested storm to the requested directory. Available only for storms with advisories issued by the National Hurricane Center.
         
         Parameters
         ----------
-        year : int
-            Year to retrieve season data. If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
-        basin : str, optional
-            If using a global ibtracs dataset, this specifies which basin to load in. Otherwise this argument is ignored.
-        
-        Returns
-        -------
-        tropycal.tracks.Season
-            Object containing every storm entry for the given season, and methods for analyzing and plotting the season.
+        storm : str, tuple or dict
+            Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
+        save_path : str
+            Path of directory to download the TCR into. Default is current working directory.
         """
+        
+        #Retrieve requested storm
+        if isinstance(storm,dict) == False:
+            storm_dict = self.get_storm(storm)
+        else:
+            storm_dict = self.get_storm(storm.id)
+        
+        #Error check
+        if self.source != "hurdat":
+            msg = "NHC data can only be accessed when HURDAT is used as the data source."
+            raise RuntimeError(msg)
+        if self.year < 1995:
+            msg = "Tropical Cyclone Reports are unavailable prior to 1995."
+            raise RuntimeError(msg)
+        if isinstance(save_path,str) == False:
+            msg = "'save_path' must be of type str."
+            raise TypeError(msg)
+        
+        #Format URL
+        storm_id = self.dict['id'].upper()
+        storm_name = self.dict['name'].title()
+        url = f"https://www.nhc.noaa.gov/data/tcr/{storm_id}_{storm_name}.pdf"
+        
+        #Check to make sure PDF is available
+        request = requests.get(url)
+        if request.status_code != 200:
+            msg = "This tropical cyclone does not have a Tropical Cyclone Report (TCR) available."
+            raise RuntimeError(msg)
+        
+        #Retrieve PDF
+        response = requests.get(url)
+        full_path = os.path.join(save_path,f"TCR_{storm_id}_{storm_name}.pdf")
+        with open(full_path, 'wb') as f:
+            f.write(response.content)
+    
+    
+    def __retrieve_season(self,year,basin):
         
         #Initialize dict to be populated
         season_dict = {}
@@ -1219,7 +1287,44 @@ class TrackDataset:
                 
         #Return object
         return Season(season_dict,season_info)
-
+                   
+    def get_season(self,year,basin='all'):
+        
+        r"""
+        Retrieves a Season object for the requested season or seasons.
+        
+        Parameters
+        ----------
+        year : int or list
+            Year(s) to retrieve season data. If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975). Use of multiple years is only permissible for hurdat sources.
+        basin : str, optional
+            If using a global ibtracs dataset, this specifies which basin to load in. Otherwise this argument is ignored.
+        
+        Returns
+        -------
+        tropycal.tracks.Season
+            Object containing every storm entry for the given season, and methods for analyzing and plotting the season.
+        """
+        
+        #Error checks
+        if isinstance(year,int) == False and isinstance(year,list) == False:
+            msg = "'year' must be of type int or list."
+            raise TypeError(msg)
+        if isinstance(year,list) == True:
+            for i in year:
+                if isinstance(i,int) == False:
+                    msg = "Elements of list 'year' must be of type int."
+                    raise TypeError(msg)
+        
+        #Retrieve season object(s)
+        if isinstance(year,int) == True:
+            return self.__retrieve_season(year,basin)
+        else:
+            return_season = self.__retrieve_season(year[0],basin)
+            for i_year in year[1:]:
+                return_season = return_season + self.__retrieve_season(i_year,basin)
+            return return_season
+    
     def ace_climo(self,plot_year=None,compare_years=None,start_year=1950,rolling_sum=0,return_dict=False,plot=True,save_path=None):
         
         r"""
@@ -1266,7 +1371,7 @@ class TrackDataset:
             
             #Get info for this year
             season = self.get_season(year)
-            year_info = season.annual_summary()
+            year_info = season.summary()
             
             #Generate list of dates for this year
             year_dates = np.array([dt.strptime(((pd.to_datetime(i)).strftime('%Y%m%d%H')),'%Y%m%d%H') for i in np.arange(dt(year,1,1),dt(year+1,1,1),timedelta(hours=6))])
@@ -1520,7 +1625,7 @@ class TrackDataset:
             
             #Get info for this year
             season = self.get_season(year)
-            year_info = season.annual_summary()
+            year_info = season.summary()
             
             #Generate list of dates for this year
             year_dates = np.array([dt.strptime(((pd.to_datetime(i)).strftime('%Y%m%d%H')),'%Y%m%d%H') for i in np.arange(dt(year,1,1),dt(year+1,1,1),timedelta(hours=6))])
@@ -1941,7 +2046,7 @@ class TrackDataset:
         else:
             return
     
-    def rank_storm(self,metric,return_df=True,ascending=False,subset_domain=None,year_range=None,date_range=None,subtropical=True):
+    def rank_storm(self,metric,return_df=True,ascending=False,domain=None,year_range=None,date_range=None,subtropical=True):
         
         r"""
         Ranks storm by a specified metric.
@@ -1965,7 +2070,7 @@ class TrackDataset:
             Whether to return a pandas.DataFrame (True) or dict (False). Default is True.
         ascending : bool
             Whether to return rank in ascending order (True) or descending order (False). Default is False.
-        subset_domain : str
+        domain : str
             String representing either a bounded region 'latW/latE/latS/latN', or a basin name. Default is entire basin.
         year_range : list or tuple
             List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
@@ -2047,14 +2152,14 @@ class TrackDataset:
             basin_tropical = np.array(storm_data['wmo_basin'])[idx]
             
             #Filter geographically
-            if subset_domain != None:
-                if isinstance(subset_domain,str) == False:
-                    raise TypeError("subset_domain must be of type str.")
-                if '/' in subset_domain:
-                    bound_w,bound_e,bound_s,bound_n = [float(i) for i in subset_domain.split("/")]
+            if domain != None:
+                if isinstance(domain,str) == False:
+                    raise TypeError("domain must be of type str.")
+                if '/' in domain:
+                    bound_w,bound_e,bound_s,bound_n = [float(i) for i in domain.split("/")]
                     idx = np.where((lat_tropical >= bound_s) & (lat_tropical <= bound_n) & (lon_tropical >= bound_w) & (lon_tropical <= bound_e))
                 else:
-                    idx = np.where(basin_tropical==subset_domain)
+                    idx = np.where(basin_tropical==domain)
                 if len(idx[0]) == 0: continue
                 
                 #Check for subset type
@@ -2223,7 +2328,7 @@ class TrackDataset:
         #Iterate over every season
         for year in range(start_year,end_year+1):
             season = self.get_season(year)
-            year_data = season.annual_summary()
+            year_data = season.summary()
             year_ace = year_data['season_ace']
             
             #Compare year ACE against storm ACE
@@ -2234,7 +2339,7 @@ class TrackDataset:
                 
         return ace_rank
 
-    def filter_storms(self,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},subset_domain=(0,360,-90,90),doInterp=False,return_keys=True):
+    def filter_storms(self,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=(0,360,-90,90),doInterp=False,return_keys=True):
         
         r"""
         Filters all storms by various thresholds.
@@ -2249,15 +2354,15 @@ class TrackDataset:
             Keywords include:
                 
             * **sample_min** - minimum number of storms in a grid box for the cmd_request to be applied. For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
-            * **V_min** - minimum wind for a given point to be included in the cmd_request.
-            * **P_max** - maximum pressure for a given point to be included in the cmd_request.
-            * **dV_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.
-            * **dP_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.
+            * **v_min** - minimum wind for a given point to be included in the cmd_request.
+            * **p_max** - maximum pressure for a given point to be included in the cmd_request.
+            * **dv_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.
+            * **dp_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.
             * **dt_window** - time window over which change variables are calculated (hours). Default is 24.
             * **dt_align** - alignment of dt_window for change variables -- 'start','middle','end' -- e.g. 'end' for dt_window=24 associates a TC point with change over the past 24 hours. Default is middle.
             
             Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.
-        subset_domain : str
+        domain : str
             String or tuple representing a bounded region, 'latW/latE/latS/latN'.
         doInterp : bool
             Whether to interpolate track data to hourly. Default is False.
@@ -2270,16 +2375,16 @@ class TrackDataset:
             Check return_keys for more information.
         """
 
-        default_thresh={'sample_min':1,'P_max':9999,'V_min':0,'dV_min':-9999,'dP_max':9999,'dV_max':9999,'dP_min':-9999,
+        default_thresh={'sample_min':1,'p_max':9999,'v_min':0,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,
                         'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
 
-        if isinstance(subset_domain,str):
-            lon_min,lon_max,lat_min,lat_max = [float(i) for i in subset_domain.split("/")]
+        if isinstance(domain,str):
+            lon_min,lon_max,lat_min,lat_max = [float(i) for i in domain.split("/")]
         else:
-            lon_min,lon_max,lat_min,lat_max = subset_domain
+            lon_min,lon_max,lat_min,lat_max = domain
         year_min,year_max = year_range
         date_min,date_max = [dt.strptime(i,'%m/%d') for i in date_range]
         date_max += timedelta(days=1,seconds=-1)
@@ -2320,39 +2425,39 @@ class TrackDataset:
                         points['dx_dt'].append(istorm['dx_dt'][i])
                         points['dy_dt'].append(istorm['dy_dt'][i])
         p = pd.DataFrame.from_dict(points)
-        if thresh['V_min']>0:
-            p = p.loc[(p['vmax']>=thresh['V_min'])]
-        if thresh['P_max']<9999:
-            p = p.loc[(p['mslp']<=thresh['P_max'])]
+        if thresh['v_min']>0:
+            p = p.loc[(p['vmax']>=thresh['v_min'])]
+        if thresh['p_max']<9999:
+            p = p.loc[(p['mslp']<=thresh['p_max'])]
         if doInterp:
-            if thresh['dV_min']>0:
-                p = p.loc[(p['dvmax_dt']>=thresh['dV_min'])]
-            if thresh['dP_max']<9999:
-                p = p.loc[(p['dmslp_dt']>=thresh['dP_max'])]
-            if thresh['dV_max']<9999:
-                p = p.loc[(p['dvmax_dt']<=thresh['dV_max'])]
-            if thresh['dP_min']>0:
-                p = p.loc[(p['dmslp_dt']<=thresh['dP_min'])]
+            if thresh['dv_min']>0:
+                p = p.loc[(p['dvmax_dt']>=thresh['dv_min'])]
+            if thresh['dp_max']<9999:
+                p = p.loc[(p['dmslp_dt']>=thresh['dp_max'])]
+            if thresh['dv_max']<9999:
+                p = p.loc[(p['dvmax_dt']<=thresh['dv_max'])]
+            if thresh['dp_min']>0:
+                p = p.loc[(p['dmslp_dt']<=thresh['dp_min'])]
             
         if return_keys:
             return [g[0] for g in p.groupby("stormid")]
         else:
             return p
 
-    def gridded_stats(self,cmd_request,thresh={},year_range=None,date_range=('1/1','12/31'),binsize=1,\
-                         zoom=None,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def gridded_stats(self,request,thresh={},year_range=None,date_range=('1/1','12/31'),binsize=1,\
+                         domain=None,ax=None,return_ax=False,return_array=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of gridded statistics.
         
         Parameters
         ----------
-        cmd_request : str
+        request : str
             This string is a descriptor for what you want to plot.
             It will be used to define the variable (e.g. 'wind' --> 'vmax') and the function (e.g. 'maximum' --> np.max()).
             This string is also used as the plot title.
             
-            Variable words to use in cmd_request:
+            Variable words to use in request:
                 
             * **wind** - (kt). Sustained wind.
             * **pressure** - (hPa). Minimum pressure.
@@ -2362,7 +2467,7 @@ class TrackDataset:
             
             Units of all wind variables are knots and pressure variables are hPa. These are added into the title.
             
-            Function words to use in cmd_request:
+            Function words to use in request:
                 
             * **maximum**
             * **minimum**
@@ -2375,11 +2480,11 @@ class TrackDataset:
         thresh : dict
             Keywords include:
                 
-            * **sample_min** - minimum number of storms in a grid box for the cmd_request to be applied. For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
-            * **V_min** - minimum wind for a given point to be included in the cmd_request.
-            * **P_max** - maximum pressure for a given point to be included in the cmd_request.
-            * **dV_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.
-            * **dP_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.
+            * **sample_min** - minimum number of storms in a grid box for the request to be applied. For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
+            * **v_min** - minimum wind for a given point to be included in the request.
+            * **p_max** - maximum pressure for a given point to be included in the request.
+            * **dv_min** - minimum change in wind over dt_window for a given point to be included in the request.
+            * **dp_max** - maximum change in pressure over dt_window for a given point to be included in the request.
             * **dt_window** - time window over which change variables are calculated (hours). Default is 24.
             * **dt_align** - alignment of dt_window for change variables -- 'start','middle','end' -- e.g. 'end' for dt_window=24 associates a TC point with change over the past 24 hours. Default is middle.
             
@@ -2391,14 +2496,18 @@ class TrackDataset:
             List or tuple representing the start and end dates as a string in 'month/day' format (e.g., ('6/1','8/15')). Default is ('1/1','12/31') or full year.
         binsize : float
             Grid resolution in degrees. Default is 1 degree.
-        zoom : str
-            Zoom for the plot. Default is "dynamic". Can be one of the following:
+        domain : str
+            Domain for the plot. Default is "dynamic". Can be one of the following:
             
             * **(basin_name)** - Any of the acceptable basins (check ``TrackDataset()`` for a list).
             * **lonW/lonE/latS/latN** - Custom plot domain.
             
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
+        return_array : bool
+            If True, returns the gridded 2D array used to generate the plot. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         prop : dict
@@ -2407,13 +2516,13 @@ class TrackDataset:
             Property of cartopy map.
         """
 
-        default_thresh={'sample_min':np.nan,'P_max':np.nan,'V_min':np.nan,'dV_min':np.nan,'dP_max':np.nan,'dV_max':np.nan,'dP_min':np.nan,'dt_window':24,'dt_align':'middle'}
+        default_thresh={'sample_min':np.nan,'p_max':np.nan,'v_min':np.nan,'dv_min':np.nan,'dp_max':np.nan,'dv_max':np.nan,'dp_min':np.nan,'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
 
-        thresh,func = findfunc(cmd_request,thresh)
-        thresh,varname = findvar(cmd_request,thresh)
+        thresh,func = findfunc(request,thresh)
+        thresh,varname = findvar(request,thresh)
         
         VEC_FLAG = isinstance(varname,tuple)
 
@@ -2477,11 +2586,14 @@ class TrackDataset:
             grid_z[np.where(grid_z==0)]=np.nan
         
         #Create instance of plot object
-        self.plot_obj = TrackPlot()
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if zoom == None:
-            zoom = self.basin
+        if domain == None:
+            domain = self.basin
         if cartopy_proj == None:
             if max(points['lon']) > 150 or min(points['lon']) < -150:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
@@ -2491,23 +2603,37 @@ class TrackDataset:
         #Plot
         endash = u"\u2013"
         dot = u"\u2022"
-        title_L=cmd_request.lower()
+        title_L=request.lower()
         for name in ['wind','vmax']:
             title_L = title_L.replace(name,'wind (kt)')
         for name in ['pressure','mslp']:
             title_L = title_L.replace(name,'pressure (hPa)')
         for name in ['heading','motion','movement']:
             title_L = title_L.replace(name,f'heading (km/hr) over {thresh["dt_window"]} hours')
-        if cmd_request.find('change')>=0:
+        if request.find('change')>=0:
             title_L = title_L+f", {thresh['dt_align']}"
         title_L = title_L[0].upper()+title_L[1:]+plot_subtitle
         date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
         title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'
         prop['title_L'],prop['title_R']=title_L,title_R
         
-        plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,VEC_FLAG,zoom,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
-                    
+        plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,VEC_FLAG,domain,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
+        
+        #Format grid into xarray if specified
+        if return_array == True:
+            try:
+                #Import xarray and construct DataArray, replacing NaNs with zeros
+                import xarray as xr
+                arr = xr.DataArray(np.nan_to_num(grid_z),coords=[grid_y.T[0],grid_x[0]],dims=['lat','lon'])
+                return arr
+            except ImportError as e:
+                raise RuntimeError("Error: xarray is not available. Install xarray in order to use the 'return_array' flag.") from e
+
         #Return axis
+        if return_ax == True and return_array == True:
+            return {'ax':plot_ax,'array':arr}
+        if return_ax == False and return_array == True:
+            return arr
         if ax != None or return_ax == True: return plot_ax
 
     
@@ -2569,7 +2695,7 @@ class TrackDataset:
         mag_thresh : int
             Minimum threshold for tornado rating.
         return_ax : bool
-            Whether to return the axis plotted. Default is False.
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         return_df : bool
             Whether to return the pandas DataFrame containing the composite tornado data. Default is False.
         

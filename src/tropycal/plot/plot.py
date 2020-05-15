@@ -297,86 +297,106 @@ class Plot:
         #Return prop
         return default_prop
     
-    def set_projection(self,zoom):
+    def set_projection(self,domain):
         
         r"""
-        Sets a predefined map projection zoom.
+        Sets a predefined map projection domain.
         
         Parameters
         ----------
-        zoom : str
-            Name of map projection to zoom over.
+        domain : str
+            Name of map projection to domain over.
         """
         
         #North Atlantic plot domain
-        if zoom == "north_atlantic":
+        if domain == "north_atlantic":
             bound_w = -105.0
             bound_e = -5.0
             bound_s = 0.0
             bound_n = 65.0
             
         #East Pacific plot domain
-        elif zoom == "east_pacific":
+        elif domain == "east_pacific":
             bound_w = -180.0+360.0 
             bound_e = -80+360.0 
             bound_s = 0.0
             bound_n = 65.0
             
         #West Pacific plot domain
-        elif zoom == "west_pacific":
+        elif domain == "west_pacific":
             bound_w = 90.0
             bound_e = 180.0
             bound_s = 0.0
             bound_n = 65.0
             
         #North Indian plot domain
-        elif zoom == "north_indian":
+        elif domain == "north_indian":
             bound_w = 30.0
             bound_e = 110.0
             bound_s = -5.0
             bound_n = 40.0
             
         #South Indian plot domain
-        elif zoom == "south_indian":
+        elif domain == "south_indian":
             bound_w = 20.0
             bound_e = 110.0
             bound_s = -50.0
             bound_n = 5.0
             
         #Australia plot domain
-        elif zoom == "australia":
+        elif domain == "australia":
             bound_w = 90.0
             bound_e = 180.0
             bound_s = -60.0
             bound_n = 0.0
             
         #South Pacific plot domain
-        elif zoom == "south_pacific":
+        elif domain == "south_pacific":
             bound_w = 140.0
             bound_e = -120.0+360.0
             bound_s = -65.0
             bound_n = 0.0
             
         #Global plot domain
-        elif zoom == "all":
+        elif domain == "all":
             bound_w = 0.1
             bound_e = 360.0
             bound_s = -90.0
             bound_n = 90.0
             
         #CONUS plot domain
-        elif zoom == "conus":
+        elif domain == "conus":
             bound_w = -130.0
             bound_e = -65.0
             bound_s = 20.0
             bound_n = 50.0
 
         #CONUS plot domain
-        elif zoom == "east_conus":
+        elif domain == "east_conus":
             bound_w = -105.0
             bound_e = -60.0
             bound_s = 20.0
             bound_n = 48.0
+        
+        #Custom domain
+        else:
+            
+            #Error check
+            if isinstance(domain,dict) == False:
+                msg = "Custom domains must be of type dict."
+                raise TypeError(msg)
+            
+            keys = domain.keys()
+            check = [False, False, False, False]
+            values = [0, 0, 0, 0]
+            for key in keys:
+                if key[0].lower() == 'n': check[0] = True; bound_n = domain[key]
+                if key[0].lower() == 's': check[1] = True; bound_s = domain[key]
+                if key[0].lower() == 'e': check[2] = True; bound_e = domain[key]
+                if key[0].lower() == 'w': check[3] = True; bound_w = domain[key]
+            if False in check:
+                msg = "Custom domains must be of type dict with arguments for 'n', 's', 'e' and 'w'."
+                raise ValueError(msg)
             
         #Set map extent
         self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
@@ -389,8 +409,9 @@ class Plot:
     
     def add_credit(self,text):
         
-        a = self.ax.text(0.99,0.01,text,fontsize=10,color='k',alpha=0.7,fontweight='bold',
-                transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
-        a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='white'),
-                       path_effects.Normal()])
+        if self.use_credit:
+            a = self.ax.text(0.99,0.01,text,fontsize=10,color='k',alpha=0.7,fontweight='bold',
+                    transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
+            a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='white'),
+                           path_effects.Normal()])
         

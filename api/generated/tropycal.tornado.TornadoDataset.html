@@ -105,6 +105,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
 </ul>
@@ -208,7 +209,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.plot_TCtors_rotated" title="tropycal.tornado.TornadoDataset.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_TCtors_rotated</span></code></a>(storm[, dist_thresh, …])</p></td>
 <td><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.plot_tors" title="tropycal.tornado.TornadoDataset.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_tors</span></code></a>(tor_info[, zoom, plotPPF, ax, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.plot_tors" title="tropycal.tornado.TornadoDataset.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_tors</span></code></a>(tor_info[, domain, plotPPF, ax, …])</p></td>
 <td><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.rotateToHeading" title="tropycal.tornado.TornadoDataset.rotateToHeading"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotateToHeading</span></code></a>(storm, stormTors)</p></td>
@@ -259,7 +260,7 @@
 
 <dl class="py method">
 <dt id="tropycal.tornado.TornadoDataset.plot_tors">
-<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tor_info</span></em>, <em class="sig-param"><span class="n">zoom</span><span class="o">=</span><span class="default_value">'conus'</span></em>, <em class="sig-param"><span class="n">plotPPF</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_tors" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tor_info</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">'conus'</span></em>, <em class="sig-param"><span class="n">plotPPF</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_tors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -272,7 +273,7 @@
 <li><p><strong>list</strong> with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.</p></li>
 </ul>
 </p></li>
-<li><p><strong>zoom</strong> (<em>str</em>) – <p>Zoom for the plot. Can be one of the following:</p>
+<li><p><strong>domain</strong> (<em>str</em>) – <p>Domain for the plot. Can be one of the following:</p>
 <ul>
 <li><p><strong>dynamic</strong> - default. Dynamically focuses the domain using the tornado track(s) plotted.</p></li>
 <li><p><strong>conus</strong> - Contiguous United States</p></li>

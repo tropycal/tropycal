@@ -27,6 +27,8 @@ Storm
       ~Storm.plot_TCtors_rotated
       ~Storm.plot_nhc_forecast
       ~Storm.plot_tors
+      ~Storm.query_nhc_discussions
+      ~Storm.sel_time
       ~Storm.to_dataframe
       ~Storm.to_dict
       ~Storm.to_xarray
@@ -55,6 +57,8 @@ Storm
    .. automethod:: plot_TCtors_rotated
    .. automethod:: plot_nhc_forecast
    .. automethod:: plot_tors
+   .. automethod:: query_nhc_discussions
+   .. automethod:: sel_time
    .. automethod:: to_dataframe
    .. automethod:: to_dict
    .. automethod:: to_xarray

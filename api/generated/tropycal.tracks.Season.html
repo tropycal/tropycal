@@ -107,6 +107,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
 </ul>
@@ -204,11 +205,17 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Season.__init__" title="tropycal.tracks.Season.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(season, info)</p></td>
 <td><p>Initialize self.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Season.annual_summary" title="tropycal.tracks.Season.annual_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annual_summary</span></code></a>()</p></td>
-<td><p>Generates a summary for this season with various cumulative statistics.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Season.get_storm" title="tropycal.tracks.Season.get_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm</span></code></a>(storm)</p></td>
+<td><p>Retrieves a Storm object for the requested storm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Season.plot" title="tropycal.tracks.Season.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([ax, return_ax, cartopy_proj, prop, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Season.get_storm_id" title="tropycal.tracks.Season.get_storm_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm_id</span></code></a>(storm)</p></td>
+<td><p>Returns the storm ID (e.g., “AL012019”) given the storm name and year.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Season.plot" title="tropycal.tracks.Season.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([ax, return_ax, cartopy_proj, prop, …])</p></td>
 <td><p>Creates a plot of this season.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Season.summary" title="tropycal.tracks.Season.summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">summary</span></code></a>()</p></td>
+<td><p>Generates a summary for this season with various cumulative statistics.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Season.to_dataframe" title="tropycal.tracks.Season.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dataframe</span></code></a>()</p></td>
 <td><p>Converts the season dict into a pandas DataFrame object.</p></td>
@@ -223,12 +230,29 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="tropycal.tracks.Season.annual_summary">
-<code class="sig-name descname">annual_summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season.annual_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season.annual_summary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a summary for this season with various cumulative statistics.</p>
+<dt id="tropycal.tracks.Season.get_storm">
+<code class="sig-name descname">get_storm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season.get_storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season.get_storm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a Storm object for the requested storm.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>dict</em> – Dictionary containing various statistics about this season.</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>storm</strong> (<em>str</em><em> or </em><em>tuple</em>) – Requested storm. Can be either string of storm ID (e.g., “AL052019”), or tuple with storm name and year (e.g., (“Matthew”,2016)).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>tropycal.tracks.Storm</em> – Object containing information about the requested storm, and methods for analyzing and plotting the storm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.tracks.Season.get_storm_id">
+<code class="sig-name descname">get_storm_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season.get_storm_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season.get_storm_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the storm ID (e.g., “AL012019”) given the storm name and year.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>storm</strong> (<em>tuple</em>) – Tuple containing the storm name and year (e.g., (“Matthew”,2016)).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>str or list</em> – If a single storm was found, returns a string containing its ID. Otherwise returns a list of matching IDs.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -241,10 +265,22 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
 <li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</p></li>
 <li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.tracks.Season.summary">
+<code class="sig-name descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a summary for this season with various cumulative statistics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – Dictionary containing various statistics about this season.</p>
 </dd>
 </dl>
 </dd></dl>

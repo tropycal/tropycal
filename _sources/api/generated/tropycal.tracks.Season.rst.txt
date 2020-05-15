@@ -17,8 +17,10 @@ Season
    .. autosummary::
    
       ~Season.__init__
-      ~Season.annual_summary
+      ~Season.get_storm
+      ~Season.get_storm_id
       ~Season.plot
+      ~Season.summary
       ~Season.to_dataframe
 
    
@@ -35,8 +37,10 @@ Season
 
    
    .. automethod:: __init__
-   .. automethod:: annual_summary
+   .. automethod:: get_storm
+   .. automethod:: get_storm_id
    .. automethod:: plot
+   .. automethod:: summary
    .. automethod:: to_dataframe
 
    

@@ -92,6 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Example Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html#keyword-options">Keyword Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sample_usage.html">Example Gallery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data.html">Data Sources</a></li>
 </ul>
@@ -428,7 +429,7 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
         
 
-<div class="viewcode-block" id="TornadoDataset.plot_tors"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.plot_tors">[docs]</a>    <span class="k">def</span> <span class="nf">plot_tors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tor_info</span><span class="p">,</span><span class="n">zoom</span><span class="o">=</span><span class="s2">&quot;conus&quot;</span><span class="p">,</span><span class="n">plotPPF</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="TornadoDataset.plot_tors"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.plot_tors">[docs]</a>    <span class="k">def</span> <span class="nf">plot_tors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tor_info</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;conus&quot;</span><span class="p">,</span><span class="n">plotPPF</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).</span>
@@ -442,8 +443,8 @@
 <span class="sd">            * **dict** entry containing the requested tornadoes to plot.</span>
 <span class="sd">            * **datetime.datetime** object for a single day to plot tornadoes.</span>
 <span class="sd">            * **list** with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.</span>
-<span class="sd">        zoom : str</span>
-<span class="sd">            Zoom for the plot. Can be one of the following:</span>
+<span class="sd">        domain : str</span>
+<span class="sd">            Domain for the plot. Can be one of the following:</span>
 <span class="sd">            </span>
 <span class="sd">            * **dynamic** - default. Dynamically focuses the domain using the tornado track(s) plotted.</span>
 <span class="sd">            * **conus** - Contiguous United States</span>
@@ -510,7 +511,7 @@
             <span class="n">cartopy_proj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span>
         
         <span class="c1">#Plot tornadoes</span>
-        <span class="n">plot_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_tornadoes</span><span class="p">(</span><span class="n">dfTors</span><span class="p">,</span><span class="n">zoom</span><span class="p">,</span><span class="n">plotPPF</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        <span class="n">plot_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_tornadoes</span><span class="p">(</span><span class="n">dfTors</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">plotPPF</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
         
         <span class="c1">#Return axis</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>

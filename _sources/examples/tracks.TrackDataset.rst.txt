@@ -55,7 +55,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.41 seconds)
+    --> Completed reading in HURDAT2 data (2.57 seconds)
 
 
 
@@ -94,6 +94,17 @@ A TrackDataset object can be used to retrieve individual storms and seasons, usi
         Minimum Pressure:  919 hPa
         Start Date:        0600 UTC 07 October 2018
         End Date:          1800 UTC 11 October 2018
+
+    Variables:
+        date        (datetime) [2018-10-06 18:00:00 .... 2018-10-15 18:00:00]
+        extra_obs   (int64) [0 .... 0]
+        special     (str) [ .... ]
+        type        (str) [LO .... EX]
+        lat         (float64) [17.8 .... 41.2]
+        lon         (float64) [-86.6 .... -10.0]
+        vmax        (int64) [25 .... 35]
+        mslp        (int64) [1006 .... 1001]
+        wmo_basin   (str) [north_atlantic .... north_atlantic]
 
     More Information:
         id:              AL142018
@@ -160,7 +171,7 @@ Note that you can pass various arguments to the plot function, such as customizi
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f543b54af28>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f1a3f28a3c8>
 
 
 
@@ -242,11 +253,11 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
 .. code-block:: default
 
 
-    hurdat_atl.gridded_stats(cmd_request="maximum wind",return_ax=True)
+    hurdat_atl.gridded_stats(request="maximum wind",return_ax=True)
 
     # Let's look at the average change in sustained wind speed over a 24-hour period. By default, the value plotted is for the midpoint of the 24-hour period (so 12 hours preceding and following). We'll use the "prop" keyword argument to set the colormap to "bwr" and set the contour level range:
 
-    hurdat_atl.gridded_stats(cmd_request="average wind change in 24 hours",prop={'cmap':'bwr','clevs':[-80,80]},return_ax=True)
+    hurdat_atl.gridded_stats(request="average wind change in 24 hours",prop={'cmap':'bwr','clevs':[-80,80]},return_ax=True)
 
 
 
@@ -281,14 +292,14 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
       warnings.warn('The .xlabels_top attribute is deprecated. Please '
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
-    doing the plotting
+    --> Generating plot
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:47: RuntimeWarning: Mean of empty slice
       return thresh,lambda x: np.nanmean(x)
-    doing the plotting
+    --> Generating plot
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f543d7cb588>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f1a44e42940>
 
 
 
@@ -320,7 +331,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (43.01 seconds)
+    --> Completed reading in ibtracs data (40.65 seconds)
 
 
 
@@ -333,7 +344,7 @@ Let's make a plot of the maximum sustained wind of TCs globally:
 .. code-block:: default
 
 
-    ibtracs.gridded_stats(cmd_request="maximum wind",return_ax=True)
+    ibtracs.gridded_stats(request="maximum wind",return_ax=True)
 
 
 
@@ -350,9 +361,9 @@ Let's make a plot of the maximum sustained wind of TCs globally:
 
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
-    doing the plotting
+    --> Generating plot
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f543dd18128>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f1a44529cc0>
 
 
 
@@ -362,7 +373,7 @@ Make a plot of the total number of storms per 1 degree gridbox worldwide:
 .. code-block:: default
 
 
-    ibtracs.gridded_stats(cmd_request="count of storms",prop={'cmap':'plasma_r'})
+    ibtracs.gridded_stats(request="number of storms",prop={'cmap':'plasma_r'})
 
 
 
@@ -379,7 +390,7 @@ Make a plot of the total number of storms per 1 degree gridbox worldwide:
 
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
-    doing the plotting
+    --> Generating plot
 
 
 
@@ -390,7 +401,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 .. code-block:: default
 
 
-    ibtracs.gridded_stats(cmd_request="count of storms",thresh={'dV_min':30},prop={'cmap':'plasma_r'})
+    ibtracs.gridded_stats(request="number of storms",thresh={'dv_min':30},prop={'cmap':'plasma_r'})
 
 
 
@@ -406,7 +417,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
-    doing the plotting
+    --> Generating plot
 
 
 
@@ -414,7 +425,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 6 minutes  14.667 seconds)
+   **Total running time of the script:** ( 6 minutes  3.501 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:

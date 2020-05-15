@@ -19,6 +19,7 @@ TrackDataset
       ~TrackDataset.__init__
       ~TrackDataset.ace_climo
       ~TrackDataset.assign_storm_tornadoes
+      ~TrackDataset.download_tcr
       ~TrackDataset.filter_storms
       ~TrackDataset.get_season
       ~TrackDataset.get_storm
@@ -50,6 +51,7 @@ TrackDataset
    .. automethod:: __init__
    .. automethod:: ace_climo
    .. automethod:: assign_storm_tornadoes
+   .. automethod:: download_tcr
    .. automethod:: filter_storms
    .. automethod:: get_season
    .. automethod:: get_storm

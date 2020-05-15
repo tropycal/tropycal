@@ -92,6 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Example Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html#keyword-options">Keyword Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sample_usage.html">Example Gallery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data.html">Data Sources</a></li>
 </ul>
@@ -238,14 +239,28 @@
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
          
         <span class="n">summary</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&lt;tropycal.tracks.Dataset&gt;&quot;</span><span class="p">]</span>
+        
+        <span class="c1">#Find maximum wind and minimum pressure</span>
+        <span class="n">max_wind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">stormid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">]]))</span>
+        <span class="n">max_wind_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">min_mslp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">stormid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;mslp&#39;</span><span class="p">]]))</span>
+        <span class="n">min_mslp_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">array_vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">])</span>
+            <span class="n">array_mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;mslp&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array_vmax</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">array_vmax</span><span class="p">)])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">array_vmax</span><span class="p">)</span> <span class="o">==</span> <span class="n">max_wind</span><span class="p">:</span>
+                <span class="n">max_wind_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;year&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array_mslp</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">array_mslp</span><span class="p">)])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">array_mslp</span><span class="p">)</span> <span class="o">==</span> <span class="n">min_mslp</span><span class="p">:</span>
+                <span class="n">min_mslp_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;year&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="c1">#Add general summary</span>
         <span class="n">emdash</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u2014</span><span class="s1">&#39;</span>
         <span class="n">summary_keys</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Basin&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">basin</span><span class="p">,</span>\
                         <span class="s1">&#39;Source&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">+</span><span class="p">[</span><span class="s1">&#39;, &#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">ibtracs_mode</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">==</span><span class="s1">&#39;hurdat&#39;</span><span class="p">],</span>\
                         <span class="s1">&#39;Number of storms&#39;</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">),</span>\
-                        <span class="s1">&#39;Maximum wind&#39;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">stormid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">]]))</span><span class="si">}</span><span class="s2"> knots&quot;</span><span class="p">,</span>
-                        <span class="s1">&#39;Minimum pressure&#39;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">stormid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;mslp&#39;</span><span class="p">]]))</span><span class="si">}</span><span class="s2"> hPa&quot;</span><span class="p">,</span>
+                        <span class="s1">&#39;Maximum wind&#39;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">max_wind</span><span class="si">}</span><span class="s2"> knots (</span><span class="si">{</span><span class="n">max_wind_name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                        <span class="s1">&#39;Minimum pressure&#39;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">min_mslp</span><span class="si">}</span><span class="s2"> hPa (</span><span class="si">{</span><span class="n">min_mslp_name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
                         <span class="s1">&#39;Year range&#39;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="s1">&#39;year&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">emdash</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="s1">&#39;year&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
         <span class="c1">#Add dataset summary</span>
         <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Dataset Summary:&quot;</span><span class="p">)</span>
@@ -256,11 +271,12 @@
 
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
     
+    
 <div class="viewcode-block" id="TrackDataset.__init__"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="c1">#kwargs</span>
-        <span class="n">atlantic_url</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;atlantic_url&#39;</span><span class="p">,</span> <span class="s1">&#39;https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2018-051019.txt&#39;</span><span class="p">)</span>
-        <span class="n">pacific_url</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;pacific_url&#39;</span><span class="p">,</span> <span class="s1">&#39;https://www.nhc.noaa.gov/data/hurdat/hurdat2-nepac-1949-2018-071519.txt&#39;</span><span class="p">)</span>
+        <span class="n">atlantic_url</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;atlantic_url&#39;</span><span class="p">,</span> <span class="s1">&#39;https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2019-042820.txt&#39;</span><span class="p">)</span>
+        <span class="n">pacific_url</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;pacific_url&#39;</span><span class="p">,</span> <span class="s1">&#39;https://www.nhc.noaa.gov/data/hurdat/hurdat2-nepac-1949-2019-042320.txt&#39;</span><span class="p">)</span>
         <span class="n">ibtracs_url</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ibtracs_url&#39;</span><span class="p">,</span> <span class="s1">&#39;https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv&#39;</span><span class="p">)</span>
         <span class="n">ibtracs_mode</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ibtracs_mode&#39;</span><span class="p">,</span> <span class="s1">&#39;jtwc&#39;</span><span class="p">)</span>
         <span class="n">catarina</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;catarina&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -331,6 +347,7 @@
         
         <span class="c1">#Add dict to store all storm-specific tornado data in</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_tors</span> <span class="o">=</span> <span class="p">{}</span></div>
+    
     
     <span class="k">def</span> <span class="nf">__read_hurdat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">override_basin</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         
@@ -535,6 +552,7 @@
         <span class="n">tsec</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">time_elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">(),</span><span class="mi">2</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--&gt; Completed reading in HURDAT2 data (</span><span class="si">{</span><span class="n">tsec</span><span class="si">}</span><span class="s2"> seconds)&quot;</span><span class="p">)</span>
     
+    
     <span class="k">def</span> <span class="nf">__read_btk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -680,6 +698,7 @@
         <span class="n">tsec</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">time_elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">(),</span><span class="mi">2</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--&gt; Completed reading in best track data (</span><span class="si">{</span><span class="n">tsec</span><span class="si">}</span><span class="s2"> seconds)&quot;</span><span class="p">)</span>
 
+        
     <span class="k">def</span> <span class="nf">__read_ibtracs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1068,6 +1087,7 @@
         <span class="n">tsec</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">time_elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">(),</span><span class="mi">2</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--&gt; Completed reading in ibtracs data (</span><span class="si">{</span><span class="n">tsec</span><span class="si">}</span><span class="s2"> seconds)&quot;</span><span class="p">)</span>
             
+            
 <div class="viewcode-block" id="TrackDataset.get_storm_id"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.get_storm_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_storm_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1104,6 +1124,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys_use</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="n">keys_use</span> <span class="o">=</span> <span class="n">keys_use</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys_use</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Storm not found&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">keys_use</span></div>
+    
     
 <div class="viewcode-block" id="TrackDataset.get_storm"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.get_storm">[docs]</a>    <span class="k">def</span> <span class="nf">get_storm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">):</span>
         
@@ -1145,7 +1166,8 @@
             <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Multiple IDs were identified for the requested storm. Choose one of the following storm IDs and provide it as the &#39;storm&#39; argument instead of a tuple:</span><span class="si">{</span><span class="n">error_message</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="TrackDataset.plot_storm"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.plot_storm">[docs]</a>    <span class="k">def</span> <span class="nf">plot_storm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">zoom</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">plot_all</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
+    
+<div class="viewcode-block" id="TrackDataset.plot_storm"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.plot_storm">[docs]</a>    <span class="k">def</span> <span class="nf">plot_storm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">plot_all</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a plot of a single storm.</span>
@@ -1154,8 +1176,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        storm : str, tuple or dict</span>
 <span class="sd">            Requested storm. Can be either string of storm ID (e.g., &quot;AL052019&quot;), tuple with storm name and year (e.g., (&quot;Matthew&quot;,2016)), or a dict entry.</span>
-<span class="sd">        zoom : str</span>
-<span class="sd">            Zoom for the plot. Default is &quot;dynamic&quot;. Can be one of the following:</span>
+<span class="sd">        domain : str</span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Can be one of the following:</span>
 <span class="sd">            </span>
 <span class="sd">            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.</span>
 <span class="sd">            * **(basin_name)** - Any of the acceptable basins (check &quot;TrackDataset&quot; for a list).</span>
@@ -1165,7 +1187,7 @@
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
 <span class="sd">        return_ax : bool</span>
-<span class="sd">            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.</span>
+<span class="sd">            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</span>
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">        prop : dict</span>
@@ -1181,7 +1203,10 @@
             <span class="n">storm_dict</span> <span class="o">=</span> <span class="n">storm</span>
         
         <span class="c1">#Create instance of plot object</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
         
         <span class="c1">#Create cartopy projection</span>
         <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
@@ -1193,12 +1218,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">cartopy_proj</span>
             
         <span class="c1">#Plot storm</span>
-        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><span class="n">storm_dict</span><span class="p">,</span><span class="n">zoom</span><span class="p">,</span><span class="n">plot_all</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><span class="n">storm_dict</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">plot_all</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
         
         <span class="c1">#Return axis</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">return</span> <span class="n">plot_ax</span></div>
     
-<div class="viewcode-block" id="TrackDataset.plot_storms"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.plot_storms">[docs]</a>    <span class="k">def</span> <span class="nf">plot_storms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storms</span><span class="p">,</span><span class="n">zoom</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">title_text</span><span class="o">=</span><span class="s2">&quot;TC Track Composite&quot;</span><span class="p">,</span><span class="n">filter_dates</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1/1&#39;</span><span class="p">,</span><span class="s1">&#39;12/31&#39;</span><span class="p">),</span><span class="n">plot_all_dots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
+    
+<div class="viewcode-block" id="TrackDataset.plot_storms"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.plot_storms">[docs]</a>    <span class="k">def</span> <span class="nf">plot_storms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storms</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">title_text</span><span class="o">=</span><span class="s2">&quot;TC Track Composite&quot;</span><span class="p">,</span><span class="n">filter_dates</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1/1&#39;</span><span class="p">,</span><span class="s1">&#39;12/31&#39;</span><span class="p">),</span><span class="n">plot_all_dots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a plot of multiple storms.</span>
@@ -1207,8 +1233,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        storms : list</span>
 <span class="sd">            List of requested storms. List can contain either strings of storm ID (e.g., &quot;AL052019&quot;), tuples with storm name and year (e.g., (&quot;Matthew&quot;,2016)), or dict entries.</span>
-<span class="sd">        zoom : str</span>
-<span class="sd">            Zoom for the plot. Default is &quot;dynamic&quot;. Can be one of the following:</span>
+<span class="sd">        domain : str</span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Can be one of the following:</span>
 <span class="sd">            </span>
 <span class="sd">            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.</span>
 <span class="sd">            * **(basin_name)** - Any of the acceptable basins (check &quot;TrackDataset&quot; for a list).</span>
@@ -1218,7 +1244,7 @@
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
 <span class="sd">        return_ax : bool</span>
-<span class="sd">            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.</span>
+<span class="sd">            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</span>
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">        prop : dict</span>
@@ -1228,7 +1254,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1">#Create instance of plot object</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
         
         <span class="c1">#Identify plot domain for all requested storms</span>
         <span class="n">max_lon</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
@@ -1257,10 +1286,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">cartopy_proj</span>
             
         <span class="c1">#Plot storm</span>
-        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storms</span><span class="p">(</span><span class="n">storm_dicts</span><span class="p">,</span><span class="n">zoom</span><span class="p">,</span><span class="n">title_text</span><span class="p">,</span><span class="n">filter_dates</span><span class="p">,</span><span class="n">plot_all_dots</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storms</span><span class="p">(</span><span class="n">storm_dicts</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">title_text</span><span class="p">,</span><span class="n">filter_dates</span><span class="p">,</span><span class="n">plot_all_dots</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
         
         <span class="c1">#Return axis</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">return</span> <span class="n">plot_ax</span></div>
+        
         
 <div class="viewcode-block" id="TrackDataset.plot_season"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.plot_season">[docs]</a>    <span class="k">def</span> <span class="nf">plot_season</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
         
@@ -1273,6 +1303,8 @@
 <span class="sd">            Year to retrieve season data. If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).</span>
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        return_ax : bool</span>
+<span class="sd">            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</span>
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">        prop : dict</span>
@@ -1285,7 +1317,10 @@
         <span class="n">season</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_season</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
         
         <span class="c1">#Create instance of plot object</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
         
         <span class="c1">#Create cartopy projection</span>
         <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
@@ -1301,6 +1336,7 @@
         
         <span class="c1">#Return axis</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">return</span> <span class="n">plot_ax</span></div>
+    
     
 <div class="viewcode-block" id="TrackDataset.search_name"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.search_name">[docs]</a>    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
         
@@ -1323,23 +1359,56 @@
         
         <span class="k">return</span> <span class="n">years</span></div>
     
-<div class="viewcode-block" id="TrackDataset.get_season"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.get_season">[docs]</a>    <span class="k">def</span> <span class="nf">get_season</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+    
+<div class="viewcode-block" id="TrackDataset.download_tcr"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.download_tcr">[docs]</a>    <span class="k">def</span> <span class="nf">download_tcr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieves a Season object for the requested season.</span>
+<span class="sd">        Downloads the NHC offical Tropical Cyclone Report (TCR) for the requested storm to the requested directory. Available only for storms with advisories issued by the National Hurricane Center.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        year : int</span>
-<span class="sd">            Year to retrieve season data. If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).</span>
-<span class="sd">        basin : str, optional</span>
-<span class="sd">            If using a global ibtracs dataset, this specifies which basin to load in. Otherwise this argument is ignored.</span>
-<span class="sd">        </span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        tropycal.tracks.Season</span>
-<span class="sd">            Object containing every storm entry for the given season, and methods for analyzing and plotting the season.</span>
+<span class="sd">        storm : str, tuple or dict</span>
+<span class="sd">            Requested storm. Can be either string of storm ID (e.g., &quot;AL052019&quot;), tuple with storm name and year (e.g., (&quot;Matthew&quot;,2016)), or a dict entry.</span>
+<span class="sd">        save_path : str</span>
+<span class="sd">            Path of directory to download the TCR into. Default is current working directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Retrieve requested storm</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">storm</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">storm_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_storm</span><span class="p">(</span><span class="n">storm</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">storm_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_storm</span><span class="p">(</span><span class="n">storm</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        
+        <span class="c1">#Error check</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">!=</span> <span class="s2">&quot;hurdat&quot;</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NHC data can only be accessed when HURDAT is used as the data source.&quot;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">&lt;</span> <span class="mi">1995</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Tropical Cyclone Reports are unavailable prior to 1995.&quot;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;save_path&#39; must be of type str.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="c1">#Format URL</span>
+        <span class="n">storm_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="n">storm_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.nhc.noaa.gov/data/tcr/</span><span class="si">{</span><span class="n">storm_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">storm_name</span><span class="si">}</span><span class="s2">.pdf&quot;</span>
+        
+        <span class="c1">#Check to make sure PDF is available</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;This tropical cyclone does not have a Tropical Cyclone Report (TCR) available.&quot;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="c1">#Retrieve PDF</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span><span class="sa">f</span><span class="s2">&quot;TCR_</span><span class="si">{</span><span class="n">storm_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">storm_name</span><span class="si">}</span><span class="s2">.pdf&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
+    
+    
+    <span class="k">def</span> <span class="nf">__retrieve_season</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">basin</span><span class="p">):</span>
         
         <span class="c1">#Initialize dict to be populated</span>
         <span class="n">season_dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1377,8 +1446,45 @@
         <span class="n">season_info</span><span class="p">[</span><span class="s1">&#39;source_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">season_dict</span><span class="p">[</span><span class="n">first_key</span><span class="p">][</span><span class="s1">&#39;source_info&#39;</span><span class="p">]</span>
                 
         <span class="c1">#Return object</span>
-        <span class="k">return</span> <span class="n">Season</span><span class="p">(</span><span class="n">season_dict</span><span class="p">,</span><span class="n">season_info</span><span class="p">)</span></div>
-
+        <span class="k">return</span> <span class="n">Season</span><span class="p">(</span><span class="n">season_dict</span><span class="p">,</span><span class="n">season_info</span><span class="p">)</span>
+                   
+<div class="viewcode-block" id="TrackDataset.get_season"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.get_season">[docs]</a>    <span class="k">def</span> <span class="nf">get_season</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">year</span><span class="p">,</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a Season object for the requested season or seasons.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        year : int or list</span>
+<span class="sd">            Year(s) to retrieve season data. If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975). Use of multiple years is only permissible for hurdat sources.</span>
+<span class="sd">        basin : str, optional</span>
+<span class="sd">            If using a global ibtracs dataset, this specifies which basin to load in. Otherwise this argument is ignored.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tropycal.tracks.Season</span>
+<span class="sd">            Object containing every storm entry for the given season, and methods for analyzing and plotting the season.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Error checks</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="nb">list</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;year&#39; must be of type int or list.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="nb">list</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">year</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Elements of list &#39;year&#39; must be of type int.&quot;</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="c1">#Retrieve season object(s)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__retrieve_season</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">basin</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">return_season</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__retrieve_season</span><span class="p">(</span><span class="n">year</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">basin</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i_year</span> <span class="ow">in</span> <span class="n">year</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">return_season</span> <span class="o">=</span> <span class="n">return_season</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__retrieve_season</span><span class="p">(</span><span class="n">i_year</span><span class="p">,</span><span class="n">basin</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">return_season</span></div>
+    
 <div class="viewcode-block" id="TrackDataset.ace_climo"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.ace_climo">[docs]</a>    <span class="k">def</span> <span class="nf">ace_climo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">plot_year</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">compare_years</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">start_year</span><span class="o">=</span><span class="mi">1950</span><span class="p">,</span><span class="n">rolling_sum</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">return_dict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1425,7 +1531,7 @@
             
             <span class="c1">#Get info for this year</span>
             <span class="n">season</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_season</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
-            <span class="n">year_info</span> <span class="o">=</span> <span class="n">season</span><span class="o">.</span><span class="n">annual_summary</span><span class="p">()</span>
+            <span class="n">year_info</span> <span class="o">=</span> <span class="n">season</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
             
             <span class="c1">#Generate list of dates for this year</span>
             <span class="n">year_dates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(((</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)),</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">dt</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">dt</span><span class="p">(</span><span class="n">year</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">))])</span>
@@ -1679,7 +1785,7 @@
             
             <span class="c1">#Get info for this year</span>
             <span class="n">season</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_season</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
-            <span class="n">year_info</span> <span class="o">=</span> <span class="n">season</span><span class="o">.</span><span class="n">annual_summary</span><span class="p">()</span>
+            <span class="n">year_info</span> <span class="o">=</span> <span class="n">season</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
             
             <span class="c1">#Generate list of dates for this year</span>
             <span class="n">year_dates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(((</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)),</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">dt</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">dt</span><span class="p">(</span><span class="n">year</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">))])</span>
@@ -2100,7 +2206,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span></div>
     
-<div class="viewcode-block" id="TrackDataset.rank_storm"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.rank_storm">[docs]</a>    <span class="k">def</span> <span class="nf">rank_storm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">metric</span><span class="p">,</span><span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">subset_domain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">year_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">date_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">subtropical</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="TrackDataset.rank_storm"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.rank_storm">[docs]</a>    <span class="k">def</span> <span class="nf">rank_storm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">metric</span><span class="p">,</span><span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">year_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">date_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">subtropical</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ranks storm by a specified metric.</span>
@@ -2124,7 +2230,7 @@
 <span class="sd">            Whether to return a pandas.DataFrame (True) or dict (False). Default is True.</span>
 <span class="sd">        ascending : bool</span>
 <span class="sd">            Whether to return rank in ascending order (True) or descending order (False). Default is False.</span>
-<span class="sd">        subset_domain : str</span>
+<span class="sd">        domain : str</span>
 <span class="sd">            String representing either a bounded region &#39;latW/latE/latS/latN&#39;, or a basin name. Default is entire basin.</span>
 <span class="sd">        year_range : list or tuple</span>
 <span class="sd">            List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.</span>
@@ -2206,14 +2312,14 @@
             <span class="n">basin_tropical</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">storm_data</span><span class="p">[</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">]</span>
             
             <span class="c1">#Filter geographically</span>
-            <span class="k">if</span> <span class="n">subset_domain</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subset_domain</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;subset_domain must be of type str.&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">subset_domain</span><span class="p">:</span>
-                    <span class="n">bound_w</span><span class="p">,</span><span class="n">bound_e</span><span class="p">,</span><span class="n">bound_s</span><span class="p">,</span><span class="n">bound_n</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">subset_domain</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">domain</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;domain must be of type str.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">domain</span><span class="p">:</span>
+                    <span class="n">bound_w</span><span class="p">,</span><span class="n">bound_e</span><span class="p">,</span><span class="n">bound_s</span><span class="p">,</span><span class="n">bound_n</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">domain</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)]</span>
                     <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">lat_tropical</span> <span class="o">&gt;=</span> <span class="n">bound_s</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lat_tropical</span> <span class="o">&lt;=</span> <span class="n">bound_n</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lon_tropical</span> <span class="o">&gt;=</span> <span class="n">bound_w</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lon_tropical</span> <span class="o">&lt;=</span> <span class="n">bound_e</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">basin_tropical</span><span class="o">==</span><span class="n">subset_domain</span><span class="p">)</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">basin_tropical</span><span class="o">==</span><span class="n">domain</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">continue</span>
                 
                 <span class="c1">#Check for subset type</span>
@@ -2382,7 +2488,7 @@
         <span class="c1">#Iterate over every season</span>
         <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_year</span><span class="p">,</span><span class="n">end_year</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
             <span class="n">season</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_season</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
-            <span class="n">year_data</span> <span class="o">=</span> <span class="n">season</span><span class="o">.</span><span class="n">annual_summary</span><span class="p">()</span>
+            <span class="n">year_data</span> <span class="o">=</span> <span class="n">season</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
             <span class="n">year_ace</span> <span class="o">=</span> <span class="n">year_data</span><span class="p">[</span><span class="s1">&#39;season_ace&#39;</span><span class="p">]</span>
             
             <span class="c1">#Compare year ACE against storm ACE</span>
@@ -2393,7 +2499,7 @@
                 
         <span class="k">return</span> <span class="n">ace_rank</span></div>
 
-<div class="viewcode-block" id="TrackDataset.filter_storms"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.filter_storms">[docs]</a>    <span class="k">def</span> <span class="nf">filter_storms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">year_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">9999</span><span class="p">),</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1/1&#39;</span><span class="p">,</span><span class="s1">&#39;12/31&#39;</span><span class="p">),</span><span class="n">thresh</span><span class="o">=</span><span class="p">{},</span><span class="n">subset_domain</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">360</span><span class="p">,</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span><span class="mi">90</span><span class="p">),</span><span class="n">doInterp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">return_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="TrackDataset.filter_storms"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.filter_storms">[docs]</a>    <span class="k">def</span> <span class="nf">filter_storms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">year_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">9999</span><span class="p">),</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1/1&#39;</span><span class="p">,</span><span class="s1">&#39;12/31&#39;</span><span class="p">),</span><span class="n">thresh</span><span class="o">=</span><span class="p">{},</span><span class="n">domain</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">360</span><span class="p">,</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span><span class="mi">90</span><span class="p">),</span><span class="n">doInterp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">return_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Filters all storms by various thresholds.</span>
@@ -2408,15 +2514,15 @@
 <span class="sd">            Keywords include:</span>
 <span class="sd">                </span>
 <span class="sd">            * **sample_min** - minimum number of storms in a grid box for the cmd_request to be applied. For the functions &#39;percentile&#39; and &#39;average&#39;, &#39;sample_min&#39; defaults to 5 and will override any value less than 5.</span>
-<span class="sd">            * **V_min** - minimum wind for a given point to be included in the cmd_request.</span>
-<span class="sd">            * **P_max** - maximum pressure for a given point to be included in the cmd_request.</span>
-<span class="sd">            * **dV_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.</span>
-<span class="sd">            * **dP_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.</span>
+<span class="sd">            * **v_min** - minimum wind for a given point to be included in the cmd_request.</span>
+<span class="sd">            * **p_max** - maximum pressure for a given point to be included in the cmd_request.</span>
+<span class="sd">            * **dv_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.</span>
+<span class="sd">            * **dp_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.</span>
 <span class="sd">            * **dt_window** - time window over which change variables are calculated (hours). Default is 24.</span>
 <span class="sd">            * **dt_align** - alignment of dt_window for change variables -- &#39;start&#39;,&#39;middle&#39;,&#39;end&#39; -- e.g. &#39;end&#39; for dt_window=24 associates a TC point with change over the past 24 hours. Default is middle.</span>
 <span class="sd">            </span>
 <span class="sd">            Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.</span>
-<span class="sd">        subset_domain : str</span>
+<span class="sd">        domain : str</span>
 <span class="sd">            String or tuple representing a bounded region, &#39;latW/latE/latS/latN&#39;.</span>
 <span class="sd">        doInterp : bool</span>
 <span class="sd">            Whether to interpolate track data to hourly. Default is False.</span>
@@ -2429,16 +2535,16 @@
 <span class="sd">            Check return_keys for more information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">default_thresh</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;sample_min&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;P_max&#39;</span><span class="p">:</span><span class="mi">9999</span><span class="p">,</span><span class="s1">&#39;V_min&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;dV_min&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">9999</span><span class="p">,</span><span class="s1">&#39;dP_max&#39;</span><span class="p">:</span><span class="mi">9999</span><span class="p">,</span><span class="s1">&#39;dV_max&#39;</span><span class="p">:</span><span class="mi">9999</span><span class="p">,</span><span class="s1">&#39;dP_min&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">9999</span><span class="p">,</span>
+        <span class="n">default_thresh</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;sample_min&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;p_max&#39;</span><span class="p">:</span><span class="mi">9999</span><span class="p">,</span><span class="s1">&#39;v_min&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;dv_min&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">9999</span><span class="p">,</span><span class="s1">&#39;dp_max&#39;</span><span class="p">:</span><span class="mi">9999</span><span class="p">,</span><span class="s1">&#39;dv_max&#39;</span><span class="p">:</span><span class="mi">9999</span><span class="p">,</span><span class="s1">&#39;dp_min&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">9999</span><span class="p">,</span>
                         <span class="s1">&#39;dt_window&#39;</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span><span class="s1">&#39;dt_align&#39;</span><span class="p">:</span><span class="s1">&#39;middle&#39;</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">thresh</span><span class="p">:</span>
             <span class="n">default_thresh</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">thresh</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="n">thresh</span> <span class="o">=</span> <span class="n">default_thresh</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subset_domain</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
-            <span class="n">lon_min</span><span class="p">,</span><span class="n">lon_max</span><span class="p">,</span><span class="n">lat_min</span><span class="p">,</span><span class="n">lat_max</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">subset_domain</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">lon_min</span><span class="p">,</span><span class="n">lon_max</span><span class="p">,</span><span class="n">lat_min</span><span class="p">,</span><span class="n">lat_max</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">domain</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">lon_min</span><span class="p">,</span><span class="n">lon_max</span><span class="p">,</span><span class="n">lat_min</span><span class="p">,</span><span class="n">lat_max</span> <span class="o">=</span> <span class="n">subset_domain</span>
+            <span class="n">lon_min</span><span class="p">,</span><span class="n">lon_max</span><span class="p">,</span><span class="n">lat_min</span><span class="p">,</span><span class="n">lat_max</span> <span class="o">=</span> <span class="n">domain</span>
         <span class="n">year_min</span><span class="p">,</span><span class="n">year_max</span> <span class="o">=</span> <span class="n">year_range</span>
         <span class="n">date_min</span><span class="p">,</span><span class="n">date_max</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">date_range</span><span class="p">]</span>
         <span class="n">date_max</span> <span class="o">+=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">seconds</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -2479,39 +2585,39 @@
                         <span class="n">points</span><span class="p">[</span><span class="s1">&#39;dx_dt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">istorm</span><span class="p">[</span><span class="s1">&#39;dx_dt&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
                         <span class="n">points</span><span class="p">[</span><span class="s1">&#39;dy_dt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">istorm</span><span class="p">[</span><span class="s1">&#39;dy_dt&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;V_min&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;V_min&#39;</span><span class="p">])]</span>
-        <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;P_max&#39;</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">9999</span><span class="p">:</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;P_max&#39;</span><span class="p">])]</span>
+        <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;v_min&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;v_min&#39;</span><span class="p">])]</span>
+        <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;p_max&#39;</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">9999</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;p_max&#39;</span><span class="p">])]</span>
         <span class="k">if</span> <span class="n">doInterp</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dV_min&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;dvmax_dt&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dV_min&#39;</span><span class="p">])]</span>
-            <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dP_max&#39;</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">9999</span><span class="p">:</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;dmslp_dt&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dP_max&#39;</span><span class="p">])]</span>
-            <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dV_max&#39;</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">9999</span><span class="p">:</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;dvmax_dt&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dV_max&#39;</span><span class="p">])]</span>
-            <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dP_min&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;dmslp_dt&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dP_min&#39;</span><span class="p">])]</span>
+            <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dv_min&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;dvmax_dt&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dv_min&#39;</span><span class="p">])]</span>
+            <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dp_max&#39;</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">9999</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;dmslp_dt&#39;</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dp_max&#39;</span><span class="p">])]</span>
+            <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dv_max&#39;</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">9999</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;dvmax_dt&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dv_max&#39;</span><span class="p">])]</span>
+            <span class="k">if</span> <span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dp_min&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;dmslp_dt&#39;</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dp_min&#39;</span><span class="p">])]</span>
             
         <span class="k">if</span> <span class="n">return_keys</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;stormid&quot;</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">p</span></div>
 
-<div class="viewcode-block" id="TrackDataset.gridded_stats"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.gridded_stats">[docs]</a>    <span class="k">def</span> <span class="nf">gridded_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cmd_request</span><span class="p">,</span><span class="n">thresh</span><span class="o">=</span><span class="p">{},</span><span class="n">year_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1/1&#39;</span><span class="p">,</span><span class="s1">&#39;12/31&#39;</span><span class="p">),</span><span class="n">binsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>\
-                         <span class="n">zoom</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="TrackDataset.gridded_stats"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.gridded_stats">[docs]</a>    <span class="k">def</span> <span class="nf">gridded_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">request</span><span class="p">,</span><span class="n">thresh</span><span class="o">=</span><span class="p">{},</span><span class="n">year_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1/1&#39;</span><span class="p">,</span><span class="s1">&#39;12/31&#39;</span><span class="p">),</span><span class="n">binsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>\
+                         <span class="n">domain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">return_array</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a plot of gridded statistics.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        cmd_request : str</span>
+<span class="sd">        request : str</span>
 <span class="sd">            This string is a descriptor for what you want to plot.</span>
 <span class="sd">            It will be used to define the variable (e.g. &#39;wind&#39; --&gt; &#39;vmax&#39;) and the function (e.g. &#39;maximum&#39; --&gt; np.max()).</span>
 <span class="sd">            This string is also used as the plot title.</span>
 <span class="sd">            </span>
-<span class="sd">            Variable words to use in cmd_request:</span>
+<span class="sd">            Variable words to use in request:</span>
 <span class="sd">                </span>
 <span class="sd">            * **wind** - (kt). Sustained wind.</span>
 <span class="sd">            * **pressure** - (hPa). Minimum pressure.</span>
@@ -2521,7 +2627,7 @@
 <span class="sd">            </span>
 <span class="sd">            Units of all wind variables are knots and pressure variables are hPa. These are added into the title.</span>
 <span class="sd">            </span>
-<span class="sd">            Function words to use in cmd_request:</span>
+<span class="sd">            Function words to use in request:</span>
 <span class="sd">                </span>
 <span class="sd">            * **maximum**</span>
 <span class="sd">            * **minimum**</span>
@@ -2534,11 +2640,11 @@
 <span class="sd">        thresh : dict</span>
 <span class="sd">            Keywords include:</span>
 <span class="sd">                </span>
-<span class="sd">            * **sample_min** - minimum number of storms in a grid box for the cmd_request to be applied. For the functions &#39;percentile&#39; and &#39;average&#39;, &#39;sample_min&#39; defaults to 5 and will override any value less than 5.</span>
-<span class="sd">            * **V_min** - minimum wind for a given point to be included in the cmd_request.</span>
-<span class="sd">            * **P_max** - maximum pressure for a given point to be included in the cmd_request.</span>
-<span class="sd">            * **dV_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.</span>
-<span class="sd">            * **dP_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.</span>
+<span class="sd">            * **sample_min** - minimum number of storms in a grid box for the request to be applied. For the functions &#39;percentile&#39; and &#39;average&#39;, &#39;sample_min&#39; defaults to 5 and will override any value less than 5.</span>
+<span class="sd">            * **v_min** - minimum wind for a given point to be included in the request.</span>
+<span class="sd">            * **p_max** - maximum pressure for a given point to be included in the request.</span>
+<span class="sd">            * **dv_min** - minimum change in wind over dt_window for a given point to be included in the request.</span>
+<span class="sd">            * **dp_max** - maximum change in pressure over dt_window for a given point to be included in the request.</span>
 <span class="sd">            * **dt_window** - time window over which change variables are calculated (hours). Default is 24.</span>
 <span class="sd">            * **dt_align** - alignment of dt_window for change variables -- &#39;start&#39;,&#39;middle&#39;,&#39;end&#39; -- e.g. &#39;end&#39; for dt_window=24 associates a TC point with change over the past 24 hours. Default is middle.</span>
 <span class="sd">            </span>
@@ -2550,14 +2656,18 @@
 <span class="sd">            List or tuple representing the start and end dates as a string in &#39;month/day&#39; format (e.g., (&#39;6/1&#39;,&#39;8/15&#39;)). Default is (&#39;1/1&#39;,&#39;12/31&#39;) or full year.</span>
 <span class="sd">        binsize : float</span>
 <span class="sd">            Grid resolution in degrees. Default is 1 degree.</span>
-<span class="sd">        zoom : str</span>
-<span class="sd">            Zoom for the plot. Default is &quot;dynamic&quot;. Can be one of the following:</span>
+<span class="sd">        domain : str</span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Can be one of the following:</span>
 <span class="sd">            </span>
 <span class="sd">            * **(basin_name)** - Any of the acceptable basins (check ``TrackDataset()`` for a list).</span>
 <span class="sd">            * **lonW/lonE/latS/latN** - Custom plot domain.</span>
 <span class="sd">            </span>
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        return_ax : bool</span>
+<span class="sd">            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</span>
+<span class="sd">        return_array : bool</span>
+<span class="sd">            If True, returns the gridded 2D array used to generate the plot. Default is False.</span>
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">        prop : dict</span>
@@ -2566,13 +2676,13 @@
 <span class="sd">            Property of cartopy map.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">default_thresh</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;sample_min&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;P_max&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;V_min&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;dV_min&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;dP_max&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;dV_max&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;dP_min&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;dt_window&#39;</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span><span class="s1">&#39;dt_align&#39;</span><span class="p">:</span><span class="s1">&#39;middle&#39;</span><span class="p">}</span>
+        <span class="n">default_thresh</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;sample_min&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;p_max&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;v_min&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;dv_min&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;dp_max&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;dv_max&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;dp_min&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="s1">&#39;dt_window&#39;</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span><span class="s1">&#39;dt_align&#39;</span><span class="p">:</span><span class="s1">&#39;middle&#39;</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">thresh</span><span class="p">:</span>
             <span class="n">default_thresh</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">thresh</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="n">thresh</span> <span class="o">=</span> <span class="n">default_thresh</span>
 
-        <span class="n">thresh</span><span class="p">,</span><span class="n">func</span> <span class="o">=</span> <span class="n">findfunc</span><span class="p">(</span><span class="n">cmd_request</span><span class="p">,</span><span class="n">thresh</span><span class="p">)</span>
-        <span class="n">thresh</span><span class="p">,</span><span class="n">varname</span> <span class="o">=</span> <span class="n">findvar</span><span class="p">(</span><span class="n">cmd_request</span><span class="p">,</span><span class="n">thresh</span><span class="p">)</span>
+        <span class="n">thresh</span><span class="p">,</span><span class="n">func</span> <span class="o">=</span> <span class="n">findfunc</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="n">thresh</span><span class="p">)</span>
+        <span class="n">thresh</span><span class="p">,</span><span class="n">varname</span> <span class="o">=</span> <span class="n">findvar</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="n">thresh</span><span class="p">)</span>
         
         <span class="n">VEC_FLAG</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span>
 
@@ -2636,11 +2746,14 @@
             <span class="n">grid_z</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">grid_z</span><span class="o">==</span><span class="mi">0</span><span class="p">)]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
         
         <span class="c1">#Create instance of plot object</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
         
         <span class="c1">#Create cartopy projection</span>
-        <span class="k">if</span> <span class="n">zoom</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">zoom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basin</span>
+        <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">domain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basin</span>
         <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">150</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">150</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span>
@@ -2650,23 +2763,37 @@
         <span class="c1">#Plot</span>
         <span class="n">endash</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="se">\u2013</span><span class="s2">&quot;</span>
         <span class="n">dot</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="se">\u2022</span><span class="s2">&quot;</span>
-        <span class="n">title_L</span><span class="o">=</span><span class="n">cmd_request</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">title_L</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;wind&#39;</span><span class="p">,</span><span class="s1">&#39;vmax&#39;</span><span class="p">]:</span>
             <span class="n">title_L</span> <span class="o">=</span> <span class="n">title_L</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="s1">&#39;wind (kt)&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span><span class="s1">&#39;mslp&#39;</span><span class="p">]:</span>
             <span class="n">title_L</span> <span class="o">=</span> <span class="n">title_L</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="s1">&#39;pressure (hPa)&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;heading&#39;</span><span class="p">,</span><span class="s1">&#39;motion&#39;</span><span class="p">,</span><span class="s1">&#39;movement&#39;</span><span class="p">]:</span>
             <span class="n">title_L</span> <span class="o">=</span> <span class="n">title_L</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;heading (km/hr) over </span><span class="si">{</span><span class="n">thresh</span><span class="p">[</span><span class="s2">&quot;dt_window&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> hours&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">cmd_request</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">:</span>
             <span class="n">title_L</span> <span class="o">=</span> <span class="n">title_L</span><span class="o">+</span><span class="sa">f</span><span class="s2">&quot;, </span><span class="si">{</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dt_align&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">title_L</span> <span class="o">=</span> <span class="n">title_L</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">+</span><span class="n">title_L</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">+</span><span class="n">plot_subtitle</span>
         <span class="n">date_range</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="s1">&#39;%m/</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%b/</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">date_range</span><span class="p">]</span>
         <span class="n">title_R</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">date_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">endash</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">date_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">dot</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">year_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">endash</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">year_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;title_L&#39;</span><span class="p">],</span><span class="n">prop</span><span class="p">[</span><span class="s1">&#39;title_R&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">title_L</span><span class="p">,</span><span class="n">title_R</span>
         
-        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_gridded</span><span class="p">(</span><span class="n">grid_x</span><span class="p">,</span><span class="n">grid_y</span><span class="p">,</span><span class="n">grid_z</span><span class="p">,</span><span class="n">VEC_FLAG</span><span class="p">,</span><span class="n">zoom</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
-                    
+        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_gridded</span><span class="p">(</span><span class="n">grid_x</span><span class="p">,</span><span class="n">grid_y</span><span class="p">,</span><span class="n">grid_z</span><span class="p">,</span><span class="n">VEC_FLAG</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        
+        <span class="c1">#Format grid into xarray if specified</span>
+        <span class="k">if</span> <span class="n">return_array</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1">#Import xarray and construct DataArray, replacing NaNs with zeros</span>
+                <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">grid_z</span><span class="p">),</span><span class="n">coords</span><span class="o">=</span><span class="p">[</span><span class="n">grid_y</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">grid_x</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span><span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+                <span class="k">return</span> <span class="n">arr</span>
+            <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Error: xarray is not available. Install xarray in order to use the &#39;return_array&#39; flag.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
         <span class="c1">#Return axis</span>
+        <span class="k">if</span> <span class="n">return_ax</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">return_array</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;ax&#39;</span><span class="p">:</span><span class="n">plot_ax</span><span class="p">,</span><span class="s1">&#39;array&#39;</span><span class="p">:</span><span class="n">arr</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">return_ax</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">return_array</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">arr</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">return</span> <span class="n">plot_ax</span></div>
 
     
@@ -2728,7 +2855,7 @@
 <span class="sd">        mag_thresh : int</span>
 <span class="sd">            Minimum threshold for tornado rating.</span>
 <span class="sd">        return_ax : bool</span>
-<span class="sd">            Whether to return the axis plotted. Default is False.</span>
+<span class="sd">            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</span>
 <span class="sd">        return_df : bool</span>
 <span class="sd">            Whether to return the pandas DataFrame containing the composite tornado data. Default is False.</span>
 <span class="sd">        </span>

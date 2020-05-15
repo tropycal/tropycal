@@ -92,6 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Example Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html#keyword-options">Keyword Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sample_usage.html">Example Gallery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data.html">Data Sources</a></li>
 </ul>
@@ -205,7 +206,6 @@
 <span class="sd">            indicating the distance (km) of the ob from the interpolated center of the storm.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#init class</span>
 <div class="viewcode-block" id="ReconDataset.__init__"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">read_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         
         <span class="k">if</span> <span class="n">save_path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">read_path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
@@ -437,7 +437,7 @@
 
     <span class="c1">#PLOT FUNCTION FOR RECON POINTS</span>
     <span class="c1">#Passed!</span>
-<div class="viewcode-block" id="ReconDataset.plot_points"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_points">[docs]</a>    <span class="k">def</span> <span class="nf">plot_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">zoom</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ReconDataset.plot_points"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_points">[docs]</a>    <span class="k">def</span> <span class="nf">plot_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a plot of recon data points.</span>
@@ -454,13 +454,15 @@
 <span class="sd">            &quot;wspd&quot; - 30-second flight level wind </span>
 <span class="sd">            &quot;pkwnd&quot; - 10-second flight level wind</span>
 <span class="sd">            &quot;p_sfc&quot; - extrapolated surface pressure</span>
-<span class="sd">        zoom : str</span>
-<span class="sd">            Zoom for the plot. Can be one of the following:</span>
+<span class="sd">        domain : str</span>
+<span class="sd">            Domain for the plot. Can be one of the following:</span>
 <span class="sd">            &quot;dynamic&quot; - default - dynamically focuses the domain using the tornado track(s) plotted, </span>
 <span class="sd">            &quot;north_atlantic&quot; - North Atlantic Ocean basin, </span>
 <span class="sd">            &quot;lonW/lonE/latS/latN&quot; - Custom plot domain.</span>
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        return_ax : bool</span>
+<span class="sd">            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</span>
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">            </span>
@@ -498,7 +500,7 @@
             <span class="n">cartopy_proj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span>
         
         <span class="c1">#Plot recon</span>
-        <span class="n">plot_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_points</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storm_obj</span><span class="p">,</span><span class="n">dfRecon</span><span class="p">,</span><span class="n">zoom</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="n">varname</span><span class="p">,</span>\
+        <span class="n">plot_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_points</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storm_obj</span><span class="p">,</span><span class="n">dfRecon</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="n">varname</span><span class="p">,</span>\
                                               <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
         
         <span class="c1">#Return axis</span>
@@ -512,7 +514,7 @@
                        <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a hovmoller of azimuthally-averaged recon data.</span>
+<span class="sd">        Creates a hovmoller plot of azimuthally-averaged recon data.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -523,6 +525,8 @@
 <span class="sd">            String</span>
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        return_ax : bool</span>
+<span class="sd">            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</span>
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">            </span>
@@ -592,7 +596,7 @@
 
 
     <span class="c1">#PLOT FUNCTION FOR RECON MAPS</span>
-<div class="viewcode-block" id="ReconDataset.plot_maps"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_maps">[docs]</a>    <span class="k">def</span> <span class="nf">plot_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">track_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">recon_stats</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">zoom</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span>\
+<div class="viewcode-block" id="ReconDataset.plot_maps"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_maps">[docs]</a>    <span class="k">def</span> <span class="nf">plot_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">track_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">recon_stats</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span>\
                   <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">savetopath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     
         <span class="c1">#plot_time, plot_mission (only for dots)</span>
@@ -612,13 +616,15 @@
 <span class="sd">            &quot;wspd&quot; - 30-second flight level wind </span>
 <span class="sd">            &quot;pkwnd&quot; - 10-second flight level wind</span>
 <span class="sd">            &quot;p_sfc&quot; - extrapolated surface pressure</span>
-<span class="sd">        zoom : str</span>
-<span class="sd">            Zoom for the plot. Can be one of the following:</span>
+<span class="sd">        domain : str</span>
+<span class="sd">            Domain for the plot. Can be one of the following:</span>
 <span class="sd">            &quot;dynamic&quot; - default - dynamically focuses the domain around , </span>
 <span class="sd">            &quot;north_atlantic&quot; - North Atlantic Ocean basin, </span>
 <span class="sd">            &quot;lonW/lonE/latS/latN&quot; - Custom plot domain.</span>
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        return_ax : bool</span>
+<span class="sd">            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</span>
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">            </span>
@@ -693,7 +699,7 @@
                 
                 <span class="c1">#Plot recon</span>
                 <span class="n">plot_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_maps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storm_obj</span><span class="p">,</span><span class="n">Maps_sub</span><span class="p">,</span><span class="n">varname</span><span class="p">,</span><span class="n">recon_stats</span><span class="p">,</span>\
-                                                    <span class="n">zoom</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+                                                    <span class="n">domain</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
                 
                 <span class="n">figs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plot_info</span><span class="p">)</span>
                 
@@ -716,7 +722,7 @@
             
             <span class="c1">#Plot recon</span>
             <span class="n">plot_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_maps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storm_obj</span><span class="p">,</span><span class="n">Maps</span><span class="p">,</span><span class="n">varname</span><span class="p">,</span><span class="n">recon_stats</span><span class="p">,</span>\
-                                                <span class="n">zoom</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+                                                <span class="n">domain</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
             
             <span class="c1">#Return axis</span>
             <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span><span class="p">:</span>
@@ -726,7 +732,7 @@
     
     <span class="c1">#PLOT FUNCTION FOR RECON SWATH</span>
 <div class="viewcode-block" id="ReconDataset.plot_swath"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_swath">[docs]</a>    <span class="k">def</span> <span class="nf">plot_swath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">swathfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">track_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">radlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
-                   <span class="n">zoom</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                   <span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a map plot of a swath of interpolated recon data.</span>
@@ -745,14 +751,16 @@
 <span class="sd">            &quot;p_sfc&quot; - extrapolated surface pressure</span>
 <span class="sd">        swathfunc : function</span>
 <span class="sd">            Function to operate on interpolated recon data.</span>
-<span class="sd">            e.g. np.max, np.min, or percentile function</span>
-<span class="sd">        zoom : str</span>
-<span class="sd">            Zoom for the plot. Can be one of the following:</span>
+<span class="sd">            e.g., np.max, np.min, or percentile function</span>
+<span class="sd">        domain : str</span>
+<span class="sd">            Domain for the plot. Can be one of the following:</span>
 <span class="sd">            &quot;dynamic&quot; - default - dynamically focuses the domain using the tornado track(s) plotted, </span>
 <span class="sd">            &quot;north_atlantic&quot; - North Atlantic Ocean basin, </span>
 <span class="sd">            &quot;lonW/lonE/latS/latN&quot; - Custom plot domain.</span>
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        return_ax : bool</span>
+<span class="sd">            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</span>
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">            </span>
@@ -769,7 +777,6 @@
         <span class="n">map_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;map_prop&#39;</span><span class="p">,{})</span>
         
         <span class="c1">#Get plot data</span>
-
         <span class="k">if</span> <span class="n">recon_select</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dfRecon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recentered</span>        
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recon_select</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -803,9 +810,8 @@
         
         <span class="c1">#Plot recon</span>
         <span class="n">plot_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_swath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storm_obj</span><span class="p">,</span><span class="n">Maps</span><span class="p">,</span><span class="n">varname</span><span class="p">,</span><span class="n">swathfunc</span><span class="p">,</span><span class="n">track_dict</span><span class="p">,</span><span class="n">radlim</span><span class="p">,</span>\
-                                             <span class="n">zoom</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
-    
-    
+                                             <span class="n">domain</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        
         <span class="c1">#Return axis</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">plot_info</span></div></div>

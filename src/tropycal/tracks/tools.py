@@ -63,35 +63,35 @@ def construct_title(thresh):
     else:
         thresh['sample_min']=0
         
-    if not np.isnan(thresh['V_min']):
-        plot_subtitle.append(f"{gteq} {thresh['V_min']}kt")
+    if not np.isnan(thresh['v_min']):
+        plot_subtitle.append(f"{gteq} {thresh['v_min']}kt")
     else:
-        thresh['V_min']=0
+        thresh['v_min']=0
         
-    if not np.isnan(thresh['P_max']):
-        plot_subtitle.append(f"{lteq} {thresh['P_max']}hPa")            
+    if not np.isnan(thresh['p_max']):
+        plot_subtitle.append(f"{lteq} {thresh['p_max']}hPa")            
     else:
-        thresh['P_max']=9999
+        thresh['p_max']=9999
 
-    if not np.isnan(thresh['dV_min']):
-        plot_subtitle.append(f"{gteq} {thresh['dV_min']}kt / {thresh['dt_window']}hr")            
+    if not np.isnan(thresh['dv_min']):
+        plot_subtitle.append(f"{gteq} {thresh['dv_min']}kt / {thresh['dt_window']}hr")            
     else:
-        thresh['dV_min']=-9999
+        thresh['dv_min']=-9999
 
-    if not np.isnan(thresh['dP_max']):
-        plot_subtitle.append(f"{lteq} {thresh['dP_max']}hPa / {thresh['dt_window']}hr")            
+    if not np.isnan(thresh['dp_max']):
+        plot_subtitle.append(f"{lteq} {thresh['dp_max']}hPa / {thresh['dt_window']}hr")            
     else:
-        thresh['dP_max']=9999
+        thresh['dp_max']=9999
     
-    if not np.isnan(thresh['dV_max']):
-        plot_subtitle.append(f"{lteq} {thresh['dV_max']}kt / {thresh['dt_window']}hr")            
+    if not np.isnan(thresh['dv_max']):
+        plot_subtitle.append(f"{lteq} {thresh['dv_max']}kt / {thresh['dt_window']}hr")            
     else:
-        thresh['dV_max']=9999
+        thresh['dv_max']=9999
 
-    if not np.isnan(thresh['dP_min']):
-        plot_subtitle.append(f"{gteq} {thresh['dP_min']}hPa / {thresh['dt_window']}hr")            
+    if not np.isnan(thresh['dp_min']):
+        plot_subtitle.append(f"{gteq} {thresh['dp_min']}hPa / {thresh['dt_window']}hr")            
     else:
-        thresh['dP_min']=-9999
+        thresh['dp_min']=-9999
     
     if len(plot_subtitle)>0:
         plot_subtitle = '\n'+', '.join(plot_subtitle)

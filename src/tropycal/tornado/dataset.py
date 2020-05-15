@@ -269,7 +269,7 @@ class TornadoDataset():
             plt.close()
         
 
-    def plot_tors(self,tor_info,zoom="conus",plotPPF=False,ax=None,return_ax=False,cartopy_proj=None,**kwargs):
+    def plot_tors(self,tor_info,domain="conus",plotPPF=False,ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).
@@ -283,8 +283,8 @@ class TornadoDataset():
             * **dict** entry containing the requested tornadoes to plot.
             * **datetime.datetime** object for a single day to plot tornadoes.
             * **list** with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+        domain : str
+            Domain for the plot. Can be one of the following:
             
             * **dynamic** - default. Dynamically focuses the domain using the tornado track(s) plotted.
             * **conus** - Contiguous United States
@@ -351,7 +351,7 @@ class TornadoDataset():
             cartopy_proj = self.plot_obj.proj
         
         #Plot tornadoes
-        plot_info = self.plot_obj.plot_tornadoes(dfTors,zoom,plotPPF,ax,return_ax,prop=prop,map_prop=map_prop)
+        plot_info = self.plot_obj.plot_tornadoes(dfTors,domain,plotPPF,ax,return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax==True:

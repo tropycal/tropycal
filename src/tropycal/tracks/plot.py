@@ -33,7 +33,11 @@ except:
 
 class TrackPlot(Plot):
     
-    def plot_storm(self,storm,zoom="dynamic",plot_all=False,ax=None,return_ax=False,track_labels=False,prop={},map_prop={}):
+    def __init__(self):
+        
+        self.use_credit = True
+    
+    def plot_storm(self,storm,domain="dynamic",plot_all=False,ax=None,return_ax=False,track_labels=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -42,8 +46,8 @@ class TrackPlot(Plot):
         ----------
         storm : str, tuple or dict
             Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+        domain : str
+            Domain for the plot. Can be one of the following:
             "dynamic" - default. Dynamically focuses the domain using the storm track(s) plotted.
             "north_atlantic" - North Atlantic Ocean basin
             "pacific" - East/Central Pacific Ocean basin
@@ -68,10 +72,6 @@ class TrackPlot(Plot):
         prop = self.add_prop(prop,default_prop)
         map_prop = self.add_prop(map_prop,default_map_prop)
         self.plot_init(ax,map_prop)
-        
-        #error check
-        if isinstance(zoom,str) == False:
-            raise TypeError('Error: zoom must be of type str')
         
         #--------------------------------------------------------------------------------------
         
@@ -175,33 +175,16 @@ class TrackPlot(Plot):
         #--------------------------------------------------------------------------------------
 
         
-        #Pre-generated zooms
-        if zoom in ['north_atlantic','east_pacific','west_pacific','south_pacific','south_indian','north_indian','australia','all']:
-            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
-            
         #Storm-centered plot domain
-        elif zoom == "dynamic":
+        if domain == "dynamic":
             
             bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
             self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
             
-        #Custom plot domain
+        #Pre-generated or custom domain
         else:
-            
-            #Check to ensure 3 slashes are provided
-            if zoom.count("/") != 3:
-                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
-            else:
-                try:
-                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
-                    bound_w = float(bound_w)
-                    bound_e = float(bound_e)
-                    bound_s = float(bound_s)
-                    bound_n = float(bound_n)
-                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
-                except:
-                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
-        
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
+
         #Plot parallels and meridians
         #This is currently not supported for all cartopy projections.
         try:
@@ -277,7 +260,7 @@ class TrackPlot(Plot):
             plt.show()
             plt.close()
     
-    def plot_storms(self,storms,zoom="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_storms(self,storms,domain="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of multiple storm tracks.
@@ -286,8 +269,8 @@ class TrackPlot(Plot):
         ----------
         storms : list
             List of requested storms. List can contain either strings of storm ID (e.g., "AL052019"), tuples with storm name and year (e.g., ("Matthew",2016)), or dict entries.
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+        domain : str
+            Domain for the plot. Can be one of the following:
             "dynamic" - default. Dynamically focuses the domain using the storm track(s) plotted.
             "north_atlantic" - North Atlantic Ocean basin
             "pacific" - East/Central Pacific Ocean basin
@@ -312,10 +295,6 @@ class TrackPlot(Plot):
         prop = self.add_prop(prop,default_prop)
         map_prop = self.add_prop(map_prop,default_map_prop)
         self.plot_init(ax,map_prop)
-        
-        #error check
-        if isinstance(zoom,str) == False:
-            raise TypeError('Error: zoom must be of type str')
         
         #--------------------------------------------------------------------------------------
         
@@ -413,32 +392,15 @@ class TrackPlot(Plot):
         #--------------------------------------------------------------------------------------
         
         
-        #Pre-generated zooms
-        if zoom in ['north_atlantic','east_pacific','west_pacific','south_pacific','south_indian','north_indian','australia','all']:
-            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
-            
         #Storm-centered plot domain
-        elif zoom == "dynamic":
+        if domain == "dynamic":
             
             bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
             self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
             
-        #Custom plot domain
+        #Pre-generated or custom domain
         else:
-            
-            #Check to ensure 3 slashes are provided
-            if zoom.count("/") != 3:
-                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
-            else:
-                try:
-                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
-                    bound_w = float(bound_w)
-                    bound_e = float(bound_e)
-                    bound_s = float(bound_s)
-                    bound_n = float(bound_n)
-                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
-                except:
-                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
         
         #Plot parallels and meridians
         #This is currently not supported for all cartopy projections.
@@ -485,7 +447,7 @@ class TrackPlot(Plot):
             plt.show()
             plt.close()
         
-    def plot_storm_nhc(self,forecast,track=None,track_labels='fhr',cone_days=5,zoom="dynamic_forecast",ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_storm_nhc(self,forecast,track=None,track_labels='fhr',cone_days=5,domain="dynamic_forecast",ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of the operational NHC forecast track along with observed track data.
@@ -504,8 +466,8 @@ class TrackPlot(Plot):
             'valid_edt' = EDT valid time
         cone_days : int
             Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+        domain : str
+            Domain for the plot. Can be one of the following:
             "dynamic_forecast" - default. Dynamically focuses the domain on the forecast track.
             "dynamic" - Dynamically focuses the domain on the combined observed and forecast track.
             "lonW/lonE/latS/latN" - Custom plot domain
@@ -591,7 +553,7 @@ class TrackPlot(Plot):
                 sdate.append(sdate[-1]+timedelta(hours=start_slice))
 
                 #Add to coordinate extrema
-                if zoom != "dynamic_forecast":
+                if domain != "dynamic_forecast":
                     if max_lat == None:
                         max_lat = max(lats)
                     else:
@@ -743,7 +705,7 @@ class TrackPlot(Plot):
                 self.plot_nhc_labels(self.ax, fcst_lon, fcst_lat, labels, k=1.2)
                 
             #Add cone coordinates to coordinate extrema
-            if zoom == "dynamic_forecast" or max_lat == None:
+            if domain == "dynamic_forecast" or max_lat == None:
                 max_lat = max(cone_lat)
                 min_lat = min(cone_lat)
                 max_lon = max(cone_lon)
@@ -756,33 +718,15 @@ class TrackPlot(Plot):
 
         #--------------------------------------------------------------------------------------
 
-        #Pre-generated zooms
-        if zoom in ['north_atlantic','east_pacific','west_pacific','south_pacific','south_indian','north_indian','australia','all']:
-            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
-
         #Storm-centered plot domain
-        elif zoom == "dynamic" or zoom == 'dynamic_forecast':
+        if domain == "dynamic" or domain == 'dynamic_forecast':
             
             bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
-
             self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
             
-        #Custom plot domain
+        #Pre-generated or custom domain
         else:
-            
-            #Check to ensure 3 slashes are provided
-            if zoom.count("/") != 3:
-                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
-            else:
-                try:
-                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
-                    bound_w = float(bound_w)
-                    bound_e = float(bound_e)
-                    bound_s = float(bound_s)
-                    bound_n = float(bound_n)
-                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
-                except:
-                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
         
         #Plot parallels and meridians
         #This is currently not supported for all cartopy projections.
@@ -936,8 +880,8 @@ class TrackPlot(Plot):
         max_lon = None
         min_lon = None
 
-        sinfo = season.annual_summary()
-        storms = sinfo['id']
+        sinfo = season.summary()
+        storms = season.dict.keys()
         for istorm in storms:
 
             #Get data for this storm
@@ -990,7 +934,7 @@ class TrackPlot(Plot):
 
         #--------------------------------------------------------------------------------------
         
-        #Pre-generated zooms
+        #Pre-generated domains
         bound_w,bound_e,bound_s,bound_n = self.set_projection(season.basin)
             
         #Determine number of lat/lon lines to use for parallels & meridians
@@ -1046,7 +990,16 @@ class TrackPlot(Plot):
         #Add right title
         endash = u"\u2013"
         dot = u"\u2022"
-        self.ax.set_title(f"{sinfo['season_named']} named {dot} {sinfo['season_hurricane']} hurricanes {dot} {sinfo['season_major']} major\n{sinfo['season_ace']:.1f} Cumulative ACE",loc='right',fontsize=13)
+        count_named = sinfo['season_named']
+        count_hurricane = sinfo['season_hurricane']
+        count_major = sinfo['season_major']
+        count_ace = sinfo['season_ace']
+        if isinstance(season.year,list) == True:
+            count_named = np.sum(sinfo['season_named'])
+            count_hurricane = np.sum(sinfo['season_hurricane'])
+            count_major = np.sum(sinfo['season_major'])
+            count_ace = np.sum(sinfo['season_ace'])
+        self.ax.set_title(f"{count_named} named {dot} {count_hurricane} hurricanes {dot} {count_major} major\n{count_ace:.1f} Cumulative ACE",loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
 
@@ -1102,6 +1055,7 @@ class TrackPlot(Plot):
         #Radii are in nautical miles
         cone_climo_hr = [3,12,24,36,48,72,96,120]
         cone_size_atl = {}
+        cone_size_atl[2020] = [16,26,41,55,69,103,151,196]
         cone_size_atl[2019] = [16,26,41,54,68,102,151,198]
         cone_size_atl[2018] = [16,26,43,56,74,103,151,198]
         cone_size_atl[2017] = [16,29,45,63,78,107,159,211]
@@ -1116,6 +1070,7 @@ class TrackPlot(Plot):
         cone_size_atl[2008] = [16,39,67,92,118,170,233,305]
 
         cone_size_pac = {}
+        cone_size_pac[2020] = [16,25,38,51,65,91,115,138]
         cone_size_pac[2019] = [16,25,38,48,62,88,115,145]
         cone_size_pac[2018] = [16,25,39,50,66,94,125,162]
         cone_size_pac[2017] = [16,25,40,51,66,93,116,151]
@@ -1129,11 +1084,13 @@ class TrackPlot(Plot):
         cone_size_pac[2009] = [16,36,59,85,105,148,187,230]
         cone_size_pac[2008] = [16,36,66,92,115,161,210,256]
 
+        #Function for interpolating between 2 times
         def temporal_interpolation(value, orig_times, target_times):
             f = interp.interp1d(orig_times,value)
             ynew = f(target_times)
             return ynew
 
+        #Function for plugging small array into larger array
         def plug_array(small,large,small_coords,large_coords):
 
             small_lat = np.round(small_coords['lat'],2)
@@ -1167,10 +1124,11 @@ class TrackPlot(Plot):
 
             return large
 
+        #Function for finding nearest value in an array
         def findNearest(array,val):
             return array[np.abs(array - val).argmin()]
 
-        ###### Plot cyclogenesis location density
+        #Function for adding a radius surrounding a point
         def add_radius(lats,lons,vlat,vlon,rad):
 
             #construct new array expanding slightly over rad from lat/lon center
@@ -1201,9 +1159,8 @@ class TrackPlot(Plot):
             small_coords = {'lat':nlat,'lon':nlon}
 
             return return_arr, small_coords
-
-
-
+        
+        #--------------------------------------------------------------------
 
         #Retrieve cone size for given year
         if forecast['init'].year in cone_size_atl.keys():
@@ -1282,9 +1239,9 @@ class TrackPlot(Plot):
             temp_lon[temp_lon<0] = temp_lon[temp_lon<0]+360.0
             fcst_lon = temp_lon.tolist()
 
-        #Interpolate forecast data temporally
+        #Interpolate forecast data temporally and spatially
         interp_kind = 'quadratic'
-        if len(t) == 2: interp_kind = 'linear'
+        if len(t) == 2: interp_kind = 'linear' #Interpolate linearly if only 2 forecast points
         x1 = interp.interp1d(t,fcst_lon,kind=interp_kind)
         y1 = interp.interp1d(t,fcst_lat,kind=interp_kind)
         interp_fhr = interp_fhr_idx * 6
@@ -1407,7 +1364,7 @@ class TrackPlot(Plot):
                                         color='k'),
                         transform=ccrs.PlateCarree())
 
-    def plot_gridded(self,xcoord,ycoord,zcoord,VEC_FLAG=False,zoom="north_atlantic",ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_gridded(self,xcoord,ycoord,zcoord,VEC_FLAG=False,domain="north_atlantic",ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -1416,9 +1373,8 @@ class TrackPlot(Plot):
         ----------
         storm : str, tuple or dict
             Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
-        zoom : str
-            Zoom for the plot. Can be one of the following:
-            "dynamic" - default. Dynamically focuses the domain using the storm track(s) plotted.
+        domain : str
+            Domain for the plot. Default is TrackDataset basin. Can be one of the following:
             "north_atlantic" - North Atlantic Ocean basin
             "pacific" - East/Central Pacific Ocean basin
             "lonW/lonE/latS/latN" - Custom plot domain
@@ -1435,38 +1391,16 @@ class TrackPlot(Plot):
         """
         
         #Set default properties
-        default_prop={'cmap':'category','clevs':[np.nanmin(zcoord),np.nanmax(zcoord)],'left_title':'','right_title':'All storms','pcolor':True,'smooth':None}
+        default_prop={'cmap':'category','clevs':[np.nanmin(zcoord),np.nanmax(zcoord)],'left_title':'','right_title':'All storms'}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
         prop = self.add_prop(prop,default_prop)
         map_prop = self.add_prop(map_prop,default_map_prop)
         self.plot_init(ax,map_prop)
-        
-        #error check
-        if isinstance(zoom,str) == False:
-            raise TypeError('Error: zoom must be of type str')
-        
-        #Pre-generated zooms
-        if zoom in ['north_atlantic','east_pacific','west_pacific','south_pacific','south_indian','north_indian','australia','all']:
-            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
-            
-        #Custom plot domain
-        else:
-            
-            #Check to ensure 3 slashes are provided
-            if zoom.count("/") != 3:
-                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
-            else:
-                try:
-                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
-                    bound_w = float(bound_w)
-                    bound_e = float(bound_e)
-                    bound_s = float(bound_s)
-                    bound_n = float(bound_n)
-                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
-                except:
-                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+
+        #Plot domain
+        bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
         
         #Plot parallels and meridians
         #This is currently not supported for all cartopy projections.
@@ -1502,20 +1436,14 @@ class TrackPlot(Plot):
             zcoord = mag
         
         else:
-            print('doing the plotting')
-            if prop['pcolor']:
-                if varname=='date' and prop['smooth'] is not None:
-                    zcoord[np.isnan(zcoord)]=0
-                    zcoord=gfilt(zcoord,sigma=prop['smooth'])
-                    zcoord[zcoord<min(clevs)]=np.nan
-                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
-                               transform=ccrs.PlateCarree())
-            else:
-                clevs = prop['clevs']
-                cmap = prop['cmap']
-                cbmap = self.ax.contourf(xcoord,ycoord,zcoord,clevs,cmap = cmap,
-                               transform=ccrs.PlateCarree())
-        
+            print('--> Generating plot')
+            #if varname=='date' and prop['smooth'] is not None:
+            #    zcoord[np.isnan(zcoord)]=0
+            #    zcoord=gfilt(zcoord,sigma=prop['smooth'])
+            #    zcoord[zcoord<min(clevs)]=np.nan
+            cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+                           transform=ccrs.PlateCarree())
+
         #--------------------------------------------------------------------------------------
 
         
@@ -1534,7 +1462,7 @@ class TrackPlot(Plot):
         cax = self.fig.add_axes([bb.x0+bb.width, bb.y0-.05*bb.height, 0.015, bb.height])
         cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
                                  ticks=clevs)
-        if len(clevs)>2 and prop['pcolor']:
+        if len(clevs)>2:
             cbar.ax.yaxis.set_ticks(clevs)
         cbar.ax.tick_params(labelsize=11.5)
         cax.yaxis.set_ticks_position('left')

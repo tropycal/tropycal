@@ -46,7 +46,6 @@ class ReconDataset:
             indicating the distance (km) of the ob from the interpolated center of the storm.
     """
 
-    #init class
     def __init__(self,storm,save_path="",read_path=""):
         
         if save_path != "" and read_path != "":
@@ -278,7 +277,7 @@ class ReconDataset:
 
     #PLOT FUNCTION FOR RECON POINTS
     #Passed!
-    def plot_points(self,recon_select=None,varname='wspd',zoom="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
+    def plot_points(self,recon_select=None,varname='wspd',domain="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of recon data points.
@@ -295,13 +294,15 @@ class ReconDataset:
             "wspd" - 30-second flight level wind 
             "pkwnd" - 10-second flight level wind
             "p_sfc" - extrapolated surface pressure
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+        domain : str
+            Domain for the plot. Can be one of the following:
             "dynamic" - default - dynamically focuses the domain using the tornado track(s) plotted, 
             "north_atlantic" - North Atlantic Ocean basin, 
             "lonW/lonE/latS/latN" - Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
@@ -339,7 +340,7 @@ class ReconDataset:
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        plot_info = self.plot_obj.plot_points(self.storm_obj,dfRecon,zoom,varname=varname,\
+        plot_info = self.plot_obj.plot_points(self.storm_obj,dfRecon,domain,varname=varname,\
                                               ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
@@ -353,7 +354,7 @@ class ReconDataset:
                        ax=None,return_ax=False,**kwargs):
         
         r"""
-        Creates a hovmoller of azimuthally-averaged recon data.
+        Creates a hovmoller plot of azimuthally-averaged recon data.
         
         Parameters
         ----------
@@ -364,6 +365,8 @@ class ReconDataset:
             String
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
@@ -433,7 +436,7 @@ class ReconDataset:
 
 
     #PLOT FUNCTION FOR RECON MAPS
-    def plot_maps(self,recon_select=None,varname='wspd',track_dict=None,recon_stats=None,zoom="dynamic",\
+    def plot_maps(self,recon_select=None,varname='wspd',track_dict=None,recon_stats=None,domain="dynamic",\
                   ax=None,return_ax=False,savetopath=None,cartopy_proj=None,**kwargs):
     
         #plot_time, plot_mission (only for dots)
@@ -453,13 +456,15 @@ class ReconDataset:
             "wspd" - 30-second flight level wind 
             "pkwnd" - 10-second flight level wind
             "p_sfc" - extrapolated surface pressure
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+        domain : str
+            Domain for the plot. Can be one of the following:
             "dynamic" - default - dynamically focuses the domain around , 
             "north_atlantic" - North Atlantic Ocean basin, 
             "lonW/lonE/latS/latN" - Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
@@ -534,7 +539,7 @@ class ReconDataset:
                 
                 #Plot recon
                 plot_info = self.plot_obj.plot_maps(self.storm_obj,Maps_sub,varname,recon_stats,\
-                                                    zoom,ax,return_ax=True,prop=prop,map_prop=map_prop)
+                                                    domain,ax,return_ax=True,prop=prop,map_prop=map_prop)
                 
                 figs.append(plot_info)
                 
@@ -557,7 +562,7 @@ class ReconDataset:
             
             #Plot recon
             plot_info = self.plot_obj.plot_maps(self.storm_obj,Maps,varname,recon_stats,\
-                                                zoom,ax,return_ax,prop=prop,map_prop=map_prop)
+                                                domain,ax,return_ax,prop=prop,map_prop=map_prop)
             
             #Return axis
             if ax is not None or return_ax:
@@ -567,7 +572,7 @@ class ReconDataset:
     
     #PLOT FUNCTION FOR RECON SWATH
     def plot_swath(self,recon_select=None,varname='wspd',swathfunc=None,track_dict=None,radlim=None,\
-                   zoom="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
+                   domain="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a map plot of a swath of interpolated recon data.
@@ -586,14 +591,16 @@ class ReconDataset:
             "p_sfc" - extrapolated surface pressure
         swathfunc : function
             Function to operate on interpolated recon data.
-            e.g. np.max, np.min, or percentile function
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+            e.g., np.max, np.min, or percentile function
+        domain : str
+            Domain for the plot. Can be one of the following:
             "dynamic" - default - dynamically focuses the domain using the tornado track(s) plotted, 
             "north_atlantic" - North Atlantic Ocean basin, 
             "lonW/lonE/latS/latN" - Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
@@ -610,7 +617,6 @@ class ReconDataset:
         map_prop = kwargs.pop('map_prop',{})
         
         #Get plot data
-
         if recon_select is None:
             dfRecon = self.recentered        
         elif isinstance(recon_select,pd.core.frame.DataFrame):
@@ -644,9 +650,8 @@ class ReconDataset:
         
         #Plot recon
         plot_info = self.plot_obj.plot_swath(self.storm_obj,Maps,varname,swathfunc,track_dict,radlim,\
-                                             zoom,ax,return_ax,prop=prop,map_prop=map_prop)
-    
-    
+                                             domain,ax,return_ax,prop=prop,map_prop=map_prop)
+        
         #Return axis
         if ax != None or return_ax==True:
             return plot_info

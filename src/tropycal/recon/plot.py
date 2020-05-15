@@ -31,8 +31,12 @@ except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
 class ReconPlot(Plot):
+    
+    def __init__(self):
+        
+        self.use_credit = True
                  
-    def plot_points(self,storm,recon_data,zoom="dynamic",varname='wspd',barbs=False,scatter=False,\
+    def plot_points(self,storm,recon_data,domain="dynamic",varname='wspd',barbs=False,scatter=False,\
                     ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
@@ -42,8 +46,8 @@ class ReconPlot(Plot):
         ----------
         recon_data : dataframe
             Recon data, must be dataframe
-        zoom : str
-            Zoom for the plot. Can be one of the following:
+        domain : str
+            Domain for the plot. Can be one of the following:
             "dynamic" - default. Dynamically focuses the domain using the tornado track(s) plotted.
             "north_atlantic" - North Atlantic Ocean basin
             "conus", "east_conus"
@@ -74,10 +78,6 @@ class ReconPlot(Plot):
         #set default properties
         input_prop = prop
         input_map_prop = map_prop
-        
-        #error check
-        if isinstance(zoom,str) == False:
-            raise TypeError('Error: zoom must be of type str')
         
         #--------------------------------------------------------------------------------------
         
@@ -156,32 +156,15 @@ class ReconPlot(Plot):
 
         #--------------------------------------------------------------------------------------
         
-        #Pre-generated zooms
-        if zoom in ['north_atlantic','conus','east_conus']:
-            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
-            
         #Storm-centered plot domain
-        elif zoom == "dynamic":
+        if domain == "dynamic":
             
             bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
             self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
             
-        #Custom plot domain
+        #Pre-generated or custom domain
         else:
-            
-            #Check to ensure 3 slashes are provided
-            if zoom.count("/") != 3:
-                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
-            else:
-                try:
-                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
-                    bound_w = float(bound_w)
-                    bound_e = float(bound_e)
-                    bound_s = float(bound_s)
-                    bound_n = float(bound_n)
-                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
-                except:
-                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
         
         #Determine number of lat/lon lines to use for parallels & meridians
         self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
@@ -272,7 +255,7 @@ class ReconPlot(Plot):
         
 
     def plot_swath(self,storm,Maps,varname,swathfunc,track_dict,radlim=200,\
-                   zoom="dynamic",ax=None,return_ax=False,prop={},map_prop={}):
+                   domain="dynamic",ax=None,return_ax=False,prop={},map_prop={}):
 
         #Set default properties
         default_prop={'cmap':'category','levels':None,'left_title':'','right_title':'All storms','pcolor':True}
@@ -363,31 +346,15 @@ class ReconPlot(Plot):
         norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
         cbmap = self.ax.contourf(lons,lats,aggregate_grid,cmap=cmap,norm=norm,levels=clevs,transform=ccrs.PlateCarree())
         
-        #Pre-generated zooms
-        if zoom in ['north_atlantic','conus','east_conus']:
-            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
-            
         #Storm-centered plot domain
-        elif zoom == "dynamic":
+        if domain == "dynamic":
             
+            bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
             self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
             
-        #Custom plot domain
+        #Pre-generated or custom domain
         else:
-            
-            #Check to ensure 3 slashes are provided
-            if zoom.count("/") != 3:
-                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
-            else:
-                try:
-                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
-                    bound_w = float(bound_w)
-                    bound_e = float(bound_e)
-                    bound_s = float(bound_s)
-                    bound_n = float(bound_n)
-                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
-                except:
-                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
         
         #Determine number of lat/lon lines to use for parallels & meridians
         self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
@@ -487,10 +454,10 @@ class ReconPlot(Plot):
         #Initialize plot
         prop = self.add_prop(prop,default_prop)
         
-        mlib.rcParams.update({'font.size': 16})
+        #mlib.rcParams.update({'font.size': 16})
 
         fig = plt.figure(figsize=prop['figsize'])
-        if ax==None:
+        if ax == None:
             self.ax = plt.subplot()
         else:
             self.ax = ax
@@ -534,7 +501,7 @@ class ReconPlot(Plot):
             plt.close()
      
     def plot_maps(self,storm,Maps_dict,varname,recon_stats=None,\
-                  zoom='dynamic',ax=None,return_ax=False,prop={},map_prop={}):
+                  domain='dynamic',ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of storm-centered recon data interpolated to a grid
@@ -575,7 +542,7 @@ class ReconPlot(Plot):
         lons = out[:,:,0]
         lats = out[:,:,1]
         
-        mlib.rcParams.update({'font.size': 16})
+        #mlib.rcParams.update({'font.size': 16})
 
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
 
@@ -583,34 +550,15 @@ class ReconPlot(Plot):
         cbmap = self.ax.contourf(lons,lats,Maps_dict['maps'],\
                                  cmap=cmap,norm=norm,levels=clevs,transform=ccrs.PlateCarree())
 
-        #Pre-generated zooms
-        if zoom in ['north_atlantic','conus','east_conus']:
-            bound_w,bound_e,bound_s,bound_n = self.set_projection(zoom)
-            
         #Storm-centered plot domain
-        elif zoom == "dynamic":
+        if domain == "dynamic":
             
-#            bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(np.amin(lons),np.amax(lons),np.amin(lats),np.amax(lats))
             bound_w,bound_e,bound_s,bound_n = np.amin(lons)-.1,np.amax(lons)+.1,np.amin(lats)-.1,np.amax(lats)+.1
             self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
             
-        #Custom plot domain
+        #Pre-generated or custom domain
         else:
-            
-            #Check to ensure 3 slashes are provided
-            if zoom.count("/") != 3:
-                raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
-            else:
-                try:
-                    bound_w,bound_e,bound_s,bound_n = zoom.split("/")
-                    bound_w = float(bound_w)
-                    bound_e = float(bound_e)
-                    bound_s = float(bound_s)
-                    bound_n = float(bound_n)
-                    self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
-                except:
-                    raise ValueError("Error: Custom map projection bounds must be provided as 'west/east/south/north'")
-
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
 
         #Determine number of lat/lon lines to use for parallels & meridians
         self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])

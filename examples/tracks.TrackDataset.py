@@ -83,11 +83,11 @@ hurdat_atl.wind_pres_relationship(storm=('sandy',2012))
 # 
 # Let's construct a 1 degree grid and plot the maximum sustained wind recorded at each gridpoint:
 
-hurdat_atl.gridded_stats(cmd_request="maximum wind",return_ax=True)
+hurdat_atl.gridded_stats(request="maximum wind",return_ax=True)
 
 # Let's look at the average change in sustained wind speed over a 24-hour period. By default, the value plotted is for the midpoint of the 24-hour period (so 12 hours preceding and following). We'll use the "prop" keyword argument to set the colormap to "bwr" and set the contour level range:
 
-hurdat_atl.gridded_stats(cmd_request="average wind change in 24 hours",prop={'cmap':'bwr','clevs':[-80,80]},return_ax=True)
+hurdat_atl.gridded_stats(request="average wind change in 24 hours",prop={'cmap':'bwr','clevs':[-80,80]},return_ax=True)
 
 ###########################################
 # IBTrACS Dataset
@@ -108,14 +108,14 @@ ibtracs = tracks.TrackDataset(basin='all',source='ibtracs',ibtracs_mode='jtwc_ne
 # 
 # Let's make a plot of the maximum sustained wind of TCs globally:
 
-ibtracs.gridded_stats(cmd_request="maximum wind",return_ax=True)
+ibtracs.gridded_stats(request="maximum wind",return_ax=True)
 
 ###########################################
 # Make a plot of the total number of storms per 1 degree gridbox worldwide:
 
-ibtracs.gridded_stats(cmd_request="count of storms",prop={'cmap':'plasma_r'})
+ibtracs.gridded_stats(request="number of storms",prop={'cmap':'plasma_r'})
 
 ###########################################
 # Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 hours) per 1 degree gridbox:
 
-ibtracs.gridded_stats(cmd_request="count of storms",thresh={'dV_min':30},prop={'cmap':'plasma_r'})
+ibtracs.gridded_stats(request="number of storms",thresh={'dv_min':30},prop={'cmap':'plasma_r'})

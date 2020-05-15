@@ -1437,10 +1437,10 @@ class TrackPlot(Plot):
         
         else:
             print('--> Generating plot')
-            if varname=='date' and prop['smooth'] is not None:
-                zcoord[np.isnan(zcoord)]=0
-                zcoord=gfilt(zcoord,sigma=prop['smooth'])
-                zcoord[zcoord<min(clevs)]=np.nan
+            #if varname=='date' and prop['smooth'] is not None:
+            #    zcoord[np.isnan(zcoord)]=0
+            #    zcoord=gfilt(zcoord,sigma=prop['smooth'])
+            #    zcoord[zcoord<min(clevs)]=np.nan
             cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
                            transform=ccrs.PlateCarree())
 

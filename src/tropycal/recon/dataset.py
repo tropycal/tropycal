@@ -377,8 +377,12 @@ class ReconDataset:
         """
         
         #Pop kwargs
-        prop = kwargs.pop('prop',{'cmap':'category','levels':None})  
-
+        prop = kwargs.pop('prop',{})
+        default_prop = {'cmap':'category','levels':None}
+        for key in default_prop.keys():
+            if key not in prop.keys():
+                prop[key]=default_prop[key]
+            
         #Get plot data
         
         if recon_select is None:
@@ -398,10 +402,9 @@ class ReconDataset:
 
         title = get_recon_title(varname)
         if prop['levels'] is None:
-            prop['levels'] = np.arange(np.floor(np.nanmin(Hov_dict['hovmoller'])/10)*10,
-                            np.ceil(np.nanmax(Hov_dict['hovmoller'])/10)*10+1,10)
-        cmap,levels = get_cmap_levels(varname,prop['cmap'],prop['levels'],linear=True)
-        
+            prop['levels'] = (np.min(Hov_dict['hovmoller']),np.max(Hov_dict['hovmoller']))
+        cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
+                
         time = Hov_dict['time']
         radius = Hov_dict['radius']
         vardata = Hov_dict['hovmoller']
@@ -412,15 +415,19 @@ class ReconDataset:
         #Create plot        
         plt.figure(figsize=(9,11),dpi=150)
         ax=plt.subplot()
-        cf=ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),\
-                     levels=levels,cmap=cmap)
+        if len(prop['levels'])>2:
+            cf=ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),\
+                     levels=clevs,cmap=cmap)
+        else:
+            cf=ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),\
+                     cmap=cmap,levels=np.linspace(min(prop['levels']),max(prop['levels']),256))
         ax.axis([0,max(radius),min(time),max(time)])
         
         ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d %H'))
         
         ax.set_ylabel('UTC Time (MM-DD HH)')
         ax.set_xlabel('Radius (km)')
-        plt.colorbar(cf,orientation='horizontal',pad=0.1)
+        plt.colorbar(cf,orientation='horizontal',pad=0.1,ticks=clevs)
 
         mlib.rcParams.update({'font.size': 16})
         

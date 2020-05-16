@@ -143,7 +143,7 @@ class Realtime():
                 add_basin = 'east_pacific'
 
             #add empty entry into dict
-            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'NHC Hurricane Database'}
+            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'NHC Hurricane Database','realtime':True}
             self.data[stormid]['source'] = 'hurdat'
 
             #add empty lists

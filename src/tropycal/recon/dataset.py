@@ -31,8 +31,12 @@ class ReconDataset:
     
     Parameters
     ----------
-    stormtuple : tuple or list
-        Requested storm. Can be either tuple or list containing storm name and year (e.g., ("Matthew",2016)).
+    storm : tropycal.tracks.Storm
+        Requested storm as an instance of a Storm object.
+    save_path : str, optional
+        Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.
+    read_path : str, optional
+        Filepath to read saved recon data from. If specified, "save_path" cannot be passed as an argument.
         
     Returns
     -------

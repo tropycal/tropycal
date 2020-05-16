@@ -41,9 +41,9 @@ class Storm:
     storm : dict
         Dict entry of the requested storm.
     
-    Additional Parameters
-    ---------------------
-    stormTors : dict
+    Other Parameters
+    ----------------
+    stormTors : dict, optional
         Dict entry containing tornado data assicated with the storm. Populated directly from tropycal.tracks.TrackDataset.
 
     Returns
@@ -299,11 +299,7 @@ class Storm:
         Parameters
         ----------
         domain : str
-            Domain for the plot. Can be one of the following:
-            
-            * **dynamic** - default. Dynamically focuses the domain using the storm track plotted.
-            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
-            * **lonW/lonE/latS/latN** - Custom plot domain
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
@@ -360,11 +356,7 @@ class Storm:
         cone_days : int
             Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.
         domain : str
-            Domain for the plot. Can be one of the following:
-            
-            * **dynamic_forecast** Default. Dynamically focuses the domain on the forecast track.
-            * **dynamic** - Dynamically focuses the domain on the combined observed and forecast track.
-            * **lonW/lonE/latS/latN** Custom plot domain.
+            Domain for the plot. Default is "dynamic_forecast". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -1128,11 +1120,7 @@ class Storm:
             DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm
                 for future use.
         domain : str
-            Domain for the plot. Can be one of the following:
-            
-            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted and tornadoes it produced.
-            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
-            * **lonW/lonE/latS/latN** - Custom plot domain
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         plotPPF : bool or str
             Whether to plot practically perfect forecast (PPF). True defaults to "daily". Default is False.
         

@@ -1017,11 +1017,7 @@ class TrackDataset:
         storm : str, tuple or dict
             Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
         domain : str
-            Domain for the plot. Default is "dynamic". Can be one of the following:
-            
-            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
-            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
-            * **lonW/lonE/latS/latN** - Custom plot domain.
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
@@ -1074,11 +1070,7 @@ class TrackDataset:
         storms : list
             List of requested storms. List can contain either strings of storm ID (e.g., "AL052019"), tuples with storm name and year (e.g., ("Matthew",2016)), or dict entries.
         domain : str
-            Domain for the plot. Default is "dynamic". Can be one of the following:
-            
-            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.
-            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
-            * **lonW/lonE/latS/latN** - Custom plot domain.
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         plot_all_dots : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
@@ -2497,11 +2489,7 @@ class TrackDataset:
         binsize : float
             Grid resolution in degrees. Default is 1 degree.
         domain : str
-            Domain for the plot. Default is "dynamic". Can be one of the following:
-            
-            * **(basin_name)** - Any of the acceptable basins (check ``TrackDataset()`` for a list).
-            * **lonW/lonE/latS/latN** - Custom plot domain.
-            
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool

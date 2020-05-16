@@ -295,10 +295,7 @@ class ReconDataset:
             "pkwnd" - 10-second flight level wind
             "p_sfc" - extrapolated surface pressure
         domain : str
-            Domain for the plot. Can be one of the following:
-            "dynamic" - default - dynamically focuses the domain using the tornado track(s) plotted, 
-            "north_atlantic" - North Atlantic Ocean basin, 
-            "lonW/lonE/latS/latN" - Custom plot domain.
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -457,10 +454,7 @@ class ReconDataset:
             "pkwnd" - 10-second flight level wind
             "p_sfc" - extrapolated surface pressure
         domain : str
-            Domain for the plot. Can be one of the following:
-            "dynamic" - default - dynamically focuses the domain around , 
-            "north_atlantic" - North Atlantic Ocean basin, 
-            "lonW/lonE/latS/latN" - Custom plot domain.
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -593,10 +587,7 @@ class ReconDataset:
             Function to operate on interpolated recon data.
             e.g., np.max, np.min, or percentile function
         domain : str
-            Domain for the plot. Can be one of the following:
-            "dynamic" - default - dynamically focuses the domain using the tornado track(s) plotted, 
-            "north_atlantic" - North Atlantic Ocean basin, 
-            "lonW/lonE/latS/latN" - Custom plot domain.
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool

@@ -11,21 +11,24 @@ API Reference
    tropycal.tracks
    tropycal.tornado
    tropycal.recon
+   tropycal.realtime
    
-###############
+===============
 Keyword Options
-###############
+===============
 
-.. currentmodule:: tropycal
+Various plotting functions in Tropycal make use of properties to allow the user to customize the plots:
 
-List of keyword options for various functions in Tropycal:
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
 
-.. toctree::
-   :maxdepth: 1
-
-   options/domain
-   options/map_prop
-   options/gridded_stats
+   * - Page
+     - Description
+   * - :doc:`../options/domain`
+     - List of available map domains for plotting.
+   * - :doc:`../options/map_prop`
+     - List of available map customization properties.
 
 * :ref:`modindex`
 * :ref:`genindex`

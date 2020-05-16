@@ -537,14 +537,29 @@ class ReconDataset:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
                 cartopy_proj = self.plot_obj.proj
                 
-                #Plot recon
-                plot_info = self.plot_obj.plot_maps(self.storm_obj,Maps_sub,varname,recon_stats,\
-                                                    domain,ax,return_ax=True,prop=prop,map_prop=map_prop)
+                #Maintain the same lat / lon dimensions for all dynamic maps
+                #Determined by the dynamic domain from the first map
+                if i>0 and domain is 'dynamic':
+                    d1 = {'n':Maps_sub['center_lat']+dlat,\
+                          's':Maps_sub['center_lat']-dlat,\
+                          'e':Maps_sub['center_lon']+dlon,\
+                          'w':Maps_sub['center_lon']-dlon}
+                else:
+                    d1 = domain
                 
-                figs.append(plot_info)
+                #Plot recon
+                plot_ax,d0 = self.plot_obj.plot_maps(self.storm_obj,Maps_sub,varname,recon_stats,\
+                                                    domain=d1,ax=ax,return_ax=True,return_domain=True,prop=prop,map_prop=map_prop)
+                
+                #Get domain dimensions from the first map
+                if i==0:
+                    dlat = .5*(d0['n']-d0['s'])
+                    dlon = .5*(d0['e']-d0['w'])
+                
+                figs.append(plot_ax)
                 
                 if savetopath is not None:
-                    plt.savefig(f'{savetopath}/{t.strftime("%Y%m%d%H%M")}')
+                    plt.savefig(f'{savetopath}/{t.strftime("%Y%m%d%H%M")}',bbox_inches='tight')
                 plt.close()
                 
             if savetopath is None:

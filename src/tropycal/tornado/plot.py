@@ -35,7 +35,7 @@ class TornadoPlot(Plot):
         
         self.use_credit = True
                  
-    def plot_tornadoes(self,tornado,domain="east_conus",plotPPF=False,ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_tornadoes(self,tornado,domain="east_conus",plotPPH=False,ax=None,return_ax=False,return_domain=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -63,7 +63,7 @@ class TornadoPlot(Plot):
         """
         
         #Set default properties
-        default_prop={'plotType':'tracks','PPFcolors':'SPC','PPFlevels':[2,5,10,15,30,45,60,100],\
+        default_prop={'plotType':'tracks','PPHcolors':'SPC','PPHlevels':[2,5,10,15,30,45,60,100],\
                       'EFcolors':'default','linewidth':1.5,'ms':7.5}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF',\
                           'linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
@@ -119,14 +119,14 @@ class TornadoPlot(Plot):
         else:
             if min(mnlon) < min_lon: min_lon = min(mnlon)
 
-        #Plot PPF
-        if plotPPF in ['total','daily',True]:
-            if plotPPF == True: plotPPF='daily'
-            PPF,longrid,latgrid = getPPF(tornado_data,method=plotPPF)
+        #Plot PPH
+        if plotPPH in ['total','daily',True]:
+            if plotPPH == True: plotPPH='daily'
+            PPH,longrid,latgrid = getPPH(tornado_data,method=plotPPH)
             
-            colors,clevs = ppf_colors(plotPPF,prop['PPFcolors'],prop['PPFlevels'])
+            colors,clevs = PPH_colors(plotPPH,prop['PPHcolors'],prop['PPHlevels'])
                     
-            cbmap = self.ax.contourf(longrid,latgrid,PPF,\
+            cbmap = self.ax.contourf(longrid,latgrid,PPH,\
                              levels=clevs,colors=colors,alpha=0.5)
 
         #Plot tornadoes as specified
@@ -157,15 +157,15 @@ class TornadoPlot(Plot):
         #--------------------------------------------------------------------------------------
         
         #Add left title
-        ppf_title = ''
-        if plotPPF in ['total',True]:
-            ppf_title = ' and total PPF (%)'
-        if plotPPF == 'daily':
-            ppf_title = ' and daily PPF (%)'
-        self.ax.set_title('Tornado tracks'+ppf_title,loc='left',fontsize=17,fontweight='bold')
+        PPH_title = ''
+        if plotPPH in ['total',True]:
+            PPH_title = ' and total PPH (%)'
+        if plotPPH == 'daily':
+            PPH_title = ' and daily PPH (%)'
+        self.ax.set_title('Tornado tracks'+PPH_title,loc='left',fontsize=17,fontweight='bold')
 
         #Add right title
-        #max_ppf = max(PPF)
+        #max_PPH = max(PPH)
         start_date = dt.strftime(min(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
         end_date = dt.strftime(max(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
         self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
@@ -189,8 +189,8 @@ class TornadoPlot(Plot):
                                        fc = 'w',edgecolor = '0.8',alpha = 0.8,\
                                        transform=self.fig.transFigure, zorder=100)
         
-        #Add PPF colorbar
-        if plotPPF != False:
+        #Add PPH colorbar
+        if plotPPH != False:
             
             # Define colorbar axis
             cax = self.fig.add_axes([bb.width + 3*bb.x0 - 2*bb_ax.x0, bb.y0, 0.015, bb.height])
@@ -209,8 +209,11 @@ class TornadoPlot(Plot):
         self.add_credit(text)
         
         #Return axis if specified, otherwise display figure
-        if ax != None or return_ax == True:
-            return self.ax,'/'.join([str(b) for b in [bound_w,bound_e,bound_s,bound_n]]),leg_tor
+        if ax is not None or return_ax:
+            if return_domain:
+                return self.ax,leg_tor,{'n':bound_n,'e':bound_e,'s':bound_s,'w':bound_w}
+            else:
+                return self.ax,leg_tor
         else:
             plt.show()
             plt.close()

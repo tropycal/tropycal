@@ -529,7 +529,64 @@ class Storm:
         
         #Get list of available NHC advisories & map discussions
         if storm_year == (dt.now()).year:
-            pass
+            #Get list of all discussions for all storms this year
+            url_disco = 'https://ftp.nhc.noaa.gov/atcf/dis/'
+            page = requests.get(url_disco).text
+            content = page.split("\n")
+            files = []
+            for line in content:
+                if ".discus." in line and self.id.lower() in line:
+                    filename = line.split('">')[1]
+                    filename = filename.split("</a>")[0]
+                    files.append(filename)
+            del content
+            
+            #Read in all NHC forecast discussions
+            discos = {'id':[],'utc_date':[],'url':[],'mode':0}
+            for file in files:
+                
+                #Get info about forecast
+                file_info = file.split(".")
+                disco_number = int(file_info[2])
+                
+                #Open file to get info about time issued
+                f = urllib.request.urlopen(url_disco + file)
+                content = f.read()
+                content = content.decode("utf-8")
+                content = content.split("\n")
+                f.close()
+                
+                #Figure out time issued
+                hr = content[5].split(" ")[0]
+                zone = content[5].split(" ")[2]
+                disco_time = str2(int(hr)) + ' '.join(content[5].split(" ")[1:])
+                
+                format_time = content[5].split(" ")[0]
+                if len(format_time) == 3: format_time = "0" + format_time
+                format_time = format_time + " " +  ' '.join(content[5].split(" ")[1:])
+                disco_date = dt.strptime(format_time,f'%I00 %p {zone} %a %b %d %Y')
+                
+                time_zones = {
+                'ADT':-3,
+                'AST':-4,
+                'EDT':-4,
+                'EST':-5,
+                'CDT':-5,
+                'CST':-6,
+                'MDT':-6,
+                'MST':-7,
+                'PDT':-7,
+                'PST':-8,
+                'HDT':-9,
+                'HST':-10}
+                offset = time_zones.get(zone,0)
+                disco_date = disco_date + timedelta(hours=offset*-1)
+                
+                #Add times issued
+                discos['id'].append(disco_number)
+                discos['utc_date'].append(disco_date)
+                discos['url'].append(url_disco + file)
+            
         elif storm_year < 1992:
             raise RuntimeError("NHC discussion data is unavailable.")
         elif storm_year < 2000:

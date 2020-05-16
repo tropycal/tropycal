@@ -354,8 +354,8 @@ class TornadoDataset():
         plot_info = self.plot_obj.plot_tornadoes(dfTors,domain,plotPPH,ax,return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax==True:
-            return plot_info[0],plot_info[1],plot_info[2]
+        if ax is not None or return_ax==True:
+            return plot_info
 
     def __getTimeTors(self,time):
         

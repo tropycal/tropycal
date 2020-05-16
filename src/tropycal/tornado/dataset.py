@@ -269,7 +269,7 @@ class TornadoDataset():
             plt.close()
         
 
-    def plot_tors(self,tor_info,domain="conus",plotPPH=False,ax=None,return_ax=False,cartopy_proj=None,**kwargs):
+    def plot_tors(self,tor_info,domain="conus",plotPPH=False,ax=None,return_ax=False,return_domain=True,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of tornado tracks and Practically Perfect Forecast (PPH).
@@ -351,10 +351,10 @@ class TornadoDataset():
             cartopy_proj = self.plot_obj.proj
         
         #Plot tornadoes
-        plot_info = self.plot_obj.plot_tornadoes(dfTors,domain,plotPPH,ax,return_ax,prop=prop,map_prop=map_prop)
+        plot_info = self.plot_obj.plot_tornadoes(dfTors,domain,plotPPH,ax,return_ax,return_domain,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax is not None or return_ax==True:
+        if ax is not None or return_ax or return_domain:
             return plot_info
 
     def __getTimeTors(self,time):

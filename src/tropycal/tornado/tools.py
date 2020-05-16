@@ -16,10 +16,10 @@ def circle_filter(d):
     disk = disk.astype(float)
     return disk
 
-def getPPF(dfTors,method='daily',res=10):
+def getPPH(dfTors,method='daily',res=10):
     
     r"""
-    Calculate PPF density from tornado dataframe
+    Calculate PPH density from tornado dataframe
     
     Parameters
     ----------
@@ -54,12 +54,12 @@ def getPPF(dfTors,method='daily',res=10):
         
     if method == 'daily':
         grid = np.mean(aggregate_grid,axis=0)
-        PPF = gfilt(grid,sigma=1.5*interval)*100
+        PPH = gfilt(grid,sigma=1.5*interval)*100
     if method == 'total':
         grid = np.sum(aggregate_grid,axis=0)
-        PPF = gfilt((grid>=1)*1.0,sigma=1.5*interval)*100
+        PPH = gfilt((grid>=1)*1.0,sigma=1.5*interval)*100
         
-    return PPF,.5*(longrid[:len(longrid)-1]+longrid[1:]),.5*(latgrid[:len(latgrid)-1]+latgrid[1:])
+    return PPH,.5*(longrid[:len(longrid)-1]+longrid[1:]),.5*(latgrid[:len(latgrid)-1]+latgrid[1:])
 
 
 def ef_colors(x):
@@ -81,7 +81,7 @@ def ef_colors(x):
     return colors
 
 
-def ppf_colors(ptype,x,clevs):
+def PPH_colors(ptype,x,clevs):
     import matplotlib as mlib
     if x=='SPC':
         if ptype=='daily':
@@ -94,7 +94,7 @@ def ppf_colors(ptype,x,clevs):
                       '#912CEE',\
                       '#104E8B']
         else:
-            warnings.warn('SPC colors only allowed for daily PPF.\n'+\
+            warnings.warn('SPC colors only allowed for daily PPH.\n'+\
                           'Defaulting to plasma colormap.')
             x = 'plasma'
     if x!='SPC':

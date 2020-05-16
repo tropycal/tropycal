@@ -1168,7 +1168,7 @@ class Storm:
             f.write(response.content)
 
             
-    def plot_tors(self,dist_thresh=1000,Tors=None,domain="dynamic",plotPPF=False,plot_all=False,\
+    def plot_tors(self,dist_thresh=1000,Tors=None,domain="dynamic",plotPPH=False,plot_all=False,\
                   ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
                 
         r"""
@@ -1183,10 +1183,10 @@ class Storm:
                 for future use.
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
-        plotPPF : bool or str
-            Whether to plot practically perfect forecast (PPF). True defaults to "daily". Default is False.
-        
-            * **False** - no PPF plot.
+        plotPPH : bool or str
+            Whether to plot practically perfect forecast (PPH). True defaults to "daily". Default is False.
+
+            * **False** - no PPH plot.
             * **True** - defaults to "daily".
             * **"total"** - probability of a tornado within 25mi of a point during the period of time selected.
             * **"daily"** - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.
@@ -1206,9 +1206,9 @@ class Storm:
         
         #Set default colormap for TC plots to Wistia
         try:
-            prop['PPFcolors']
+            prop['PPHcolors']
         except:
-            prop['PPFcolors']='Wistia'
+            prop['PPHcolors']='Wistia'
         
         if Tors == None:
             try:
@@ -1247,11 +1247,12 @@ class Storm:
                 self.plot_obj_tc.create_cartopy(proj='PlateCarree',central_longitude=0.0)
                 
         #Plot tornadoes
-        plot_ax,domain,leg_tor = self.plot_obj_tor.plot_tornadoes(self.stormTors,domain,ax=ax,return_ax=True,\
-                                             plotPPF=plotPPF,prop=prop,map_prop=map_prop)
+        plot_ax,leg_tor,domain = self.plot_obj_tor.plot_tornadoes(self.stormTors,domain,ax=ax,return_ax=True,return_domain=True,\
+                                             plotPPH=plotPPH,prop=prop,map_prop=map_prop)
         tor_title = plot_ax.get_title('left')
 
         #Plot storm
+        plot_ax = self.plot_obj_tc.plot_storm(self.dict,domain=domain,ax=plot_ax,prop=prop,map_prop=map_prop)
         
         plot_ax.add_artist(leg_tor)
         

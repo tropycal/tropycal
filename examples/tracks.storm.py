@@ -53,11 +53,11 @@ print(storm.to_dataframe())
 storm.plot(return_ax=True)
 
 ###########################################
-# Plot the tornado tracks associated with Michael, along with the accompanying daily practically perfect forecast (PPF):
+# Plot the tornado tracks associated with Michael, along with the accompanying daily practically perfect forecast (PPH):
 # 
 # Note: There is currently a bug with this function that outputs 2 axes, a filled one and a blank one. This will be fixed in future updates.
 
-storm.plot_tors(plotPPF=True)
+storm.plot_tors(plotPPH=True)
 
 ###########################################
 # If this storm was ever in NHC's area of responsibility, you can retrieve operational NHC forecast data for this event provided it is available. Forecast discussions date back to 1992, and forecast tracks date back to 1954.

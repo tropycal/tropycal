@@ -269,10 +269,10 @@ class TornadoDataset():
             plt.close()
         
 
-    def plot_tors(self,tor_info,domain="conus",plotPPF=False,ax=None,return_ax=False,cartopy_proj=None,**kwargs):
+    def plot_tors(self,tor_info,domain="conus",plotPPH=False,ax=None,return_ax=False,return_domain=True,cartopy_proj=None,**kwargs):
         
         r"""
-        Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).
+        Creates a plot of tornado tracks and Practically Perfect Forecast (PPH).
         
         Parameters
         ----------
@@ -285,10 +285,10 @@ class TornadoDataset():
             * **list** with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.
         domain : str
             Domain for the plot. Default is "conus". Please refer to :ref:`options-domain` for available domain options.
-        plotPPF : bool or str
-            Whether to plot practically perfect forecast (PPF). True defaults to "daily". Default is False.
+        plotPPH : bool or str
+            Whether to plot practically perfect forecast (PPH). True defaults to "daily". Default is False.
         
-            * **False** - no PPF plot.
+            * **False** - no PPH plot.
             * **True** - defaults to "daily".
             * **"total"** - probability of a tornado within 25mi of a point during the period of time selected.
             * **"daily"** - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.
@@ -315,18 +315,18 @@ class TornadoDataset():
             dfTors = self.__getTimeTors(tor_info)
             if isinstance(tor_info,list):
                 try:
-                    if prop['PPFcolors']=='SPC':
-                        warning_message = 'SPC colors only allowed for daily PPF. Defaulting to plasma colormap.'
+                    if prop['PPHcolors']=='SPC':
+                        warning_message = 'SPC colors only allowed for daily PPH. Defaulting to plasma colormap.'
                         warnings.warn(warning_message)
-                        prop['PPFcolors']='plasma'
+                        prop['PPHcolors']='plasma'
                 except:
-                    warning_message = 'SPC colors only allowed for daily PPF. Defaulting to plasma colormap.'
+                    warning_message = 'SPC colors only allowed for daily PPH. Defaulting to plasma colormap.'
                     warnings.warn(warning_message)
-                    prop['PPFcolors']='plasma'
+                    prop['PPHcolors']='plasma'
                     
-                if plotPPF!='total':
+                if plotPPH!='total':
                     try:
-                        prop['PPFlevels']
+                        prop['PPHlevels']
                     except:
                         t_int = (max(tor_info)-min(tor_info)).days
                         if t_int>1:
@@ -335,7 +335,7 @@ class TornadoDataset():
                             for i,_ in enumerate(new_levs[:-1]):
                                 new_levs[i] = max([new_levs[i],0.1])
                                 new_levs[i+1] = new_levs[i]+max([new_levs[i+1]-new_levs[i],.1])
-                            prop['PPFlevels']=new_levs
+                            prop['PPHlevels']=new_levs
     
         #Create instance of plot object
         self.plot_obj = TornadoPlot()
@@ -346,11 +346,11 @@ class TornadoDataset():
             cartopy_proj = self.plot_obj.proj
         
         #Plot tornadoes
-        plot_info = self.plot_obj.plot_tornadoes(dfTors,domain,plotPPF,ax,return_ax,prop=prop,map_prop=map_prop)
+        plot_info = self.plot_obj.plot_tornadoes(dfTors,domain,plotPPH,ax,return_ax,return_domain,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax==True:
-            return plot_info[0],plot_info[1],plot_info[2]
+        if ax is not None or return_ax or return_domain:
+            return plot_info
 
     def __getTimeTors(self,time):
         

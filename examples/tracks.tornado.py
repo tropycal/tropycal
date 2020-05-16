@@ -19,9 +19,9 @@ import datetime as dt
 tor_data = tornado.TornadoDataset()
     
 ###########################################
-# We can use a TornadoDataset object to analyze both tornadoes associated with tropical cyclones and non-TC tornadoes. As an example of the latter, we can make a plot of all tornadoes during the 27 April 2011 tornado outbreak, along with the Practically Perfect Forecast (PPF) in filled contours:
+# We can use a TornadoDataset object to analyze both tornadoes associated with tropical cyclones and non-TC tornadoes. As an example of the latter, we can make a plot of all tornadoes during the 27 April 2011 tornado outbreak, along with the Practically Perfect Forecast (PPH) in filled contours:
 
-tor_ax,domain,leg_tor = tor_data.plot_tors(dt.datetime(2011,4,27),plotPPF=True,return_ax=True)
+tor_ax,domain,leg_tor = tor_data.plot_tors(dt.datetime(2011,4,27),plotPPH=True,return_ax=True)
 tor_ax
 
 ###########################################
@@ -65,9 +65,9 @@ hurdat_atl.plot_TCtors_rotated(storms=[('charley',2004),('frances',2004),('ivan'
 storm = hurdat_atl.get_storm(('ivan',2004))
 
 ###########################################
-# Let's plot all the tornado tracks, and daily PPF, associated with Hurricane Ivan:
+# Let's plot all the tornado tracks, and daily PPH, associated with Hurricane Ivan:
 
-storm.plot_tors(plotPPF=True,return_ax=True)
+storm.plot_tors(plotPPH=True,return_ax=True)
 
 ###########################################
 # Let's make a plot of the tornadoes in storm motion relative coordinates:

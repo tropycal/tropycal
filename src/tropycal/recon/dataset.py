@@ -317,7 +317,7 @@ class ReconDataset:
         #Pop kwargs
         prop = kwargs.pop('prop',{})
         map_prop = kwargs.pop('map_prop',{})
-        
+                
         #Get plot data
         
         if recon_select is None:
@@ -402,7 +402,7 @@ class ReconDataset:
 
         title = get_recon_title(varname)
         if prop['levels'] is None:
-            prop['levels'] = (np.min(Hov_dict['hovmoller']),np.max(Hov_dict['hovmoller']))
+            prop['levels'] = (np.nanmin(Hov_dict['hovmoller']),np.nanmax(Hov_dict['hovmoller']))
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
                 
         time = Hov_dict['time']
@@ -424,12 +424,16 @@ class ReconDataset:
         ax.axis([0,max(radius),min(time),max(time)])
         
         ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d %H'))
+        for tick in ax.xaxis.get_major_ticks():
+                tick.label.set_fontsize(14)
+        for tick in ax.yaxis.get_major_ticks():
+                tick.label.set_fontsize(14)
+        ax.set_ylabel('UTC Time (MM-DD HH)',fontsize=15)
+        ax.set_xlabel('Radius (km)',fontsize=15)
+        cbar = plt.colorbar(cf,orientation='horizontal',pad=0.1)
+        cbar.ax.xaxis.set_ticks(np.linspace(0,1,len(clevs)))
+        cbar.ax.xaxis.set_ticklabels(clevs,fontsize=14)
         
-        ax.set_ylabel('UTC Time (MM-DD HH)')
-        ax.set_xlabel('Radius (km)')
-        plt.colorbar(cf,orientation='horizontal',pad=0.1,ticks=clevs)
-
-        mlib.rcParams.update({'font.size': 16})
         
         #--------------------------------------------------------------------------------------
         

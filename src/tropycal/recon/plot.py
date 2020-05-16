@@ -127,7 +127,7 @@ class ReconPlot(Plot):
         
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
         
-        if varname == 'vmax' and prop['cmap'] == 'category':
+        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] == 'category':
             vmin = min(clevs); vmax = max(clevs)
         else:
             vmin = min(prop['levels']); vmax = max(prop['levels'])
@@ -148,13 +148,7 @@ class ReconPlot(Plot):
         if scatter:
                         
             dataSort = recon_data.sort_values(by=prop['sortby'],ascending=(prop['sortby']!='p_sfc')).reset_index(drop=True)
-#            prop['obs_levels']=np.linspace(min(dataSort[varname]),max(dataSort[varname]),256)
-#            norm = mlib.colors.Normalize(vmin=min(prop['obs_levels']), vmax=max(prop['obs_levels']))
-#            cmap = mlib.colors.LinearSegmentedColormap.from_list(
-#                'Custom cmap', colors,len(colors))
-            norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
-#            cmap = mlib.cm.get_cmap(prop['obs_colors'])
-            
+          
             cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],\
                                 cmap=cmap,vmin=vmin,vmax=vmax, s=prop['ms'])
 

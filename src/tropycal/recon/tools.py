@@ -149,6 +149,9 @@ class interpRecon:
         
         #Iterate through all data surrounding a center pass given the window previously specified, and create a polar
         #grid for each
+        start_time = dt.now()
+        print("--> Starting interpolation")
+        
         spaceInterpData={}
         for time in spaceInterpTimes:
             #Temporarily set dfRecon to this centered subset window
@@ -162,9 +165,7 @@ class interpRecon:
         self.dfRecon = tmpRecon
         reconArray = np.array([i for i in spaceInterpData.values()])
 
-        #Interpolate over every half hour and update on progress
-        start_time = dt.now()
-        print("--> Starting to interpolate to target_track times")
+        #Interpolate over every half hour
         newTimes = np.arange(mdates.date2num(trackTimes[0]),mdates.date2num(trackTimes[-1])+1e-3,1/48)    
         oldTimes = mdates.date2num(spaceInterpTimes)
         reconTimeInterp=np.apply_along_axis(lambda x: np.interp(newTimes,oldTimes,x),
@@ -211,6 +212,9 @@ class interpRecon:
             recon_stats={name:[] for name in stat_vars.keys()}
         #Iterate through all data surrounding a center pass given the window previously specified, and create a polar
         #grid for each
+        start_time = dt.now()
+        print("--> Starting interpolation")
+        
         for time in spaceInterpTimes:
             print(time)
             self.dfRecon = tmpRecon[(tmpRecon['time']>time-window/2) & (tmpRecon['time']<=time+window/2)]
@@ -224,10 +228,6 @@ class interpRecon:
         self.dfRecon = tmpRecon        
         reconArray = np.array([i for i in spaceInterpData.values()])
 
-        #Time duration to interpolate
-        start_time = dt.now()
-        print("--> Starting to interpolate to target_track times")
-        
         #If multiple times, create a lat & lon grid for half hour intervals
         if len(trackTimes)>1:
             newTimes = np.arange(mdates.date2num(trackTimes[0]),mdates.date2num(trackTimes[-1])+interval/24,interval/24)    
@@ -362,15 +362,18 @@ def make_colormap(colors,whiten=0):
     
     return mymap
 
+
 def get_cmap_levels(varname,x,clevs,linear=False):
     
-    colors = ({0.0:'w',
-           2/8:'#72FF78',
-           3/8:'#EFFF0F',
-           5/8:'r',
-           6/8:'#6012D5',
-           1.0:'#85FFFF'})
+        
+    colors = ({0:'w',
+           2:'#72FF78',
+           3:'#EFFF0F',
+           5:'r',
+           6:'#6012D5',
+           8:'#85FFFF'})
     cmap_fischer = make_colormap(colors)
+    
     
     if x=='category':
         if varname in ['sfmr','fl_to_sfc']:
@@ -378,25 +381,41 @@ def get_cmap_levels(varname,x,clevs,linear=False):
 #            colors = ['#8FC2F2','#3185D3','#FFFF00','#FF9E00','#DD0000','#FF00FC','#8B0088']
             clevs = [cat2wind(c) for c in range(-1,6)]+[200]
             if linear:
-                colorstack = [mcolors.to_rgba(category_color(lev)) \
+                colors = [mcolors.to_rgba(category_color(lev)) \
                                for c,lev in enumerate(clevs[:-1]) for _ in range(clevs[c+1]-clevs[c])]
             else:
-                colorstack = [mcolors.to_rgba(category_color(lev)) \
-                               for c,lev in enumerate(clevs[:-1])]
-            cmap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colorstack)
+                clevs = [cat2wind(c) for c in range(-1,6)]+[200]
+                colors = [category_color(lev) for lev in clevs[:-1]]
+                cmap = mcolors.ListedColormap(colors)
         else:
             warnings.warn('Saffir Simpson category colors allowed only for surface winds')
             x = 'plasma'
     if x!='category':
         if isinstance(x,str):
             cmap = mlib.cm.get_cmap(x)
-            norm = mlib.colors.Normalize(vmin=0, vmax=len(clevs)-1)
-            colors = cmap(norm(np.arange(len(clevs))))
         elif isinstance(x,list):
-            colors = x
+            cmap = mcolors.ListedColormap(x)
+        elif isinstance(x,dict):
+            cmap = make_colormap(x)
         else:
-            norm = mlib.colors.Normalize(vmin=0, vmax=len(clevs)-1)
-            colors = x(norm(np.arange(len(clevs))))
-        cmap = mcolors.LinearSegmentedColormap.from_list('my_colormap',colors)
+            cmap = x
+        norm = mlib.colors.Normalize(vmin=0, vmax=len(clevs)-1)
+        if len(clevs)>2:
+            colors = cmap(norm(np.arange(len(clevs)-1)))
+            cmap = mcolors.ListedColormap(colors)
+        else:
+            colors = cmap(norm(np.linspace(0,1,256)))
+            cmap = mcolors.LinearSegmentedColormap.from_list('my_colormap',colors)
+            
+            y0 = min(clevs)
+            y1 = max(clevs)
+            dy = (y1-y0)/8
+            scalemag = int(np.log(dy)/np.log(10))
+            dy_scaled = dy*10**-scalemag
+            dc = min([1,2,5,10], key=lambda x:abs(x-dy_scaled))
+            dc = dc*10**scalemag
+            c0 = np.ceil(y0/dc)*dc
+            c1 = np.floor(y1/dc)*dc
+            clevs = np.arange(c0,c1+dc,dc)
+
     return cmap,clevs
-    

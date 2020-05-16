@@ -5,6 +5,8 @@ from datetime import datetime as dt,timedelta
 import requests
 import urllib
 import matplotlib.dates as mdates
+import matplotlib.colors as mcolors
+import matplotlib as mlib
 import warnings
 
 def findvar(cmd,thresh):
@@ -390,30 +392,85 @@ def category_color(vmax):
     else:
         return '#8B0088'
 
-
-def make_cmap(varname,x,clevs):
-    import matplotlib as mlib
-    import matplotlib.colors as mcolors
-    if x=='category':
-        if varname=='vmax':
-            clevs = [cat2wind(c) for c in range(-1,6)]+[200]
-            colorstack = [mcolors.to_rgba(category_color(lev)) \
-                           for c,lev in enumerate(clevs[:-1]) \
-                           for _ in range((clevs[c+1]-clevs[c])*10)]
-            cmap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colorstack)
+def make_colormap(colors,whiten=0):
+    import numpy as np
+    from matplotlib.colors import LinearSegmentedColormap, ColorConverter
+    
+    z  = np.array(sorted(colors.keys()))
+    n  = len(z)
+    z1 = min(z)
+    zn = max(z)
+    x0 = (z - z1) / (zn - z1)
+    
+    CC = ColorConverter()
+    R = []
+    G = []
+    B = []
+    for i in range(n):
+        Ci = colors[z[i]]
+        if type(Ci) == str:
+            RGB = CC.to_rgb(Ci)
         else:
-            warnings.warn('Saffir Simpson category colors only allowed for wind. '+\
-                          'Defaulting to plasma colormap.')
+            RGB = Ci
+        R.append(RGB[0] + (1-RGB[0])*whiten)
+        G.append(RGB[1] + (1-RGB[1])*whiten)
+        B.append(RGB[2] + (1-RGB[2])*whiten)
+    
+    cmap_dict = {}
+    cmap_dict['red']   = [(x0[i],R[i],R[i]) for i in range(len(R))]
+    cmap_dict['green'] = [(x0[i],G[i],G[i]) for i in range(len(G))]
+    cmap_dict['blue']  = [(x0[i],B[i],B[i]) for i in range(len(B))]
+    mymap = LinearSegmentedColormap('mymap',cmap_dict)
+    
+    return mymap
+
+def get_cmap_levels(varname,x,clevs,linear=False):
+    
+    if x=='category':
+        if varname == 'vmax':
+#            clevs = [34,64,83,96,113,137,200]
+#            colors = ['#8FC2F2','#3185D3','#FFFF00','#FF9E00','#DD0000','#FF00FC','#8B0088']
+            clevs = [cat2wind(c) for c in range(-1,6)]+[200]
+            if linear:
+                colors = [mcolors.to_rgba(category_color(lev)) \
+                               for c,lev in enumerate(clevs[:-1]) for _ in range(clevs[c+1]-clevs[c])]
+            else:
+                clevs = [cat2wind(c) for c in range(-1,6)]+[200]
+                colors = [category_color(lev) for lev in clevs[:-1]]
+                cmap = mcolors.ListedColormap(colors)
+        else:
+            warnings.warn('Saffir Simpson category colors allowed only for surface winds')
             x = 'plasma'
     if x!='category':
         if isinstance(x,str):
             cmap = mlib.cm.get_cmap(x)
         elif isinstance(x,list):
-            colorstack = np.vstack([mcolors.to_rgba(color) for color in x])
-            cmap = mcolors.LinearSegmentedColormap.from_list('my_colormap', colorstack)
+            cmap = mcolors.ListedColormap(x)
+        elif isinstance(x,dict):
+            cmap = make_colormap(x)
         else:
-            cmap=x
+            cmap = x
+        norm = mlib.colors.Normalize(vmin=0, vmax=len(clevs)-1)
+        if len(clevs)>2:
+            colors = cmap(norm(np.arange(len(clevs)-1)))
+            cmap = mcolors.ListedColormap(colors)
+        else:
+            colors = cmap(norm(np.linspace(0,1,256)))
+            cmap = mcolors.LinearSegmentedColormap.from_list('my_colormap',colors)
+            
+            y0 = min(clevs)
+            y1 = max(clevs)
+            dy = (y1-y0)/8
+            scalemag = int(np.log(dy)/np.log(10))
+            dy_scaled = dy*10**-scalemag
+            dc = min([1,2,5,10], key=lambda x:abs(x-dy_scaled))
+            dc = dc*10**scalemag
+            c0 = np.ceil(y0/dc)*dc
+            c1 = np.floor(y1/dc)*dc
+            clevs = np.arange(c0,c1+dc,dc)
+            
     return cmap,clevs
+    
 
 
 def str2(a):

@@ -66,7 +66,8 @@ class ReconPlot(Plot):
             scatter = True
         
         #Set default properties
-        default_prop={'cmap':'category','levels':None,'sortby':varname,'linewidth':1.5,'ms':7.5}
+        default_prop={'cmap':'category','levels':(np.min(recon_data[varname]),np.max(recon_data[varname])),\
+                      'sortby':varname,'linewidth':1.5,'ms':7.5}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF',\
                           'linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
@@ -124,10 +125,12 @@ class ReconPlot(Plot):
 
         #Plot recon data as specified
         
-        if prop['levels'] is None:
-            prop['levels'] = np.arange(np.floor(np.min(recon_data[varname])/10)*10,
-                            np.ceil(np.max(recon_data[varname])/10)*10+1,10)
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
+        
+        if varname == 'vmax' and prop['cmap'] == 'category':
+            vmin = min(clevs); vmax = max(clevs)
+        else:
+            vmin = min(prop['levels']); vmax = max(prop['levels'])
         
         if barbs:
             
@@ -152,7 +155,8 @@ class ReconPlot(Plot):
             norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
 #            cmap = mlib.cm.get_cmap(prop['obs_colors'])
             
-            cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],cmap=cmap,norm=norm, s=prop['ms'])
+            cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],\
+                                cmap=cmap,vmin=vmin,vmax=vmax, s=prop['ms'])
 
         #--------------------------------------------------------------------------------------
         
@@ -196,7 +200,7 @@ class ReconPlot(Plot):
         #--------------------------------------------------------------------------------------
         
         #Add legend
-
+        
         #Phantom legend
         handles=[]
         for _ in range(10):
@@ -213,14 +217,19 @@ class ReconPlot(Plot):
 #        cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
         cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
                                  ticks=clevs)
+            
         if len(prop['levels'])>2:
-#            [(c-min(clevs))/(max(clevs)-min(clevs)) for c in clevs]
-            cax.yaxis.set_ticks(np.linspace(0,1,len(clevs)))
+            cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
+            cax.yaxis.set_ticklabels(clevs)
+        else:
+            cax.yaxis.set_ticks(clevs)
         cax.tick_params(labelsize=11.5)
         cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
         if prop['cmap']=='category' and varname=='sfmr':
+            cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
+            cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
             cax2.yaxis.set_ticks_position('right')
             cax2.yaxis.set_ticks((np.linspace(0,1,len(clevs))[:-1]+np.linspace(0,1,len(clevs))[1:])*.5)
@@ -234,11 +243,7 @@ class ReconPlot(Plot):
                                        fc = 'w',edgecolor = '0.8',alpha = 0.8,\
                                        transform=self.fig.transFigure, zorder=2)
         self.ax.add_patch(rectangle)
-        
-        
 
-
-        #Add colorbar
         
         
         
@@ -335,8 +340,7 @@ class ReconPlot(Plot):
         
     
         if prop['levels'] is None:
-            prop['levels'] = np.arange(np.floor(np.nanmin(aggregate_grid)/10)*10,
-                            np.ceil(np.nanmax(aggregate_grid)/10)*10+1,10)
+            prop['levels'] = (np.min(recon_data[varname]),np.max(recon_data[varname]))
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
                 
         out = self.proj.transform_points(distproj,xmgrid,ymgrid)
@@ -384,7 +388,7 @@ class ReconPlot(Plot):
         #--------------------------------------------------------------------------------------
         
         #Add legend
-
+        
         #Phantom legend
         handles=[]
         for _ in range(10):
@@ -401,14 +405,19 @@ class ReconPlot(Plot):
 #        cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
         cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
                                  ticks=clevs)
+            
         if len(prop['levels'])>2:
-#            [(c-min(clevs))/(max(clevs)-min(clevs)) for c in clevs]
-            cax.yaxis.set_ticks(np.linspace(0,1,len(clevs)))
+            cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
+            cax.yaxis.set_ticklabels(clevs)
+        else:
+            cax.yaxis.set_ticks(clevs)
         cax.tick_params(labelsize=11.5)
         cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
         if prop['cmap']=='category' and varname=='sfmr':
+            cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
+            cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
             cax2.yaxis.set_ticks_position('right')
             cax2.yaxis.set_ticks((np.linspace(0,1,len(clevs))[:-1]+np.linspace(0,1,len(clevs))[1:])*.5)
@@ -422,6 +431,7 @@ class ReconPlot(Plot):
                                        fc = 'w',edgecolor = '0.8',alpha = 0.8,\
                                        transform=self.fig.transFigure, zorder=2)
         self.ax.add_patch(rectangle)
+        
  
         #Add plot credit
         text = self.plot_credit()
@@ -501,7 +511,7 @@ class ReconPlot(Plot):
             plt.close()
      
     def plot_maps(self,storm,Maps_dict,varname,recon_stats=None,\
-                  domain='dynamic',ax=None,return_ax=False,prop={},map_prop={}):
+                  domain='dynamic',ax=None,return_ax=False,return_domain=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of storm-centered recon data interpolated to a grid
@@ -605,7 +615,11 @@ class ReconPlot(Plot):
         text = self.plot_credit()
         self.add_credit(text)
 
-        return self.ax
+        if return_ax:
+            if return_domain:
+                return self.ax,{'n':bound_n,'e':bound_e,'s':bound_s,'w':bound_w}
+            else:
+                return self.ax
 
     def plot_hovmoller(self,storm,Hov,varname):
         

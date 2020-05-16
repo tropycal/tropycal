@@ -1391,7 +1391,8 @@ class TrackPlot(Plot):
         """
         
         #Set default properties
-        default_prop={'cmap':'category','clevs':[np.nanmin(zcoord),np.nanmax(zcoord)],'left_title':'','right_title':'All storms'}
+        default_prop={'cmap':'category','levels':(np.nanmin(zcoord),np.nanmax(zcoord)),\
+                      'left_title':'','right_title':'All storms'}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
@@ -1415,7 +1416,25 @@ class TrackPlot(Plot):
             _,varname = findvar(prop['title_L'],{})
         except:
             varname = 'date'
-        cmap,clevs = make_cmap(varname,prop['cmap'],prop['clevs'])
+
+        cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
+
+        if len(clevs)==2:
+            y0 = min(clevs)
+            y1 = max(clevs)
+            dy = (y1-y0)/8
+            scalemag = int(np.log(dy)/np.log(10))
+            dy_scaled = dy*10**-scalemag
+            dc = min([1,2,5,10], key=lambda x:abs(x-dy_scaled))
+            c0 = np.ceil(y0/dc*10**-scalemag)*dc*10**scalemag
+            c1 = np.floor(y1/dc*10**-scalemag)*dc*10**scalemag
+            clevs = np.arange(c0,c1+dc,dc)
+        
+        if varname == 'vmax' and prop['cmap'] == 'category':
+            vmin = min(clevs); vmax = max(clevs)
+        else:
+            vmin = min(prop['levels']); vmax = max(prop['levels'])
+
         
         if len(xcoord.shape) and len(ycoord.shape)==1:
             xcoord,ycoord = np.meshgrid(xcoord,ycoord)
@@ -1441,7 +1460,7 @@ class TrackPlot(Plot):
             #    zcoord[np.isnan(zcoord)]=0
             #    zcoord=gfilt(zcoord,sigma=prop['smooth'])
             #    zcoord[zcoord<min(clevs)]=np.nan
-            cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+            cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=vmin,vmax=vmax,
                            transform=ccrs.PlateCarree())
 
         #--------------------------------------------------------------------------------------
@@ -1460,18 +1479,25 @@ class TrackPlot(Plot):
 
         #Define colorbar axis
         cax = self.fig.add_axes([bb.x0+bb.width, bb.y0-.05*bb.height, 0.015, bb.height])
+#        cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
         cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
                                  ticks=clevs)
-        if len(clevs)>2:
-            cbar.ax.yaxis.set_ticks(clevs)
-        cbar.ax.tick_params(labelsize=11.5)
+            
+        if len(prop['levels'])>2:
+            cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
+            cax.yaxis.set_ticklabels(clevs)
+        else:
+            cax.yaxis.set_ticks(clevs)
+        cax.tick_params(labelsize=11.5)
         cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
         if prop['cmap']=='category' and varname=='vmax':
+            cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
+            cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
             cax2.yaxis.set_ticks_position('right')
-            cax2.yaxis.set_ticks([(i-5)/(201-5) for i in np.mean([clevs[:-1],clevs[1:]],axis=0)])
+            cax2.yaxis.set_ticks((np.linspace(0,1,len(clevs))[:-1]+np.linspace(0,1,len(clevs))[1:])*.5)
             cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
             cax2.tick_params('both', length=0, width=0, which='major')
             cax.yaxis.set_ticks_position('left')

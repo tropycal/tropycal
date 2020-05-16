@@ -377,8 +377,12 @@ class ReconDataset:
         """
         
         #Pop kwargs
-        prop = kwargs.pop('prop',{'cmap':'category','levels':None})  
-
+        prop = kwargs.pop('prop',{})
+        default_prop = {'cmap':'category','levels':None}
+        for key in default_prop.keys():
+            if key not in prop.keys():
+                prop[key]=default_prop[key]
+            
         #Get plot data
         
         if recon_select is None:
@@ -398,10 +402,9 @@ class ReconDataset:
 
         title = get_recon_title(varname)
         if prop['levels'] is None:
-            prop['levels'] = np.arange(np.floor(np.nanmin(Hov_dict['hovmoller'])/10)*10,
-                            np.ceil(np.nanmax(Hov_dict['hovmoller'])/10)*10+1,10)
-        cmap,levels = get_cmap_levels(varname,prop['cmap'],prop['levels'],linear=True)
-        
+            prop['levels'] = (np.min(Hov_dict['hovmoller']),np.max(Hov_dict['hovmoller']))
+        cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
+                
         time = Hov_dict['time']
         radius = Hov_dict['radius']
         vardata = Hov_dict['hovmoller']
@@ -412,15 +415,19 @@ class ReconDataset:
         #Create plot        
         plt.figure(figsize=(9,11),dpi=150)
         ax=plt.subplot()
-        cf=ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),\
-                     levels=levels,cmap=cmap)
+        if len(prop['levels'])>2:
+            cf=ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),\
+                     levels=clevs,cmap=cmap)
+        else:
+            cf=ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),\
+                     cmap=cmap,levels=np.linspace(min(prop['levels']),max(prop['levels']),256))
         ax.axis([0,max(radius),min(time),max(time)])
         
         ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d %H'))
         
         ax.set_ylabel('UTC Time (MM-DD HH)')
         ax.set_xlabel('Radius (km)')
-        plt.colorbar(cf,orientation='horizontal',pad=0.1)
+        plt.colorbar(cf,orientation='horizontal',pad=0.1,ticks=clevs)
 
         mlib.rcParams.update({'font.size': 16})
         
@@ -537,14 +544,29 @@ class ReconDataset:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
                 cartopy_proj = self.plot_obj.proj
                 
-                #Plot recon
-                plot_info = self.plot_obj.plot_maps(self.storm_obj,Maps_sub,varname,recon_stats,\
-                                                    domain,ax,return_ax=True,prop=prop,map_prop=map_prop)
+                #Maintain the same lat / lon dimensions for all dynamic maps
+                #Determined by the dynamic domain from the first map
+                if i>0 and domain is 'dynamic':
+                    d1 = {'n':Maps_sub['center_lat']+dlat,\
+                          's':Maps_sub['center_lat']-dlat,\
+                          'e':Maps_sub['center_lon']+dlon,\
+                          'w':Maps_sub['center_lon']-dlon}
+                else:
+                    d1 = domain
                 
-                figs.append(plot_info)
+                #Plot recon
+                plot_ax,d0 = self.plot_obj.plot_maps(self.storm_obj,Maps_sub,varname,recon_stats,\
+                                                    domain=d1,ax=ax,return_ax=True,return_domain=True,prop=prop,map_prop=map_prop)
+                
+                #Get domain dimensions from the first map
+                if i==0:
+                    dlat = .5*(d0['n']-d0['s'])
+                    dlon = .5*(d0['e']-d0['w'])
+                
+                figs.append(plot_ax)
                 
                 if savetopath is not None:
-                    plt.savefig(f'{savetopath}/{t.strftime("%Y%m%d%H%M")}')
+                    plt.savefig(f'{savetopath}/{t.strftime("%Y%m%d%H%M")}',bbox_inches='tight')
                 plt.close()
                 
             if savetopath is None:

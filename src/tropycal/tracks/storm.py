@@ -41,9 +41,9 @@ class Storm:
     storm : dict
         Dict entry of the requested storm.
     
-    Additional Parameters
-    ---------------------
-    stormTors : dict
+    Other Parameters
+    ----------------
+    stormTors : dict, optional
         Dict entry containing tornado data assicated with the storm. Populated directly from tropycal.tracks.TrackDataset.
 
     Returns
@@ -123,6 +123,7 @@ class Storm:
         self.coords = {}
         self.vars = {}
         for key in keys:
+            if key == 'realtime': continue
             if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
                 self[key] = self.dict[key]
                 self.coords[key] = self.dict[key]
@@ -138,6 +139,12 @@ class Storm:
         
         #Get Archer track data for this storm, if it exists
         self.get_archer()
+        
+        #Determine if storm object was retrieved via realtime object
+        if 'realtime' in keys and self.dict['realtime'] == True:
+            self.realtime = True
+        else:
+            self.realtime = False
     
     def sel_time(self,start_time,end_time=None):
         
@@ -299,11 +306,7 @@ class Storm:
         Parameters
         ----------
         domain : str
-            Domain for the plot. Can be one of the following:
-            
-            * **dynamic** - default. Dynamically focuses the domain using the storm track plotted.
-            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
-            * **lonW/lonE/latS/latN** - Custom plot domain
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         plot_all : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
@@ -360,11 +363,7 @@ class Storm:
         cone_days : int
             Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.
         domain : str
-            Domain for the plot. Can be one of the following:
-            
-            * **dynamic_forecast** Default. Dynamically focuses the domain on the forecast track.
-            * **dynamic** - Dynamically focuses the domain on the combined observed and forecast track.
-            * **lonW/lonE/latS/latN** Custom plot domain.
+            Domain for the plot. Default is "dynamic_forecast". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -497,8 +496,6 @@ class Storm:
         #Add other info to forecast dict
         forecast_dict['advisory_num'] = advisory_num
         forecast_dict['basin'] = self.basin
-            
-        track_dict = self.dict
         
         #Plot storm
         plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
@@ -532,7 +529,64 @@ class Storm:
         
         #Get list of available NHC advisories & map discussions
         if storm_year == (dt.now()).year:
-            pass
+            #Get list of all discussions for all storms this year
+            url_disco = 'https://ftp.nhc.noaa.gov/atcf/dis/'
+            page = requests.get(url_disco).text
+            content = page.split("\n")
+            files = []
+            for line in content:
+                if ".discus." in line and self.id.lower() in line:
+                    filename = line.split('">')[1]
+                    filename = filename.split("</a>")[0]
+                    files.append(filename)
+            del content
+            
+            #Read in all NHC forecast discussions
+            discos = {'id':[],'utc_date':[],'url':[],'mode':0}
+            for file in files:
+                
+                #Get info about forecast
+                file_info = file.split(".")
+                disco_number = int(file_info[2])
+                
+                #Open file to get info about time issued
+                f = urllib.request.urlopen(url_disco + file)
+                content = f.read()
+                content = content.decode("utf-8")
+                content = content.split("\n")
+                f.close()
+                
+                #Figure out time issued
+                hr = content[5].split(" ")[0]
+                zone = content[5].split(" ")[2]
+                disco_time = str2(int(hr)) + ' '.join(content[5].split(" ")[1:])
+                
+                format_time = content[5].split(" ")[0]
+                if len(format_time) == 3: format_time = "0" + format_time
+                format_time = format_time + " " +  ' '.join(content[5].split(" ")[1:])
+                disco_date = dt.strptime(format_time,f'%I00 %p {zone} %a %b %d %Y')
+                
+                time_zones = {
+                'ADT':-3,
+                'AST':-4,
+                'EDT':-4,
+                'EST':-5,
+                'CDT':-5,
+                'CST':-6,
+                'MDT':-6,
+                'MST':-7,
+                'PDT':-7,
+                'PST':-8,
+                'HDT':-9,
+                'HST':-10}
+                offset = time_zones.get(zone,0)
+                disco_date = disco_date + timedelta(hours=offset*-1)
+                
+                #Add times issued
+                discos['id'].append(disco_number)
+                discos['utc_date'].append(disco_date)
+                discos['url'].append(url_disco + file)
+            
         elif storm_year < 1992:
             raise RuntimeError("NHC discussion data is unavailable.")
         elif storm_year < 2000:
@@ -1128,14 +1182,10 @@ class Storm:
             DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm
                 for future use.
         domain : str
-            Domain for the plot. Can be one of the following:
-            
-            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted and tornadoes it produced.
-            * **(basin_name)** - Any of the acceptable basins (check "TrackDataset" for a list).
-            * **lonW/lonE/latS/latN** - Custom plot domain
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         plotPPH : bool or str
             Whether to plot practically perfect forecast (PPH). True defaults to "daily". Default is False.
-        
+
             * **False** - no PPH plot.
             * **True** - defaults to "daily".
             * **"total"** - probability of a tornado within 25mi of a point during the period of time selected.
@@ -1297,11 +1347,32 @@ class Storm:
             
     def get_recon(self,save_path="",read_path=""):
         
+        r"""
+        Creates an instance of ReconDataset for this storm's data. Saves it as an attribute of this object (storm.recon).
+        
+        Parameters
+        ----------
+        storm : tropycal.tracks.Storm
+            Requested storm as an instance of a Storm object.
+        save_path : str, optional
+            Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.
+        read_path : str, optional
+            Filepath to read saved recon data from. If specified, "save_path" cannot be passed as an argument.
+        """
+        
         self.recon = ReconDataset(self,save_path,read_path)
                 
     def get_archer(self):
-        URL=f'http://tropic.ssec.wisc.edu/real-time/adt/archive{self.year}/{self.id[2:4]}{self.id[1]}-list.txt'
-        a = requests.get(URL).content.decode("utf-8") 
+        
+        r"""
+        Retrieves satellite-derived Archer track data for this storm, if available. Saves it as an attribute of this object (storm.archer).
+        """
+        
+        #Format URL
+        url = f'http://tropic.ssec.wisc.edu/real-time/adt/archive{self.year}/{self.id[2:4]}{self.id[1]}-list.txt'
+        
+        #Read in data
+        a = requests.get(url).content.decode("utf-8") 
         content = [[c.strip() for c in b.split()] for b in a.split('\n')]
         #data = [[dt.strptime(line[0]+'/'+line[1][:4],'%Y%b%d/%H%M'),-1*float(line[-4]),float(line[-5])] for line in content[-100:-3]]
         archer = {}
@@ -1318,3 +1389,137 @@ class Storm:
                 continue
         self.archer = archer
     
+    def plot_nhc_forecast_realtime(self,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
+                                   ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+        
+        r"""
+        Plots the latest available NHC forecast, for Realtime retrieved objects only.
+        
+        Parameters
+        ----------
+        track_labels : str
+            Label forecast hours with the following methods:
+            
+            * **""** = no label
+            * **"fhr"** = forecast hour (default)
+            * **"valid_utc"** = UTC valid time
+            * **"valid_edt"** = EDT valid time
+        cone_days : int
+            Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.
+        domain : str
+            Domain for the plot. Default is "dynamic_forecast". Please refer to :ref:`options-domain` for available domain options.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        prop : dict
+            Property of storm track lines.
+        map_prop : dict
+            Property of cartopy map.
+        """
+        
+        #Error check
+        if self.realtime == False:
+            raise RuntimeError("This function is only available for Storm objects retrieved via tropycal.realtime.Realtime.")
+        
+        #Check to ensure the data source is HURDAT
+        if self.source != "hurdat":
+            raise RuntimeError("Error: NHC data can only be accessed when HURDAT is used as the data source.")
+        
+        #Create instance of plot object
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
+        
+        #Create cartopy projection
+        if cartopy_proj == None:
+            if max(self.dict['lon']) > 140 or min(self.dict['lon']) < -140:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+            else:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+            
+        #Get forecast for this storm
+        url = f"https://ftp.nhc.noaa.gov/atcf/fst/{self.id.lower()}.fst"
+        if requests.get(url).status_code != 200: raise RuntimeError("NHC forecast data is unavailable for this storm.")
+
+        #Read file content
+        f = urllib.request.urlopen(url)
+        content = f.read()
+        content = content.decode("utf-8")
+        content = content.split("\n")
+        content = [(i.replace(" ","")).split(",") for i in content]
+        f.close()
+        
+        #Iterate through every line in content:
+        nhc_forecasts = {}
+        
+        for line in content:
+
+            #Get basic components
+            lineArray = [i.replace(" ","") for i in line]
+            if len(lineArray) < 11: continue
+            basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
+            
+            if len(nhc_forecasts) == 0:
+                nhc_forecasts = {
+                    'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
+                }
+
+            #Format lat & lon
+            fhr = int(fhr)
+            if "N" in lat:
+                lat_temp = lat.split("N")[0]
+                lat = float(lat_temp) * 0.1
+            elif "S" in lat:
+                lat_temp = lat.split("S")[0]
+                lat = float(lat_temp) * -0.1
+            if "W" in lon:
+                lon_temp = lon.split("W")[0]
+                lon = float(lon_temp) * -0.1
+            elif "E" in lon:
+                lon_temp = lon.split("E")[0]
+                lon = float(lon_temp) * 0.1
+            
+            #Format vmax & MSLP
+            if vmax == '':
+                vmax = np.nan
+            else:
+                vmax = int(vmax)
+                if vmax < 10 or vmax > 300: vmax = np.nan
+            if mslp == '':
+                mslp = np.nan
+            else:
+                mslp = int(mslp)
+                if mslp < 1: mslp = np.nan
+
+            #Add forecast data to dict if forecast hour isn't already there
+            if fhr not in nhc_forecasts['fhr']:
+                if model in ['OFCL','OFCI'] and fhr > 120:
+                    pass
+                else:
+                    if lat == 0.0 and lon == 0.0:
+                        continue
+                    nhc_forecasts['fhr'].append(fhr)
+                    nhc_forecasts['lat'].append(lat)
+                    nhc_forecasts['lon'].append(lon)
+                    nhc_forecasts['vmax'].append(vmax)
+                    nhc_forecasts['mslp'].append(mslp)
+                    
+                    #Get storm type, if it can be determined
+                    if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
+                        stype = get_type(vmax,False)
+                    nhc_forecasts['type'].append(stype)
+        
+        #Add other info to forecast dict
+        nhc_forecasts['advisory_num'] = -1
+        nhc_forecasts['basin'] = self.basin
+        
+        #Plot storm
+        plot_ax = self.plot_obj.plot_storm_nhc(nhc_forecasts,self.dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        
+        #Return axis
+        if ax != None or return_ax == True: return plot_ax
+        

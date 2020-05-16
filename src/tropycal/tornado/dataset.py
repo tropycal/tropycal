@@ -284,12 +284,7 @@ class TornadoDataset():
             * **datetime.datetime** object for a single day to plot tornadoes.
             * **list** with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.
         domain : str
-            Domain for the plot. Can be one of the following:
-            
-            * **dynamic** - default. Dynamically focuses the domain using the tornado track(s) plotted.
-            * **conus** - Contiguous United States
-            * **east_conus** - Eastern CONUS
-            * **lonW/lonE/latS/latN** - Custom plot domain
+            Domain for the plot. Default is "conus". Please refer to :ref:`options-domain` for available domain options.
         plotPPH : bool or str
             Whether to plot practically perfect forecast (PPH). True defaults to "daily". Default is False.
         

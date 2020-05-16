@@ -795,8 +795,13 @@ class TrackPlot(Plot):
         forecast_date = (forecast['init']+timedelta(hours=fcst_hr[start_slice])).strftime("%H%M UTC %d %b %Y")
         forecast_id = forecast['advisory_num']
         
-        title_text = f"{knots_to_mph(first_fcst_wind)} mph {dot} {first_fcst_mslp} hPa {dot} Forecast #{forecast_id}"
-        title_text += f"\nForecast Issued: {forecast_date}"
+        if forecast_id == -1:
+            title_text = f"Current Intensity: {knots_to_mph(first_fcst_wind)} mph {dot} {first_fcst_mslp} hPa"
+            title_text += f"\nForecast Issued: {forecast_date}"
+        else:
+            title_text = f"{knots_to_mph(first_fcst_wind)} mph {dot} {first_fcst_mslp} hPa {dot} Forecast #{forecast_id}"
+            title_text += f"\nForecast Issued: {forecast_date}"
+        
         
         #Add right title
         self.ax.set_title(title_text,loc='right',fontsize=13)

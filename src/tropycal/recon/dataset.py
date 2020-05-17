@@ -22,7 +22,7 @@ except:
 
 from .plot import ReconPlot
 from .tools import * 
-#from ..tracks import *
+from ..tracks.tools import *
 
 class ReconDataset:
 
@@ -275,8 +275,6 @@ class ReconDataset:
         return selected
 
 
-    #PLOT FUNCTION FOR RECON POINTS
-    #Passed!
     def plot_points(self,recon_select=None,varname='wspd',domain="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
@@ -290,15 +288,13 @@ class ReconDataset:
             or datetime or list of start/end datetimes.
         varname : str
             Variable to plot. Can be one of the following keys in recon_select dataframe:
-            "sfmr" - SFMR surface wind
-            "wspd" - 30-second flight level wind 
-            "pkwnd" - 10-second flight level wind
-            "p_sfc" - extrapolated surface pressure
+            
+            * **"sfmr"** = SFMR surface wind
+            * **"wspd"** = 30-second flight level wind (default)
+            * **"pkwnd"** = 10-second flight level wind
+            * **"p_sfc"** = extrapolated surface pressure
         domain : str
-            Domain for the plot. Can be one of the following:
-            "dynamic" - default - dynamically focuses the domain using the tornado track(s) plotted, 
-            "north_atlantic" - North Atlantic Ocean basin, 
-            "lonW/lonE/latS/latN" - Custom plot domain.
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -306,12 +302,12 @@ class ReconDataset:
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
-        Optional Parameters
-        -------------------
+        Other Parameters
+        ----------------
         prop : dict
-            Property of recon plot.
+            Customization properties of recon plot. Please refer to :ref:`options-prop-recon-plot` for available options.
         map_prop : dict
-            Property of cartopy map.
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
         
         #Pop kwargs
@@ -347,9 +343,7 @@ class ReconDataset:
         if ax != None or return_ax==True:
             return plot_info
 
-
-    #PLOT FUNCTION FOR RECON HOVMOLLER
-    #Passed!
+    
     def plot_hovmoller(self,recon_select=None,varname='wspd',radlim=None,track_dict=None,\
                        ax=None,return_ax=False,**kwargs):
         
@@ -370,10 +364,10 @@ class ReconDataset:
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
-        Optional Parameters
-        -------------------
+        Other Parameters
+        ----------------
         prop : dict
-            Property of recon plot.
+            Customization properties for recon plot.
         """
         
         #Pop kwargs
@@ -434,12 +428,11 @@ class ReconDataset:
         cbar.ax.xaxis.set_ticks(np.linspace(0,1,len(clevs)))
         cbar.ax.xaxis.set_ticklabels(clevs,fontsize=14)
         
-        
         #--------------------------------------------------------------------------------------
         
         title_left,title_right = ReconPlot().plot_hovmoller(self.storm_obj,Hov_dict,varname)
-        ax.set_title(title_left,loc='left',fontsize=17,fontweight='bold')
-        ax.set_title(title_right,loc='right',fontsize=13)
+        ax.set_title(title_left,loc='left',fontsize=16,fontweight='bold')
+        ax.set_title(title_right,loc='right',fontsize=12)
         
         #Return axis
         if return_ax:
@@ -463,15 +456,13 @@ class ReconDataset:
             or datetime or list of start/end datetimes.
         varname : str
             Variable to plot. Can be one of the following keys in recon_select dataframe:
-            "sfmr" - SFMR surface wind
-            "wspd" - 30-second flight level wind 
-            "pkwnd" - 10-second flight level wind
-            "p_sfc" - extrapolated surface pressure
+            
+            * **"sfmr"** = SFMR surface wind
+            * **"wspd"** = 30-second flight level wind (default)
+            * **"pkwnd"** = 10-second flight level wind
+            * **"p_sfc"** = extrapolated surface pressure
         domain : str
-            Domain for the plot. Can be one of the following:
-            "dynamic" - default - dynamically focuses the domain around , 
-            "north_atlantic" - North Atlantic Ocean basin, 
-            "lonW/lonE/latS/latN" - Custom plot domain.
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -479,12 +470,12 @@ class ReconDataset:
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
-        Optional Parameters
-        -------------------
+        Other Parameters
+        ----------------
         prop : dict
-            Property of recon plot.
+            Customization properties of recon plot. Please refer to :ref:`options-prop-recon-swath` for available options.
         map_prop : dict
-            Property of cartopy map.
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
         
         #Pop kwargs
@@ -611,18 +602,16 @@ class ReconDataset:
             or datetime or list of start/end datetimes.
         varname : str
             Variable to plot. Can be one of the following keys in recon_select dataframe:
-            "sfmr" - SFMR surface wind
-            "wspd" - 30-second flight level wind 
-            "pkwnd" - 10-second flight level wind
-            "p_sfc" - extrapolated surface pressure
+            
+            * **"sfmr"** = SFMR surface wind
+            * **"wspd"** = 30-second flight level wind (default)
+            * **"pkwnd"** = 10-second flight level wind
+            * **"p_sfc"** = extrapolated surface pressure
         swathfunc : function
             Function to operate on interpolated recon data.
             e.g., np.max, np.min, or percentile function
         domain : str
-            Domain for the plot. Can be one of the following:
-            "dynamic" - default - dynamically focuses the domain using the tornado track(s) plotted, 
-            "north_atlantic" - North Atlantic Ocean basin, 
-            "lonW/lonE/latS/latN" - Custom plot domain.
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -630,12 +619,12 @@ class ReconDataset:
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
-        Optional Parameters
-        -------------------
+        Other Parameters
+        ----------------
         prop : dict
-            Property of recon plot.
+            Customization properties of recon plot. Please refer to :ref:`options-prop-recon-swath` for available options.
         map_prop : dict
-            Property of cartopy map.
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
         
         #Pop kwargs

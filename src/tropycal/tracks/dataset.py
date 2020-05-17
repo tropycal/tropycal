@@ -1026,10 +1026,13 @@ class TrackDataset:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        
+        Other Parameters
+        ----------------
         prop : dict
-            Property of storm track lines.
+            Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
         map_prop : dict
-            Property of cartopy map.
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
         
         #Retrieve requested storm
@@ -1079,10 +1082,13 @@ class TrackDataset:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        
+        Other Parameters
+        ----------------
         prop : dict
-            Property of storm track lines.
+            Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
         map_prop : dict
-            Property of cartopy map.
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
         
         #Create instance of plot object
@@ -1139,10 +1145,13 @@ class TrackDataset:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        
+        Other Parameters
+        ----------------
         prop : dict
-            Property of storm track lines.
+            Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
         map_prop : dict
-            Property of cartopy map.
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
         
         #Retrieve season object
@@ -2498,10 +2507,13 @@ class TrackDataset:
             If True, returns the gridded 2D array used to generate the plot. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        
+        Other Parameters
+        ----------------
         prop : dict
-            Property of plot, e.g. 'cmap' and 'clevs'
+            Customization properties of plot. Please refer to :ref:`options-prop-gridded` for available options.
         map_prop : dict
-            Property of cartopy map.
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
 
         default_thresh={'sample_min':np.nan,'p_max':np.nan,'v_min':np.nan,'dv_min':np.nan,'dp_max':np.nan,'dv_max':np.nan,'dp_min':np.nan,'dt_window':24,'dt_align':'middle'}

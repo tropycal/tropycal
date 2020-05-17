@@ -106,22 +106,31 @@ class TrackPlot(Plot):
             lons = new_lons.tolist()
 
         #Add to coordinate extrema
+        if domain == 'dynamic_tropical':
+            type_array = np.array(storm_data['type'])
+            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+            use_lats = (np.array(storm_data['lat'])[idx]).tolist()
+            use_lons = (np.array(storm_data['lon'])[idx]).tolist()
+        else:
+            use_lats = storm_data['lat']
+            use_lons = storm_data['lon']
+        
         if max_lat == None:
-            max_lat = max(lats)
+            max_lat = max(use_lats)
         else:
-            if max(lats) > max_lat: max_lat = max(lats)
+            if max(use_lats) > max_lat: max_lat = max(use_lats)
         if min_lat == None:
-            min_lat = min(lats)
+            min_lat = min(use_lats)
         else:
-            if min(lats) < min_lat: min_lat = min(lats)
+            if min(use_lats) < min_lat: min_lat = min(use_lats)
         if max_lon == None:
-            max_lon = max(lons)
+            max_lon = max(use_lons)
         else:
-            if max(lons) > max_lon: max_lon = max(lons)
+            if max(use_lons) > max_lon: max_lon = max(use_lons)
         if min_lon == None:
-            min_lon = min(lons)
+            min_lon = min(use_lons)
         else:
-            if min(lons) < min_lon: min_lon = min(lons)
+            if min(use_lons) < min_lon: min_lon = min(use_lons)
 
         #Plot storm line as specified
         if prop['linecolor'] == 'category':
@@ -176,7 +185,7 @@ class TrackPlot(Plot):
 
         
         #Storm-centered plot domain
-        if domain == "dynamic":
+        if domain == "dynamic" or domain == "dynamic_tropical":
             
             bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
             self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())

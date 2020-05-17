@@ -127,7 +127,7 @@ class ReconPlot(Plot):
         
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
         
-        if varname == 'vmax' and prop['cmap'] == 'category':
+        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] == 'category':
             vmin = min(clevs); vmax = max(clevs)
         else:
             vmin = min(prop['levels']); vmax = max(prop['levels'])
@@ -148,13 +148,7 @@ class ReconPlot(Plot):
         if scatter:
                         
             dataSort = recon_data.sort_values(by=prop['sortby'],ascending=(prop['sortby']!='p_sfc')).reset_index(drop=True)
-#            prop['obs_levels']=np.linspace(min(dataSort[varname]),max(dataSort[varname]),256)
-#            norm = mlib.colors.Normalize(vmin=min(prop['obs_levels']), vmax=max(prop['obs_levels']))
-#            cmap = mlib.colors.LinearSegmentedColormap.from_list(
-#                'Custom cmap', colors,len(colors))
-            norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
-#            cmap = mlib.cm.get_cmap(prop['obs_colors'])
-            
+          
             cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],\
                                 cmap=cmap,vmin=vmin,vmax=vmax, s=prop['ms'])
 
@@ -340,9 +334,9 @@ class ReconPlot(Plot):
         
     
         if prop['levels'] is None:
-            prop['levels'] = (np.min(recon_data[varname]),np.max(recon_data[varname]))
+            prop['levels'] = (np.nanmin(aggregate_grid),np.nanmax(aggregate_grid))
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
-                
+                        
         out = self.proj.transform_points(distproj,xmgrid,ymgrid)
         lons = out[:,:,0]
         lats = out[:,:,1]
@@ -405,18 +399,13 @@ class ReconPlot(Plot):
 #        cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
         cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
                                  ticks=clevs)
-            
-        if len(prop['levels'])>2:
-            cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
-            cax.yaxis.set_ticklabels(clevs)
-        else:
-            cax.yaxis.set_ticks(clevs)
+                
         cax.tick_params(labelsize=11.5)
         cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
         if prop['cmap']=='category' and varname=='sfmr':
-            cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
+            cax.yaxis.set_ticks(np.linspace(0,1,len(clevs)))
             cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
             cax2.yaxis.set_ticks_position('right')

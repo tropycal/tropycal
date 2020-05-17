@@ -427,7 +427,7 @@ def make_colormap(colors,whiten=0):
 def get_cmap_levels(varname,x,clevs,linear=False):
     
     if x=='category':
-        if varname == 'vmax':
+        if varname in ['vmax','sfmr','fl_to_sfc']:
 #            clevs = [34,64,83,96,113,137,200]
 #            colors = ['#8FC2F2','#3185D3','#FFFF00','#FF9E00','#DD0000','#FF00FC','#8B0088']
             clevs = [cat2wind(c) for c in range(-1,6)]+[200]

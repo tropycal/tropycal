@@ -95,7 +95,7 @@ class Realtime():
             List containing the storm IDs for currently active storms. Each ID has a Storm object stored as an attribute of Realtime.
         """
         
-        print(self.storms)
+        return self.storms
 
     def __read_btk(self):
         

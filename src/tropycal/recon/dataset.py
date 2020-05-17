@@ -31,12 +31,8 @@ class ReconDataset:
     
     Parameters
     ----------
-    storm : tropycal.tracks.Storm
-        Requested storm as an instance of a Storm object.
-    save_path : str, optional
-        Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.
-    read_path : str, optional
-        Filepath to read saved recon data from. If specified, "save_path" cannot be passed as an argument.
+    stormtuple : tuple or list
+        Requested storm. Can be either tuple or list containing storm name and year (e.g., ("Matthew",2016)).
         
     Returns
     -------
@@ -299,7 +295,10 @@ class ReconDataset:
             "pkwnd" - 10-second flight level wind
             "p_sfc" - extrapolated surface pressure
         domain : str
-            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
+            Domain for the plot. Can be one of the following:
+            "dynamic" - default - dynamically focuses the domain using the tornado track(s) plotted, 
+            "north_atlantic" - North Atlantic Ocean basin, 
+            "lonW/lonE/latS/latN" - Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -307,8 +306,8 @@ class ReconDataset:
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
-        Additional Parameters
-        ---------------------
+        Optional Parameters
+        -------------------
         prop : dict
             Property of recon plot.
         map_prop : dict
@@ -318,7 +317,7 @@ class ReconDataset:
         #Pop kwargs
         prop = kwargs.pop('prop',{})
         map_prop = kwargs.pop('map_prop',{})
-        
+                
         #Get plot data
         
         if recon_select is None:
@@ -371,8 +370,8 @@ class ReconDataset:
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
-        Additional Parameters
-        ---------------------
+        Optional Parameters
+        -------------------
         prop : dict
             Property of recon plot.
         """
@@ -403,7 +402,7 @@ class ReconDataset:
 
         title = get_recon_title(varname)
         if prop['levels'] is None:
-            prop['levels'] = (np.min(Hov_dict['hovmoller']),np.max(Hov_dict['hovmoller']))
+            prop['levels'] = (np.nanmin(Hov_dict['hovmoller']),np.nanmax(Hov_dict['hovmoller']))
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
                 
         time = Hov_dict['time']
@@ -425,12 +424,16 @@ class ReconDataset:
         ax.axis([0,max(radius),min(time),max(time)])
         
         ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d %H'))
+        for tick in ax.xaxis.get_major_ticks():
+                tick.label.set_fontsize(14)
+        for tick in ax.yaxis.get_major_ticks():
+                tick.label.set_fontsize(14)
+        ax.set_ylabel('UTC Time (MM-DD HH)',fontsize=15)
+        ax.set_xlabel('Radius (km)',fontsize=15)
+        cbar = plt.colorbar(cf,orientation='horizontal',pad=0.1)
+        cbar.ax.xaxis.set_ticks(np.linspace(0,1,len(clevs)))
+        cbar.ax.xaxis.set_ticklabels(clevs,fontsize=14)
         
-        ax.set_ylabel('UTC Time (MM-DD HH)')
-        ax.set_xlabel('Radius (km)')
-        plt.colorbar(cf,orientation='horizontal',pad=0.1,ticks=clevs)
-
-        mlib.rcParams.update({'font.size': 16})
         
         #--------------------------------------------------------------------------------------
         
@@ -465,7 +468,10 @@ class ReconDataset:
             "pkwnd" - 10-second flight level wind
             "p_sfc" - extrapolated surface pressure
         domain : str
-            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
+            Domain for the plot. Can be one of the following:
+            "dynamic" - default - dynamically focuses the domain around , 
+            "north_atlantic" - North Atlantic Ocean basin, 
+            "lonW/lonE/latS/latN" - Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -473,8 +479,8 @@ class ReconDataset:
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
-        Additional Parameters
-        ---------------------
+        Optional Parameters
+        -------------------
         prop : dict
             Property of recon plot.
         map_prop : dict
@@ -613,7 +619,10 @@ class ReconDataset:
             Function to operate on interpolated recon data.
             e.g., np.max, np.min, or percentile function
         domain : str
-            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
+            Domain for the plot. Can be one of the following:
+            "dynamic" - default - dynamically focuses the domain using the tornado track(s) plotted, 
+            "north_atlantic" - North Atlantic Ocean basin, 
+            "lonW/lonE/latS/latN" - Custom plot domain.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -621,8 +630,8 @@ class ReconDataset:
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
-        Additional Parameters
-        ---------------------
+        Optional Parameters
+        -------------------
         prop : dict
             Property of recon plot.
         map_prop : dict

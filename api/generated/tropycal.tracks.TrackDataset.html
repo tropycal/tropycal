@@ -105,9 +105,10 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
 </ul>
@@ -472,12 +473,7 @@ This string is also used as the plot title.</p>
 <li><p><strong>year_range</strong> (<em>list</em><em> or </em><em>tuple</em>) – List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.</p></li>
 <li><p><strong>date_range</strong> (<em>list</em><em> or </em><em>tuple</em>) – List or tuple representing the start and end dates as a string in ‘month/day’ format (e.g., (‘6/1’,’8/15’)). Default is (‘1/1’,’12/31’) or full year.</p></li>
 <li><p><strong>binsize</strong> (<em>float</em>) – Grid resolution in degrees. Default is 1 degree.</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – <p>Domain for the plot. Default is “dynamic”. Can be one of the following:</p>
-<ul>
-<li><p><strong>(basin_name)</strong> - Any of the acceptable basins (check <code class="docutils literal notranslate"><span class="pre">TrackDataset()</span></code> for a list).</p></li>
-<li><p><strong>lonW/lonE/latS/latN</strong> - Custom plot domain.</p></li>
-</ul>
-</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
 <li><p><strong>return_array</strong> (<em>bool</em>) – If True, returns the gridded 2D array used to generate the plot. Default is False.</p></li>
@@ -558,13 +554,7 @@ This string is also used as the plot title.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>storm</strong> (<em>str</em><em>, </em><em>tuple</em><em> or </em><em>dict</em>) – Requested storm. Can be either string of storm ID (e.g., “AL052019”), tuple with storm name and year (e.g., (“Matthew”,2016)), or a dict entry.</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – <p>Domain for the plot. Default is “dynamic”. Can be one of the following:</p>
-<ul>
-<li><p><strong>dynamic</strong> - default. Dynamically focuses the domain using the storm track(s) plotted.</p></li>
-<li><p><strong>(basin_name)</strong> - Any of the acceptable basins (check “TrackDataset” for a list).</p></li>
-<li><p><strong>lonW/lonE/latS/latN</strong> - Custom plot domain.</p></li>
-</ul>
-</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
 <li><p><strong>plot_all</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
@@ -584,13 +574,7 @@ This string is also used as the plot title.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>storms</strong> (<em>list</em>) – List of requested storms. List can contain either strings of storm ID (e.g., “AL052019”), tuples with storm name and year (e.g., (“Matthew”,2016)), or dict entries.</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – <p>Domain for the plot. Default is “dynamic”. Can be one of the following:</p>
-<ul>
-<li><p><strong>dynamic</strong> - default. Dynamically focuses the domain using the storm track(s) plotted.</p></li>
-<li><p><strong>(basin_name)</strong> - Any of the acceptable basins (check “TrackDataset” for a list).</p></li>
-<li><p><strong>lonW/lonE/latS/latN</strong> - Custom plot domain.</p></li>
-</ul>
-</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
 <li><p><strong>plot_all_dots</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>

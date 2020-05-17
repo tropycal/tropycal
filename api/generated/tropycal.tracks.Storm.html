@@ -105,9 +105,10 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
 </ul>
@@ -186,15 +187,13 @@
 <dd><p>Initializes an instance of Storm, retrieved via <code class="docutils literal notranslate"><span class="pre">TrackDataset.get_storm()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>storm</strong> (<em>dict</em>) – Dict entry of the requested storm.</p></li>
-<li><p><strong>Parameters</strong> (<em>Additional</em>) – </p></li>
-<li><p><strong>---------------------</strong> – </p></li>
-<li><p><strong>stormTors</strong> (<em>dict</em>) – Dict entry containing tornado data assicated with the storm. Populated directly from tropycal.tracks.TrackDataset.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>storm</strong> (<em>dict</em>) – Dict entry of the requested storm.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>Storm</em> – Instance of a Storm object.</p>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><p><strong>stormTors</strong> (<em>dict, optional</em>) – Dict entry containing tornado data assicated with the storm. Populated directly from tropycal.tracks.TrackDataset.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>Storm</em> – Instance of a Storm object.</p>
 </dd>
 </dl>
 <p class="rubric">Methods Summary</p>
@@ -211,7 +210,7 @@
 <td><p>Downloads the NHC offical Tropical Cyclone Report (TCR) for the requested storm to the requested directory.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.get_archer" title="tropycal.tracks.Storm.get_archer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_archer</span></code></a>()</p></td>
-<td><p></p></td>
+<td><p>Retrieves satellite-derived Archer track data for this storm, if available.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.get_nhc_discussion" title="tropycal.tracks.Storm.get_nhc_discussion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nhc_discussion</span></code></a>(forecast[, save_path])</p></td>
 <td><p>Retrieves a single NHC forecast discussion.</p></td>
@@ -220,7 +219,7 @@
 <td><p>Retrieves operational model and NHC forecasts throughout the entire life duration of the storm.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.get_recon" title="tropycal.tracks.Storm.get_recon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_recon</span></code></a>([save_path, read_path])</p></td>
-<td><p></p></td>
+<td><p>Creates an instance of ReconDataset for this storm’s data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.list_nhc_discussions" title="tropycal.tracks.Storm.list_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_nhc_discussions</span></code></a>()</p></td>
 <td><p>Retrieves a list of NHC forecast discussions for this storm, archived on <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/archive/">https://ftp.nhc.noaa.gov/atcf/archive/</a>.</p></td>
@@ -234,22 +233,25 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.plot_nhc_forecast" title="tropycal.tracks.Storm.plot_nhc_forecast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_nhc_forecast</span></code></a>(forecast[, track_labels, …])</p></td>
 <td><p>Creates a plot of the operational NHC forecast track along with observed track data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.plot_tors" title="tropycal.tracks.Storm.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_tors</span></code></a>([dist_thresh, Tors, domain, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.plot_nhc_forecast_realtime" title="tropycal.tracks.Storm.plot_nhc_forecast_realtime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_nhc_forecast_realtime</span></code></a>([track_labels, …])</p></td>
+<td><p>Plots the latest available NHC forecast, for Realtime retrieved objects only.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.plot_tors" title="tropycal.tracks.Storm.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_tors</span></code></a>([dist_thresh, Tors, domain, …])</p></td>
 <td><p>Creates a plot of the storm and associated tornado tracks.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.query_nhc_discussions" title="tropycal.tracks.Storm.query_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_nhc_discussions</span></code></a>(query)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.query_nhc_discussions" title="tropycal.tracks.Storm.query_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_nhc_discussions</span></code></a>(query)</p></td>
 <td><p>Searches for the given word or phrase through all NHC forecast discussions for this storm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.sel_time" title="tropycal.tracks.Storm.sel_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sel_time</span></code></a>(start_time[, end_time])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.sel_time" title="tropycal.tracks.Storm.sel_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sel_time</span></code></a>(start_time[, end_time])</p></td>
 <td><p>Subset this storm’s data by a range of times or for a single time.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.to_dataframe" title="tropycal.tracks.Storm.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dataframe</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.to_dataframe" title="tropycal.tracks.Storm.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dataframe</span></code></a>()</p></td>
 <td><p>Converts the storm dict into a pandas DataFrame object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.to_dict" title="tropycal.tracks.Storm.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.to_dict" title="tropycal.tracks.Storm.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code></a>()</p></td>
 <td><p>Returns the dict entry for the storm.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.to_xarray" title="tropycal.tracks.Storm.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_xarray</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Storm.to_xarray" title="tropycal.tracks.Storm.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_xarray</span></code></a>()</p></td>
 <td><p>Converts the storm dict into an xarray Dataset object.</p></td>
 </tr>
 </tbody>
@@ -275,7 +277,8 @@
 <dl class="py method">
 <dt id="tropycal.tracks.Storm.get_archer">
 <code class="sig-name descname">get_archer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_archer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_archer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves satellite-derived Archer track data for this storm, if available. Saves it as an attribute of this object (storm.archer).</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="tropycal.tracks.Storm.get_nhc_discussion">
@@ -308,7 +311,17 @@
 <dl class="py method">
 <dt id="tropycal.tracks.Storm.get_recon">
 <code class="sig-name descname">get_recon</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_path</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">read_path</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_recon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_recon" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Creates an instance of ReconDataset for this storm’s data. Saves it as an attribute of this object (storm.recon).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>storm</strong> (<a class="reference internal" href="#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Requested storm as an instance of a Storm object.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.</p></li>
+<li><p><strong>read_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to read saved recon data from. If specified, “save_path” cannot be passed as an argument.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="tropycal.tracks.Storm.list_nhc_discussions">
@@ -328,13 +341,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> (<em>str</em>) – <p>Domain for the plot. Can be one of the following:</p>
-<ul>
-<li><p><strong>dynamic</strong> - default. Dynamically focuses the domain using the storm track plotted.</p></li>
-<li><p><strong>(basin_name)</strong> - Any of the acceptable basins (check “TrackDataset” for a list).</p></li>
-<li><p><strong>lonW/lonE/latS/latN</strong> - Custom plot domain</p></li>
-</ul>
-</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
 <li><p><strong>plot_all</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
@@ -379,13 +386,34 @@
 </ul>
 </p></li>
 <li><p><strong>cone_days</strong> (<em>int</em>) – Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – <p>Domain for the plot. Can be one of the following:</p>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic_forecast”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.tracks.Storm.plot_nhc_forecast_realtime">
+<code class="sig-name descname">plot_nhc_forecast_realtime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">track_labels</span><span class="o">=</span><span class="default_value">'fhr'</span></em>, <em class="sig-param"><span class="n">cone_days</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">'dynamic_forecast'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_nhc_forecast_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_nhc_forecast_realtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the latest available NHC forecast, for Realtime retrieved objects only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>track_labels</strong> (<em>str</em>) – <p>Label forecast hours with the following methods:</p>
 <ul>
-<li><p><strong>dynamic_forecast</strong> Default. Dynamically focuses the domain on the forecast track.</p></li>
-<li><p><strong>dynamic</strong> - Dynamically focuses the domain on the combined observed and forecast track.</p></li>
-<li><p><strong>lonW/lonE/latS/latN</strong> Custom plot domain.</p></li>
+<li><p><strong>””</strong> = no label</p></li>
+<li><p><strong>”fhr”</strong> = forecast hour (default)</p></li>
+<li><p><strong>”valid_utc”</strong> = UTC valid time</p></li>
+<li><p><strong>”valid_edt”</strong> = EDT valid time</p></li>
 </ul>
 </p></li>
+<li><p><strong>cone_days</strong> (<em>int</em>) – Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic_forecast”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
 <li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
@@ -398,7 +426,7 @@
 
 <dl class="py method">
 <dt id="tropycal.tracks.Storm.plot_tors">
-<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dist_thresh</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">Tors</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">'dynamic'</span></em>, <em class="sig-param"><span class="n">plotPPF</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_all</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{'PPFcolors': 'Wistia'}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_tors" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dist_thresh</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">Tors</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">'dynamic'</span></em>, <em class="sig-param"><span class="n">plotPPH</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_all</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{'PPHcolors': 'Wistia'}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_tors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of the storm and associated tornado tracks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -409,16 +437,10 @@
 </dd>
 </dl>
 </p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – <p>Domain for the plot. Can be one of the following:</p>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>plotPPH</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPH). True defaults to “daily”. Default is False.</p>
 <ul>
-<li><p><strong>dynamic</strong> - default. Dynamically focuses the domain using the storm track(s) plotted and tornadoes it produced.</p></li>
-<li><p><strong>(basin_name)</strong> - Any of the acceptable basins (check “TrackDataset” for a list).</p></li>
-<li><p><strong>lonW/lonE/latS/latN</strong> - Custom plot domain</p></li>
-</ul>
-</p></li>
-<li><p><strong>plotPPF</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPF). True defaults to “daily”. Default is False.</p>
-<ul>
-<li><p><strong>False</strong> - no PPF plot.</p></li>
+<li><p><strong>False</strong> - no PPH plot.</p></li>
 <li><p><strong>True</strong> - defaults to “daily”.</p></li>
 <li><p><strong>”total”</strong> - probability of a tornado within 25mi of a point during the period of time selected.</p></li>
 <li><p><strong>”daily”</strong> - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.</p></li>

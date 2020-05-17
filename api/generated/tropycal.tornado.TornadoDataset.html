@@ -103,9 +103,10 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
 </ul>
@@ -209,8 +210,8 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.plot_TCtors_rotated" title="tropycal.tornado.TornadoDataset.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_TCtors_rotated</span></code></a>(storm[, dist_thresh, …])</p></td>
 <td><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.plot_tors" title="tropycal.tornado.TornadoDataset.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_tors</span></code></a>(tor_info[, domain, plotPPF, ax, …])</p></td>
-<td><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.plot_tors" title="tropycal.tornado.TornadoDataset.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_tors</span></code></a>(tor_info[, domain, plotPPH, ax, …])</p></td>
+<td><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPH).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.rotateToHeading" title="tropycal.tornado.TornadoDataset.rotateToHeading"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotateToHeading</span></code></a>(storm, stormTors)</p></td>
 <td><p>Rotate tornado tracks to their position relative to the heading of the TC at the time.</p></td>
@@ -260,8 +261,8 @@
 
 <dl class="py method">
 <dt id="tropycal.tornado.TornadoDataset.plot_tors">
-<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tor_info</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">'conus'</span></em>, <em class="sig-param"><span class="n">plotPPF</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_tors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPF).</p>
+<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tor_info</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">'conus'</span></em>, <em class="sig-param"><span class="n">plotPPH</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">return_domain</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_tors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPH).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -273,17 +274,10 @@
 <li><p><strong>list</strong> with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.</p></li>
 </ul>
 </p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – <p>Domain for the plot. Can be one of the following:</p>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “conus”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>plotPPH</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPH). True defaults to “daily”. Default is False.</p>
 <ul>
-<li><p><strong>dynamic</strong> - default. Dynamically focuses the domain using the tornado track(s) plotted.</p></li>
-<li><p><strong>conus</strong> - Contiguous United States</p></li>
-<li><p><strong>east_conus</strong> - Eastern CONUS</p></li>
-<li><p><strong>lonW/lonE/latS/latN</strong> - Custom plot domain</p></li>
-</ul>
-</p></li>
-<li><p><strong>plotPPF</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPF). True defaults to “daily”. Default is False.</p>
-<ul>
-<li><p><strong>False</strong> - no PPF plot.</p></li>
+<li><p><strong>False</strong> - no PPH plot.</p></li>
 <li><p><strong>True</strong> - defaults to “daily”.</p></li>
 <li><p><strong>”total”</strong> - probability of a tornado within 25mi of a point during the period of time selected.</p></li>
 <li><p><strong>”daily”</strong> - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.</p></li>

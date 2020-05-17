@@ -92,7 +92,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Example Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html#keyword-options">Keyword Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sample_usage.html">Example Gallery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data.html">Data Sources</a></li>
 </ul>
@@ -1177,11 +1176,7 @@
 <span class="sd">        storm : str, tuple or dict</span>
 <span class="sd">            Requested storm. Can be either string of storm ID (e.g., &quot;AL052019&quot;), tuple with storm name and year (e.g., (&quot;Matthew&quot;,2016)), or a dict entry.</span>
 <span class="sd">        domain : str</span>
-<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Can be one of the following:</span>
-<span class="sd">            </span>
-<span class="sd">            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.</span>
-<span class="sd">            * **(basin_name)** - Any of the acceptable basins (check &quot;TrackDataset&quot; for a list).</span>
-<span class="sd">            * **lonW/lonE/latS/latN** - Custom plot domain.</span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
 <span class="sd">        plot_all : bool</span>
 <span class="sd">            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</span>
 <span class="sd">        ax : axes</span>
@@ -1234,11 +1229,7 @@
 <span class="sd">        storms : list</span>
 <span class="sd">            List of requested storms. List can contain either strings of storm ID (e.g., &quot;AL052019&quot;), tuples with storm name and year (e.g., (&quot;Matthew&quot;,2016)), or dict entries.</span>
 <span class="sd">        domain : str</span>
-<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Can be one of the following:</span>
-<span class="sd">            </span>
-<span class="sd">            * **dynamic** - default. Dynamically focuses the domain using the storm track(s) plotted.</span>
-<span class="sd">            * **(basin_name)** - Any of the acceptable basins (check &quot;TrackDataset&quot; for a list).</span>
-<span class="sd">            * **lonW/lonE/latS/latN** - Custom plot domain.</span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
 <span class="sd">        plot_all_dots : bool</span>
 <span class="sd">            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</span>
 <span class="sd">        ax : axes</span>
@@ -2657,11 +2648,7 @@
 <span class="sd">        binsize : float</span>
 <span class="sd">            Grid resolution in degrees. Default is 1 degree.</span>
 <span class="sd">        domain : str</span>
-<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Can be one of the following:</span>
-<span class="sd">            </span>
-<span class="sd">            * **(basin_name)** - Any of the acceptable basins (check ``TrackDataset()`` for a list).</span>
-<span class="sd">            * **lonW/lonE/latS/latN** - Custom plot domain.</span>
-<span class="sd">            </span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
 <span class="sd">        return_ax : bool</span>

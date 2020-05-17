@@ -1,0 +1,45 @@
+Realtime
+==========================
+
+.. currentmodule:: tropycal.realtime
+
+.. autoclass:: Realtime
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Realtime.__init__
+      ~Realtime.list_active_storms
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: __init__
+   .. automethod:: list_active_storms
+
+   
+   
+
+.. include:: tropycal.realtime.Realtime.examples
+
+.. raw:: html
+
+     <div style='clear:both'></div>

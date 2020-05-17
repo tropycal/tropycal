@@ -108,7 +108,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/index.html#keyword-options">Keyword Options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sample_usage.html">Example Gallery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data.html">Data Sources</a></li>
 </ul>
@@ -199,7 +198,7 @@
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (2.58 seconds)
+--&gt; Completed reading in HURDAT2 data (2.54 seconds)
 </pre></div>
 </div>
 <div class="section" id="retrieving-storms-and-seasons">
@@ -266,7 +265,7 @@ More Information:
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
   warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f78b8bfbda0&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fbcd3a15470&gt;
 </pre></div>
 </div>
 </div>
@@ -312,9 +311,9 @@ More Information:
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
-/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:42: RuntimeWarning: All-NaN slice encountered
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:44: RuntimeWarning: All-NaN slice encountered
   return thresh,lambda x: np.nanmax(x)
-/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:42: RuntimeWarning: All-NaN axis encountered
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:44: RuntimeWarning: All-NaN axis encountered
   return thresh,lambda x: np.nanmax(x)
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
   warnings.warn(&#39;The .xlabels_top attribute is deprecated. Please &#39;
@@ -323,11 +322,11 @@ More Information:
 --&gt; Generating plot
 --&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
-/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:47: RuntimeWarning: Mean of empty slice
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:49: RuntimeWarning: Mean of empty slice
   return thresh,lambda x: np.nanmean(x)
 --&gt; Generating plot
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f78c0c2fba8&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fbcda587940&gt;
 </pre></div>
 </div>
 </div>
@@ -343,7 +342,7 @@ More Information:
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in ibtracs data
---&gt; Completed reading in ibtracs data (41.3 seconds)
+--&gt; Completed reading in ibtracs data (41.22 seconds)
 </pre></div>
 </div>
 <p>In its current form, tropycal is not configured to support all types of analyses for global IBTrACS, particularly near the dateline. Future updates will work to improve this functionality.</p>
@@ -357,7 +356,7 @@ More Information:
 --&gt; Grouping by lat/lon/storm
 --&gt; Generating plot
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f78c0742f60&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fbcda32dfd0&gt;
 </pre></div>
 </div>
 <p>Make a plot of the total number of storms per 1 degree gridbox worldwide:</p>
@@ -382,7 +381,7 @@ More Information:
 --&gt; Generating plot
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  8.132 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  8.272 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-trackdataset-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/8e0af267200996c0b90c20030c99ca74/tracks.TrackDataset.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.TrackDataset.py</span></code></a></p>

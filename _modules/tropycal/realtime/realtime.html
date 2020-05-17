@@ -177,6 +177,7 @@
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn_message</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">..tracks</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.storm</span> <span class="kn">import</span> <span class="n">RealtimeStorm</span>
 
 <div class="viewcode-block" id="Realtime"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.Realtime.html#tropycal.realtime.Realtime">[docs]</a><span class="k">class</span> <span class="nc">Realtime</span><span class="p">():</span>
     
@@ -184,6 +185,12 @@
 <span class="sd">    Creates an instance of a Realtime object containing currently active tropical cyclones. Only available for areas in NHC&#39;s area of responsibility.</span>
 <span class="sd">    </span>
 <span class="sd">    If there are active storms currently, a Storm object is stored as an attribute of Realtime, and can be retrieved fore example as &quot;realtime.AL012020&quot;.</span>
+<span class="sd">    </span>
+<span class="sd">    .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">        realtime = Realtime() #Create an instance of a Realtime object</span>
+<span class="sd">        storm = realtime.AL012020 #One method of retrieving a RealtimeStorm object</span>
+<span class="sd">        storm = realtime[&#39;AL012020&#39;] #Another method of retrieving a RealtimeStorm object</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -237,7 +244,7 @@
         <span class="c1">#For each storm remaining, create a Storm object</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">Storm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">RealtimeStorm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
             <span class="c1">#Delete data dict while retaining active storm keys</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">storms</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
@@ -255,6 +262,33 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span></div>
+    
+<div class="viewcode-block" id="Realtime.get_storm"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.Realtime.html#tropycal.realtime.Realtime.get_storm">[docs]</a>    <span class="k">def</span> <span class="nf">get_storm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a RealtimeStorm object for the requested storm ID.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        storm : str</span>
+<span class="sd">            Storm ID for the requested storm (e.g., &quot;AL012020&quot;).</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tropycal.realtime.RealtimeStorm</span>
+<span class="sd">            An instance of RealtimeStorm.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Check to see if storm is available</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">storm</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">storm</span><span class="se">\&quot;</span><span class="s2"> must be of type str.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">storm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Requested storm ID is not contained in this object.&quot;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="c1">#Return RealtimeStorm object</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">storm</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="nf">__read_btk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         

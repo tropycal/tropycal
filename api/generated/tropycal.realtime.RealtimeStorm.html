@@ -1,0 +1,624 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>RealtimeStorm &mdash; tropycal </title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Example Gallery" href="../../sample_usage.html" />
+    <link rel="prev" title="Realtime" href="tropycal.realtime.Realtime.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.realtime.html">realtime</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.realtime.Realtime.html">Realtime</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">RealtimeStorm</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="tropycal.realtime.html">realtime</a> &raquo;</li>
+        
+      <li>RealtimeStorm</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/api/generated/tropycal.realtime.RealtimeStorm.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="realtimestorm">
+<h1>RealtimeStorm<a class="headerlink" href="#realtimestorm" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="tropycal.realtime.RealtimeStorm">
+<em class="property">class </em><code class="sig-prename descclassname">tropycal.realtime.</code><code class="sig-name descname">RealtimeStorm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em>, <em class="sig-param"><span class="n">stormTors</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes an instance of RealtimeStorm. This object inherits all the methods and functionality of <code class="docutils literal notranslate"><span class="pre">tropycal.tracks.Storm</span></code>, but with additional methods unique to this object, all containing the word “realtime” as part of the function name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>storm</strong> (<em>dict</em>) – Dict entry of the requested storm.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>RealtimeStorm</em> – Instance of a RealtimeStorm object.</p>
+</dd>
+</dl>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.__init__" title="tropycal.realtime.RealtimeStorm.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(storm[, stormTors])</p></td>
+<td><p>Initialize self.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.download_tcr" title="tropycal.realtime.RealtimeStorm.download_tcr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_tcr</span></code></a>([save_path])</p></td>
+<td><p>Downloads the NHC offical Tropical Cyclone Report (TCR) for the requested storm to the requested directory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.get_archer" title="tropycal.realtime.RealtimeStorm.get_archer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_archer</span></code></a>()</p></td>
+<td><p>Retrieves satellite-derived Archer track data for this storm, if available.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.get_nhc_discussion" title="tropycal.realtime.RealtimeStorm.get_nhc_discussion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nhc_discussion</span></code></a>(forecast[, save_path])</p></td>
+<td><p>Retrieves a single NHC forecast discussion.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime" title="tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nhc_discussion_realtime</span></code></a>()</p></td>
+<td><p>Retrieve the latest available NHC forecast discussion.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.get_nhc_forecast_realtime" title="tropycal.realtime.RealtimeStorm.get_nhc_forecast_realtime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nhc_forecast_realtime</span></code></a>()</p></td>
+<td><p>Retrieve a dictionary containing the latest official NHC forecast.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.get_operational_forecasts" title="tropycal.realtime.RealtimeStorm.get_operational_forecasts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_operational_forecasts</span></code></a>()</p></td>
+<td><p>Retrieves operational model and NHC forecasts throughout the entire life duration of the storm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.get_realtime_info" title="tropycal.realtime.RealtimeStorm.get_realtime_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_realtime_info</span></code></a>()</p></td>
+<td><p>Returns a dict containing the latest available information about the storm.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.get_recon" title="tropycal.realtime.RealtimeStorm.get_recon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_recon</span></code></a>([save_path, read_path])</p></td>
+<td><p>Creates an instance of ReconDataset for this storm’s data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.list_nhc_discussions" title="tropycal.realtime.RealtimeStorm.list_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_nhc_discussions</span></code></a>()</p></td>
+<td><p>Retrieves a list of NHC forecast discussions for this storm, archived on <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/archive/">https://ftp.nhc.noaa.gov/atcf/archive/</a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.plot" title="tropycal.realtime.RealtimeStorm.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([domain, plot_all, ax, return_ax, …])</p></td>
+<td><p>Creates a plot of the observed track of the storm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.plot_TCtors_rotated" title="tropycal.realtime.RealtimeStorm.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_TCtors_rotated</span></code></a>([dist_thresh, return_ax])</p></td>
+<td><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.plot_nhc_forecast" title="tropycal.realtime.RealtimeStorm.plot_nhc_forecast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_nhc_forecast</span></code></a>(forecast[, track_labels, …])</p></td>
+<td><p>Creates a plot of the operational NHC forecast track along with observed track data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.plot_nhc_forecast_realtime" title="tropycal.realtime.RealtimeStorm.plot_nhc_forecast_realtime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_nhc_forecast_realtime</span></code></a>([track_labels, …])</p></td>
+<td><p>Plots the latest available NHC forecast.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.plot_tors" title="tropycal.realtime.RealtimeStorm.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_tors</span></code></a>([dist_thresh, Tors, domain, …])</p></td>
+<td><p>Creates a plot of the storm and associated tornado tracks.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.query_nhc_discussions" title="tropycal.realtime.RealtimeStorm.query_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_nhc_discussions</span></code></a>(query)</p></td>
+<td><p>Searches for the given word or phrase through all NHC forecast discussions for this storm.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.sel_time" title="tropycal.realtime.RealtimeStorm.sel_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sel_time</span></code></a>(start_time[, end_time])</p></td>
+<td><p>Subset this storm’s data by a range of times or for a single time.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.to_dataframe" title="tropycal.realtime.RealtimeStorm.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dataframe</span></code></a>()</p></td>
+<td><p>Converts the storm dict into a pandas DataFrame object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.to_dict" title="tropycal.realtime.RealtimeStorm.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code></a>()</p></td>
+<td><p>Returns the dict entry for the storm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.to_xarray" title="tropycal.realtime.RealtimeStorm.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_xarray</span></code></a>()</p></td>
+<td><p>Converts the storm dict into an xarray Dataset object.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em>, <em class="sig-param"><span class="n">stormTors</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.download_tcr">
+<code class="sig-name descname">download_tcr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_path</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.download_tcr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads the NHC offical Tropical Cyclone Report (TCR) for the requested storm to the requested directory. Available only for storms with advisories issued by the National Hurricane Center.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>save_path</strong> (<em>str</em>) – Path of directory to download the TCR into. Default is current working directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.get_archer">
+<code class="sig-name descname">get_archer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_archer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves satellite-derived Archer track data for this storm, if available. Saves it as an attribute of this object (storm.archer).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.get_nhc_discussion">
+<code class="sig-name descname">get_nhc_discussion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">forecast</span></em>, <em class="sig-param"><span class="n">save_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_nhc_discussion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a single NHC forecast discussion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>forecast</strong> (<em>datetime.datetime</em><em> or </em><em>int</em>) – Datetime object representing the desired forecast discussion time (in UTC), or integer representing the forecast discussion ID. If -1 is passed, the latest forecast discussion is returned.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory path to save the forecast discussion text to. If None (default), forecast won’t be saved.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>dict</em> – Dictionary containing the forecast discussion text and accompanying information about this discussion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime">
+<code class="sig-name descname">get_nhc_discussion_realtime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.get_nhc_discussion_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the latest available NHC forecast discussion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – Dict entry containing the latest official NHC forecast discussion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.get_nhc_forecast_realtime">
+<code class="sig-name descname">get_nhc_forecast_realtime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.get_nhc_forecast_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_nhc_forecast_realtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a dictionary containing the latest official NHC forecast.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – Dict entry containing the latest official NHC forecast.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.get_operational_forecasts">
+<code class="sig-name descname">get_operational_forecasts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_operational_forecasts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves operational model and NHC forecasts throughout the entire life duration of the storm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – Dictionary containing all forecast entries.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.get_realtime_info">
+<code class="sig-name descname">get_realtime_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.get_realtime_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_realtime_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dict containing the latest available information about the storm. This function uses NHC Public Advisories, so it will differ from available Best Track data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – Dict entry containing current storm information.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.get_recon">
+<code class="sig-name descname">get_recon</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_path</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">read_path</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_recon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of ReconDataset for this storm’s data. Saves it as an attribute of this object (storm.recon).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Requested storm as an instance of a Storm object.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.</p></li>
+<li><p><strong>read_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to read saved recon data from. If specified, “save_path” cannot be passed as an argument.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.list_nhc_discussions">
+<code class="sig-name descname">list_nhc_discussions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.list_nhc_discussions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a list of NHC forecast discussions for this storm, archived on <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/archive/">https://ftp.nhc.noaa.gov/atcf/archive/</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – Dictionary containing entries for each forecast discussion for this storm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.plot">
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">'dynamic'</span></em>, <em class="sig-param"><span class="n">plot_all</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of the observed track of the storm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. “dynamic_tropical” is also available. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>plot_all</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Prop</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.plot_TCtors_rotated">
+<code class="sig-name descname">plot_TCtors_rotated</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dist_thresh</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist_thresh</strong> (<em>int</em>) – Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km. Ignored if tornado data was passed into Storm from TrackDataset.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The motion vector is oriented upwards (in the +y direction).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.plot_nhc_forecast">
+<code class="sig-name descname">plot_nhc_forecast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">forecast</span></em>, <em class="sig-param"><span class="n">track_labels</span><span class="o">=</span><span class="default_value">'fhr'</span></em>, <em class="sig-param"><span class="n">cone_days</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">'dynamic_forecast'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_nhc_forecast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of the operational NHC forecast track along with observed track data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>forecast</strong> (<em>int</em><em> or </em><em>datetime.datetime</em>) – Integer representing the forecast number, or datetime object for the closest issued forecast to this date.</p></li>
+<li><p><strong>track_labels</strong> (<em>str</em>) – <p>Label forecast hours with the following methods:</p>
+<ul>
+<li><p><strong>””</strong> = no label</p></li>
+<li><p><strong>”fhr”</strong> = forecast hour (default)</p></li>
+<li><p><strong>”valid_utc”</strong> = UTC valid time</p></li>
+<li><p><strong>”valid_edt”</strong> = EDT valid time</p></li>
+</ul>
+</p></li>
+<li><p><strong>cone_days</strong> (<em>int</em>) – Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic_forecast”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of NHC forecast plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-nhc"><span class="std std-ref">plot_nhc_forecast</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.plot_nhc_forecast_realtime">
+<code class="sig-name descname">plot_nhc_forecast_realtime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">track_labels</span><span class="o">=</span><span class="default_value">'fhr'</span></em>, <em class="sig-param"><span class="n">cone_days</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">'dynamic_forecast'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.plot_nhc_forecast_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_nhc_forecast_realtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the latest available NHC forecast. This function is available for Realtime retrieved objects only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>track_labels</strong> (<em>str</em>) – <p>Label forecast hours with the following methods:</p>
+<ul>
+<li><p><strong>””</strong> = no label</p></li>
+<li><p><strong>”fhr”</strong> = forecast hour (default)</p></li>
+<li><p><strong>”valid_utc”</strong> = UTC valid time</p></li>
+<li><p><strong>”valid_edt”</strong> = EDT valid time</p></li>
+</ul>
+</p></li>
+<li><p><strong>cone_days</strong> (<em>int</em>) – Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic_forecast”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.plot_tors">
+<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dist_thresh</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">Tors</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">'dynamic'</span></em>, <em class="sig-param"><span class="n">plotPPH</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_all</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{'PPHcolors': 'Wistia'}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_tors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of the storm and associated tornado tracks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dist_thresh</strong> (<em>int</em>) – Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km.</p></li>
+<li><p><strong>Tors</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm</dt><dd><p>for future use.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>plotPPH</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPH). True defaults to “daily”. Default is False.</p>
+<ul>
+<li><p><strong>False</strong> - no PPH plot.</p></li>
+<li><p><strong>True</strong> - defaults to “daily”.</p></li>
+<li><p><strong>”total”</strong> - probability of a tornado within 25mi of a point during the period of time selected.</p></li>
+<li><p><strong>”daily”</strong> - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.</p></li>
+</ul>
+</p></li>
+<li><p><strong>plot_all</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of plot.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.query_nhc_discussions">
+<code class="sig-name descname">query_nhc_discussions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">query</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.query_nhc_discussions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for the given word or phrase through all NHC forecast discussions for this storm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>query</strong> (<em>str</em><em> or </em><em>list</em>) – String or list representing a word(s) or phrase(s) to search for within the NHC forecast discussions (e.g., “rapid intensification”). Query is case insensitive.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>list</em> – List of dictionaries containing all relevant forecast discussions.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.sel_time">
+<code class="sig-name descname">sel_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_time</span></em>, <em class="sig-param"><span class="n">end_time</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.sel_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subset this storm’s data by a range of times or for a single time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_time</strong> (<em>datetime.datetime</em>) – Datetime object representing the start time for subsetting. If <cite>end_time</cite> is not passed, data will be returned for the closest time to start_time.</p></li>
+<li><p><strong>end_time</strong> (<em>datetime.datetime</em><em> (</em><em>optional</em><em>)</em>) – Datetime object representing the end time for subsetting. If specified, will return data for this range of times.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>dict</em> – A dictionary containing information about the storm, subsetted by the specified time range.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.to_dataframe">
+<code class="sig-name descname">to_dataframe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.to_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the storm dict into a pandas DataFrame object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>pandas.DataFrame</em> – A pandas DataFrame object containing information about the storm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the dict entry for the storm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – A dictionary containing information about the storm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.RealtimeStorm.to_xarray">
+<code class="sig-name descname">to_xarray</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.to_xarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the storm dict into an xarray Dataset object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>xarray.Dataset</em> – An xarray Dataset object containing information about the storm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div style='clear:both'></div></div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../sample_usage.html" class="btn btn-neutral float-right" title="Example Gallery" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tropycal.realtime.Realtime.html" class="btn btn-neutral float-left" title="Realtime" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

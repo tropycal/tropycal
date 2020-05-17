@@ -1,4 +1,4 @@
-.. _options-prop:
+.. _options-prop-all:
 
 ####################
 Map Plotting Options
@@ -115,8 +115,8 @@ The following properties are available only for the ``tropycal.tracks.TrackDatas
 
 .. _options-prop-recon-plot:
 
-gridded_stats
--------------
+plot_points
+-----------
 
 The following properties are available only for the ``tropycal.recon.ReconDataset.plot_points()`` function.
 

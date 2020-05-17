@@ -290,10 +290,10 @@ or datetime or list of start/end datetimes.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
 <li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>Parameters</strong> (<em>Optional</em>) – </p></li>
-<li><p><strong>-------------------</strong> – </p></li>
-<li><p><strong>prop</strong> (<em>dict</em>) – Property of recon plot.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><p><strong>prop</strong> (<em>dict</em>) – Customization properties for recon plot.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -308,22 +308,24 @@ or datetime or list of start/end datetimes.</p></li>
 <li><p><strong>recon_select</strong> (<em>Requested recon data</em>) – pandas.DataFrame or dict,
 or string referencing the mission name (e.g. ‘12_NOAA’),
 or datetime or list of start/end datetimes.</p></li>
-<li><p><strong>varname</strong> (<em>str</em>) – Variable to plot. Can be one of the following keys in recon_select dataframe:
-“sfmr” - SFMR surface wind
-“wspd” - 30-second flight level wind
-“pkwnd” - 10-second flight level wind
-“p_sfc” - extrapolated surface pressure</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Can be one of the following:
-“dynamic” - default - dynamically focuses the domain around ,
-“north_atlantic” - North Atlantic Ocean basin,
-“lonW/lonE/latS/latN” - Custom plot domain.</p></li>
+<li><p><strong>varname</strong> (<em>str</em>) – <p>Variable to plot. Can be one of the following keys in recon_select dataframe:</p>
+<ul>
+<li><p><strong>”sfmr”</strong> = SFMR surface wind</p></li>
+<li><p><strong>”wspd”</strong> = 30-second flight level wind (default)</p></li>
+<li><p><strong>”pkwnd”</strong> = 10-second flight level wind</p></li>
+<li><p><strong>”p_sfc”</strong> = extrapolated surface pressure</p></li>
+</ul>
+</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
 <li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>Parameters</strong> (<em>Optional</em>) – </p></li>
-<li><p><strong>-------------------</strong> – </p></li>
-<li><p><strong>prop</strong> (<em>dict</em>) – Property of recon plot.</p></li>
-<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-swath"><span class="std std-ref">plot_swath</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
 </ul>
 </dd>
 </dl>
@@ -339,22 +341,24 @@ or datetime or list of start/end datetimes.</p></li>
 <li><p><strong>recon_select</strong> (<em>Requested recon data</em>) – pandas.DataFrame or dict,
 or string referencing the mission name (e.g. ‘12_NOAA’),
 or datetime or list of start/end datetimes.</p></li>
-<li><p><strong>varname</strong> (<em>str</em>) – Variable to plot. Can be one of the following keys in recon_select dataframe:
-“sfmr” - SFMR surface wind
-“wspd” - 30-second flight level wind
-“pkwnd” - 10-second flight level wind
-“p_sfc” - extrapolated surface pressure</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Can be one of the following:
-“dynamic” - default - dynamically focuses the domain using the tornado track(s) plotted,
-“north_atlantic” - North Atlantic Ocean basin,
-“lonW/lonE/latS/latN” - Custom plot domain.</p></li>
+<li><p><strong>varname</strong> (<em>str</em>) – <p>Variable to plot. Can be one of the following keys in recon_select dataframe:</p>
+<ul>
+<li><p><strong>”sfmr”</strong> = SFMR surface wind</p></li>
+<li><p><strong>”wspd”</strong> = 30-second flight level wind (default)</p></li>
+<li><p><strong>”pkwnd”</strong> = 10-second flight level wind</p></li>
+<li><p><strong>”p_sfc”</strong> = extrapolated surface pressure</p></li>
+</ul>
+</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
 <li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>Parameters</strong> (<em>Optional</em>) – </p></li>
-<li><p><strong>-------------------</strong> – </p></li>
-<li><p><strong>prop</strong> (<em>dict</em>) – Property of recon plot.</p></li>
-<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-plot"><span class="std std-ref">plot_points</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
 </ul>
 </dd>
 </dl>
@@ -370,24 +374,26 @@ or datetime or list of start/end datetimes.</p></li>
 <li><p><strong>recon_select</strong> (<em>Requested recon data</em>) – pandas.DataFrame or dict,
 or string referencing the mission name (e.g. ‘12_NOAA’),
 or datetime or list of start/end datetimes.</p></li>
-<li><p><strong>varname</strong> (<em>str</em>) – Variable to plot. Can be one of the following keys in recon_select dataframe:
-“sfmr” - SFMR surface wind
-“wspd” - 30-second flight level wind
-“pkwnd” - 10-second flight level wind
-“p_sfc” - extrapolated surface pressure</p></li>
+<li><p><strong>varname</strong> (<em>str</em>) – <p>Variable to plot. Can be one of the following keys in recon_select dataframe:</p>
+<ul>
+<li><p><strong>”sfmr”</strong> = SFMR surface wind</p></li>
+<li><p><strong>”wspd”</strong> = 30-second flight level wind (default)</p></li>
+<li><p><strong>”pkwnd”</strong> = 10-second flight level wind</p></li>
+<li><p><strong>”p_sfc”</strong> = extrapolated surface pressure</p></li>
+</ul>
+</p></li>
 <li><p><strong>swathfunc</strong> (<em>function</em>) – Function to operate on interpolated recon data.
 e.g., np.max, np.min, or percentile function</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Can be one of the following:
-“dynamic” - default - dynamically focuses the domain using the tornado track(s) plotted,
-“north_atlantic” - North Atlantic Ocean basin,
-“lonW/lonE/latS/latN” - Custom plot domain.</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
 <li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>Parameters</strong> (<em>Optional</em>) – </p></li>
-<li><p><strong>-------------------</strong> – </p></li>
-<li><p><strong>prop</strong> (<em>dict</em>) – Property of recon plot.</p></li>
-<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-swath"><span class="std std-ref">plot_swath</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
 </ul>
 </dd>
 </dl>

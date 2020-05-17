@@ -1,0 +1,81 @@
+RealtimeStorm
+===============================
+
+.. currentmodule:: tropycal.realtime
+
+.. autoclass:: RealtimeStorm
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~RealtimeStorm.__init__
+      ~RealtimeStorm.download_tcr
+      ~RealtimeStorm.get_archer
+      ~RealtimeStorm.get_nhc_discussion
+      ~RealtimeStorm.get_nhc_discussion_realtime
+      ~RealtimeStorm.get_nhc_forecast_realtime
+      ~RealtimeStorm.get_operational_forecasts
+      ~RealtimeStorm.get_realtime_info
+      ~RealtimeStorm.get_recon
+      ~RealtimeStorm.list_nhc_discussions
+      ~RealtimeStorm.plot
+      ~RealtimeStorm.plot_TCtors_rotated
+      ~RealtimeStorm.plot_nhc_forecast
+      ~RealtimeStorm.plot_nhc_forecast_realtime
+      ~RealtimeStorm.plot_tors
+      ~RealtimeStorm.query_nhc_discussions
+      ~RealtimeStorm.sel_time
+      ~RealtimeStorm.to_dataframe
+      ~RealtimeStorm.to_dict
+      ~RealtimeStorm.to_xarray
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: __init__
+   .. automethod:: download_tcr
+   .. automethod:: get_archer
+   .. automethod:: get_nhc_discussion
+   .. automethod:: get_nhc_discussion_realtime
+   .. automethod:: get_nhc_forecast_realtime
+   .. automethod:: get_operational_forecasts
+   .. automethod:: get_realtime_info
+   .. automethod:: get_recon
+   .. automethod:: list_nhc_discussions
+   .. automethod:: plot
+   .. automethod:: plot_TCtors_rotated
+   .. automethod:: plot_nhc_forecast
+   .. automethod:: plot_nhc_forecast_realtime
+   .. automethod:: plot_tors
+   .. automethod:: query_nhc_discussions
+   .. automethod:: sel_time
+   .. automethod:: to_dataframe
+   .. automethod:: to_dict
+   .. automethod:: to_xarray
+
+   
+   
+
+.. include:: tropycal.realtime.RealtimeStorm.examples
+
+.. raw:: html
+
+     <div style='clear:both'></div>

@@ -26,7 +26,6 @@ Storm
       ~Storm.plot
       ~Storm.plot_TCtors_rotated
       ~Storm.plot_nhc_forecast
-      ~Storm.plot_nhc_forecast_realtime
       ~Storm.plot_tors
       ~Storm.query_nhc_discussions
       ~Storm.sel_time
@@ -57,7 +56,6 @@ Storm
    .. automethod:: plot
    .. automethod:: plot_TCtors_rotated
    .. automethod:: plot_nhc_forecast
-   .. automethod:: plot_nhc_forecast_realtime
    .. automethod:: plot_tors
    .. automethod:: query_nhc_discussions
    .. automethod:: sel_time

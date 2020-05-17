@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Example Gallery" href="../../sample_usage.html" />
+    <link rel="next" title="RealtimeStorm" href="tropycal.realtime.RealtimeStorm.html" />
     <link rel="prev" title="realtime" href="tropycal.realtime.html" /> 
 </head>
 
@@ -99,6 +99,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.realtime.html">realtime</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Realtime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.html">RealtimeStorm</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
@@ -181,6 +182,11 @@
 <em class="property">class </em><code class="sig-prename descclassname">tropycal.realtime.</code><code class="sig-name descname">Realtime</code><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.Realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of a Realtime object containing currently active tropical cyclones. Only available for areas in NHC’s area of responsibility.</p>
 <p>If there are active storms currently, a Storm object is stored as an attribute of Realtime, and can be retrieved fore example as “realtime.AL012020”.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">realtime</span> <span class="o">=</span> <span class="n">Realtime</span><span class="p">()</span> <span class="c1">#Create an instance of a Realtime object</span>
+<span class="n">storm</span> <span class="o">=</span> <span class="n">realtime</span><span class="o">.</span><span class="n">AL012020</span> <span class="c1">#One method of retrieving a RealtimeStorm object</span>
+<span class="n">storm</span> <span class="o">=</span> <span class="n">realtime</span><span class="p">[</span><span class="s1">&#39;AL012020&#39;</span><span class="p">]</span> <span class="c1">#Another method of retrieving a RealtimeStorm object</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><em>Realtime</em> – An instance of Realtime.</p>
@@ -196,7 +202,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.Realtime.__init__" title="tropycal.realtime.Realtime.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</p></td>
 <td><p>Initialize self.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.Realtime.list_active_storms" title="tropycal.realtime.Realtime.list_active_storms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_active_storms</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.Realtime.get_storm" title="tropycal.realtime.Realtime.get_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm</span></code></a>(storm)</p></td>
+<td><p>Returns a RealtimeStorm object for the requested storm ID.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.Realtime.list_active_storms" title="tropycal.realtime.Realtime.list_active_storms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_active_storms</span></code></a>()</p></td>
 <td><p>Produces a list of storms currently stored in Realtime.</p></td>
 </tr>
 </tbody>
@@ -206,6 +215,20 @@
 <dt id="tropycal.realtime.Realtime.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.Realtime.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tropycal.realtime.Realtime.get_storm">
+<code class="sig-name descname">get_storm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">storm</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime.get_storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.Realtime.get_storm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a RealtimeStorm object for the requested storm ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>storm</strong> (<em>str</em>) – Storm ID for the requested storm (e.g., “AL012020”).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>tropycal.realtime.RealtimeStorm</em> – An instance of RealtimeStorm.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -231,7 +254,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../../sample_usage.html" class="btn btn-neutral float-right" title="Example Gallery" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="tropycal.realtime.RealtimeStorm.html" class="btn btn-neutral float-right" title="RealtimeStorm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="tropycal.realtime.html" class="btn btn-neutral float-left" title="realtime" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -17,6 +17,7 @@ Realtime
    .. autosummary::
    
       ~Realtime.__init__
+      ~Realtime.get_storm
       ~Realtime.list_active_storms
 
    
@@ -33,6 +34,7 @@ Realtime
 
    
    .. automethod:: __init__
+   .. automethod:: get_storm
    .. automethod:: list_active_storms
 
    

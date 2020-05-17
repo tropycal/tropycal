@@ -181,7 +181,7 @@
 
 <span class="kn">from</span> <span class="nn">.plot</span> <span class="kn">import</span> <span class="n">ReconPlot</span>
 <span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="o">*</span> 
-<span class="c1">#from ..tracks import *</span>
+<span class="kn">from</span> <span class="nn">..tracks.tools</span> <span class="kn">import</span> <span class="o">*</span>
 
 <div class="viewcode-block" id="ReconDataset"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset">[docs]</a><span class="k">class</span> <span class="nc">ReconDataset</span><span class="p">:</span>
 
@@ -434,8 +434,6 @@
         <span class="k">return</span> <span class="n">selected</span></div>
 
 
-    <span class="c1">#PLOT FUNCTION FOR RECON POINTS</span>
-    <span class="c1">#Passed!</span>
 <div class="viewcode-block" id="ReconDataset.plot_points"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_points">[docs]</a>    <span class="k">def</span> <span class="nf">plot_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -449,15 +447,13 @@
 <span class="sd">            or datetime or list of start/end datetimes.</span>
 <span class="sd">        varname : str</span>
 <span class="sd">            Variable to plot. Can be one of the following keys in recon_select dataframe:</span>
-<span class="sd">            &quot;sfmr&quot; - SFMR surface wind</span>
-<span class="sd">            &quot;wspd&quot; - 30-second flight level wind </span>
-<span class="sd">            &quot;pkwnd&quot; - 10-second flight level wind</span>
-<span class="sd">            &quot;p_sfc&quot; - extrapolated surface pressure</span>
+<span class="sd">            </span>
+<span class="sd">            * **&quot;sfmr&quot;** = SFMR surface wind</span>
+<span class="sd">            * **&quot;wspd&quot;** = 30-second flight level wind (default)</span>
+<span class="sd">            * **&quot;pkwnd&quot;** = 10-second flight level wind</span>
+<span class="sd">            * **&quot;p_sfc&quot;** = extrapolated surface pressure</span>
 <span class="sd">        domain : str</span>
-<span class="sd">            Domain for the plot. Can be one of the following:</span>
-<span class="sd">            &quot;dynamic&quot; - default - dynamically focuses the domain using the tornado track(s) plotted, </span>
-<span class="sd">            &quot;north_atlantic&quot; - North Atlantic Ocean basin, </span>
-<span class="sd">            &quot;lonW/lonE/latS/latN&quot; - Custom plot domain.</span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
 <span class="sd">        return_ax : bool</span>
@@ -465,12 +461,12 @@
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">            </span>
-<span class="sd">        Optional Parameters</span>
-<span class="sd">        -------------------</span>
+<span class="sd">        Other Parameters</span>
+<span class="sd">        ----------------</span>
 <span class="sd">        prop : dict</span>
-<span class="sd">            Property of recon plot.</span>
+<span class="sd">            Customization properties of recon plot. Please refer to :ref:`options-prop-recon-plot` for available options.</span>
 <span class="sd">        map_prop : dict</span>
-<span class="sd">            Property of cartopy map.</span>
+<span class="sd">            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1">#Pop kwargs</span>
@@ -506,9 +502,7 @@
         <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">plot_info</span></div>
 
-
-    <span class="c1">#PLOT FUNCTION FOR RECON HOVMOLLER</span>
-    <span class="c1">#Passed!</span>
+    
 <div class="viewcode-block" id="ReconDataset.plot_hovmoller"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_hovmoller">[docs]</a>    <span class="k">def</span> <span class="nf">plot_hovmoller</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">radlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">track_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
                        <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
@@ -529,10 +523,10 @@
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">            </span>
-<span class="sd">        Optional Parameters</span>
-<span class="sd">        -------------------</span>
+<span class="sd">        Other Parameters</span>
+<span class="sd">        ----------------</span>
 <span class="sd">        prop : dict</span>
-<span class="sd">            Property of recon plot.</span>
+<span class="sd">            Customization properties for recon plot.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1">#Pop kwargs</span>
@@ -593,12 +587,11 @@
         <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">clevs</span><span class="p">)))</span>
         <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">(</span><span class="n">clevs</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
         
-        
         <span class="c1">#--------------------------------------------------------------------------------------</span>
         
         <span class="n">title_left</span><span class="p">,</span><span class="n">title_right</span> <span class="o">=</span> <span class="n">ReconPlot</span><span class="p">()</span><span class="o">.</span><span class="n">plot_hovmoller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storm_obj</span><span class="p">,</span><span class="n">Hov_dict</span><span class="p">,</span><span class="n">varname</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title_left</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span><span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title_right</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title_left</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span><span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title_right</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
         
         <span class="c1">#Return axis</span>
         <span class="k">if</span> <span class="n">return_ax</span><span class="p">:</span>
@@ -622,15 +615,13 @@
 <span class="sd">            or datetime or list of start/end datetimes.</span>
 <span class="sd">        varname : str</span>
 <span class="sd">            Variable to plot. Can be one of the following keys in recon_select dataframe:</span>
-<span class="sd">            &quot;sfmr&quot; - SFMR surface wind</span>
-<span class="sd">            &quot;wspd&quot; - 30-second flight level wind </span>
-<span class="sd">            &quot;pkwnd&quot; - 10-second flight level wind</span>
-<span class="sd">            &quot;p_sfc&quot; - extrapolated surface pressure</span>
+<span class="sd">            </span>
+<span class="sd">            * **&quot;sfmr&quot;** = SFMR surface wind</span>
+<span class="sd">            * **&quot;wspd&quot;** = 30-second flight level wind (default)</span>
+<span class="sd">            * **&quot;pkwnd&quot;** = 10-second flight level wind</span>
+<span class="sd">            * **&quot;p_sfc&quot;** = extrapolated surface pressure</span>
 <span class="sd">        domain : str</span>
-<span class="sd">            Domain for the plot. Can be one of the following:</span>
-<span class="sd">            &quot;dynamic&quot; - default - dynamically focuses the domain around , </span>
-<span class="sd">            &quot;north_atlantic&quot; - North Atlantic Ocean basin, </span>
-<span class="sd">            &quot;lonW/lonE/latS/latN&quot; - Custom plot domain.</span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
 <span class="sd">        return_ax : bool</span>
@@ -638,12 +629,12 @@
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">            </span>
-<span class="sd">        Optional Parameters</span>
-<span class="sd">        -------------------</span>
+<span class="sd">        Other Parameters</span>
+<span class="sd">        ----------------</span>
 <span class="sd">        prop : dict</span>
-<span class="sd">            Property of recon plot.</span>
+<span class="sd">            Customization properties of recon plot. Please refer to :ref:`options-prop-recon-swath` for available options.</span>
 <span class="sd">        map_prop : dict</span>
-<span class="sd">            Property of cartopy map.</span>
+<span class="sd">            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1">#Pop kwargs</span>
@@ -770,18 +761,16 @@
 <span class="sd">            or datetime or list of start/end datetimes.</span>
 <span class="sd">        varname : str</span>
 <span class="sd">            Variable to plot. Can be one of the following keys in recon_select dataframe:</span>
-<span class="sd">            &quot;sfmr&quot; - SFMR surface wind</span>
-<span class="sd">            &quot;wspd&quot; - 30-second flight level wind </span>
-<span class="sd">            &quot;pkwnd&quot; - 10-second flight level wind</span>
-<span class="sd">            &quot;p_sfc&quot; - extrapolated surface pressure</span>
+<span class="sd">            </span>
+<span class="sd">            * **&quot;sfmr&quot;** = SFMR surface wind</span>
+<span class="sd">            * **&quot;wspd&quot;** = 30-second flight level wind (default)</span>
+<span class="sd">            * **&quot;pkwnd&quot;** = 10-second flight level wind</span>
+<span class="sd">            * **&quot;p_sfc&quot;** = extrapolated surface pressure</span>
 <span class="sd">        swathfunc : function</span>
 <span class="sd">            Function to operate on interpolated recon data.</span>
 <span class="sd">            e.g., np.max, np.min, or percentile function</span>
 <span class="sd">        domain : str</span>
-<span class="sd">            Domain for the plot. Can be one of the following:</span>
-<span class="sd">            &quot;dynamic&quot; - default - dynamically focuses the domain using the tornado track(s) plotted, </span>
-<span class="sd">            &quot;north_atlantic&quot; - North Atlantic Ocean basin, </span>
-<span class="sd">            &quot;lonW/lonE/latS/latN&quot; - Custom plot domain.</span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
 <span class="sd">        ax : axes</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
 <span class="sd">        return_ax : bool</span>
@@ -789,12 +778,12 @@
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
 <span class="sd">            </span>
-<span class="sd">        Optional Parameters</span>
-<span class="sd">        -------------------</span>
+<span class="sd">        Other Parameters</span>
+<span class="sd">        ----------------</span>
 <span class="sd">        prop : dict</span>
-<span class="sd">            Property of recon plot.</span>
+<span class="sd">            Customization properties of recon plot. Please refer to :ref:`options-prop-recon-swath` for available options.</span>
 <span class="sd">        map_prop : dict</span>
-<span class="sd">            Property of cartopy map.</span>
+<span class="sd">            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1">#Pop kwargs</span>

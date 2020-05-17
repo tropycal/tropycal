@@ -54,5 +54,7 @@ The following domains are available for some, but not all plotting functions. Pl
    * - "dynamic"
      - Dynamic map projection, centered on the feature of interest (e.g., storm track, tornadoes, recon data).
    * - "dynamic_forecast"
-     - Dynamic map projection, focused entirely on the forecast track. Available only for forecast track functions.
+     - Dynamic map projection, focused entirely on the forecast track. Available only for forecast track plotting functions.
+   * - "dynamic_tropical"
+     - Dynamic map projection, excluding extratropical cyclone points. Available only for track plotting functions.
 

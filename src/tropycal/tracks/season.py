@@ -257,10 +257,13 @@ class Season:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        
+        Other Parameters
+        ----------------
         prop : dict
-            Property of storm track lines.
+            Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
         map_prop : dict
-            Property of cartopy map.
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
         
         #Create instance of plot object

@@ -18,6 +18,7 @@ except:
     warnings.warn(warn_message)
 
 from ..tracks import *
+from .storm import RealtimeStorm
 
 class Realtime():
     
@@ -25,6 +26,12 @@ class Realtime():
     Creates an instance of a Realtime object containing currently active tropical cyclones. Only available for areas in NHC's area of responsibility.
     
     If there are active storms currently, a Storm object is stored as an attribute of Realtime, and can be retrieved fore example as "realtime.AL012020".
+    
+    .. code-block:: python
+    
+        realtime = Realtime() #Create an instance of a Realtime object
+        storm = realtime.AL012020 #One method of retrieving a RealtimeStorm object
+        storm = realtime['AL012020'] #Another method of retrieving a RealtimeStorm object
 
     Returns
     -------
@@ -78,7 +85,7 @@ class Realtime():
         #For each storm remaining, create a Storm object
         if len(self.data) > 0:
             for key in self.data.keys():
-                self[key] = Storm(self.data[key])
+                self[key] = RealtimeStorm(self.data[key])
 
             #Delete data dict while retaining active storm keys
             self.storms = [k for k in self.data.keys()]
@@ -96,6 +103,33 @@ class Realtime():
         """
         
         return self.storms
+    
+    def get_storm(self,storm):
+        
+        r"""
+        Returns a RealtimeStorm object for the requested storm ID.
+        
+        Parameters
+        ----------
+        storm : str
+            Storm ID for the requested storm (e.g., "AL012020").
+        
+        Returns
+        -------
+        tropycal.realtime.RealtimeStorm
+            An instance of RealtimeStorm.
+        """
+        
+        #Check to see if storm is available
+        if isinstance(storm,str) == False:
+            msg = "\"storm\" must be of type str."
+            raise TypeError(msg)
+        if storm not in self.storms:
+            msg = "Requested storm ID is not contained in this object."
+            raise RuntimeError(msg)
+        
+        #Return RealtimeStorm object
+        return self[storm]
 
     def __read_btk(self):
         

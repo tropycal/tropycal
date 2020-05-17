@@ -428,8 +428,8 @@ def get_cmap_levels(varname,x,clevs,linear=False):
     
     if x=='category':
         if varname in ['vmax','sfmr','fl_to_sfc']:
-#            clevs = [34,64,83,96,113,137,200]
-#            colors = ['#8FC2F2','#3185D3','#FFFF00','#FF9E00','#DD0000','#FF00FC','#8B0088']
+            #clevs = [34,64,83,96,113,137,200]
+            #colors = ['#8FC2F2','#3185D3','#FFFF00','#FF9E00','#DD0000','#FF00FC','#8B0088']
             clevs = [cat2wind(c) for c in range(-1,6)]+[200]
             if linear:
                 colors = [mcolors.to_rgba(category_color(lev)) \
@@ -468,7 +468,10 @@ def get_cmap_levels(varname,x,clevs,linear=False):
             c0 = np.ceil(y0/dc)*dc
             c1 = np.floor(y1/dc)*dc
             clevs = np.arange(c0,c1+dc,dc)
-            
+    
+            if scalemag > 0:
+                clevs = clevs.astype(int)
+    
     return cmap,clevs
     
 

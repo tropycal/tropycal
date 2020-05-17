@@ -293,9 +293,9 @@ class RealtimeStorm(Storm):
             
         #Get forecast for this storm
         try:
-            nhc_forecast = (self.latest_forecast).copy()
+            nhc_forecasts = (self.latest_forecast).copy()
         except:
-            nhc_forecast = self.get_nhc_forecast_realtime()
+            nhc_forecasts = self.get_nhc_forecast_realtime()
         
         #Add other info to forecast dict
         nhc_forecasts['advisory_num'] = -1

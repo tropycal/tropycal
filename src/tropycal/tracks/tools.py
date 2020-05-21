@@ -587,6 +587,71 @@ def cyclone_catarina():
     #Replace original entry with this
     return storm_dict
 
+def get_basin(lat,lon,storm_id=""):
+    
+    r"""
+    Returns the current basin of the tropical cyclone.
+    
+    Parameters
+    ----------
+    lat : int or float
+        Latitude of the storm.
+    lon : int or float
+        Longitude of the storm.
+    
+    Other Parameters
+    ----------------
+    storm_id : str
+        String representing storm ID. Used to distinguish between Atlantic and Pacific basins.
+    
+    Returns
+    -------
+    str
+        String representing the current basin.
+    """
+    
+    #Error check
+    if isinstance(lat,float) == False and isinstance(lat,int) == False:
+        msg = "\"lat\" must be of type int or float."
+        raise TypeError(msg)
+    if isinstance(lon,float) == False and isinstance(lon,int) == False:
+        msg = "\"lon\" must be of type int or float."
+        raise TypeError(msg)
+    
+    #Fix longitude
+    if lon < 0.0: lon = lon + 360.0
+    
+    #Northern hemisphere check
+    if lat >= 0.0:
+        
+        if lon < 100.0:
+            return "north_indian"
+        elif lon < 180.0:
+            return "west_pacific"
+        else:
+            if len(storm_id) != 9:
+                msg = "Cannot determine whether storm is in North Atlantic or East Pacific basins."
+                raise RuntimeError(msg)
+            if storm_id[0:2] == "AL":
+                return "north_atlantic"
+            else:
+                return "north_pacific"
+    
+    #Southern hemisphere check
+    else:
+        
+        if lon < 20.0:
+            return "south_atlantic"
+        elif lon < 90.0:
+            return "south_indian"
+        elif lon < 160.0:
+            return "australia"
+        elif lon < 280.0:
+            return "south_pacific"
+        else:
+            return "south_atlantic"
+        
+
 def knots_to_mph(wind):
 
     kts = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160,165,170,175,180,185]

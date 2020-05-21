@@ -646,21 +646,24 @@ class TrackPlot(Plot):
             cone = self.generate_nhc_cone(forecast,dateline,cone_days)
 
             #Contour fill cone & account for dateline crossing
-            cone_lon = cone['lon']
-            cone_lat = cone['lat']
-            cone_lon_2d = cone['lon2d']
-            cone_lat_2d = cone['lat2d']
-            if self.proj.proj4_params['lon_0'] == 180.0:
-                new_lons = np.array(cone_lon_2d)
-                new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
-                cone_lon_2d = new_lons.tolist()
-                new_lons = np.array(cone_lon)
-                new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
-                cone_lon = new_lons.tolist() 
-            cone_2d = cone['cone']
-            cone_2d = ndimage.gaussian_filter(cone_2d,sigma=0.5,order=0)
-            self.ax.contourf(cone_lon_2d,cone_lat_2d,cone_2d,[0.9,1.1],colors=['#ffffff','#ffffff'],alpha=prop['cone_alpha'],zorder=2,transform=ccrs.PlateCarree())
-            self.ax.contour(cone_lon_2d,cone_lat_2d,cone_2d,[0.9],linewidths=prop['cone_lw'],colors=['k'],zorder=3,transform=ccrs.PlateCarree())
+            if 'cone' in forecast.keys() and forecast['cone'] == False:
+                pass
+            else:
+                cone_lon = cone['lon']
+                cone_lat = cone['lat']
+                cone_lon_2d = cone['lon2d']
+                cone_lat_2d = cone['lat2d']
+                if self.proj.proj4_params['lon_0'] == 180.0:
+                    new_lons = np.array(cone_lon_2d)
+                    new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
+                    cone_lon_2d = new_lons.tolist()
+                    new_lons = np.array(cone_lon)
+                    new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
+                    cone_lon = new_lons.tolist() 
+                cone_2d = cone['cone']
+                cone_2d = ndimage.gaussian_filter(cone_2d,sigma=0.5,order=0)
+                self.ax.contourf(cone_lon_2d,cone_lat_2d,cone_2d,[0.9,1.1],colors=['#ffffff','#ffffff'],alpha=prop['cone_alpha'],zorder=2,transform=ccrs.PlateCarree())
+                self.ax.contour(cone_lon_2d,cone_lat_2d,cone_2d,[0.9],linewidths=prop['cone_lw'],colors=['k'],zorder=3,transform=ccrs.PlateCarree())
 
             #Plot center line & account for dateline crossing
             center_lon = cone['center_lon']
@@ -702,10 +705,14 @@ class TrackPlot(Plot):
                 self.ax.plot(ilon,ilat,mtype,color=ncol,mec='k',mew=mew,ms=prop['ms']*1.3,transform=ccrs.PlateCarree(),zorder=use_zorder)
 
             #Label forecast dots
-            if track_labels in ['fhr','valid_utc','valid_edt']:
+            if track_labels in ['fhr','valid_utc','valid_edt','fhr_wind_kt','fhr_wind_mph']:
                 valid_dates = [forecast['init']+timedelta(hours=int(i)) for i in iter_hr]
                 if track_labels == 'fhr':
                     labels = [str(i) for i in iter_hr]
+                if track_labels == 'fhr_wind_kt':
+                    labels = [f"Hour {iter_hr[i]}\n{fcst_vmax[i]} kt" for i in range(len(iter_hr))]
+                if track_labels == 'fhr_wind_mph':
+                    labels = [f"Hour {iter_hr[i]}\n{knots_to_mph(fcst_vmax[i])} mph" for i in range(len(iter_hr))]
                 if track_labels == 'valid_edt':
                     labels = [str(int(i.strftime('%I'))) + ' ' + i.strftime('%p %a') for i in [j-timedelta(hours=4) for j in valid_dates]]
                     edt_warning = True
@@ -714,16 +721,28 @@ class TrackPlot(Plot):
                 self.plot_nhc_labels(self.ax, fcst_lon, fcst_lat, labels, k=1.2)
                 
             #Add cone coordinates to coordinate extrema
-            if domain == "dynamic_forecast" or max_lat == None:
-                max_lat = max(cone_lat)
-                min_lat = min(cone_lat)
-                max_lon = max(cone_lon)
-                min_lon = min(cone_lon)
+            if 'cone' in forecast.keys() and forecast['cone'] == False:
+                if domain == "dynamic_forecast" or max_lat == None:
+                    max_lat = max(center_lat)
+                    min_lat = min(center_lat)
+                    max_lon = max(center_lon)
+                    min_lon = min(center_lon)
+                else:
+                    if max(center_lat) > max_lat: max_lat = max(center_lat)
+                    if min(center_lat) < min_lat: min_lat = min(center_lat)
+                    if max(center_lon) > max_lon: max_lon = max(center_lon)
+                    if min(center_lon) < min_lon: min_lon = min(center_lon)
             else:
-                if max(cone_lat) > max_lat: max_lat = max(cone_lat)
-                if min(cone_lat) < min_lat: min_lat = min(cone_lat)
-                if max(cone_lon) > max_lon: max_lon = max(cone_lon)
-                if min(cone_lon) < min_lon: min_lon = min(cone_lon)
+                if domain == "dynamic_forecast" or max_lat == None:
+                    max_lat = max(cone_lat)
+                    min_lat = min(cone_lat)
+                    max_lon = max(cone_lon)
+                    min_lon = min(cone_lon)
+                else:
+                    if max(cone_lat) > max_lat: max_lat = max(cone_lat)
+                    if min(cone_lat) < min_lat: min_lat = min(cone_lat)
+                    if max(cone_lon) > max_lon: max_lon = max(cone_lon)
+                    if min(cone_lon) < min_lon: min_lon = min(cone_lon)
 
         #--------------------------------------------------------------------------------------
 
@@ -787,6 +806,10 @@ class TrackPlot(Plot):
                     if ityp in ['SS','TS','HU']:
                         storm_name = storm_data['name']
         
+        #Fix storm types for non-NHC basins
+        if 'cone' in forecast.keys():
+            storm_type = get_storm_type(first_fcst_wind,False,forecast['basin'])
+        
         #Add left title
         self.ax.set_title(f"{storm_type} {storm_name}",loc='left',fontsize=17,fontweight='bold')
 
@@ -806,7 +829,10 @@ class TrackPlot(Plot):
         
         if forecast_id == -1:
             title_text = f"Current Intensity: {knots_to_mph(first_fcst_wind)} mph {dot} {first_fcst_mslp} hPa"
-            title_text += f"\nForecast Issued: {forecast_date}"
+            if 'cone' in forecast.keys() and forecast['cone'] == False:
+                title_text += f"\nJTWC Issued: {forecast_date}"
+            else:
+                title_text += f"\nNHC Issued: {forecast_date}"
         else:
             title_text = f"{knots_to_mph(first_fcst_wind)} mph {dot} {first_fcst_mslp} hPa {dot} Forecast #{forecast_id}"
             title_text += f"\nForecast Issued: {forecast_date}"
@@ -1069,7 +1095,7 @@ class TrackPlot(Plot):
         #Radii are in nautical miles
         cone_climo_hr = [3,12,24,36,48,72,96,120]
         cone_size_atl = {}
-        cone_size_atl[2020] = [16,26,41,55,69,103,151,196]
+        cone_size_atl[2020] = [16,26,41,55,69,86,103,151,196]
         cone_size_atl[2019] = [16,26,41,54,68,102,151,198]
         cone_size_atl[2018] = [16,26,43,56,74,103,151,198]
         cone_size_atl[2017] = [16,29,45,63,78,107,159,211]
@@ -1084,7 +1110,7 @@ class TrackPlot(Plot):
         cone_size_atl[2008] = [16,39,67,92,118,170,233,305]
 
         cone_size_pac = {}
-        cone_size_pac[2020] = [16,25,38,51,65,91,115,138]
+        cone_size_pac[2020] = [16,25,38,51,65,78,91,115,138]
         cone_size_pac[2019] = [16,25,38,48,62,88,115,145]
         cone_size_pac[2018] = [16,25,39,50,66,94,125,162]
         cone_size_pac[2017] = [16,25,40,51,66,93,116,151]
@@ -1097,6 +1123,10 @@ class TrackPlot(Plot):
         cone_size_pac[2010] = [16,36,59,82,102,138,174,220]
         cone_size_pac[2009] = [16,36,59,85,105,148,187,230]
         cone_size_pac[2008] = [16,36,66,92,115,161,210,256]
+        
+        #Fix for 2020 that now incorporates 60 hour forecasts
+        if forecast['init'].year >= 2020:
+            cone_climo_hr = [3,12,24,36,48,60,72,96,120]
 
         #Function for interpolating between 2 times
         def temporal_interpolation(value, orig_times, target_times):
@@ -1184,7 +1214,8 @@ class TrackPlot(Plot):
             elif forecast['basin'] == 'east_pacific':
                 cone_size = cone_size_pac[forecast['init'].year]
             else:
-                raise RuntimeError("Error: No cone information is available for the requested basin.")
+                cone_size = 0
+                #raise RuntimeError("Error: No cone information is available for the requested basin.")
         else:
             cone_year = 2008
             warnings.warn(f"No cone information is available for the requested year. Defaulting to 2008 cone.")
@@ -1193,7 +1224,8 @@ class TrackPlot(Plot):
             elif forecast['basin'] == 'east_pacific':
                 cone_size = cone_size_pac[2008]
             else:
-                raise RuntimeError("Error: No cone information is available for the requested basin.")
+                cone_size = 0
+                #raise RuntimeError("Error: No cone information is available for the requested basin.")
             #raise RuntimeError("Error: No cone information is available for the requested year.")
         
         #Check if fhr3 is available, then get forecast data
@@ -1261,6 +1293,11 @@ class TrackPlot(Plot):
         interp_fhr = interp_fhr_idx * 6
         interp_lon = x1(interp_fhr_idx)
         interp_lat = y1(interp_fhr_idx)
+        
+        #Return if no cone specified
+        if cone_size == 0:
+            return_dict = {'center_lon':interp_lon,'center_lat':interp_lat}
+            return return_dict
 
         #Interpolate cone radius temporally
         cone_climo_hr = cone_climo_hr[:cone_day_cap]

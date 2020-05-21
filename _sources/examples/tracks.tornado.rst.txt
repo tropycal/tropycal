@@ -52,7 +52,7 @@ Let's start by creating an instance of a TornadoDataset object. By default, this
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.53 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.69 seconds)
 
 
 
@@ -70,6 +70,7 @@ We can use a TornadoDataset object to analyze both tornadoes associated with tro
 
 
 .. image:: /examples/images/sphx_glr_tracks.tornado_001.png
+    :alt: Tornado tracks and daily PPH (%), Start ... 12:02 UTC 27 Apr 2011 End ... 11:50 UTC 28 Apr 2011
     :class: sphx-glr-single-img
 
 
@@ -90,7 +91,7 @@ We can use a TornadoDataset object to analyze both tornadoes associated with tro
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bbece8518>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa671912b70>
 
 
 
@@ -115,7 +116,7 @@ We can also use TornadoDataset to assess tornadoes associated with tropical cycl
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (3.05 seconds)
+    --> Completed reading in HURDAT2 data (2.65 seconds)
 
 
 
@@ -143,9 +144,9 @@ This code block will take a while to run, as it will iterate over every storm in
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.44 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.52 seconds)
     --> Starting to assign tornadoes to storms
-    --> Completed assigning tornadoes to storm (88.30 seconds)
+    --> Completed assigning tornadoes to storm (124.26 seconds)
 
 
 
@@ -164,6 +165,7 @@ Most tornadoes associated with tropical cyclones occur in the front right quadra
 
 
 .. image:: /examples/images/sphx_glr_tracks.tornado_002.png
+    :alt: Composite motion-relative tornadoes Min threshold: EF-0 | n=214 storms
     :class: sphx-glr-single-img
 
 
@@ -174,7 +176,7 @@ Most tornadoes associated with tropical cyclones occur in the front right quadra
  .. code-block:: none
 
 
-    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7f5bbdda4e48>}
+    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7fa66fc7ce80>}
 
 
 
@@ -190,6 +192,7 @@ We can also make the same plot for a composite subset of tropical cyclones, give
 
 
 .. image:: /examples/images/sphx_glr_tracks.tornado_003.png
+    :alt: Composite motion-relative tornadoes Min threshold: EF-0 | n=4 storms
     :class: sphx-glr-single-img
 
 
@@ -200,7 +203,7 @@ We can also make the same plot for a composite subset of tropical cyclones, give
  .. code-block:: none
 
 
-    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7f5bbda7c2b0>}
+    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7fa66f9d4390>}
 
 
 
@@ -238,6 +241,7 @@ Let's plot all the tornado tracks, and daily PPH, associated with Hurricane Ivan
 
 
 .. image:: /examples/images/sphx_glr_tracks.tornado_004.png
+    :alt: Hurricane IVAN Tornado tracks and daily PPH (%), 02 Sep 2004 – 24 Sep 2004 145 kt • 910 hPa • 70.4 ACE
     :class: sphx-glr-single-img
 
 
@@ -252,7 +256,7 @@ Let's plot all the tornado tracks, and daily PPH, associated with Hurricane Ivan
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bbda63390>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa66f92fc88>
 
 
 
@@ -267,6 +271,7 @@ Let's make a plot of the tornadoes in storm motion relative coordinates:
 
 
 .. image:: /examples/images/sphx_glr_tracks.tornado_005.png
+    :alt: IVAN 2004 tornadoes relative to heading
     :class: sphx-glr-single-img
 
 
@@ -277,14 +282,14 @@ Let's make a plot of the tornadoes in storm motion relative coordinates:
  .. code-block:: none
 
 
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7f5bbd9ccb70>
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7fa66f8a3ba8>
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  0.125 seconds)
+   **Total running time of the script:** ( 2 minutes  35.617 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.tornado.py:

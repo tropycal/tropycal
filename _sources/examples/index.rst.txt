@@ -20,6 +20,7 @@ Examples of using tropycal to generate images and text.
 .. only:: html
 
  .. figure:: /examples/images/thumb/sphx_glr_tracks.tornado_thumb.png
+     :alt: Tornado Analyses
 
      :ref:`sphx_glr_examples_tracks.tornado.py`
 
@@ -40,6 +41,7 @@ Examples of using tropycal to generate images and text.
 .. only:: html
 
  .. figure:: /examples/images/thumb/sphx_glr_tracks.storm_thumb.png
+     :alt: Individual Storm Analysis
 
      :ref:`sphx_glr_examples_tracks.storm.py`
 
@@ -60,6 +62,7 @@ Examples of using tropycal to generate images and text.
 .. only:: html
 
  .. figure:: /examples/images/thumb/sphx_glr_tracks.TrackDataset_thumb.png
+     :alt: TC Dataset Analysis
 
      :ref:`sphx_glr_examples_tracks.TrackDataset.py`
 

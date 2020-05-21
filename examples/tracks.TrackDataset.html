@@ -198,7 +198,7 @@
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (2.37 seconds)
+--&gt; Completed reading in HURDAT2 data (2.47 seconds)
 </pre></div>
 </div>
 <div class="section" id="retrieving-storms-and-seasons">
@@ -259,14 +259,14 @@ More Information:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.plot_storm" title="tropycal.tracks.TrackDataset.plot_storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">plot_storm</span></a><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">),</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_001.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_001.png" />
+<img alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_001.png" />
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
   warnings.warn(&#39;The .xlabels_top attribute is deprecated. Please &#39;
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
   warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bb6da6278&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa66a02b400&gt;
 </pre></div>
 </div>
 </div>
@@ -304,9 +304,9 @@ More Information:
 </pre></div>
 </div>
 <ul class="sphx-glr-horizontal">
-<li><img alt="../_images/sphx_glr_tracks.TrackDataset_002.png" class="sphx-glr-multi-img" src="../_images/sphx_glr_tracks.TrackDataset_002.png" />
+<li><img alt="Maximum wind (kt), Jan/01 – Dec/31 • 1851 – 2019" class="sphx-glr-multi-img" src="../_images/sphx_glr_tracks.TrackDataset_002.png" />
 </li>
-<li><img alt="../_images/sphx_glr_tracks.TrackDataset_003.png" class="sphx-glr-multi-img" src="../_images/sphx_glr_tracks.TrackDataset_003.png" />
+<li><img alt="Average wind (kt) change in 24 hours, middle ≥ 5 storms/bin, Jan/01 – Dec/31 • 1851 – 2019" class="sphx-glr-multi-img" src="../_images/sphx_glr_tracks.TrackDataset_003.png" />
 </li>
 </ul>
 <p class="sphx-glr-script-out">Out:</p>
@@ -327,7 +327,7 @@ More Information:
   return thresh,lambda x: np.nanmean(x)
 --&gt; Generating plot
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bba4a55c0&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa66f7b8cc0&gt;
 </pre></div>
 </div>
 </div>
@@ -343,7 +343,7 @@ More Information:
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in ibtracs data
---&gt; Completed reading in ibtracs data (42.56 seconds)
+--&gt; Completed reading in ibtracs data (39.77 seconds)
 </pre></div>
 </div>
 <p>In its current form, tropycal is not configured to support all types of analyses for global IBTrACS, particularly near the dateline. Future updates will work to improve this functionality.</p>
@@ -351,20 +351,20 @@ More Information:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;maximum wind&quot;</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_004.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_004.png" />
+<img alt="Maximum wind (kt), Jan/01 – Dec/31 • 1851 – 2020" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_004.png" />
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
 --&gt; Generating plot
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bb9d46080&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa66d203b70&gt;
 </pre></div>
 </div>
 <p>Make a plot of the total number of storms per 1 degree gridbox worldwide:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;number of storms&quot;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;plasma_r&#39;</span><span class="p">})</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_005.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_005.png" />
+<img alt="Number of storms, Jan/01 – Dec/31 • 1851 – 2020" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_005.png" />
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
@@ -375,14 +375,14 @@ More Information:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;number of storms&quot;</span><span class="p">,</span><span class="n">thresh</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dv_min&#39;</span><span class="p">:</span><span class="mi">30</span><span class="p">},</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;plasma_r&#39;</span><span class="p">})</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_006.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_006.png" />
+<img alt="Number of storms ≥ 30kt / 24hr, Jan/01 – Dec/31 • 1851 – 2020" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_006.png" />
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
 --&gt; Generating plot
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  10.753 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  2.282 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-trackdataset-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/8e0af267200996c0b90c20030c99ca74/tracks.TrackDataset.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.TrackDataset.py</span></code></a></p>

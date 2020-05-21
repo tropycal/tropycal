@@ -53,7 +53,7 @@ HURDAT data is not available for the most recent hurricane seasons. To include t
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.38 seconds)
+    --> Completed reading in HURDAT2 data (2.52 seconds)
 
 
 
@@ -224,6 +224,7 @@ Note that you can pass various arguments to the plot function, such as customizi
 
 
 .. image:: /examples/images/sphx_glr_tracks.storm_001.png
+    :alt: Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE
     :class: sphx-glr-single-img
 
 
@@ -238,7 +239,7 @@ Note that you can pass various arguments to the plot function, such as customizi
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bbda63a58>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa66f932470>
 
 
 
@@ -265,7 +266,7 @@ Note: There is currently a bug with this function that outputs 2 axes, a filled 
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/storm.py:1236: UserWarning: Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run "TrackDataset.assign_storm_tornadoes()" to avoid this warning in the future.
       warnings.warn(warn_message)
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (13.15 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.90 seconds)
 
 
 
@@ -381,6 +382,7 @@ Let's plot Michael's second forecast cone:
 
 
 .. image:: /examples/images/sphx_glr_tracks.storm_002.png
+    :alt: Potential Tropical Cyclone FOURTEEN, 30 mph • 1004 hPa • Forecast #2 Forecast Issued: 0300 UTC 07 Oct 2018
     :class: sphx-glr-single-img
 
 
@@ -395,7 +397,7 @@ Let's plot Michael's second forecast cone:
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bd2dfa1d0>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa671130780>
 
 
 
@@ -413,6 +415,7 @@ Note that the observed track here differs from the HURDAT2 track plotted previou
 
 
 .. image:: /examples/images/sphx_glr_tracks.storm_003.png
+    :alt: Hurricane MICHAEL, 110 mph • 965 hPa • Forecast #12 Forecast Issued: 1500 UTC 09 Oct 2018
     :class: sphx-glr-single-img
 
 
@@ -427,7 +430,7 @@ Note that the observed track here differs from the HURDAT2 track plotted previou
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bb7b48128>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa66ac480f0>
 
 
 
@@ -459,7 +462,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (43.25 seconds)
+    --> Completed reading in ibtracs data (40.09 seconds)
 
 
 
@@ -481,6 +484,7 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
 
 
 .. image:: /examples/images/sphx_glr_tracks.storm_004.png
+    :alt: Super Typhoon HAIYAN, 03 Nov 2013 – 11 Nov 2013 170 kt • 895 hPa • 38.2 ACE
     :class: sphx-glr-single-img
 
 
@@ -491,7 +495,7 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bb7b50588>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa66ac340f0>
 
 
 
@@ -510,6 +514,7 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
 
 
 .. image:: /examples/images/sphx_glr_tracks.storm_005.png
+    :alt: Cyclone CATARINA, 24 Mar 2004 – 28 Mar 2004 85 kt • 972 hPa • 7.4 ACE
     :class: sphx-glr-single-img
 
 
@@ -520,7 +525,7 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bb6dcc208>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa66fca1d30>
 
 
 
@@ -529,7 +534,7 @@ If we were to read in IBTrACS without setting ``Catarina=True`` (which sets it t
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  22.646 seconds)
+   **Total running time of the script:** ( 1 minutes  13.777 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.storm.py:

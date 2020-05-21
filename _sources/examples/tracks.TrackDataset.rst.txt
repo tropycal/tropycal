@@ -55,7 +55,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.37 seconds)
+    --> Completed reading in HURDAT2 data (2.47 seconds)
 
 
 
@@ -158,6 +158,7 @@ Note that you can pass various arguments to the plot function, such as customizi
 
 
 .. image:: /examples/images/sphx_glr_tracks.TrackDataset_001.png
+    :alt: Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE
     :class: sphx-glr-single-img
 
 
@@ -172,7 +173,7 @@ Note that you can pass various arguments to the plot function, such as customizi
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bb6da6278>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa66a02b400>
 
 
 
@@ -269,12 +270,14 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
     *
 
       .. image:: /examples/images/sphx_glr_tracks.TrackDataset_002.png
-            :class: sphx-glr-multi-img
+          :alt: Maximum wind (kt), Jan/01 – Dec/31 • 1851 – 2019
+          :class: sphx-glr-multi-img
 
     *
 
       .. image:: /examples/images/sphx_glr_tracks.TrackDataset_003.png
-            :class: sphx-glr-multi-img
+          :alt: Average wind (kt) change in 24 hours, middle ≥ 5 storms/bin, Jan/01 – Dec/31 • 1851 – 2019
+          :class: sphx-glr-multi-img
 
 
 .. rst-class:: sphx-glr-script-out
@@ -300,7 +303,7 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
       return thresh,lambda x: np.nanmean(x)
     --> Generating plot
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bba4a55c0>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa66f7b8cc0>
 
 
 
@@ -332,7 +335,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (42.56 seconds)
+    --> Completed reading in ibtracs data (39.77 seconds)
 
 
 
@@ -351,6 +354,7 @@ Let's make a plot of the maximum sustained wind of TCs globally:
 
 
 .. image:: /examples/images/sphx_glr_tracks.TrackDataset_004.png
+    :alt: Maximum wind (kt), Jan/01 – Dec/31 • 1851 – 2020
     :class: sphx-glr-single-img
 
 
@@ -364,7 +368,7 @@ Let's make a plot of the maximum sustained wind of TCs globally:
     --> Grouping by lat/lon/storm
     --> Generating plot
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f5bb9d46080>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fa66d203b70>
 
 
 
@@ -380,6 +384,7 @@ Make a plot of the total number of storms per 1 degree gridbox worldwide:
 
 
 .. image:: /examples/images/sphx_glr_tracks.TrackDataset_005.png
+    :alt: Number of storms, Jan/01 – Dec/31 • 1851 – 2020
     :class: sphx-glr-single-img
 
 
@@ -407,6 +412,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 
 .. image:: /examples/images/sphx_glr_tracks.TrackDataset_006.png
+    :alt: Number of storms ≥ 30kt / 24hr, Jan/01 – Dec/31 • 1851 – 2020
     :class: sphx-glr-single-img
 
 
@@ -426,7 +432,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 6 minutes  10.753 seconds)
+   **Total running time of the script:** ( 6 minutes  2.282 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:

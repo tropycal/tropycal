@@ -2431,14 +2431,14 @@ class TrackDataset:
         if thresh['p_max']<9999:
             p = p.loc[(p['mslp']<=thresh['p_max'])]
         if doInterp:
-            if thresh['dv_min']>0:
+            if thresh['dv_min']>-9999:
                 p = p.loc[(p['dvmax_dt']>=thresh['dv_min'])]
             if thresh['dp_max']<9999:
-                p = p.loc[(p['dmslp_dt']>=thresh['dp_max'])]
+                p = p.loc[(p['dmslp_dt']<=thresh['dp_max'])]
             if thresh['dv_max']<9999:
                 p = p.loc[(p['dvmax_dt']<=thresh['dv_max'])]
-            if thresh['dp_min']>0:
-                p = p.loc[(p['dmslp_dt']<=thresh['dp_min'])]
+            if thresh['dp_min']>-9999:
+                p = p.loc[(p['dmslp_dt']>=thresh['dp_min'])]
             
         if return_keys:
             return [g[0] for g in p.groupby("stormid")]

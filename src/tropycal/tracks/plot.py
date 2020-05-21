@@ -1442,7 +1442,7 @@ class TrackPlot(Plot):
         """
         
         #Set default properties
-        default_prop={'cmap':'category','levels':(np.nanmin(zcoord),np.nanmax(zcoord)),\
+        default_prop={'cmap':'category','levels':None,\
                       'left_title':'','right_title':'All storms'}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
@@ -1468,6 +1468,12 @@ class TrackPlot(Plot):
         except:
             varname = 'date'
 
+        if VEC_FLAG:
+            vecmag = np.hypot(*zcoord)
+            if prop['levels'] is None:
+                prop['levels'] = (np.nanmin(vecmag),np.nanmax(vecmag))
+        elif prop['levels'] is None:
+            prop['levels'] = (np.nanmin(zcoord),np.nanmax(zcoord))
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
 
         if len(clevs)==2:
@@ -1491,19 +1497,17 @@ class TrackPlot(Plot):
             xcoord,ycoord = np.meshgrid(xcoord,ycoord)
         
         if VEC_FLAG:
-            mag = np.hypot(*zcoord)
             binsize = abs(xcoord[0,0]-xcoord[0,1])
-            clevs = [np.nanmin(mag),np.nanmax(mag)]
-            cbmap = self.ax.pcolor(xcoord,ycoord,mag,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+            cbmap = self.ax.pcolor(xcoord,ycoord,vecmag,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
                                transform=ccrs.PlateCarree())            
-            zcoord = zcoord/mag*binsize
+            zcoord = zcoord/vecmag*binsize
             x_center = (xcoord[:-1,:-1]+xcoord[1:,1:])*.5
             y_center = (ycoord[:-1,:-1]+ycoord[1:,1:])*.5
             u = zcoord[0][:-1,:-1]
             v = zcoord[1][:-1,:-1]
             self.ax.quiver(x_center,y_center,u,v,color='w',alpha=0.6,transform=ccrs.PlateCarree(),\
                            pivot='mid',width=.001*binsize,headwidth=3.5,headlength=4.5,headaxislength=4)
-            zcoord = mag
+            zcoord = vecmag
         
         else:
             print('--> Generating plot')

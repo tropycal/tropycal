@@ -52,7 +52,7 @@ Let's start by creating an instance of a TornadoDataset object. By default, this
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.75 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.88 seconds)
 
 
 
@@ -91,7 +91,7 @@ We can use a TornadoDataset object to analyze both tornadoes associated with tro
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7ff4cb9eeb38>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f3549c81b70>
 
 
 
@@ -116,7 +116,7 @@ We can also use TornadoDataset to assess tornadoes associated with tropical cycl
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.59 seconds)
+    --> Completed reading in HURDAT2 data (2.66 seconds)
 
 
 
@@ -144,9 +144,9 @@ This code block will take a while to run, as it will iterate over every storm in
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.69 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.82 seconds)
     --> Starting to assign tornadoes to storms
-    --> Completed assigning tornadoes to storm (124.56 seconds)
+    --> Completed assigning tornadoes to storm (121.77 seconds)
 
 
 
@@ -176,7 +176,7 @@ Most tornadoes associated with tropical cyclones occur in the front right quadra
  .. code-block:: none
 
 
-    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7ff4c9d58e80>}
+    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7f3547febe80>}
 
 
 
@@ -203,7 +203,7 @@ We can also make the same plot for a composite subset of tropical cyclones, give
  .. code-block:: none
 
 
-    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7ff4c9ab03c8>}
+    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7f3547d43358>}
 
 
 
@@ -256,7 +256,7 @@ Let's plot all the tornado tracks, and daily PPH, associated with Hurricane Ivan
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7ff4c9a162b0>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f3547ca8748>
 
 
 
@@ -282,14 +282,14 @@ Let's make a plot of the tornadoes in storm motion relative coordinates:
  .. code-block:: none
 
 
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7ff4c997f9e8>
+    <matplotlib.axes._subplots.AxesSubplot object at 0x7f3547c12ba8>
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  36.190 seconds)
+   **Total running time of the script:** ( 2 minutes  33.568 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.tornado.py:

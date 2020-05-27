@@ -1,0 +1,12 @@
+classify_subtropical
+===================================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: classify_subtropical
+
+.. include:: tropycal.utils.classify_subtropical.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

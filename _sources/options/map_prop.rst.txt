@@ -40,8 +40,8 @@ The following table lists options that can be passed to the "map_prop" argument 
 
 .. _options-prop:
 
-Prop
-====
+Tracks Properties
+=================
 
 The following sections lists options that can be passed to the "prop" argument as a dictionary. A sample usage block is included below:
 
@@ -115,6 +115,9 @@ The following properties are available only for the ``tropycal.tracks.TrackDatas
 
 .. _options-prop-recon-plot:
 
+Recon Properties
+================
+
 plot_points
 -----------
 
@@ -137,8 +140,8 @@ The following properties are available only for the ``tropycal.recon.ReconDatase
 
 .. _options-prop-recon-swath:
 
-plot_swath
-----------
+plot_swath and plot_map
+-----------------------
 
 The following properties are available only for the ``tropycal.recon.ReconDataset.plot_swath()`` and ``tropycal.recon.ReconDataset.plot_map()`` functions.
 
@@ -158,3 +161,23 @@ The following properties are available only for the ``tropycal.recon.ReconDatase
      - Title string for the right side of the plot. Default is 'All storms'.
    * - pcolor
      - Boolean for whether to use ``matplotlib.pyplot.pcolor()`` if set to True (default). If False, uses ``matplotlib.pyplot.contourf()``.
+
+.. _options-prop-recon-hovmoller:
+
+plot_hovmoller
+--------------
+
+The following properties are available only for the ``tropycal.recon.ReconDataset.plot_hovmoller()`` function.
+
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Property
+     - Description
+   * - cmap
+     - Colormap to use for the plot. If string 'category' is passed (default), uses a pre-defined color scale corresponding to the Saffir-Simpson Hurricane Wind Scale.
+   * - levels
+     - Levels for the color scale. If None (default), these are automatically generated.
+   * - smooth_contourf
+     - Boolean determining whether to draw a smooth contourfill plot (True, default) or discrete intervals (False).

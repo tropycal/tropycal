@@ -1,0 +1,12 @@
+get_basin
+========================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: get_basin
+
+.. include:: tropycal.utils.get_basin.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

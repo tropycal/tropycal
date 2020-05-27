@@ -193,7 +193,7 @@
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (2.58 seconds)
+--&gt; Completed reading in HURDAT2 data (2.56 seconds)
 </pre></div>
 </div>
 </div>
@@ -303,7 +303,7 @@ Attributes:
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
   warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f6c1ae68898&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fc6b6c724e0&gt;
 </pre></div>
 </div>
 <p>Plot the tornado tracks associated with Michael, along with the accompanying daily practically perfect forecast (PPH):</p>
@@ -312,10 +312,10 @@ Attributes:
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/storm.py:1236: UserWarning: Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run &quot;TrackDataset.assign_storm_tornadoes()&quot; to avoid this warning in the future.
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/storm.py:1239: UserWarning: Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run &quot;TrackDataset.assign_storm_tornadoes()&quot; to avoid this warning in the future.
   warnings.warn(warn_message)
 --&gt; Starting to read in tornado track data
---&gt; Completed reading in tornado data for 1950-2018 (9.00 seconds)
+--&gt; Completed reading in tornado data for 1950-2018 (8.90 seconds)
 </pre></div>
 </div>
 <p>If this storm was ever in NHC’s area of responsibility, you can retrieve operational NHC forecast data for this event provided it is available. Forecast discussions date back to 1992, and forecast tracks date back to 1954.</p>
@@ -410,7 +410,7 @@ NNNN
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
   warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f6c3385a5c0&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fc6b817b470&gt;
 </pre></div>
 </div>
 <p>Now let’s look at the 12th forecast for Michael.</p>
@@ -425,7 +425,7 @@ NNNN
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
   warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f6c1ae22400&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fc6afff77b8&gt;
 </pre></div>
 </div>
 </div>
@@ -441,7 +441,7 @@ NNNN
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in ibtracs data
---&gt; Completed reading in ibtracs data (42.03 seconds)
+--&gt; Completed reading in ibtracs data (40.43 seconds)
 </pre></div>
 </div>
 <p>The functionality for handling storms in IBTrACS is the same as with using HURDAT2, the only limitation being no NHC and operational model data can be accessed when using IBTrACS as the data source.</p>
@@ -452,7 +452,7 @@ NNNN
 </div>
 <img alt="Super Typhoon HAIYAN, 03 Nov 2013 – 11 Nov 2013 170 kt • 895 hPa • 38.2 ACE" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_004.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f6c1ae37940&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fc6b76dd828&gt;
 </pre></div>
 </div>
 <p><a class="reference external" href="https://en.wikipedia.org/wiki/Hurricane_Catarina">Cyclone Catarina</a> (2004) was an extremely rare hurricane-force tropical cyclone that developed in the South Atlantic basin, which normally doesn’t see tropical cyclone activity, and subsequently made landfall in Brazil. The “Catarina” name is unofficial; it was not assigned a name in real time, and JTWC assigned it the ID “AL502004”. Recall that when reading in the IBTrACS dataset previously, we set <code class="docutils literal notranslate"><span class="pre">Catarina=True</span></code>. This read in data for Cyclone Catarina from a special post-storm reanalysis from McTaggart-Cowan et al. (2006). Let’s make a plot of Catarina’s observed track and intensity per this reanalysis:</p>
@@ -462,11 +462,11 @@ NNNN
 </div>
 <img alt="Cyclone CATARINA, 24 Mar 2004 – 28 Mar 2004 85 kt • 972 hPa • 7.4 ACE" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.storm_005.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f6c1b1d05f8&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fc6b6fb7080&gt;
 </pre></div>
 </div>
 <p>If we were to read in IBTrACS without setting <code class="docutils literal notranslate"><span class="pre">Catarina=True</span></code> (which sets it to False by default) and plot the track for “AL502004”, we would get a noticeably different (shorter) and weaker track.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  16.714 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  14.330 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-storm-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/a7588acf5ac89aa72efd0525273570d7/tracks.storm.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.storm.py</span></code></a></p>

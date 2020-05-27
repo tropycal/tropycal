@@ -1,0 +1,12 @@
+get_colors_pph
+=============================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: get_colors_pph
+
+.. include:: tropycal.utils.get_colors_pph.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

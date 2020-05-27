@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.html">RealtimeStorm</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
 </li>
@@ -180,16 +181,14 @@
 <dl class="py class">
 <dt id="tropycal.realtime.Realtime">
 <em class="property">class </em><code class="sig-prename descclassname">tropycal.realtime.</code><code class="sig-name descname">Realtime</code><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.Realtime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates an instance of a Realtime object containing currently active tropical cyclones. Only available for areas in NHC’s area of responsibility.</p>
-<p>If there are active storms currently, a Storm object is stored as an attribute of Realtime, and can be retrieved fore example as “realtime.AL012020”.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">realtime</span> <span class="o">=</span> <span class="n">Realtime</span><span class="p">()</span> <span class="c1">#Create an instance of a Realtime object</span>
-<span class="n">storm</span> <span class="o">=</span> <span class="n">realtime</span><span class="o">.</span><span class="n">AL012020</span> <span class="c1">#One method of retrieving a RealtimeStorm object</span>
-<span class="n">storm</span> <span class="o">=</span> <span class="n">realtime</span><span class="p">[</span><span class="s1">&#39;AL012020&#39;</span><span class="p">]</span> <span class="c1">#Another method of retrieving a RealtimeStorm object</span>
-</pre></div>
-</div>
+<dd><p>Creates an instance of a Realtime object containing currently active tropical cyclones.</p>
+<p>Realtime objects are used to retrieve RealtimeStorm objects, which are created for every active tropical cyclone globally upon creating an instance of Realtime.</p>
+<p>Data sources are as follows:
+National Hurricane Center: <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/btk/">https://ftp.nhc.noaa.gov/atcf/btk/</a>
+Joint Typhoon Warning Center: <a class="reference external" href="http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/">http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>Realtime</em> – An instance of Realtime.</p>
+<dd class="field-odd"><p><em>tropycal.realtime.Realtime</em> – An instance of Realtime.</p>
 </dd>
 </dl>
 <p class="rubric">Methods Summary</p>

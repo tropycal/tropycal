@@ -1,0 +1,12 @@
+accumulated_cyclone_energy
+=========================================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: accumulated_cyclone_energy
+
+.. include:: tropycal.utils.accumulated_cyclone_energy.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

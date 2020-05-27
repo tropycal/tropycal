@@ -1,0 +1,659 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tropycal.utils.generic_utils &mdash; tropycal </title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/logo_32.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">Data Sources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tropycal.utils.generic_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tropycal.utils.generic_utils</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Utility functions that are used across modules.</span>
+
+<span class="sd">Ensure these do not reference any function from colors.py. If a function does need to reference another function from colors.py,</span>
+<span class="sd">add it in that file.</span>
+
+<span class="sd">Public utility functions should be added to documentation in the &#39;/docs/_templates/overrides/tropycal.utils.rst&#39; file.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mlib</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="c1">#===========================================================================================================</span>
+<span class="c1"># Public utilities</span>
+<span class="c1"># These are used internally and have use externally. Add these to documentation.</span>
+<span class="c1">#===========================================================================================================</span>
+
+<div class="viewcode-block" id="wind_to_category"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.wind_to_category.html#tropycal.utils.wind_to_category">[docs]</a><span class="k">def</span> <span class="nf">wind_to_category</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert sustained wind speed in knots to Saffir-Simpson Hurricane Wind Scale category.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wind_speed : int</span>
+<span class="sd">        Sustained wind speed in knots.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Category corresponding to the sustained wind. 0 is tropical storm, -1 is tropical depression.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Category 5 hurricane</span>
+    <span class="k">if</span> <span class="n">wind_speed</span> <span class="o">&gt;=</span> <span class="mi">137</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">5</span>
+    
+    <span class="c1">#Category 4 hurricane</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&gt;=</span> <span class="mi">113</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">4</span>
+    
+    <span class="c1">#Category 3 hurricane</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&gt;=</span> <span class="mi">96</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">3</span>
+    
+    <span class="c1">#Category 2 hurricane</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&gt;=</span> <span class="mi">83</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">2</span>
+    
+    <span class="c1">#Category 1 hurricane</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&gt;=</span> <span class="mi">64</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    
+    <span class="c1">#Tropical storm</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&gt;=</span> <span class="mi">34</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    
+    <span class="c1">#Tropical depression</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+<div class="viewcode-block" id="category_to_wind"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.category_to_wind.html#tropycal.utils.category_to_wind">[docs]</a><span class="k">def</span> <span class="nf">category_to_wind</span><span class="p">(</span><span class="n">category</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert Saffir-Simpson Hurricane Wind Scale category to minimum threshold sustained wind speed in knots.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    category : int</span>
+<span class="sd">        Saffir-Simpson Hurricane Wind Scale category. Use 0 for tropical storm, -1 for tropical depression.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Sustained wind speed in knots corresponding to the minimum threshold of the requested category.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Construct dictionary of thresholds</span>
+    <span class="n">conversion</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span>
+                  <span class="mi">0</span><span class="p">:</span><span class="mi">34</span><span class="p">,</span>
+                  <span class="mi">1</span><span class="p">:</span><span class="mi">64</span><span class="p">,</span>
+                  <span class="mi">2</span><span class="p">:</span><span class="mi">83</span><span class="p">,</span>
+                  <span class="mi">3</span><span class="p">:</span><span class="mi">96</span><span class="p">,</span>
+                  <span class="mi">4</span><span class="p">:</span><span class="mi">113</span><span class="p">,</span>
+                  <span class="mi">5</span><span class="p">:</span><span class="mi">137</span><span class="p">}</span>
+    
+    <span class="c1">#Return category</span>
+    <span class="k">return</span> <span class="n">conversion</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">category</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="classify_subtropical"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.classify_subtropical.html#tropycal.utils.classify_subtropical">[docs]</a><span class="k">def</span> <span class="nf">classify_subtropical</span><span class="p">(</span><span class="n">storm_type</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine whether a tropical cyclone was purely subtropical.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    storm_type : list or numpy.ndarray</span>
+<span class="sd">        List or array containing storm types.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        Boolean identifying whether the tropical cyclone was purely subtropical.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Ensure storm_type is a numpy array</span>
+    <span class="n">storm_type_check</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">storm_type</span><span class="p">)</span>
+    
+    <span class="c1">#Ensure all storm types are uppercase</span>
+    <span class="n">storm_track_check</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">storm_type_check</span><span class="p">]</span>
+    
+    <span class="c1">#Check for subtropical depression status</span>
+    <span class="k">if</span> <span class="s1">&#39;SD&#39;</span> <span class="ow">in</span> <span class="n">storm_type_check</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;SD&#39;</span> <span class="ow">in</span> <span class="n">storm_type_check</span> <span class="ow">and</span> <span class="kc">True</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">storm_type_check</span><span class="p">,[</span><span class="s1">&#39;TD&#39;</span><span class="p">,</span><span class="s1">&#39;TS&#39;</span><span class="p">,</span><span class="s1">&#39;HU&#39;</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    
+    <span class="c1">#Check for subtropical storm status</span>
+    <span class="k">if</span> <span class="s1">&#39;SS&#39;</span> <span class="ow">in</span> <span class="n">storm_type_check</span> <span class="ow">and</span> <span class="kc">True</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">storm_type_check</span><span class="p">,[</span><span class="s1">&#39;TD&#39;</span><span class="p">,</span><span class="s1">&#39;TS&#39;</span><span class="p">,</span><span class="s1">&#39;HU&#39;</span><span class="p">]):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    
+    <span class="c1">#Otherwise, it was a tropical cyclone at some point in its life cycle</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="get_storm_classification"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.get_storm_classification.html#tropycal.utils.get_storm_classification">[docs]</a><span class="k">def</span> <span class="nf">get_storm_classification</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">,</span><span class="n">subtropical_flag</span><span class="p">,</span><span class="n">basin</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve the tropical cyclone classification given its subtropical status and current basin.</span>
+<span class="sd">    </span>
+<span class="sd">    Warning: This function currently does not differentiate between 1-minute, 3-minute and 10-minute sustained wind speeds.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wind_speed : int</span>
+<span class="sd">        Integer denoting sustained wind speed in knots.</span>
+<span class="sd">    subtropical_flag : bool</span>
+<span class="sd">        Boolean denoting whether the cyclone is subtropical or not.</span>
+<span class="sd">    basin : str</span>
+<span class="sd">        String denoting basin in which the tropical cyclone is located.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        String denoting the classification of the tropical cyclone.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#North Atlantic and East Pacific basins</span>
+    <span class="k">if</span> <span class="n">basin</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="s1">&#39;east_pacific&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">wind_speed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Unknown&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">34</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">subtropical_flag</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;Subtropical Depression&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;Tropical Depression&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">63</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">subtropical_flag</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;Subtropical Storm&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;Tropical Storm&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Hurricane&quot;</span>
+    
+    <span class="c1">#West Pacific basin</span>
+    <span class="k">elif</span> <span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;west_pacific&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">wind_speed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Unknown&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">34</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">subtropical_flag</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;Subtropical Depression&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;Tropical Depression&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">63</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">subtropical_flag</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;Subtropical Storm&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;Tropical Storm&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">120</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Typhoon&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Super Typhoon&quot;</span>
+    
+    <span class="c1">#Australia and South Pacific basins</span>
+    <span class="k">elif</span> <span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;australia&#39;</span> <span class="ow">or</span> <span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;south_pacific&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">wind_speed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Unknown&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">63</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Tropical Cyclone&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Severe Tropical Cyclone&quot;</span>
+    
+    <span class="c1">#North Indian Ocean</span>
+    <span class="k">elif</span> <span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;north_indian&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">wind_speed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Unknown&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">28</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Depression&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">34</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Deep Depression&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">48</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Cyclonic Storm&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">64</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Severe Cyclonic Storm&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">90</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Very Severe Cyclonic Storm&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">120</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Extremely Severe Cyclonic Storm&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Super Cyclonic Storm&quot;</span>
+    
+    <span class="c1">#South Indian Ocean</span>
+    <span class="k">elif</span> <span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;south_indian&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">wind_speed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Unknown&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">28</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Tropical Disturbance&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">34</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Tropical Depression&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">48</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Moderate Tropical Storm&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">64</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Severe Tropical Storm&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">90</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Tropical Cyclone&quot;</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">115</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Intense Tropical Cyclone&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Very Intense Tropical Cyclone&quot;</span>
+    
+    <span class="c1">#Otherwise, return a generic &quot;Cyclone&quot; classification</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Cyclone&quot;</span></div>
+
+<div class="viewcode-block" id="get_storm_type"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.get_storm_type.html#tropycal.utils.get_storm_type">[docs]</a><span class="k">def</span> <span class="nf">get_storm_type</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">,</span><span class="n">subtropical_flag</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve the 2-character tropical cyclone type given its subtropical status.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wind_speed : int</span>
+<span class="sd">        Integer denoting sustained wind speed in knots.</span>
+<span class="sd">    subtropical_flag : bool</span>
+<span class="sd">        Boolean denoting whether the cyclone is subtropical or not.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        String denoting the tropical cyclone type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Tropical depression</span>
+    <span class="k">if</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">34</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">subtropical_flag</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;SD&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;TD&quot;</span>
+    
+    <span class="c1">#Tropical storm</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">63</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">subtropical_flag</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;SS&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;TS&quot;</span>
+    
+    <span class="c1">#Hurricane</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;HU&quot;</span></div>
+
+<div class="viewcode-block" id="get_basin"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.get_basin.html#tropycal.utils.get_basin">[docs]</a><span class="k">def</span> <span class="nf">get_basin</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">storm_id</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the current basin of the tropical cyclone.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lat : int or float</span>
+<span class="sd">        Latitude of the storm.</span>
+<span class="sd">    lon : int or float</span>
+<span class="sd">        Longitude of the storm.</span>
+<span class="sd">    </span>
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    storm_id : str</span>
+<span class="sd">        String representing storm ID. Used to distinguish between Atlantic and Pacific basins.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        String representing the current basin.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Error check</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span><span class="nb">float</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">lat</span><span class="se">\&quot;</span><span class="s2"> must be of type int or float.&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span><span class="nb">float</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">lon</span><span class="se">\&quot;</span><span class="s2"> must be of type int or float.&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    
+    <span class="c1">#Fix longitude</span>
+    <span class="k">if</span> <span class="n">lon</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span> <span class="n">lon</span> <span class="o">=</span> <span class="n">lon</span> <span class="o">+</span> <span class="mf">360.0</span>
+    
+    <span class="c1">#Northern hemisphere check</span>
+    <span class="k">if</span> <span class="n">lat</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="n">lon</span> <span class="o">&lt;</span> <span class="mf">100.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;north_indian&quot;</span>
+        <span class="k">elif</span> <span class="n">lon</span> <span class="o">&lt;</span> <span class="mf">180.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;west_pacific&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">storm_id</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">9</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot determine whether storm is in North Atlantic or East Pacific basins.&quot;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">storm_id</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;AL&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;north_atlantic&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;north_pacific&quot;</span>
+    
+    <span class="c1">#Southern hemisphere check</span>
+    <span class="k">else</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="n">lon</span> <span class="o">&lt;</span> <span class="mf">20.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;south_atlantic&quot;</span>
+        <span class="k">elif</span> <span class="n">lon</span> <span class="o">&lt;</span> <span class="mf">90.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;south_indian&quot;</span>
+        <span class="k">elif</span> <span class="n">lon</span> <span class="o">&lt;</span> <span class="mf">160.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;australia&quot;</span>
+        <span class="k">elif</span> <span class="n">lon</span> <span class="o">&lt;</span> <span class="mf">280.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;south_pacific&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;south_atlantic&quot;</span></div>
+
+<span class="k">def</span> <span class="nf">knots_to_mph</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert wind from knots to miles per hour, in increments of 5 as used by NHC.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wind_speed : int</span>
+<span class="sd">        Sustained wind in knots.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Sustained wind in miles per hour.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Ensure input is rounded down to nearest multiple of 5</span>
+    <span class="n">wind_speed</span> <span class="o">=</span> <span class="n">wind_speed</span> <span class="o">-</span> <span class="p">(</span><span class="n">wind_speed</span> <span class="o">%</span> <span class="mi">5</span><span class="p">)</span>
+
+    <span class="c1">#Define knots and mph conversions</span>
+    <span class="n">kts</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">55</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">65</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">85</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">105</span><span class="p">,</span><span class="mi">110</span><span class="p">,</span><span class="mi">115</span><span class="p">,</span><span class="mi">120</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">130</span><span class="p">,</span><span class="mi">135</span><span class="p">,</span><span class="mi">140</span><span class="p">,</span><span class="mi">145</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">155</span><span class="p">,</span><span class="mi">160</span><span class="p">,</span><span class="mi">165</span><span class="p">,</span><span class="mi">170</span><span class="p">,</span><span class="mi">175</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">185</span><span class="p">]</span>
+    <span class="n">mphs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">65</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">85</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">105</span><span class="p">,</span><span class="mi">110</span><span class="p">,</span><span class="mi">115</span><span class="p">,</span><span class="mi">120</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">130</span><span class="p">,</span><span class="mi">140</span><span class="p">,</span><span class="mi">145</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">155</span><span class="p">,</span><span class="mi">160</span><span class="p">,</span><span class="mi">165</span><span class="p">,</span><span class="mi">175</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">185</span><span class="p">,</span><span class="mi">190</span><span class="p">,</span><span class="mi">195</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">205</span><span class="p">,</span><span class="mi">210</span><span class="p">]</span>
+    
+    <span class="c1">#If value is in list, return converted value</span>
+    <span class="k">if</span> <span class="n">wind_speed</span> <span class="ow">in</span> <span class="n">kts</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mphs</span><span class="p">[</span><span class="n">kts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">)]</span>
+    
+    <span class="c1">#Otherwise, return original value</span>
+    <span class="k">return</span> <span class="n">wind_speed</span>
+
+<div class="viewcode-block" id="accumulated_cyclone_energy"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.accumulated_cyclone_energy.html#tropycal.utils.accumulated_cyclone_energy">[docs]</a><span class="k">def</span> <span class="nf">accumulated_cyclone_energy</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">,</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate Cccumulated Cyclone Energy (ACE) based on sustained wind speed in knots.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wind_speed : int</span>
+<span class="sd">        Sustained wind in knots.</span>
+<span class="sd">    hours : int, optional</span>
+<span class="sd">        Duration in hours over which the sustained wind was observed. Default is 6 hours.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Accumulated cyclone energy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Calculate ACE</span>
+    <span class="n">ace</span> <span class="o">=</span> <span class="p">((</span><span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">wind_speed</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">hours</span><span class="o">/</span><span class="mf">6.0</span><span class="p">)</span>
+    
+    <span class="c1">#Return ACE</span>
+    <span class="k">return</span> <span class="n">ace</span></div>
+
+<span class="c1">#===========================================================================================================</span>
+<span class="c1"># Private utilities</span>
+<span class="c1"># These are primarily intended to be used internally. Do not add these to documentation.</span>
+<span class="c1">#===========================================================================================================</span>
+
+<span class="k">def</span> <span class="nf">all_nan</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine whether the entire array is filled with NaNs.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : list or numpy.ndarray</span>
+<span class="sd">        List or array to be checked.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        Returns whether the array is filled with all NaNs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Convert array to numpy array</span>
+    <span class="n">arr_copy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    
+    <span class="c1">#Check if there are non-NaN values in the array</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr_copy</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">arr_copy</span><span class="p">)])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<span class="k">def</span> <span class="nf">category_label_to_wind</span><span class="p">(</span><span class="n">category</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert Saffir-Simpson Hurricane Wind Scale category label to minimum threshold sustained wind speed in knots. Internal function.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    category : int</span>
+<span class="sd">        Saffir-Simpson Hurricane Wind Scale category. Use 0 for tropical storm, -1 for tropical depression.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Sustained wind speed in knots corresponding to the minimum threshold of the requested category.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Convert category to lowercase</span>
+    <span class="n">category_lowercase</span> <span class="o">=</span> <span class="n">category</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    
+    <span class="c1">#Return thresholds based on category label</span>
+    <span class="k">if</span> <span class="n">category_lowercase</span> <span class="o">==</span> <span class="s1">&#39;td&#39;</span> <span class="ow">or</span> <span class="n">category_lowercase</span> <span class="o">==</span> <span class="s1">&#39;sd&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">category_lowercase</span> <span class="o">==</span> <span class="s1">&#39;ts&#39;</span> <span class="ow">or</span> <span class="n">category_lowercase</span> <span class="o">==</span> <span class="s1">&#39;ss&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">category_lowercase</span> <span class="o">==</span> <span class="s1">&#39;c1&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">category_lowercase</span> <span class="o">==</span> <span class="s1">&#39;c2&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">category_lowercase</span> <span class="o">==</span> <span class="s1">&#39;c3&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">category_lowercase</span> <span class="o">==</span> <span class="s1">&#39;c4&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

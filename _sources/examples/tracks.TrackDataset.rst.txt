@@ -55,7 +55,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.56 seconds)
+    --> Completed reading in HURDAT2 data (2.61 seconds)
 
 
 
@@ -173,7 +173,7 @@ Note that you can pass various arguments to the plot function, such as customizi
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f6c1b05f198>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fc6b015d5c0>
 
 
 
@@ -270,13 +270,13 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
     *
 
       .. image:: /examples/images/sphx_glr_tracks.TrackDataset_002.png
-          :alt: Maximum wind (kt), Jan/01 – Dec/31 • 1851 – 2019
+          :alt: Maximum wind (kt), Jan 01 – Dec 31 • 1851 – 2019
           :class: sphx-glr-multi-img
 
     *
 
       .. image:: /examples/images/sphx_glr_tracks.TrackDataset_003.png
-          :alt: Average wind (kt) change in 24 hours, middle ≥ 5 storms/bin, Jan/01 – Dec/31 • 1851 – 2019
+          :alt: Average wind (kt) change in 24 hours, middle ≥ 5 storms/bin, Jan 01 – Dec 31 • 1851 – 2019
           :class: sphx-glr-multi-img
 
 
@@ -288,10 +288,10 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
 
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:44: RuntimeWarning: All-NaN slice encountered
-      return thresh,lambda x: np.nanmax(x)
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:44: RuntimeWarning: All-NaN axis encountered
-      return thresh,lambda x: np.nanmax(x)
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:101: RuntimeWarning: All-NaN slice encountered
+      return thresh, lambda x: np.nanmax(x)
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:101: RuntimeWarning: All-NaN axis encountered
+      return thresh, lambda x: np.nanmax(x)
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
       warnings.warn('The .xlabels_top attribute is deprecated. Please '
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
@@ -299,11 +299,11 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
     --> Generating plot
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:49: RuntimeWarning: Mean of empty slice
-      return thresh,lambda x: np.nanmean(x)
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:110: RuntimeWarning: Mean of empty slice
+      return thresh, lambda x: np.nanmean(x)
     --> Generating plot
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f6c16b17be0>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fc6b2e19748>
 
 
 
@@ -335,7 +335,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (40.76 seconds)
+    --> Completed reading in ibtracs data (40.45 seconds)
 
 
 
@@ -354,7 +354,7 @@ Let's make a plot of the maximum sustained wind of TCs globally:
 
 
 .. image:: /examples/images/sphx_glr_tracks.TrackDataset_004.png
-    :alt: Maximum wind (kt), Jan/01 – Dec/31 • 1851 – 2020
+    :alt: Maximum wind (kt), Jan 01 – Dec 31 • 1851 – 2020
     :class: sphx-glr-single-img
 
 
@@ -368,7 +368,7 @@ Let's make a plot of the maximum sustained wind of TCs globally:
     --> Grouping by lat/lon/storm
     --> Generating plot
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f6c16f2bfd0>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fc6b27c8080>
 
 
 
@@ -384,7 +384,7 @@ Make a plot of the total number of storms per 1 degree gridbox worldwide:
 
 
 .. image:: /examples/images/sphx_glr_tracks.TrackDataset_005.png
-    :alt: Number of storms, Jan/01 – Dec/31 • 1851 – 2020
+    :alt: Number of storms, Jan 01 – Dec 31 • 1851 – 2020
     :class: sphx-glr-single-img
 
 
@@ -412,7 +412,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 
 .. image:: /examples/images/sphx_glr_tracks.TrackDataset_006.png
-    :alt: Number of storms ≥ 30kt / 24hr, Jan/01 – Dec/31 • 1851 – 2020
+    :alt: Number of storms ≥ 30kt / 24hr, Jan 01 – Dec 31 • 1851 – 2020
     :class: sphx-glr-single-img
 
 
@@ -432,7 +432,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 6 minutes  8.789 seconds)
+   **Total running time of the script:** ( 6 minutes  19.707 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:

@@ -181,8 +181,10 @@
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn_message</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">.plot</span> <span class="kn">import</span> <span class="n">TornadoPlot</span>
+
+<span class="c1">#Import tools</span>
 <span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="c1">#from ...tropycal import tracks</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="o">*</span>
 
 <div class="viewcode-block" id="TornadoDataset"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset">[docs]</a><span class="k">class</span> <span class="nc">TornadoDataset</span><span class="p">():</span>
     
@@ -386,7 +388,7 @@
         <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">()</span>
         
         <span class="c1">#Default EF color scale</span>
-        <span class="n">EFcolors</span> <span class="o">=</span> <span class="n">ef_colors</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+        <span class="n">EFcolors</span> <span class="o">=</span> <span class="n">get_colors_ef</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
         
         <span class="c1">#Plot all tornado tracks in motion relative coords</span>
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">stormTors</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>

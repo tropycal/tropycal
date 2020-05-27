@@ -1,0 +1,12 @@
+get_storm_type
+=============================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: get_storm_type
+
+.. include:: tropycal.utils.get_storm_type.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

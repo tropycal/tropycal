@@ -1,0 +1,493 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tropycal.utils.colors &mdash; tropycal </title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/logo_32.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">Data Sources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tropycal.utils.colors</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tropycal.utils.colors</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Utility functions that are used across modules for colors.</span>
+
+<span class="sd">Public utility functions should be added to documentation in the &#39;/docs/_templates/overrides/tropycal.utils.rst&#39; file.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mlib</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">.generic_utils</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">#===========================================================================================================</span>
+<span class="c1"># Public utilities</span>
+<span class="c1"># These are used internally and have use externally. Add these to documentation.</span>
+<span class="c1">#===========================================================================================================</span>
+
+<div class="viewcode-block" id="get_colors_sshws"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.get_colors_sshws.html#tropycal.utils.get_colors_sshws">[docs]</a><span class="k">def</span> <span class="nf">get_colors_sshws</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve the default colors for the Saffir-Simpson Hurricane Wind Scale (SSHWS).</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wind_speed : int or list</span>
+<span class="sd">        Sustained wind speed in knots.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Hex string for the corresponding color.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#If category string passed, convert to wind</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">wind_speed</span> <span class="o">=</span> <span class="n">category_label_to_wind</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">)</span>
+    
+    <span class="c1">#Return default SSHWS category color scale</span>
+    <span class="k">if</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;#FFFFFF&#39;</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">34</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;#8FC2F2&#39;</span> <span class="c1">#&#39;#7DB7ED&#39;</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">64</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;#3185D3&#39;</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">83</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;#FFFF00&#39;</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">96</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;#FF9E00&#39;</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">113</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;#DD0000&#39;</span>
+    <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">137</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;#FF00FC&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;#8B0088&#39;</span></div>
+
+<span class="k">def</span> <span class="nf">make_colormap</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span><span class="n">whiten</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    
+    <span class="n">z</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">colors</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="n">n</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">z1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">zn</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">z1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">zn</span> <span class="o">-</span> <span class="n">z1</span><span class="p">)</span>
+    
+    <span class="n">CC</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">ColorConverter</span><span class="p">()</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">Ci</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">Ci</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">RGB</span> <span class="o">=</span> <span class="n">CC</span><span class="o">.</span><span class="n">to_rgb</span><span class="p">(</span><span class="n">Ci</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">RGB</span> <span class="o">=</span> <span class="n">Ci</span>
+        <span class="n">R</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RGB</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">RGB</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">whiten</span><span class="p">)</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RGB</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">RGB</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">whiten</span><span class="p">)</span>
+        <span class="n">B</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RGB</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">RGB</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">*</span><span class="n">whiten</span><span class="p">)</span>
+    
+    <span class="n">cmap_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">cmap_dict</span><span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="p">[(</span><span class="n">x0</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">))]</span>
+    <span class="n">cmap_dict</span><span class="p">[</span><span class="s1">&#39;green&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x0</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">G</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">G</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="p">))]</span>
+    <span class="n">cmap_dict</span><span class="p">[</span><span class="s1">&#39;blue&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="p">[(</span><span class="n">x0</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">))]</span>
+    <span class="n">mymap</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="p">(</span><span class="s1">&#39;mymap&#39;</span><span class="p">,</span><span class="n">cmap_dict</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">mymap</span>
+
+<div class="viewcode-block" id="get_colors_ef"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.get_colors_ef.html#tropycal.utils.get_colors_ef">[docs]</a><span class="k">def</span> <span class="nf">get_colors_ef</span><span class="p">(</span><span class="n">colormap</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve a list of colors for the Enhanced Fujita (EF) tornado scale.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    colormap : str or list</span>
+<span class="sd">        Matplotlib colormap to use. Default is &#39;default&#39;, which uses Tropycal&#39;s default colors for the EF scale. If a list, this list must have 6 colors in order from EF0 to EF5.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list or cmap</span>
+<span class="sd">        If used a matplotlib colormap, a cmap is returned, otherwise a list of colors is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Matplotlib colormap</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">colormap</span> <span class="o">!=</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">mlib</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">mlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="c1">#colors = [colormap]*6</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Colormap not found.&#39;</span><span class="p">)</span>
+    
+    <span class="c1">#User-passed list of colors</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">colormap</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must pass a list of 6 colors to correspond from EF0 to EF5.&#39;</span><span class="p">)</span>
+    
+    <span class="c1">#Otherwise, return default colors</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lightsalmon&#39;</span><span class="p">,</span><span class="s1">&#39;tomato&#39;</span><span class="p">,</span><span class="s1">&#39;red&#39;</span><span class="p">,</span><span class="s1">&#39;firebrick&#39;</span><span class="p">,</span><span class="s1">&#39;darkred&#39;</span><span class="p">,</span><span class="s1">&#39;purple&#39;</span><span class="p">]</span>
+    
+    <span class="c1">#Return list of colors, or colormap</span>
+    <span class="k">return</span> <span class="n">colors</span></div>
+
+<div class="viewcode-block" id="get_colors_pph"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.get_colors_pph.html#tropycal.utils.get_colors_pph">[docs]</a><span class="k">def</span> <span class="nf">get_colors_pph</span><span class="p">(</span><span class="n">plot_type</span><span class="p">,</span><span class="n">colormap</span><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve a list of colors for Practically Perfect Hindcast (PPH) for tornadoes.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    plot_type : str</span>
+<span class="sd">        Plot type for PPH. Can be &quot;daily&quot; for single-day PPH, or &quot;total&quot; for multi-day PPH.</span>
+<span class="sd">    colormap : str or list</span>
+<span class="sd">        Matplotlib colormap to use. Default is &#39;spc&#39;, which uses Tropycal&#39;s default colors for the EF scale. If a list, this list must have 6 colors in order from EF0 to EF5.</span>
+<span class="sd">    levels : list</span>
+<span class="sd">        List of contour levels. Default is SPC intervals.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    colors : list or cmap</span>
+<span class="sd">        If used a matplotlib colormap, a cmap is returned, otherwise a list of colors is returned.</span>
+<span class="sd">    levels : list</span>
+<span class="sd">        List of contour levels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Insert default levels if none specified</span>
+    <span class="k">if</span> <span class="n">levels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">100</span><span class="p">]</span>
+    
+    <span class="c1">#Default SPC colormap</span>
+    <span class="k">if</span> <span class="n">colormap</span> <span class="o">==</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
+        
+        <span class="c1">#Daily plot type</span>
+        <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s1">&#39;daily&#39;</span><span class="p">:</span>
+            <span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">100</span><span class="p">]</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#008B00&#39;</span><span class="p">,</span><span class="s1">&#39;#8B4726&#39;</span><span class="p">,</span><span class="s1">&#39;#FFC800&#39;</span><span class="p">,</span><span class="s1">&#39;#FF0000&#39;</span><span class="p">,</span><span class="s1">&#39;#FF00FF&#39;</span><span class="p">,</span><span class="s1">&#39;#912CEE&#39;</span><span class="p">,</span><span class="s1">&#39;#104E8B&#39;</span><span class="p">]</span>
+        
+        <span class="c1">#Multi-day plot type</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;SPC colors only allowed for daily PPH.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">+</span>\
+                          <span class="s1">&#39;Defaulting to plasma colormap.&#39;</span><span class="p">)</span>
+            <span class="n">colormap</span> <span class="o">=</span> <span class="s1">&#39;plasma&#39;</span>
+    
+    <span class="c1">#User-defined colormap</span>
+    <span class="k">if</span> <span class="n">colormap</span> <span class="o">!=</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
+        
+        <span class="c1">#Matplotlib colormap</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">mlib</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">mlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">))))</span>
+        
+        <span class="c1">#User defined list of colors</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">colormap</span>
+        
+        <span class="c1">#If a cmap is passed</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">mlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">colormap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">))))</span>
+    
+    <span class="c1">#Return colormap and values</span>
+    <span class="k">return</span> <span class="n">colors</span><span class="p">,</span> <span class="n">levels</span></div>
+
+<span class="c1">#===========================================================================================================</span>
+<span class="c1"># Private utilities</span>
+<span class="c1"># These are primarily intended to be used internally. Do not add these to documentation.</span>
+<span class="c1">#===========================================================================================================</span>
+
+<span class="k">def</span> <span class="nf">get_cmap_levels</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span><span class="n">colormap</span><span class="p">,</span><span class="n">levels</span><span class="p">,</span><span class="n">linear</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve a list of colors for Practically Perfect Hindcast (PPH) for tornadoes.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    varname : str</span>
+<span class="sd">        if &#39;vmax&#39;, &#39;sfmr&#39;, or &#39;fl_to_sfc&#39;, then SSHWS category colors can be used.</span>
+<span class="sd">    colormap : str or list</span>
+<span class="sd">        Matplotlib colormap to use. Default is &#39;category&#39;, which uses Tropycal&#39;s default colors for the SSHWS scale. If a list, a colormap is generated from this list.</span>
+<span class="sd">    levels : list</span>
+<span class="sd">        List of contour levels. Default is SPC intervals.</span>
+<span class="sd">    linear : bool</span>
+<span class="sd">        If colormap is &#39;category&#39;, determine whether to generate a colorbar using linear category increments (True) or wind increments (False).</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    colors : cmap</span>
+<span class="sd">        Matplotlib colormap object.</span>
+<span class="sd">    levels : list</span>
+<span class="sd">        List of contour levels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Default SSHWS colormap</span>
+    <span class="k">if</span> <span class="n">colormap</span> <span class="o">==</span> <span class="s1">&#39;category&#39;</span><span class="p">:</span>
+        
+        <span class="c1">#Ensure variable contains some element of surface wind</span>
+        <span class="k">if</span> <span class="n">varname</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;sfmr&#39;</span><span class="p">,</span><span class="s1">&#39;fl_to_sfc&#39;</span><span class="p">]:</span>
+            
+            <span class="c1">#Generate contour levels</span>
+            <span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="n">category_to_wind</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">)]</span><span class="o">+</span><span class="p">[</span><span class="mi">200</span><span class="p">]</span>
+            
+            <span class="c1">#Linear category increments</span>
+            <span class="k">if</span> <span class="n">linear</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcolors</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">get_colors_sshws</span><span class="p">(</span><span class="n">lev</span><span class="p">))</span> \
+                               <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">lev</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">levels</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">levels</span><span class="p">[</span><span class="n">c</span><span class="p">])]</span>
+            
+            <span class="c1">#Linear wind increments</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="n">category_to_wind</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">)]</span><span class="o">+</span><span class="p">[</span><span class="mi">200</span><span class="p">]</span>
+                <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_colors_sshws</span><span class="p">(</span><span class="n">lev</span><span class="p">)</span> <span class="k">for</span> <span class="n">lev</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="n">cmap</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span>
+        
+        <span class="c1">#Otherwise, default to plasma colormap</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Saffir Simpson category colors allowed only for surface winds&#39;</span><span class="p">)</span>
+            <span class="n">colormap</span> <span class="o">=</span> <span class="s1">&#39;plasma&#39;</span>
+    
+    <span class="c1">#Other colormap options</span>
+    <span class="k">if</span> <span class="n">colormap</span> <span class="o">!=</span> <span class="s1">&#39;category&#39;</span><span class="p">:</span>
+        
+        <span class="c1">#Matplotlib colormap name</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">mlib</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span>
+        
+        <span class="c1">#User defined list of colors</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span>
+        
+        <span class="c1">#Dictionary</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colormap</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">make_colormap</span><span class="p">(</span><span class="n">colormap</span><span class="p">)</span>
+        
+        <span class="c1">#Otherwise, a cmap was passed</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">colormap</span>
+        
+        <span class="c1">#Normalize colors relative to levels</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">mlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1">#If more than 2 levels were passed, use those for the contour levels</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span>
+        
+        <span class="c1">#Otherwise, create a list of colors based on levels</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">256</span><span class="p">)))</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="s1">&#39;my_colormap&#39;</span><span class="p">,</span><span class="n">colors</span><span class="p">)</span>
+            
+            <span class="n">y0</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="p">(</span><span class="n">y1</span><span class="o">-</span><span class="n">y0</span><span class="p">)</span><span class="o">/</span><span class="mi">8</span>
+            <span class="n">scalemag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">dy</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+            <span class="n">dy_scaled</span> <span class="o">=</span> <span class="n">dy</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="n">scalemag</span>
+            <span class="n">dc</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">dy_scaled</span><span class="p">))</span>
+            <span class="n">dc</span> <span class="o">=</span> <span class="n">dc</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="n">scalemag</span>
+            <span class="n">c0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">y0</span><span class="o">/</span><span class="n">dc</span><span class="p">)</span><span class="o">*</span><span class="n">dc</span>
+            <span class="n">c1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">y1</span><span class="o">/</span><span class="n">dc</span><span class="p">)</span><span class="o">*</span><span class="n">dc</span>
+            <span class="n">levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">c0</span><span class="p">,</span><span class="n">c1</span><span class="o">+</span><span class="n">dc</span><span class="p">,</span><span class="n">dc</span><span class="p">)</span>
+    
+            <span class="k">if</span> <span class="n">scalemag</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">levels</span> <span class="o">=</span> <span class="n">levels</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    
+    <span class="c1">#Return colormap and levels</span>
+    <span class="k">return</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">levels</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

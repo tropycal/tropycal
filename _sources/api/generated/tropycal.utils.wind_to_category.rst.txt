@@ -1,0 +1,12 @@
+wind_to_category
+===============================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: wind_to_category
+
+.. include:: tropycal.utils.wind_to_category.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

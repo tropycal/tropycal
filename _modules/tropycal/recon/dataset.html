@@ -173,6 +173,7 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mlib</span>
     <span class="kn">import</span> <span class="nn">matplotlib.lines</span> <span class="k">as</span> <span class="nn">mlines</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
     <span class="kn">import</span> <span class="nn">matplotlib.patheffects</span> <span class="k">as</span> <span class="nn">path_effects</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
     <span class="kn">import</span> <span class="nn">matplotlib.ticker</span> <span class="k">as</span> <span class="nn">mticker</span>
@@ -180,8 +181,10 @@
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.&quot;</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">.plot</span> <span class="kn">import</span> <span class="n">ReconPlot</span>
-<span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="o">*</span> 
-<span class="kn">from</span> <span class="nn">..tracks.tools</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">#Import tools</span>
+<span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="o">*</span>
 
 <div class="viewcode-block" id="ReconDataset"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset">[docs]</a><span class="k">class</span> <span class="nc">ReconDataset</span><span class="p">:</span>
 
@@ -192,6 +195,10 @@
 <span class="sd">    ----------</span>
 <span class="sd">    stormtuple : tuple or list</span>
 <span class="sd">        Requested storm. Can be either tuple or list containing storm name and year (e.g., (&quot;Matthew&quot;,2016)).</span>
+<span class="sd">    save_path : str, optional</span>
+<span class="sd">        Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.</span>
+<span class="sd">    read_path : str, optional</span>
+<span class="sd">        Filepath to read saved recon data from. If specified, &quot;save_path&quot; cannot be passed as an argument.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -203,24 +210,36 @@
 <span class="sd">            Dictionary keys are given by mission number and agency (e.g. &#39;15_NOAA&#39;).</span>
 <span class="sd">        * **recentered** - A dataframe with all missions concatenated together, and columns &#39;xdist&#39; and &#39;ydist&#39;</span>
 <span class="sd">            indicating the distance (km) of the ob from the interpolated center of the storm.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Recon data is currently read in via Tropical Atlantic. Future releases of Tropycal will incorporate NHC recon archives.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ReconDataset.__init__"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">read_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         
+        <span class="c1">#Error check</span>
         <span class="k">if</span> <span class="n">save_path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">read_path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error: Cannot read in and save a file at the same time.&quot;</span><span class="p">)</span>
         
+        <span class="c1">#Create URL prefix for reading in recon data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url_prefix</span> <span class="o">=</span> <span class="s1">&#39;http://tropicalatlantic.com/recon/recon.cgi?&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storm_obj</span> <span class="o">=</span> <span class="n">storm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storm</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">storm</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">storm</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
         
+        <span class="c1">#If reading in a pickled file, load it in</span>
         <span class="k">if</span> <span class="n">read_path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">read_path</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+        
+        <span class="c1">#Otherwise, retrieve all mission data for this storm</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allMissions</span><span class="p">()</span>
+            
+            <span class="c1">#Save mission data as a pickle if necessary</span>
             <span class="k">if</span> <span class="n">save_path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span><span class="p">,</span><span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         
+        <span class="c1">#Convert recon data to storm-centered coordinates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recentered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recenter</span><span class="p">()</span></div>
             
         
@@ -526,18 +545,17 @@
 <span class="sd">        Other Parameters</span>
 <span class="sd">        ----------------</span>
 <span class="sd">        prop : dict</span>
-<span class="sd">            Customization properties for recon plot.</span>
+<span class="sd">            Customization properties for recon plot. Please refer to :ref:`options-prop-recon-hovmoller` for available options.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1">#Pop kwargs</span>
         <span class="n">prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prop&#39;</span><span class="p">,{})</span>
-        <span class="n">default_prop</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;category&#39;</span><span class="p">,</span><span class="s1">&#39;levels&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">}</span>
+        <span class="n">default_prop</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;category&#39;</span><span class="p">,</span><span class="s1">&#39;levels&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;smooth_contourf&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">default_prop</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prop</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">prop</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">default_prop</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
             
-        <span class="c1">#Get plot data</span>
-        
+        <span class="c1">#Get recon data based on recon_select</span>
         <span class="k">if</span> <span class="n">recon_select</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dfRecon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recentered</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recon_select</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -547,17 +565,23 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dfRecon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getSubTime</span><span class="p">(</span><span class="n">recon_select</span><span class="p">)</span>
         
+        <span class="c1">#Retrieve track dictionary if none is specified</span>
         <span class="k">if</span> <span class="n">track_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">track_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storm_obj</span><span class="o">.</span><span class="n">dict</span>
         
+        <span class="c1">#Interpolate recon data to a hovmoller</span>
         <span class="n">iRecon</span> <span class="o">=</span> <span class="n">interpRecon</span><span class="p">(</span><span class="n">dfRecon</span><span class="p">,</span><span class="n">varname</span><span class="p">,</span><span class="n">radlim</span><span class="p">)</span>
         <span class="n">Hov_dict</span> <span class="o">=</span> <span class="n">iRecon</span><span class="o">.</span><span class="n">interpHovmoller</span><span class="p">(</span><span class="n">track_dict</span><span class="p">)</span>
 
-        <span class="n">title</span> <span class="o">=</span> <span class="n">get_recon_title</span><span class="p">(</span><span class="n">varname</span><span class="p">)</span>
+        <span class="c1">#title = get_recon_title(varname) #may not be necessary</span>
+        <span class="c1">#If no contour levels specified, generate levels based on data min and max</span>
         <span class="k">if</span> <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">Hov_dict</span><span class="p">[</span><span class="s1">&#39;hovmoller&#39;</span><span class="p">]),</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">Hov_dict</span><span class="p">[</span><span class="s1">&#39;hovmoller&#39;</span><span class="p">]))</span>
+        
+        <span class="c1">#Retrieve updated contour levels and colormap based on input arguments and variable type</span>
         <span class="n">cmap</span><span class="p">,</span><span class="n">clevs</span> <span class="o">=</span> <span class="n">get_cmap_levels</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span><span class="n">prop</span><span class="p">[</span><span class="s1">&#39;cmap&#39;</span><span class="p">],</span><span class="n">prop</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">])</span>
-                
+        
+        <span class="c1">#Retrieve hovmoller times, radii and data</span>
         <span class="n">time</span> <span class="o">=</span> <span class="n">Hov_dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
         <span class="n">radius</span> <span class="o">=</span> <span class="n">Hov_dict</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">]</span>
         <span class="n">vardata</span> <span class="o">=</span> <span class="n">Hov_dict</span><span class="p">[</span><span class="s1">&#39;hovmoller&#39;</span><span class="p">]</span>
@@ -565,31 +589,51 @@
         <span class="c1">#Error check time</span>
         <span class="n">time</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">((</span><span class="n">i</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M&#39;</span><span class="p">)),</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">time</span><span class="p">]</span>
         
+        <span class="c1">#------------------------------------------------------------------------------</span>
+        
         <span class="c1">#Create plot        </span>
         <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">11</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prop</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">:</span>
-            <span class="n">cf</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">gfilt1d</span><span class="p">(</span><span class="n">vardata</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>\
-                     <span class="n">levels</span><span class="o">=</span><span class="n">clevs</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">()</span>
+        
+        <span class="c1">#Plot surface category colors individually, necessitating normalizing colormap</span>
+        <span class="k">if</span> <span class="n">varname</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;sfmr&#39;</span><span class="p">,</span><span class="s1">&#39;fl_to_sfc&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;cmap&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;category&#39;</span><span class="p">:</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">BoundaryNorm</span><span class="p">(</span><span class="n">clevs</span><span class="p">,</span><span class="n">cmap</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+            <span class="n">cf</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">gfilt1d</span><span class="p">(</span><span class="n">vardata</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                             <span class="n">levels</span><span class="o">=</span><span class="n">clevs</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+        
+        <span class="c1">#Multiple clevels or without smooth contouring</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">prop</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;smooth_contourf&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">cf</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">gfilt1d</span><span class="p">(</span><span class="n">vardata</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                             <span class="n">levels</span><span class="o">=</span><span class="n">clevs</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+        
+        <span class="c1">#Automatically generated levels with smooth contouring</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">cf</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">gfilt1d</span><span class="p">(</span><span class="n">vardata</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>\
-                     <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">prop</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">prop</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">]),</span><span class="mi">256</span><span class="p">))</span>
+            <span class="n">cf</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">gfilt1d</span><span class="p">(</span><span class="n">vardata</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                             <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">prop</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">]),</span><span class="nb">max</span><span class="p">(</span><span class="n">prop</span><span class="p">[</span><span class="s1">&#39;levels&#39;</span><span class="p">]),</span><span class="mi">256</span><span class="p">))</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="n">radius</span><span class="p">),</span><span class="nb">min</span><span class="p">(</span><span class="n">time</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">time</span><span class="p">)])</span>
         
+        <span class="c1">#Plot colorbar</span>
+        <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cf</span><span class="p">,</span><span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">,</span><span class="n">pad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        
+        <span class="c1">#Format y-label ticks and labels as dates</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%m-</span><span class="si">%d</span><span class="s1"> %H&#39;</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">tick</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">get_major_ticks</span><span class="p">():</span>
                 <span class="n">tick</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">tick</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">get_major_ticks</span><span class="p">():</span>
                 <span class="n">tick</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;UTC Time (MM-DD HH)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Radius (km)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
-        <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cf</span><span class="p">,</span><span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">,</span><span class="n">pad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        
+        <span class="c1">#Format x-axis ticks</span>
         <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">clevs</span><span class="p">)))</span>
         <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">(</span><span class="n">clevs</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
         
+        <span class="c1">#Set axes labels</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;UTC Time (MM-DD HH)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Radius (km)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+        
         <span class="c1">#--------------------------------------------------------------------------------------</span>
         
-        <span class="n">title_left</span><span class="p">,</span><span class="n">title_right</span> <span class="o">=</span> <span class="n">ReconPlot</span><span class="p">()</span><span class="o">.</span><span class="n">plot_hovmoller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storm_obj</span><span class="p">,</span><span class="n">Hov_dict</span><span class="p">,</span><span class="n">varname</span><span class="p">)</span>
+        <span class="c1">#Generate left and right title strings</span>
+        <span class="n">title_left</span><span class="p">,</span> <span class="n">title_right</span> <span class="o">=</span> <span class="n">hovmoller_plot_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storm_obj</span><span class="p">,</span><span class="n">Hov_dict</span><span class="p">,</span><span class="n">varname</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title_left</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span><span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title_right</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
         

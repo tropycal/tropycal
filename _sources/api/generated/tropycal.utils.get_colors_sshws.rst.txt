@@ -1,0 +1,12 @@
+get_colors_sshws
+===============================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: get_colors_sshws
+
+.. include:: tropycal.utils.get_colors_sshws.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

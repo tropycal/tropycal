@@ -106,6 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
 </li>
@@ -188,7 +189,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>basin</strong> (<em>str</em>) – <p>Ocean basin to load data for. Can be any of the following.</p>
+<li><p><strong>basin</strong> (<em>str</em>) – <p>Ocean basin to load data for. Can be any of the following:</p>
 <ul>
 <li><p><strong>north_atlantic</strong> - HURDAT2, ibtracs</p></li>
 <li><p><strong>east_pacific</strong> - HURDAT2, ibtracs</p></li>
@@ -431,7 +432,7 @@
 
 <dl class="py method">
 <dt id="tropycal.tracks.TrackDataset.gridded_stats">
-<code class="sig-name descname">gridded_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">thresh</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">year_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">date_range</span><span class="o">=</span><span class="default_value">'1/1', '12/31'</span></em>, <em class="sig-param"><span class="n">binsize</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">return_array</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{'title_L': 'Maximum wind (kt)', 'title_R': 'Jan/01 – Dec/31 • 1851 – 2020'}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.gridded_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.gridded_stats" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">gridded_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">thresh</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">year_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">year_range_subtract</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">year_average</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">date_range</span><span class="o">=</span><span class="default_value">'1/1', '12/31'</span></em>, <em class="sig-param"><span class="n">binsize</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_ax</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">return_array</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cartopy_proj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">prop</span><span class="o">=</span><span class="default_value">{'title_L': 'Maximum wind (kt)', 'title_R': 'Jan 01 – Dec 31 • 1851 – 2020'}</span></em>, <em class="sig-param"><span class="n">map_prop</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.gridded_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.gridded_stats" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of gridded statistics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -458,7 +459,7 @@ This string is also used as the plot title.</p>
 </ul>
 <p>Example usage: “maximum wind change in 24 hours”, “50th percentile wind”, “number of storms”</p>
 </p></li>
-<li><p><strong>thresh</strong> (<em>dict</em>) – <p>Keywords include:</p>
+<li><p><strong>thresh</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>Keywords include:</p>
 <ul>
 <li><p><strong>sample_min</strong> - minimum number of storms in a grid box for the request to be applied. For the functions ‘percentile’ and ‘average’, ‘sample_min’ defaults to 5 and will override any value less than 5.</p></li>
 <li><p><strong>v_min</strong> - minimum wind for a given point to be included in the request.</p></li>
@@ -470,20 +471,22 @@ This string is also used as the plot title.</p>
 </ul>
 <p>Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.</p>
 </p></li>
-<li><p><strong>year_range</strong> (<em>list</em><em> or </em><em>tuple</em>) – List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.</p></li>
-<li><p><strong>date_range</strong> (<em>list</em><em> or </em><em>tuple</em>) – List or tuple representing the start and end dates as a string in ‘month/day’ format (e.g., (‘6/1’,’8/15’)). Default is (‘1/1’,’12/31’) or full year.</p></li>
-<li><p><strong>binsize</strong> (<em>float</em>) – Grid resolution in degrees. Default is 1 degree.</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
-<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
-<li><p><strong>return_array</strong> (<em>bool</em>) – If True, returns the gridded 2D array used to generate the plot. Default is False.</p></li>
-<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>year_range</strong> (<em>list</em><em> or </em><em>tuple</em><em>, </em><em>optional</em>) – List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.</p></li>
+<li><p><strong>year_range_subtract</strong> (<em>list</em><em> or </em><em>tuple</em><em>, </em><em>optional</em>) – A year range to subtract from the previously specified “year_range”. If specified, will create a difference plot.</p></li>
+<li><p><strong>year_average</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, both year ranges will be computed and plotted as an annual average.</p></li>
+<li><p><strong>date_range</strong> (<em>list</em><em> or </em><em>tuple</em><em>, </em><em>optional</em>) – List or tuple representing the start and end dates as a string in ‘month/day’ format (e.g., (‘6/1’,’8/15’)). Default is (‘1/1’,’12/31’) or full year.</p></li>
+<li><p><strong>binsize</strong> (<em>float</em><em>, </em><em>optional</em>) – Grid resolution in degrees. Default is 1 degree.</p></li>
+<li><p><strong>domain</strong> (<em>str</em><em>, </em><em>optional</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em><em>, </em><em>optional</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+<li><p><strong>return_array</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, returns the gridded 2D array used to generate the plot. Default is False.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em><em>, </em><em>optional</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Other Parameters</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-gridded"><span class="std std-ref">gridded_stats</span></a> for available options.</p></li>
-<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+<li><p><strong>prop</strong> (<em>dict, optional</em>) – Customization properties of plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-gridded"><span class="std std-ref">gridded_stats</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict, optional</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
 </ul>
 </dd>
 </dl>
@@ -547,7 +550,7 @@ This string is also used as the plot title.</p>
 </dd>
 <dt class="field-even">Other Parameters</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Prop</span></a> for available options.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Tracks Properties</span></a> for available options.</p></li>
 <li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
 </ul>
 </dd>
@@ -571,7 +574,7 @@ This string is also used as the plot title.</p>
 </dd>
 <dt class="field-even">Other Parameters</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Prop</span></a> for available options.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Tracks Properties</span></a> for available options.</p></li>
 <li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
 </ul>
 </dd>
@@ -595,7 +598,7 @@ This string is also used as the plot title.</p>
 </dd>
 <dt class="field-even">Other Parameters</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Prop</span></a> for available options.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Tracks Properties</span></a> for available options.</p></li>
 <li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
 </ul>
 </dd>

@@ -170,7 +170,10 @@
 
 <span class="kn">from</span> <span class="nn">.plot</span> <span class="kn">import</span> <span class="n">TrackPlot</span>
 <span class="kn">from</span> <span class="nn">.storm</span> <span class="kn">import</span> <span class="n">Storm</span>
+
+<span class="c1">#Import tools</span>
 <span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="o">*</span>
     
 <div class="viewcode-block" id="Season"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season">[docs]</a><span class="k">class</span> <span class="nc">Season</span><span class="p">:</span>
     
@@ -528,7 +531,7 @@
                     <span class="n">max_cat</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">max_wnd</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">temp_vmax</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
-                    <span class="n">max_cat</span> <span class="o">=</span> <span class="n">convert_category</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">temp_vmax</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
+                    <span class="n">max_cat</span> <span class="o">=</span> <span class="n">wind_to_category</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">temp_vmax</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np_slp</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">np_slp</span><span class="p">)])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">min_slp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
                 <span class="k">else</span><span class="p">:</span>

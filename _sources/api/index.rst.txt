@@ -12,6 +12,7 @@ API Reference
    tropycal.tornado
    tropycal.recon
    tropycal.realtime
+   tropycal.utils
    
 ===============
 Keyword Options

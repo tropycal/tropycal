@@ -1,0 +1,12 @@
+get_colors_ef
+============================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: get_colors_ef
+
+.. include:: tropycal.utils.get_colors_ef.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

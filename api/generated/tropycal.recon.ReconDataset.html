@@ -101,6 +101,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
 </li>
@@ -182,7 +183,11 @@
 <dd><p>Creates an instance of a ReconDataset object containing all recon data for a single storm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stormtuple</strong> (<em>tuple</em><em> or </em><em>list</em>) – Requested storm. Can be either tuple or list containing storm name and year (e.g., (“Matthew”,2016)).</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stormtuple</strong> (<em>tuple</em><em> or </em><em>list</em>) – Requested storm. Can be either tuple or list containing storm name and year (e.g., (“Matthew”,2016)).</p></li>
+<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.</p></li>
+<li><p><strong>read_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to read saved recon data from. If specified, “save_path” cannot be passed as an argument.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><p><em>Dataset</em> – An instance of ReconDataset, initialized with the following:</p>
@@ -202,6 +207,8 @@ Dictionary keys are given by mission number and agency (e.g. ‘15_NOAA’).</p>
 </p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Recon data is currently read in via Tropical Atlantic. Future releases of Tropycal will incorporate NHC recon archives.</p>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -293,7 +300,7 @@ or datetime or list of start/end datetimes.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Other Parameters</dt>
-<dd class="field-even"><p><strong>prop</strong> (<em>dict</em>) – Customization properties for recon plot.</p>
+<dd class="field-even"><p><strong>prop</strong> (<em>dict</em>) – Customization properties for recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-hovmoller"><span class="std std-ref">plot_hovmoller</span></a> for available options.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -324,7 +331,7 @@ or datetime or list of start/end datetimes.</p></li>
 </dd>
 <dt class="field-even">Other Parameters</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-swath"><span class="std std-ref">plot_swath</span></a> for available options.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-swath"><span class="std std-ref">plot_swath and plot_map</span></a> for available options.</p></li>
 <li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
 </ul>
 </dd>
@@ -357,7 +364,7 @@ or datetime or list of start/end datetimes.</p></li>
 </dd>
 <dt class="field-even">Other Parameters</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-plot"><span class="std std-ref">plot_points</span></a> for available options.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-plot"><span class="std std-ref">Recon Properties</span></a> for available options.</p></li>
 <li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
 </ul>
 </dd>
@@ -392,7 +399,7 @@ e.g., np.max, np.min, or percentile function</p></li>
 </dd>
 <dt class="field-even">Other Parameters</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-swath"><span class="std std-ref">plot_swath</span></a> for available options.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-swath"><span class="std std-ref">plot_swath and plot_map</span></a> for available options.</p></li>
 <li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
 </ul>
 </dd>

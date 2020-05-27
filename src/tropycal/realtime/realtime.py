@@ -17,9 +17,10 @@ except:
     warn_message = "Warning: Cartopy is not installed in your python environment. Plotting functions will not work."
     warnings.warn(warn_message)
 
-from ..tracks import *
-from ..tracks.tools import get_type, get_basin
 from .storm import RealtimeStorm
+
+#Import tools
+from ..utils import *
 
 class Realtime():
     
@@ -98,6 +99,11 @@ class Realtime():
 
             #Delete data dict while retaining active storm keys
             self.storms = [k for k in self.data.keys()]
+            del self.data
+        else:
+            
+            #Create an empty list signaling no active storms
+            self.storms = []
             del self.data
     
     def __read_btk(self):
@@ -319,7 +325,7 @@ class Realtime():
                 #Get other relevant variables
                 btk_wind = int(line[8])
                 btk_mslp = int(line[9])
-                btk_type = get_type(btk_wind,subtrop_flag=False)
+                btk_type = get_storm_type(btk_wind,False)
                 name = line[27]
 
                 #Replace with NaNs

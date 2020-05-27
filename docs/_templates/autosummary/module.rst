@@ -1,4 +1,4 @@
-{% if fullname in ['tropycal.tracks.plot', 'tropycal.tracks.plot.TrackPlot', 'tropycal.tornado.plot', 'tropycal.tornado.TornadoPlot'] %}
+{% if fullname in ['tropycal.utils'] %}
 
 {% include 'overrides/' ~ fullname ~ '.rst' with context %}
 

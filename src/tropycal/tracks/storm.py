@@ -11,9 +11,12 @@ from datetime import datetime as dt,timedelta
 import requests
 
 from .plot import TrackPlot
-from .tools import *
 from ..tornado import *
 from ..recon import *
+
+#Import tools
+from .tools import *
+from ..utils import *
 
 try:
     import zipfile
@@ -450,7 +453,7 @@ class Storm:
                 track_dict['date'].append(carq_forecasts[k]['init'])
 
                 itype = carq_forecasts[k]['type'][hr_idx]
-                if itype == "": itype = get_type(carq_forecasts[k]['vmax'][0],False)
+                if itype == "": itype = get_storm_type(carq_forecasts[k]['vmax'][0],False)
                 track_dict['type'].append(itype)
 
                 hr = carq_forecasts[k]['init'].strftime("%H%M")
@@ -472,7 +475,7 @@ class Storm:
                 track_dict['date'].append(nhc_forecasts[k]['init']+timedelta(hours=hr_add))
 
                 itype = nhc_forecasts[k]['type'][hr_idx]
-                if itype == "": itype = get_type(nhc_forecasts[k]['vmax'][0],False)
+                if itype == "": itype = get_storm_type(nhc_forecasts[k]['vmax'][0],False)
                 track_dict['type'].append(itype)
 
                 hr = nhc_forecasts[k]['init'].strftime("%H%M")
@@ -568,7 +571,7 @@ class Storm:
                 #Figure out time issued
                 hr = content[5].split(" ")[0]
                 zone = content[5].split(" ")[2]
-                disco_time = str2(int(hr)) + ' '.join(content[5].split(" ")[1:])
+                disco_time = num_to_str2(int(hr)) + ' '.join(content[5].split(" ")[1:])
                 
                 format_time = content[5].split(" ")[0]
                 if len(format_time) == 3: format_time = "0" + format_time
@@ -712,7 +715,7 @@ class Storm:
                 #Figure out time issued
                 hr = content[4].split(" ")[0]
                 zone = content[4].split(" ")[2]
-                disco_time = str2(int(hr)) + ' '.join(content[4].split(" ")[1:])
+                disco_time = num_to_str2(int(hr)) + ' '.join(content[4].split(" ")[1:])
                 disco_date = dt.strptime(content[4],f'%I %p {zone} %a %b %d %Y')
                 
                 time_zones = {
@@ -1133,7 +1136,7 @@ class Storm:
                     
                     #Get storm type, if it can be determined
                     if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
-                        stype = get_type(vmax,False)
+                        stype = get_storm_type(vmax,False)
                     forecasts[model][run_init]['type'].append(stype)
 
         #Save dict locally
@@ -1318,7 +1321,7 @@ class Storm:
         ax = plt.subplot()
         
         #Default EF color scale
-        EFcolors = ef_colors('default')
+        EFcolors = get_colors_ef('default')
         
         #Plot all tornado tracks in motion relative coords
         for _,row in self.stormTors.iterrows():

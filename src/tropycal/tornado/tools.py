@@ -6,8 +6,8 @@ from scipy.ndimage import gaussian_filter as gfilt,maximum_filter
 import warnings
 
 def circle_filter(d):
-    r=int(d/2)
-    if d%2==0:
+    r = int(d/2)
+    if d%2 == 0:
         y,x = np.ogrid[-r: r, -r: r]
         x=x+.5;y=y+.5
     else:
@@ -61,50 +61,3 @@ def getPPH(dfTors,method='daily',res=10):
         
     return PPH,.5*(longrid[:len(longrid)-1]+longrid[1:]),.5*(latgrid[:len(latgrid)-1]+latgrid[1:])
 
-
-def ef_colors(x):
-    import matplotlib as mlib
-    if x == 'default':
-        colors = ['lightsalmon','tomato','red','firebrick','darkred','purple']
-    elif isinstance(x,str):
-        try:
-            cmap = mlib.cm.get_cmap(x)
-            norm = mlib.colors.Normalize(vmin=0, vmax=5)
-            colors = cmap(norm([0,1,2,3,4,5]))
-        except:
-            colors = [x]*6
-    elif isinstance(x,list):
-        if len(x) == 6:
-            colors = x
-    else:
-        colors = ['lightsalmon','tomato','red','firebrick','darkred','purple']
-    return colors
-
-
-def PPH_colors(ptype,x,clevs):
-    import matplotlib as mlib
-    if x=='SPC':
-        if ptype=='daily':
-            clevs = [2,5,10,15,30,45,60,100]
-            colors = ['#008B00',\
-                      '#8B4726',\
-                      '#FFC800',\
-                      '#FF0000',\
-                      '#FF00FF',\
-                      '#912CEE',\
-                      '#104E8B']
-        else:
-            warnings.warn('SPC colors only allowed for daily PPH.\n'+\
-                          'Defaulting to plasma colormap.')
-            x = 'plasma'
-    if x!='SPC':
-        if isinstance(x,str):
-            cmap = mlib.cm.get_cmap(x)
-            norm = mlib.colors.Normalize(vmin=0, vmax=len(clevs)-2)
-            colors = cmap(norm(np.arange(len(clevs))))
-        elif isinstance(x,list):
-            colors = x
-        else:
-            norm = mlib.colors.Normalize(vmin=0, vmax=len(clevs)-2)
-            colors = x(norm(np.arange(len(clevs))))
-    return colors,clevs

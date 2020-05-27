@@ -8,8 +8,10 @@ import warnings
 from datetime import datetime as dt,timedelta
 
 from ..plot import Plot
+
+#Import tools
 from .tools import *
-from ..tracks.tools import *
+from ..utils import *
 
 try:
     import cartopy.feature as cfeature
@@ -63,10 +65,10 @@ class TornadoPlot(Plot):
         """
         
         #Set default properties
-        default_prop={'plotType':'tracks','PPHcolors':'SPC','PPHlevels':[2,5,10,15,30,45,60,100],\
-                      'EFcolors':'default','linewidth':1.5,'ms':7.5}
-        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF',\
-                          'linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        default_prop = {'plotType':'tracks','PPHcolors':'spc','PPHlevels':[2,5,10,15,30,45,60,100],
+                        'EFcolors':'default','linewidth':1.5,'ms':7.5}
+        default_map_prop = {'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF',
+                            'linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
         prop = self.add_prop(prop,default_prop)
@@ -121,16 +123,16 @@ class TornadoPlot(Plot):
 
         #Plot PPH
         if plotPPH in ['total','daily',True]:
-            if plotPPH == True: plotPPH='daily'
+            if plotPPH == True: plotPPH = 'daily'
             PPH,longrid,latgrid = getPPH(tornado_data,method=plotPPH)
             
-            colors,clevs = PPH_colors(plotPPH,prop['PPHcolors'],prop['PPHlevels'])
+            colors,clevs = get_colors_pph(plotPPH,prop['PPHcolors'],prop['PPHlevels'])
                     
             cbmap = self.ax.contourf(longrid,latgrid,PPH,\
                              levels=clevs,colors=colors,alpha=0.5)
 
         #Plot tornadoes as specified
-        EFcolors = ef_colors(prop['EFcolors'])
+        EFcolors = get_colors_ef(prop['EFcolors'])
         
         tornado_data = tornado_data.sort_values('mag')
         for _,row in tornado_data.iterrows():

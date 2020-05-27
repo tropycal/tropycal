@@ -11,7 +11,10 @@ import networkx as nx
 from scipy.ndimage import gaussian_filter as gfilt
 
 from ..plot import Plot
+
+#Import tools
 from .tools import *
+from ..utils import *
 
 try:
     import cartopy.feature as cfeature
@@ -139,7 +142,7 @@ class TrackPlot(Plot):
                 ltype = 'solid'
                 if type_line[i] not in ['SS','SD','TD','TS','HU']: ltype = 'dotted'
                 self.ax.plot([lons[i-1],lons[i]],[lats[i-1],lats[i]],
-                              '-',color=category_color(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
+                              '-',color=get_colors_sshws(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
                               transform=ccrs.PlateCarree(),
                               path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*1.2, foreground='k'), path_effects.Normal()])
         else:
@@ -167,7 +170,7 @@ class TrackPlot(Plot):
                 elif itype in ['TD','TS','HU']:
                     mtype = 'o'
                 if prop['fillcolor'] == 'category':
-                    ncol = category_color(np.nan_to_num(iwnd))
+                    ncol = get_colors_sshws(np.nan_to_num(iwnd))
                 else:
                     ncol = 'k'
                 self.ax.plot(ilon,ilat,mtype,color=ncol,mec='k',mew=0.5,ms=prop['ms'],transform=ccrs.PlateCarree())
@@ -208,10 +211,10 @@ class TrackPlot(Plot):
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
         tropical_vmax = np.array(storm_data['vmax'])[idx]
             
-        subtrop = classify_subtrop(np.array(storm_data['type']))
+        subtrop = classify_subtropical(np.array(storm_data['type']))
         peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
         peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_type(np.nanmax(tropical_vmax),subtrop,peak_basin)
+        storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
         self.ax.set_title(f"{storm_type} {storm_data['name']}",loc='left',fontsize=17,fontweight='bold')
 
         #Add right title
@@ -253,13 +256,13 @@ class TrackPlot(Plot):
             
             ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
             sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
-            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=category_color(33))
-            ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=category_color(34))
-            c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=category_color(64))
-            c2 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 2', marker='o', color=category_color(83))
-            c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=category_color(96))
-            c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=category_color(113))
-            c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=category_color(137))
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=get_colors_sshws(33))
+            ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=get_colors_sshws(34))
+            c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=get_colors_sshws(64))
+            c2 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 2', marker='o', color=get_colors_sshws(83))
+            c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=get_colors_sshws(96))
+            c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=get_colors_sshws(113))
+            c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
             self.ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
 
         #Return axis if specified, otherwise display figure
@@ -365,7 +368,7 @@ class TrackPlot(Plot):
                     ltype = 'solid'
                     if type_line[i] not in ['SS','SD','TD','TS','HU']: ltype = 'dotted'
                     self.ax.plot([lons[i-1],lons[i]],[lats[i-1],lats[i]],
-                                  '-',color=category_color(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
+                                  '-',color=get_colors_sshws(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
                                   transform=ccrs.PlateCarree(),
                                   path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*0.2, foreground='k'), path_effects.Normal()])
             else:
@@ -393,7 +396,7 @@ class TrackPlot(Plot):
                     elif itype in ['TD','TS','HU']:
                         mtype = 'o'
                     if prop['fillcolor'] == 'category':
-                        ncol = category_color(np.nan_to_num(iwnd))
+                        ncol = get_colors_sshws(np.nan_to_num(iwnd))
                     else:
                         ncol = 'k'
                     self.ax.plot(ilon,ilat,mtype,color=ncol,mec='k',mew=0.5,ms=prop['ms'],transform=ccrs.PlateCarree())
@@ -441,13 +444,13 @@ class TrackPlot(Plot):
             
             ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
             sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
-            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=category_color(33))
-            ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=category_color(34))
-            c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=category_color(64))
-            c2 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 2', marker='o', color=category_color(83))
-            c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=category_color(96))
-            c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=category_color(113))
-            c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=category_color(137))
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=get_colors_sshws(33))
+            ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=get_colors_sshws(34))
+            c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=get_colors_sshws(64))
+            c2 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 2', marker='o', color=get_colors_sshws(83))
+            c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=get_colors_sshws(96))
+            c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=get_colors_sshws(113))
+            c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
             self.ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
 
         #Return axis if specified, otherwise display figure
@@ -552,7 +555,7 @@ class TrackPlot(Plot):
                 fcst_lat = np.array(forecast['lat'])[fcst_hr>=start_slice][0]
                 fcst_type = np.array(forecast['type'])[fcst_hr>=start_slice][0]
                 fcst_vmax = np.array(forecast['vmax'])[fcst_hr>=start_slice][0]
-                if fcst_type == "": fcst_type = get_type(fcst_vmax,False)
+                if fcst_type == "": fcst_type = get_storm_type(fcst_vmax,False)
                 if self.proj.proj4_params['lon_0'] == 180.0:
                     if fcst_lon < 0: fcst_lon = fcst_lon + 360.0
                 lons.append(fcst_lon)
@@ -592,7 +595,7 @@ class TrackPlot(Plot):
                         ltype = 'solid'
                         if type6[i] not in ['SS','SD','TD','TS','HU']: ltype = 'dotted'
                         self.ax.plot([lons[i-1],lons[i]],[lats[i-1],lats[i]],
-                                      '-',color=category_color(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
+                                      '-',color=get_colors_sshws(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
                                       transform=ccrs.PlateCarree(),
                                       path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*1.25, foreground='k'), path_effects.Normal()])
                 else:
@@ -614,7 +617,7 @@ class TrackPlot(Plot):
                         elif itype in ['TD','TS','HU']:
                             mtype = 'o'
                         if prop['fillcolor'] == 'category':
-                            ncol = category_color(np.nan_to_num(iwnd))
+                            ncol = get_colors_sshws(np.nan_to_num(iwnd))
                         else:
                             ncol = 'k'
                         self.ax.plot(ilon,ilat,mtype,color=ncol,mec='k',mew=0.5,ms=prop['ms'],transform=ccrs.PlateCarree())
@@ -695,7 +698,7 @@ class TrackPlot(Plot):
                 elif itype in ['TD','TS','HU','']:
                     mtype = 'o'
                 if prop['fillcolor'] == 'category':
-                    ncol = category_color(np.nan_to_num(iwnd))
+                    ncol = get_colors_sshws(np.nan_to_num(iwnd))
                 else:
                     ncol = 'k'
                 #Marker width
@@ -772,10 +775,9 @@ class TrackPlot(Plot):
         if all_nan(first_fcst_wind) == True:
             storm_type = 'Unknown'
         else:
-            #subtrop = classify_subtrop(np.array(storm_data['type']))
             subtrop = True if first_fcst_type in ['SD','SS'] else False
             cur_wind = first_fcst_wind + 0
-            storm_type = get_storm_type(np.nan_to_num(cur_wind),subtrop,'north_atlantic')
+            storm_type = get_storm_classification(np.nan_to_num(cur_wind),subtrop,'north_atlantic')
         
         #Identify storm name (and storm type, if post-tropical or potential TC)
         matching_times = [i for i in storm_data['date'] if i <= forecast['init']]
@@ -783,11 +785,11 @@ class TrackPlot(Plot):
             if all_nan(first_fcst_wind) == True:
                 storm_name = storm_data['name']
             else:
-                storm_name = num_to_str(int(storm_data['id'][2:4])).upper()
+                storm_name = num_to_text(int(storm_data['id'][2:4])).upper()
                 if first_fcst_wind >= 34 and first_fcst_type in ['TD','SD','SS','TS','HU']: storm_name = storm_data['name'];
                 if first_fcst_type not in ['TD','SD','SS','TS','HU']: storm_type = 'Potential Tropical Cyclone'
         else:
-            storm_name = num_to_str(int(storm_data['id'][2:4])).upper()
+            storm_name = num_to_text(int(storm_data['id'][2:4])).upper()
             storm_type = 'Potential Tropical Cyclone'
             storm_tropical = False
             if all_nan(vmax) == True:
@@ -797,9 +799,8 @@ class TrackPlot(Plot):
                 for i,(iwnd,ityp) in enumerate(zip(vmax,styp)):
                     if ityp in ['SD','SS','TD','TS','HU']:
                         storm_tropical = True
-                        #subtrop = classify_subtrop(np.array(storm_data['type']))
                         subtrop = True if ityp in ['SD','SS'] else False
-                        storm_type = get_storm_type(np.nan_to_num(iwnd),subtrop,'north_atlantic')
+                        storm_type = get_storm_classification(np.nan_to_num(iwnd),subtrop,'north_atlantic')
                         if np.isnan(iwnd) == True: storm_type = 'Unknown'
                     else:
                         if storm_tropical == True: storm_type = 'Post Tropical Cyclone'
@@ -808,7 +809,7 @@ class TrackPlot(Plot):
         
         #Fix storm types for non-NHC basins
         if 'cone' in forecast.keys():
-            storm_type = get_storm_type(first_fcst_wind,False,forecast['basin'])
+            storm_type = get_storm_classification(first_fcst_wind,False,forecast['basin'])
         
         #Add left title
         self.ax.set_title(f"{storm_type} {storm_name}",loc='left',fontsize=17,fontweight='bold')
@@ -849,13 +850,13 @@ class TrackPlot(Plot):
             ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
             sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
             uk = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Unknown', marker='o', color='w')
-            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=category_color(33))
-            ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=category_color(34))
-            c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=category_color(64))
-            c2 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 2', marker='o', color=category_color(83))
-            c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=category_color(96))
-            c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=category_color(113))
-            c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=category_color(137))
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=get_colors_sshws(33))
+            ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=get_colors_sshws(34))
+            c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=get_colors_sshws(64))
+            c2 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 2', marker='o', color=get_colors_sshws(83))
+            c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=get_colors_sshws(96))
+            c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=get_colors_sshws(113))
+            c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
             self.ax.legend(handles=[ex,sb,uk,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
 
         #Add forecast label warning
@@ -967,7 +968,7 @@ class TrackPlot(Plot):
                         ltype = 'dotted'
                     peffect = [path_effects.Stroke(linewidth=prop['linewidth']*1.2, foreground='k'), path_effects.Normal()]
                     self.ax.plot([lons[i-1],lons[i]],[lats[i-1],lats[i]],
-                                  '-',color=category_color(np.nan_to_num(storm_data['vmax'][i])),linewidth=prop['linewidth'],linestyle=ltype,
+                                  '-',color=get_colors_sshws(np.nan_to_num(storm_data['vmax'][i])),linewidth=prop['linewidth'],linestyle=ltype,
                                   transform=ccrs.PlateCarree(),path_effects = peffect)
             else:
                 self.ax.plot(lons,lats,'-',color=prop['linecolor'],linewidth=prop['linewidth'],transform=ccrs.PlateCarree())
@@ -1059,13 +1060,13 @@ class TrackPlot(Plot):
             
             ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
             sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
-            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=category_color(33))
-            ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=category_color(34))
-            c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=category_color(64))
-            c2 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 2', marker='o', color=category_color(83))
-            c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=category_color(96))
-            c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=category_color(113))
-            c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=category_color(137))
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=get_colors_sshws(33))
+            ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=get_colors_sshws(34))
+            c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=get_colors_sshws(64))
+            c2 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 2', marker='o', color=get_colors_sshws(83))
+            c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=get_colors_sshws(96))
+            c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=get_colors_sshws(113))
+            c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
             self.ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
 
         #Return axis if specified, otherwise display figure
@@ -1450,6 +1451,9 @@ class TrackPlot(Plot):
         prop = self.add_prop(prop,default_prop)
         map_prop = self.add_prop(map_prop,default_map_prop)
         self.plot_init(ax,map_prop)
+        
+        #Determine if contour levels are automatically generated
+        auto_levels = True if prop['levels'] is None or prop['levels'] == [] else False
 
         #Plot domain
         bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
@@ -1464,7 +1468,7 @@ class TrackPlot(Plot):
         #--------------------------------------------------------------------------------------
         
         try:
-            _,varname = findvar(prop['title_L'],{})
+            _,varname = find_var(prop['title_L'],{})
         except:
             varname = 'date'
 
@@ -1475,8 +1479,9 @@ class TrackPlot(Plot):
         elif prop['levels'] is None:
             prop['levels'] = (np.nanmin(zcoord),np.nanmax(zcoord))
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
-
-        if len(clevs)==2:
+        
+        #Generate contourf levels
+        if len(clevs) == 2:
             y0 = min(clevs)
             y1 = max(clevs)
             dy = (y1-y0)/8
@@ -1491,7 +1496,14 @@ class TrackPlot(Plot):
             vmin = min(clevs); vmax = max(clevs)
         else:
             vmin = min(prop['levels']); vmax = max(prop['levels'])
-
+        
+        #For difference/change plots with automatically generated contour levels, ensure that 0 is in the middle
+        if auto_levels == True:
+            if varname in ['dvmax_dt','dmslp_dt'] or '\n' in prop['title_R']:
+                max_val = np.max([np.abs(vmin),vmax])
+                vmin = np.round(max_val * -1.0,2)
+                vmax = np.round(max_val * 1.0,2)
+                clevs = [vmin,np.round(vmin*0.5,2),0,np.round(vmax*0.5,2),vmax]
         
         if len(xcoord.shape) and len(ycoord.shape)==1:
             xcoord,ycoord = np.meshgrid(xcoord,ycoord)
@@ -1515,8 +1527,14 @@ class TrackPlot(Plot):
             #    zcoord[np.isnan(zcoord)]=0
             #    zcoord=gfilt(zcoord,sigma=prop['smooth'])
             #    zcoord[zcoord<min(clevs)]=np.nan
-            cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=vmin,vmax=vmax,
-                           transform=ccrs.PlateCarree())
+            
+            if prop['cmap']=='category' and varname=='vmax':
+                norm = mcolors.BoundaryNorm(clevs,cmap.N)
+                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=vmin,vmax=vmax,norm=norm,
+                                       transform=ccrs.PlateCarree())
+            else:
+                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=vmin,vmax=vmax,
+                                       transform=ccrs.PlateCarree())
 
         #--------------------------------------------------------------------------------------
 
@@ -1538,17 +1556,21 @@ class TrackPlot(Plot):
         cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
                                  ticks=clevs)
             
+        """
         if len(prop['levels'])>2:
             cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
+            cax.yaxis.set_ticks(np.linspace(0,1,len(clevs)))
             cax.yaxis.set_ticklabels(clevs)
         else:
             cax.yaxis.set_ticks(clevs)
+        """
         cax.tick_params(labelsize=11.5)
         cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
         if prop['cmap']=='category' and varname=='vmax':
-            cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
+            #cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
+            cax.yaxis.set_ticks(np.linspace(0,1,len(clevs)))
             cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
             cax2.yaxis.set_ticks_position('right')

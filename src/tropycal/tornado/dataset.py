@@ -22,8 +22,10 @@ except:
     warnings.warn(warn_message)
 
 from .plot import TornadoPlot
+
+#Import tools
 from .tools import *
-#from ...tropycal import tracks
+from ..utils import *
 
 class TornadoDataset():
     
@@ -227,7 +229,7 @@ class TornadoDataset():
         ax = plt.subplot()
         
         #Default EF color scale
-        EFcolors = ef_colors('default')
+        EFcolors = get_colors_ef('default')
         
         #Plot all tornado tracks in motion relative coords
         for _,row in stormTors.iterrows():

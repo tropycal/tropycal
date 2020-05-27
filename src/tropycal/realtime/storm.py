@@ -10,8 +10,9 @@ import warnings
 from datetime import datetime as dt,timedelta
 import requests
 
-from ..tracks.tools import *
 from ..tracks import *
+from ..tracks.tools import *
+from ..utils import *
 
 try:
     import zipfile
@@ -273,7 +274,7 @@ class RealtimeStorm(Storm):
 
                         #Get storm type, if it can be determined
                         if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
-                            stype = get_type(vmax,False)
+                            stype = get_storm_type(vmax,False)
                         forecasts['type'].append(stype)
         
         #Retrieve JTWC forecast otherwise
@@ -345,7 +346,7 @@ class RealtimeStorm(Storm):
                     forecasts['mslp'].append(mslp)
 
                     #Get storm type, if it can be determined
-                    stype = get_type(vmax,False)
+                    stype = get_storm_type(vmax,False)
                     forecasts['type'].append(stype)
             
         #Determine ACE thus far
@@ -596,7 +597,7 @@ class RealtimeStorm(Storm):
 
             #Get storm type
             subtrop_flag = True if self.type[-1] in ['SS','SD'] else False
-            current_advisory['type'] = get_storm_type(self.vmax[-1],subtrop_flag,self.basin)
+            current_advisory['type'] = get_storm_classification(self.vmax[-1],subtrop_flag,self.basin)
 
             #Get storm name
             current_advisory['name'] = self.name.title()
@@ -733,7 +734,7 @@ class RealtimeStorm(Storm):
         #Figure out time issued
         hr = content[6].split(" ")[0]
         zone = content[6].split(" ")[2]
-        disco_time = str2(int(hr)) + ' '.join(content[6].split(" ")[1:])
+        disco_time = num_to_str2(int(hr)) + ' '.join(content[6].split(" ")[1:])
 
         format_time = content[6].split(" ")[0]
         if len(format_time) == 3: format_time = "0" + format_time

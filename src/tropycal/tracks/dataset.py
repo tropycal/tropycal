@@ -8,14 +8,18 @@ import scipy.interpolate as interp
 import urllib
 import warnings
 from datetime import datetime as dt,timedelta
-
+#Import other tropycal objects
 from ..plot import Plot
 from .plot import TrackPlot
 from .storm import Storm
 from .season import Season
-from .tools import *
 from ..tornado import *
 
+#Import tools
+from .tools import *
+from ..utils import *
+
+#Import matplotlib
 try:
     import matplotlib.lines as mlines
     import matplotlib.patheffects as path_effects
@@ -32,7 +36,7 @@ class TrackDataset:
     Parameters
     ----------
     basin : str
-        Ocean basin to load data for. Can be any of the following.
+        Ocean basin to load data for. Can be any of the following:
         
         * **north_atlantic** - HURDAT2, ibtracs
         * **east_pacific** - HURDAT2, ibtracs
@@ -364,9 +368,9 @@ class TrackDataset:
                         current_year_id = 2
                 
             #Estimate operational storm ID (which sometimes differs from HURDAT2 ID)
-            blocked_list = []#['AL061988']
+            blocked_list = []
             potential_tcs = ['AL102017']
-            increment_but_pass = []#['AL212005']
+            increment_but_pass = []
             
             if storm_name == 'UNNAMED' and max_wnd != np.nan and max_wnd >= 34 and storm_id not in blocked_list:
                 if storm_id in increment_but_pass: current_year_id += 1
@@ -375,9 +379,9 @@ class TrackDataset:
                 pass
             else:
                 #Skip potential TCs
-                if f"{storm_id[0:2]}{str2(current_year_id)}{storm_year}" in potential_tcs:
+                if f"{storm_id[0:2]}{num_to_str2(current_year_id)}{storm_year}" in potential_tcs:
                     current_year_id += 1
-                self.data[key]['operational_id'] = f"{storm_id[0:2]}{str2(current_year_id)}{storm_year}"
+                self.data[key]['operational_id'] = f"{storm_id[0:2]}{num_to_str2(current_year_id)}{storm_year}"
                 current_year_id += 1
                 
             #Swap operational storm IDs, if necessary
@@ -1797,12 +1801,12 @@ class TrackDataset:
                         cur_julian = int(convert_to_julian( (dt.now()).replace(year=2019,minute=0,second=0) ))*4 - int(rolling_sum*4)
                         year_julian = year_julian[:cur_julian+1]
                         year_tc_days = year_tc_days[:cur_julian+1]
-                        ax.plot(year_julian[-1],year_tc_days[-1],'o',color=category_color(icat),ms=8,mec='k',mew=0.8,zorder=8)
+                        ax.plot(year_julian[-1],year_tc_days[-1],'o',color=get_colors_sshws(icat),ms=8,mec='k',mew=0.8,zorder=8)
 
                     year_tc_days_masked = np.array(year_tc_days)
                     year_tc_days_masked = np.ma.masked_where(year_tc_days_masked==0,year_tc_days_masked)
                     ax.plot(year_julian,year_tc_days_masked,'-',color='k',linewidth=2.8,zorder=6)
-                    ax.plot(year_julian,year_tc_days_masked,'-',color=category_color(icat),linewidth=2.0,zorder=6)
+                    ax.plot(year_julian,year_tc_days_masked,'-',color=get_colors_sshws(icat),linewidth=2.0,zorder=6)
                     year_labels.append(f"{np.max(year_tc_days):.1f}")
                     
             else:
@@ -1858,12 +1862,12 @@ class TrackDataset:
             else:
                 add_str = [f" | {plot_year}: {i}" for i in year_labels[::-1]]
             xnums = np.zeros((p50['ts'].shape))
-            ax.fill_between(julian,p50['c1'],p50['ts'],color=category_color(34),alpha=0.3,zorder=2,label=f'TS (Avg: {np.max(p50["ts"]):.1f}{add_str[0]})')
-            ax.fill_between(julian,p50['c2'],p50['c1'],color=category_color(64),alpha=0.3,zorder=2,label=f'C1 (Avg: {np.max(p50["c1"]):.1f}{add_str[1]})')
-            ax.fill_between(julian,p50['c3'],p50['c2'],color=category_color(83),alpha=0.3,zorder=2,label=f'C2 (Avg: {np.max(p50["c2"]):.1f}{add_str[2]})')
-            ax.fill_between(julian,p50['c4'],p50['c3'],color=category_color(96),alpha=0.3,zorder=2,label=f'C3 (Avg: {np.max(p50["c3"]):.1f}{add_str[3]})')
-            ax.fill_between(julian,p50['c5'],p50['c4'],color=category_color(113),alpha=0.3,zorder=2,label=f'C4 (Avg: {np.max(p50["c4"]):.1f}{add_str[4]})')
-            ax.fill_between(julian,xnums,p50['c5'],color=category_color(137),alpha=0.3,zorder=2,label=f'C5 (Avg: {np.max(p50["c5"]):.1f}{add_str[5]})')
+            ax.fill_between(julian,p50['c1'],p50['ts'],color=get_colors_sshws(34),alpha=0.3,zorder=2,label=f'TS (Avg: {np.max(p50["ts"]):.1f}{add_str[0]})')
+            ax.fill_between(julian,p50['c2'],p50['c1'],color=get_colors_sshws(64),alpha=0.3,zorder=2,label=f'C1 (Avg: {np.max(p50["c1"]):.1f}{add_str[1]})')
+            ax.fill_between(julian,p50['c3'],p50['c2'],color=get_colors_sshws(83),alpha=0.3,zorder=2,label=f'C2 (Avg: {np.max(p50["c2"]):.1f}{add_str[2]})')
+            ax.fill_between(julian,p50['c4'],p50['c3'],color=get_colors_sshws(96),alpha=0.3,zorder=2,label=f'C3 (Avg: {np.max(p50["c3"]):.1f}{add_str[3]})')
+            ax.fill_between(julian,p50['c5'],p50['c4'],color=get_colors_sshws(113),alpha=0.3,zorder=2,label=f'C4 (Avg: {np.max(p50["c4"]):.1f}{add_str[4]})')
+            ax.fill_between(julian,xnums,p50['c5'],color=get_colors_sshws(137),alpha=0.3,zorder=2,label=f'C5 (Avg: {np.max(p50["c5"]):.1f}{add_str[5]})')
         else:
             pmin_masked = np.array(pmin)
             pmin_masked = np.ma.masked_where(pmin_masked==0,pmin_masked)
@@ -1916,7 +1920,8 @@ class TrackDataset:
         dict
             If return_dict is True, a dictionary containing data about the wind vs. MSLP relationship climatology is returned.
         """
-
+        
+        #Define empty dictionary
         relationship = {}
         
         #Determine year range of dataset
@@ -1938,11 +1943,12 @@ class TrackDataset:
         relationship['vp'] = vp
 
         #Create 2D histogram of v+p relationship
-        counts,yedges,xedges=np.histogram2d(*zip(*vp),[np.arange(800,1050,5)-2.5,np.arange(0,250,5)-2.5])
+        counts,yedges,xedges = np.histogram2d(*zip(*vp),[np.arange(800,1050,5)-2.5,np.arange(0,250,5)-2.5])
         relationship['counts'] = counts
         relationship['yedges'] = yedges
         relationship['xedges'] = xedges
         
+        #Return if plot is not requested
         if plot == False:
             if return_dict == True:
                 return relationship
@@ -1950,10 +1956,10 @@ class TrackDataset:
                 return
         
         #Create figure
-        fig=plt.figure(figsize=(12,9.5),dpi=200)
+        fig = plt.figure(figsize=(12,9.5),dpi = 200)
 
         #Plot climatology
-        CS=plt.pcolor(xedges,yedges,counts**0.3,vmin=0,vmax=np.amax(counts)**.3,cmap='gnuplot2_r')
+        CS = plt.pcolor(xedges,yedges,counts**0.3,vmin=0,vmax=np.amax(counts)**.3,cmap='gnuplot2_r')
         plt.plot(xedges,[testfit(vp,x,2) for x in xedges],'k--',linewidth=2)
         
         #Plot storm, if specified
@@ -2375,21 +2381,26 @@ class TrackDataset:
         list or pandas.DataFrame
             Check return_keys for more information.
         """
-
+        
+        #Update thresh based on input
         default_thresh={'sample_min':1,'p_max':9999,'v_min':0,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,
                         'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
 
+        #Determine domain over which to filter data
         if isinstance(domain,str):
             lon_min,lon_max,lat_min,lat_max = [float(i) for i in domain.split("/")]
         else:
             lon_min,lon_max,lat_min,lat_max = domain
+        
+        #Determine year and date range
         year_min,year_max = year_range
         date_min,date_max = [dt.strptime(i,'%m/%d') for i in date_range]
         date_max += timedelta(days=1,seconds=-1)
         
+        #Determine if a date falls within the date range
         def date_range_test(t,t_min,t_max):
             if date_min<date_max:
                 test1 = (t>=t_min.replace(year=t.year))
@@ -2400,32 +2411,52 @@ class TrackDataset:
                 test2 = (dt(t.year,1,1)<=t<=t_max.replace(year=t.year))
                 return test1 | test2
         
-        points={}
-        for name in ['vmax','mslp','type','lat','lon','date','stormid']+ \
+        #Create empty dictionary to store output in
+        points = {}
+        for name in ['vmax','mslp','type','lat','lon','date','season','stormid']+ \
                     ['dmslp_dt','dvmax_dt','dx_dt','dy_dt']*int(doInterp):
-            points[name]=[]
+            points[name] = []
+        
+        #Iterate over every storm in TrackDataset
         for key in self.keys:
+            
+            #Retrieve storm dict
             istorm = self.data[key].copy()
+            
+            #Interpolate temporally if requested
             if doInterp:
                 istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
+            
+            #Iterate over every timestep of the storm
             for i in range(len(istorm['date'])):
-                if istorm['type'][i] in ['TD','SD','TS','SS','HU'] \
+                
+                #Filter to only tropical cyclones, and filter by dates & coordiates
+                if istorm['type'][i] in ['TD','SD','TS','SS','HU','TY'] \
                 and lat_min<=istorm['lat'][i]<=lat_max and lon_min<=istorm['lon'][i]%360<=lon_max \
                 and year_min<=istorm['date'][i].year<=year_max \
                 and date_range_test(istorm['date'][i],date_min,date_max):
+                    
+                    #Append data points
                     points['vmax'].append(istorm['vmax'][i])
                     points['mslp'].append(istorm['mslp'][i])
                     points['type'].append(istorm['type'][i])
                     points['lat'].append(istorm['lat'][i])
                     points['lon'].append(istorm['lon'][i])
                     points['date'].append(istorm['date'][i])
+                    points['season'].append(istorm['season'])
                     points['stormid'].append(key)
+                    
+                    #Append separately for interpolated data
                     if doInterp:
                         points['dvmax_dt'].append(istorm['dvmax_dt'][i])
                         points['dmslp_dt'].append(istorm['dmslp_dt'][i])
                         points['dx_dt'].append(istorm['dx_dt'][i])
                         points['dy_dt'].append(istorm['dy_dt'][i])
+        
+        #Create a DataFrame from the dictionary
         p = pd.DataFrame.from_dict(points)
+        
+        #Filter by thresholds
         if thresh['v_min']>0:
             p = p.loc[(p['vmax']>=thresh['v_min'])]
         if thresh['p_max']<9999:
@@ -2439,14 +2470,16 @@ class TrackDataset:
                 p = p.loc[(p['dvmax_dt']<=thresh['dv_max'])]
             if thresh['dp_min']>-9999:
                 p = p.loc[(p['dmslp_dt']>=thresh['dp_min'])]
-            
+        
+        #Determine how to return data
         if return_keys:
             return [g[0] for g in p.groupby("stormid")]
         else:
             return p
 
-    def gridded_stats(self,request,thresh={},year_range=None,date_range=('1/1','12/31'),binsize=1,\
-                         domain=None,ax=None,return_ax=False,return_array=False,cartopy_proj=None,prop={},map_prop={}):
+    def gridded_stats(self,request,thresh={},year_range=None,year_range_subtract=None,year_average=False,
+                      date_range=('1/1','12/31'),binsize=1,domain=None,ax=None,return_ax=False,\
+                      return_array=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of gridded statistics.
@@ -2478,7 +2511,7 @@ class TrackDataset:
             
             Example usage: "maximum wind change in 24 hours", "50th percentile wind", "number of storms"
             
-        thresh : dict
+        thresh : dict, optional
             Keywords include:
                 
             * **sample_min** - minimum number of storms in a grid box for the request to be applied. For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
@@ -2491,99 +2524,195 @@ class TrackDataset:
             
             Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.
 
-        year_range : list or tuple
+        year_range : list or tuple, optional
             List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
-        date_range : list or tuple
+        year_range_subtract : list or tuple, optional
+            A year range to subtract from the previously specified "year_range". If specified, will create a difference plot.
+        year_average : bool, optional
+            If True, both year ranges will be computed and plotted as an annual average.
+        date_range : list or tuple, optional
             List or tuple representing the start and end dates as a string in 'month/day' format (e.g., ('6/1','8/15')). Default is ('1/1','12/31') or full year.
-        binsize : float
+        binsize : float, optional
             Grid resolution in degrees. Default is 1 degree.
-        domain : str
+        domain : str, optional
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
-        ax : axes
+        ax : axes, optional
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
+        return_ax : bool, optional
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
-        return_array : bool
+        return_array : bool, optional
             If True, returns the gridded 2D array used to generate the plot. Default is False.
-        cartopy_proj : ccrs
+        cartopy_proj : ccrs, optional
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         
         Other Parameters
         ----------------
-        prop : dict
+        prop : dict, optional
             Customization properties of plot. Please refer to :ref:`options-prop-gridded` for available options.
-        map_prop : dict
+        map_prop : dict, optional
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
 
+        #Update thresh based on input
         default_thresh={'sample_min':np.nan,'p_max':np.nan,'v_min':np.nan,'dv_min':np.nan,'dp_max':np.nan,'dv_max':np.nan,'dp_min':np.nan,'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
-
-        thresh,func = findfunc(request,thresh)
-        thresh,varname = findvar(request,thresh)
         
-        VEC_FLAG = isinstance(varname,tuple)
-
+        #Retrieve the requested function, variable for computing stats, and plot title. These modify thresh if necessary.
+        thresh,func = find_func(request,thresh)
+        thresh,varname = find_var(request,thresh)
         thresh,plot_subtitle = construct_title(thresh)
-            
+        
+        #Determine whether request includes a vector (i.e., TC motion vector)
+        VEC_FLAG = isinstance(varname,tuple)
+        
+        #Determine year range of plot
         if year_range == None:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
             year_range = (start_year,end_year)
         
-        print("--> Getting filtered storm tracks")
-        points = self.filter_storms(year_range,date_range,thresh=thresh,doInterp=True,return_keys=False)
+        #Determine year range to subtract, if making a difference plot
+        if year_range_subtract != None:
+            if isinstance(year_range_subtract,(list,tuple)) == False:
+                msg = "\"year_range_subtract\" must be of type list or tuple."
+                raise TypeError(msg)
+            if len(year_range_subtract) != 2:
+                msg = "\"year_range_subtract\" must contain 2 elements."
+                raise ValueError(msg)
+            year_range_subtract = tuple(year_range_subtract)
         
-        #Round lat/lon points down to nearest bin
-        to_bin = lambda x: np.floor(x / binsize) * binsize
-        points["latbin"] = points.lat.map(to_bin)
-        points["lonbin"] = points.lon.map(to_bin)
+        #---------------------------------------------------------------------------------------------------
         
-        print("--> Grouping by lat/lon/storm")
-        #Group by latbin,lonbin,stormid
-        groups = points.groupby(["latbin", "lonbin","stormid"])
-        #Loops through groups, and apply stat func to storms
-        new_df = {'latbin':[],'lonbin':[],'stormid':[],varname:[]}
-        for g in groups:
+        #Perform analysis either once or twice depending on year_range_subtract
+        if year_range_subtract == None:
+            years_analysis = [year_range]
+        else:
+            years_analysis = [year_range,year_range_subtract]
+        grid_x_years = []
+        grid_y_years = []
+        grid_z_years = []
+        
+        for year_range_temp in years_analysis:
+
+            #Obtain all data points for the requested threshold and year/date ranges. Interpolate data to hourly.
+            print("--> Getting filtered storm tracks")
+            points = self.filter_storms(year_range_temp,date_range,thresh=thresh,doInterp=True,return_keys=False)
+
+            #Round lat/lon points down to nearest bin
+            to_bin = lambda x: np.floor(x / binsize) * binsize
+            points["latbin"] = points.lat.map(to_bin)
+            points["lonbin"] = points.lon.map(to_bin)
+
+            #---------------------------------------------------------------------------------------------------
+
+            #Group by latbin,lonbin,stormid
+            print("--> Grouping by lat/lon/storm")
+            groups = points.groupby(["latbin","lonbin","stormid","season"])
+
+            #Loops through groups, and apply stat func to storms
+            #Constructs a new dataframe containing the lat/lon bins, storm ID and the plotting variable
+            new_df = {'latbin':[],'lonbin':[],'stormid':[],'season':[],varname:[]}
+            for g in groups:
+                #Apply function to all time steps in which a storm tracks within a gridpoint
+                if VEC_FLAG:
+                    new_df[varname].append([func(g[1][v].values) for v in varname])
+                else:
+                    new_df[varname].append(func(g[1][varname].values))
+                new_df['latbin'].append(g[0][0])
+                new_df['lonbin'].append(g[0][1])
+                new_df['stormid'].append(g[0][2])
+                new_df['season'].append(g[0][3])
+            new_df = pd.DataFrame.from_dict(new_df)
+
+            #---------------------------------------------------------------------------------------------------
+
+            #Group again by latbin,lonbin
+            #Construct two 1D lists: zi (grid values) and coords, that correspond to the 2D grid
+            groups = new_df.groupby(["latbin", "lonbin"])
+
+            #Apply the function to all storms that pass through a gridpoint
             if VEC_FLAG:
-                new_df[varname].append([func(g[1][v].values) for v in varname])
+                zi = [[func(v) for v in zip(*g[1][varname])] if len(g[1]) >= thresh['sample_min'] else [np.nan]*2 for g in groups]
             else:
-                new_df[varname].append(func(g[1][varname].values))
-            new_df['latbin'].append(g[0][0])
-            new_df['lonbin'].append(g[0][1])
-            new_df['stormid'].append(g[0][2])
-        new_df = pd.DataFrame.from_dict(new_df)
+                zi = [func(g[1][varname]) if len(g[1]) >= thresh['sample_min'] else np.nan for g in groups]
+
+            #Construct a 1D array of coordinates
+            coords = [g[0] for g in groups]
+
+            #Construct a 2D longitude and latitude grid, using the specified binsize resolution
+            xi = np.arange(np.nanmin(points["lonbin"])-binsize,np.nanmax(points["lonbin"])+2*binsize,binsize)
+            yi = np.arange(np.nanmin(points["latbin"])-binsize,np.nanmax(points["latbin"])+2*binsize,binsize)
+            grid_x, grid_y = np.meshgrid(xi,yi)
+            grid_x_years.append(grid_x)
+            grid_y_years.append(grid_y)
+
+            #Construct a 2D grid for the z value, depending on whether vector or scalar quantity
+            if VEC_FLAG:
+                grid_z_u = np.ones(grid_x.shape) * np.nan
+                grid_z_v = np.ones(grid_x.shape) * np.nan
+                for c,z in zip(coords,zi):
+                    grid_z_u[np.where((grid_y==c[0]) & (grid_x==c[1]))] = z[0]
+                    grid_z_v[np.where((grid_y==c[0]) & (grid_x==c[1]))] = z[1]
+                grid_z = [grid_z_u,grid_z_v]
+            else:
+                grid_z = np.ones(grid_x.shape)*np.nan
+                for c,z in zip(coords,zi):
+                    grid_z[np.where((grid_y==c[0]) & (grid_x==c[1]))] = z
+
+            #Set zero values to nan's if necessary
+            if varname == 'date':
+                grid_z[np.where(grid_z==0)] = np.nan
+            
+            #Add to list of grid_z's
+            grid_z_years.append(grid_z)
         
-        #Group again, by latbin,lonbin
-        groups = new_df.groupby(["latbin", "lonbin"])
+        #---------------------------------------------------------------------------------------------------
         
-        if VEC_FLAG:
-            zi = [[func(v) for v in zip(*g[1][varname])] if len(g[1])>=thresh['sample_min'] else [np.nan]*2 for g in groups]
+        #Calculate difference between plots, if specified
+        if len(grid_z_years) == 2:
+            try:
+                #Import xarray and construct DataArray
+                import xarray as xr
+                
+                #Determine whether to use averages
+                if year_average == True:
+                    years_listed = len(range(year_range[0],year_range[1]+1))
+                    grid_z_years[0] = grid_z_years[0] / years_listed
+                    years_listed = len(range(year_range_subtract[0],year_range_subtract[1]+1))
+                    grid_z_years[1] = grid_z_years[1] / years_listed
+                   
+                #Construct DataArrays
+                grid_z_1 = xr.DataArray(np.nan_to_num(grid_z_years[0]),coords=[grid_y_years[0].T[0],grid_x_years[0][0]],dims=['lat','lon'])
+                grid_z_2 = xr.DataArray(np.nan_to_num(grid_z_years[1]),coords=[grid_y_years[1].T[0],grid_x_years[1][0]],dims=['lat','lon'])
+                
+                #Compute difference grid
+                grid_z = grid_z_1 - grid_z_2
+                
+                #Reconstruct lat & lon grids
+                xi = grid_z.lon.values
+                yi = grid_z.lat.values
+                grid_z = grid_z.values
+                grid_x, grid_y = np.meshgrid(xi,yi)
+                
+                #Determine NaNs
+                grid_z_years[0][np.isnan(grid_z_years[0])] = -9999
+                grid_z_years[1][np.isnan(grid_z_years[1])] = -8999
+                grid_z_years[0][grid_z_years[0]!=-9999] = 0
+                grid_z_years[1][grid_z_years[1]!=-8999] = 0
+                grid_z_1 = xr.DataArray(np.nan_to_num(grid_z_years[0]),coords=[grid_y_years[0].T[0],grid_x_years[0][0]],dims=['lat','lon'])
+                grid_z_2 = xr.DataArray(np.nan_to_num(grid_z_years[1]),coords=[grid_y_years[1].T[0],grid_x_years[1][0]],dims=['lat','lon'])
+                grid_z_check = (grid_z_1 - grid_z_2).values
+                grid_z[grid_z_check==-1000] = np.nan
+                
+            except ImportError as e:
+                raise RuntimeError("Error: xarray is not available. Install xarray in order to use the subtract year functionality.") from e
         else:
-            zi = [func(g[1][varname]) if len(g[1])>=thresh['sample_min'] else np.nan for g in groups]
-    
-        coords = [g[0] for g in groups]
-        
-        xi= np.arange(np.nanmin(points["lonbin"])-binsize,np.nanmax(points["lonbin"])+2*binsize,binsize)
-        yi = np.arange(np.nanmin(points["latbin"])-binsize,np.nanmax(points["latbin"])+2*binsize,binsize)
-        grid_x, grid_y = np.meshgrid(xi,yi)
-        
-        if VEC_FLAG:
-            grid_z_u = np.ones(grid_x.shape)*np.nan
-            grid_z_v = np.ones(grid_x.shape)*np.nan
-            for c,z in zip(coords,zi):
-                grid_z_u[np.where((grid_y==c[0]) & (grid_x==c[1]))]=z[0]
-                grid_z_v[np.where((grid_y==c[0]) & (grid_x==c[1]))]=z[1]
-            grid_z = [grid_z_u,grid_z_v]
-        else:
-            grid_z = np.ones(grid_x.shape)*np.nan
-            for c,z in zip(coords,zi):
-                grid_z[np.where((grid_y==c[0]) & (grid_x==c[1]))]=z
-        
-        if varname == 'date':
-            grid_z[np.where(grid_z==0)]=np.nan
+            #Determine whether to use averages
+            if year_average == True:
+                years_listed = len(range(year_range[0],year_range[1]+1))
+                grid_z = grid_z / years_listed
         
         #Create instance of plot object
         try:
@@ -2591,7 +2720,7 @@ class TrackDataset:
         except:
             self.plot_obj = TrackPlot()
         
-        #Create cartopy projection
+        #Create cartopy projection using basin
         if domain == None:
             domain = self.basin
         if cartopy_proj == None:
@@ -2600,23 +2729,30 @@ class TrackDataset:
             else:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
         
-        #Plot
+        #Format left title for plot
         endash = u"\u2013"
         dot = u"\u2022"
-        title_L=request.lower()
+        title_L = request.lower()
         for name in ['wind','vmax']:
             title_L = title_L.replace(name,'wind (kt)')
         for name in ['pressure','mslp']:
             title_L = title_L.replace(name,'pressure (hPa)')
         for name in ['heading','motion','movement']:
             title_L = title_L.replace(name,f'heading (km/hr) over {thresh["dt_window"]} hours')
-        if request.find('change')>=0:
+        if request.find('change') >= 0:
             title_L = title_L+f", {thresh['dt_align']}"
-        title_L = title_L[0].upper()+title_L[1:]+plot_subtitle
-        date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
-        title_R = f'{date_range[0]} {endash} {date_range[1]} {dot} {year_range[0]} {endash} {year_range[1]}'
-        prop['title_L'],prop['title_R']=title_L,title_R
+        title_L = title_L[0].upper() + title_L[1:] + plot_subtitle
         
+        #Format right title for plot
+        date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
+        if year_range_subtract == None:
+            title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")} {dot} {year_range[0]} {endash} {year_range[1]}'
+        else:
+            add_avg = ' mean' if year_average == True else ''
+            title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")}\n{year_range[0]}{endash}{year_range[1]}{add_avg} minus {year_range_subtract[0]}{endash}{year_range_subtract[1]}{add_avg}'
+        prop['title_L'],prop['title_R'] = title_L,title_R
+        
+        #Plot gridded field
         plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,VEC_FLAG,domain,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
         
         #Format grid into xarray if specified
@@ -2748,7 +2884,7 @@ class TrackDataset:
         ax = plt.subplot()
         
         #Default EF color scale
-        EFcolors = ef_colors('default')
+        EFcolors = get_colors_ef('default')
         
         #Number of storms exceeding mag_thresh
         num_storms = len(np.unique(stormTors.loc[stormTors['mag']>=mag_thresh]['storm_id'].values))

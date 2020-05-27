@@ -9,6 +9,8 @@ import matplotlib as mlib
 import matplotlib.colors as mcolors
 import matplotlib.dates as mdates
 
+from ..utils import classify_subtropical, get_storm_classification
+
 def uv_from_wdir(wspd,wdir):
     d2r = np.pi/180.
     theta = (270 - wdir) * d2r
@@ -23,7 +25,7 @@ def uv_from_wdir(wspd,wdir):
 class interpRecon:
     
     """
-    Interpolates storm-centered data by time and space
+    Interpolates storm-centered data by time and space.
     """
     
     def __init__(self,dfRecon,varname,radlim=None):
@@ -269,9 +271,12 @@ class interpRecon:
 # TOOLS FOR PLOTTING
 #------------------------------------------------------------------------------
 
-#Title generator
-        
 def get_recon_title(varname):
+    
+    r"""
+    Generate plot title descriptor for plots.
+    """
+    
     if varname.lower() == 'wspd':
         titlename = '30s FL wind'
         unitname = r'(kt)'
@@ -284,82 +289,44 @@ def get_recon_title(varname):
     if varname.lower() == 'p_sfc':
         titlename = 'Sfc pressure'
         unitname = r'(hPa)'
+    
     return titlename,unitname
 
-#Convert between wind and category
-def wind2cat(wind):
-    w2c = {5:-1,\
-           34:0,\
-           64:1,\
-           83:2,\
-           96:3,\
-           113:4,\
-           137:5}
-    return w2c[wind]
-
-def cat2wind(cat):
-    c2w = {-1:5,\
-           0:34,\
-           1:64,\
-           2:83,\
-           3:96,\
-           4:113,\
-           5:137}
-    return c2w[cat]
-
-
-def category_color(vmax):
+def hovmoller_plot_title(storm_obj,Hov,varname):
     
-    if isinstance(vmax,str) == True:
-        vmax = category_to_wind(vmax)
+    r"""
+    Generate plot title for hovmoller.
+    """
     
-    if vmax < 5:
-        return '#FFFFFF'
-    elif vmax < 34:
-        return '#8FC2F2' #'#7DB7ED'
-    elif vmax < 64:
-        return '#3185D3'
-    elif vmax < 83:
-        return '#FFFF00'
-    elif vmax < 96:
-        return '#FF9E00'
-    elif vmax < 113:
-        return '#DD0000'
-    elif vmax < 137:
-        return '#FF00FC'
-    else:
-        return '#8B0088'
+    #Retrieve storm dictionary from Storm object
+    storm_data = storm_obj.dict
+    
+    #------- construct left title ---------
+    
+    #Subset sustained wind array to when the storm was tropical
+    type_array = np.array(storm_data['type'])
+    idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+    tropical_vmax = np.array(storm_data['vmax'])[idx]
+    
+    #Determine storm classification based on subtropical status & basin
+    subtrop = classify_subtropical(np.array(storm_data['type']))
+    peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+    peak_basin = storm_data['wmo_basin'][peak_idx]
+    storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
+    
+    #Get title descriptor based on variable
+    vartitle = get_recon_title(varname)
+    
+    #Add left title
+    dot = u"\u2022"
+    title_left = f"{storm_type} {storm_data['name']}\n" + 'Recon: '+' '.join(vartitle)
 
-def make_colormap(colors,whiten=0):
-    import numpy as np
-    from matplotlib.colors import LinearSegmentedColormap, ColorConverter
+    #------- construct right title ---------
     
-    z  = np.array(sorted(colors.keys()))
-    n  = len(z)
-    z1 = min(z)
-    zn = max(z)
-    x0 = (z - z1) / (zn - z1)
+    #Determine start and end dates of hovmoller
+    start_date = dt.strftime(min(Hov['time']),'%H:%M UTC %d %b %Y')
+    end_date = dt.strftime(max(Hov['time']),'%H:%M UTC %d %b %Y')
+    title_right = f'Start ... {start_date}\nEnd ... {end_date}'
     
-    CC = ColorConverter()
-    R = []
-    G = []
-    B = []
-    for i in range(n):
-        Ci = colors[z[i]]
-        if type(Ci) == str:
-            RGB = CC.to_rgb(Ci)
-        else:
-            RGB = Ci
-        R.append(RGB[0] + (1-RGB[0])*whiten)
-        G.append(RGB[1] + (1-RGB[1])*whiten)
-        B.append(RGB[2] + (1-RGB[2])*whiten)
-    
-    cmap_dict = {}
-    cmap_dict['red']   = [(x0[i],R[i],R[i]) for i in range(len(R))]
-    cmap_dict['green'] = [(x0[i],G[i],G[i]) for i in range(len(G))]
-    cmap_dict['blue']  = [(x0[i],B[i],B[i]) for i in range(len(B))]
-    mymap = LinearSegmentedColormap('mymap',cmap_dict)
-    
-    return mymap
-
-
+    #Return both titles
+    return title_left,title_right

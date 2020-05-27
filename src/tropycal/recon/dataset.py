@@ -14,6 +14,7 @@ import matplotlib.dates as mdates
 try:
     import matplotlib as mlib
     import matplotlib.lines as mlines
+    import matplotlib.colors as mcolors
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
@@ -21,8 +22,10 @@ except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
 from .plot import ReconPlot
-from .tools import * 
-from ..tracks.tools import *
+
+#Import tools
+from .tools import *
+from ..utils import *
 
 class ReconDataset:
 
@@ -33,6 +36,10 @@ class ReconDataset:
     ----------
     stormtuple : tuple or list
         Requested storm. Can be either tuple or list containing storm name and year (e.g., ("Matthew",2016)).
+    save_path : str, optional
+        Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.
+    read_path : str, optional
+        Filepath to read saved recon data from. If specified, "save_path" cannot be passed as an argument.
         
     Returns
     -------
@@ -44,24 +51,36 @@ class ReconDataset:
             Dictionary keys are given by mission number and agency (e.g. '15_NOAA').
         * **recentered** - A dataframe with all missions concatenated together, and columns 'xdist' and 'ydist'
             indicating the distance (km) of the ob from the interpolated center of the storm.
+    
+    Notes
+    -----
+    Recon data is currently read in via Tropical Atlantic. Future releases of Tropycal will incorporate NHC recon archives.
     """
 
     def __init__(self,storm,save_path="",read_path=""):
         
+        #Error check
         if save_path != "" and read_path != "":
             raise ValueError("Error: Cannot read in and save a file at the same time.")
         
+        #Create URL prefix for reading in recon data
         self.url_prefix = 'http://tropicalatlantic.com/recon/recon.cgi?'
         self.storm_obj = storm
         self.storm = str(storm.name)
         self.year = str(storm.year)
         
+        #If reading in a pickled file, load it in
         if read_path != "":
             self.missiondata = pickle.load(open(read_path,'rb'))
+        
+        #Otherwise, retrieve all mission data for this storm
         else:
             self.missiondata = self.allMissions()
+            
+            #Save mission data as a pickle if necessary
             if save_path != "": pickle.dump(self.missiondata,open(save_path,'wb'),-1)
         
+        #Convert recon data to storm-centered coordinates
         self.recentered = self.recenter()
             
         
@@ -367,18 +386,17 @@ class ReconDataset:
         Other Parameters
         ----------------
         prop : dict
-            Customization properties for recon plot.
+            Customization properties for recon plot. Please refer to :ref:`options-prop-recon-hovmoller` for available options.
         """
         
         #Pop kwargs
         prop = kwargs.pop('prop',{})
-        default_prop = {'cmap':'category','levels':None}
+        default_prop = {'cmap':'category','levels':None,'smooth_contourf':False}
         for key in default_prop.keys():
             if key not in prop.keys():
                 prop[key]=default_prop[key]
             
-        #Get plot data
-        
+        #Get recon data based on recon_select
         if recon_select is None:
             dfRecon = self.recentered
         elif isinstance(recon_select,pd.core.frame.DataFrame):
@@ -388,17 +406,23 @@ class ReconDataset:
         else:
             dfRecon = self.__getSubTime(recon_select)
         
+        #Retrieve track dictionary if none is specified
         if track_dict is None:
             track_dict = self.storm_obj.dict
         
+        #Interpolate recon data to a hovmoller
         iRecon = interpRecon(dfRecon,varname,radlim)
         Hov_dict = iRecon.interpHovmoller(track_dict)
 
-        title = get_recon_title(varname)
+        #title = get_recon_title(varname) #may not be necessary
+        #If no contour levels specified, generate levels based on data min and max
         if prop['levels'] is None:
             prop['levels'] = (np.nanmin(Hov_dict['hovmoller']),np.nanmax(Hov_dict['hovmoller']))
+        
+        #Retrieve updated contour levels and colormap based on input arguments and variable type
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
-                
+        
+        #Retrieve hovmoller times, radii and data
         time = Hov_dict['time']
         radius = Hov_dict['radius']
         vardata = Hov_dict['hovmoller']
@@ -406,31 +430,51 @@ class ReconDataset:
         #Error check time
         time = [dt.strptime((i.strftime('%Y%m%d%H%M')),'%Y%m%d%H%M') for i in time]
         
+        #------------------------------------------------------------------------------
+        
         #Create plot        
         plt.figure(figsize=(9,11),dpi=150)
-        ax=plt.subplot()
-        if len(prop['levels'])>2:
-            cf=ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),\
-                     levels=clevs,cmap=cmap)
+        ax = plt.subplot()
+        
+        #Plot surface category colors individually, necessitating normalizing colormap
+        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] == 'category':
+            norm = mcolors.BoundaryNorm(clevs,cmap.N)
+            cf = ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),
+                             levels=clevs,cmap=cmap,norm=norm)
+        
+        #Multiple clevels or without smooth contouring
+        elif len(prop['levels']) > 2 or prop['smooth_contourf'] == False:
+            cf = ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),
+                             levels=clevs,cmap=cmap)
+        
+        #Automatically generated levels with smooth contouring
         else:
-            cf=ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),\
-                     cmap=cmap,levels=np.linspace(min(prop['levels']),max(prop['levels']),256))
+            cf = ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),
+                             cmap=cmap,levels=np.linspace(min(prop['levels']),max(prop['levels']),256))
         ax.axis([0,max(radius),min(time),max(time)])
         
+        #Plot colorbar
+        cbar = plt.colorbar(cf,orientation='horizontal',pad=0.1)
+        
+        #Format y-label ticks and labels as dates
         ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d %H'))
         for tick in ax.xaxis.get_major_ticks():
                 tick.label.set_fontsize(14)
         for tick in ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(14)
-        ax.set_ylabel('UTC Time (MM-DD HH)',fontsize=15)
-        ax.set_xlabel('Radius (km)',fontsize=15)
-        cbar = plt.colorbar(cf,orientation='horizontal',pad=0.1)
+        
+        #Format x-axis ticks
         cbar.ax.xaxis.set_ticks(np.linspace(0,1,len(clevs)))
         cbar.ax.xaxis.set_ticklabels(clevs,fontsize=14)
         
+        #Set axes labels
+        ax.set_ylabel('UTC Time (MM-DD HH)',fontsize=15)
+        ax.set_xlabel('Radius (km)',fontsize=15)
+        
         #--------------------------------------------------------------------------------------
         
-        title_left,title_right = ReconPlot().plot_hovmoller(self.storm_obj,Hov_dict,varname)
+        #Generate left and right title strings
+        title_left, title_right = hovmoller_plot_title(self.storm_obj,Hov_dict,varname)
         ax.set_title(title_left,loc='left',fontsize=16,fontweight='bold')
         ax.set_title(title_right,loc='right',fontsize=12)
         

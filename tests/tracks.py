@@ -1,4 +1,4 @@
-"""Tests for the `skewt` module."""
+"""Tests for various modules."""
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -99,7 +99,7 @@ def test_code():
     #------------------------------------------------------------
     
     #Test retrieving season
-    ax = season = hurdat_atl.get_season(2017)
+    season = hurdat_atl.get_season(2017)
     
     #Make plot of season
     test_plot(season.plot, proj, True, [], {'return_ax': True}, use_figsize=(14,9))

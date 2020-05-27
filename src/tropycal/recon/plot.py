@@ -9,8 +9,10 @@ from datetime import datetime as dt,timedelta
 from scipy.ndimage import gaussian_filter as gfilt
 
 from ..plot import Plot
+
+#Import tools
 from .tools import *
-from ..tracks.tools import *
+from ..utils import *
 
 try:
     import cartopy.feature as cfeature
@@ -174,10 +176,10 @@ class ReconPlot(Plot):
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
         tropical_vmax = np.array(storm_data['vmax'])[idx]
             
-        subtrop = classify_subtrop(np.array(storm_data['type']))
+        subtrop = classify_subtropical(np.array(storm_data['type']))
         peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
         peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_type(np.nanmax(tropical_vmax),subtrop,peak_basin)
+        storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
         
         dot = u"\u2022"
         if barbs:
@@ -364,10 +366,10 @@ class ReconPlot(Plot):
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
         tropical_vmax = np.array(storm_data['vmax'])[idx]
             
-        subtrop = classify_subtrop(np.array(storm_data['type']))
+        subtrop = classify_subtropical(np.array(storm_data['type']))
         peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
         peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_type(np.nanmax(tropical_vmax),subtrop,peak_basin)
+        storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
         
         dot = u"\u2022"
         vartitle = get_recon_title(varname)
@@ -580,10 +582,10 @@ class ReconPlot(Plot):
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
         tropical_vmax = np.array(storm_data['vmax'])[idx]
             
-        subtrop = classify_subtrop(np.array(storm_data['type']))
+        subtrop = classify_subtropical(np.array(storm_data['type']))
         peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
         peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_type(np.nanmax(tropical_vmax),subtrop,peak_basin)
+        storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
         
         vartitle = get_recon_title(varname)
         title_left = f"{storm_type} {storm_data['name']}\n" + 'Recon: '+' '.join(vartitle)
@@ -609,29 +611,3 @@ class ReconPlot(Plot):
                 return self.ax,{'n':bound_n,'e':bound_e,'s':bound_s,'w':bound_w}
             else:
                 return self.ax
-
-    def plot_hovmoller(self,storm,Hov,varname):
-        
-        storm_data = storm.dict
-        #Add left title
-        type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
-        tropical_vmax = np.array(storm_data['vmax'])[idx]
-            
-        subtrop = classify_subtrop(np.array(storm_data['type']))
-        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
-        peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_type(np.nanmax(tropical_vmax),subtrop,peak_basin)
-        
-        dot = u"\u2022"
-        vartitle = get_recon_title(varname)
-
-        title_left = f"{storm_type} {storm_data['name']}\n" + 'Recon: '+' '.join(vartitle)
-
-        #Add right title
-        #max_ppf = max(PPF)
-        start_date = dt.strftime(min(Hov['time']),'%H:%M UTC %d %b %Y')
-        end_date = dt.strftime(max(Hov['time']),'%H:%M UTC %d %b %Y')
-        title_right = f'Start ... {start_date}\nEnd ... {end_date}'
-
-        return title_left,title_right

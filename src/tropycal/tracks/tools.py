@@ -9,121 +9,264 @@ import matplotlib.colors as mcolors
 import matplotlib as mlib
 import warnings
 
-def findvar(cmd,thresh):
-    cmd=cmd.lower()
-    if cmd.find('count')>=0 or cmd.find('num')>=0:
-        return thresh,'date'
-    if cmd.find('wind')>=0 or cmd.find('vmax')>=0:
-        if cmd.find('change')>=0:
+def find_var(request,thresh):
+    
+    r"""
+    Given a request and threshold, returns the variable for plotting. Referenced from ``TrackDataset.gridded_stats()`` and ``TrackPlot.plot_gridded()``. Internal function.
+    
+    Parameters
+    ----------
+    request : str
+        Descriptor of the requested plot. Detailed more in the ``TrackDataset.gridded_dataset()`` function.
+    thresh : dict
+        Dictionary containing thresholds for the plot. Detailed more in the ``TrackDataset.gridded_dataset()`` function.
+    
+    Returns
+    -------
+    thresh : dict
+        Returns the thresh dictionary, modified depending on the request.
+    varname : str
+        String denoting the variable for plotting.
+    """
+    
+    #Convert command to lowercase
+    request = request.lower()
+    
+    #Count of number of storms
+    if request.find('count') >= 0 or request.find('num') >= 0:
+        return thresh, 'date' #not sure what date stands for
+    
+    #Sustained wind, or change in wind speed
+    if request.find('wind') >= 0 or request.find('vmax') >= 0:
+        #If change in wind, determine time interval
+        if request.find('change') >= 0:
             try:
-                thresh['dt_window'] = int(''.join([c for i,c in enumerate(cmd) \
-                      if c.isdigit() and i>cmd.find('hour')-4]))
+                thresh['dt_window'] = int(''.join([c for i,c in enumerate(request) \
+                      if c.isdigit() and i > request.find('hour')-4]))
             except:
                 raise RuntimeError("Error: specify time interval (hours)")
             return thresh,'dvmax_dt'
+        #Otherwise, sustained wind
         else:
             return thresh,'vmax'
-    elif cmd.find('pressure')>=0 or cmd.find('slp')>=0:
-        if cmd.find('change')>=0:
+    
+    #Minimum MSLP, or change in MSLP
+    elif request.find('pressure') >= 0 or request.find('slp') >= 0:
+        #If change in MSLP, determine time interval
+        if request.find('change') >= 0:
             try:
-                thresh['dt_window'] = int(''.join([c for i,c in enumerate(cmd) \
-                      if c.isdigit() and i>cmd.find('hour')-4]))
+                thresh['dt_window'] = int(''.join([c for i,c in enumerate(request) \
+                      if c.isdigit() and i > request.find('hour')-4]))
             except:
                 raise RuntimeError("Error: specify time interval (hours)")
             return thresh,'dmslp_dt'
+        #Otherwise, minimum MSLP
         else:
             return thresh,'mslp'
-    elif cmd.find('heading')>=0 or cmd.find('movement')>=0 or cmd.find('motion')>=0:
+    
+    #Storm motion or heading (vector)
+    elif request.find('heading') >= 0 or request.find('movement') >= 0 or request.find('motion') >= 0:
         return thresh,('dx_dt','dy_dt')
+    
+    #Otherwise, error
     else:
-        raise RuntimeError("Error: Could not decipher variable")
+        msg = "Error: Could not decipher variable. Please refer to documentation for examples on how to phrase the \"request\" string."
+        raise RuntimeError(msg)
         
-def findfunc(cmd,thresh):
-    cmd=cmd.lower()
-    if cmd.find('max')==0:
-        return thresh,lambda x: np.nanmax(x)
-    if cmd.find('min')==0:
-        return thresh,lambda x: np.nanmin(x)
-    elif cmd.find('mean')>=0 or cmd.find('average')>=0 or cmd.find('avg')>=0:
-        thresh['sample_min']=max([5,thresh['sample_min']])
-        return thresh,lambda x: np.nanmean(x)
-    elif cmd.find('percentile')>=0:
-        ptile = int(''.join([c for i,c in enumerate(cmd) if c.isdigit() and i<cmd.find('percentile')]))
-        thresh['sample_min']=max([5,thresh['sample_min']])
-        return thresh,lambda x: np.nanpercentile(x,ptile)
-    elif cmd.find('count')>=0 or cmd.find('num')>=0:
-        return thresh,lambda x: len(x)
+def find_func(request,thresh):
+    
+    r"""
+    Given a request and threshold, returns the requested function. Referenced from ``TrackDataset.gridded_stats()``. Internal function.
+    
+    Parameters
+    ----------
+    request : str
+        Descriptor of the requested plot. Detailed more in the ``TrackDataset.gridded_dataset()`` function.
+    thresh : dict
+        Dictionary containing thresholds for the plot. Detailed more in the ``TrackDataset.gridded_dataset()`` function.
+    
+    Returns
+    -------
+    thresh : dict
+        Returns the thresh dictionary, modified depending on the request.
+    func : lambda
+        Returns a function to apply to the data.
+    """
+    
+    #Convert command to lowercase
+    request = request.lower()
+    
+    #Numpy maximum function
+    if request.find('max') == 0:
+        return thresh, lambda x: np.nanmax(x)
+    
+    #Numpy minimum function
+    if request.find('min') == 0:
+        return thresh, lambda x: np.nanmin(x)
+    
+    #Numpy average function
+    elif request.find('mean') >= 0 or request.find('average') >= 0 or request.find('avg') >= 0:
+        thresh['sample_min'] = max([5,thresh['sample_min']]) #Ensure sample minimum is at least 5 per gridpoint
+        return thresh, lambda x: np.nanmean(x)
+    
+    #Numpy percentile function
+    elif request.find('percentile') >= 0:
+        ptile = int(''.join([c for i,c in enumerate(request) if c.isdigit() and i < request.find('percentile')]))
+        thresh['sample_min'] = max([5,thresh['sample_min']]) #Ensure sample minimum is at least 5 per gridpoint
+        return thresh, lambda x: np.nanpercentile(x,ptile)
+    
+    #Count function
+    elif request.find('count') >= 0 or request.find('num') >= 0:
+        return thresh, lambda x: len(x)
+    
+    #Otherwise, function cannot be identified
     else:
-        raise RuntimeError("Error: Could not decipher function")
+        msg = "Cannot decipher the function. Please refer to documentation for examples on how to phrase the \"request\" string."
+        raise RuntimeError(msg)
 
 def construct_title(thresh):
+    
+    r"""
+    Construct a plot title for ``TrackDataset.gridded_stats()``. Internal function.
+    
+    Parameters
+    ----------
+    thresh : dict
+        Dictionary containing thresholds for the plot. Detailed more in the ``TrackDataset.gridded_dataset()`` function.
+    
+    Returns
+    -------
+    thresh : dict
+        Returns the thresh dictionary, modified depending on the threshold(s) specified.
+    plot_subtitle : str
+        String denoting the title for the plot.
+    """
+    
+    #List containing entry for plot title, later merged into a string
     plot_subtitle = []
+    
+    #Symbols for greater/less than or equal to signs
     gteq = u"\u2265"
     lteq = u"\u2264"
+    
+    #Add sample minimum
     if not np.isnan(thresh['sample_min']):
         plot_subtitle.append(f"{gteq} {thresh['sample_min']} storms/bin")
     else:
-        thresh['sample_min']=0
-        
+        thresh['sample_min'] = 0
+    
+    #Add minimum wind speed
     if not np.isnan(thresh['v_min']):
         plot_subtitle.append(f"{gteq} {thresh['v_min']}kt")
     else:
-        thresh['v_min']=0
-        
+        thresh['v_min'] = 0
+    
+    #Add maximum MSLP
     if not np.isnan(thresh['p_max']):
         plot_subtitle.append(f"{lteq} {thresh['p_max']}hPa")            
     else:
-        thresh['p_max']=9999
-
+        thresh['p_max'] = 9999
+    
+    #Add minimum change in wind speed
     if not np.isnan(thresh['dv_min']):
         plot_subtitle.append(f"{gteq} {thresh['dv_min']}kt / {thresh['dt_window']}hr")            
     else:
-        thresh['dv_min']=-9999
-
+        thresh['dv_min'] = -9999
+    
+    #Add maximum change in MSLP
     if not np.isnan(thresh['dp_max']):
         plot_subtitle.append(f"{lteq} {thresh['dp_max']}hPa / {thresh['dt_window']}hr")            
     else:
-        thresh['dp_max']=9999
+        thresh['dp_max'] = 9999
     
+    #Add maximum change in wind speed
     if not np.isnan(thresh['dv_max']):
         plot_subtitle.append(f"{lteq} {thresh['dv_max']}kt / {thresh['dt_window']}hr")            
     else:
-        thresh['dv_max']=9999
-
+        thresh['dv_max'] = 9999
+    
+    #Add minimum change in MSLP
     if not np.isnan(thresh['dp_min']):
         plot_subtitle.append(f"{gteq} {thresh['dp_min']}hPa / {thresh['dt_window']}hr")            
     else:
-        thresh['dp_min']=-9999
+        thresh['dp_min'] = -9999
     
+    #Combine plot_subtitle into string
     if len(plot_subtitle)>0:
         plot_subtitle = '\n'+', '.join(plot_subtitle)
     else:
         plot_subtitle = ''
-    return thresh,plot_subtitle
+    
+    #Return modified thresh and plot title
+    return thresh, plot_subtitle
 
 
 def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
+    
+    r"""
+    Interpolate a storm dictionary temporally to a specified time resolution. Referenced from ``TrackDataset.filter_storms()``. Internal function.
+    
+    Parameters
+    ----------
+    storm_dict : dict
+        Dictionary containing a storm entry.
+    timeres : int
+        Temporal resolution in hours to interpolate storm data to. Default is 1 hour.
+    dt_window : int
+        Time window in hours over which to calculate temporal change data. Default is 24 hours.
+    dt_align : str
+        Whether to align the temporal change window as "start", "middle" or "end" of the dt_window time period.
+    
+    Returns
+    -------
+    dict
+        Dictionary containing the updated storm entry.
+    """
+    
+    #Create an empty dict for the new storm entry
     new_storm = {}
+    
+    #Copy over non-list attributes
+    for key in storm_dict.keys():
+        if isinstance(storm_dict[key],list) == False:
+            new_storm[key] = storm_dict[key]
+    
+    #Create an empty list for entries
     for name in ['date','vmax','mslp','lat','lon','type']:
-        new_storm[name]=[]
+        new_storm[name] = []
+    
+    #Convert dates to numbers for ease of calculation
     times = mdates.date2num(storm_dict['date'])
-    storm_dict['type']=np.asarray(storm_dict['type'])
-    storm_dict['lon'] = np.array(storm_dict['lon'])%360
+    
+    #Convert lat & lons to arrays, and ensure lons are out of 360 degrees
+    storm_dict['type'] = np.asarray(storm_dict['type'])
+    storm_dict['lon'] = np.array(storm_dict['lon']) % 360
+    
+    #Attempt temporal interpolation
     try:
+        
+        #Create a list of target times given the requested temporal resolution
         targettimes = np.arange(times[0],times[-1]+timeres/24,timeres/24)
+        
+        #Update dates
         new_storm['date'] = [t.replace(tzinfo=None) for t in mdates.num2date(targettimes)]
+        
+        #Interpolate and fill in storm type
         stormtype = np.ones(len(storm_dict['type']))*-99
         stormtype[np.where((storm_dict['type']=='TD') | (storm_dict['type']=='SD') | (storm_dict['type']=='TS') | \
                            (storm_dict['type']=='SS') | (storm_dict['type']=='HU'))] = 0
         new_storm['type'] = np.interp(targettimes,times,stormtype)
         new_storm['type'] = np.where(new_storm['type']<0,'NT','TD')
+        
+        #Interpolate and fill in other variables
         for name in ['vmax','mslp','lat','lon']:
             new_storm[name] = np.interp(targettimes,times,storm_dict[name])
         
-        new_storm['dvmax_dt'] = [np.nan]+list((new_storm['vmax'][1:]-new_storm['vmax'][:-1])/timeres)
-
-        new_storm['dmslp_dt'] = [np.nan]+list((new_storm['mslp'][1:]-new_storm['mslp'][:-1])/timeres)
-
+        #Calculate change in wind & MSLP over temporal resolution
+        new_storm['dvmax_dt'] = [np.nan] + list((new_storm['vmax'][1:]-new_storm['vmax'][:-1]) / timeres)
+        new_storm['dmslp_dt'] = [np.nan] + list((new_storm['mslp'][1:]-new_storm['mslp'][:-1]) / timeres)
+        
+        #Calculate x and y position change over temporal window
         rE = 6.371e3 #km
         d2r = np.pi/180.
         new_storm['dx_dt'] = [np.nan]+list(d2r*(new_storm['lon'][1:]-new_storm['lon'][:-1])* \
@@ -131,6 +274,7 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
         new_storm['dy_dt'] = [np.nan]+list(d2r*(new_storm['lat'][1:]-new_storm['lat'][:-1])* \
                  rE/timeres)
         
+        #Convert change in wind & MSLP to change over specified window
         for name in ['dvmax_dt','dmslp_dt']:
             tmp = np.round(np.convolve(new_storm[name],[1]*int(dt_window/timeres),mode='valid'),1)         
             if dt_align=='end':
@@ -140,7 +284,8 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
                 new_storm[name] = tmp2+[np.nan]*(len(new_storm[name])-len(tmp2))
             if dt_align=='start':
                 new_storm[name] = list(tmp)+[np.nan]*(len(new_storm[name])-len(tmp))
-                
+        
+        #Convert change in position to change over specified window
         for name in ['dx_dt','dy_dt']:
             tmp = np.convolve(new_storm[name],[timeres/dt_window]*int(dt_window/timeres),mode='valid')
             if dt_align=='end':
@@ -150,8 +295,11 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
                 new_storm[name] = tmp2+[np.nan]*(len(new_storm[name])-len(tmp2))
             if dt_align=='start':
                 new_storm[name] = list(tmp)+[np.nan]*(len(new_storm[name])-len(tmp))
-            
+        
+        #Return new dict
         return new_storm
+    
+    #Otherwise, simply return NaNs
     except:
         for name in new_storm.keys():
             try:
@@ -162,324 +310,175 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
 
 
 def filter_storms_vp(trackdata,year_min=0,year_max=9999,subset_domain=None):
+    
     r"""
-    trackdata : tracks.Dataset object
+    Calculate a wind-pressure relationship. Referenced from ``TrackDataset.wind_pres_relationship()``. Internal function.
+    
+    Parameters
+    ----------
+    trackdata : tropycal.tracks.TrackDataset
+        TrackDataset object.
+    year_min : int
+        Starting year of analysis.
+    year_max : int
+        Ending year of analysis.
     subset_domain : str
         String representing either a bounded region 'latW/latE/latS/latN', or a basin name.
+    
+    Returns
+    -------
+    list
+        List representing pressure-wind relationship.
     """
+    
+    #If no subset domain is passed, use global data
     if subset_domain == None:
         lon_min,lon_max,lat_min,lat_max = [0,360,-90,90]
     else:
         lon_min,lon_max,lat_min,lat_max = [float(i) for i in subset_domain.split("/")]
-    vp=[]
+    
+    #Empty list for v-p relationship data
+    vp = []
+    
+    #Iterate over every storm in dataset
     for key in trackdata.keys:
+        
+        #Retrieve storm dictionary
         istorm = trackdata.data[key]
+        
+        #Iterate over every storm time step
         for i,(iwind,imslp,itype,ilat,ilon,itime) in \
         enumerate(zip(istorm['vmax'],istorm['mslp'],istorm['type'],istorm['lat'],istorm['lon'],istorm['date'])):
-            if np.nan not in [iwind,imslp] and itype in ['TD','TS','SS','HU'] \
+            
+            #Ensure both have data and are while the cyclone is tropical
+            if np.nan not in [iwind,imslp] and itype in ['TD','TS','SS','HU','TY'] \
                    and lat_min<=ilat<=lat_max and lon_min<=ilon%360<=lon_max \
                    and year_min<=itime.year<=year_max:
                 vp.append([imslp,iwind])
+    
+    #Return v-p relationship list
     return vp
 
 def testfit(data,x,order):
-    if len(data)>50:
-        f=np.polyfit([i[1] for i in data],[i[0] for i in data],order)
-        y=sum([f[i]*x**(order-i) for i in range(order+1)])
+    
+    r"""
+    Calculate a line of best fit for wind-pressure relationship. Referenced from ``TrackDataset.wind_pres_relationship()``. Internal function.
+    
+    Parameters
+    ----------
+    data : list
+        List of tuples representing wind-pressure relationship. Obtained from ``filter_storms_vp()``.
+    x : float
+        x value corresponding to the maximum sustained wind.
+    order : int
+        Function order to pass to ``np.polyfit()``.
+    
+    Returns
+    -------
+    float
+        y value corresponding to the polyfit function for the given x value.
+    """
+    
+    #Make sure there are enough samples
+    if len(data) > 50:
+        f = np.polyfit([i[1] for i in data],[i[0] for i in data],order)
+        y = sum([f[i]*x**(order-i) for i in range(order+1)])
         return y
     else:
         return np.nan
     
 def rolling_window(a, window):
+    
+    r"""
+    Calculate a rolling window of an array given a window. Referenced from ``TrackDataset.ace_climo()`` and ``TrackDataset.hurricane_days_climo()``. Internal function.
+    
+    Parameters
+    ----------
+    a : numpy.ndarray
+        1D array containing data.
+    window : int
+        Window over which to compute a rolling window.
+    
+    Returns
+    -------
+    numpy.ndarray
+        Array containing the rolling window.
+    """
+    
     shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
     strides = a.strides + (a.strides[-1],)
     return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
 
 def convert_to_julian(date):
+    
+    r"""
+    Convert a date to Julian days. Referenced from ``TrackDataset.ace_climo()`` and ``TrackDataset.hurricane_days_climo()``. Internal function.
+    
+    Parameters
+    ----------
+    date : datetime.datetime
+        Datetime object of the date to be converted to Julian days.
+    
+    Returns
+    -------
+    int
+        Integer representing the Julian day of the requested date.
+    """
+    
     year = date.year
     return ((date - dt(year,1,1,0)).days + (date - dt(year,1,1,0)).seconds/86400.0) + 1
 
 def months_in_julian(year):
+    
+    r"""
+    Format months in Julian days for plotting time series. Referenced from ``TrackDataset.ace_climo()`` and ``TrackDataset.hurricane_days_climo()``. Internal function.
+    
+    Parameters
+    ----------
+    year : int
+        Year for which to determine Julian month days.
+    
+    Returns
+    -------
+    dict
+        Dictionary containing data for constructing time series.
+    """
+    
+    #Get number of days in year
     length_of_year = convert_to_julian(dt(year,12,31,0))+1.0
+    
+    #Construct a list of months and names
     months = range(1,13,1)
     months_names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     months_dates = [dt(year,i,1,0) for i in months]
+    
+    #Get midpoint x-axis location of month
     months_julian = [int(convert_to_julian(i)) for i in months_dates]
     midpoint_julian = (np.array(months_julian) + np.array(months_julian[1:]+[length_of_year]))/2.0
     return {'start':months_julian,'midpoint':midpoint_julian.tolist(),'name':months_names}
 
-#Convert between wind and category
-def wind2cat(wind):
-    w2c = {5:-1,\
-           34:0,\
-           64:1,\
-           83:2,\
-           96:3,\
-           113:4,\
-           137:5}
-    return w2c[wind]
-
-def cat2wind(cat):
-    c2w = {-1:5,\
-           0:34,\
-           1:64,\
-           2:83,\
-           3:96,\
-           4:113,\
-           5:137}
-    return c2w[cat]
-
-
-def convert_category(vmax):
-    if vmax >= 137:
-        return 5
-    elif vmax >= 113:
-        return 4
-    elif vmax >= 96:
-        return 3
-    elif vmax >= 83:
-        return 2
-    elif vmax >= 64:
-        return 1
-    elif vmax >= 34:
-        return 0
-    return -1
-
-def category_to_wind(cat):
-    cat2 = cat.lower()
-    if cat2 == 'td' or cat2 == 'sd':
-        return 33
-    elif cat2 == 'ts' or cat2 == 'ss':
-        return 34
-    elif cat2 == 'c1':
-        return 64
-    elif cat2 == 'c2':
-        return 83
-    elif cat2 == 'c3':
-        return 96
-    elif cat2 == 'c4':
-        return 113
-    else:
-        return 137
-
-def classify_subtrop(storm_type):
+def num_to_str2(number):
+    
+    r"""
+    Convert an integer to a 2-character string. Internal function.
+    
+    Parameters
+    ----------
+    number : int
+        Integer to be converted to a string.
+    
+    Returns
+    -------
+    str
+        Two character string.
     """
-    SD purely - yes
-    SD then SS then TS - no
-    SD then TS - no
-    """
-    if 'SD' in storm_type:
-        if 'SD' in storm_type and True not in np.isin(storm_type,['TD','TS','HU']):
-            return True
-    if 'SS' in storm_type and True not in np.isin(storm_type,['TD','TS','HU']):
-        return True
-    else:
-        return False
-
-def get_storm_type(vmax,subtrop_flag,basin):
     
-    if basin in ['north_atlantic','east_pacific']:
-        if vmax == 0:
-            return "Unknown"
-        elif vmax < 34:
-            if subtrop_flag == True:
-                return "Subtropical Depression"
-            else:
-                return "Tropical Depression"
-        elif vmax < 63:
-            if subtrop_flag == True:
-                return "Subtropical Storm"
-            else:
-                return "Tropical Storm"
-        else:
-            return "Hurricane"
-     
-    elif basin == 'west_pacific':
-        if vmax == 0:
-            return "Unknown"
-        elif vmax < 34:
-            if subtrop_flag == True:
-                return "Subtropical Depression"
-            else:
-                return "Tropical Depression"
-        elif vmax < 63:
-            if subtrop_flag == True:
-                return "Subtropical Storm"
-            else:
-                return "Tropical Storm"
-        elif vmax < 120:
-            return "Typhoon"
-        else:
-            return "Super Typhoon"
-    elif basin == 'australia' or basin == 'south_pacific':
-        if vmax == 0:
-            return "Unknown"
-        elif vmax < 63:
-            return "Tropical Cyclone"
-        else:
-            return "Severe Tropical Cyclone"
-    elif basin == 'north_indian':
-        if vmax == 0:
-            return "Unknown"
-        elif vmax < 28:
-            return "Depression"
-        elif vmax < 34:
-            return "Deep Depression"
-        elif vmax < 48:
-            return "Cyclonic Storm"
-        elif vmax < 64:
-            return "Severe Cyclonic Storm"
-        elif vmax < 90:
-            return "Very Severe Cyclonic Storm"
-        elif vmax < 120:
-            return "Extremely Severe Cyclonic Storm"
-        else:
-            return "Super Cyclonic Storm"
-    elif basin == 'south_indian':
-        if vmax == 0:
-            return "Unknown"
-        elif vmax < 28:
-            return "Tropical Disturbance"
-        elif vmax < 34:
-            return "Tropical Depression"
-        elif vmax < 48:
-            return "Moderate Tropical Storm"
-        elif vmax < 64:
-            return "Severe Tropical Storm"
-        elif vmax < 90:
-            return "Tropical Cyclone"
-        elif vmax < 115:
-            return "Intense Tropical Cyclone"
-        else:
-            return "Very Intense Tropical Cyclone"
-    else:
-        return "Cyclone"
+    #If number is less than 10, add a leading zero out front
+    if number < 10:
+        return f'0{number}'
     
-def get_type(vmax,subtrop_flag):
-    
-    if vmax < 34:
-        if subtrop_flag == True:
-            return "SD"
-        else:
-            return "TD"
-    elif vmax < 63:
-        if subtrop_flag == True:
-            return "SS"
-        else:
-            return "TS"
-    else:
-        return "HU"
-    
-def category_color(vmax):
-    
-    if isinstance(vmax,str) == True:
-        vmax = category_to_wind(vmax)
-    
-    if vmax < 5:
-        return '#FFFFFF'
-    elif vmax < 34:
-        return '#8FC2F2' #'#7DB7ED'
-    elif vmax < 64:
-        return '#3185D3'
-    elif vmax < 83:
-        return '#FFFF00'
-    elif vmax < 96:
-        return '#FF9E00'
-    elif vmax < 113:
-        return '#DD0000'
-    elif vmax < 137:
-        return '#FF00FC'
-    else:
-        return '#8B0088'
-
-def make_colormap(colors,whiten=0):
-    import numpy as np
-    from matplotlib.colors import LinearSegmentedColormap, ColorConverter
-    
-    z  = np.array(sorted(colors.keys()))
-    n  = len(z)
-    z1 = min(z)
-    zn = max(z)
-    x0 = (z - z1) / (zn - z1)
-    
-    CC = ColorConverter()
-    R = []
-    G = []
-    B = []
-    for i in range(n):
-        Ci = colors[z[i]]
-        if type(Ci) == str:
-            RGB = CC.to_rgb(Ci)
-        else:
-            RGB = Ci
-        R.append(RGB[0] + (1-RGB[0])*whiten)
-        G.append(RGB[1] + (1-RGB[1])*whiten)
-        B.append(RGB[2] + (1-RGB[2])*whiten)
-    
-    cmap_dict = {}
-    cmap_dict['red']   = [(x0[i],R[i],R[i]) for i in range(len(R))]
-    cmap_dict['green'] = [(x0[i],G[i],G[i]) for i in range(len(G))]
-    cmap_dict['blue']  = [(x0[i],B[i],B[i]) for i in range(len(B))]
-    mymap = LinearSegmentedColormap('mymap',cmap_dict)
-    
-    return mymap
-
-def get_cmap_levels(varname,x,clevs,linear=False):
-    
-    if x=='category':
-        if varname in ['vmax','sfmr','fl_to_sfc']:
-            #clevs = [34,64,83,96,113,137,200]
-            #colors = ['#8FC2F2','#3185D3','#FFFF00','#FF9E00','#DD0000','#FF00FC','#8B0088']
-            clevs = [cat2wind(c) for c in range(-1,6)]+[200]
-            if linear:
-                colors = [mcolors.to_rgba(category_color(lev)) \
-                               for c,lev in enumerate(clevs[:-1]) for _ in range(clevs[c+1]-clevs[c])]
-            else:
-                clevs = [cat2wind(c) for c in range(-1,6)]+[200]
-                colors = [category_color(lev) for lev in clevs[:-1]]
-                cmap = mcolors.ListedColormap(colors)
-        else:
-            warnings.warn('Saffir Simpson category colors allowed only for surface winds')
-            x = 'plasma'
-    if x!='category':
-        if isinstance(x,str):
-            cmap = mlib.cm.get_cmap(x)
-        elif isinstance(x,list):
-            cmap = mcolors.ListedColormap(x)
-        elif isinstance(x,dict):
-            cmap = make_colormap(x)
-        else:
-            cmap = x
-        norm = mlib.colors.Normalize(vmin=0, vmax=len(clevs)-1)
-        if len(clevs)>2:
-            colors = cmap(norm(np.arange(len(clevs)-1)))
-            cmap = mcolors.ListedColormap(colors)
-        else:
-            colors = cmap(norm(np.linspace(0,1,256)))
-            cmap = mcolors.LinearSegmentedColormap.from_list('my_colormap',colors)
-            
-            y0 = min(clevs)
-            y1 = max(clevs)
-            dy = (y1-y0)/8
-            scalemag = int(np.log(dy)/np.log(10))
-            dy_scaled = dy*10**-scalemag
-            dc = min([1,2,5,10], key=lambda x:abs(x-dy_scaled))
-            dc = dc*10**scalemag
-            c0 = np.ceil(y0/dc)*dc
-            c1 = np.floor(y1/dc)*dc
-            clevs = np.arange(c0,c1+dc,dc)
-    
-            if scalemag > 0:
-                clevs = clevs.astype(int)
-    
-    return cmap,clevs
-    
-
-
-def str2(a):
-    if a < 10:
-        return f'0{a}'
-    return str(a)
+    #Otherwise, simply convert to a string
+    return str(number)
 
 def plot_credit():
     return "Plot generated using troPYcal"
@@ -490,14 +489,6 @@ def add_credit(ax,text):
             transform=ax.transAxes,ha='right',va='bottom',zorder=10)
     a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='white'),
                    path_effects.Normal()])
-        
-
-def all_nan(arr):
-    arr_copy = np.array(arr)
-    if len(arr_copy[~np.isnan(arr_copy)]) == 0:
-        return True
-    else:
-        return False
 
 def pac_2006_cyclone():
     
@@ -587,34 +578,23 @@ def cyclone_catarina():
     #Replace original entry with this
     return storm_dict
 
-def knots_to_mph(wind):
-
-    kts = [10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160,165,170,175,180,185]
-    mphs = [15,20,25,30,35,40,45,50,60,65,70,75,80,85,90,100,105,110,115,120,125,130,140,145,150,155,160,165,175,180,185,190,195,200,205,210]
+def num_to_text(number):
     
-    if wind in kts:
-        return mphs[kts.index(wind)]
-    return wind
-
-def ef_colors(x):
-    import matplotlib as mlib
-    if x == 'default':
-        colors = ['lightsalmon','tomato','red','firebrick','darkred','purple']
-    elif isinstance(x,str):
-        try:
-            cmap = mlib.cm.get_cmap(x)
-            norm = mlib.colors.Normalize(vmin=0, vmax=5)
-            colors = cmap(norm([0,1,2,3,4,5]))
-        except:
-            colors = [x]*6
-    elif isinstance(x,list):
-        if len(x) == 6:
-            colors = x
-    else:
-        colors = ['lightsalmon','tomato','red','firebrick','darkred','purple']
-    return colors
-
-def num_to_str(num):
+    r"""
+    Retrieve a text representation of a number less than 100. Internal function.
+    
+    Parameters
+    ----------
+    number : int
+        Integer to be converted to a string.
+    
+    Returns
+    -------
+    str
+        Text representing the number.
+    """
+    
+    #Dictionary mapping numbers to string representations
     d = { 0 : 'zero', 1 : 'one', 2 : 'two', 3 : 'three', 4 : 'four', 5 : 'five',
           6 : 'six', 7 : 'seven', 8 : 'eight', 9 : 'nine', 10 : 'ten',
           11 : 'eleven', 12 : 'twelve', 13 : 'thirteen', 14 : 'fourteen',
@@ -623,13 +603,18 @@ def num_to_str(num):
           30 : 'thirty', 40 : 'forty', 50 : 'fifty', 60 : 'sixty',
           70 : 'seventy', 80 : 'eighty', 90 : 'ninety' }
 
-    assert(0 <= num)
-
-    if (num < 20):
-        return d[num]
-
-    if (num < 100):
-        if num % 10 == 0:
-            return d[num]
+    #If number is less than 20, return string
+    if number < 20:
+        return d[number]
+    
+    #Otherwise, form number from combination of strings
+    elif number < 100:
+        if number % 10 == 0:
+            return d[number]
         else:
-            return d[num // 10 * 10] + '-' + d[num % 10]
+            return d[number // 10 * 10] + '-' + d[number % 10]
+    
+    #If larger than 100, raise error
+    else:
+        msg = "Please choose a number less than 100."
+        raise ValueError(msg)

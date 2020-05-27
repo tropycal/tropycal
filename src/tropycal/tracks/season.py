@@ -11,7 +11,10 @@ from datetime import datetime as dt,timedelta
 
 from .plot import TrackPlot
 from .storm import Storm
+
+#Import tools
 from .tools import *
+from ..utils import *
     
 class Season:
     
@@ -369,7 +372,7 @@ class Season:
                     max_cat = -1
                 else:
                     max_wnd = int(np.nanmax(temp_vmax[idx]))
-                    max_cat = convert_category(np.nanmax(temp_vmax[idx]))
+                    max_cat = wind_to_category(np.nanmax(temp_vmax[idx]))
                 if len(np_slp[~np.isnan(np_slp)]) == 0:
                     min_slp = np.nan
                 else:

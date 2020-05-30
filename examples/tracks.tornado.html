@@ -193,7 +193,7 @@
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in tornado track data
---&gt; Completed reading in tornado data for 1950-2018 (8.86 seconds)
+--&gt; Completed reading in tornado data for 1950-2018 (8.57 seconds)
 </pre></div>
 </div>
 <p>We can use a TornadoDataset object to analyze both tornadoes associated with tropical cyclones and non-TC tornadoes. As an example of the latter, we can make a plot of all tornadoes during the 27 April 2011 tornado outbreak, along with the Practically Perfect Forecast (PPH) in filled contours:</p>
@@ -214,7 +214,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
   warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f74763085c0&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fbd54c86ef0&gt;
 </pre></div>
 </div>
 </div>
@@ -226,7 +226,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (2.59 seconds)
+--&gt; Completed reading in HURDAT2 data (2.77 seconds)
 </pre></div>
 </div>
 <p>This instance of Storm contains several methods that return the storm data back in different data types. The following examples will show how to retrieve 3 different data types.</p>
@@ -237,9 +237,9 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in tornado track data
---&gt; Completed reading in tornado data for 1950-2018 (8.65 seconds)
+--&gt; Completed reading in tornado data for 1950-2018 (8.53 seconds)
 --&gt; Starting to assign tornadoes to storms
---&gt; Completed assigning tornadoes to storm (131.26 seconds)
+--&gt; Completed assigning tornadoes to storm (88.69 seconds)
 </pre></div>
 </div>
 <p>Once the above block is done running, we can now look at a climatology of tornadoes associated with North Atlantic tropical cyclones. The current method of analysis is via the <code class="docutils literal notranslate"><span class="pre">plot_TCtors_rotated()</span></code> method, which rotates tropical cyclones to a storm motion relative framework.</p>
@@ -249,7 +249,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <img alt="Composite motion-relative tornadoes Min threshold: EF-0 | n=214 storms" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_002.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;ax&#39;: &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f7474670e80&gt;}
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;ax&#39;: &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7fbd53d40e48&gt;}
 </pre></div>
 </div>
 <p>We can also make the same plot for a composite subset of tropical cyclones, given either their IDs (e.g., “AL052004”), or a storm tuple. For instance, let’s composite the four hurricanes that made landfall in Florida in 2004:</p>
@@ -258,7 +258,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <img alt="Composite motion-relative tornadoes Min threshold: EF-0 | n=4 storms" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_003.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;ax&#39;: &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f7474347550&gt;}
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;ax&#39;: &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7fbd53a18278&gt;}
 </pre></div>
 </div>
 </div>
@@ -283,7 +283,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
   warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f747432e160&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fbd53a18208&gt;
 </pre></div>
 </div>
 <p>Let’s make a plot of the tornadoes in storm motion relative coordinates:</p>
@@ -292,10 +292,10 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <img alt="IVAN 2004 tornadoes relative to heading" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_005.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f7474297f28&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot object at 0x7fbd53998390&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  42.941 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  0.566 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-tornado-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/a506bea07afada80573c7bf4216395cf/tracks.tornado.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.tornado.py</span></code></a></p>

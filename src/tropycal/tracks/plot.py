@@ -493,6 +493,9 @@ class TrackPlot(Plot):
             Property of cartopy map.
         """
         
+        #Determine if forecast is realtime
+        realtime_flag = True if forecast['advisory_num'] == -1 else False
+        
         #Set default properties
         default_prop={'dots':True,'fillcolor':'category','linecolor':'k','category_colors':'default','linewidth':1.0,'ms':7.5,'cone_lw':1.0,'cone_alpha':0.6}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
@@ -550,6 +553,7 @@ class TrackPlot(Plot):
                 fcst_hr = np.array(forecast['fhr'])
                 start_slice = 0
                 if 3 in fcst_hr: start_slice = 3
+                if realtime_flag == True: start_slice = int(fcst_hr[1])
                 iter_hr = np.array(forecast['fhr'])[fcst_hr>=start_slice][0]
                 fcst_lon = np.array(forecast['lon'])[fcst_hr>=start_slice][0]
                 fcst_lat = np.array(forecast['lat'])[fcst_hr>=start_slice][0]
@@ -638,6 +642,7 @@ class TrackPlot(Plot):
         fcst_hr = np.array(forecast['fhr'])
         start_slice = 0
         if 3 in fcst_hr: start_slice = 3
+        if realtime_flag == True: start_slice = int(fcst_hr[1])
         check_duration = fcst_hr[(fcst_hr>=start_slice) & (fcst_hr<=cone_days*24)]
 
         #Check for sufficiently many hours
@@ -825,6 +830,7 @@ class TrackPlot(Plot):
         fcst_hr = forecast['fhr']
         start_slice = 0
         if 3 in fcst_hr: start_slice = 1
+        if realtime_flag == True: start_slice = 1
         forecast_date = (forecast['init']+timedelta(hours=fcst_hr[start_slice])).strftime("%H%M UTC %d %b %Y")
         forecast_id = forecast['advisory_num']
         
@@ -1092,6 +1098,9 @@ class TrackPlot(Plot):
         
         """
 
+        #Determine if forecast is realtime
+        realtime_flag = True if forecast['advisory_num'] == -1 else False
+        
         #Source: https://www.nhc.noaa.gov/verification/verify3.shtml
         #Radii are in nautical miles
         cone_climo_hr = [3,12,24,36,48,72,96,120]
@@ -1128,6 +1137,8 @@ class TrackPlot(Plot):
         #Fix for 2020 that now incorporates 60 hour forecasts
         if forecast['init'].year >= 2020:
             cone_climo_hr = [3,12,24,36,48,60,72,96,120]
+        if realtime_flag == True: #Realtime
+            cone_climo_hr = [forecast['fhr'][1],12,24,36,48,60,72,96,120]
 
         #Function for interpolating between 2 times
         def temporal_interpolation(value, orig_times, target_times):
@@ -1229,7 +1240,8 @@ class TrackPlot(Plot):
                 #raise RuntimeError("Error: No cone information is available for the requested basin.")
             #raise RuntimeError("Error: No cone information is available for the requested year.")
         
-        #Check if fhr3 is available, then get forecast data
+        #Check if fhr3 is available (or 1st hour for realtime), then get forecast data
+        check_fhr = forecast['fhr'][1] if realtime_flag == True else 3
         flag_12 = 0
         if forecast['fhr'][0] == 12:
             flag_12 = 1
@@ -1241,13 +1253,13 @@ class TrackPlot(Plot):
             subtract_by = t[0]
             t = t - t[0]
             interp_fhr_idx = np.arange(t[0],t[-1]+0.1,0.1) - t[0]
-        elif 3 in forecast['fhr'] and 1 in forecast['fhr'] and 0 in forecast['fhr']:
+        elif check_fhr in forecast['fhr'] and 1 in forecast['fhr'] and 0 in forecast['fhr']:
             fcst_lon = forecast['lon'][2:]
             fcst_lat = forecast['lat'][2:]
             fhr = forecast['fhr'][2:]
             t = np.array(fhr)/6.0
             interp_fhr_idx = np.arange(t[0],t[-1]+0.01,0.1)
-        elif 3 in forecast['fhr'] and 0 in forecast['fhr']:
+        elif check_fhr in forecast['fhr'] and 0 in forecast['fhr']:
             idx = np.array([i for i,j in enumerate(forecast['fhr']) if j in cone_climo_hr])
             fcst_lon = np.array(forecast['lon'])[idx]
             fcst_lat = np.array(forecast['lat'])[idx]

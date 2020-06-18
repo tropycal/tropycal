@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,6 +11,14 @@
   
 
   
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
+
+  
   
     <link rel="shortcut icon" href="../_static/logo_32.ico"/>
   
@@ -19,7 +26,9 @@
   
 
   
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -31,14 +40,6 @@
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="API Reference" href="../api/index.html" />
@@ -56,7 +57,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> tropycal
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> tropycal
           
 
           
@@ -82,6 +83,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -115,6 +117,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -153,7 +156,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html">Docs</a> &raquo;</li>
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="index.html">Examples</a> &raquo;</li>
         
@@ -198,7 +201,7 @@
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (2.62 seconds)
+--&gt; Completed reading in HURDAT2 data (2.48 seconds)
 </pre></div>
 </div>
 <div class="section" id="retrieving-storms-and-seasons">
@@ -266,7 +269,7 @@ More Information:
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
   warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7ffacc0b8c18&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f09e345e2b0&gt;
 </pre></div>
 </div>
 </div>
@@ -327,7 +330,7 @@ More Information:
   return thresh, lambda x: np.nanmean(x)
 --&gt; Generating plot
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7ffac24bf9b0&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f09de635e10&gt;
 </pre></div>
 </div>
 </div>
@@ -343,7 +346,7 @@ More Information:
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in ibtracs data
---&gt; Completed reading in ibtracs data (40.56 seconds)
+--&gt; Completed reading in ibtracs data (39.59 seconds)
 </pre></div>
 </div>
 <p>In its current form, tropycal is not configured to support all types of analyses for global IBTrACS, particularly near the dateline. Future updates will work to improve this functionality.</p>
@@ -357,7 +360,7 @@ More Information:
 --&gt; Grouping by lat/lon/storm
 --&gt; Generating plot
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7ffac84c6080&gt;
+&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f09df757048&gt;
 </pre></div>
 </div>
 <p>Make a plot of the total number of storms per 1 degree gridbox worldwide:</p>
@@ -382,7 +385,7 @@ More Information:
 --&gt; Generating plot
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  21.766 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  10.857 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-trackdataset-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/8e0af267200996c0b90c20030c99ca74/tracks.TrackDataset.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.TrackDataset.py</span></code></a></p>
@@ -415,11 +418,19 @@ More Information:
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Tropycal Developers
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -430,7 +441,6 @@ More Information:
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

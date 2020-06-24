@@ -476,7 +476,7 @@ class RealtimeStorm(Storm):
         
         #If source is all, determine which method to use
         if source == 'all':
-            if self.basin == 'hurdat':
+            if self.source == 'hurdat':
                 #Check to see which is the latest advisory
                 latest_btk = self.date[-1]
                 
@@ -559,7 +559,7 @@ class RealtimeStorm(Storm):
             current_advisory['mslp'] = int(result)
 
             #Get storm category
-            current_advisory['category'] = convert_category(current_advisory['wind_kt'])
+            current_advisory['category'] = wind_to_category(current_advisory['wind_kt'])
 
             #Get storm direction
             results = [i for i in content if 'systemDirectionOfMotion' in i][0]
@@ -584,7 +584,7 @@ class RealtimeStorm(Storm):
         else:
             
             #Add source
-            if self.basin == 'hurdat':
+            if self.source == 'hurdat':
                 current_advisory['source'] = 'NHC Best Track'
             else:
                 current_advisory['source'] = 'JTWC Best Track'
@@ -615,7 +615,7 @@ class RealtimeStorm(Storm):
             current_advisory['mslp'] = self.mslp[-1]
 
             #Get storm category
-            current_advisory['category'] = convert_category(current_advisory['wind_kt'])
+            current_advisory['category'] = wind_to_category(current_advisory['wind_kt'])
 
             #Use geopy to determine motion direction and degrees
             try:

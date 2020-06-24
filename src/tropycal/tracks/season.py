@@ -159,6 +159,9 @@ class Season:
         #Add every key containing a list into the dict
         keys = [k for k in self.dict.keys()]
         for key in keys:
+            #Get tropical duration
+            temp_type = np.array(self.dict[key]['type'])
+            tropical_idx = np.where((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU'))
             if key in season_info_keys:
                 sidx = season_info_keys.index(key)
                 ds['id'].append(key)
@@ -166,10 +169,10 @@ class Season:
                 ds['vmax'].append(season_info['max_wspd'][sidx])
                 ds['mslp'].append(season_info['min_mslp'][sidx])
                 ds['category'].append(season_info['category'][sidx])
-                ds['start_time'].append(self.dict[key]['date'][0])
-                ds['end_time'].append(self.dict[key]['date'][-1])
-                ds['start_lat'].append(self.dict[key]['lat'][0])
-                ds['start_lon'].append(self.dict[key]['lon'][0])
+                ds['start_time'].append(np.array(self.dict[key]['date'])[tropical_idx][0])
+                ds['end_time'].append(np.array(self.dict[key]['date'])[tropical_idx][-1])
+                ds['start_lat'].append(np.array(self.dict[key]['lat'])[tropical_idx][0])
+                ds['start_lon'].append(np.array(self.dict[key]['lon'])[tropical_idx][0])
                 ds['ace'].append(np.round(season_info['ace'][sidx],1))
                     
         #Convert entire dict to a DataFrame

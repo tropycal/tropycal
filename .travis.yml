@@ -37,7 +37,7 @@ before_install:
 
 # This is the script to build the docs on travis, then deploy
 install:
-  - python -m pip install sphinx
+  - python -m pip install sphinx==2.4.1
   - python -m pip install sphinx-gallery
   - python -m pip install sphinx-rtd-theme
   - python -m pip install .

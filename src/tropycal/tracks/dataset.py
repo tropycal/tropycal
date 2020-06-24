@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import re
 import scipy.interpolate as interp
+import scipy.stats as stats
 import urllib
 import warnings
 from datetime import datetime as dt,timedelta
@@ -2942,3 +2943,159 @@ class TrackDataset:
             return_dict['df'] = stormTors
         if len(return_dict) > 0:
             return return_dict
+    
+    def to_dataframe(self):
+        
+        r"""
+        Retrieve a Pandas DataFrame for all seasons within TrackDataset.
+        
+        Returns
+        -------
+        pandas.DataFrame
+            Returns a Pandas DataFrame containing requested data.
+        """
+        
+        #Get start and end seasons in this TrackDataset object
+        start_season = self.data[self.keys[0]]['year']
+        end_season = self.data[self.keys[-1]]['year']
+        
+        #Create empty dict to be used for making pandas DataFrame object
+        ds = {'season':[],'all_storms':[],'named_storms':[],'hurricanes':[],'major_hurricanes':[],'ace':[],'start_time':[],'end_time':[]}
+        
+        #Iterate over all seasons in the TrackDataset object
+        for season in range(start_season,end_season+1):
+            
+            #Get season summary
+            season_summary = self.get_season(season).summary()
+            
+            #Add information to dict
+            ds['season'].append(season)
+            ds['all_storms'].append(season_summary['season_storms'])
+            ds['named_storms'].append(season_summary['season_named'])
+            ds['hurricanes'].append(season_summary['season_hurricane'])
+            ds['major_hurricanes'].append(season_summary['season_major'])
+            ds['ace'].append(season_summary['season_ace'])
+            ds['start_time'].append(season_summary['season_start'])
+            ds['end_time'].append(season_summary['season_end'])
+        
+        #Convert entire dict to a DataFrame
+        ds = pd.DataFrame(ds)
+
+        #Return dataset
+        return ds.set_index('season')
+    
+    def climatology(self,start_season=1981,end_season=2010):
+        
+        r"""
+        Create a climatology for this dataset given start and end seasons. If none passed, defaults to 1981-2010.
+        
+        Parameters
+        ----------
+        start_season : int, optional
+            First season for the climatology range.
+        end_season : int, optional
+            Ending season for the climatology range.
+        
+        Returns
+        -------
+        dict
+            Dictionary containing the climatology for this dataset.
+        """
+        
+        #Error check
+        if start_season >= end_season:
+            raise ValueError("start_season cannot be greater than end_season.")
+        if isinstance(start_season,int) == False or isinstance(end_season,int) == False:
+            raise TypeError("start_season and end_season must be of type int.")
+        if (end_season - start_season)< 5:
+            raise ValueError("A minimum of 5 seasons is required for constructing a climatology.")
+        
+        #Retrieve data for all seasons in this dataset
+        full_climo = self.to_dataframe()
+        
+        #Subset rows by year range
+        subset_climo = full_climo.loc[start_season:end_season+1]
+        
+        #Convert dates to julian days
+        julian_start = [convert_to_julian(pd.to_datetime(i)) for i in subset_climo['start_time'].values]
+        julian_end = [convert_to_julian(pd.to_datetime(i)) for i in subset_climo['end_time'].values]
+        julian_end = [i+365 if i < 100 else i for i in julian_end]
+        subset_climo = subset_climo.drop(columns=['start_time','end_time'])
+        subset_climo['start_time'] = julian_start
+        subset_climo['end_time'] = julian_end
+        
+        #Calculate means
+        subset_climo_means = (subset_climo.mean(axis=0)).round(1)
+        
+        #Compile averages
+        climatology = {}
+        for key in ['all_storms','named_storms','hurricanes','major_hurricanes','ace']:
+            climatology[key] = subset_climo_means[key]
+        for key in ['start_time','end_time']:
+            climatology[key] = dt(dt.now().year-1,12,31)+timedelta(hours=24*subset_climo_means[key])
+        
+        #Return dict
+        return climatology
+    
+    def season_composite(self,seasons,climo_bounds=None):
+        
+        r"""
+        Create composite statistics for a list of seasons.
+        
+        Parameters
+        ----------
+        seasons : list
+            List of seasons to create a composite of. For Southern Hemisphere, season is the start of the two-year period.
+        climo_bounds : list or tuple
+            List or tuple of start and end years of climatology bounds. If none, defaults to (1981,2010).
+        
+        Returns
+        -------
+        dict
+            Dictionary containing the composite of the requested seasons.
+        """
+        
+        #Error check
+        if isinstance(seasons,list) == False:
+            raise TypeError("'seasons' must be of type list.")
+        
+        #Create climo bounds
+        if climo_bounds is None:
+            climo_bounds = (1981,2010)
+        
+        #Get Season object for the composite
+        summary = self.get_season(seasons).summary()
+        
+        #Get basin climatology
+        climatology = self.climatology(climo_bounds[0],climo_bounds[1])
+        full_climo = self.to_dataframe()
+        subset_climo = full_climo.loc[climo_bounds[0]:climo_bounds[1]+1]
+        
+        #Create composite dictionary
+        map_keys = {'all_storms':'season_storms',
+                    'named_storms':'season_named',
+                    'hurricanes':'season_hurricane',
+                    'major_hurricanes':'season_major',
+                    'ace':'season_ace',
+                   }
+        composite = {}
+        for key in map_keys.keys():
+            
+            #Get list from seasons
+            season_list = summary[map_keys.get(key)]
+            
+            #Get climatology
+            season_climo = climatology[key]
+            
+            #Get individual years in climatology
+            season_fullclimo = subset_climo[key].values
+            
+            #Create dictionary of relevant calculations for this entry
+            composite[key] = {'list':season_list,
+                              'average':np.round(np.average(season_list),1),
+                              'composite_anomaly':np.round(np.average(season_list)-season_climo,1),
+                              'percentile_ranks':[np.round(stats.percentileofscore(season_fullclimo,i),1) for i in season_list],
+                             }
+        
+        return composite
+        

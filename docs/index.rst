@@ -1,6 +1,10 @@
 Tropycal
 ============================
 
+.. image:: _static/dorian.png
+   :width: 300 px
+   :align: left
+
 Tropycal is a Python package intended to simplify the process of retrieving and analyzing tropical cyclone data, both for past storms and in real time, and is geared towards the research and operational meteorology sectors.
 
 Tropycal can read in HURDAT2 and IBTrACS reanalysis data and operational National Hurricane Center (NHC) Best Track data and conform them to the same format, which can be used to perform climatological, seasonal and individual storm analyses. For each individual storm, operational NHC forecasts, aircraft reconnaissance data, and any associated tornado activity can be retrieved and plotted.
@@ -23,10 +27,10 @@ Tropycal is supported for Python >= 3.6. For examples on how to use Tropycal in 
    sample_usage
    data
 
-Version
-=======
+Latest Version
+==============
 
-The latest version of Tropycal as of 26 May 2020 is v0.2.1. This documentation is valid for the latest version of Tropycal.
+The latest version of Tropycal as of 23 June 2020 is v0.2.2. This documentation is valid for the latest version of Tropycal.
 
 Indices and tables
 ==================

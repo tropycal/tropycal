@@ -53,7 +53,7 @@ HURDAT data is not available for the most recent hurricane seasons. To include t
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.93 seconds)
+    --> Completed reading in HURDAT2 data (2.68 seconds)
 
 
 
@@ -239,7 +239,7 @@ Note that you can pass various arguments to the plot function, such as customizi
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fe95a316da0>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f18b1a90278>
 
 
 
@@ -266,7 +266,7 @@ Note: There is currently a bug with this function that outputs 2 axes, a filled 
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/storm.py:1239: UserWarning: Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run "TrackDataset.assign_storm_tornadoes()" to avoid this warning in the future.
       warnings.warn(warn_message)
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.91 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.45 seconds)
 
 
 
@@ -397,7 +397,7 @@ Let's plot Michael's second forecast cone:
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fe95bc81ef0>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f18b1e63438>
 
 
 
@@ -430,7 +430,7 @@ Note that the observed track here differs from the HURDAT2 track plotted previou
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fe95a7224a8>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f18b1e76198>
 
 
 
@@ -462,7 +462,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (43.77 seconds)
+    --> Completed reading in ibtracs data (43.38 seconds)
 
 
 
@@ -495,7 +495,7 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fe95357bba8>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f18b1e95be0>
 
 
 
@@ -525,7 +525,7 @@ The functionality for handling storms in IBTrACS is the same as with using HURDA
  .. code-block:: none
 
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fe95a66d940>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f18abb80cf8>
 
 
 
@@ -534,7 +534,7 @@ If we were to read in IBTrACS without setting ``Catarina=True`` (which sets it t
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  19.430 seconds)
+   **Total running time of the script:** ( 1 minutes  18.108 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.storm.py:

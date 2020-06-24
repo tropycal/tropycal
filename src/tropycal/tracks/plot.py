@@ -834,14 +834,20 @@ class TrackPlot(Plot):
         forecast_date = (forecast['init']+timedelta(hours=fcst_hr[start_slice])).strftime("%H%M UTC %d %b %Y")
         forecast_id = forecast['advisory_num']
         
+        #Get wind value to display
+        if first_fcst_wind == "N/A":
+            wind_display_value = "N/A"
+        else:
+            wind_display_value = knots_to_mph(first_fcst_wind)
+        
         if forecast_id == -1:
-            title_text = f"Current Intensity: {knots_to_mph(first_fcst_wind)} mph {dot} {first_fcst_mslp} hPa"
+            title_text = f"Current Intensity: {wind_display_value} mph {dot} {first_fcst_mslp} hPa"
             if 'cone' in forecast.keys() and forecast['cone'] == False:
                 title_text += f"\nJTWC Issued: {forecast_date}"
             else:
                 title_text += f"\nNHC Issued: {forecast_date}"
         else:
-            title_text = f"{knots_to_mph(first_fcst_wind)} mph {dot} {first_fcst_mslp} hPa {dot} Forecast #{forecast_id}"
+            title_text = f"{wind_display_value} mph {dot} {first_fcst_mslp} hPa {dot} Forecast #{forecast_id}"
             title_text += f"\nForecast Issued: {forecast_date}"
         
         
@@ -874,7 +880,10 @@ class TrackPlot(Plot):
         except:
             warning_text = ""
         try:
-            warning_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n"
+            if cone['year'] >= 2008:
+                warning_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n"
+            else:
+                warning_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} derived\nNHC cone radii. This cone differs from official NHC products at the time.\n\n"
         except:
             pass
         
@@ -1118,6 +1127,24 @@ class TrackPlot(Plot):
         cone_size_atl[2010] = [16,36,62,85,108,161,220,285]
         cone_size_atl[2009] = [16,36,62,89,111,167,230,302]
         cone_size_atl[2008] = [16,39,67,92,118,170,233,305]
+        cone_size_atl[2007] = [16,39,69,98,124,178,253,324]
+        cone_size_atl[2006] = [16,42,73,103,131,192,259,335]
+        cone_size_atl[2005] = [16,43,77,109,142,207,266,350]
+        cone_size_atl[2004] = [16,46,81,117,156,218,275,369]
+        cone_size_atl[2003] = [16,47,85,122,162,227,318,433]
+        cone_size_atl[2002] = [16,48,85,123,164,233,316,443]
+        cone_size_atl[2001] = [16,48,85,124,162,227]
+        cone_size_atl[2000] = [16,50,91,132,170,244]
+        cone_size_atl[1999] = [16,52,96,136,178,260]
+        cone_size_atl[1998] = [16,53,98,141,184,273]
+        cone_size_atl[1997] = [16,54,99,144,191,281]
+        cone_size_atl[1996] = [16,55,108,155,206,312]
+        cone_size_atl[1995] = [16,60,113,166,217,358]
+        cone_size_atl[1994] = [16,59,113,168,220,344]
+        cone_size_atl[1993] = [16,58,108,162,217,343]
+        cone_size_atl[1992] = [16,59,112,166,223,343]
+        cone_size_atl[1991] = [16,59,112,167,225,353]
+        cone_size_atl[1990] = [16,57,111,168,232,356]
 
         cone_size_pac = {}
         cone_size_pac[2020] = [16,25,38,51,65,78,91,115,138]
@@ -1229,13 +1256,18 @@ class TrackPlot(Plot):
                 cone_size = 0
                 #raise RuntimeError("Error: No cone information is available for the requested basin.")
         else:
-            cone_year = 2008
-            warnings.warn(f"No cone information is available for the requested year. Defaulting to 2008 cone.")
             if forecast['basin'] == 'north_atlantic':
-                cone_size = cone_size_atl[2008]
+                cone_year = 1990
+                cone_size = cone_size_atl[1990]
+                msg = f"No cone information is available for the requested year. Defaulting to 1990 cone."
+                warnings.warn(msg)
             elif forecast['basin'] == 'east_pacific':
+                cone_year = 2008
                 cone_size = cone_size_pac[2008]
+                msg = f"No cone information is available for the requested year. Defaulting to 2008 cone."
+                warnings.warn(msg)
             else:
+                cone_year = 2008
                 cone_size = 0
                 #raise RuntimeError("Error: No cone information is available for the requested basin.")
             #raise RuntimeError("Error: No cone information is available for the requested year.")
@@ -1325,6 +1357,12 @@ class TrackPlot(Plot):
         interp_rad = np.apply_along_axis(lambda n: temporal_interpolation(n,fhr,interp_fhr),axis=0,arr=temp_arr)
 
         #Initialize 0.05 degree grid
+        grid_extent = 9
+        if cone_year >= 2004: grid_extent = 8.5
+        if cone_year >= 2008: grid_extent = 8
+        if cone_year >= 2012: grid_extent = 7.5
+        if cone_year >= 2016: grid_extent = 7
+        
         gridlats = np.arange(min(interp_lat)-7,max(interp_lat)+7,0.05)
         gridlons = np.arange(min(interp_lon)-7,max(interp_lon)+7,0.05)
         gridlons2d,gridlats2d = np.meshgrid(gridlons,gridlats)

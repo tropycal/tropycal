@@ -3,7 +3,6 @@ r"""Functionality for reading and analyzing SPC tornado dataset."""
 import numpy as np
 import pandas as pd
 from datetime import datetime as dt,timedelta
-from geopy.distance import great_circle
 from scipy.interpolate import interp1d
 import matplotlib.dates as mdates
 import warnings

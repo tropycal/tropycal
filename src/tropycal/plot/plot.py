@@ -7,7 +7,6 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 import pkg_resources
-import posixpath
 
 try:
     import cartopy.feature as cfeature

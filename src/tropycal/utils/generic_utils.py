@@ -6,6 +6,7 @@ add it in that file.
 Public utility functions should be added to documentation in the '/docs/_templates/overrides/tropycal.utils.rst' file."""
 
 import os, sys
+import math
 import numpy as np
 import pandas as pd
 from datetime import datetime as dt,timedelta
@@ -456,3 +457,82 @@ def category_label_to_wind(category):
     else:
         return category_to_wind(5)
 
+class Distance:
+    
+    def __init__(self,dist,units='kilometers'):
+        
+        # Conversion fractions (numerator_denominator)
+        mi_km = 0.621371
+        nmi_km = 0.539957
+        m_km = 1000.
+        ft_km = 3280.84
+        
+        if units in ['kilometers','km']:
+            self.kilometers = dist
+        elif units in ['miles','mi']:
+            self.kilometers = dist / mi_km
+        elif units in ['nauticalmiles','nautical','nmi']:
+            self.kilometers = dist / nmi_km
+        elif units in ['feet','ft']:
+            self.kilometers = dist / ft_km
+        elif units in ['meters','m']:
+            self.kilometers = dist / m_km
+        self.miles = self.kilometers * mi_km
+        self.nautical = self.kilometers * nmi_km
+        self.meters = self.kilometers * m_km
+        self.feet = self.kilometers * ft_km
+
+
+class great_circle(Distance):
+
+    def __init__(self, start_point, end_point, **kwargs):
+        r"""
+        
+        Parameters
+        ----------
+        start_point : tuple or int
+            Starting pair of coordinates, in order of (latitde, longitude)
+        end_point : tuple or int
+            Starting pair of coordinates, in order of (latitde, longitude)
+        radius : float, optional
+            Radius of Earth. Default is 6371.009 km.
+        
+        Returns
+        -------
+        great_circle
+            Instance of a great_circle object. To retrieve the distance, add the requested unit at the end (e.g., "great_circle(start,end).kilometers").
+        
+        Notes
+        -----
+        Use spherical geometry to calculate the surface distance between two points. Uses the mean earth radius as defined by the International Union of Geodesy and Geophysics, approx 6371.009 km (for WGS-84), resulting in an error of up to about 0.5%. Otherwise set which radius of the earth to use by specifying a 'radius' keyword argument. It must be in kilometers.
+        """
+        
+        #Set Earth's radius
+        self.RADIUS = kwargs.pop('radius', 6371.009)
+        
+        #Compute 
+        dist = self.measure(start_point,end_point)
+        Distance.__init__(self,dist,units='kilometers')
+
+    def measure(self, start_point, end_point):
+        
+        #Retrieve latitude and longitude coordinates from input pairs
+        lat1, lon1 = math.radians(start_point[0]), math.radians(start_point[1])
+        lat2, lon2 = math.radians(end_point[0]), math.radians(end_point[1])
+
+        #Compute sin and cos of coordinates
+        sin_lat1, cos_lat1 = math.sin(lat1), math.cos(lat1)
+        sin_lat2, cos_lat2 = math.sin(lat2), math.cos(lat2)
+
+        #Compute sin and cos of delta longitude
+        delta_lon = lon2 - lon1
+        cos_delta_lon, sin_delta_lon = math.cos(delta_lon), math.sin(delta_lon)
+
+        #Compute great circle distance
+        d = math.atan2(math.sqrt((cos_lat2 * sin_delta_lon) ** 2 +
+                       (cos_lat1 * sin_lat2 -
+                        sin_lat1 * cos_lat2 * cos_delta_lon) ** 2),
+                sin_lat1 * sin_lat2 + cos_lat1 * cos_lat2 * cos_delta_lon)
+
+        #Return great circle distance
+        return self.RADIUS * d

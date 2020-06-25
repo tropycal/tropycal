@@ -8,7 +8,6 @@ import pickle
 from scipy.interpolate import interp1d
 from scipy.ndimage import gaussian_filter as gfilt,gaussian_filter1d as gfilt1d
 from scipy.ndimage.filters import minimum_filter
-from geopy.distance import great_circle
 import matplotlib.dates as mdates
 
 try:

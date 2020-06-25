@@ -617,7 +617,7 @@ class RealtimeStorm(Storm):
             #Get storm category
             current_advisory['category'] = wind_to_category(current_advisory['wind_kt'])
 
-            #Use geopy to determine motion direction and degrees
+            #Determine motion direction and degrees
             try:
                 
                 #Cannot calculate motion if there's only one data point
@@ -632,11 +632,8 @@ class RealtimeStorm(Storm):
                     current_advisory['motion_kph'] = 'n/a'
                     current_advisory['motion_kt'] = 'n/a'
                 
-                #Otherwise, use geopy to calculate
+                #Otherwise, use great_circle to calculate
                 else:
-                
-                    #Import geopy
-                    from geopy.distance import great_circle
                     
                     #Get points
                     start_point = (self.lat[-2],self.lon[-2])

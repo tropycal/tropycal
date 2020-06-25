@@ -167,6 +167,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">interp</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
 <span class="kn">import</span> <span class="nn">urllib</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
@@ -3103,7 +3104,163 @@
         <span class="k">if</span> <span class="n">return_df</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">return_dict</span><span class="p">[</span><span class="s1">&#39;df&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stormTors</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">return_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">return_dict</span></div></div>
+            <span class="k">return</span> <span class="n">return_dict</span></div>
+    
+<div class="viewcode-block" id="TrackDataset.to_dataframe"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.to_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a Pandas DataFrame for all seasons within TrackDataset.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            Returns a Pandas DataFrame containing requested data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Get start and end seasons in this TrackDataset object</span>
+        <span class="n">start_season</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="s1">&#39;year&#39;</span><span class="p">]</span>
+        <span class="n">end_season</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]][</span><span class="s1">&#39;year&#39;</span><span class="p">]</span>
+        
+        <span class="c1">#Create empty dict to be used for making pandas DataFrame object</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;season&#39;</span><span class="p">:[],</span><span class="s1">&#39;all_storms&#39;</span><span class="p">:[],</span><span class="s1">&#39;named_storms&#39;</span><span class="p">:[],</span><span class="s1">&#39;hurricanes&#39;</span><span class="p">:[],</span><span class="s1">&#39;major_hurricanes&#39;</span><span class="p">:[],</span><span class="s1">&#39;ace&#39;</span><span class="p">:[],</span><span class="s1">&#39;start_time&#39;</span><span class="p">:[],</span><span class="s1">&#39;end_time&#39;</span><span class="p">:[]}</span>
+        
+        <span class="c1">#Iterate over all seasons in the TrackDataset object</span>
+        <span class="k">for</span> <span class="n">season</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_season</span><span class="p">,</span><span class="n">end_season</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            
+            <span class="c1">#Get season summary</span>
+            <span class="n">season_summary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_season</span><span class="p">(</span><span class="n">season</span><span class="p">)</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+            
+            <span class="c1">#Add information to dict</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">season</span><span class="p">)</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;all_storms&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">season_summary</span><span class="p">[</span><span class="s1">&#39;season_storms&#39;</span><span class="p">])</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;named_storms&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">season_summary</span><span class="p">[</span><span class="s1">&#39;season_named&#39;</span><span class="p">])</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;hurricanes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">season_summary</span><span class="p">[</span><span class="s1">&#39;season_hurricane&#39;</span><span class="p">])</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;major_hurricanes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">season_summary</span><span class="p">[</span><span class="s1">&#39;season_major&#39;</span><span class="p">])</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">season_summary</span><span class="p">[</span><span class="s1">&#39;season_ace&#39;</span><span class="p">])</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">season_summary</span><span class="p">[</span><span class="s1">&#39;season_start&#39;</span><span class="p">])</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">season_summary</span><span class="p">[</span><span class="s1">&#39;season_end&#39;</span><span class="p">])</span>
+        
+        <span class="c1">#Convert entire dict to a DataFrame</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+
+        <span class="c1">#Return dataset</span>
+        <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;season&#39;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="TrackDataset.climatology"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.climatology">[docs]</a>    <span class="k">def</span> <span class="nf">climatology</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">start_season</span><span class="o">=</span><span class="mi">1981</span><span class="p">,</span><span class="n">end_season</span><span class="o">=</span><span class="mi">2010</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a climatology for this dataset given start and end seasons. If none passed, defaults to 1981-2010.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        start_season : int, optional</span>
+<span class="sd">            First season for the climatology range.</span>
+<span class="sd">        end_season : int, optional</span>
+<span class="sd">            Ending season for the climatology range.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary containing the climatology for this dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Error check</span>
+        <span class="k">if</span> <span class="n">start_season</span> <span class="o">&gt;=</span> <span class="n">end_season</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;start_season cannot be greater than end_season.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start_season</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">end_season</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;start_season and end_season must be of type int.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">end_season</span> <span class="o">-</span> <span class="n">start_season</span><span class="p">)</span><span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A minimum of 5 seasons is required for constructing a climatology.&quot;</span><span class="p">)</span>
+        
+        <span class="c1">#Retrieve data for all seasons in this dataset</span>
+        <span class="n">full_climo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+        
+        <span class="c1">#Subset rows by year range</span>
+        <span class="n">subset_climo</span> <span class="o">=</span> <span class="n">full_climo</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start_season</span><span class="p">:</span><span class="n">end_season</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="c1">#Convert dates to julian days</span>
+        <span class="n">julian_start</span> <span class="o">=</span> <span class="p">[</span><span class="n">convert_to_julian</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">subset_climo</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+        <span class="n">julian_end</span> <span class="o">=</span> <span class="p">[</span><span class="n">convert_to_julian</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">subset_climo</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+        <span class="n">julian_end</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">365</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="k">else</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">julian_end</span><span class="p">]</span>
+        <span class="n">subset_climo</span> <span class="o">=</span> <span class="n">subset_climo</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">,</span><span class="s1">&#39;end_time&#39;</span><span class="p">])</span>
+        <span class="n">subset_climo</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">julian_start</span>
+        <span class="n">subset_climo</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">julian_end</span>
+        
+        <span class="c1">#Calculate means</span>
+        <span class="n">subset_climo_means</span> <span class="o">=</span> <span class="p">(</span><span class="n">subset_climo</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1">#Compile averages</span>
+        <span class="n">climatology</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;all_storms&#39;</span><span class="p">,</span><span class="s1">&#39;named_storms&#39;</span><span class="p">,</span><span class="s1">&#39;hurricanes&#39;</span><span class="p">,</span><span class="s1">&#39;major_hurricanes&#39;</span><span class="p">,</span><span class="s1">&#39;ace&#39;</span><span class="p">]:</span>
+            <span class="n">climatology</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset_climo_means</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">,</span><span class="s1">&#39;end_time&#39;</span><span class="p">]:</span>
+            <span class="n">climatology</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">31</span><span class="p">)</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">24</span><span class="o">*</span><span class="n">subset_climo_means</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        
+        <span class="c1">#Return dict</span>
+        <span class="k">return</span> <span class="n">climatology</span></div>
+    
+<div class="viewcode-block" id="TrackDataset.season_composite"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.season_composite">[docs]</a>    <span class="k">def</span> <span class="nf">season_composite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">seasons</span><span class="p">,</span><span class="n">climo_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create composite statistics for a list of seasons.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        seasons : list</span>
+<span class="sd">            List of seasons to create a composite of. For Southern Hemisphere, season is the start of the two-year period.</span>
+<span class="sd">        climo_bounds : list or tuple</span>
+<span class="sd">            List or tuple of start and end years of climatology bounds. If none, defaults to (1981,2010).</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary containing the composite of the requested seasons.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Error check</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seasons</span><span class="p">,</span><span class="nb">list</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;seasons&#39; must be of type list.&quot;</span><span class="p">)</span>
+        
+        <span class="c1">#Create climo bounds</span>
+        <span class="k">if</span> <span class="n">climo_bounds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">climo_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1981</span><span class="p">,</span><span class="mi">2010</span><span class="p">)</span>
+        
+        <span class="c1">#Get Season object for the composite</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_season</span><span class="p">(</span><span class="n">seasons</span><span class="p">)</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+        
+        <span class="c1">#Get basin climatology</span>
+        <span class="n">climatology</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">climatology</span><span class="p">(</span><span class="n">climo_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">climo_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">full_climo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+        <span class="n">subset_climo</span> <span class="o">=</span> <span class="n">full_climo</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">climo_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">climo_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="c1">#Create composite dictionary</span>
+        <span class="n">map_keys</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;all_storms&#39;</span><span class="p">:</span><span class="s1">&#39;season_storms&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;named_storms&#39;</span><span class="p">:</span><span class="s1">&#39;season_named&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;hurricanes&#39;</span><span class="p">:</span><span class="s1">&#39;season_hurricane&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;major_hurricanes&#39;</span><span class="p">:</span><span class="s1">&#39;season_major&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;ace&#39;</span><span class="p">:</span><span class="s1">&#39;season_ace&#39;</span><span class="p">,</span>
+                   <span class="p">}</span>
+        <span class="n">composite</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">map_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            
+            <span class="c1">#Get list from seasons</span>
+            <span class="n">season_list</span> <span class="o">=</span> <span class="n">summary</span><span class="p">[</span><span class="n">map_keys</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span>
+            
+            <span class="c1">#Get climatology</span>
+            <span class="n">season_climo</span> <span class="o">=</span> <span class="n">climatology</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            
+            <span class="c1">#Get individual years in climatology</span>
+            <span class="n">season_fullclimo</span> <span class="o">=</span> <span class="n">subset_climo</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            
+            <span class="c1">#Create dictionary of relevant calculations for this entry</span>
+            <span class="n">composite</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;list&#39;</span><span class="p">:</span><span class="n">season_list</span><span class="p">,</span>
+                              <span class="s1">&#39;average&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">season_list</span><span class="p">),</span><span class="mi">1</span><span class="p">),</span>
+                              <span class="s1">&#39;composite_anomaly&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">season_list</span><span class="p">)</span><span class="o">-</span><span class="n">season_climo</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span>
+                              <span class="s1">&#39;percentile_ranks&#39;</span><span class="p">:[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">percentileofscore</span><span class="p">(</span><span class="n">season_fullclimo</span><span class="p">,</span><span class="n">i</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">season_list</span><span class="p">],</span>
+                             <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="n">composite</span></div></div>
+        
 </pre></div>
 
            </div>

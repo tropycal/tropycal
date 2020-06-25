@@ -638,7 +638,7 @@
         
         <span class="c1">#If source is all, determine which method to use</span>
         <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;hurdat&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;hurdat&#39;</span><span class="p">:</span>
                 <span class="c1">#Check to see which is the latest advisory</span>
                 <span class="n">latest_btk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 
@@ -721,7 +721,7 @@
             <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
             <span class="c1">#Get storm category</span>
-            <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_category</span><span class="p">(</span><span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_kt&#39;</span><span class="p">])</span>
+            <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wind_to_category</span><span class="p">(</span><span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_kt&#39;</span><span class="p">])</span>
 
             <span class="c1">#Get storm direction</span>
             <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span> <span class="k">if</span> <span class="s1">&#39;systemDirectionOfMotion&#39;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -746,7 +746,7 @@
         <span class="k">else</span><span class="p">:</span>
             
             <span class="c1">#Add source</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;hurdat&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;hurdat&#39;</span><span class="p">:</span>
                 <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NHC Best Track&#39;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;JTWC Best Track&#39;</span>
@@ -777,7 +777,7 @@
             <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mslp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
             <span class="c1">#Get storm category</span>
-            <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_category</span><span class="p">(</span><span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_kt&#39;</span><span class="p">])</span>
+            <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wind_to_category</span><span class="p">(</span><span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_kt&#39;</span><span class="p">])</span>
 
             <span class="c1">#Use geopy to determine motion direction and degrees</span>
             <span class="k">try</span><span class="p">:</span>

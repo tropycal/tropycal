@@ -6,6 +6,7 @@ add it in that file.
 Public utility functions should be added to documentation in the '/docs/_templates/overrides/tropycal.utils.rst' file."""
 
 import os, sys
+import math
 import numpy as np
 import pandas as pd
 from datetime import datetime as dt,timedelta

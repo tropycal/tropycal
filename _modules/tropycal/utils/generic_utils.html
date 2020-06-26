@@ -168,6 +168,7 @@
 <span class="sd">Public utility functions should be added to documentation in the &#39;/docs/_templates/overrides/tropycal.utils.rst&#39; file.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
@@ -618,6 +619,85 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
+<span class="k">class</span> <span class="nc">Distance</span><span class="p">:</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dist</span><span class="p">,</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;kilometers&#39;</span><span class="p">):</span>
+        
+        <span class="c1"># Conversion fractions (numerator_denominator)</span>
+        <span class="n">mi_km</span> <span class="o">=</span> <span class="mf">0.621371</span>
+        <span class="n">nmi_km</span> <span class="o">=</span> <span class="mf">0.539957</span>
+        <span class="n">m_km</span> <span class="o">=</span> <span class="mf">1000.</span>
+        <span class="n">ft_km</span> <span class="o">=</span> <span class="mf">3280.84</span>
+        
+        <span class="k">if</span> <span class="n">units</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;kilometers&#39;</span><span class="p">,</span><span class="s1">&#39;km&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kilometers</span> <span class="o">=</span> <span class="n">dist</span>
+        <span class="k">elif</span> <span class="n">units</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;miles&#39;</span><span class="p">,</span><span class="s1">&#39;mi&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kilometers</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">/</span> <span class="n">mi_km</span>
+        <span class="k">elif</span> <span class="n">units</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;nauticalmiles&#39;</span><span class="p">,</span><span class="s1">&#39;nautical&#39;</span><span class="p">,</span><span class="s1">&#39;nmi&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kilometers</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">/</span> <span class="n">nmi_km</span>
+        <span class="k">elif</span> <span class="n">units</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;feet&#39;</span><span class="p">,</span><span class="s1">&#39;ft&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kilometers</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">/</span> <span class="n">ft_km</span>
+        <span class="k">elif</span> <span class="n">units</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;meters&#39;</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kilometers</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">/</span> <span class="n">m_km</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">miles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kilometers</span> <span class="o">*</span> <span class="n">mi_km</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nautical</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kilometers</span> <span class="o">*</span> <span class="n">nmi_km</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kilometers</span> <span class="o">*</span> <span class="n">m_km</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kilometers</span> <span class="o">*</span> <span class="n">ft_km</span>
+
+
+<span class="k">class</span> <span class="nc">great_circle</span><span class="p">(</span><span class="n">Distance</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_point</span><span class="p">,</span> <span class="n">end_point</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        start_point : tuple or int</span>
+<span class="sd">            Starting pair of coordinates, in order of (latitde, longitude)</span>
+<span class="sd">        end_point : tuple or int</span>
+<span class="sd">            Starting pair of coordinates, in order of (latitde, longitude)</span>
+<span class="sd">        radius : float, optional</span>
+<span class="sd">            Radius of Earth. Default is 6371.009 km.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        great_circle</span>
+<span class="sd">            Instance of a great_circle object. To retrieve the distance, add the requested unit at the end (e.g., &quot;great_circle(start,end).kilometers&quot;).</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Use spherical geometry to calculate the surface distance between two points. Uses the mean earth radius as defined by the International Union of Geodesy and Geophysics, approx 6371.009 km (for WGS-84), resulting in an error of up to about 0.5%. Otherwise set which radius of the earth to use by specifying a &#39;radius&#39; keyword argument. It must be in kilometers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Set Earth&#39;s radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RADIUS</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;radius&#39;</span><span class="p">,</span> <span class="mf">6371.009</span><span class="p">)</span>
+        
+        <span class="c1">#Compute </span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="n">start_point</span><span class="p">,</span><span class="n">end_point</span><span class="p">)</span>
+        <span class="n">Distance</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dist</span><span class="p">,</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;kilometers&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">measure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_point</span><span class="p">,</span> <span class="n">end_point</span><span class="p">):</span>
+        
+        <span class="c1">#Retrieve latitude and longitude coordinates from input pairs</span>
+        <span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">start_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">start_point</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">lat2</span><span class="p">,</span> <span class="n">lon2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">end_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">end_point</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1">#Compute sin and cos of coordinates</span>
+        <span class="n">sin_lat1</span><span class="p">,</span> <span class="n">cos_lat1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat1</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat1</span><span class="p">)</span>
+        <span class="n">sin_lat2</span><span class="p">,</span> <span class="n">cos_lat2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat2</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat2</span><span class="p">)</span>
+
+        <span class="c1">#Compute sin and cos of delta longitude</span>
+        <span class="n">delta_lon</span> <span class="o">=</span> <span class="n">lon2</span> <span class="o">-</span> <span class="n">lon1</span>
+        <span class="n">cos_delta_lon</span><span class="p">,</span> <span class="n">sin_delta_lon</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">delta_lon</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">delta_lon</span><span class="p">)</span>
+
+        <span class="c1">#Compute great circle distance</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">cos_lat2</span> <span class="o">*</span> <span class="n">sin_delta_lon</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span>
+                       <span class="p">(</span><span class="n">cos_lat1</span> <span class="o">*</span> <span class="n">sin_lat2</span> <span class="o">-</span>
+                        <span class="n">sin_lat1</span> <span class="o">*</span> <span class="n">cos_lat2</span> <span class="o">*</span> <span class="n">cos_delta_lon</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="n">sin_lat1</span> <span class="o">*</span> <span class="n">sin_lat2</span> <span class="o">+</span> <span class="n">cos_lat1</span> <span class="o">*</span> <span class="n">cos_lat2</span> <span class="o">*</span> <span class="n">cos_delta_lon</span><span class="p">)</span>
+
+        <span class="c1">#Return great circle distance</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">RADIUS</span> <span class="o">*</span> <span class="n">d</span>
 </pre></div>
 
            </div>
@@ -631,7 +711,7 @@
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2019, Tropycal Developers
+        &copy; Copyright 2020, Tropycal Developers
 
     </p>
   </div>

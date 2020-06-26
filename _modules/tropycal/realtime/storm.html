@@ -779,7 +779,7 @@
             <span class="c1">#Get storm category</span>
             <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wind_to_category</span><span class="p">(</span><span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_kt&#39;</span><span class="p">])</span>
 
-            <span class="c1">#Use geopy to determine motion direction and degrees</span>
+            <span class="c1">#Determine motion direction and degrees</span>
             <span class="k">try</span><span class="p">:</span>
                 
                 <span class="c1">#Cannot calculate motion if there&#39;s only one data point</span>
@@ -794,11 +794,8 @@
                     <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;motion_kph&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;n/a&#39;</span>
                     <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;motion_kt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;n/a&#39;</span>
                 
-                <span class="c1">#Otherwise, use geopy to calculate</span>
+                <span class="c1">#Otherwise, use great_circle to calculate</span>
                 <span class="k">else</span><span class="p">:</span>
-                
-                    <span class="c1">#Import geopy</span>
-                    <span class="kn">from</span> <span class="nn">geopy.distance</span> <span class="kn">import</span> <span class="n">great_circle</span>
                     
                     <span class="c1">#Get points</span>
                     <span class="n">start_point</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
@@ -937,7 +934,7 @@
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2019, Tropycal Developers
+        &copy; Copyright 2020, Tropycal Developers
 
     </p>
   </div>

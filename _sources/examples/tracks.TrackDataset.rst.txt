@@ -55,7 +55,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.55 seconds)
+    --> Completed reading in HURDAT2 data (2.36 seconds)
 
 
 
@@ -173,7 +173,7 @@ Note that you can pass various arguments to the plot function, such as customizi
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fd5ca34d160>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f2e97c86320>
 
 
 
@@ -303,7 +303,7 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
       return thresh, lambda x: np.nanmean(x)
     --> Generating plot
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fd5cc9dc8d0>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f2e9e62b8d0>
 
 
 
@@ -335,7 +335,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (43.42 seconds)
+    --> Completed reading in ibtracs data (44.0 seconds)
 
 
 
@@ -368,7 +368,7 @@ Let's make a plot of the maximum sustained wind of TCs globally:
     --> Grouping by lat/lon/storm
     --> Generating plot
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7fd5d1f05160>
+    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f2e9e57a160>
 
 
 
@@ -432,7 +432,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 6 minutes  21.001 seconds)
+   **Total running time of the script:** ( 6 minutes  33.796 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:

@@ -52,7 +52,7 @@ Let's start by creating an instance of a TornadoDataset object. By default, this
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.92 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.84 seconds)
 
 
 
@@ -90,8 +90,11 @@ We can use a TornadoDataset object to analyze both tornadoes associated with tro
       warnings.warn('The .xlabels_top attribute is deprecated. Please '
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tornado/plot.py:187: MatplotlibDeprecationWarning: 
+    The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
+      bb = leg_tor.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f51aa97cb38>
+    <GeoAxesSubplot:title={'left':'Tornado tracks and daily PPH (%)','right':'Start ... 12:02 UTC 27 Apr 2011\nEnd ... 11:50 UTC 28 Apr 2011'}>
 
 
 
@@ -116,7 +119,7 @@ We can also use TornadoDataset to assess tornadoes associated with tropical cycl
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.9 seconds)
+    --> Completed reading in HURDAT2 data (2.69 seconds)
 
 
 
@@ -144,9 +147,9 @@ This code block will take a while to run, as it will iterate over every storm in
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.66 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.79 seconds)
     --> Starting to assign tornadoes to storms
-    --> Completed assigning tornadoes to storm (128.43 seconds)
+    --> Completed assigning tornadoes to storm (125.61 seconds)
 
 
 
@@ -176,7 +179,7 @@ Most tornadoes associated with tropical cyclones occur in the front right quadra
  .. code-block:: none
 
 
-    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7f51a8cd6e10>}
+    {'ax': <AxesSubplot:title={'center':'Composite motion-relative tornadoes\nMin threshold: EF-0 | n=214 storms'}, xlabel='Left/Right of Storm Heading (km)', ylabel='Behind/Ahead of Storm Heading (km)'>}
 
 
 
@@ -203,7 +206,7 @@ We can also make the same plot for a composite subset of tropical cyclones, give
  .. code-block:: none
 
 
-    {'ax': <matplotlib.axes._subplots.AxesSubplot object at 0x7f51a8a1b5c0>}
+    {'ax': <AxesSubplot:title={'center':'Composite motion-relative tornadoes\nMin threshold: EF-0 | n=4 storms'}, xlabel='Left/Right of Storm Heading (km)', ylabel='Behind/Ahead of Storm Heading (km)'>}
 
 
 
@@ -255,8 +258,11 @@ Let's plot all the tornado tracks, and daily PPH, associated with Hurricane Ivan
       warnings.warn('The .xlabels_top attribute is deprecated. Please '
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
       warnings.warn('The .ylabels_right attribute is deprecated. Please '
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tornado/plot.py:187: MatplotlibDeprecationWarning: 
+    The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
+      bb = leg_tor.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 
-    <cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f51c4a8d208>
+    <GeoAxesSubplot:title={'left':'Hurricane IVAN\nTornado tracks and daily PPH (%)','right':'02 Sep 2004 – 24 Sep 2004\n145 kt • 910 hPa • 70.4 ACE'}>
 
 
 
@@ -282,14 +288,14 @@ Let's make a plot of the tornadoes in storm motion relative coordinates:
  .. code-block:: none
 
 
-    <matplotlib.axes._subplots.AxesSubplot object at 0x7f51a8945a58>
+    <AxesSubplot:title={'center':'IVAN 2004 tornadoes relative to heading'}, xlabel='Left/Right of Storm Heading (km)', ylabel='Behind/Ahead of Storm Heading (km)'>
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  41.001 seconds)
+   **Total running time of the script:** ( 2 minutes  37.853 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.tornado.py:

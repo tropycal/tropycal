@@ -196,7 +196,7 @@
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in tornado track data
---&gt; Completed reading in tornado data for 1950-2018 (8.92 seconds)
+--&gt; Completed reading in tornado data for 1950-2018 (8.84 seconds)
 </pre></div>
 </div>
 <p>We can use a TornadoDataset object to analyze both tornadoes associated with tropical cyclones and non-TC tornadoes. As an example of the latter, we can make a plot of all tornadoes during the 27 April 2011 tornado outbreak, along with the Practically Perfect Forecast (PPH) in filled contours:</p>
@@ -216,8 +216,11 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
   warnings.warn(&#39;The .xlabels_top attribute is deprecated. Please &#39;
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
   warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tornado/plot.py:187: MatplotlibDeprecationWarning:
+The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
+  bb = leg_tor.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f51aa97cb38&gt;
+&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Tornado tracks and daily PPH (%)&#39;,&#39;right&#39;:&#39;Start ... 12:02 UTC 27 Apr 2011\nEnd ... 11:50 UTC 28 Apr 2011&#39;}&gt;
 </pre></div>
 </div>
 </div>
@@ -229,7 +232,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (2.9 seconds)
+--&gt; Completed reading in HURDAT2 data (2.69 seconds)
 </pre></div>
 </div>
 <p>This instance of Storm contains several methods that return the storm data back in different data types. The following examples will show how to retrieve 3 different data types.</p>
@@ -240,9 +243,9 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in tornado track data
---&gt; Completed reading in tornado data for 1950-2018 (8.66 seconds)
+--&gt; Completed reading in tornado data for 1950-2018 (8.79 seconds)
 --&gt; Starting to assign tornadoes to storms
---&gt; Completed assigning tornadoes to storm (128.43 seconds)
+--&gt; Completed assigning tornadoes to storm (125.61 seconds)
 </pre></div>
 </div>
 <p>Once the above block is done running, we can now look at a climatology of tornadoes associated with North Atlantic tropical cyclones. The current method of analysis is via the <code class="docutils literal notranslate"><span class="pre">plot_TCtors_rotated()</span></code> method, which rotates tropical cyclones to a storm motion relative framework.</p>
@@ -252,7 +255,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <img alt="Composite motion-relative tornadoes Min threshold: EF-0 | n=214 storms" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_002.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;ax&#39;: &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f51a8cd6e10&gt;}
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;ax&#39;: &lt;AxesSubplot:title={&#39;center&#39;:&#39;Composite motion-relative tornadoes\nMin threshold: EF-0 | n=214 storms&#39;}, xlabel=&#39;Left/Right of Storm Heading (km)&#39;, ylabel=&#39;Behind/Ahead of Storm Heading (km)&#39;&gt;}
 </pre></div>
 </div>
 <p>We can also make the same plot for a composite subset of tropical cyclones, given either their IDs (e.g., “AL052004”), or a storm tuple. For instance, let’s composite the four hurricanes that made landfall in Florida in 2004:</p>
@@ -261,7 +264,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <img alt="Composite motion-relative tornadoes Min threshold: EF-0 | n=4 storms" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_003.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;ax&#39;: &lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f51a8a1b5c0&gt;}
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;ax&#39;: &lt;AxesSubplot:title={&#39;center&#39;:&#39;Composite motion-relative tornadoes\nMin threshold: EF-0 | n=4 storms&#39;}, xlabel=&#39;Left/Right of Storm Heading (km)&#39;, ylabel=&#39;Behind/Ahead of Storm Heading (km)&#39;&gt;}
 </pre></div>
 </div>
 </div>
@@ -285,8 +288,11 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
   warnings.warn(&#39;The .xlabels_top attribute is deprecated. Please &#39;
 /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
   warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tornado/plot.py:187: MatplotlibDeprecationWarning:
+The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
+  bb = leg_tor.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x7f51c4a8d208&gt;
+&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane IVAN\nTornado tracks and daily PPH (%)&#39;,&#39;right&#39;:&#39;02 Sep 2004 – 24 Sep 2004\n145 kt • 910 hPa • 70.4 ACE&#39;}&gt;
 </pre></div>
 </div>
 <p>Let’s make a plot of the tornadoes in storm motion relative coordinates:</p>
@@ -295,10 +301,10 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <img alt="IVAN 2004 tornadoes relative to heading" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_005.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot object at 0x7f51a8945a58&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:title={&#39;center&#39;:&#39;IVAN 2004 tornadoes relative to heading&#39;}, xlabel=&#39;Left/Right of Storm Heading (km)&#39;, ylabel=&#39;Behind/Ahead of Storm Heading (km)&#39;&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  41.001 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  37.853 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-tornado-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/a506bea07afada80573c7bf4216395cf/tracks.tornado.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.tornado.py</span></code></a></p>

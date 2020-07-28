@@ -53,7 +53,7 @@ HURDAT data is not available for the most recent hurricane seasons. To include t
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.89 seconds)
+    --> Completed reading in HURDAT2 data (2.76 seconds)
 
 
 
@@ -266,7 +266,7 @@ Note: There is currently a bug with this function that outputs 2 axes, a filled 
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/storm.py:1239: UserWarning: Reading in tornado data for this storm. If you seek to analyze tornado data for multiple storms, run "TrackDataset.assign_storm_tornadoes()" to avoid this warning in the future.
       warnings.warn(warn_message)
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (9.11 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.89 seconds)
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tornado/plot.py:187: MatplotlibDeprecationWarning: 
     The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
       bb = leg_tor.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
@@ -465,7 +465,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (42.78 seconds)
+    --> Completed reading in ibtracs data (41.52 seconds)
 
 
 
@@ -537,7 +537,7 @@ If we were to read in IBTrACS without setting ``Catarina=True`` (which sets it t
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  17.600 seconds)
+   **Total running time of the script:** ( 1 minutes  15.478 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.storm.py:

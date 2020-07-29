@@ -52,7 +52,7 @@ Let's start by creating an instance of a TornadoDataset object. By default, this
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (9.00 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.89 seconds)
 
 
 
@@ -119,7 +119,7 @@ We can also use TornadoDataset to assess tornadoes associated with tropical cycl
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.96 seconds)
+    --> Completed reading in HURDAT2 data (2.79 seconds)
 
 
 
@@ -147,9 +147,9 @@ This code block will take a while to run, as it will iterate over every storm in
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.72 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.66 seconds)
     --> Starting to assign tornadoes to storms
-    --> Completed assigning tornadoes to storm (126.15 seconds)
+    --> Completed assigning tornadoes to storm (124.51 seconds)
 
 
 
@@ -261,6 +261,10 @@ Let's plot all the tornado tracks, and daily PPH, associated with Hurricane Ivan
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tornado/plot.py:187: MatplotlibDeprecationWarning: 
     The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
       bb = leg_tor.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
+      warnings.warn('The .xlabels_top attribute is deprecated. Please '
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
+      warnings.warn('The .ylabels_right attribute is deprecated. Please '
 
     <GeoAxesSubplot:title={'left':'Hurricane IVAN\nTornado tracks and daily PPH (%)','right':'02 Sep 2004 – 24 Sep 2004\n145 kt • 910 hPa • 70.4 ACE'}>
 
@@ -295,7 +299,7 @@ Let's make a plot of the tornadoes in storm motion relative coordinates:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  39.302 seconds)
+   **Total running time of the script:** ( 2 minutes  36.806 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.tornado.py:

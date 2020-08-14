@@ -493,9 +493,6 @@ class TrackPlot(Plot):
             Property of cartopy map.
         """
         
-        #Determine if forecast is realtime
-        realtime_flag = True if forecast['advisory_num'] == -1 else False
-        
         #Set default properties
         default_prop={'dots':True,'fillcolor':'category','linecolor':'k','category_colors':'default','linewidth':1.0,'ms':7.5,'cone_lw':1.0,'cone_alpha':0.6}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
@@ -553,7 +550,6 @@ class TrackPlot(Plot):
                 fcst_hr = np.array(forecast['fhr'])
                 start_slice = 0
                 if 3 in fcst_hr: start_slice = 3
-                if realtime_flag == True: start_slice = int(fcst_hr[1])
                 iter_hr = np.array(forecast['fhr'])[fcst_hr>=start_slice][0]
                 fcst_lon = np.array(forecast['lon'])[fcst_hr>=start_slice][0]
                 fcst_lat = np.array(forecast['lat'])[fcst_hr>=start_slice][0]
@@ -642,7 +638,6 @@ class TrackPlot(Plot):
         fcst_hr = np.array(forecast['fhr'])
         start_slice = 0
         if 3 in fcst_hr: start_slice = 3
-        if realtime_flag == True: start_slice = int(fcst_hr[1])
         check_duration = fcst_hr[(fcst_hr>=start_slice) & (fcst_hr<=cone_days*24)]
 
         #Check for sufficiently many hours
@@ -830,24 +825,17 @@ class TrackPlot(Plot):
         fcst_hr = forecast['fhr']
         start_slice = 0
         if 3 in fcst_hr: start_slice = 1
-        if realtime_flag == True: start_slice = 1
         forecast_date = (forecast['init']+timedelta(hours=fcst_hr[start_slice])).strftime("%H%M UTC %d %b %Y")
         forecast_id = forecast['advisory_num']
         
-        #Get wind value to display
-        if first_fcst_wind == "N/A":
-            wind_display_value = "N/A"
-        else:
-            wind_display_value = knots_to_mph(first_fcst_wind)
-        
         if forecast_id == -1:
-            title_text = f"Current Intensity: {wind_display_value} mph {dot} {first_fcst_mslp} hPa"
+            title_text = f"Current Intensity: {knots_to_mph(first_fcst_wind)} mph {dot} {first_fcst_mslp} hPa"
             if 'cone' in forecast.keys() and forecast['cone'] == False:
                 title_text += f"\nJTWC Issued: {forecast_date}"
             else:
                 title_text += f"\nNHC Issued: {forecast_date}"
         else:
-            title_text = f"{wind_display_value} mph {dot} {first_fcst_mslp} hPa {dot} Forecast #{forecast_id}"
+            title_text = f"{knots_to_mph(first_fcst_wind)} mph {dot} {first_fcst_mslp} hPa {dot} Forecast #{forecast_id}"
             title_text += f"\nForecast Issued: {forecast_date}"
         
         
@@ -880,10 +868,7 @@ class TrackPlot(Plot):
         except:
             warning_text = ""
         try:
-            if cone['year'] >= 2008:
-                warning_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n"
-            else:
-                warning_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} derived\nNHC cone radii. This cone differs from official NHC products at the time.\n\n"
+            warning_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n"
         except:
             pass
         
@@ -1107,9 +1092,6 @@ class TrackPlot(Plot):
         
         """
 
-        #Determine if forecast is realtime
-        realtime_flag = True if forecast['advisory_num'] == -1 else False
-        
         #Source: https://www.nhc.noaa.gov/verification/verify3.shtml
         #Radii are in nautical miles
         cone_climo_hr = [3,12,24,36,48,72,96,120]
@@ -1127,24 +1109,6 @@ class TrackPlot(Plot):
         cone_size_atl[2010] = [16,36,62,85,108,161,220,285]
         cone_size_atl[2009] = [16,36,62,89,111,167,230,302]
         cone_size_atl[2008] = [16,39,67,92,118,170,233,305]
-        cone_size_atl[2007] = [16,39,69,98,124,178,253,324]
-        cone_size_atl[2006] = [16,42,73,103,131,192,259,335]
-        cone_size_atl[2005] = [16,43,77,109,142,207,266,350]
-        cone_size_atl[2004] = [16,46,81,117,156,218,275,369]
-        cone_size_atl[2003] = [16,47,85,122,162,227,318,433]
-        cone_size_atl[2002] = [16,48,85,123,164,233,316,443]
-        cone_size_atl[2001] = [16,48,85,124,162,227]
-        cone_size_atl[2000] = [16,50,91,132,170,244]
-        cone_size_atl[1999] = [16,52,96,136,178,260]
-        cone_size_atl[1998] = [16,53,98,141,184,273]
-        cone_size_atl[1997] = [16,54,99,144,191,281]
-        cone_size_atl[1996] = [16,55,108,155,206,312]
-        cone_size_atl[1995] = [16,60,113,166,217,358]
-        cone_size_atl[1994] = [16,59,113,168,220,344]
-        cone_size_atl[1993] = [16,58,108,162,217,343]
-        cone_size_atl[1992] = [16,59,112,166,223,343]
-        cone_size_atl[1991] = [16,59,112,167,225,353]
-        cone_size_atl[1990] = [16,57,111,168,232,356]
 
         cone_size_pac = {}
         cone_size_pac[2020] = [16,25,38,51,65,78,91,115,138]
@@ -1164,8 +1128,6 @@ class TrackPlot(Plot):
         #Fix for 2020 that now incorporates 60 hour forecasts
         if forecast['init'].year >= 2020:
             cone_climo_hr = [3,12,24,36,48,60,72,96,120]
-        if realtime_flag == True: #Realtime
-            cone_climo_hr = [forecast['fhr'][1],12,24,36,48,60,72,96,120]
 
         #Function for interpolating between 2 times
         def temporal_interpolation(value, orig_times, target_times):
@@ -1256,24 +1218,18 @@ class TrackPlot(Plot):
                 cone_size = 0
                 #raise RuntimeError("Error: No cone information is available for the requested basin.")
         else:
+            cone_year = 2008
+            warnings.warn(f"No cone information is available for the requested year. Defaulting to 2008 cone.")
             if forecast['basin'] == 'north_atlantic':
-                cone_year = 1990
-                cone_size = cone_size_atl[1990]
-                msg = f"No cone information is available for the requested year. Defaulting to 1990 cone."
-                warnings.warn(msg)
+                cone_size = cone_size_atl[2008]
             elif forecast['basin'] == 'east_pacific':
-                cone_year = 2008
                 cone_size = cone_size_pac[2008]
-                msg = f"No cone information is available for the requested year. Defaulting to 2008 cone."
-                warnings.warn(msg)
             else:
-                cone_year = 2008
                 cone_size = 0
                 #raise RuntimeError("Error: No cone information is available for the requested basin.")
             #raise RuntimeError("Error: No cone information is available for the requested year.")
         
-        #Check if fhr3 is available (or 1st hour for realtime), then get forecast data
-        check_fhr = forecast['fhr'][1] if realtime_flag == True else 3
+        #Check if fhr3 is available, then get forecast data
         flag_12 = 0
         if forecast['fhr'][0] == 12:
             flag_12 = 1
@@ -1285,13 +1241,13 @@ class TrackPlot(Plot):
             subtract_by = t[0]
             t = t - t[0]
             interp_fhr_idx = np.arange(t[0],t[-1]+0.1,0.1) - t[0]
-        elif check_fhr in forecast['fhr'] and 1 in forecast['fhr'] and 0 in forecast['fhr']:
+        elif 3 in forecast['fhr'] and 1 in forecast['fhr'] and 0 in forecast['fhr']:
             fcst_lon = forecast['lon'][2:]
             fcst_lat = forecast['lat'][2:]
             fhr = forecast['fhr'][2:]
             t = np.array(fhr)/6.0
             interp_fhr_idx = np.arange(t[0],t[-1]+0.01,0.1)
-        elif check_fhr in forecast['fhr'] and 0 in forecast['fhr']:
+        elif 3 in forecast['fhr'] and 0 in forecast['fhr']:
             idx = np.array([i for i,j in enumerate(forecast['fhr']) if j in cone_climo_hr])
             fcst_lon = np.array(forecast['lon'])[idx]
             fcst_lat = np.array(forecast['lat'])[idx]
@@ -1357,12 +1313,6 @@ class TrackPlot(Plot):
         interp_rad = np.apply_along_axis(lambda n: temporal_interpolation(n,fhr,interp_fhr),axis=0,arr=temp_arr)
 
         #Initialize 0.05 degree grid
-        grid_extent = 9
-        if cone_year >= 2004: grid_extent = 8.5
-        if cone_year >= 2008: grid_extent = 8
-        if cone_year >= 2012: grid_extent = 7.5
-        if cone_year >= 2016: grid_extent = 7
-        
         gridlats = np.arange(min(interp_lat)-7,max(interp_lat)+7,0.05)
         gridlons = np.arange(min(interp_lon)-7,max(interp_lon)+7,0.05)
         gridlons2d,gridlats2d = np.meshgrid(gridlons,gridlats)
@@ -1494,7 +1444,8 @@ class TrackPlot(Plot):
         
         #Set default properties
         default_prop={'cmap':'category','levels':None,\
-                      'left_title':'','right_title':'All storms'}
+                      'left_title':'','right_title':'All storms',
+                      'plot_values':False,'values_size':None}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
@@ -1567,7 +1518,8 @@ class TrackPlot(Plot):
             y_center = (ycoord[:-1,:-1]+ycoord[1:,1:])*.5
             u = zcoord[0][:-1,:-1]
             v = zcoord[1][:-1,:-1]
-            self.ax.quiver(x_center,y_center,u,v,color='w',alpha=0.6,transform=ccrs.PlateCarree(),\
+            if not prop['plot_values']:
+                self.ax.quiver(x_center,y_center,u,v,color='w',alpha=0.6,transform=ccrs.PlateCarree(),\
                            pivot='mid',width=.001*binsize,headwidth=3.5,headlength=4.5,headaxislength=4)
             zcoord = vecmag
         
@@ -1585,6 +1537,23 @@ class TrackPlot(Plot):
             else:
                 cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=vmin,vmax=vmax,
                                        transform=ccrs.PlateCarree())
+        if prop['plot_values']:
+            binsize = abs(xcoord[0,0]-xcoord[0,1])
+            x_center = (xcoord[:-1,:-1]+xcoord[1:,1:])*.5
+            y_center = (ycoord[:-1,:-1]+ycoord[1:,1:])*.5
+            xs = x_center.flatten(order='C')
+            ys = y_center.flatten(order='C')
+            zs = zcoord[:-1,:-1].flatten(order='C')
+            if prop['values_size'] is None:
+                fs = binsize*4
+            else:
+                fs = prop['values_size']
+            for xtext,ytext,ztext in zip(xs,ys,zs):
+                if not np.isnan(ztext) and xtext%360>bound_w%360 and xtext%360<bound_e%360 and\
+                    ytext>bound_s and ytext<bound_n:
+                    self.ax.text(xtext,ytext,ztext.astype(int),ha='center',va='center',fontsize=fs,\
+                                     color='w',alpha=0.8,transform=ccrs.PlateCarree())
+                
 
         #--------------------------------------------------------------------------------------
 

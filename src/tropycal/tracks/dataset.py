@@ -2778,12 +2778,17 @@ class TrackDataset:
             title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")}\n{year_range[0]}{endash}{year_range[1]}{add_avg} minus {year_range_subtract[0]}{endash}{year_range_subtract[1]}{add_avg}'
         prop['title_L'],prop['title_R'] = title_L,title_R
         
-        #Plot gridded field
-        
+        #Change the masking for variables that go out to zero near the edge of the data
         if prop['smooth'] is not None:
+            
+            #Replace NaNs with zeros to apply Gaussian filter
             grid_z_zeros = grid_z.copy()
-            grid_z_zeros[np.isnan(grid_z)]=0
+            grid_z_zeros[np.isnan(grid_z)] = 0
+            initial_mask = grid_z.copy() #Save initial mask
+            initial_mask[np.isnan(grid_z)] = -9999
             grid_z_zeros = gfilt(grid_z_zeros,sigma=prop['smooth'])
+            
+            
             if len(grid_z_years) == 2:
                 #grid_z_1_zeros = np.asarray(grid_z_1)
                 #grid_z_1_zeros[grid_z_1==-9999]=0
@@ -2795,12 +2800,18 @@ class TrackDataset:
                 #grid_z_zeros = grid_z_1_zeros - grid_z_2_zeros
                 #test_zeros = (grid_z_1_zeros<.02*np.nanmax(grid_z_1_zeros)) & (grid_z_2_zeros<.02*np.nanmax(grid_z_2_zeros))
                 pass
-            else:
+            
+            elif varname not in [('dx_dt','dy_dt'),'speed','mslp']:
+                
+                #Apply cutoff at 2% of maximum
                 test_zeros = (grid_z_zeros<.02*np.amax(grid_z_zeros))
                 grid_z_zeros[test_zeros] = -9999
-            grid_z_zeros[grid_z_zeros==-9999] = np.nan
+                initial_mask = grid_z_zeros.copy()
+                
+            grid_z_zeros[initial_mask==-9999] = np.nan
             grid_z = grid_z_zeros.copy()
-                                
+        
+        #Plot gridded field
         plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,VEC_FLAG,domain,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
         
         #Format grid into xarray if specified

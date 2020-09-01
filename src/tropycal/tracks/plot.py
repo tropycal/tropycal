@@ -1411,19 +1411,22 @@ class TrackPlot(Plot):
         for key, val in pos.items():
             pos[key] = (val*scale) + shift
 
+        #Apply coordinate transform
+        transform = ccrs.PlateCarree()._as_mpl_transform(self.ax)
+        
         start = False
         for label, data_str in G.edges():
             if start == False:
                 start = True
                 continue
-            self.ax.annotate(label,
-                        xy=pos[data_str], xycoords='data',
-                        xytext=pos[label], textcoords='data', fontweight='bold', ha='center', va='center',
+            self.ax.annotate(label, #xycoords="data"
+                        xy=pos[data_str], xycoords=transform,
+                        xytext=pos[label], textcoords=transform, fontweight='bold', ha='center', va='center',
                         arrowprops=dict(arrowstyle="-",#->
                                         shrinkA=0, shrinkB=0,
                                         connectionstyle="arc3", 
                                         color='k'),
-                        transform=ccrs.PlateCarree())
+                        transform=ccrs.PlateCarree(),clip_on=True)
 
     def plot_gridded(self,xcoord,ycoord,zcoord,VEC_FLAG=False,domain="north_atlantic",ax=None,return_ax=False,prop={},map_prop={}):
         

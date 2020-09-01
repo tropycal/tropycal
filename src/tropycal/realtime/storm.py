@@ -24,6 +24,7 @@ except:
 
 try:
     import matplotlib.lines as mlines
+    import matplotlib.dates as mdates
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
@@ -349,30 +350,30 @@ class RealtimeStorm(Storm):
                     stype = get_storm_type(vmax,False)
                     forecasts['type'].append(stype)
             
-        #Determine ACE thus far
+        #Determine ACE thus far (prior to initial forecast hour)
         ace = 0.0
         for i in range(len(self.date)):
             if self.date[i] >= forecasts['init']: continue
-            ace += ((10**-4) * (self.vmax[i]**2))
+            if self.type[i] not in ['TS','SS','HU']: continue
+            ace += accumulated_cyclone_energy(self.vmax[i],hours=6)
         
         #Add initial forecast hour ACE
-        ace += ((10**-4) * (forecasts['vmax'][0]**2))
+        ace += accumulated_cyclone_energy(forecasts['vmax'][0],hours=6)
         forecasts['cumulative_ace'].append(np.round(ace,1))
         
+        #Interpolate forecast to 6-hour increments
+        def temporal_interpolation(value, orig_times, target_times, kind='linear'):
+            f = interp.interp1d(orig_times,value,kind=kind,fill_value='extrapolate')
+            ynew = f(target_times)
+            return ynew
+        interp_fhr = range(0,forecasts['fhr'][-1]+1,6) #Construct a 6-hour time range
+        interp_vmax = temporal_interpolation(forecasts['vmax'],forecasts['fhr'],interp_fhr)
+        
         #Add forecast ACE
-        for i in range(1,len(forecasts['fhr'])):
+        for i,(i_fhr,i_vmax) in enumerate(zip(interp_fhr[1:],interp_vmax[1:])):
             
-            #Get hour difference
-            hour_diff = forecasts['fhr'][i] - forecasts['fhr'][i-1]
-            
-            #Calculate ACE for 6 hour increments, linearly interpolating wind
-            for j in range(6,hour_diff+1,6):
-                
-                #Interpolate wind
-                fraction = float(j) / float(hour_diff)
-                wind_interp = (forecasts['vmax'][i-1]*(1.0-fraction)) + (forecasts['vmax'][i]*fraction)
-                ace += ((10**-4) * (wind_interp**2))
-            
+            #Add ACE
+            ace += accumulated_cyclone_energy(i_vmax,hours=6)
             forecasts['cumulative_ace'].append(np.round(ace,1))
         
         #Save forecast as attribute

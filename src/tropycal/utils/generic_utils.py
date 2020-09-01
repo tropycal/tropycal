@@ -389,6 +389,9 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
     #Calculate ACE
     ace = ((10**-4) * (wind_speed**2)) * (hours/6.0)
     
+    #Coerce to zero if wind speed less than TS force
+    if wind_speed < 34: ace = 0.0
+    
     #Return ACE
     return ace
 

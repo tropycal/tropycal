@@ -124,6 +124,14 @@ class Plot:
         bound_e = max_lon+0.0
         bound_s = min_lat+0.0
         bound_n = max_lat+0.0
+        
+        #If only one coordinate point, artificially induce a spread
+        if bound_w == bound_e:
+            bound_w = bound_w - 0.6
+            bound_e = bound_e + 0.6
+        if bound_s == bound_n:
+            bound_n = bound_n + 0.6
+            bound_s = bound_s - 0.6
 
         #Function for fixing map ratio
         def fix_map_ratio(bound_w,bound_e,bound_n,bound_s,nthres=1.45):

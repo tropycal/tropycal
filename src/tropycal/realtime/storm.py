@@ -200,6 +200,10 @@ class RealtimeStorm(Storm):
         -------
         dict
             Dictionary containing the latest official forecast.
+        
+        Notes
+        -----
+        This dictionary includes a calculation for accumulated cyclone energy (ACE), cumulatively for the storm's lifespan through each forecast hour. This is done by linearly interpolating the forecast to 6-hour intervals and calculating 6-hourly ACE at each interval. For storms where forecast tropical cyclone type is available, ACE is not calculated for forecast periods that are neither tropical nor subtropical.
         """
         
         #NHC forecast data
@@ -369,12 +373,28 @@ class RealtimeStorm(Storm):
         interp_fhr = range(0,forecasts['fhr'][-1]+1,6) #Construct a 6-hour time range
         interp_vmax = temporal_interpolation(forecasts['vmax'],forecasts['fhr'],interp_fhr)
         
+        #Interpolate storm type
+        interp_type = []
+        for dummy_i,(i_hour,i_vmax) in enumerate(zip(interp_fhr,interp_vmax)):
+            use_i = 0
+            for i in range(len(forecasts['fhr'])):
+                if forecasts['fhr'][i] > i_hour:
+                    break
+                use_i = int(i + 0.0)
+            i_type = forecasts['type'][use_i]
+            if i_type in ['TD','TS','SD','SS','HU','TY']: i_type = get_storm_type(i_vmax,False)
+            interp_type.append(i_type)
+        
         #Add forecast ACE
-        for i,(i_fhr,i_vmax) in enumerate(zip(interp_fhr[1:],interp_vmax[1:])):
+        for i,(i_fhr,i_vmax,i_type) in enumerate(zip(interp_fhr[1:],interp_vmax[1:],interp_type[1:])):
             
-            #Add ACE
-            ace += accumulated_cyclone_energy(i_vmax,hours=6)
-            forecasts['cumulative_ace'].append(np.round(ace,1))
+            #Add ACE if storm is a TC
+            if i_type in ['TS','SS','HU','TY']:
+                ace += accumulated_cyclone_energy(i_vmax,hours=6)
+            
+            #Add ACE to array
+            if i_fhr in forecasts['fhr']:
+                forecasts['cumulative_ace'].append(np.round(ace,1))
         
         #Save forecast as attribute
         self.latest_forecast = forecasts

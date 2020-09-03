@@ -8,6 +8,7 @@ import pickle
 from scipy.interpolate import interp1d
 from scipy.ndimage import gaussian_filter as gfilt,gaussian_filter1d as gfilt1d
 from scipy.ndimage.filters import minimum_filter
+from geopy.distance import great_circle
 import matplotlib.dates as mdates
 
 try:
@@ -56,31 +57,37 @@ class ReconDataset:
     Recon data is currently read in via Tropical Atlantic. Future releases of Tropycal will incorporate NHC recon archives.
     """
 
-    def __init__(self,storm,save_path="",read_path=""):
+    def __init__(self,storm,deltap_thresh=8,save_path="",read_path="",update=False):
         
         #Error check
-        if save_path != "" and read_path != "":
-            raise ValueError("Error: Cannot read in and save a file at the same time.")
+        #if save_path != "" and read_path != "":
+        #    raise ValueError("Error: Cannot read in and save a file at the same time.")
         
         #Create URL prefix for reading in recon data
         self.url_prefix = 'http://tropicalatlantic.com/recon/recon.cgi?'
         self.storm_obj = storm
         self.storm = str(storm.name)
         self.year = str(storm.year)
-        
+        self.deltap_thresh = deltap_thresh
+        self.UPDATE = update
         #If reading in a pickled file, load it in
         if read_path != "":
             self.missiondata = pickle.load(open(read_path,'rb'))
+            if self.UPDATE:
+                self.missiondata = self.allMissions()
         
         #Otherwise, retrieve all mission data for this storm
         else:
             self.missiondata = self.allMissions()
             
             #Save mission data as a pickle if necessary
-            if save_path != "": pickle.dump(self.missiondata,open(save_path,'wb'),-1)
+        if save_path != "": pickle.dump(self.missiondata,open(save_path,'wb'),-1)
         
         #Convert recon data to storm-centered coordinates
         self.recentered = self.recenter()
+        
+        #print(f'Most recent data: {max(self.recentered['time']):%Y %b %d %H:%M} UTC')
+        #print(f'Most recent center pass: {max(self.recentered.loc[self.recentered['iscenter']>0]['time']):%Y %b %d %H:%M} UTC')
             
         
     def getMission(self,agency,mission_num,url_mission=None):
@@ -157,10 +164,17 @@ class ReconDataset:
     def allMissions(self):
         url_storm = f'{self.url_prefix}basin=al&year={self.year}&storm={self.storm}&product=hdob'
         missions = pd.read_html(url_storm)[0]
-        missiondata={}
+        if self.UPDATE:
+            missiondata = self.missiondata
+            lastMissionNumber = max([int(x.split('_')[0]) for x in list(missiondata.keys())])
+            idxf = [x for x in missions['MissionNumber']].index(lastMissionNumber)+1
+            idxf = min([idxf+1,len(missions)]) # update last two missions
+        else:
+            idxf = len(missions)
+            missiondata={}
         timer_start = dt.now()
         print(f'--> Starting to read in recon missions')
-        for i_mission in range(len(missions)):
+        for i_mission in range(0,idxf):
             mission_num = str(missions['MissionNumber'][i_mission]).zfill(2)
             agency = ''.join(filter(str.isalpha, missions['Agency'][i_mission]))
             missiondata[f'{mission_num}_{agency}'] = self.getMission(agency,mission_num)
@@ -186,7 +200,7 @@ class ReconDataset:
                 return [np.nan]*len(A)
         
         #Check that sfc pressure spread is big enough to identify real minima
-        if np.nanpercentile(data['p_sfc'],90)-np.nanpercentile(data['p_sfc'],10)>8:
+        if np.nanpercentile(data['p_sfc'],90)-np.nanpercentile(data['p_sfc'],10)>self.deltap_thresh:
             data['p_sfc'][:20]=[np.nan]*20 #NaN out the first 10 minutes of the flight
             p_sfc_interp = fill_nan(data['p_sfc']) #Interp p_sfc across missing data
             wspd_interp = fill_nan(data['wspd']) #Interp wspd across missing data
@@ -200,7 +214,7 @@ class ReconDataset:
             imin = np.nonzero(pw_test == minimum_filter(pw_test,30))[0]
             #Only use mins if below 15th %ile of mission p_sfc data and when plane p is 500-900mb
             imin = [i for i in imin if 800<p_sfc_interp[i]<np.nanpercentile(data['p_sfc'],15) and \
-                    550<data['plane_p'][i]<900]
+                    550<data['plane_p'][i]<950]
         else:
             imin=[]
         data['iscenter'] = np.zeros(len(data['p_sfc']))
@@ -293,7 +307,8 @@ class ReconDataset:
         return selected
 
 
-    def plot_points(self,recon_select=None,varname='wspd',domain="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
+    def plot_points(self,recon_select=None,varname='wspd',domain="dynamic",plane_p_range=None,\
+                    ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of recon data points.
@@ -345,6 +360,10 @@ class ReconDataset:
         else:
             dfRecon = self.__getSubTime(recon_select)
         
+        #Apply flight level filter
+        if plane_p_range is not None:
+            dfRecon = dfRecon.loc[(dfRecon['plane_p']>min(plane_p_range)) & (dfRecon['plane_p']<max(plane_p_range))]
+        
         #Create instance of plot object
         self.plot_obj = ReconPlot()
         
@@ -362,7 +381,7 @@ class ReconDataset:
             return plot_info
 
     
-    def plot_hovmoller(self,recon_select=None,varname='wspd',radlim=None,track_dict=None,\
+    def plot_hovmoller(self,recon_select=None,varname='wspd',radlim=None,track_dict=None,plane_p_range=None,\
                        ax=None,return_ax=False,**kwargs):
         
         r"""
@@ -404,6 +423,10 @@ class ReconDataset:
             dfRecon = pd.DataFrame.from_dict(recon_select)
         else:
             dfRecon = self.__getSubTime(recon_select)
+        
+        #Apply flight level filter
+        if plane_p_range is not None:
+            dfRecon = dfRecon.loc[(dfRecon['plane_p']>min(plane_p_range)) & (dfRecon['plane_p']<max(plane_p_range))]
         
         #Retrieve track dictionary if none is specified
         if track_dict is None:
@@ -484,7 +507,7 @@ class ReconDataset:
 
     #PLOT FUNCTION FOR RECON MAPS
     def plot_maps(self,recon_select=None,varname='wspd',track_dict=None,recon_stats=None,domain="dynamic",\
-                  ax=None,return_ax=False,savetopath=None,cartopy_proj=None,**kwargs):
+                  radlim=None,plane_p_range=None,ax=None,return_ax=False,savetopath=None,cartopy_proj=None,**kwargs):
     
         #plot_time, plot_mission (only for dots)
         
@@ -540,6 +563,14 @@ class ReconDataset:
             if not isinstance(recon_select,(tuple,list)):
                 ONE_MAP = True
         
+        MULTIVAR=False
+        if isinstance(varname,(tuple,list)):
+            MULTIVAR=True                    
+        
+        #Apply flight level filter
+        if plane_p_range is not None:
+            dfRecon = dfRecon.loc[(dfRecon['plane_p']>min(plane_p_range)) & (dfRecon['plane_p']<max(plane_p_range))]
+        
         if track_dict is None:
             track_dict = self.storm_obj.dict
             
@@ -552,10 +583,17 @@ class ReconDataset:
             clat = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lat'])
             track_dict = {'time':recon_select,'lon':clon,'lat':clat}
         
-        iRecon = interpRecon(dfRecon,varname)
-        Maps = iRecon.interpMaps(track_dict)
+        if MULTIVAR:
+            Maps=[]
+            for v in varname:
+                iRecon = interpRecon(dfRecon,v,radlim)
+                tmpMaps = iRecon.interpMaps(track_dict)
+                Maps.append(tmpMaps)
+        else:
+            iRecon = interpRecon(dfRecon,varname,radlim)
+            Maps = iRecon.interpMaps(track_dict)
                 
-        titlename,units = get_recon_title(varname)
+        #titlename,units = get_recon_title(varname)
         
         if 'levels' not in prop.keys() or 'levels' in prop.keys() and prop['levels'] is None:
             prop['levels'] = np.arange(np.floor(np.nanmin(Maps['maps'])/10)*10,
@@ -569,6 +607,12 @@ class ReconDataset:
                 os.system(f'mkdir {savetopath}')
             except:
                 pass
+            
+            if MULTIVAR:
+                Maps2 = Maps[1]
+                Maps = Maps[0]
+            
+                print(np.nanmax(Maps['maps']),np.nanmin(Maps2['maps']))
             
             figs = []
             for i,t in enumerate(Maps['time']):
@@ -593,6 +637,15 @@ class ReconDataset:
                     d1 = domain
                 
                 #Plot recon
+                
+                if MULTIVAR:
+                    Maps_sub1 = dict(Maps_sub)
+                    Maps_sub2 = dict(Maps_sub)
+                    Maps_sub = [Maps_sub1,Maps_sub2]
+                    Maps_sub[1]['maps'] = Maps2['maps'][i]
+                    
+                    print(np.nanmax(Maps_sub[0]['maps']),np.nanmin(Maps_sub[1]['maps']))
+                    
                 plot_ax,d0 = self.plot_obj.plot_maps(self.storm_obj,Maps_sub,varname,recon_stats,\
                                                     domain=d1,ax=ax,return_ax=True,return_domain=True,prop=prop,map_prop=map_prop)
                 
@@ -632,7 +685,7 @@ class ReconDataset:
     
     #PLOT FUNCTION FOR RECON SWATH
     def plot_swath(self,recon_select=None,varname='wspd',swathfunc=None,track_dict=None,radlim=None,\
-                   domain="dynamic",ax=None,return_ax=False,cartopy_proj=None,**kwargs):
+                   domain="dynamic",plane_p_range=None,ax=None,return_ax=False,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a map plot of a swath of interpolated recon data.
@@ -686,6 +739,10 @@ class ReconDataset:
         else:
             dfRecon = self.__getSubTime(recon_select)
 
+        #Apply flight level filter
+        if plane_p_range is not None:
+            dfRecon = dfRecon.loc[(dfRecon['plane_p']>min(plane_p_range)) & (dfRecon['plane_p']<max(plane_p_range))]
+        
         if track_dict is None:
             track_dict = self.storm_obj.dict
         

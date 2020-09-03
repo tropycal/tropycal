@@ -530,6 +530,14 @@ class ReconPlot(Plot):
         map_prop = self.add_prop(map_prop,default_map_prop)
         self.plot_init(ax,map_prop)
 
+        MULTIVAR=False
+        if isinstance(varname,(tuple,list)):
+            varname2 = varname[1]
+            varname = varname[0]
+            Maps_dict2 = Maps_dict[1]
+            Maps_dict = Maps_dict[0]
+            MULTIVAR=True
+        
         grid_res = 1*1e3 #m
         clon = Maps_dict['center_lon']
         clat = Maps_dict['center_lat']
@@ -544,13 +552,20 @@ class ReconPlot(Plot):
         lats = out[:,:,1]
         
         #mlib.rcParams.update({'font.size': 16})
-
+        
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
 
         norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
         cbmap = self.ax.contourf(lons,lats,Maps_dict['maps'],\
                                  cmap=cmap,norm=norm,levels=clevs,transform=ccrs.PlateCarree())
-
+    
+        if MULTIVAR:
+            CS = self.ax.contour(lons,lats,Maps_dict2['maps'],levels = np.arange(0,2000,4),colors='k',linewidths=0.5)
+            # Recast levels to new class
+            CS.levels = [int(val) for val in CS.levels]
+            self.ax.clabel(CS, CS.levels, fmt='%i', inline=True, fontsize=10)
+        
+        
         #Storm-centered plot domain
         if domain == "dynamic":
             

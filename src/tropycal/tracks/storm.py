@@ -141,8 +141,11 @@ class Storm:
             self.coords['Tornado Count'] = len(stormTors['data'])
         
         #Get Archer track data for this storm, if it exists
-        self.get_archer()
-        
+        try:
+	        self.get_archer()
+    	except:
+    		pass
+    		    
         #Determine if storm object was retrieved via realtime object
         if 'realtime' in keys and self.dict['realtime'] == True:
             self.realtime = True
@@ -1366,7 +1369,7 @@ class Storm:
             plt.show()
             plt.close()
             
-    def get_recon(self,save_path="",read_path=""):
+    def get_recon(self,deltap_thresh=8,save_path="",read_path="",update=False):
         
         r"""
         Creates an instance of ReconDataset for this storm's data. Saves it as an attribute of this object (storm.recon).
@@ -1381,7 +1384,7 @@ class Storm:
             Filepath to read saved recon data from. If specified, "save_path" cannot be passed as an argument.
         """
         
-        self.recon = ReconDataset(self,save_path,read_path)
+        self.recon = ReconDataset(self,deltap_thresh,save_path,read_path,update)
                 
     def get_archer(self):
         

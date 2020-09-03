@@ -2347,7 +2347,7 @@ class TrackDataset:
                 
         return ace_rank
 
-    def filter_storms(self,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=(0,360,-90,90),doInterp=False,return_keys=True):
+    def filter_storms(self,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=None,doInterp=False,return_keys=True):
         
         r"""
         Filters all storms by various thresholds.
@@ -2391,10 +2391,17 @@ class TrackDataset:
         thresh = default_thresh
 
         #Determine domain over which to filter data
-        if isinstance(domain,str):
-            lon_min,lon_max,lat_min,lat_max = [float(i) for i in domain.split("/")]
+        
+        if domain is None:
+            domain = (0,360,-90,90)
         else:
-            lon_min,lon_max,lat_min,lat_max = domain
+            domain = (domain['w'],domain['e'],domain['s'],domain['n'])
+        lon_min,lon_max,lat_min,lat_max = domain
+        
+        #if isinstance(domain,str):
+        #    lon_min,lon_max,lat_min,lat_max = [float(i) for i in domain.split("/")]
+        #else:
+        #    lon_min,lon_max,lat_min,lat_max = domain
         
         #Determine year and date range
         year_min,year_max = year_range

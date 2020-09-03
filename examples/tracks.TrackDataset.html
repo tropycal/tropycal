@@ -201,7 +201,7 @@
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (2.43 seconds)
+--&gt; Completed reading in HURDAT2 data (15.62 seconds)
 </pre></div>
 </div>
 <div class="section" id="retrieving-storms-and-seasons">
@@ -353,7 +353,7 @@ The inverse_transformed function was deprecated in Matplotlib 3.3 and will be re
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in ibtracs data
---&gt; Completed reading in ibtracs data (40.96 seconds)
+--&gt; Completed reading in ibtracs data (41.47 seconds)
 </pre></div>
 </div>
 <p>In its current form, tropycal is not configured to support all types of analyses for global IBTrACS, particularly near the dateline. Future updates will work to improve this functionality.</p>
@@ -365,7 +365,22 @@ The inverse_transformed function was deprecated in Matplotlib 3.3 and will be re
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:101: RuntimeWarning: All-NaN slice encountered
+  return thresh, lambda x: np.nanmax(x)
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:101: RuntimeWarning: All-NaN axis encountered
+  return thresh, lambda x: np.nanmax(x)
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
+  warnings.warn(&#39;The .xlabels_top attribute is deprecated. Please &#39;
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
+  warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
 --&gt; Generating plot
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/geoaxes.py:1763: MatplotlibDeprecationWarning: shading=&#39;flat&#39; when X and Y have the same dimensions as C is deprecated since 3.3.  Either specify the corners of the quadrilaterals with X and Y, or pass shading=&#39;auto&#39;, &#39;nearest&#39; or &#39;gouraud&#39;, or set rcParams[&#39;pcolor.shading&#39;].  This will become an error two minor releases later.
+  result = matplotlib.axes.Axes.pcolor(self, *args, **kwargs)
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/geoaxes.py:1763: MatplotlibDeprecationWarning: Passing parameters norm and vmin/vmax simultaneously is deprecated since 3.3 and will become an error two minor releases later. Please pass vmin/vmax directly to the norm when creating it.
+  result = matplotlib.axes.Axes.pcolor(self, *args, **kwargs)
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/plot.py:1600: MatplotlibDeprecationWarning:
+The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
+  bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 
 &lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Maximum wind (kt)&#39;,&#39;right&#39;:&#39;Jan 01 – Dec 31 • 1851 – 2020&#39;}&gt;
 </pre></div>
@@ -378,7 +393,16 @@ The inverse_transformed function was deprecated in Matplotlib 3.3 and will be re
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
+  warnings.warn(&#39;The .xlabels_top attribute is deprecated. Please &#39;
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:343: UserWarning: The .ylabels_right attribute is deprecated. Please use .right_labels to toggle visibility instead.
+  warnings.warn(&#39;The .ylabels_right attribute is deprecated. Please &#39;
 --&gt; Generating plot
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/geoaxes.py:1763: MatplotlibDeprecationWarning: shading=&#39;flat&#39; when X and Y have the same dimensions as C is deprecated since 3.3.  Either specify the corners of the quadrilaterals with X and Y, or pass shading=&#39;auto&#39;, &#39;nearest&#39; or &#39;gouraud&#39;, or set rcParams[&#39;pcolor.shading&#39;].  This will become an error two minor releases later.
+  result = matplotlib.axes.Axes.pcolor(self, *args, **kwargs)
+/home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/plot.py:1600: MatplotlibDeprecationWarning:
+The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
+  bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 </pre></div>
 </div>
 <p>Make a plot of the total number of rapidly intensifying storms (&gt;=30 kt over 24 hours) per 1 degree gridbox:</p>
@@ -401,7 +425,7 @@ The inverse_transformed function was deprecated in Matplotlib 3.3 and will be re
   bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  33.051 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  48.209 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-trackdataset-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/8e0af267200996c0b90c20030c99ca74/tracks.TrackDataset.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.TrackDataset.py</span></code></a></p>

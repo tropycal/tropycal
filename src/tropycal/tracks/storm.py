@@ -142,10 +142,10 @@ class Storm:
         
         #Get Archer track data for this storm, if it exists
         try:
-	        self.get_archer()
-    	except:
-    		pass
-    		    
+            self.get_archer()
+        except:
+            pass
+            
         #Determine if storm object was retrieved via realtime object
         if 'realtime' in keys and self.dict['realtime'] == True:
             self.realtime = True
@@ -306,7 +306,7 @@ class Storm:
         return ds
     
     #PLOT FUNCTION FOR HURDAT
-    def plot(self,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot(self,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of the observed track of the storm.
@@ -323,6 +323,8 @@ class Storm:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         
         Other Parameters
         ----------------
@@ -348,14 +350,14 @@ class Storm:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(self.dict,domain,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(self.dict,domain,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop,save_path=save_path)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
         
     #PLOT FUNCTION FOR HURDAT
     def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
-                          ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+                          ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of the operational NHC forecast track along with observed track data.
@@ -381,6 +383,8 @@ class Storm:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         
         Other Parameters
         ----------------
@@ -512,7 +516,7 @@ class Storm:
         forecast_dict['basin'] = self.basin
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax

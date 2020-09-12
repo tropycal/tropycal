@@ -1,3 +1,4 @@
+import os, sys
 import calendar
 import numpy as np
 import pandas as pd
@@ -40,7 +41,7 @@ class TrackPlot(Plot):
         
         self.use_credit = True
     
-    def plot_storm(self,storm,domain="dynamic",plot_all=False,ax=None,return_ax=False,track_labels=False,prop={},map_prop={}):
+    def plot_storm(self,storm,domain="dynamic",plot_all=False,ax=None,return_ax=False,track_labels=False,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -272,7 +273,11 @@ class TrackPlot(Plot):
             c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=get_colors_sshws(113))
             c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
             self.ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
-
+        
+        #Save image if specified
+        if save_path != None and isinstance(save_path,str) == True:
+            plt.savefig(os.path.join(save_path,f"{storm_data['name']}_{storm_data['year']}_track.png"),bbox_inches='tight')
+        
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:
             return self.ax
@@ -280,7 +285,7 @@ class TrackPlot(Plot):
             plt.show()
             plt.close()
     
-    def plot_storms(self,storms,domain="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_storms(self,storms,domain="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of multiple storm tracks.
@@ -461,13 +466,19 @@ class TrackPlot(Plot):
             c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
             self.ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
 
+        #Save image if specified
+        if save_path != None and isinstance(save_path,str) == True:
+            plt.savefig(os.path.join(save_path,f"tropycal_track_composite.png"),bbox_inches='tight')
+        
         #Return axis if specified, otherwise display figure
+        if return_ax == True:
             return self.ax,'/'.join([str(i) for i in [bound_w,bound_e,bound_s,bound_n]])
         else:
             plt.show()
             plt.close()
         
-    def plot_storm_nhc(self,forecast,track=None,track_labels='fhr',cone_days=5,domain="dynamic_forecast",ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_storm_nhc(self,forecast,track=None,track_labels='fhr',cone_days=5,domain="dynamic_forecast",ax=None,return_ax=False,save_path=
+None,prop={},map_prop={}):
         
         r"""
         Creates a plot of the operational NHC forecast track along with observed track data.
@@ -886,6 +897,10 @@ class TrackPlot(Plot):
         
         credit_text = self.plot_credit()
         self.add_credit(credit_text)
+        
+        #Save image if specified
+        if save_path != None and isinstance(save_path,str) == True:
+            plt.savefig(os.path.join(save_path,f"{storm_data['name']}_{storm_data['year']}_track.png"),bbox_inches='tight')
         
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:

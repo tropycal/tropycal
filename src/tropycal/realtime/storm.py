@@ -401,7 +401,7 @@ class RealtimeStorm(Storm):
         return self.latest_forecast
 
     def plot_forecast_realtime(self,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
-                                   ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+                                   ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Plots the latest available official forecast. Available for both NHC and JTWC sources.
@@ -425,6 +425,8 @@ class RealtimeStorm(Storm):
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         prop : dict
             Property of storm track lines.
         map_prop : dict
@@ -456,7 +458,7 @@ class RealtimeStorm(Storm):
         if self.source != "hurdat": nhc_forecasts['cone'] = False
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm_nhc(nhc_forecasts,self.dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm_nhc(nhc_forecasts,self.dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax

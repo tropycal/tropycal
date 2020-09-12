@@ -1012,7 +1012,7 @@ class TrackDataset:
             raise RuntimeError(error_message)
     
     
-    def plot_storm(self,storm,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot_storm(self,storm,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,save_path="",prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm.
@@ -1031,6 +1031,8 @@ class TrackDataset:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If blank or none, image will not be saved.
         
         Other Parameters
         ----------------
@@ -1062,13 +1064,13 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
     
     
-    def plot_storms(self,storms,domain="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot_storms(self,storms,domain="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of multiple storms.
@@ -1087,6 +1089,8 @@ class TrackDataset:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         
         Other Parameters
         ----------------
@@ -1129,7 +1133,7 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title_text,filter_dates,plot_all_dots,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title_text,filter_dates,plot_all_dots,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax

@@ -1012,7 +1012,7 @@ class TrackDataset:
             raise RuntimeError(error_message)
     
     
-    def plot_storm(self,storm,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,save_path="",prop={},map_prop={}):
+    def plot_storm(self,storm,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm.
@@ -1032,7 +1032,7 @@ class TrackDataset:
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
-            Relative or full path of directory to save the image in. If blank or none, image will not be saved.
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         
         Other Parameters
         ----------------

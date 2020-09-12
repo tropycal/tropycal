@@ -289,6 +289,12 @@ def get_recon_title(varname):
     if varname.lower() == 'p_sfc':
         titlename = 'Sfc pressure'
         unitname = r'(hPa)'
+    if varname.lower() == 'plane_p':
+        titlename = 'Flight level pressure'
+        unitname = r'(hPa)'
+    if varname.lower() == 'plane_z':
+        titlename = 'Flight level height'
+        unitname = r'(m)'
     
     return titlename,unitname
 

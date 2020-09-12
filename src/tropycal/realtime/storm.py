@@ -24,6 +24,7 @@ except:
 
 try:
     import matplotlib.lines as mlines
+    import matplotlib.dates as mdates
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
@@ -199,6 +200,10 @@ class RealtimeStorm(Storm):
         -------
         dict
             Dictionary containing the latest official forecast.
+        
+        Notes
+        -----
+        This dictionary includes a calculation for accumulated cyclone energy (ACE), cumulatively for the storm's lifespan through each forecast hour. This is done by linearly interpolating the forecast to 6-hour intervals and calculating 6-hourly ACE at each interval. For storms where forecast tropical cyclone type is available, ACE is not calculated for forecast periods that are neither tropical nor subtropical.
         """
         
         #NHC forecast data
@@ -349,38 +354,54 @@ class RealtimeStorm(Storm):
                     stype = get_storm_type(vmax,False)
                     forecasts['type'].append(stype)
             
-        #Determine ACE thus far
+        #Determine ACE thus far (prior to initial forecast hour)
         ace = 0.0
         for i in range(len(self.date)):
             if self.date[i] >= forecasts['init']: continue
-            ace += ((10**-4) * (self.vmax[i]**2))
+            if self.type[i] not in ['TS','SS','HU']: continue
+            ace += accumulated_cyclone_energy(self.vmax[i],hours=6)
         
         #Add initial forecast hour ACE
-        ace += ((10**-4) * (forecasts['vmax'][0]**2))
+        ace += accumulated_cyclone_energy(forecasts['vmax'][0],hours=6)
         forecasts['cumulative_ace'].append(np.round(ace,1))
         
+        #Interpolate forecast to 6-hour increments
+        def temporal_interpolation(value, orig_times, target_times, kind='linear'):
+            f = interp.interp1d(orig_times,value,kind=kind,fill_value='extrapolate')
+            ynew = f(target_times)
+            return ynew
+        interp_fhr = range(0,forecasts['fhr'][-1]+1,6) #Construct a 6-hour time range
+        interp_vmax = temporal_interpolation(forecasts['vmax'],forecasts['fhr'],interp_fhr)
+        
+        #Interpolate storm type
+        interp_type = []
+        for dummy_i,(i_hour,i_vmax) in enumerate(zip(interp_fhr,interp_vmax)):
+            use_i = 0
+            for i in range(len(forecasts['fhr'])):
+                if forecasts['fhr'][i] > i_hour:
+                    break
+                use_i = int(i + 0.0)
+            i_type = forecasts['type'][use_i]
+            if i_type in ['TD','TS','SD','SS','HU','TY']: i_type = get_storm_type(i_vmax,False)
+            interp_type.append(i_type)
+        
         #Add forecast ACE
-        for i in range(1,len(forecasts['fhr'])):
+        for i,(i_fhr,i_vmax,i_type) in enumerate(zip(interp_fhr[1:],interp_vmax[1:],interp_type[1:])):
             
-            #Get hour difference
-            hour_diff = forecasts['fhr'][i] - forecasts['fhr'][i-1]
+            #Add ACE if storm is a TC
+            if i_type in ['TS','SS','HU','TY']:
+                ace += accumulated_cyclone_energy(i_vmax,hours=6)
             
-            #Calculate ACE for 6 hour increments, linearly interpolating wind
-            for j in range(6,hour_diff+1,6):
-                
-                #Interpolate wind
-                fraction = float(j) / float(hour_diff)
-                wind_interp = (forecasts['vmax'][i-1]*(1.0-fraction)) + (forecasts['vmax'][i]*fraction)
-                ace += ((10**-4) * (wind_interp**2))
-            
-            forecasts['cumulative_ace'].append(np.round(ace,1))
+            #Add ACE to array
+            if i_fhr in forecasts['fhr']:
+                forecasts['cumulative_ace'].append(np.round(ace,1))
         
         #Save forecast as attribute
         self.latest_forecast = forecasts
         return self.latest_forecast
 
     def plot_forecast_realtime(self,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
-                                   ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+                                   ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Plots the latest available official forecast. Available for both NHC and JTWC sources.
@@ -404,6 +425,8 @@ class RealtimeStorm(Storm):
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         prop : dict
             Property of storm track lines.
         map_prop : dict
@@ -435,7 +458,7 @@ class RealtimeStorm(Storm):
         if self.source != "hurdat": nhc_forecasts['cone'] = False
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm_nhc(nhc_forecasts,self.dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm_nhc(nhc_forecasts,self.dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
@@ -556,7 +579,7 @@ class RealtimeStorm(Storm):
             #Get MSLP
             results = [i for i in content if 'systemMslpMb' in i][0]
             result = (results.split(">")[1]).split("<")[0]
-            current_advisory['mslp'] = int(result)
+            current_advisory['mslp'] = np.int(result)
 
             #Get storm category
             current_advisory['category'] = wind_to_category(current_advisory['wind_kt'])
@@ -612,7 +635,7 @@ class RealtimeStorm(Storm):
             current_advisory['wind_kt'] = self.vmax[-1]
 
             #Get MSLP
-            current_advisory['mslp'] = self.mslp[-1]
+            current_advisory['mslp'] = np.int(self.mslp[-1])
 
             #Get storm category
             current_advisory['category'] = wind_to_category(current_advisory['wind_kt'])

@@ -49,7 +49,10 @@ def find_var(request,thresh):
         #Otherwise, sustained wind
         else:
             return thresh,'vmax'
-    
+
+    elif request.find('ace')>=0 or request.find('accumulated')>=0:
+        return thresh,'ace'
+        
     #Minimum MSLP, or change in MSLP
     elif request.find('pressure') >= 0 or request.find('slp') >= 0:
         #If change in MSLP, determine time interval
@@ -65,8 +68,12 @@ def find_var(request,thresh):
             return thresh,'mslp'
     
     #Storm motion or heading (vector)
-    elif request.find('heading') >= 0 or request.find('movement') >= 0 or request.find('motion') >= 0:
+    elif request.find('heading') >= 0 or request.find('motion') >= 0:
         return thresh,('dx_dt','dy_dt')
+    
+    elif request.find('movement')>=0 or request.find('speed') >= 0:
+        return thresh,'speed'
+    
     
     #Otherwise, error
     else:
@@ -93,6 +100,8 @@ def find_func(request,thresh):
         Returns a function to apply to the data.
     """
     
+    print(request)
+    
     #Convert command to lowercase
     request = request.lower()
     
@@ -118,6 +127,10 @@ def find_func(request,thresh):
     #Count function
     elif request.find('count') >= 0 or request.find('num') >= 0:
         return thresh, lambda x: len(x)
+    
+    #ACE - cumulative function
+    elif request.find('ace') >=0 or request.find('accumulated') >=0:
+        return thresh, lambda x: np.nansum(x)
     
     #Otherwise, function cannot be identified
     else:
@@ -267,12 +280,13 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
         new_storm['dmslp_dt'] = [np.nan] + list((new_storm['mslp'][1:]-new_storm['mslp'][:-1]) / timeres)
         
         #Calculate x and y position change over temporal window
-        rE = 6.371e3 #km
+        rE = 6.371e3 * 0.539957 #nautical miles
         d2r = np.pi/180.
         new_storm['dx_dt'] = [np.nan]+list(d2r*(new_storm['lon'][1:]-new_storm['lon'][:-1])* \
                  rE*np.cos(d2r*np.mean([new_storm['lat'][1:],new_storm['lat'][:-1]],axis=0))/timeres)
         new_storm['dy_dt'] = [np.nan]+list(d2r*(new_storm['lat'][1:]-new_storm['lat'][:-1])* \
                  rE/timeres)
+        new_storm['speed'] = [(x**2+y**2)**0.5 for x,y in zip(new_storm['dx_dt'],new_storm['dy_dt'])]
         
         #Convert change in wind & MSLP to change over specified window
         for name in ['dvmax_dt','dmslp_dt']:
@@ -286,7 +300,7 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
                 new_storm[name] = list(tmp)+[np.nan]*(len(new_storm[name])-len(tmp))
         
         #Convert change in position to change over specified window
-        for name in ['dx_dt','dy_dt']:
+        for name in ['dx_dt','dy_dt','speed']:
             tmp = np.convolve(new_storm[name],[timeres/dt_window]*int(dt_window/timeres),mode='valid')
             if dt_align=='end':
                 new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)

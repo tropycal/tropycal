@@ -5,10 +5,10 @@ import numpy as np
 import pandas as pd
 import re
 import scipy.interpolate as interp
-import scipy.stats as stats
 import urllib
 import warnings
 from datetime import datetime as dt,timedelta
+from scipy.ndimage import gaussian_filter as gfilt
 #Import other tropycal objects
 from ..plot import Plot
 from .plot import TrackPlot
@@ -1012,7 +1012,7 @@ class TrackDataset:
             raise RuntimeError(error_message)
     
     
-    def plot_storm(self,storm,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot_storm(self,storm,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm.
@@ -1031,6 +1031,8 @@ class TrackDataset:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         
         Other Parameters
         ----------------
@@ -1062,13 +1064,13 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
     
     
-    def plot_storms(self,storms,domain="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot_storms(self,storms,domain="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of multiple storms.
@@ -1087,6 +1089,8 @@ class TrackDataset:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         
         Other Parameters
         ----------------
@@ -1129,7 +1133,7 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title_text,filter_dates,plot_all_dots,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title_text,filter_dates,plot_all_dots,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
@@ -2347,7 +2351,7 @@ class TrackDataset:
                 
         return ace_rank
 
-    def filter_storms(self,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=(0,360,-90,90),doInterp=False,return_keys=True):
+    def filter_storms(self,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=None,doInterp=False,return_keys=True):
         
         r"""
         Filters all storms by various thresholds.
@@ -2384,17 +2388,24 @@ class TrackDataset:
         """
         
         #Update thresh based on input
-        default_thresh={'sample_min':1,'p_max':9999,'v_min':0,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,
+        default_thresh={'sample_min':1,'p_max':9999,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,
                         'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
 
         #Determine domain over which to filter data
-        if isinstance(domain,str):
-            lon_min,lon_max,lat_min,lat_max = [float(i) for i in domain.split("/")]
+        
+        if domain is None:
+            domain = (0,360,-90,90)
         else:
-            lon_min,lon_max,lat_min,lat_max = domain
+            domain = (domain['w'],domain['e'],domain['s'],domain['n'])
+        lon_min,lon_max,lat_min,lat_max = domain
+        
+        #if isinstance(domain,str):
+        #    lon_min,lon_max,lat_min,lat_max = [float(i) for i in domain.split("/")]
+        #else:
+        #    lon_min,lon_max,lat_min,lat_max = domain
         
         #Determine year and date range
         year_min,year_max = year_range
@@ -2414,8 +2425,8 @@ class TrackDataset:
         
         #Create empty dictionary to store output in
         points = {}
-        for name in ['vmax','mslp','type','lat','lon','date','season','stormid']+ \
-                    ['dmslp_dt','dvmax_dt','dx_dt','dy_dt']*int(doInterp):
+        for name in ['vmax','mslp','type','lat','lon','date','season','stormid','ace']+ \
+                    ['dmslp_dt','dvmax_dt','dx_dt','dy_dt','speed']*int(doInterp):
             points[name] = []
         
         #Iterate over every storm in TrackDataset
@@ -2427,7 +2438,9 @@ class TrackDataset:
             #Interpolate temporally if requested
             if doInterp:
                 istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
-            
+                timeres = 1
+            else:
+                timeres = 6
             #Iterate over every timestep of the storm
             for i in range(len(istorm['date'])):
                 
@@ -2446,13 +2459,18 @@ class TrackDataset:
                     points['date'].append(istorm['date'][i])
                     points['season'].append(istorm['season'])
                     points['stormid'].append(key)
-                    
+                    if istorm['vmax'][i]>34:
+                        points['ace'].append(istorm['vmax'][i]**2*1e-4*timeres/6)
+                    else:
+                        points['ace'].append(0)                        
+                        
                     #Append separately for interpolated data
                     if doInterp:
                         points['dvmax_dt'].append(istorm['dvmax_dt'][i])
                         points['dmslp_dt'].append(istorm['dmslp_dt'][i])
                         points['dx_dt'].append(istorm['dx_dt'][i])
                         points['dy_dt'].append(istorm['dy_dt'][i])
+                        points['speed'].append(istorm['speed'][i])
         
         #Create a DataFrame from the dictionary
         p = pd.DataFrame.from_dict(points)
@@ -2460,6 +2478,8 @@ class TrackDataset:
         #Filter by thresholds
         if thresh['v_min']>0:
             p = p.loc[(p['vmax']>=thresh['v_min'])]
+        if thresh['v_max']<9999:
+            p = p.loc[(p['vmax']<=thresh['v_max'])]
         if thresh['p_max']<9999:
             p = p.loc[(p['mslp']<=thresh['p_max'])]
         if doInterp:
@@ -2554,6 +2574,11 @@ class TrackDataset:
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
 
+        default_prop = {'smooth':None}
+        for key in prop.keys():
+            default_prop[key] = prop[key]
+        prop = default_prop
+        
         #Update thresh based on input
         default_thresh={'sample_min':np.nan,'p_max':np.nan,'v_min':np.nan,'dv_min':np.nan,'dp_max':np.nan,'dv_max':np.nan,'dp_min':np.nan,'dt_window':24,'dt_align':'middle'}
         for key in thresh:
@@ -2643,8 +2668,17 @@ class TrackDataset:
             coords = [g[0] for g in groups]
 
             #Construct a 2D longitude and latitude grid, using the specified binsize resolution
-            xi = np.arange(np.nanmin(points["lonbin"])-binsize,np.nanmax(points["lonbin"])+2*binsize,binsize)
-            yi = np.arange(np.nanmin(points["latbin"])-binsize,np.nanmax(points["latbin"])+2*binsize,binsize)
+            if prop['smooth'] is not None:
+                all_lats = [(round(l/binsize)*binsize) for key in self.data.keys() for l in self.data[key]['lat']]
+                all_lons = [(round(l/binsize)*binsize)%360 for key in self.data.keys() for l in self.data[key]['lon']]
+                xi = np.arange(min(all_lons)-binsize,max(all_lons)+2*binsize,binsize)
+                yi = np.arange(min(all_lats)-binsize,max(all_lats)+2*binsize,binsize)
+                if self.basin == 'all':
+                    xi = np.arange(0,360+binsize,binsize)
+                    yi = np.arange(-90,90+binsize,binsize)
+            else:
+                xi = np.arange(np.nanmin(points["lonbin"])-binsize,np.nanmax(points["lonbin"])+2*binsize,binsize)
+                yi = np.arange(np.nanmin(points["latbin"])-binsize,np.nanmax(points["latbin"])+2*binsize,binsize)
             grid_x, grid_y = np.meshgrid(xi,yi)
             grid_x_years.append(grid_x)
             grid_y_years.append(grid_y)
@@ -2738,20 +2772,55 @@ class TrackDataset:
             title_L = title_L.replace(name,'wind (kt)')
         for name in ['pressure','mslp']:
             title_L = title_L.replace(name,'pressure (hPa)')
-        for name in ['heading','motion','movement']:
-            title_L = title_L.replace(name,f'heading (km/hr) over {thresh["dt_window"]} hours')
+        for name in ['heading','motion']:
+            title_L = title_L.replace(name,f'heading (kt) over {thresh["dt_window"]} hours')
+        for name in ['speed','movement']:
+            title_L = title_L.replace(name,f'forward speed (kt) over {thresh["dt_window"]} hours')
         if request.find('change') >= 0:
             title_L = title_L+f", {thresh['dt_align']}"
         title_L = title_L[0].upper() + title_L[1:] + plot_subtitle
         
         #Format right title for plot
         date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
+        add_avg = ' year-avg' if year_average == True else ''
         if year_range_subtract == None:
-            title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")} {dot} {year_range[0]} {endash} {year_range[1]}'
+            title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")} {dot} {year_range[0]} {endash} {year_range[1]}{add_avg}'
         else:
-            add_avg = ' mean' if year_average == True else ''
             title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")}\n{year_range[0]}{endash}{year_range[1]}{add_avg} minus {year_range_subtract[0]}{endash}{year_range_subtract[1]}{add_avg}'
         prop['title_L'],prop['title_R'] = title_L,title_R
+        
+        #Change the masking for variables that go out to zero near the edge of the data
+        if prop['smooth'] is not None:
+            
+            #Replace NaNs with zeros to apply Gaussian filter
+            grid_z_zeros = grid_z.copy()
+            grid_z_zeros[np.isnan(grid_z)] = 0
+            initial_mask = grid_z.copy() #Save initial mask
+            initial_mask[np.isnan(grid_z)] = -9999
+            grid_z_zeros = gfilt(grid_z_zeros,sigma=prop['smooth'])
+            
+            
+            if len(grid_z_years) == 2:
+                #grid_z_1_zeros = np.asarray(grid_z_1)
+                #grid_z_1_zeros[grid_z_1==-9999]=0
+                #grid_z_1_zeros = gfilt(grid_z_1_zeros,sigma=prop['smooth'])
+                
+                #grid_z_2_zeros = np.asarray(grid_z_2)
+                #grid_z_2_zeros[grid_z_2==-8999]=0
+                #grid_z_2_zeros = gfilt(grid_z_2_zeros,sigma=prop['smooth'])
+                #grid_z_zeros = grid_z_1_zeros - grid_z_2_zeros
+                #test_zeros = (grid_z_1_zeros<.02*np.nanmax(grid_z_1_zeros)) & (grid_z_2_zeros<.02*np.nanmax(grid_z_2_zeros))
+                pass
+            
+            elif varname not in [('dx_dt','dy_dt'),'speed','mslp']:
+                
+                #Apply cutoff at 2% of maximum
+                test_zeros = (grid_z_zeros<.02*np.amax(grid_z_zeros))
+                grid_z_zeros[test_zeros] = -9999
+                initial_mask = grid_z_zeros.copy()
+                
+            grid_z_zeros[initial_mask==-9999] = np.nan
+            grid_z = grid_z_zeros.copy()
         
         #Plot gridded field
         plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,VEC_FLAG,domain,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
@@ -2943,159 +3012,3 @@ class TrackDataset:
             return_dict['df'] = stormTors
         if len(return_dict) > 0:
             return return_dict
-    
-    def to_dataframe(self):
-        
-        r"""
-        Retrieve a Pandas DataFrame for all seasons within TrackDataset.
-        
-        Returns
-        -------
-        pandas.DataFrame
-            Returns a Pandas DataFrame containing requested data.
-        """
-        
-        #Get start and end seasons in this TrackDataset object
-        start_season = self.data[self.keys[0]]['year']
-        end_season = self.data[self.keys[-1]]['year']
-        
-        #Create empty dict to be used for making pandas DataFrame object
-        ds = {'season':[],'all_storms':[],'named_storms':[],'hurricanes':[],'major_hurricanes':[],'ace':[],'start_time':[],'end_time':[]}
-        
-        #Iterate over all seasons in the TrackDataset object
-        for season in range(start_season,end_season+1):
-            
-            #Get season summary
-            season_summary = self.get_season(season).summary()
-            
-            #Add information to dict
-            ds['season'].append(season)
-            ds['all_storms'].append(season_summary['season_storms'])
-            ds['named_storms'].append(season_summary['season_named'])
-            ds['hurricanes'].append(season_summary['season_hurricane'])
-            ds['major_hurricanes'].append(season_summary['season_major'])
-            ds['ace'].append(season_summary['season_ace'])
-            ds['start_time'].append(season_summary['season_start'])
-            ds['end_time'].append(season_summary['season_end'])
-        
-        #Convert entire dict to a DataFrame
-        ds = pd.DataFrame(ds)
-
-        #Return dataset
-        return ds.set_index('season')
-    
-    def climatology(self,start_season=1981,end_season=2010):
-        
-        r"""
-        Create a climatology for this dataset given start and end seasons. If none passed, defaults to 1981-2010.
-        
-        Parameters
-        ----------
-        start_season : int, optional
-            First season for the climatology range.
-        end_season : int, optional
-            Ending season for the climatology range.
-        
-        Returns
-        -------
-        dict
-            Dictionary containing the climatology for this dataset.
-        """
-        
-        #Error check
-        if start_season >= end_season:
-            raise ValueError("start_season cannot be greater than end_season.")
-        if isinstance(start_season,int) == False or isinstance(end_season,int) == False:
-            raise TypeError("start_season and end_season must be of type int.")
-        if (end_season - start_season)< 5:
-            raise ValueError("A minimum of 5 seasons is required for constructing a climatology.")
-        
-        #Retrieve data for all seasons in this dataset
-        full_climo = self.to_dataframe()
-        
-        #Subset rows by year range
-        subset_climo = full_climo.loc[start_season:end_season+1]
-        
-        #Convert dates to julian days
-        julian_start = [convert_to_julian(pd.to_datetime(i)) for i in subset_climo['start_time'].values]
-        julian_end = [convert_to_julian(pd.to_datetime(i)) for i in subset_climo['end_time'].values]
-        julian_end = [i+365 if i < 100 else i for i in julian_end]
-        subset_climo = subset_climo.drop(columns=['start_time','end_time'])
-        subset_climo['start_time'] = julian_start
-        subset_climo['end_time'] = julian_end
-        
-        #Calculate means
-        subset_climo_means = (subset_climo.mean(axis=0)).round(1)
-        
-        #Compile averages
-        climatology = {}
-        for key in ['all_storms','named_storms','hurricanes','major_hurricanes','ace']:
-            climatology[key] = subset_climo_means[key]
-        for key in ['start_time','end_time']:
-            climatology[key] = dt(dt.now().year-1,12,31)+timedelta(hours=24*subset_climo_means[key])
-        
-        #Return dict
-        return climatology
-    
-    def season_composite(self,seasons,climo_bounds=None):
-        
-        r"""
-        Create composite statistics for a list of seasons.
-        
-        Parameters
-        ----------
-        seasons : list
-            List of seasons to create a composite of. For Southern Hemisphere, season is the start of the two-year period.
-        climo_bounds : list or tuple
-            List or tuple of start and end years of climatology bounds. If none, defaults to (1981,2010).
-        
-        Returns
-        -------
-        dict
-            Dictionary containing the composite of the requested seasons.
-        """
-        
-        #Error check
-        if isinstance(seasons,list) == False:
-            raise TypeError("'seasons' must be of type list.")
-        
-        #Create climo bounds
-        if climo_bounds is None:
-            climo_bounds = (1981,2010)
-        
-        #Get Season object for the composite
-        summary = self.get_season(seasons).summary()
-        
-        #Get basin climatology
-        climatology = self.climatology(climo_bounds[0],climo_bounds[1])
-        full_climo = self.to_dataframe()
-        subset_climo = full_climo.loc[climo_bounds[0]:climo_bounds[1]+1]
-        
-        #Create composite dictionary
-        map_keys = {'all_storms':'season_storms',
-                    'named_storms':'season_named',
-                    'hurricanes':'season_hurricane',
-                    'major_hurricanes':'season_major',
-                    'ace':'season_ace',
-                   }
-        composite = {}
-        for key in map_keys.keys():
-            
-            #Get list from seasons
-            season_list = summary[map_keys.get(key)]
-            
-            #Get climatology
-            season_climo = climatology[key]
-            
-            #Get individual years in climatology
-            season_fullclimo = subset_climo[key].values
-            
-            #Create dictionary of relevant calculations for this entry
-            composite[key] = {'list':season_list,
-                              'average':np.round(np.average(season_list),1),
-                              'composite_anomaly':np.round(np.average(season_list)-season_climo,1),
-                              'percentile_ranks':[np.round(stats.percentileofscore(season_fullclimo,i),1) for i in season_list],
-                             }
-        
-        return composite
-        

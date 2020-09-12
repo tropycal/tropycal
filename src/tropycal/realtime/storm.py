@@ -577,7 +577,7 @@ class RealtimeStorm(Storm):
             #Get MSLP
             results = [i for i in content if 'systemMslpMb' in i][0]
             result = (results.split(">")[1]).split("<")[0]
-            current_advisory['mslp'] = int(result)
+            current_advisory['mslp'] = np.int(result)
 
             #Get storm category
             current_advisory['category'] = wind_to_category(current_advisory['wind_kt'])
@@ -633,7 +633,7 @@ class RealtimeStorm(Storm):
             current_advisory['wind_kt'] = self.vmax[-1]
 
             #Get MSLP
-            current_advisory['mslp'] = self.mslp[-1]
+            current_advisory['mslp'] = np.int(self.mslp[-1])
 
             #Get storm category
             current_advisory['category'] = wind_to_category(current_advisory['wind_kt'])

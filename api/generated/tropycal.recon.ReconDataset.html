@@ -182,7 +182,7 @@
 <h1>ReconDataset<a class="headerlink" href="#recondataset" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="tropycal.recon.ReconDataset">
-<em class="property">class </em><code class="sig-prename descclassname">tropycal.recon.</code><code class="sig-name descname">ReconDataset</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">save_path=''</em>, <em class="sig-param">read_path=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">tropycal.recon.</code><code class="sig-name descname">ReconDataset</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">deltap_thresh=8</em>, <em class="sig-param">save_path=''</em>, <em class="sig-param">read_path=''</em>, <em class="sig-param">update=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of a ReconDataset object containing all recon data for a single storm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -219,7 +219,7 @@ Dictionary keys are given by mission number and agency (e.g. ‘15_NOAA’).</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.__init__" title="tropycal.recon.ReconDataset.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(storm[, save_path, read_path])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.__init__" title="tropycal.recon.ReconDataset.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(storm[, deltap_thresh, save_path, …])</p></td>
 <td><p>Initialize self.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.allMissions" title="tropycal.recon.ReconDataset.allMissions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allMissions</span></code></a>()</p></td>
@@ -254,7 +254,7 @@ Dictionary keys are given by mission number and agency (e.g. ‘15_NOAA’).</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="tropycal.recon.ReconDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">save_path=''</em>, <em class="sig-param">read_path=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">deltap_thresh=8</em>, <em class="sig-param">save_path=''</em>, <em class="sig-param">read_path=''</em>, <em class="sig-param">update=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -289,7 +289,7 @@ Dictionary keys are given by mission number and agency (e.g. ‘15_NOAA’).</p>
 
 <dl class="method">
 <dt id="tropycal.recon.ReconDataset.plot_hovmoller">
-<code class="sig-name descname">plot_hovmoller</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">radlim=None</em>, <em class="sig-param">track_dict=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_hovmoller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_hovmoller" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_hovmoller</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">radlim=None</em>, <em class="sig-param">track_dict=None</em>, <em class="sig-param">plane_p_range=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_hovmoller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_hovmoller" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a hovmoller plot of azimuthally-averaged recon data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -310,7 +310,7 @@ or datetime or list of start/end datetimes.</p></li>
 
 <dl class="method">
 <dt id="tropycal.recon.ReconDataset.plot_maps">
-<code class="sig-name descname">plot_maps</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">track_dict=None</em>, <em class="sig-param">recon_stats=None</em>, <em class="sig-param">domain='dynamic'</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">savetopath=None</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_maps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_maps" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_maps</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">track_dict=None</em>, <em class="sig-param">recon_stats=None</em>, <em class="sig-param">domain='dynamic'</em>, <em class="sig-param">radlim=None</em>, <em class="sig-param">plane_p_range=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">savetopath=None</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_maps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_maps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates maps of interpolated recon data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -343,7 +343,7 @@ or datetime or list of start/end datetimes.</p></li>
 
 <dl class="method">
 <dt id="tropycal.recon.ReconDataset.plot_points">
-<code class="sig-name descname">plot_points</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">domain='dynamic'</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_points" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_points</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">domain='dynamic'</em>, <em class="sig-param">plane_p_range=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of recon data points.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -376,7 +376,7 @@ or datetime or list of start/end datetimes.</p></li>
 
 <dl class="method">
 <dt id="tropycal.recon.ReconDataset.plot_swath">
-<code class="sig-name descname">plot_swath</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">swathfunc=None</em>, <em class="sig-param">track_dict=None</em>, <em class="sig-param">radlim=None</em>, <em class="sig-param">domain='dynamic'</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_swath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_swath" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_swath</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">swathfunc=None</em>, <em class="sig-param">track_dict=None</em>, <em class="sig-param">radlim=None</em>, <em class="sig-param">domain='dynamic'</em>, <em class="sig-param">plane_p_range=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_swath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_swath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a map plot of a swath of interpolated recon data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

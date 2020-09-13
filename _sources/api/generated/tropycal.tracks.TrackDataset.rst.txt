@@ -19,7 +19,6 @@ TrackDataset
       ~TrackDataset.__init__
       ~TrackDataset.ace_climo
       ~TrackDataset.assign_storm_tornadoes
-      ~TrackDataset.climatology
       ~TrackDataset.download_tcr
       ~TrackDataset.filter_storms
       ~TrackDataset.get_season
@@ -33,9 +32,7 @@ TrackDataset
       ~TrackDataset.plot_storms
       ~TrackDataset.rank_storm
       ~TrackDataset.search_name
-      ~TrackDataset.season_composite
       ~TrackDataset.storm_ace_vs_season
-      ~TrackDataset.to_dataframe
       ~TrackDataset.wind_pres_relationship
 
    
@@ -54,7 +51,6 @@ TrackDataset
    .. automethod:: __init__
    .. automethod:: ace_climo
    .. automethod:: assign_storm_tornadoes
-   .. automethod:: climatology
    .. automethod:: download_tcr
    .. automethod:: filter_storms
    .. automethod:: get_season
@@ -68,9 +64,7 @@ TrackDataset
    .. automethod:: plot_storms
    .. automethod:: rank_storm
    .. automethod:: search_name
-   .. automethod:: season_composite
    .. automethod:: storm_ace_vs_season
-   .. automethod:: to_dataframe
    .. automethod:: wind_pres_relationship
 
    

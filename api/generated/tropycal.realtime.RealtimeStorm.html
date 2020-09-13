@@ -227,7 +227,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.get_realtime_info" title="tropycal.realtime.RealtimeStorm.get_realtime_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_realtime_info</span></code></a>([source])</p></td>
 <td><p>Returns a dict containing the latest available information about the storm.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.get_recon" title="tropycal.realtime.RealtimeStorm.get_recon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_recon</span></code></a>([save_path, read_path])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.get_recon" title="tropycal.realtime.RealtimeStorm.get_recon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_recon</span></code></a>([deltap_thresh, save_path, …])</p></td>
 <td><p>Creates an instance of ReconDataset for this storm’s data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.RealtimeStorm.list_nhc_discussions" title="tropycal.realtime.RealtimeStorm.list_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_nhc_discussions</span></code></a>()</p></td>
@@ -309,6 +309,8 @@
 <dd class="field-odd"><p><em>dict</em> – Dictionary containing the latest official forecast.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>This dictionary includes a calculation for accumulated cyclone energy (ACE), cumulatively for the storm’s lifespan through each forecast hour. This is done by linearly interpolating the forecast to 6-hour intervals and calculating 6-hourly ACE at each interval. For storms where forecast tropical cyclone type is available, ACE is not calculated for forecast periods that are neither tropical nor subtropical.</p>
 </dd></dl>
 
 <dl class="method">
@@ -372,7 +374,7 @@
 
 <dl class="method">
 <dt id="tropycal.realtime.RealtimeStorm.get_recon">
-<code class="sig-name descname">get_recon</code><span class="sig-paren">(</span><em class="sig-param">save_path=''</em>, <em class="sig-param">read_path=''</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_recon" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_recon</code><span class="sig-paren">(</span><em class="sig-param">deltap_thresh=8</em>, <em class="sig-param">save_path=''</em>, <em class="sig-param">read_path=''</em>, <em class="sig-param">update=False</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_recon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of ReconDataset for this storm’s data. Saves it as an attribute of this object (storm.recon).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -398,7 +400,7 @@
 
 <dl class="method">
 <dt id="tropycal.realtime.RealtimeStorm.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">domain='dynamic'</em>, <em class="sig-param">plot_all=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">domain='dynamic'</em>, <em class="sig-param">plot_all=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">save_path=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of the observed track of the storm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -408,6 +410,7 @@
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
 <li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Other Parameters</dt>
@@ -437,7 +440,7 @@
 
 <dl class="method">
 <dt id="tropycal.realtime.RealtimeStorm.plot_forecast_realtime">
-<code class="sig-name descname">plot_forecast_realtime</code><span class="sig-paren">(</span><em class="sig-param">track_labels='fhr'</em>, <em class="sig-param">cone_days=5</em>, <em class="sig-param">domain='dynamic_forecast'</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.plot_forecast_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_forecast_realtime" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_forecast_realtime</code><span class="sig-paren">(</span><em class="sig-param">track_labels='fhr'</em>, <em class="sig-param">cone_days=5</em>, <em class="sig-param">domain='dynamic_forecast'</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">save_path=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.plot_forecast_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_forecast_realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the latest available official forecast. Available for both NHC and JTWC sources.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -455,6 +458,7 @@
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
 <li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</p></li>
 <li><p><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</p></li>
 <li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
 </ul>
@@ -464,7 +468,7 @@
 
 <dl class="method">
 <dt id="tropycal.realtime.RealtimeStorm.plot_nhc_forecast">
-<code class="sig-name descname">plot_nhc_forecast</code><span class="sig-paren">(</span><em class="sig-param">forecast</em>, <em class="sig-param">track_labels='fhr'</em>, <em class="sig-param">cone_days=5</em>, <em class="sig-param">domain='dynamic_forecast'</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_nhc_forecast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot_nhc_forecast</code><span class="sig-paren">(</span><em class="sig-param">forecast</em>, <em class="sig-param">track_labels='fhr'</em>, <em class="sig-param">cone_days=5</em>, <em class="sig-param">domain='dynamic_forecast'</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">save_path=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_nhc_forecast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of the operational NHC forecast track along with observed track data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -483,6 +487,7 @@
 <li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
 <li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Other Parameters</dt>

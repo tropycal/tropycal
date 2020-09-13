@@ -303,8 +303,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="s1">&#39;Tornado Count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
         
         <span class="c1">#Get Archer track data for this storm, if it exists</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_archer</span><span class="p">()</span>
-        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_archer</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+            
         <span class="c1">#Determine if storm object was retrieved via realtime object</span>
         <span class="k">if</span> <span class="s1">&#39;realtime&#39;</span> <span class="ow">in</span> <span class="n">keys</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;realtime&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">realtime</span> <span class="o">=</span> <span class="kc">True</span>
@@ -465,7 +468,7 @@
         <span class="k">return</span> <span class="n">ds</span></div>
     
     <span class="c1">#PLOT FUNCTION FOR HURDAT</span>
-<div class="viewcode-block" id="Storm.plot"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.html#tropycal.realtime.Storm.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">plot_all</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="Storm.plot"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.html#tropycal.realtime.Storm.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">plot_all</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a plot of the observed track of the storm.</span>
@@ -482,6 +485,8 @@
 <span class="sd">            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</span>
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
+<span class="sd">        save_path : str</span>
+<span class="sd">            Relative or full path of directory to save the image in. If none, image will not be saved.</span>
 <span class="sd">        </span>
 <span class="sd">        Other Parameters</span>
 <span class="sd">        ----------------</span>
@@ -507,14 +512,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">cartopy_proj</span>
             
         <span class="c1">#Plot storm</span>
-        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">plot_all</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">plot_all</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="n">save_path</span><span class="p">)</span>
         
         <span class="c1">#Return axis</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">return</span> <span class="n">plot_ax</span></div>
         
     <span class="c1">#PLOT FUNCTION FOR HURDAT</span>
 <div class="viewcode-block" id="Storm.plot_nhc_forecast"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.html#tropycal.realtime.Storm.plot_nhc_forecast">[docs]</a>    <span class="k">def</span> <span class="nf">plot_nhc_forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">forecast</span><span class="p">,</span><span class="n">track_labels</span><span class="o">=</span><span class="s1">&#39;fhr&#39;</span><span class="p">,</span><span class="n">cone_days</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic_forecast&quot;</span><span class="p">,</span>
-                          <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
+                          <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a plot of the operational NHC forecast track along with observed track data.</span>
@@ -540,6 +545,8 @@
 <span class="sd">            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</span>
 <span class="sd">        cartopy_proj : ccrs</span>
 <span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
+<span class="sd">        save_path : str</span>
+<span class="sd">            Relative or full path of directory to save the image in. If none, image will not be saved.</span>
 <span class="sd">        </span>
 <span class="sd">        Other Parameters</span>
 <span class="sd">        ----------------</span>
@@ -671,7 +678,7 @@
         <span class="n">forecast_dict</span><span class="p">[</span><span class="s1">&#39;basin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basin</span>
         
         <span class="c1">#Plot storm</span>
-        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storm_nhc</span><span class="p">(</span><span class="n">forecast_dict</span><span class="p">,</span><span class="n">track_dict</span><span class="p">,</span><span class="n">track_labels</span><span class="p">,</span><span class="n">cone_days</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storm_nhc</span><span class="p">(</span><span class="n">forecast_dict</span><span class="p">,</span><span class="n">track_dict</span><span class="p">,</span><span class="n">track_labels</span><span class="p">,</span><span class="n">cone_days</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="n">save_path</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
         
         <span class="c1">#Return axis</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">return</span> <span class="n">plot_ax</span></div>
@@ -1528,7 +1535,7 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
             
-<div class="viewcode-block" id="Storm.get_recon"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.html#tropycal.realtime.Storm.get_recon">[docs]</a>    <span class="k">def</span> <span class="nf">get_recon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">read_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Storm.get_recon"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.html#tropycal.realtime.Storm.get_recon">[docs]</a>    <span class="k">def</span> <span class="nf">get_recon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">deltap_thresh</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">read_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates an instance of ReconDataset for this storm&#39;s data. Saves it as an attribute of this object (storm.recon).</span>
@@ -1543,7 +1550,7 @@
 <span class="sd">            Filepath to read saved recon data from. If specified, &quot;save_path&quot; cannot be passed as an argument.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">recon</span> <span class="o">=</span> <span class="n">ReconDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">save_path</span><span class="p">,</span><span class="n">read_path</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recon</span> <span class="o">=</span> <span class="n">ReconDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">deltap_thresh</span><span class="p">,</span><span class="n">save_path</span><span class="p">,</span><span class="n">read_path</span><span class="p">,</span><span class="n">update</span><span class="p">)</span></div>
                 
 <div class="viewcode-block" id="Storm.get_archer"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.html#tropycal.realtime.Storm.get_archer">[docs]</a>    <span class="k">def</span> <span class="nf">get_archer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         

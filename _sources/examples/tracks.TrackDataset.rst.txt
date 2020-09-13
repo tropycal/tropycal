@@ -55,7 +55,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.22 seconds)
+    --> Completed reading in HURDAT2 data (2.57 seconds)
 
 
 
@@ -286,11 +286,12 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
 
  .. code-block:: none
 
+    maximum wind
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:101: RuntimeWarning: All-NaN slice encountered
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:110: RuntimeWarning: All-NaN slice encountered
       return thresh, lambda x: np.nanmax(x)
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:101: RuntimeWarning: All-NaN axis encountered
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:110: RuntimeWarning: All-NaN axis encountered
       return thresh, lambda x: np.nanmax(x)
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
       warnings.warn('The .xlabels_top attribute is deprecated. Please '
@@ -301,12 +302,13 @@ Let's construct a 1 degree grid and plot the maximum sustained wind recorded at 
       result = matplotlib.axes.Axes.pcolor(self, *args, **kwargs)
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/geoaxes.py:1763: MatplotlibDeprecationWarning: Passing parameters norm and vmin/vmax simultaneously is deprecated since 3.3 and will become an error two minor releases later. Please pass vmin/vmax directly to the norm when creating it.
       result = matplotlib.axes.Axes.pcolor(self, *args, **kwargs)
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/plot.py:1600: MatplotlibDeprecationWarning: 
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/plot.py:1596: MatplotlibDeprecationWarning: 
     The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
       bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+    average wind change in 24 hours
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:110: RuntimeWarning: Mean of empty slice
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:119: RuntimeWarning: Mean of empty slice
       return thresh, lambda x: np.nanmean(x)
     --> Generating plot
 
@@ -342,7 +344,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (41.26 seconds)
+    --> Completed reading in ibtracs data (41.68 seconds)
 
 
 
@@ -371,11 +373,12 @@ Let's make a plot of the maximum sustained wind of TCs globally:
 
  .. code-block:: none
 
+    maximum wind
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:101: RuntimeWarning: All-NaN slice encountered
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:110: RuntimeWarning: All-NaN slice encountered
       return thresh, lambda x: np.nanmax(x)
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:101: RuntimeWarning: All-NaN axis encountered
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/tools.py:110: RuntimeWarning: All-NaN axis encountered
       return thresh, lambda x: np.nanmax(x)
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
       warnings.warn('The .xlabels_top attribute is deprecated. Please '
@@ -386,7 +389,7 @@ Let's make a plot of the maximum sustained wind of TCs globally:
       result = matplotlib.axes.Axes.pcolor(self, *args, **kwargs)
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/geoaxes.py:1763: MatplotlibDeprecationWarning: Passing parameters norm and vmin/vmax simultaneously is deprecated since 3.3 and will become an error two minor releases later. Please pass vmin/vmax directly to the norm when creating it.
       result = matplotlib.axes.Axes.pcolor(self, *args, **kwargs)
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/plot.py:1600: MatplotlibDeprecationWarning: 
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/plot.py:1596: MatplotlibDeprecationWarning: 
     The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
       bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 
@@ -416,6 +419,7 @@ Make a plot of the total number of storms per 1 degree gridbox worldwide:
 
  .. code-block:: none
 
+    number of storms
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
@@ -425,7 +429,7 @@ Make a plot of the total number of storms per 1 degree gridbox worldwide:
     --> Generating plot
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/geoaxes.py:1763: MatplotlibDeprecationWarning: shading='flat' when X and Y have the same dimensions as C is deprecated since 3.3.  Either specify the corners of the quadrilaterals with X and Y, or pass shading='auto', 'nearest' or 'gouraud', or set rcParams['pcolor.shading'].  This will become an error two minor releases later.
       result = matplotlib.axes.Axes.pcolor(self, *args, **kwargs)
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/plot.py:1600: MatplotlibDeprecationWarning: 
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/plot.py:1596: MatplotlibDeprecationWarning: 
     The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
       bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 
@@ -453,6 +457,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
  .. code-block:: none
 
+    number of storms
     --> Getting filtered storm tracks
     --> Grouping by lat/lon/storm
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/gridliner.py:307: UserWarning: The .xlabels_top attribute is deprecated. Please use .top_labels to toggle visibility instead.
@@ -462,7 +467,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
     --> Generating plot
     /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/cartopy/mpl/geoaxes.py:1763: MatplotlibDeprecationWarning: shading='flat' when X and Y have the same dimensions as C is deprecated since 3.3.  Either specify the corners of the quadrilaterals with X and Y, or pass shading='auto', 'nearest' or 'gouraud', or set rcParams['pcolor.shading'].  This will become an error two minor releases later.
       result = matplotlib.axes.Axes.pcolor(self, *args, **kwargs)
-    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/plot.py:1600: MatplotlibDeprecationWarning: 
+    /home/travis/virtualenv/python3.6.7/lib/python3.6/site-packages/tropycal/tracks/plot.py:1596: MatplotlibDeprecationWarning: 
     The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
       bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 
@@ -472,7 +477,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 6 minutes  36.480 seconds)
+   **Total running time of the script:** ( 6 minutes  57.584 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:

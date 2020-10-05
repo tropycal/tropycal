@@ -55,7 +55,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.39 seconds)
+    --> Completed reading in HURDAT2 data (2.36 seconds)
 
 
 
@@ -344,7 +344,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (41.19 seconds)
+    --> Completed reading in ibtracs data (41.94 seconds)
 
 
 
@@ -477,7 +477,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 6 minutes  48.104 seconds)
+   **Total running time of the script:** ( 6 minutes  45.968 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:

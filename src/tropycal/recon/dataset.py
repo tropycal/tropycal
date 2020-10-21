@@ -381,7 +381,7 @@ class ReconDataset:
 
     
     def plot_hovmoller(self,recon_select=None,varname='wspd',radlim=None,track_dict=None,plane_p_range=None,\
-                       ax=None,return_ax=False,**kwargs):
+                       window=6,align='center',ax=None,return_ax=False,**kwargs):
         
         r"""
         Creates a hovmoller plot of azimuthally-averaged recon data.
@@ -432,7 +432,7 @@ class ReconDataset:
             track_dict = self.storm_obj.dict
         
         #Interpolate recon data to a hovmoller
-        iRecon = interpRecon(dfRecon,varname,radlim)
+        iRecon = interpRecon(dfRecon,varname,radlim,window=window,align=align)
         Hov_dict = iRecon.interpHovmoller(track_dict)
 
         #title = get_recon_title(varname) #may not be necessary
@@ -484,10 +484,6 @@ class ReconDataset:
         for tick in ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(14)
         
-        #Format x-axis ticks
-        cbar.ax.xaxis.set_ticks(np.linspace(0,1,len(clevs)))
-        cbar.ax.xaxis.set_ticklabels(clevs,fontsize=14)
-        
         #Set axes labels
         ax.set_ylabel('UTC Time (MM-DD HH)',fontsize=15)
         ax.set_xlabel('Radius (km)',fontsize=15)
@@ -506,7 +502,7 @@ class ReconDataset:
 
     #PLOT FUNCTION FOR RECON MAPS
     def plot_maps(self,recon_select=None,varname='wspd',track_dict=None,recon_stats=None,domain="dynamic",\
-                  radlim=None,plane_p_range=None,ax=None,return_ax=False,savetopath=None,cartopy_proj=None,**kwargs):
+                  window=6,align='center',radlim=None,plane_p_range=None,ax=None,return_ax=False,savetopath=None,cartopy_proj=None,**kwargs):
     
         #plot_time, plot_mission (only for dots)
         
@@ -578,18 +574,23 @@ class ReconDataset:
                 track_dict['time'] = track_dict['date']
                 
         if ONE_MAP:
-            clon = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lon'])
-            clat = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lat'])
+            f = interp1d(mdates.date2num(track_dict['time']),track_dict['lon'], fill_value='extrapolate')
+            clon = f(mdates.date2num(recon_select))
+            f = interp1d(mdates.date2num(track_dict['time']),track_dict['lat'], fill_value='extrapolate')
+            clat = f(mdates.date2num(recon_select))
+            
+            #clon = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lon'])
+            #clat = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lat'])
             track_dict = {'time':recon_select,'lon':clon,'lat':clat}
         
         if MULTIVAR:
             Maps=[]
             for v in varname:
-                iRecon = interpRecon(dfRecon,v,radlim)
+                iRecon = interpRecon(dfRecon,v,radlim,window=window,align=align)
                 tmpMaps = iRecon.interpMaps(track_dict)
                 Maps.append(tmpMaps)
         else:
-            iRecon = interpRecon(dfRecon,varname,radlim)
+            iRecon = interpRecon(dfRecon,varname,radlim,window=window,align=align)
             Maps = iRecon.interpMaps(track_dict)
                 
         #titlename,units = get_recon_title(varname)

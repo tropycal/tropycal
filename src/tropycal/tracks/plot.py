@@ -1615,8 +1615,7 @@ None,prop={},map_prop={}):
     
         rect_offset = 0.0
         if prop['cmap']=='category' and varname=='vmax':
-            #cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
-            cax.yaxis.set_ticks(np.linspace(0,1,len(clevs)))
+            cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
             cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
             cax2.yaxis.set_ticks_position('right')

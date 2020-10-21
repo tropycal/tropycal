@@ -2388,7 +2388,7 @@ class TrackDataset:
         """
         
         #Update thresh based on input
-        default_thresh={'sample_min':1,'p_max':9999,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,
+        default_thresh={'sample_min':1,'p_max':9999,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,'speed_max':9999,
                         'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
@@ -2491,6 +2491,8 @@ class TrackDataset:
                 p = p.loc[(p['dvmax_dt']<=thresh['dv_max'])]
             if thresh['dp_min']>-9999:
                 p = p.loc[(p['dmslp_dt']>=thresh['dp_min'])]
+            if thresh['speed_max']<9999:
+                p = p.loc[(p['speed']>=thresh['speed_max'])]
         
         #Determine how to return data
         if return_keys:
@@ -2580,7 +2582,8 @@ class TrackDataset:
         prop = default_prop
         
         #Update thresh based on input
-        default_thresh={'sample_min':np.nan,'p_max':np.nan,'v_min':np.nan,'dv_min':np.nan,'dp_max':np.nan,'dv_max':np.nan,'dp_min':np.nan,'dt_window':24,'dt_align':'middle'}
+        default_thresh={'sample_min':np.nan,'p_max':np.nan,'v_min':np.nan,'dv_min':np.nan,'dp_max':np.nan,'dv_max':np.nan,'dp_min':np.nan,'speed_max':np.nan,
+                        'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh

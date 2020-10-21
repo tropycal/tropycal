@@ -255,6 +255,15 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
     storm_dict['type'] = np.asarray(storm_dict['type'])
     storm_dict['lon'] = np.array(storm_dict['lon']) % 360
     
+    def round_datetime(tm,nearest_minute=10):
+        discard = timedelta(minutes=tm.minute % nearest_minute,
+                             seconds=tm.second,
+                             microseconds=tm.microsecond)
+        tm -= discard
+        if discard >= timedelta(minutes=int(nearest_minute/2)):
+            tm += timedelta(minutes=nearest_minute)
+        return tm
+    
     #Attempt temporal interpolation
     try:
         
@@ -262,7 +271,8 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
         targettimes = np.arange(times[0],times[-1]+timeres/24,timeres/24)
         
         #Update dates
-        new_storm['date'] = [t.replace(tzinfo=None) for t in mdates.num2date(targettimes)]
+        new_storm['date'] = [round_datetime(t.replace(tzinfo=None)) for t in mdates.num2date(targettimes)]
+        targettimes = mdates.date2num(np.array(new_storm['date']))
         
         #Interpolate and fill in storm type
         stormtype = np.ones(len(storm_dict['type']))*-99

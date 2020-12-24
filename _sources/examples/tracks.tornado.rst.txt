@@ -65,7 +65,7 @@ Let's start by creating an instance of a TornadoDataset object. By default, this
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.70 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.76 seconds)
 
 
 
@@ -138,7 +138,7 @@ We can also use TornadoDataset to assess tornadoes associated with tropical cycl
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.49 seconds)
+    --> Completed reading in HURDAT2 data (2.54 seconds)
 
 
 
@@ -169,9 +169,9 @@ This code block will take a while to run, as it will iterate over every storm in
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2018 (8.60 seconds)
+    --> Completed reading in tornado data for 1950-2018 (8.79 seconds)
     --> Starting to assign tornadoes to storms
-    --> Completed assigning tornadoes to storm (88.17 seconds)
+    --> Completed assigning tornadoes to storm (85.50 seconds)
 
 
 
@@ -336,7 +336,7 @@ Let's make a plot of the tornadoes in storm motion relative coordinates:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  0.160 seconds)
+   **Total running time of the script:** ( 1 minutes  57.646 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.tornado.py:

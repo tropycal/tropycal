@@ -68,7 +68,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (2.37 seconds)
+    --> Completed reading in HURDAT2 data (2.53 seconds)
 
 
 
@@ -384,7 +384,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (43.09 seconds)
+    --> Completed reading in ibtracs data (43.38 seconds)
 
 
 
@@ -406,7 +406,7 @@ Let's make a plot of the maximum sustained wind of TCs globally:
 
 
 .. image:: /examples/images/sphx_glr_tracks.TrackDataset_004.png
-    :alt: Maximum wind (kt), Jan 01 – Dec 31 • 1851 – 2020
+    :alt: Maximum wind (kt), Jan 01 – Dec 31 • 1851 – 2021
     :class: sphx-glr-single-img
 
 
@@ -436,7 +436,7 @@ Let's make a plot of the maximum sustained wind of TCs globally:
     The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
       bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 
-    <GeoAxesSubplot:title={'left':'Maximum wind (kt)','right':'Jan 01 – Dec 31 • 1851 – 2020'}>
+    <GeoAxesSubplot:title={'left':'Maximum wind (kt)','right':'Jan 01 – Dec 31 • 1851 – 2021'}>
 
 
 
@@ -455,7 +455,7 @@ Make a plot of the total number of storms per 1 degree gridbox worldwide:
 
 
 .. image:: /examples/images/sphx_glr_tracks.TrackDataset_005.png
-    :alt: Number of storms, Jan 01 – Dec 31 • 1851 – 2020
+    :alt: Number of storms, Jan 01 – Dec 31 • 1851 – 2021
     :class: sphx-glr-single-img
 
 
@@ -496,7 +496,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 
 .. image:: /examples/images/sphx_glr_tracks.TrackDataset_006.png
-    :alt: Number of storms ≥ 30kt / 24hr, Jan 01 – Dec 31 • 1851 – 2020
+    :alt: Number of storms ≥ 30kt / 24hr, Jan 01 – Dec 31 • 1851 – 2021
     :class: sphx-glr-single-img
 
 
@@ -526,7 +526,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 6 minutes  39.522 seconds)
+   **Total running time of the script:** ( 6 minutes  34.396 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:

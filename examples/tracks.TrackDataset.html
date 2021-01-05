@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>TC Dataset Analysis &mdash; tropycal </title>
   
@@ -23,7 +23,10 @@
   
     <link rel="shortcut icon" href="../_static/logo_32.ico"/>
   
+
   
+  
+
   
 
   
@@ -58,7 +61,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> tropycal
+            <a href="../index.html" class="icon icon-home"> tropycal
           
 
           
@@ -153,6 +156,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -166,7 +171,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../_sources/examples/tracks.TrackDataset.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -203,7 +208,7 @@ to download the full example code</p>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (2.37 seconds)
+--&gt; Completed reading in HURDAT2 data (2.53 seconds)
 </pre></div>
 </div>
 <div class="section" id="retrieving-storms-and-seasons">
@@ -357,7 +362,7 @@ average wind change in 24 hours
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in ibtracs data
---&gt; Completed reading in ibtracs data (43.09 seconds)
+--&gt; Completed reading in ibtracs data (43.38 seconds)
 </pre></div>
 </div>
 <p>In its current form, tropycal is not configured to support all types of analyses for global IBTrACS, particularly near the dateline. Future updates will work to improve this functionality.</p>
@@ -365,7 +370,7 @@ average wind change in 24 hours
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;maximum wind&quot;</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="Maximum wind (kt), Jan 01 – Dec 31 • 1851 – 2020" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_004.png" />
+<img alt="Maximum wind (kt), Jan 01 – Dec 31 • 1851 – 2021" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_004.png" />
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>maximum wind
 --&gt; Getting filtered storm tracks
@@ -387,14 +392,14 @@ average wind change in 24 hours
 The inverse_transformed function was deprecated in Matplotlib 3.3 and will be removed two minor releases later. Use transformed(transform.inverted()) instead.
   bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 
-&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Maximum wind (kt)&#39;,&#39;right&#39;:&#39;Jan 01 – Dec 31 • 1851 – 2020&#39;}&gt;
+&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Maximum wind (kt)&#39;,&#39;right&#39;:&#39;Jan 01 – Dec 31 • 1851 – 2021&#39;}&gt;
 </pre></div>
 </div>
 <p>Make a plot of the total number of storms per 1 degree gridbox worldwide:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;number of storms&quot;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;plasma_r&#39;</span><span class="p">})</span>
 </pre></div>
 </div>
-<img alt="Number of storms, Jan 01 – Dec 31 • 1851 – 2020" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_005.png" />
+<img alt="Number of storms, Jan 01 – Dec 31 • 1851 – 2021" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_005.png" />
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>number of storms
 --&gt; Getting filtered storm tracks
@@ -415,7 +420,7 @@ The inverse_transformed function was deprecated in Matplotlib 3.3 and will be re
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;number of storms&quot;</span><span class="p">,</span><span class="n">thresh</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dv_min&#39;</span><span class="p">:</span><span class="mi">30</span><span class="p">},</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;plasma_r&#39;</span><span class="p">})</span>
 </pre></div>
 </div>
-<img alt="Number of storms ≥ 30kt / 24hr, Jan 01 – Dec 31 • 1851 – 2020" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_006.png" />
+<img alt="Number of storms ≥ 30kt / 24hr, Jan 01 – Dec 31 • 1851 – 2021" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_006.png" />
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>number of storms
 --&gt; Getting filtered storm tracks
@@ -432,7 +437,7 @@ The inverse_transformed function was deprecated in Matplotlib 3.3 and will be re
   bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  39.522 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  34.396 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-trackdataset-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/8e0af267200996c0b90c20030c99ca74/tracks.TrackDataset.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.TrackDataset.py</span></code></a></p>
@@ -450,37 +455,29 @@ The inverse_transformed function was deprecated in Matplotlib 3.3 and will be re
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../api/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tracks.storm.html" class="btn btn-neutral float-left" title="Individual Storm Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="../api/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tracks.storm.html" class="btn btn-neutral float-left" title="Individual Storm Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Tropycal Developers
+        &#169; Copyright 2020, Tropycal Developers.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

@@ -909,7 +909,7 @@ None,prop={},map_prop={}):
             plt.show()
             plt.close()
     
-    def plot_season(self,season,ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_season(self,season,domain=None,ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single season.
@@ -1000,7 +1000,10 @@ None,prop={},map_prop={}):
         #--------------------------------------------------------------------------------------
         
         #Pre-generated domains
-        bound_w,bound_e,bound_s,bound_n = self.set_projection(season.basin)
+        if domain is None:
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(season.basin)
+        else:
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
             
         #Determine number of lat/lon lines to use for parallels & meridians
         self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
@@ -1082,8 +1085,8 @@ None,prop={},map_prop={}):
         #Add legend
         if prop['fillcolor'] == 'category' or prop['linecolor'] == 'category':
             
-            ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
-            sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
+            ex = mlines.Line2D([], [], linestyle='--', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='None', color='k')
+            #sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
             td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=get_colors_sshws(33))
             ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=get_colors_sshws(34))
             c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=get_colors_sshws(64))
@@ -1091,7 +1094,7 @@ None,prop={},map_prop={}):
             c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=get_colors_sshws(96))
             c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=get_colors_sshws(113))
             c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
-            self.ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
+            self.ax.legend(handles=[ex,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
 
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:
@@ -1100,7 +1103,7 @@ None,prop={},map_prop={}):
             plt.show()
             plt.close()
         
-    def generate_nhc_cone(self,forecast,dateline,cone_days=5):
+    def generate_nhc_cone(self,forecast,dateline,cone_days=5,cone_year=None):
         
         r"""
         Generates a cone of uncertainty using forecast data from NHC.
@@ -1149,9 +1152,35 @@ None,prop={},map_prop={}):
         cone_size_pac[2009] = [16,36,59,85,105,148,187,230]
         cone_size_pac[2008] = [16,36,66,92,115,161,210,256]
         
+        fcst_year = forecast['init'].year
+        if cone_year is None:
+            cone_year = forecast['init'].year
+
+        #Retrieve cone size for given year
+        if cone_year in cone_size_atl.keys():
+            if forecast['basin'] == 'north_atlantic':
+                cone_size = cone_size_atl[cone_year]
+            elif forecast['basin'] == 'east_pacific':
+                cone_size = cone_size_pac[cone_year]
+            else:
+                cone_size = 0
+                #raise RuntimeError("Error: No cone information is available for the requested basin.")
+        else:
+            cone_year = 2008
+            warnings.warn(f"No cone information is available for the requested year. Defaulting to 2008 cone.")
+            if forecast['basin'] == 'north_atlantic':
+                cone_size = cone_size_atl[2008]
+            elif forecast['basin'] == 'east_pacific':
+                cone_size = cone_size_pac[2008]
+            else:
+                cone_size = 0
+                #raise RuntimeError("Error: No cone information is available for the requested basin.")
+            #raise RuntimeError("Error: No cone information is available for the requested year.")
+        
         #Fix for 2020 that now incorporates 60 hour forecasts
-        if forecast['init'].year >= 2020:
+        if fcst_year >= 2020:
             cone_climo_hr = [3,12,24,36,48,60,72,96,120]
+            cone_size = cone_size[:5]+[np.mean(cone_size[4:6])]+cone_size[5:]
 
         #Function for interpolating between 2 times
         def temporal_interpolation(value, orig_times, target_times):
@@ -1231,28 +1260,6 @@ None,prop={},map_prop={}):
         
         #--------------------------------------------------------------------
 
-        #Retrieve cone size for given year
-        if forecast['init'].year in cone_size_atl.keys():
-            cone_year = forecast['init'].year
-            if forecast['basin'] == 'north_atlantic':
-                cone_size = cone_size_atl[forecast['init'].year]
-            elif forecast['basin'] == 'east_pacific':
-                cone_size = cone_size_pac[forecast['init'].year]
-            else:
-                cone_size = 0
-                #raise RuntimeError("Error: No cone information is available for the requested basin.")
-        else:
-            cone_year = 2008
-            warnings.warn(f"No cone information is available for the requested year. Defaulting to 2008 cone.")
-            if forecast['basin'] == 'north_atlantic':
-                cone_size = cone_size_atl[2008]
-            elif forecast['basin'] == 'east_pacific':
-                cone_size = cone_size_pac[2008]
-            else:
-                cone_size = 0
-                #raise RuntimeError("Error: No cone information is available for the requested basin.")
-            #raise RuntimeError("Error: No cone information is available for the requested year.")
-        
         #Check if fhr3 is available, then get forecast data
         flag_12 = 0
         if forecast['fhr'][0] == 12:
@@ -1443,7 +1450,7 @@ None,prop={},map_prop={}):
                                         color='k'),
                         transform=ccrs.PlateCarree(),clip_on=True)
 
-    def plot_gridded(self,xcoord,ycoord,zcoord,VEC_FLAG=False,domain="north_atlantic",ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_gridded(self,xcoord,ycoord,zcoord,varname='type',VEC_FLAG=False,domain="north_atlantic",ax=None,return_ax=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -1494,11 +1501,6 @@ None,prop={},map_prop={}):
             pass
         
         #--------------------------------------------------------------------------------------
-        
-        try:
-            _,varname = find_var(prop['title_L'],{})
-        except:
-            varname = 'date'
 
         if VEC_FLAG:
             vecmag = np.hypot(*zcoord)
@@ -1597,7 +1599,7 @@ None,prop={},map_prop={}):
         bb_ax = self.ax.get_position()
 
         #Define colorbar axis
-        cax = self.fig.add_axes([bb.x0+bb.width, bb.y0-.05*bb.height, 0.015, bb.height])
+        cax = self.fig.add_axes([bb.x0+1.2*bb.width, bb.y0-.05*bb.height, 0.015, bb.height])
 #        cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
         cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
                                  ticks=clevs)
@@ -1625,8 +1627,10 @@ None,prop={},map_prop={}):
             cax.yaxis.set_ticks_position('left')
             
             rect_offset = 0.7
+        if varname == 'date':
+            cax.set_yticklabels([f'{mdates.num2date(i):%b %-d}' for i in clevs],fontsize=11.5)
             
-        rectangle = mpatches.Rectangle((bb.x0,bb.y0-0.1*bb.height),(1.8+rect_offset)*bb.width,1.1*bb.height,\
+        rectangle = mpatches.Rectangle((bb.x0,bb.y0-0.1*bb.height),(2+rect_offset)*bb.width,1.1*bb.height,\
                                        fc = 'w',edgecolor = '0.8',alpha = 0.8,\
                                        transform=self.fig.transFigure, zorder=2)
         self.ax.add_patch(rectangle)

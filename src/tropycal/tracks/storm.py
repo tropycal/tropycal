@@ -1373,7 +1373,7 @@ class Storm:
             plt.show()
             plt.close()
             
-    def get_recon(self,deltap_thresh=8,save_path="",read_path="",update=False):
+    def get_recon(self,deltap_thresh=8,save_path="",read_path="",mission_url_list=None,update=False):
         
         r"""
         Creates an instance of ReconDataset for this storm's data. Saves it as an attribute of this object (storm.recon).
@@ -1388,7 +1388,7 @@ class Storm:
             Filepath to read saved recon data from. If specified, "save_path" cannot be passed as an argument.
         """
         
-        self.recon = ReconDataset(self,deltap_thresh,save_path,read_path,update)
+        self.recon = ReconDataset(self,deltap_thresh,mission_url_list,save_path,read_path,update)
                 
     def get_archer(self):
         

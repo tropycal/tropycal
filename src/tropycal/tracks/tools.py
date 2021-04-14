@@ -34,7 +34,10 @@ def find_var(request,thresh):
     
     #Count of number of storms
     if request.find('count') >= 0 or request.find('num') >= 0:
-        return thresh, 'date' #not sure what date stands for
+        return thresh, 'type'
+
+    if request.find('date') >= 0 or request.find('day') >= 0:
+        return thresh, 'date'
     
     #Sustained wind, or change in wind speed
     if request.find('wind') >= 0 or request.find('vmax') >= 0:
@@ -106,11 +109,11 @@ def find_func(request,thresh):
     request = request.lower()
     
     #Numpy maximum function
-    if request.find('max') == 0:
+    if request.find('max') == 0 or request.find('latest') == 0:
         return thresh, lambda x: np.nanmax(x)
     
     #Numpy minimum function
-    if request.find('min') == 0:
+    if request.find('min') == 0 or request.find('earliest') == 0:
         return thresh, lambda x: np.nanmin(x)
     
     #Numpy average function
@@ -129,7 +132,7 @@ def find_func(request,thresh):
         return thresh, lambda x: len(x)
     
     #ACE - cumulative function
-    elif request.find('ace') >=0 or request.find('accumulated') >=0:
+    elif request.find('ace') >=0:
         return thresh, lambda x: np.nansum(x)
     
     #Otherwise, function cannot be identified

@@ -193,6 +193,12 @@ class TrackDataset:
         
         #Add dict to store all storm-specific tornado data in
         self.data_tors = {}
+        
+        # If doInterp, interpolate each storm and save to dictionary.
+        if doInterp:
+            self.__getInterp()
+            
+        print('YOU ARE USING AN EDITED VERSION')
     
     
     def __read_hurdat(self,override_basin=False):
@@ -1399,6 +1405,8 @@ class TrackDataset:
             If return_dict is True, a dictionary containing data about the ACE climatology is returned.
         """
         
+        cur_year = dt.now().year
+        
         if climo_year_range is None:
             climo_year_range = (1950,dt.now().year-1)
         #if plot_year!=None and plot_year<start_year:
@@ -1640,7 +1648,7 @@ class TrackDataset:
         if save_path == None:
             plt.show()
         else:
-            plt.savefig(save_path,bbox_inches='tight')
+            plt.savefig(save_path,bbox_inches='tight',facecolor='w')
         plt.close()
         
         if return_dict == True:
@@ -2445,11 +2453,7 @@ class TrackDataset:
         """
         
         #Update thresh based on input
-<<<<<<< Updated upstream
-        default_thresh={'sample_min':1,'p_max':9999,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,'speed_max':9999,
-=======
         default_thresh={'sample_min':1,'p_max':9999,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,'speed_max':9999,'speed_min':-9999,
->>>>>>> Stashed changes
                         'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
@@ -2487,7 +2491,7 @@ class TrackDataset:
         #Create empty dictionary to store output in
         points = {}
         for name in ['vmax','mslp','type','lat','lon','date','season','stormid','ace']+ \
-                    ['dmslp_dt','dvmax_dt','dx_dt','dy_dt','speed']*int(doInterp):
+                    ['dmslp_dt','dvmax_dt','acie','dx_dt','dy_dt','speed']*int(doInterp):
             points[name] = []
         
         #Iterate over every storm in TrackDataset
@@ -2531,6 +2535,7 @@ class TrackDataset:
                     #Append separately for interpolated data
                     if doInterp:
                         points['dvmax_dt'].append(istorm['dvmax_dt'][i])
+                        points['acie'].append([0,istorm['dvmax_dt'][i]**2*1e-4*timeres/6][istorm['dvmax_dt'][i]>0])
                         points['dmslp_dt'].append(istorm['dmslp_dt'][i])
                         points['dx_dt'].append(istorm['dx_dt'][i])
                         points['dy_dt'].append(istorm['dy_dt'][i])
@@ -2557,11 +2562,8 @@ class TrackDataset:
                 p = p.loc[(p['dmslp_dt']>=thresh['dp_min'])]
             if thresh['speed_max']<9999:
                 p = p.loc[(p['speed']>=thresh['speed_max'])]
-<<<<<<< Updated upstream
-=======
             if thresh['speed_min']>-9999:
                 p = p.loc[(p['speed']>=thresh['speed_min'])]
->>>>>>> Stashed changes
         
         #Determine how to return data
         if return_keys:
@@ -2651,8 +2653,7 @@ class TrackDataset:
         prop = default_prop
         
         #Update thresh based on input
-        default_thresh={'sample_min':np.nan,'p_max':np.nan,'v_min':np.nan,'dv_min':np.nan,'dp_max':np.nan,'dv_max':np.nan,'dp_min':np.nan,'speed_max':np.nan,
-                        'dt_window':24,'dt_align':'middle'}
+        default_thresh={'sample_min':np.nan,'p_max':np.nan,'v_min':np.nan,'dv_min':np.nan,'dp_max':np.nan,'dv_max':np.nan,'dp_min':np.nan,'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
@@ -2670,6 +2671,9 @@ class TrackDataset:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
             year_range = (start_year,end_year)
+        
+        #Start date in numpy datetime64
+        startdate = np.datetime64('2000-'+'-'.join([f'{int(d):02}' for d in date_range[0].split('/')]))
         
         #Determine year range to subtract, if making a difference plot
         if year_range_subtract != None:
@@ -2713,11 +2717,14 @@ class TrackDataset:
             #Constructs a new dataframe containing the lat/lon bins, storm ID and the plotting variable
             new_df = {'latbin':[],'lonbin':[],'stormid':[],'season':[],varname:[]}
             for g in groups:
-                #Apply function to all time steps in which a storm tracks within a gridpoint
+                #Apply function to all time steps in which a storm tracks within a gridbox
                 if VEC_FLAG:
                     new_df[varname].append([func(g[1][v].values) for v in varname])
+                elif varname == 'date':
+                    new_df[varname].append(func([date_diff(dt(2000,t.month,t.day),startdate)\
+                          for t in pd.DatetimeIndex(g[1][varname].values)]))
                 else:
-                    new_df[varname].append(func(g[1][varname].values))
+                    new_df[varname].append(func(g[1][varname].values))                    
                 new_df['latbin'].append(g[0][0])
                 new_df['lonbin'].append(g[0][1])
                 new_df['stormid'].append(g[0][2])
@@ -2733,6 +2740,9 @@ class TrackDataset:
             #Apply the function to all storms that pass through a gridpoint
             if VEC_FLAG:
                 zi = [[func(v) for v in zip(*g[1][varname])] if len(g[1]) >= thresh['sample_min'] else [np.nan]*2 for g in groups]
+            elif varname == 'date':
+                zi = [func(g[1][varname]) if len(g[1]) >= thresh['sample_min'] else np.nan for g in groups]
+                zi = [mdates.date2num(startdate+z) for z in zi]                
             else:
                 zi = [func(g[1][varname]) if len(g[1]) >= thresh['sample_min'] else np.nan for g in groups]
 
@@ -2769,7 +2779,7 @@ class TrackDataset:
                     grid_z[np.where((grid_y==c[0]) & (grid_x==c[1]))] = z
 
             #Set zero values to nan's if necessary
-            if varname == 'date':
+            if varname == 'type':
                 grid_z[np.where(grid_z==0)] = np.nan
             
             #Add to list of grid_z's

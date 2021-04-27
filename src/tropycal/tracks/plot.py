@@ -69,7 +69,8 @@ class TrackPlot(Plot):
         """
         
         #Set default properties
-        default_prop={'dots':True,'fillcolor':'category','linecolor':'k','category_colors':'default','linewidth':1.0,'ms':7.5,'title':True}
+        default_prop={'dots':True,'fillcolor':'category','cmap':None,'levels':None,\
+                      'linecolor':'k','linewidth':1.0,'ms':7.5,'title':True}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
@@ -136,21 +137,53 @@ class TrackPlot(Plot):
         else:
             if min(use_lons) < min_lon: min_lon = min(use_lons)
 
+        #Plot background storm line
+        type_line = np.array(['solid' if i in ['SS','SD','TD','TS','HU'] else 'dotted' for i in styp])
+        typenum = np.cumsum([0]+[1 if type_line[i+1]!=j else 0\
+                    for i,j in enumerate(type_line[:-1])])
+        typedict = {k:v for k,v in zip(typenum,type_line)}
+        for i in set(typenum):
+            where = [j for j,k in enumerate(typenum) if k==i]
+            where += [min([where[-1]+1,len(typenum)-1])]
+            self.ax.plot(np.array(lons)[where],np.array(lats)[where],'-',
+                          color='k',linewidth=prop['linewidth']*1.5,linestyle=typedict[i],transform=ccrs.PlateCarree())
+
         #Plot storm line as specified
+        segmented_color = False
         if prop['linecolor'] == 'category':
-            type_line = np.array(styp)
+            segmented_color = True
+            ncol = [get_colors_sshws(np.nan_to_num(iwnd)) for iwnd in storm_data['vmax']]
+        elif isinstance(prop['linecolor'],str) and prop['linecolor'] in storm_data.keys():
+            segmented_color = True
+            colorvar = storm_data[prop['linecolor']]
+            if prop['levels'] is None:
+                prop['levels'] = [np.nanmin(colorvar),np.nanmax(colorvar)]
+            cmap,levels = get_cmap_levels(prop['linecolor'],prop['cmap'],prop['levels'])
+            ncol = cmap((colorvar-min(levels))/(max(levels)-min(levels)))
+        if segmented_color:
             for i in (np.arange(len(lats[1:]))+1):
-                ltype = 'solid'
-                if type_line[i] not in ['SS','SD','TD','TS','HU']: ltype = 'dotted'
                 self.ax.plot([lons[i-1],lons[i]],[lats[i-1],lats[i]],
-                              '-',color=get_colors_sshws(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
-                              transform=ccrs.PlateCarree(),
-                              path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*1.2, foreground='k'), path_effects.Normal()])
+                              '-',color=ncol[i],linewidth=prop['linewidth'],linestyle='solid',transform=ccrs.PlateCarree())
         else:
             self.ax.plot(lons,lats,'-',color=prop['linecolor'],linewidth=prop['linewidth'],transform=ccrs.PlateCarree())
 
         #Plot storm dots as specified
         if prop['dots'] == True:
+            segmented_color = False
+            if prop['fillcolor'] == 'category':
+                segmented_color = True
+                ncol = [get_colors_sshws(np.nan_to_num(iwnd)) for iwnd in storm_data['vmax']]
+            elif isinstance(prop['fillcolor'],str) and prop['fillcolor'] in storm_data.keys():
+                segmented_color = True
+                colorvar = storm_data[prop['fillcolor']]
+                if prop['levels'] is None:
+                    prop['levels'] = [np.nanmin(colorvar),np.nanmax(colorvar)]
+                cmap,levels = get_cmap_levels(prop['fillcolor'],prop['cmap'],prop['levels'])
+                ncol = cmap((colorvar-min(levels))/(max(levels)-min(levels)))
+            elif isinstance(prop['fillcolor'],str):
+                ncol = [prop['fillcolor']]*len(sdate)
+            else:
+                ncol = ['k']*len(sdate)
             #filter dots to only 6 hour intervals
             time_hr = np.array([i.strftime('%H%M') for i in sdate])
             if plot_all == False:
@@ -159,6 +192,7 @@ class TrackPlot(Plot):
                 lon_dots = np.array(lons)[time_idx]
                 vmax_dots = np.array(vmax)[time_idx]
                 type_dots = np.array(styp)[time_idx]
+                ncol = np.array(ncol)[time_idx]
             else:
                 lat_dots = np.array(lats)
                 lon_dots = np.array(lons)
@@ -170,11 +204,7 @@ class TrackPlot(Plot):
                     mtype = 's'
                 elif itype in ['TD','TS','HU']:
                     mtype = 'o'
-                if prop['fillcolor'] == 'category':
-                    ncol = get_colors_sshws(np.nan_to_num(iwnd))
-                else:
-                    ncol = 'k'
-                self.ax.plot(ilon,ilat,mtype,color=ncol,mec='k',mew=0.5,ms=prop['ms'],transform=ccrs.PlateCarree())
+                self.ax.plot(ilon,ilat,mtype,color=ncol[i],mec='k',mew=0.5,ms=prop['ms'],transform=ccrs.PlateCarree())
             
             #Label track dots
             if track_labels in ['valid_utc']:
@@ -259,10 +289,9 @@ class TrackPlot(Plot):
         
         credit_text = self.plot_credit()
         self.add_credit(credit_text)
-        
+                
         #Add legend
-        if prop['fillcolor'] == 'category' or prop['linecolor'] == 'category':
-            
+        if prop['fillcolor'] == 'category' and prop['dots'] == True:
             ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
             sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
             td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=get_colors_sshws(33))
@@ -273,6 +302,110 @@ class TrackPlot(Plot):
             c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=get_colors_sshws(113))
             c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
             self.ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
+
+        elif prop['linecolor'] == 'category' and prop['dots'] == False:
+            ex = mlines.Line2D([], [], linestyle='dotted', label='Non-Tropical', color='k')
+            td = mlines.Line2D([], [], linestyle='solid', label='Sub/Tropical Depression', color=get_colors_sshws(33))
+            ts = mlines.Line2D([], [], linestyle='solid', label='Sub/Tropical Storm', color=get_colors_sshws(34))
+            c1 = mlines.Line2D([], [], linestyle='solid', label='Category 1', color=get_colors_sshws(64))
+            c2 = mlines.Line2D([], [], linestyle='solid', label='Category 2', color=get_colors_sshws(83))
+            c3 = mlines.Line2D([], [], linestyle='solid', label='Category 3', color=get_colors_sshws(96))
+            c4 = mlines.Line2D([], [], linestyle='solid', label='Category 4', color=get_colors_sshws(113))
+            c5 = mlines.Line2D([], [], linestyle='solid', label='Category 5', color=get_colors_sshws(137))
+            self.ax.legend(handles=[ex,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
+
+        elif prop['dots'] and not segmented_color:
+            ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color=prop['fillcolor'])
+            sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color=prop['fillcolor'])
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical', marker='o', color=prop['fillcolor'])
+            handles=[ex,sb,td]
+            self.ax.legend(handles=handles,fontsize=11.5)
+
+        elif not prop['dots'] and not segmented_color:
+            ex = mlines.Line2D([], [], linestyle='dotted',label='Non-Tropical', color=prop['linecolor'])
+            td = mlines.Line2D([], [], linestyle='solid',label='Tropical', color=prop['linecolor'])
+            handles=[ex,td]
+            self.ax.legend(handles=handles,fontsize=11.5)
+
+        elif prop['dots']:
+            ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
+            sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical', marker='o', color='w')
+            handles=[ex,sb,td]
+            for _ in range(7):
+                handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
+            l=self.ax.legend(handles=handles,fontsize=11.5)
+            plt.draw()
+            
+            #Get the bbox
+            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            #p = l.get_window_extent()
+                
+            #Define colorbar axis
+            cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
+            norm = mlib.colors.Normalize(vmin=min(levels), vmax=max(levels))
+            cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
+            cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
+                                     ticks=levels)
+            
+            cax.tick_params(labelsize=11.5)
+            cax.yaxis.set_ticks_position('left')
+            cbar.set_label(prop['fillcolor'],fontsize=11.5,rotation=90)
+        
+            rect_offset = 0.0
+            if prop['cmap']=='category' and prop['fillcolor']=='vmax':
+                cax.yaxis.set_ticks(np.linspace(min(levels),max(levels),len(levels)))
+                cax.yaxis.set_ticklabels(levels)
+                cax2 = cax.twinx()
+                cax2.yaxis.set_ticks_position('right')
+                cax2.yaxis.set_ticks((np.linspace(0,1,len(levels))[:-1]+np.linspace(0,1,len(levels))[1:])*.5)
+                cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+                cax2.tick_params('both', length=0, width=0, which='major')
+                cax.yaxis.set_ticks_position('left')
+                rect_offset = 0.7
+            if prop['fillcolor'] == 'date':
+                cax.set_yticklabels([f'{mdates.num2date(i):%b %-d}' for i in clevs],fontsize=11.5)
+                
+        else:
+            ex = mlines.Line2D([], [], linestyle='dotted',label='Non-Tropical', color='k')
+            td = mlines.Line2D([], [], linestyle='solid',label='Tropical', color='k')
+            handles=[ex,td]
+            for _ in range(7):
+                handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
+            l=self.ax.legend(handles=handles,fontsize=11.5)
+            plt.draw()
+            
+            #Get the bbox
+            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            #p = l.get_window_extent()
+                
+            #Define colorbar axis
+            cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
+            norm = mlib.colors.Normalize(vmin=min(levels), vmax=max(levels))
+            cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
+            cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
+                                     ticks=levels)
+            
+            cax.tick_params(labelsize=11.5)
+            cax.yaxis.set_ticks_position('left')
+            cbarlab = make_var_label(prop['linecolor'],storm_data)            
+            cbar.set_label(cbarlab,fontsize=11.5,rotation=90)
+        
+            rect_offset = 0.0
+            if prop['cmap']=='category' and prop['linecolor']=='vmax':
+                cax.yaxis.set_ticks(np.linspace(min(levels),max(levels),len(levels)))
+                cax.yaxis.set_ticklabels(levels)
+                cax2 = cax.twinx()
+                cax2.yaxis.set_ticks_position('right')
+                cax2.yaxis.set_ticks((np.linspace(0,1,len(levels))[:-1]+np.linspace(0,1,len(levels))[1:])*.5)
+                cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+                cax2.tick_params('both', length=0, width=0, which='major')
+                cax.yaxis.set_ticks_position('left')
+                rect_offset = 0.7
+            if prop['linecolor'] == 'date':
+                cax.set_yticklabels([f'{mdates.num2date(i):%b %-d}' for i in clevs],fontsize=11.5)
+                
+        
         
         #Save image if specified
         if save_path != None and isinstance(save_path,str) == True:
@@ -929,7 +1062,8 @@ None,prop={},map_prop={}):
         """
         
         #Set default properties
-        default_prop={'dots':False,'fillcolor':'category','linecolor':'category','category_colors':'default','linewidth':1.5,'ms':7.5}
+        default_prop={'dots':False,'fillcolor':'category','cmap':None,'levels':None,\
+                      'linecolor':'category','linewidth':1.0,'ms':7.5,'title':True}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
         #Initialize plot
@@ -983,20 +1117,75 @@ None,prop={},map_prop={}):
             else:
                 if min(lons) < min_lon: min_lon = min(lons)
 
-            #Draw storm lines
+            #Plot background storm line
+            type_line = np.array(['solid' if i in ['SS','SD','TD','TS','HU'] else 'dotted' for i in styp])
+            typenum = np.cumsum([0]+[1 if type_line[i+1]!=j else 0\
+                        for i,j in enumerate(type_line[:-1])])
+            typedict = {k:v for k,v in zip(typenum,type_line)}
+            for i in set(typenum):
+                where = [j for j,k in enumerate(typenum) if k==i]
+                where += [min([where[-1]+1,len(typenum)-1])]
+                self.ax.plot(np.array(lons)[where],np.array(lats)[where],'-',
+                              color='k',linewidth=prop['linewidth']*1.5,linestyle=typedict[i],transform=ccrs.PlateCarree())
+    
+            #Plot storm line as specified
+            segmented_color = False
             if prop['linecolor'] == 'category':
-                type6 = np.array(storm_data['type'])
+                segmented_color = True
+                ncol = [get_colors_sshws(np.nan_to_num(iwnd)) for iwnd in storm_data['vmax']]
+            elif isinstance(prop['linecolor'],str) and prop['linecolor'] in storm_data.keys():
+                segmented_color = True
+                colorvar = storm_data[prop['linecolor']]
+                if prop['levels'] is None:
+                    prop['levels'] = [np.nanmin(colorvar),np.nanmax(colorvar)]
+                cmap,levels = get_cmap_levels(prop['linecolor'],prop['cmap'],prop['levels'])
+                ncol = cmap((colorvar-min(levels))/(max(levels)-min(levels)))
+            if segmented_color:
                 for i in (np.arange(len(lats[1:]))+1):
-                    ltype = 'solid'
-                    if type6[i] not in ['SS','SD','TD','TS','HU']:
-                        ltype = 'dotted'
-                    peffect = [path_effects.Stroke(linewidth=prop['linewidth']*1.2, foreground='k'), path_effects.Normal()]
                     self.ax.plot([lons[i-1],lons[i]],[lats[i-1],lats[i]],
-                                  '-',color=get_colors_sshws(np.nan_to_num(storm_data['vmax'][i])),linewidth=prop['linewidth'],linestyle=ltype,
-                                  transform=ccrs.PlateCarree(),path_effects = peffect)
+                                  '-',color=ncol[i],linewidth=prop['linewidth'],linestyle='solid',transform=ccrs.PlateCarree())
             else:
                 self.ax.plot(lons,lats,'-',color=prop['linecolor'],linewidth=prop['linewidth'],transform=ccrs.PlateCarree())
-
+    
+            #Plot storm dots as specified
+            if prop['dots'] == True:
+                segmented_color = False
+                if prop['fillcolor'] == 'category':
+                    segmented_color = True
+                    ncol = [get_colors_sshws(np.nan_to_num(iwnd)) for iwnd in storm_data['vmax']]
+                elif isinstance(prop['fillcolor'],str) and prop['fillcolor'] in storm_data.keys():
+                    segmented_color = True
+                    colorvar = storm_data[prop['fillcolor']]
+                    if prop['levels'] is None:
+                        prop['levels'] = [np.nanmin(colorvar),np.nanmax(colorvar)]
+                    cmap,levels = get_cmap_levels(prop['fillcolor'],prop['cmap'],prop['levels'])
+                    ncol = cmap((colorvar-min(levels))/(max(levels)-min(levels)))
+                elif isinstance(prop['fillcolor'],str):
+                    ncol = [prop['fillcolor']]*len(sdate)
+                else:
+                    ncol = ['k']*len(sdate)
+                #filter dots to only 6 hour intervals
+                time_hr = np.array([i.strftime('%H%M') for i in sdate])
+                if plot_all == False:
+                    time_idx = np.where((time_hr == '0000') | (time_hr == '0600') | (time_hr == '1200') | (time_hr == '1800'))
+                    lat_dots = np.array(lats)[time_idx]
+                    lon_dots = np.array(lons)[time_idx]
+                    vmax_dots = np.array(vmax)[time_idx]
+                    type_dots = np.array(styp)[time_idx]
+                    ncol = np.array(ncol)[time_idx]
+                else:
+                    lat_dots = np.array(lats)
+                    lon_dots = np.array(lons)
+                    vmax_dots = np.array(vmax)
+                    type_dots = np.array(styp)
+                for i,(ilon,ilat,iwnd,itype) in enumerate(zip(lon_dots,lat_dots,vmax_dots,type_dots)):
+                    mtype = '^'
+                    if itype in ['SD','SS']:
+                        mtype = 's'
+                    elif itype in ['TD','TS','HU']:
+                        mtype = 'o'
+                    self.ax.plot(ilon,ilat,mtype,color=ncol[i],mec='k',mew=0.5,ms=prop['ms'],transform=ccrs.PlateCarree())
+            
         #--------------------------------------------------------------------------------------
         
         #Pre-generated domains
@@ -1070,23 +1259,22 @@ None,prop={},map_prop={}):
         self.ax.set_title(f"{count_named} named {dot} {count_hurricane} hurricanes {dot} {count_major} major\n{count_ace:.1f} Cumulative ACE",loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
-
+        
         #Add plot credit
         warning_text=""
-        if season.source == 'ibtracs' and season.source_info == 'World Meteorological Organization (official)':
+        if storm_data['source'] == 'ibtracs' and storm_data['source_info'] == 'World Meteorological Organization (official)':
             warning_text = f"This plot uses 10-minute averaged WMO official wind data converted\nto 1-minute average (factor of 0.88). Use this wind data with caution.\n\n"
-        
+
             self.ax.text(0.99,0.01,warning_text,fontsize=9,color='k',alpha=0.7,
             transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
         
         credit_text = self.plot_credit()
         self.add_credit(credit_text)
-        
+                
         #Add legend
-        if prop['fillcolor'] == 'category' or prop['linecolor'] == 'category':
-            
-            ex = mlines.Line2D([], [], linestyle='--', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='None', color='k')
-            #sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
+        if prop['fillcolor'] == 'category' and prop['dots'] == True:
+            ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
+            sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
             td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=get_colors_sshws(33))
             ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=get_colors_sshws(34))
             c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=get_colors_sshws(64))
@@ -1094,8 +1282,111 @@ None,prop={},map_prop={}):
             c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=get_colors_sshws(96))
             c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=get_colors_sshws(113))
             c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
+            self.ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
+
+        elif prop['linecolor'] == 'category' and prop['dots'] == False:
+            ex = mlines.Line2D([], [], linestyle='dotted', label='Non-Tropical', color='k')
+            td = mlines.Line2D([], [], linestyle='solid', label='Sub/Tropical Depression', color=get_colors_sshws(33))
+            ts = mlines.Line2D([], [], linestyle='solid', label='Sub/Tropical Storm', color=get_colors_sshws(34))
+            c1 = mlines.Line2D([], [], linestyle='solid', label='Category 1', color=get_colors_sshws(64))
+            c2 = mlines.Line2D([], [], linestyle='solid', label='Category 2', color=get_colors_sshws(83))
+            c3 = mlines.Line2D([], [], linestyle='solid', label='Category 3', color=get_colors_sshws(96))
+            c4 = mlines.Line2D([], [], linestyle='solid', label='Category 4', color=get_colors_sshws(113))
+            c5 = mlines.Line2D([], [], linestyle='solid', label='Category 5', color=get_colors_sshws(137))
             self.ax.legend(handles=[ex,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5})
 
+        elif prop['dots'] and not segmented_color:
+            ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color=prop['fillcolor'])
+            sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color=prop['fillcolor'])
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical', marker='o', color=prop['fillcolor'])
+            handles=[ex,sb,td]
+            self.ax.legend(handles=handles,fontsize=11.5)
+
+        elif not prop['dots'] and not segmented_color:
+            ex = mlines.Line2D([], [], linestyle='dotted',label='Non-Tropical', color=prop['linecolor'])
+            td = mlines.Line2D([], [], linestyle='solid',label='Tropical', color=prop['linecolor'])
+            handles=[ex,td]
+            self.ax.legend(handles=handles,fontsize=11.5)
+
+        elif prop['dots']:
+            ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
+            sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical', marker='o', color='w')
+            handles=[ex,sb,td]
+            for _ in range(7):
+                handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
+            l=self.ax.legend(handles=handles,fontsize=11.5)
+            plt.draw()
+            
+            #Get the bbox
+            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            #p = l.get_window_extent()
+                
+            #Define colorbar axis
+            cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
+            norm = mlib.colors.Normalize(vmin=min(levels), vmax=max(levels))
+            cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
+            cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
+                                     ticks=levels)
+            
+            cax.tick_params(labelsize=11.5)
+            cax.yaxis.set_ticks_position('left')
+            cbar.set_label(prop['fillcolor'],fontsize=11.5,rotation=90)
+        
+            rect_offset = 0.0
+            if prop['cmap']=='category' and prop['fillcolor']=='vmax':
+                cax.yaxis.set_ticks(np.linspace(min(levels),max(levels),len(levels)))
+                cax.yaxis.set_ticklabels(levels)
+                cax2 = cax.twinx()
+                cax2.yaxis.set_ticks_position('right')
+                cax2.yaxis.set_ticks((np.linspace(0,1,len(levels))[:-1]+np.linspace(0,1,len(levels))[1:])*.5)
+                cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+                cax2.tick_params('both', length=0, width=0, which='major')
+                cax.yaxis.set_ticks_position('left')
+                rect_offset = 0.7
+            if prop['fillcolor'] == 'date':
+                cax.set_yticklabels([f'{mdates.num2date(i):%b %-d}' for i in clevs],fontsize=11.5)
+                
+        else:
+            ex = mlines.Line2D([], [], linestyle='dotted',label='Non-Tropical', color='k')
+            td = mlines.Line2D([], [], linestyle='solid',label='Tropical', color='k')
+            handles=[ex,td]
+            for _ in range(7):
+                handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
+            l=self.ax.legend(handles=handles,fontsize=11.5)
+            plt.draw()
+            
+            #Get the bbox
+            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            #p = l.get_window_extent()
+                
+            #Define colorbar axis
+            cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
+            norm = mlib.colors.Normalize(vmin=min(levels), vmax=max(levels))
+            cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
+            cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
+                                     ticks=levels)
+            
+            cax.tick_params(labelsize=11.5)
+            cax.yaxis.set_ticks_position('left')
+            cbarlab = make_var_label(prop['linecolor'],storm_data)            
+            cbar.set_label(cbarlab,fontsize=11.5,rotation=90)
+        
+            rect_offset = 0.0
+            if prop['cmap']=='category' and prop['linecolor']=='vmax':
+                cax.yaxis.set_ticks(np.linspace(min(levels),max(levels),len(levels)))
+                cax.yaxis.set_ticklabels(levels)
+                cax2 = cax.twinx()
+                cax2.yaxis.set_ticks_position('right')
+                cax2.yaxis.set_ticks((np.linspace(0,1,len(levels))[:-1]+np.linspace(0,1,len(levels))[1:])*.5)
+                cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+                cax2.tick_params('both', length=0, width=0, which='major')
+                cax.yaxis.set_ticks_position('left')
+                rect_offset = 0.7
+            if prop['linecolor'] == 'date':
+                cax.set_yticklabels([f'{mdates.num2date(i):%b %-d}' for i in clevs],fontsize=11.5)
+                
+        
         #Return axis if specified, otherwise display figure
         if ax != None or return_ax == True:
             return self.ax

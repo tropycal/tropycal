@@ -257,9 +257,13 @@ def get_cmap_levels(varname,colormap,levels,linear=False):
         elif isinstance(colormap,dict):
             cmap = make_colormap(colormap)
         
-        #Otherwise, a cmap was passed
-        else:
+        #ListedColormap
+        elif isinstance(colormap,mlib.colors.ListedColormap):
             cmap = colormap
+        
+        #Default to plasma
+        else:
+            cmap = mlib.cm.get_cmap('plasma')
         
         #Normalize colors relative to levels
         norm = mlib.colors.Normalize(vmin=0, vmax=len(levels)-1)

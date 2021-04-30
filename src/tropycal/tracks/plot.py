@@ -507,6 +507,17 @@ class TrackPlot(Plot):
             else:
                 if min(lons) < min_lon: min_lon = min(lons)
 
+            #Plot background storm line
+            type_line = np.array(['solid' if i in ['SS','SD','TD','TS','HU'] else 'dotted' for i in styp])
+            typenum = np.cumsum([0]+[1 if type_line[i+1]!=j else 0\
+                        for i,j in enumerate(type_line[:-1])])
+            typedict = {k:v for k,v in zip(typenum,type_line)}
+            for i in set(typenum):
+                where = [j for j,k in enumerate(typenum) if k==i]
+                where += [min([where[-1]+1,len(typenum)-1])]
+                self.ax.plot(np.array(lons)[where],np.array(lats)[where],'-',
+                              color='k',linewidth=prop['linewidth']*1.5,linestyle=typedict[i],transform=ccrs.PlateCarree())
+
             #Plot storm line as specified
             if prop['linecolor'] == 'category':
                 type_line = np.array(styp)
@@ -514,9 +525,8 @@ class TrackPlot(Plot):
                     ltype = 'solid'
                     if type_line[i] not in ['SS','SD','TD','TS','HU']: ltype = 'dotted'
                     self.ax.plot([lons[i-1],lons[i]],[lats[i-1],lats[i]],
-                                  '-',color=get_colors_sshws(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
-                                  transform=ccrs.PlateCarree(),
-                                  path_effects=[path_effects.Stroke(linewidth=prop['linewidth']*0.2, foreground='k'), path_effects.Normal()])
+                                  '-',color=get_colors_sshws(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle='solid',
+                                  transform=ccrs.PlateCarree())
             else:
                 self.ax.plot(lons,lats,'-',color=prop['linecolor'],linewidth=prop['linewidth'],transform=ccrs.PlateCarree())
 

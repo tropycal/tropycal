@@ -77,7 +77,10 @@ class interpRecon:
         
         #Within the RMW, replace NaNs with minimum value within the RMW
         filleye = np.where((grid_rho<rmw) & (np.isnan(grid_z_pol)))
-        grid_z_pol[filleye]=np.nanmin(grid_z_pol[np.where(grid_rho<rmw)])
+        try:
+            grid_z_pol[filleye]=np.nanmin(grid_z_pol[np.where(grid_rho<rmw)])
+        except:
+            pass
     
         #Return fields
         return grid_rho, grid_phi, grid_z_pol      

@@ -196,10 +196,7 @@ class TrackDataset:
         
         # If doInterp, interpolate each storm and save to dictionary.
         if doInterp:
-            self.__getInterp()
-            
-        print('YOU ARE USING AN EDITED VERSION')
-    
+            self.__getInterp()    
     
     def __read_hurdat(self,override_basin=False):
         
@@ -1423,7 +1420,6 @@ class TrackDataset:
         #Iterate over every year of HURDAT available
         end_year = self.data[self.keys[-1]]['year']
         years = [yr for yr in range(1851,dt.now().year+1) if (min(climo_year_range)<=yr<=max(climo_year_range)) or yr==plot_year]
-        print(years)
         for year in years:
             
             #Get info for this year

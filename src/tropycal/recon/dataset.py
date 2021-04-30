@@ -601,7 +601,8 @@ class ReconDataset:
         if not ONE_MAP:
             
             if savetopath is True:
-                savetopath = f'{self.storm}{self.year}_{varname}_maps'
+                #savetopath = f'{self.storm}{self.year}_{varname}_maps'
+                savetopath = f'{self.storm}{self.year}_maps'
             try:
                 os.system(f'mkdir {savetopath}')
             except:

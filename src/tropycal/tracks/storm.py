@@ -116,43 +116,50 @@ class Storm:
 
         return "\n".join(summary)
     
-    def __init__(self,storm,stormTors=None):
+    def __init__(self,storm,stormTors=None,read_path=""):
         
-        #Save the dict entry of the storm
-        self.dict = storm
+        if read_path == "" or os.path.isfile(read_path) == False:
+
+            #Save the dict entry of the storm
+            self.dict = storm
+
+            #Add other attributes about the storm
+            keys = self.dict.keys()
+            self.coords = {}
+            self.vars = {}
+            for key in keys:
+                if key == 'realtime': continue
+                if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
+                    self[key] = self.dict[key]
+                    self.coords[key] = self.dict[key]
+                if isinstance(self.dict[key], list) == True and isinstance(self.dict[key], dict) == False:
+                    self.vars[key] = np.array(self.dict[key])
+                    self[key] = np.array(self.dict[key])
+
+            #Assign tornado data
+            if stormTors != None and isinstance(stormTors,dict) == True:
+                self.stormTors = stormTors['data']
+                self.tornado_dist_thresh = stormTors['dist_thresh']
+                self.coords['Tornado Count'] = len(stormTors['data'])
+
+            #Get Archer track data for this storm, if it exists
+            try:
+                self.get_archer()
+            except:
+                pass
+
+            #Determine if storm object was retrieved via realtime object
+            if 'realtime' in keys and self.dict['realtime'] == True:
+                self.realtime = True
+                self.coords['realtime'] = True
+            else:
+                self.realtime = False
+                self.coords['realtime'] = False
         
-        #Add other attributes about the storm
-        keys = self.dict.keys()
-        self.coords = {}
-        self.vars = {}
-        for key in keys:
-            if key == 'realtime': continue
-            if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
-                self[key] = self.dict[key]
-                self.coords[key] = self.dict[key]
-            if isinstance(self.dict[key], list) == True and isinstance(self.dict[key], dict) == False:
-                self.vars[key] = np.array(self.dict[key])
-                self[key] = np.array(self.dict[key])
-                
-        #Assign tornado data
-        if stormTors != None and isinstance(stormTors,dict) == True:
-            self.stormTors = stormTors['data']
-            self.tornado_dist_thresh = stormTors['dist_thresh']
-            self.coords['Tornado Count'] = len(stormTors['data'])
-        
-        #Get Archer track data for this storm, if it exists
-        try:
-            self.get_archer()
-        except:
-            pass
-            
-        #Determine if storm object was retrieved via realtime object
-        if 'realtime' in keys and self.dict['realtime'] == True:
-            self.realtime = True
-            self.coords['realtime'] = True
         else:
-            self.realtime = False
-            self.coords['realtime'] = False
+            
+            #This functionality currently does not exist
+            raise ExceptionError("This functionality has not been implemented yet.")
     
     def sel_time(self,start_time,end_time=None):
         
@@ -521,6 +528,163 @@ class Storm:
         #Return axis
         if ax != None or return_ax == True: return plot_ax
         
+    
+    #PLOT FUNCTION FOR HURDAT
+    def plot_gefs_ensembles(self,forecast,fhr=None,
+                            prop_members = {'linewidth':0.5, 'linecolor':'k'},
+                            prop_mean = {'linewidth':2.0, 'linecolor':'k'},
+                            prop_gfs = {'linewidth':2.0, 'linecolor':'b'},
+                            prop_ellipse = {'linewidth':2.0, 'linecolor':'r'},
+                            prop_density = {'radius':200, 'cmap':plt.cm.YlOrRd, 'levels':[i for i in range(5,105,5)]},
+                            domain="dynamic",ax=None,return_ax=False,cartopy_proj=None,save_path=None,map_prop={}):
+        
+        r"""
+        (Add track history like we do for NHC forecasts)
+        (Add verification for archived events)
+        
+        Creates a plot of individual GEFS ensemble tracks.
+        
+        Parameters
+        ----------
+        forecast : datetime.datetime
+            Datetime object representing the GEFS run initialization.
+        fhr : int or list, optional
+            Forecast hour(s) to plot. If None (default), a plot of all forecast hours will be produced. If a list, multiple plots will be produced. If an integer, a single plot will be produced.
+        plot_density : bool, optional
+            If True, track density will be computed and plotted in addition to individual ensemble tracks.
+        domain : str
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
+        
+        Other Parameters
+        ----------------
+        prop : dict
+            Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
+        map_prop : dict
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        """
+        
+        #Create instance of plot object
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
+        
+        #Create cartopy projection
+        if cartopy_proj == None:
+            if max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+            else:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        else:
+            self.plot_obj.proj = cartopy_proj
+        
+        #-------------------------------------------------------------------------
+        
+        #Get forecasts dict saved into storm object, if it hasn't been already
+        try:
+            self.forecast_dict
+        except:
+            self.get_operational_forecasts()
+        
+        #Create dict to store all data in
+        ds = {'gfs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]},
+              'gefs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[],
+                      'members':[],'ellipse_lat':[],'ellipse_lon':[]}
+              }
+        
+        #String formatting for ensembles
+        def str2(ens):
+            if ens == 0: return "AC00"
+            if ens < 10: return f"AP0{ens}"
+            return f"AP{ens}"
+
+        #Get GFS forecast entry
+        try:
+            forecast_gfs = self.forecast_dict['AVNO'][forecast.strftime("%Y%m%d%H")]
+        except:
+            raise RuntimeError("The requested initialization isn't available for this storm.")
+        
+        #Enter into dict entry
+        ds['gfs']['fhr'] = [int(i) for i in forecast_gfs['fhr']]
+        ds['gfs']['lat'] = [np.round(i,1) for i in forecast_gfs['lat']]
+        ds['gfs']['lon'] = [np.round(i,1) for i in forecast_gfs['lon']]
+        ds['gfs']['vmax'] = [float(i) for i in forecast_gfs['vmax']]
+        ds['gfs']['mslp'] = forecast_gfs['mslp']
+        ds['gfs']['date'] = [forecast+timedelta(hours=i) for i in forecast_gfs['fhr']]
+        
+        #Retrieve GEFS ensemble data (30 members 2019-present, 20 members prior)
+        nens = 0
+        for ens in range(0,31):
+            
+            #Create dict entry
+            ds[f'gefs_{ens}'] = {'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]}
+
+            #Retrieve ensemble member data
+            ens_str = str2(ens)
+            if ens_str not in self.forecast_dict.keys(): continue
+            forecast_ens = self.forecast_dict[ens_str][forecast.strftime("%Y%m%d%H")]
+
+            #Enter into dict entry
+            ds[f'gefs_{ens}']['fhr'] = [int(i) for i in forecast_ens['fhr']]
+            ds[f'gefs_{ens}']['lat'] = [np.round(i,1) for i in forecast_ens['lat']]
+            ds[f'gefs_{ens}']['lon'] = [np.round(i,1) for i in forecast_ens['lon']]
+            ds[f'gefs_{ens}']['vmax'] = [float(i) for i in forecast_ens['vmax']]
+            ds[f'gefs_{ens}']['mslp'] = forecast_ens['mslp']
+            ds[f'gefs_{ens}']['date'] = [forecast+timedelta(hours=i) for i in forecast_ens['fhr']]
+            nens += 1
+
+        #Construct ensemble mean data
+        #Iterate through all forecast hours
+        for iter_fhr in range(0,246,6):
+
+            #Temporary data arrays
+            temp_data = {}
+            for key in ds['gfs'].keys():
+                if key not in ['date','fhr']: temp_data[key] = []
+
+            #Iterate through ensemble member
+            for ens in range(nens):
+
+                #Determine if member has data valid at this forecast hour
+                if iter_fhr in ds[f'gefs_{ens}']['fhr']:
+
+                    #Retrieve index
+                    idx = ds[f'gefs_{ens}']['fhr'].index(iter_fhr)
+
+                    #Append data
+                    for key in ds['gfs'].keys():
+                        if key not in ['date','fhr']: temp_data[key].append(ds[f'gefs_{ens}'][key][idx])
+
+            #Proceed if 20 or more ensemble members
+            if len(temp_data['lat']) >= 10:
+
+                #Append data
+                for key in ds['gfs'].keys():
+                    if key not in ['date','fhr']:
+                        ds['gefs'][key].append(np.nanmean(temp_data[key]))
+                ds['gefs']['fhr'].append(iter_fhr)
+                ds['gefs']['date'].append(forecast+timedelta(hours=iter_fhr))
+                ds['gefs']['members'].append(len(temp_data['lat']))
+
+                #Calculate ellipse data
+                if prop_ellipse != None:
+                    ellipse_data = plot_ellipse(temp_data['lat'],temp_data['lon'])
+                    ds['gefs']['ellipse_lon'].append(ellipse_data['xell'])
+                    ds['gefs']['ellipse_lat'].append(ellipse_data['yell'])
+        
+        #Plot storm
+        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_ensemble_members,prop_ensemble_mean,prop_gfs,prop_ellipse,prop_density,nens,domain,ds,ax=ax,return_ax=return_ax,map_prop=map_prop,save_path=save_path)
+        
+        #Return axis
+        if ax != None or return_ax == True: return plot_ax
     
     def list_nhc_discussions(self):
         

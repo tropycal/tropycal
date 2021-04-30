@@ -257,6 +257,14 @@ class Realtime():
         filelist = pattern.findall(string)
         for filename in filelist:
             if filename not in files: files.append(filename)
+        
+        #Search for following year (for SH storms)
+        search_pattern = f'b[isw][ohp][01234][0123456789]{current_year+1}.dat'
+
+        pattern = re.compile(search_pattern)
+        filelist = pattern.findall(string)
+        for filename in filelist:
+            if filename not in files: files.append(filename)
 
         #For each file, read in file content and add to hurdat dict
         for file in files:

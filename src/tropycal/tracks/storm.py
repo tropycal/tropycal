@@ -403,7 +403,7 @@ class Storm:
         if dmslp_dt is None:
             idx = copy.copy(idx_final)
             
-        elif 'dmslp_dt' not in self.data.keys():
+        elif 'dmslp_dt' not in self.dict.keys():
             msg = f'dmslp_dt not in storm data. Create new object with interp first.'
             raise KeyError(msg)   
             

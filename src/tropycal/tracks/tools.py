@@ -35,7 +35,10 @@ def find_var(request,thresh):
     
     #Count of number of storms
     if request.find('count') >= 0 or request.find('num') >= 0:
-        return thresh, 'date' #not sure what date stands for
+        return thresh, 'type'
+
+    if request.find('date') >= 0 or request.find('day') >= 0:
+        return thresh, 'date'
     
     #Sustained wind, or change in wind speed
     if request.find('wind') >= 0 or request.find('vmax') >= 0:
@@ -51,9 +54,11 @@ def find_var(request,thresh):
         else:
             return thresh,'vmax'
 
-    elif request.find('ace')>=0 or request.find('accumulated')>=0:
+    elif request.find('ace')>=0:
         return thresh,'ace'
-        
+    elif request.find('acie')>=0:
+        return thresh,'acie'
+    
     #Minimum MSLP, or change in MSLP
     elif request.find('pressure') >= 0 or request.find('slp') >= 0:
         #If change in MSLP, determine time interval
@@ -107,11 +112,11 @@ def find_func(request,thresh):
     request = request.lower()
     
     #Numpy maximum function
-    if request.find('max') == 0:
+    if request.find('max') == 0 or request.find('latest') == 0:
         return thresh, lambda x: np.nanmax(x)
     
     #Numpy minimum function
-    if request.find('min') == 0:
+    if request.find('min') == 0 or request.find('earliest') == 0:
         return thresh, lambda x: np.nanmin(x)
     
     #Numpy average function
@@ -130,7 +135,9 @@ def find_func(request,thresh):
         return thresh, lambda x: len(x)
     
     #ACE - cumulative function
-    elif request.find('ace') >=0 or request.find('accumulated') >=0:
+    elif request.find('ace') >=0:
+        return thresh, lambda x: np.nansum(x)
+    elif request.find('acie') >=0:
         return thresh, lambda x: np.nansum(x)
     
     #Otherwise, function cannot be identified
@@ -256,6 +263,15 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
     storm_dict['type'] = np.asarray(storm_dict['type'])
     storm_dict['lon'] = np.array(storm_dict['lon']) % 360
     
+    def round_datetime(tm,nearest_minute=10):
+        discard = timedelta(minutes=tm.minute % nearest_minute,
+                             seconds=tm.second,
+                             microseconds=tm.microsecond)
+        tm -= discard
+        if discard >= timedelta(minutes=int(nearest_minute/2)):
+            tm += timedelta(minutes=nearest_minute)
+        return tm
+    
     #Attempt temporal interpolation
     try:
         
@@ -263,18 +279,41 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
         targettimes = np.arange(times[0],times[-1]+timeres/24,timeres/24)
         
         #Update dates
-        new_storm['date'] = [t.replace(tzinfo=None) for t in mdates.num2date(targettimes)]
+        new_storm['date'] = [round_datetime(t.replace(tzinfo=None)) for t in mdates.num2date(targettimes)]
+        targettimes = mdates.date2num(np.array(new_storm['date']))
+        
+        #Create same-length lists for other things
+        new_storm['special'] = ['']*len(new_storm['date'])
+        new_storm['extra_obs'] = [0]*len(new_storm['date'])
+        
+        #WMO basin. Simple linear interpolation.
+        basinnum = np.cumsum([0]+[1 if storm_dict['wmo_basin'][i+1]!=j else 0\
+                    for i,j in enumerate(storm_dict['wmo_basin'][:-1])])
+        basindict = {k:v for k,v in zip(basinnum,storm_dict['wmo_basin'])}
+        basininterp = np.round(np.interp(targettimes,times,basinnum)).astype(int)
+        new_storm['wmo_basin'] = [basindict[k] for k in basininterp]
         
         #Interpolate and fill in storm type
-        stormtype = np.ones(len(storm_dict['type']))*-99
-        stormtype[np.where((storm_dict['type']=='TD') | (storm_dict['type']=='SD') | (storm_dict['type']=='TS') | \
-                           (storm_dict['type']=='SS') | (storm_dict['type']=='HU'))] = 0
-        new_storm['type'] = np.interp(targettimes,times,stormtype)
-        new_storm['type'] = np.where(new_storm['type']<0,'NT','TD')
+        stormtype = [1 if i in ('TD','SD','TS','SS','HU') else -1 for i in storm_dict['type']]
+        isTROP = np.interp(targettimes,times,stormtype)
+        stormtype = [1 if i in ('SD','SS') else -1 for i in storm_dict['type']]
+        isSUB = np.interp(targettimes,times,stormtype)
+        stormtype = [1 if i=='LO' else -1 for i in storm_dict['type']]
+        isLO = np.interp(targettimes,times,stormtype)
+        stormtype = [1 if i=='DB' else -1 for i in storm_dict['type']]
+        isDB = np.interp(targettimes,times,stormtype)
+        newtype = np.where(isTROP>0,'TROP','EX')
+        newtype[newtype=='TROP'] = np.where(isSUB[newtype=='TROP']>0,'SUB','TROP')
+        newtype[newtype=='EX'] = np.where(isLO[newtype=='EX']>0,'LO','EX')
+        newtype[newtype=='EX'] = np.where(isDB[newtype=='EX']>0,'DB','EX')
         
         #Interpolate and fill in other variables
         for name in ['vmax','mslp','lat','lon']:
             new_storm[name] = np.interp(targettimes,times,storm_dict[name])
+        #Correct storm type by intensity
+        newtype[newtype=='TROP'] = [['TD','TS','HU'][int(i>34)+int(i>63)] for i in new_storm['vmax'][newtype=='TROP']]
+        newtype[newtype=='SUB'] = [['SD','SS'][int(i>34)] for i in new_storm['vmax'][newtype=='SUB']]
+        new_storm['type'] = newtype
         
         #Calculate change in wind & MSLP over temporal resolution
         new_storm['dvmax_dt'] = [np.nan] + list((new_storm['vmax'][1:]-new_storm['vmax'][:-1]) / timeres)
@@ -310,6 +349,9 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
                 new_storm[name] = tmp2+[np.nan]*(len(new_storm[name])-len(tmp2))
             if dt_align=='start':
                 new_storm[name] = list(tmp)+[np.nan]*(len(new_storm[name])-len(tmp))
+        
+        new_storm['dt_window'] = dt_window
+        new_storm['dt_align'] = dt_align
         
         #Return new dict
         return new_storm
@@ -645,6 +687,7 @@ def num_to_text(number):
 
 
 
+
 def calculate_distance(lat1,lat2,lon1,lon2):
     r_earth = 6.371 * 10**6
     
@@ -831,3 +874,37 @@ def add_radius(lats,lons,vlat,vlon,rad):
     return_arr[dist > rad] = 0
     return_arr[dist <= rad] = 1
     return return_arr
+
+def listify(x):
+    if isinstance(x,(tuple,list,np.ndarray)):
+        return [i for i in x]
+    else:
+        return [x]
+    
+def make_var_label(x,storm_dict):
+    delta = u"\u0394"
+    x = list(x)
+    if x[0]=='d' and x[-3:-1]==['_','d']:
+        x[0] = delta; del x[-3:]
+        x.append(f' / {storm_dict["dt_window"]}hr')
+    x = ''.join(x)
+    if 'mslp' in x:
+        x=x.replace('mslp','mslp (hPa)')
+    if 'vmax' in x:
+        x=x.replace('vmax','vmax (kt)')
+    if 'speed' in x:
+        x=x.replace('speed','speed (kt)')    
+    return ''.join(x)
+
+def date_diff(a,b):
+    if isinstance(a,np.datetime64):
+        a=dt.utcfromtimestamp((a - np.datetime64('1970-01-01T00:00:00Z')) / np.timedelta64(1, 's'))
+    if isinstance(b,np.datetime64):
+        b=dt.utcfromtimestamp((b - np.datetime64('1970-01-01T00:00:00Z')) / np.timedelta64(1, 's'))
+    c = a.replace(year=2000)-b.replace(year=2000)
+    if c<timedelta(0):
+        try:
+            c = a.replace(year=2001)-b.replace(year=2000)
+        except:
+            c = a.replace(year=2000)-b.replace(year=1999)
+    return c

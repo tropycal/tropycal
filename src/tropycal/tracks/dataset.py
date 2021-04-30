@@ -26,6 +26,7 @@ try:
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
+    import matplotlib.dates as mdates
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
@@ -117,7 +118,7 @@ class TrackDataset:
         return "\n".join(summary)
     
     
-    def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,**kwargs):
+    def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,doInterp=False,**kwargs):
         
         #kwargs
         atlantic_url = kwargs.pop('atlantic_url', 'https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2019-042820.txt')
@@ -192,7 +193,10 @@ class TrackDataset:
         
         #Add dict to store all storm-specific tornado data in
         self.data_tors = {}
-    
+        
+        # If doInterp, interpolate each storm and save to dictionary.
+        if doInterp:
+            self.__getInterp()    
     
     def __read_hurdat(self,override_basin=False):
         
@@ -931,8 +935,18 @@ class TrackDataset:
         time_elapsed = dt.now() - start_time
         tsec = str(round(time_elapsed.total_seconds(),2))
         print(f"--> Completed reading in ibtracs data ({tsec} seconds)")
+    
+    def __getInterp(self):
+        self.data_interp = {}
+        for key in self.keys:
             
+            #Retrieve storm dict
+            istorm = self.data[key].copy()
             
+            #Interpolate temporally
+            istorm = interp_storm(istorm,timeres=1,dt_window=24,dt_align='middle')
+            self.data_interp[key]=istorm
+
     def get_storm_id(self,storm):
         
         r"""
@@ -970,6 +984,31 @@ class TrackDataset:
         if len(keys_use) == 0: raise RuntimeError("Storm not found")
         return keys_use
     
+    def get_storm_tuple(self,storm):
+
+        r"""
+        Returns the storm tuple (e.g., ("Dorian",2019)) given the storm id.
+        
+        Parameters
+        ----------
+        storm : string
+            String containing the storm (e.g., "AL052019").
+            
+        Returns
+        -------
+        tuple
+            Returns a list of matching IDs.
+        """
+
+        #Error check
+        if isinstance(storm,str) == False:
+            raise TypeError("storm must be of type string.")
+        try:
+            name = self.data[storm]['name']
+            year = self.data[storm]['year']
+        except:
+            raise RuntimeError("Storm not found")
+        return (name,year)
     
     def get_storm(self,storm):
         
@@ -1139,7 +1178,7 @@ class TrackDataset:
         if ax != None or return_ax == True: return plot_ax
         
         
-    def plot_season(self,year,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot_season(self,year,domain=None,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single season.
@@ -1182,7 +1221,7 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot season
-        plot_ax = self.plot_obj.plot_season(season,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_season(season,domain,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
@@ -1335,7 +1374,7 @@ class TrackDataset:
                 return_season = return_season + self.__retrieve_season(i_year,basin)
             return return_season
     
-    def ace_climo(self,plot_year=None,compare_years=None,start_year=1950,rolling_sum=0,return_dict=False,plot=True,save_path=None):
+    def ace_climo(self,plot_year=None,compare_years=None,climo_year_range=None,date_range=None,rolling_sum=0,return_dict=False,plot=True,return_ax=False,save_path=None):
         
         r"""
         Creates a climatology of accumulated cyclone energy (ACE).
@@ -1363,10 +1402,14 @@ class TrackDataset:
             If return_dict is True, a dictionary containing data about the ACE climatology is returned.
         """
         
-        if plot_year!=None and plot_year<start_year:
-            raise ValueError("One of the years is before the climatology start_year.")            
-        if compare_years!=None and np.any(np.asarray(compare_years)<start_year):
-            raise ValueError("One of the years is before the climatology start_year.")
+        cur_year = dt.now().year
+        
+        if climo_year_range is None:
+            climo_year_range = (1950,dt.now().year-1)
+        #if plot_year!=None and plot_year<start_year:
+        #    raise ValueError("One of the years is before the climatology start_year.")            
+        #if compare_years!=None and np.any(np.asarray(compare_years)<start_year):
+        #    raise ValueError("One of the years is before the climatology start_year.")
         
         if self.source == 'ibtracs':
             warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
@@ -1376,7 +1419,7 @@ class TrackDataset:
         
         #Iterate over every year of HURDAT available
         end_year = self.data[self.keys[-1]]['year']
-        years = range(start_year,end_year+1)
+        years = [yr for yr in range(1851,dt.now().year+1) if (min(climo_year_range)<=yr<=max(climo_year_range)) or yr==plot_year]
         for year in years:
             
             #Get info for this year
@@ -1455,7 +1498,7 @@ class TrackDataset:
                 ace[str(year)]['date'] = year_dates[((rolling_sum*4)-1):]
                 ace[str(year)]['ace'] = year_cum
                 ace[str(year)]['genesis_index'] = year_genesis
-         
+                 
         #------------------------------------------------------------------------------------------
         
         #Construct non-leap year julian day array
@@ -1470,10 +1513,10 @@ class TrackDataset:
         julian_name = months_julian['name']
         
         #Construct percentile arrays
-        all_ace = np.zeros((len(years),len(julian)))
-        for year in years:
+        all_ace = np.ones((len(years),len(julian)))*np.nan
+        for year in range(min(climo_year_range),max(climo_year_range)+1):
             all_ace[years.index(year)] = ace[str(year)]['ace']
-        pmin,p10,p25,p40,p60,p75,p90,pmax = np.percentile(all_ace,[0,10,25,40,60,75,90,100],axis=0)
+        pmin,p10,p25,p40,p60,p75,p90,pmax = np.nanpercentile(all_ace,[0,10,25,40,60,75,90,100],axis=0)
         
         #Return if not plotting
         if plot == False:
@@ -1496,17 +1539,26 @@ class TrackDataset:
         
         #Limit plot from May onward
         ax.set_xlim(julian_start[4],julian[-1])
+
         
+        if date_range is None:
+            if plot_year == cur_year:
+                tmax = dt.now().strftime('%m/%d')
+            else:
+                tmax = '12/31'
+            date_range = ('1/1',tmax)
+        date_range = [dt.strptime(t,'%m/%d') for t in date_range]
+            
         #Add plot title
         if plot_year == None:
-            title_string = f"{self.basin.title().replace('_',' ')} Accumulated Cyclone Energy (ACE) Climatology"
+            title_string = f"{self.basin.title().replace('_',' ')} Accumulated Cyclone Energy Climatology"
         else:
             cur_year = (dt.now()).year
             if plot_year == cur_year:
-                add_current = f" (through {(dt.now()).strftime('%b %d')})"
+                add_current = f"(through {date_range[-1]:%b %d})"
             else:
                 add_current = ""
-            title_string = f"{plot_year} {self.basin.title().replace('_',' ')} Accumulated Cyclone Energy (ACE){add_current}"
+            title_string = f"{plot_year} {self.basin.title().replace('_',' ')} Accumulated Cyclone Energy {add_current}"
         if rolling_sum != 0:
             title_add = f"\n{rolling_sum}-Day Running Sum"
         else:
@@ -1527,11 +1579,20 @@ class TrackDataset:
                 year_julian = year_julian[:cur_julian+1]
                 year_ace = year_ace[:cur_julian+1]
                 year_genesis = year_genesis[:cur_julian+1]
-                ax.plot(year_julian[-1],year_ace[-1],'o',color='#FF7CFF',ms=8,mec='#750775',mew=0.8,zorder=8)
+        
+            END_julian = int(convert_to_julian( date_range[-1].replace(year=2019,minute=0,second=0) ))*4 - int(rolling_sum*4)
+            year_julian = year_julian[:END_julian+1]
+            year_ace = year_ace[:END_julian+1]
+            year_genesis = year_genesis[:END_julian+1]
+            #ax.plot(year_julian[-1],year_ace[-1],'o',color='#FF7CFF',ms=8,mec='#750775',mew=0.8,zorder=8)
+            #ax.plot(year_julian,year_ace,'-',color='#750775',linewidth=2.8,zorder=6)
+            #ax.plot(year_julian,year_ace,'-',color='#FF7CFF',linewidth=2.0,zorder=6,label=f'{plot_year} ACE ({np.max(year_ace):.1f})')
+            #ax.plot(year_julian[year_genesis],year_ace[year_genesis],'D',color='#FF7CFF',ms=5,mec='#750775',mew=0.5,zorder=7,label='TC Genesis')
             
-            ax.plot(year_julian,year_ace,'-',color='#750775',linewidth=2.8,zorder=6)
-            ax.plot(year_julian,year_ace,'-',color='#FF7CFF',linewidth=2.0,zorder=6,label=f'{plot_year} ACE ({np.max(year_ace):.1f})')
-            ax.plot(year_julian[year_genesis],year_ace[year_genesis],'D',color='#FF7CFF',ms=5,mec='#750775',mew=0.5,zorder=7,label='TC Genesis')
+            ax.plot(year_julian[-1],year_ace[-1],'o',color='k',ms=8,mec='w',mew=0.8,zorder=8)
+            ax.plot(year_julian,year_ace,'-',color='w',linewidth=2.8,zorder=6)
+            ax.plot(year_julian,year_ace,'-',color='k',linewidth=2.0,zorder=6,label=f'{plot_year} ACE ({np.max(year_ace):.1f})')
+            ax.plot(year_julian[year_genesis],year_ace[year_genesis],'D',color='k',ms=5,mec='w',mew=0.5,zorder=7,label='TC Genesis')
             
         #Plot comparison years
         if compare_years != None:
@@ -1576,14 +1637,14 @@ class TrackDataset:
         
         credit_text = plot_credit()
         add_credit(ax,credit_text)
-        ax.text(0.99,0.99,f'Climatology from {start_year}{endash}{end_year}',fontsize=9,color='k',alpha=0.7,
+        ax.text(0.99,0.99,f'Climatology from {climo_year_range[0]}{endash}{climo_year_range[-1]}',fontsize=9,color='k',alpha=0.7,
                 transform=ax.transAxes,ha='right',va='top',zorder=10)
         
         #Show/save plot and close
         if save_path == None:
             plt.show()
         else:
-            plt.savefig(save_path,bbox_inches='tight')
+            plt.savefig(save_path,bbox_inches='tight',facecolor='w')
         plt.close()
         
         if return_dict == True:
@@ -2388,7 +2449,7 @@ class TrackDataset:
         """
         
         #Update thresh based on input
-        default_thresh={'sample_min':1,'p_max':9999,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,
+        default_thresh={'sample_min':1,'p_max':9999,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,'speed_max':9999,'speed_min':-9999,
                         'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
@@ -2426,7 +2487,7 @@ class TrackDataset:
         #Create empty dictionary to store output in
         points = {}
         for name in ['vmax','mslp','type','lat','lon','date','season','stormid','ace']+ \
-                    ['dmslp_dt','dvmax_dt','dx_dt','dy_dt','speed']*int(doInterp):
+                    ['dmslp_dt','dvmax_dt','acie','dx_dt','dy_dt','speed']*int(doInterp):
             points[name] = []
         
         #Iterate over every storm in TrackDataset
@@ -2437,7 +2498,10 @@ class TrackDataset:
             
             #Interpolate temporally if requested
             if doInterp:
-                istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
+                try:
+                    istorm = self.data_interp[key]
+                except:
+                    istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
                 timeres = 1
             else:
                 timeres = 6
@@ -2467,6 +2531,7 @@ class TrackDataset:
                     #Append separately for interpolated data
                     if doInterp:
                         points['dvmax_dt'].append(istorm['dvmax_dt'][i])
+                        points['acie'].append([0,istorm['dvmax_dt'][i]**2*1e-4*timeres/6][istorm['dvmax_dt'][i]>0])
                         points['dmslp_dt'].append(istorm['dmslp_dt'][i])
                         points['dx_dt'].append(istorm['dx_dt'][i])
                         points['dy_dt'].append(istorm['dy_dt'][i])
@@ -2491,6 +2556,10 @@ class TrackDataset:
                 p = p.loc[(p['dvmax_dt']<=thresh['dv_max'])]
             if thresh['dp_min']>-9999:
                 p = p.loc[(p['dmslp_dt']>=thresh['dp_min'])]
+            if thresh['speed_max']<9999:
+                p = p.loc[(p['speed']>=thresh['speed_max'])]
+            if thresh['speed_min']>-9999:
+                p = p.loc[(p['speed']>=thresh['speed_min'])]
         
         #Determine how to return data
         if return_keys:
@@ -2599,6 +2668,9 @@ class TrackDataset:
             end_year = self.data[self.keys[-1]]['year']
             year_range = (start_year,end_year)
         
+        #Start date in numpy datetime64
+        startdate = np.datetime64('2000-'+'-'.join([f'{int(d):02}' for d in date_range[0].split('/')]))
+        
         #Determine year range to subtract, if making a difference plot
         if year_range_subtract != None:
             if isinstance(year_range_subtract,(list,tuple)) == False:
@@ -2641,11 +2713,14 @@ class TrackDataset:
             #Constructs a new dataframe containing the lat/lon bins, storm ID and the plotting variable
             new_df = {'latbin':[],'lonbin':[],'stormid':[],'season':[],varname:[]}
             for g in groups:
-                #Apply function to all time steps in which a storm tracks within a gridpoint
+                #Apply function to all time steps in which a storm tracks within a gridbox
                 if VEC_FLAG:
                     new_df[varname].append([func(g[1][v].values) for v in varname])
+                elif varname == 'date':
+                    new_df[varname].append(func([date_diff(dt(2000,t.month,t.day),startdate)\
+                          for t in pd.DatetimeIndex(g[1][varname].values)]))
                 else:
-                    new_df[varname].append(func(g[1][varname].values))
+                    new_df[varname].append(func(g[1][varname].values))                    
                 new_df['latbin'].append(g[0][0])
                 new_df['lonbin'].append(g[0][1])
                 new_df['stormid'].append(g[0][2])
@@ -2661,6 +2736,9 @@ class TrackDataset:
             #Apply the function to all storms that pass through a gridpoint
             if VEC_FLAG:
                 zi = [[func(v) for v in zip(*g[1][varname])] if len(g[1]) >= thresh['sample_min'] else [np.nan]*2 for g in groups]
+            elif varname == 'date':
+                zi = [func(g[1][varname]) if len(g[1]) >= thresh['sample_min'] else np.nan for g in groups]
+                zi = [mdates.date2num(startdate+z) for z in zi]                
             else:
                 zi = [func(g[1][varname]) if len(g[1]) >= thresh['sample_min'] else np.nan for g in groups]
 
@@ -2697,7 +2775,7 @@ class TrackDataset:
                     grid_z[np.where((grid_y==c[0]) & (grid_x==c[1]))] = z
 
             #Set zero values to nan's if necessary
-            if varname == 'date':
+            if varname == 'type':
                 grid_z[np.where(grid_z==0)] = np.nan
             
             #Add to list of grid_z's
@@ -2724,6 +2802,7 @@ class TrackDataset:
                 
                 #Compute difference grid
                 grid_z = grid_z_1 - grid_z_2
+                print(np.nanmin(grid_z))
                 
                 #Reconstruct lat & lon grids
                 xi = grid_z.lon.values
@@ -2740,6 +2819,7 @@ class TrackDataset:
                 grid_z_2 = xr.DataArray(np.nan_to_num(grid_z_years[1]),coords=[grid_y_years[1].T[0],grid_x_years[1][0]],dims=['lat','lon'])
                 grid_z_check = (grid_z_1 - grid_z_2).values
                 grid_z[grid_z_check==-1000] = np.nan
+                print(np.nanmin(grid_z))
                 
             except ImportError as e:
                 raise RuntimeError("Error: xarray is not available. Install xarray in order to use the subtract year functionality.") from e
@@ -2823,7 +2903,7 @@ class TrackDataset:
             grid_z = grid_z_zeros.copy()
         
         #Plot gridded field
-        plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,VEC_FLAG,domain,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,varname,VEC_FLAG,domain,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
         
         #Format grid into xarray if specified
         if return_array == True:
@@ -2841,6 +2921,7 @@ class TrackDataset:
         if return_ax == False and return_array == True:
             return arr
         if ax != None or return_ax == True: return plot_ax
+        
 
     
     def assign_storm_tornadoes(self,dist_thresh=1000,tornado_path='spc'):

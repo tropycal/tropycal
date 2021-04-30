@@ -8,6 +8,7 @@ import scipy.interpolate as interp
 import urllib
 import warnings
 from datetime import datetime as dt,timedelta
+from copy import copy
 
 from .plot import TrackPlot
 from .storm import Storm
@@ -250,7 +251,7 @@ class Season:
             error_message = f"Multiple IDs were identified for the requested storm. Choose one of the following storm IDs and provide it as the 'storm' argument instead of a tuple:{error_message}"
             raise RuntimeError(error_message)
         
-    def plot(self,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot(self,subset=None,domain=None,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of this season.
@@ -272,6 +273,14 @@ class Season:
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
         
+        season = copy(self)
+        stormkeys = list(season.dict.keys())
+        
+        if subset is not None:
+            subkeys = [stormskeys[i] for i in subset]
+            season.dict = {key: value for key, value in season.dict.items() if key in subkeys}
+            
+        
         #Create instance of plot object
         self.plot_obj = TrackPlot()
         
@@ -281,7 +290,7 @@ class Season:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        return_ax = self.plot_obj.plot_season(self,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        return_ax = self.plot_obj.plot_season(season,domain,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return return_ax

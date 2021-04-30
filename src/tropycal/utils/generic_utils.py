@@ -520,8 +520,8 @@ class great_circle(Distance):
     def measure(self, start_point, end_point):
         
         #Retrieve latitude and longitude coordinates from input pairs
-        lat1, lon1 = math.radians(start_point[0]), math.radians(start_point[1])
-        lat2, lon2 = math.radians(end_point[0]), math.radians(end_point[1])
+        lat1, lon1 = math.radians(start_point[0]), math.radians(start_point[1]%360)
+        lat2, lon2 = math.radians(end_point[0]), math.radians(end_point[1]%360)
 
         #Compute sin and cos of coordinates
         sin_lat1, cos_lat1 = math.sin(lat1), math.cos(lat1)

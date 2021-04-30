@@ -69,7 +69,7 @@ class ReconPlot(Plot):
         
         #Set default properties
         default_prop={'cmap':'category','levels':(np.min(recon_data[varname]),np.max(recon_data[varname])),\
-                      'sortby':varname,'linewidth':1.5,'ms':7.5}
+                      'sortby':varname,'ascending':(varname!='p_sfc'),'linewidth':1.5,'ms':7.5}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF',\
                           'linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
@@ -149,7 +149,7 @@ class ReconPlot(Plot):
 #    
         if scatter:
                         
-            dataSort = recon_data.sort_values(by=prop['sortby'],ascending=(prop['sortby']!='p_sfc')).reset_index(drop=True)
+            dataSort = recon_data.sort_values(by=prop['sortby'],ascending=prop['ascending']).reset_index(drop=True)
           
             cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],\
                                 cmap=cmap,vmin=vmin,vmax=vmax, s=prop['ms'])

@@ -9,6 +9,7 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 import requests
+import copy 
 
 from .plot import TrackPlot
 from ..tornado import *
@@ -153,75 +154,353 @@ class Storm:
         else:
             self.realtime = False
             self.coords['realtime'] = False
-    
-    def sel_time(self,start_time,end_time=None):
+
+
+    def sel(self,time=None,lat=None,lon=None,vmax=None,mslp=None,\
+            dvmax_dt=None,dmslp_dt=None,stormtype=None,method='exact'):
         
         r"""
-        Subset this storm's data by a range of times or for a single time.
+        Subset this storm by any of its parameters and return a new storm object.
         
         Parameters
         ----------
-        start_time : datetime.datetime
-            Datetime object representing the start time for subsetting. If `end_time` is not passed, data will be returned for the closest time to start_time.
-        end_time : datetime.datetime (optional)
-            Datetime object representing the end time for subsetting. If specified, will return data for this range of times.
+        time : datetime.datetime or list/tuple of datetimes
+            Datetime object for single point, or list/tuple of start time and end time.
+            Default is None, which returns all points
+        lat : float/int or list/tuple of float/int
+            Float/int for single point, or list/tuple of latitude bounds (S,N).
+            None in either position of a tuple means it is boundless on that side.
+        lon : float/int or list/tuple of float/int
+            Float/int for single point, or list/tuple of longitude bounds (W,E).
+            If either lat or lon is a tuple, the other can be None for no bounds.
+            If either is a tuple, the other canNOT be a float/int.
+        vmax : list/tuple of float/int
+            list/tuple of vmax bounds (min,max).
+            None in either position of a tuple means it is boundless on that side. 
+        mslp : list/tuple of float/int
+            list/tuple of mslp bounds (min,max).
+            None in either position of a tuple means it is boundless on that side. 
+        dvmax_dt : list/tuple of float/int
+            list/tuple of vmax bounds (min,max). ONLY AVAILABLE AFTER INTERP.
+            None in either position of a tuple means it is boundless on that side. 
+        dmslp_dt : list/tuple of float/int
+            list/tuple of mslp bounds (min,max). ONLY AVAILABLE AFTER INTERP.
+            None in either position of a tuple means it is boundless on that side.
+        stormtype : list/tuple of str
+            list/tuple of stormtypes (options: 'LO','EX','TD','SD','TS','SS','HU')
+        method : str
+            Applies for single point selection in time and lat/lon.
+            'exact' requires a point to match exactly with the request. (default)
+            'nearest' returns the nearest point to the request
+            'floor' ONLY for time, returns the nearest point before the request
+            'ceil' ONLY for time, returns the neartest point after the request
         
         Returns
         -------
-        dict
-            A dictionary containing information about the storm, subsetted by the specified time range.
+        storm object
+            A new storm object that satisfies the intersection of all subsetting.
         """
         
-        #single DateTime object
-        if end_time == None:
-            
-            #Error check for data type
-            if isinstance(start_time,dt) == False:
-                msg = '\'start_time\' must be of type datetime.datetime.'
-                raise TypeError(msg)
-            
-            #Identify requested index
-            time_diff = np.array([(i-time).days + (i-time).seconds/86400 for i in self.date])
-            idx = np.abs(time_diff).argmin()
-            
-            #Construct new Storm dict with subset elements
-            temp_dict = {}
-            for key in self.dict.keys():
-                if isinstance(self.dict[key], list) == True:
-                    temp_dict[key] = self.dict[key][idx]
-                else:
-                    temp_dict[key] = self.dict[key]
-            
-            #Return new dict
-            return temp_dict
+        #create copy of storm object
+        NEW_STORM = copy.copy(self)
+        idx_final = np.arange(len(self.date))
         
-        #range of dates
-        else:
-            
-            #Error check for data type in list/tuple
-            if isinstance(start_time,dt) == False or isinstance(end_time,dt) == False:
-                msg = 'Passed arguments must be of type datetime.datetime.'
+        #apply time filter
+        if time is None:
+            idx = copy.copy(idx_final)
+        
+        elif isinstance(time,dt):
+            time_diff = np.array([(time-i).total_seconds() for i in self.date])
+            idx = np.abs(time_diff).argmin()
+            if time_diff[idx]!=0:
+                if method=='exact':
+                    msg = f'no exact match for {time}. Use different time or method.'
+                    raise ValueError(msg)
+                elif method=='floor' and time_diff[idx]<0:
+                    idx += -1
+                    if idx<0:
+                        msg = f'no points before {time}. Use different time or method.'
+                        raise ValueError(msg)
+                elif method=='ceil' and time_diff[idx]>0:
+                    idx += 1
+                    if idx>=len(time_diff):
+                        msg = f'no points after {time}. Use different time or method.'
+                        raise ValueError(msg)
+        
+        elif isinstance(time,(tuple,list)) and len(time)==2:
+            time0,time1 = time
+            if time0 is None:
+                time0 = min(self.date)
+            elif not isinstance(time0,dt):
+                msg = 'time bounds must be of type datetime.datetime or None.'
                 raise TypeError(msg)
-            
-            #Identify start index
-            time_diff = np.array([(i-start_time).days + (i-start_time).seconds/86400 for i in self.date])
-            start_idx = np.abs(time_diff).argmin()
-            
-            #Identify end index
-            time_diff = np.array([(i-end_time).days + (i-end_time).seconds/86400 for i in self.date])
-            end_idx = np.abs(time_diff).argmin() + 1
-            
-            #Construct new Storm dict with subset elements
-            temp_dict = {}
-            for key in self.dict.keys():
-                if isinstance(self.dict[key], list) == True:
-                    temp_dict[key] = self.dict[key][start_idx:end_idx]
-                else:
-                    temp_dict[key] = self.dict[key]
-            
-            #Return new dict
-            return temp_dict
+            if time1 is None:
+                time1 = max(self.date)
+            elif not isinstance(time1,dt):
+                msg = 'time bounds must be of type datetime.datetime or None.'
+                raise TypeError(msg)            
+            tmptimes = np.array(self.date)
+            idx = np.where((tmptimes>=time0) & (tmptimes<=time1))[0]
+            if len(idx)==0:
+                msg = f'no points between {time}. Use different time bounds.'
+                raise ValueError(msg)
                 
+        else:
+            msg = 'time must be of type datetime.datetime, tuple/list, or None.'
+            raise TypeError(msg)
+        
+        #update idx_final
+        idx_final = list(set(idx_final) & set(listify(idx)))
+
+        #apply lat/lon filter
+        if lat is None and lon is None:
+            idx = copy.copy(idx_final)
+            
+        elif isinstance(lat,(int,float)) and isinstance(lon,(int,float)):
+            dist = np.array([great_circle((lat,lon),(x,y)).kilometers for x,y in zip(self.lon,self.lat)])
+            idx = np.abs(dist).argmin()
+            if dist[idx]!=0:
+                if method=='exact':
+                    msg = f'no exact match for {lat}/{lon}. Use different location or method.'
+                    raise ValueError(msg)
+                elif method in ('floor','ceil'):
+                    print('floor and ceil do not apply to lat/lon filtering. Using nearest instead.')
+
+        elif (isinstance(lat,(tuple,list)) and len(lat)==2) \
+            or (isinstance(lon,(tuple,list)) and len(lon)==2):
+            if not isinstance(lat,(tuple,list)):
+                print('Using no lat bounds')
+                lat = (None,None)
+            if not isinstance(lon,(tuple,list)):
+                print('Using no lon bounds')
+                lon = (None,None)
+            lat0,lat1 = lat
+            lon0,lon1 = lon
+            if lat0 is None:
+                lat0 = min(self.lat)
+            elif not isinstance(lat0,(float,int)):
+                msg = 'lat/lon bounds must be of type float/int or None.'
+                raise TypeError(msg)
+            if lat1 is None:
+                lat1 = max(self.lat)
+            elif not isinstance(lat1,(float,int)):
+                msg = 'lat/lon bounds must be of type float/int or None.'
+                raise TypeError(msg)
+            if lon0 is None:
+                lon0 = min(self.lon)
+            elif not isinstance(lon0,(float,int)):
+                msg = 'lat/lon bounds must be of type float/int or None.'
+                raise TypeError(msg)
+            if lon1 is None:
+                lon1 = max(self.lon)
+            elif not isinstance(lon1,(float,int)):
+                msg = 'lat/lon bounds must be of type float/int or None.'
+                raise TypeError(msg)
+                
+            tmplat,tmplon = np.array(self.lat),np.array(self.lon)%360
+            idx = np.where((tmplat>=lat0) & (tmplat<=lat1) & \
+                           (tmplon>=lon0%360) & (tmplon<=lon1%360))[0]
+            if len(idx)==0:
+                msg = f'no points in {lat}/{lon} box. Use different lat/lon bounds.'
+                raise ValueError(msg)
+                
+        else:
+            msg = 'lat and lon must be of the same type: float/int, tuple/list, or None.'
+            raise TypeError(msg)  
+
+        #update idx_final
+        idx_final = list(set(idx_final) & set(listify(idx)))
+
+        #apply vmax filter
+        if vmax is None:
+            idx = copy.copy(idx_final)
+        
+        elif isinstance(vmax,(tuple,list)) and len(vmax)==2:
+            vmax0,vmax1 = vmax
+            if vmax0 is None:
+                vmax0 = np.nanmin(self.vmax)
+            elif not isinstance(vmax0,(float,int)):
+                msg = 'vmax bounds must be of type float/int or None.'
+                raise TypeError(msg)
+            if vmax1 is None:
+                vmax1 = np.nanmax(self.vmax)
+            elif not isinstance(vmax1,(float,int)):
+                msg = 'vmax bounds must be of type float/int or None.'
+                raise TypeError(msg)            
+            tmpvmax = np.array(self.vmax)
+            idx = np.where((tmpvmax>=vmax0) & (tmpvmax<=vmax1))[0]
+            if len(idx)==0:
+                msg = f'no points with vmax between {vmax}. Use different vmax bounds.'
+                raise ValueError(msg)
+                
+        else:
+            msg = 'vmax must be of type tuple/list, or None.'
+            raise TypeError(msg)
+
+        #update idx_final
+        idx_final = list(set(idx_final) & set(listify(idx)))
+
+        #apply mslp filter
+        if mslp is None:
+            idx = copy.copy(idx_final)
+        
+        elif isinstance(mslp,(tuple,list)) and len(mslp)==2:
+            mslp0,mslp1 = mslp
+            if mslp0 is None:
+                mslp0 = np.nanmin(self.mslp)
+            elif not isinstance(mslp0,(float,int)):
+                msg = 'mslp bounds must be of type float/int or None.'
+                raise TypeError(msg)
+            if mslp1 is None:
+                mslp1 = np.nanmax(self.mslp)
+            elif not isinstance(mslp1,(float,int)):
+                msg = 'mslp bounds must be of type float/int or None.'
+                raise TypeError(msg)            
+            tmpmslp = np.array(self.mslp)
+            idx = np.where((tmpmslp>=mslp0) & (tmpmslp<=mslp1))[0]
+            if len(idx)==0:
+                msg = f'no points with mslp between {mslp}. Use different dmslp_dt bounds.'
+                raise ValueError(msg)
+                
+        else:
+            msg = 'vmax must be of type tuple/list, or None.'
+            raise TypeError(msg)
+
+        #update idx_final
+        idx_final = list(set(idx_final) & set(listify(idx)))
+
+        #apply dvmax_dt filter
+        if dvmax_dt is None:
+            idx = copy.copy(idx_final)
+        
+        elif 'dvmax_dt' not in self.dict.keys():
+            msg = f'dvmax_dt not in storm data. Create new object with interp first.'
+            raise KeyError(msg)            
+        
+        elif isinstance(dvmax_dt,(tuple,list)) and len(dvmax_dt)==2:
+            dvmax_dt0,dvmax_dt1 = dvmax_dt
+            if dvmax_dt0 is None:
+                dvmax_dt0 = np.nanmin(self.dvmax_dt)
+            elif not isinstance(dvmax_dt0,(float,int)):
+                msg = 'dmslp_dt bounds must be of type float/int or None.'
+                raise TypeError(msg)
+            if dvmax_dt1 is None:
+                dvmax_dt1 = np.nanmax(self.dvmax_dt)
+            elif not isinstance(dvmax_dt1,(float,int)):
+                msg = 'dmslp_dt bounds must be of type float/int or None.'
+                raise TypeError(msg)     
+                        
+            tmpvmax = np.array(self.dvmax_dt)
+            idx = np.where((tmpvmax>=dvmax_dt0) & (tmpvmax<=dvmax_dt1))[0]
+            if len(idx)==0:
+                msg = f'no points with dvmax_dt between {dvmax_dt}. Use different dvmax_dt bounds.'
+                raise ValueError(msg)
+
+        #update idx_final
+        idx_final = list(set(idx_final) & set(listify(idx)))
+
+        #apply dmslp_dt filter
+        if dmslp_dt is None:
+            idx = copy.copy(idx_final)
+            
+        elif 'dmslp_dt' not in self.dict.keys():
+            msg = f'dmslp_dt not in storm data. Create new object with interp first.'
+            raise KeyError(msg)   
+            
+        elif isinstance(dmslp_dt,(tuple,list)) and len(dmslp_dt)==2:
+            dmslp_dt0,dmslp_dt1 = dmslp_dt
+            if dmslp_dt0 is None:
+                dmslp_dt0 = np.nanmin(self.dmslp_dt)
+            elif not isinstance(dmslp_dt0,(float,int)):
+                msg = 'dmslp_dt bounds must be of type float/int or None.'
+                raise TypeError(msg)
+            if dmslp_dt1 is None:
+                dmslp_dt1 = np.nanmax(self.dmslp_dt)
+            elif not isinstance(dmslp_dt1,(float,int)):
+                msg = 'dmslp_dt bounds must be of type float/int or None.'
+                raise TypeError(msg)            
+            tmpmslp = np.array(self.dmslp_dt)
+            idx = np.where((tmpmslp>=dmslp_dt0) & (tmpmslp<=dmslp_dt1))[0]
+            if len(idx)==0:
+                msg = f'no points with dmslp_dt between {dmslp_dt}. Use different dmslp_dt bounds.'
+                raise ValueError(msg)
+                
+        #update idx_final
+        idx_final = list(set(idx_final) & set(listify(idx)))
+
+        #apply stormtype filter
+        if stormtype is None:
+            idx = copy.copy(idx_final)
+        
+        elif isinstance(stormtype,(tuple,list,str)):
+            idx = [i for i,j in enumerate(self.type) if j in listify(stormtype)]
+            if len(idx)==0:
+                msg = f'no points with type {stormtype}. Use different stormtype.'
+                raise ValueError(msg)
+                
+        else:
+            msg = 'stormtype must be of type tuple/list, str, or None.'
+            raise TypeError(msg)
+        
+        #update idx_final
+        idx_final = sorted(list(set(idx_final) & set(listify(idx))))
+
+        #Construct new storm dict with subset elements
+        for key in self.dict.keys():
+            if isinstance(self.dict[key], list) == True:
+                NEW_STORM.dict[key] = [self.dict[key][i] for i in idx_final]
+            else:
+                NEW_STORM.dict[key] = self.dict[key]
+            
+            #Add other attributes to new storm object
+            if key == 'realtime': continue
+            if isinstance(NEW_STORM.dict[key], list) == False and isinstance(NEW_STORM.dict[key], dict) == False:
+                NEW_STORM[key] = NEW_STORM.dict[key]
+                NEW_STORM.coords[key] = NEW_STORM.dict[key]
+            if isinstance(NEW_STORM.dict[key], list) == True and isinstance(NEW_STORM.dict[key], dict) == False:
+                NEW_STORM.vars[key] = np.array(NEW_STORM.dict[key])
+                NEW_STORM[key] = np.array(NEW_STORM.dict[key])                
+                
+        return NEW_STORM
+
+    def interp(self,timeres=1,dt_window=24,dt_align='middle'):
+        
+        r"""
+        Interpolate a storm temporally to a specified time resolution.
+        
+        Parameters
+        ----------
+        timeres : int
+            Temporal resolution in hours to interpolate storm data to. Default is 1 hour.
+        dt_window : int
+            Time window in hours over which to calculate temporal change data. Default is 24 hours.
+        dt_align : str
+            Whether to align the temporal change window as "start", "middle" or "end" of the dt_window time period.
+        
+        Returns
+        -------
+        storm object
+            New storm object containing the updated dictionary.
+        """
+        
+        NEW_STORM = copy.copy(self)
+        newdict = interp_storm(self.dict,timeres,dt_window,dt_align)
+        for key in newdict.keys(): 
+            NEW_STORM.dict[key] = newdict[key]
+
+        #Add other attributes to new storm object
+        for key in NEW_STORM.dict.keys():
+            if key == 'realtime': continue
+            if isinstance(NEW_STORM.dict[key], (np.ndarray,list)) == False and isinstance(NEW_STORM.dict[key], dict) == False:
+                NEW_STORM[key] = NEW_STORM.dict[key]
+                NEW_STORM.coords[key] = NEW_STORM.dict[key]
+            if isinstance(NEW_STORM.dict[key], (np.ndarray,list)) == True and isinstance(NEW_STORM.dict[key], dict) == False:
+                NEW_STORM.dict[key] = list(NEW_STORM.dict[key])
+                NEW_STORM.vars[key] = np.array(NEW_STORM.dict[key])
+                NEW_STORM[key] = np.array(NEW_STORM.dict[key])
+                
+        return NEW_STORM
+
     def to_dict(self):
         
         r"""
@@ -1373,7 +1652,7 @@ class Storm:
             plt.show()
             plt.close()
             
-    def get_recon(self,deltap_thresh=8,save_path="",read_path="",update=False):
+    def get_recon(self,deltap_thresh=8,save_path="",read_path="",mission_url_list=None,update=False):
         
         r"""
         Creates an instance of ReconDataset for this storm's data. Saves it as an attribute of this object (storm.recon).
@@ -1388,7 +1667,7 @@ class Storm:
             Filepath to read saved recon data from. If specified, "save_path" cannot be passed as an argument.
         """
         
-        self.recon = ReconDataset(self,deltap_thresh,save_path,read_path,update)
+        self.recon = ReconDataset(self,deltap_thresh,mission_url_list,save_path,read_path,update)
                 
     def get_archer(self):
         

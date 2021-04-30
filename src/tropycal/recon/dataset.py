@@ -56,7 +56,7 @@ class ReconDataset:
     Recon data is currently read in via Tropical Atlantic. Future releases of Tropycal will incorporate NHC recon archives.
     """
 
-    def __init__(self,storm,deltap_thresh=8,save_path="",read_path="",update=False):
+    def __init__(self, storm, deltap_thresh=8, mission_url_list=None, save_path="", read_path="", update=False):
         
         #Error check
         #if save_path != "" and read_path != "":
@@ -69,26 +69,27 @@ class ReconDataset:
         self.year = str(storm.year)
         self.deltap_thresh = deltap_thresh
         self.UPDATE = update
+        self.mission_url_list = mission_url_list
+        
         #If reading in a pickled file, load it in
         if read_path != "":
             self.missiondata = pickle.load(open(read_path,'rb'))
             if self.UPDATE:
                 self.missiondata = self.allMissions()
-        
+
         #Otherwise, retrieve all mission data for this storm
         else:
             self.missiondata = self.allMissions()
-            
+
             #Save mission data as a pickle if necessary
         if save_path != "": pickle.dump(self.missiondata,open(save_path,'wb'),-1)
-        
+
         #Convert recon data to storm-centered coordinates
         self.recentered = self.recenter()
-        
-        #print(f'Most recent data: {max(self.recentered['time']):%Y %b %d %H:%M} UTC')
-        #print(f'Most recent center pass: {max(self.recentered.loc[self.recentered['iscenter']>0]['time']):%Y %b %d %H:%M} UTC')
-            
-        
+
+    #print(f'Most recent data: {max(self.recentered['time']):%Y %b %d %H:%M} UTC')
+    #print(f'Most recent center pass: {max(self.recentered.loc[self.recentered['iscenter']>0]['time']):%Y %b %d %H:%M} UTC')
+
     def getMission(self,agency,mission_num,url_mission=None):
         if url_mission is None:
             url_mission = f'{self.url_prefix}basin=al&year={self.year}&product=hdob&storm={self.storm}&mission={mission_num}&agency={agency}'
@@ -162,7 +163,11 @@ class ReconDataset:
 
     def allMissions(self):
         url_storm = f'{self.url_prefix}basin=al&year={self.year}&storm={self.storm}&product=hdob'
-        missions = pd.read_html(url_storm)[0]
+        if self.mission_url_list is None:
+            missions = pd.read_html(url_storm)[0]
+        else:
+            URL_LIST = self.mission_url_list
+            missions = pd.DataFrame.from_dict({'Agency':['listedurl']*len(URL_LIST),'MissionNumber':[f'{n:02}' for n in range(len(URL_LIST))],'URL':URL_LIST})
         if self.UPDATE:
             missiondata = self.missiondata
             lastMissionNumber = max([int(x.split('_')[0]) for x in list(missiondata.keys())])
@@ -174,9 +179,15 @@ class ReconDataset:
         timer_start = dt.now()
         print(f'--> Starting to read in recon missions')
         for i_mission in range(0,idxf):
-            mission_num = str(missions['MissionNumber'][i_mission]).zfill(2)
-            agency = ''.join(filter(str.isalpha, missions['Agency'][i_mission]))
-            missiondata[f'{mission_num}_{agency}'] = self.getMission(agency,mission_num)
+            if self.mission_url_list is None:
+                mission_num = str(missions['MissionNumber'][i_mission]).zfill(2)
+                agency = ''.join(filter(str.isalpha, missions['Agency'][i_mission]))
+                missiondata[f'{mission_num}_{agency}'] = self.getMission(agency,mission_num)
+            else:
+                mission_num = missions['MissionNumber'][i_mission]
+                agency = missions['Agency'][i_mission]
+                url = missions['URL'][i_mission]
+                missiondata[f'{mission_num}{agency}'] = self.getMission(agency,mission_num,url)
             print(f'{mission_num}_{agency}')
         print('--> Completed reading in recon missions (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
         return missiondata
@@ -381,7 +392,7 @@ class ReconDataset:
 
     
     def plot_hovmoller(self,recon_select=None,varname='wspd',radlim=None,track_dict=None,plane_p_range=None,\
-                       ax=None,return_ax=False,**kwargs):
+                       window=6,align='center',ax=None,return_ax=False,**kwargs):
         
         r"""
         Creates a hovmoller plot of azimuthally-averaged recon data.
@@ -432,7 +443,7 @@ class ReconDataset:
             track_dict = self.storm_obj.dict
         
         #Interpolate recon data to a hovmoller
-        iRecon = interpRecon(dfRecon,varname,radlim)
+        iRecon = interpRecon(dfRecon,varname,radlim,window=window,align=align)
         Hov_dict = iRecon.interpHovmoller(track_dict)
 
         #title = get_recon_title(varname) #may not be necessary
@@ -484,10 +495,6 @@ class ReconDataset:
         for tick in ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(14)
         
-        #Format x-axis ticks
-        cbar.ax.xaxis.set_ticks(np.linspace(0,1,len(clevs)))
-        cbar.ax.xaxis.set_ticklabels(clevs,fontsize=14)
-        
         #Set axes labels
         ax.set_ylabel('UTC Time (MM-DD HH)',fontsize=15)
         ax.set_xlabel('Radius (km)',fontsize=15)
@@ -506,7 +513,7 @@ class ReconDataset:
 
     #PLOT FUNCTION FOR RECON MAPS
     def plot_maps(self,recon_select=None,varname='wspd',track_dict=None,recon_stats=None,domain="dynamic",\
-                  radlim=None,plane_p_range=None,ax=None,return_ax=False,savetopath=None,cartopy_proj=None,**kwargs):
+                  window=6,align='center',radlim=None,plane_p_range=None,ax=None,return_ax=False,savetopath=None,cartopy_proj=None,**kwargs):
     
         #plot_time, plot_mission (only for dots)
         
@@ -578,18 +585,23 @@ class ReconDataset:
                 track_dict['time'] = track_dict['date']
                 
         if ONE_MAP:
-            clon = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lon'])
-            clat = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lat'])
+            f = interp1d(mdates.date2num(track_dict['time']),track_dict['lon'], fill_value='extrapolate')
+            clon = f(mdates.date2num(recon_select))
+            f = interp1d(mdates.date2num(track_dict['time']),track_dict['lat'], fill_value='extrapolate')
+            clat = f(mdates.date2num(recon_select))
+            
+            #clon = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lon'])
+            #clat = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lat'])
             track_dict = {'time':recon_select,'lon':clon,'lat':clat}
         
         if MULTIVAR:
             Maps=[]
             for v in varname:
-                iRecon = interpRecon(dfRecon,v,radlim)
+                iRecon = interpRecon(dfRecon,v,radlim,window=window,align=align)
                 tmpMaps = iRecon.interpMaps(track_dict)
                 Maps.append(tmpMaps)
         else:
-            iRecon = interpRecon(dfRecon,varname,radlim)
+            iRecon = interpRecon(dfRecon,varname,radlim,window=window,align=align)
             Maps = iRecon.interpMaps(track_dict)
                 
         #titlename,units = get_recon_title(varname)

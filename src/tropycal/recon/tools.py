@@ -28,11 +28,13 @@ class interpRecon:
     Interpolates storm-centered data by time and space.
     """
     
-    def __init__(self,dfRecon,varname,radlim=None):
+    def __init__(self,dfRecon,varname,radlim=None,window=6,align='center'):
         
         #Retrieve dataframe containing recon data, and variable to be interpolated
         self.dfRecon = dfRecon
         self.varname = varname
+        self.window = window
+        self.align = align
         
         #Specify outer radius cutoff in kilometer
         if radlim is None:
@@ -75,7 +77,10 @@ class interpRecon:
         
         #Within the RMW, replace NaNs with minimum value within the RMW
         filleye = np.where((grid_rho<rmw) & (np.isnan(grid_z_pol)))
-        grid_z_pol[filleye]=np.nanmin(grid_z_pol[np.where(grid_rho<rmw)])
+        try:
+            grid_z_pol[filleye]=np.nanmin(grid_z_pol[np.where(grid_rho<rmw)])
+        except:
+            pass
     
         #Return fields
         return grid_rho, grid_phi, grid_z_pol      
@@ -121,7 +126,7 @@ class interpRecon:
         return grid_x, grid_y, grid_z
     
 
-    def interpHovmoller(self,target_track,window=4,align='backward'):
+    def interpHovmoller(self,target_track):
         r"""
         Creates storm-centered interpolated data in polar coordinates for each timestep, and averages azimuthally to create a hovmoller.
         
@@ -130,6 +135,9 @@ class interpRecon:
         window = hours
             sets window in hours relative to the time of center pass for interpolation use.
         """
+    
+        window = self.window
+        align = self.align
     
         #Store the dataframe containing recon data
         tmpRecon = self.dfRecon.copy()
@@ -169,7 +177,8 @@ class interpRecon:
 
         #Interpolate over every half hour
         newTimes = np.arange(mdates.date2num(trackTimes[0]),mdates.date2num(trackTimes[-1])+1e-3,1/48)    
-        oldTimes = mdates.date2num(spaceInterpTimes)
+        oldTimes = mdates.date2num(np.array(list(spaceInterpData.keys())))
+        print(len(oldTimes),reconArray.shape)
         reconTimeInterp=np.apply_along_axis(lambda x: np.interp(newTimes,oldTimes,x),
                                  axis=0,arr=reconArray)
         time_elapsed = dt.now() - start_time
@@ -181,11 +190,14 @@ class interpRecon:
         self.Hovmoller = {'time':mdates.num2date(newTimes),'radius':grid_rho[0,:],'hovmoller':reconTimeInterp}
         return self.Hovmoller
 
-    def interpMaps(self,target_track,interval=0.5,window=6,align='center',stat_vars=None):
+    def interpMaps(self,target_track,interval=0.5,stat_vars=None):
         r"""
         1. Can just output a single map (interpolated to lat/lon grid and projected onto the Cartopy map
         2. If target_track is longer than 1, outputs multiple maps to a directory
         """
+        
+        window = self.window
+        align = self.align
         
         #Store the dataframe containing recon data
         tmpRecon = self.dfRecon.copy()
@@ -233,7 +245,7 @@ class interpRecon:
         #If multiple times, create a lat & lon grid for half hour intervals
         if len(trackTimes)>1:
             newTimes = np.arange(mdates.date2num(trackTimes[0]),mdates.date2num(trackTimes[-1])+interval/24,interval/24)    
-            oldTimes = mdates.date2num(spaceInterpTimes)
+            oldTimes = mdates.date2num(np.array(list(spaceInterpData.keys())))
             reconTimeInterp=np.apply_along_axis(lambda x: np.interp(newTimes,oldTimes,x),
                                  axis=0,arr=reconArray)
             #Get centered lat and lon by interpolating from target_track dictionary (whether archer or HURDAT)

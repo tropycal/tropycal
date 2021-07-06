@@ -84,6 +84,11 @@ class Realtime():
         all_keys = [k for k in self.data.keys()]
         for key in all_keys:
             
+            #Filter for storm duration
+            if len(self.data[key]['date']) == 0:
+                del self.data[key]
+                continue
+            
             #Get last date
             last_date = self.data[key]['date'][-1]
             current_date = dt.utcnow()
@@ -252,6 +257,14 @@ class Realtime():
         #Get relevant filenames from directory
         files = []
         search_pattern = f'b[isw][ohp][01234][0123456789]{current_year}.dat'
+
+        pattern = re.compile(search_pattern)
+        filelist = pattern.findall(string)
+        for filename in filelist:
+            if filename not in files: files.append(filename)
+        
+        #Search for following year (for SH storms)
+        search_pattern = f'b[isw][ohp][01234][0123456789]{current_year+1}.dat'
 
         pattern = re.compile(search_pattern)
         filelist = pattern.findall(string)

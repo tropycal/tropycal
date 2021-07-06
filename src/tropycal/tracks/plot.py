@@ -1051,6 +1051,277 @@ None,prop={},map_prop={}):
         else:
             plt.show()
             plt.close()
+
+    def plot_ensembles(self,forecast,storm_dict,fhr,prop_ensemble_members,prop_ensemble_mean,prop_gfs,prop_ellipse,prop_density,nens,
+                       domain,ds,ax,return_ax,map_prop,save_path):
+        
+        r"""
+        
+        """
+        
+        #Set default properties
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        default_prop_ensemble_members = {'linewidth':0.5, 'linecolor':'k'}
+        default_prop_ensemble_mean = {'linewidth':2.0, 'linecolor':'k'}
+        default_prop_gfs = {'linewidth':2.0, 'linecolor':'b'}
+        default_prop_ellipse = {'linewidth':2.0, 'linecolor':'r'}
+        default_prop_density = {'radius':200, 'cmap':plt.cm.YlOrRd, 'levels':[i for i in range(5,105,5)]}
+        
+        #Initialize plot
+        map_prop = self.add_prop(map_prop,default_map_prop)
+        if prop_ensemble_members != None: prop_ensemble_members = self.add_prop(prop_ensemble_members,default_prop_ensemble_members)
+        if prop_ensemble_mean != None: prop_ensemble_mean = self.add_prop(prop_ensemble_mean,default_prop_ensemble_mean)
+        if prop_gfs != None: prop_gfs = self.add_prop(prop_gfs,default_prop_gfs)
+        if prop_ellipse != None: prop_ellipse = self.add_prop(prop_ellipse,default_prop_ellipse)
+        if prop_density != None: prop_density = self.add_prop(prop_density,default_prop_density)
+        self.plot_init(ax,map_prop)
+        
+        #================================================================================================
+        
+        #Iterate over all forecast hours
+        for hr in fhr:
+
+            #Keep record of lat/lon coordinate extrema
+            max_lat = None
+            min_lat = None
+            max_lon = None
+            min_lon = None
+
+            #================================================================================================
+
+            #Plot density
+            if prop_density != None and hr in ds['gefs']['fhr']:
+
+                #Create 0.5 degree grid for plotting
+                gridlats = np.arange(0,90,0.25)
+                gridlons = np.arange(180-360.0,360-360.0,0.25)
+                gridlons2d,gridlats2d = np.meshgrid(gridlons,gridlats)
+                griddata = np.zeros((gridlons2d.shape))
+
+                #Iterate over all ensemble members
+                for ens in range(nens):
+
+                    #Proceed if hour is available
+                    if hr in ds[f'gefs_{ens}']['fhr']:
+                        idx = ds[f'gefs_{ens}']['fhr'].index(hr)
+                        griddata += add_radius(gridlats2d, gridlons2d, ds[f'gefs_{ens}']['lat'][idx],
+                                               ds[f'gefs_{ens}']['lon'][idx], prop_density['radius']) #350-km radius
+
+                #Convert density to percent
+                idx = ds[f'gefs']['fhr'].index(hr)
+                #density_percent = (griddata / ds['eps']['members'][idx]) * 100.0
+                density_percent = (griddata / nens) * 100.0
+
+                #Plot density
+                clevs = np.arange(5,105,5)
+                cs = self.ax.contourf(gridlons, gridlats, density_percent, prop_density['levels'],
+                                      cmap=prop_density['cmap'], alpha=0.6, transform=ccrs.PlateCarree())
+                cbar = plt.colorbar(cs,ticks=np.arange(5,105,5))
+                cbar.ax.tick_params(labelsize=12)
+
+            #Plot ellipse
+            if hr in ds['gefs']['fhr'] and prop_ellipse != None:
+                idx = ds['gefs']['fhr'].index(hr)
+
+                try:
+                    self.ax.plot(ds['gefs']['ellipse_lon'][idx],ds['gefs']['ellipse_lat'][idx],'-', color='w', linewidth=3.4,
+                             transform=ccrs.PlateCarree(), alpha=0.8)
+                    self.ax.plot(ds['gefs']['ellipse_lon'][idx],ds['gefs']['ellipse_lat'][idx],'-', color='b', linewidth=2.8,
+                             transform=ccrs.PlateCarree(), alpha=0.8)
+                except:
+                    pass
+
+            #Plot GEFS member tracks
+            for i in range(nens):
+                
+                #Update coordinate bounds
+                skip_bounds = False
+                if hr in ds[f'gefs_{i}']['fhr']:
+                    use_lats = ds[f'gefs_{i}']['lat'][:idx+1]
+                    use_lons = ds[f'gefs_{i}']['lon'][:idx+1]
+                else:
+                    diff = [ihr-hr for ihr in ds[f'gefs_{i}']['fhr']]
+                    idx = np.where(np.array(diff)>0)[0]
+                    if len(idx) > 0:
+                        use_lats = ds[f'gefs_{i}']['lat'][:idx[0]]
+                        use_lons = ds[f'gefs_{i}']['lon'][:idx[0]]
+                    else:
+                        skip_bounds = True
+                
+                if skip_bounds == False:
+                    if max_lat == None:
+                        max_lat = np.nanmax(use_lats)
+                    else:
+                        if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
+                    if min_lat == None:
+                        min_lat = np.nanmin(use_lats)
+                    else:
+                        if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
+                    if max_lon == None:
+                        max_lon = np.nanmax(use_lons)
+                    else:
+                        if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
+                    if min_lon == None:
+                        min_lon = np.nanmin(use_lons)
+                    else:
+                        if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
+                
+                if hr in ds[f'gefs_{i}']['fhr']:
+                    idx = ds[f'gefs_{i}']['fhr'].index(hr)
+                    self.ax.plot(ds[f'gefs_{i}']['lon'][:idx+1], ds[f'gefs_{i}']['lat'][:idx+1], linewidth=0.2,
+                             color='k', transform=ccrs.PlateCarree())
+                    self.ax.plot(ds[f'gefs_{i}']['lon'][idx], ds[f'gefs_{i}']['lat'][idx], 'o', ms=4, mfc='k',mec='k',
+                             alpha=0.6,transform=ccrs.PlateCarree())
+                elif len(ds[f'gefs_{i}']['fhr']) > 0:
+                    diff = [ihr-hr for ihr in ds[f'gefs_{i}']['fhr']]
+                    idx = np.where(np.array(diff)>0)[0]
+                    if len(idx) > 0:
+                        self.ax.plot(ds[f'gefs_{i}']['lon'][:idx[0]], ds[f'gefs_{i}']['lat'][:idx[0]], linewidth=0.2,
+                                 color='k', transform=ccrs.PlateCarree())
+
+            #Plot operational GFS track
+            if hr in ds['gfs']['fhr']:
+                
+                #Update coordinate bounds
+                skip_bounds = False
+                if hr in ds['gfs']['fhr']:
+                    use_lats = ds['gfs']['lat'][:idx+1]
+                    use_lons = ds['gfs']['lon'][:idx+1]
+                else:
+                    diff = [ihr-hr for ihr in ds['gfs']['fhr']]
+                    idx = np.where(np.array(diff)>0)[0]
+                    if len(idx) > 0:
+                        use_lats = ds['gfs']['lat'][:idx[0]]
+                        use_lons = ds['gfs']['lon'][:idx[0]]
+                    else:
+                        skip_bounds = True
+                
+                if skip_bounds == False:
+                    if max_lat == None:
+                        max_lat = np.nanmax(use_lats)
+                    else:
+                        if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
+                    if min_lat == None:
+                        min_lat = np.nanmin(use_lats)
+                    else:
+                        if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
+                    if max_lon == None:
+                        max_lon = np.nanmax(use_lons)
+                    else:
+                        if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
+                    if min_lon == None:
+                        min_lon = np.nanmin(use_lons)
+                    else:
+                        if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
+                
+                idx = ds['gfs']['fhr'].index(hr)
+                self.ax.plot(ds['gfs']['lon'][:idx+1], ds['gfs']['lat'][:idx+1], linewidth=3.0, color='r', transform=ccrs.PlateCarree())
+                self.ax.plot(ds['gfs']['lon'][idx], ds['gfs']['lat'][idx], 'o', ms=12, mfc='r',mec='k', transform=ccrs.PlateCarree())
+            elif len(ds['gfs']['fhr']) > 0:
+                diff = [ihr-hr for ihr in ds['gfs']['fhr']]
+                idx = np.where(np.array(diff)>0)[0]
+                if len(idx) > 0:
+                    self.ax.plot(ds['gfs']['lon'][:idx[0]], ds['gfs']['lat'][:idx[0]], linewidth=3.0, color='r', transform=ccrs.PlateCarree())
+
+            #Plot ensemble mean track
+            if hr in ds['gefs']['fhr']:
+                
+                #Update coordinate bounds
+                skip_bounds = False
+                if hr in ds['gefs']['fhr']:
+                    use_lats = ds['gefs']['lat'][:idx+1]
+                    use_lons = ds['gefs']['lon'][:idx+1]
+                else:
+                    diff = [ihr-hr for ihr in ds['gefs']['fhr']]
+                    idx = np.where(np.array(diff)>0)[0]
+                    if len(idx) > 0:
+                        use_lats = ds['gefs']['lat'][:idx[0]]
+                        use_lons = ds['gefs']['lon'][:idx[0]]
+                    else:
+                        skip_bounds = True
+                
+                if skip_bounds == False:
+                    if max_lat == None:
+                        max_lat = np.nanmax(use_lats)
+                    else:
+                        if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
+                    if min_lat == None:
+                        min_lat = np.nanmin(use_lats)
+                    else:
+                        if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
+                    if max_lon == None:
+                        max_lon = np.nanmax(use_lons)
+                    else:
+                        if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
+                    if min_lon == None:
+                        min_lon = np.nanmin(use_lons)
+                    else:
+                        if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
+                
+                idx = ds['gefs']['fhr'].index(hr)
+                self.ax.plot(ds['gefs']['lon'][:idx+1], ds['gefs']['lat'][:idx+1], linewidth=3.0, color='k', transform=ccrs.PlateCarree())
+                self.ax.plot(ds['gefs']['lon'][idx], ds['gefs']['lat'][idx], 'o', ms=12, mfc='k',mec='k', transform=ccrs.PlateCarree())
+            elif len(ds['gefs']['fhr']) > 0:
+                diff = [ihr-hr for ihr in ds['gefs']['fhr']]
+                idx = np.where(np.array(diff)>0)[0]
+                if len(idx) > 0:
+                    self.ax.plot(ds['gefs']['lon'][:idx[0]], ds['gefs']['lat'][:idx[0]], linewidth=3.0, color='k', transform=ccrs.PlateCarree())
+
+            #================================================================================================
+
+            #Add legend
+            import matplotlib.patches as mpatches
+            import matplotlib.lines as mlines
+            p1 = mlines.Line2D([], [], color='r', linewidth=3.0, label='Deterministic GFS')
+            p2 = mlines.Line2D([], [], color='k', linewidth=3.0, label='GEFS Mean')
+            p3 = mlines.Line2D([], [], color='k', linewidth=0.5, label='GEFS Members')
+            p4 = mlines.Line2D([], [], color='w', marker='o', ms=12, mec='b', mew=2.0, label='GEFS Ellipse')
+            l = self.ax.legend(handles=[p1,p2,p3,p4],loc=1,prop={'size':14})
+            l.set_zorder(200)
+
+            #Plot title
+            plot_title = f"GEFS Forecast Tracks for {storm_dict['name'].title()}"
+            if prop_density != None: plot_title += f"\nTrack Density ({np.int(prop_density['radius'])}-km radius)"
+            self.ax.set_title(plot_title,fontsize=18,loc='left',fontweight='bold')
+
+            title_str = f"Hour {hr} | Valid {(forecast+timedelta(hours=hr)).strftime('%H%M UTC %d %B %Y')}\n"
+            title_str += f"Initialized {forecast.strftime('%H%M UTC %d %B %Y')}"
+            self.ax.set_title(title_str,fontsize=14,loc='right')
+
+            #--------------------------------------------------------------------------------------
+
+            #Storm-centered plot domain
+            if domain == "dynamic":
+
+                bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
+                self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
+
+            #Pre-generated or custom domain
+            else:
+                bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
+
+            #Plot parallels and meridians
+            #This is currently not supported for all cartopy projections.
+            try:
+                self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+            except:
+                pass
+
+            #--------------------------------------------------------------------------------------
+
+            credit_text = self.plot_credit()
+            self.add_credit(credit_text)
+
+            #Save image if specified
+            if save_path != None and isinstance(save_path,str) == True:
+                plt.savefig(os.path.join(save_path,f"{storm_data['name']}_{storm_data['year']}_track.png"),bbox_inches='tight')
+
+            #Return axis if specified, otherwise display figure
+            if ax != None or return_ax == True:
+                return self.ax
+            else:
+                plt.show()
+                plt.close()
     
     def plot_season(self,season,domain=None,ax=None,return_ax=False,prop={},map_prop={}):
         
@@ -1232,11 +1503,9 @@ None,prop={},map_prop={}):
                 if display_name.lower() == 'unnamed':
                     display_name = int(storm_data['id'][2:4]) if len(storm_data['id']) == 8 else 'UNNAMED'
 
-                if lons[0]>(bound_w+0.5) and lons[0]<(bound_e-0.5) and lats[0]>(bound_s-0.5) and lats[0]<(bound_n-0.5):
-                    self.ax.text(lons[0],lats[0]+1.0,display_name,alpha=0.7,
+                self.ax.text(lons[0],lats[0]+1.0,display_name,alpha=0.7,clip_on=True,
                              fontweight='bold',fontsize=8.5,color='k',ha='center',va='center',transform=ccrs.PlateCarree())
-                if lons[-1]>(bound_w+0.5) and lons[-1]<(bound_e-0.5) and lats[-1]>(bound_s-0.5) and lats[-1]<(bound_n-0.5):
-                    self.ax.text(lons[-1],lats[-1]+1.0,display_name,alpha=0.7,
+                self.ax.text(lons[-1],lats[-1]+1.0,display_name,alpha=0.7,clip_on=True,
                              fontweight='bold',fontsize=8.5,color='k',ha='center',va='center',transform=ccrs.PlateCarree())
         
         #--------------------------------------------------------------------------------------
@@ -1424,6 +1693,7 @@ None,prop={},map_prop={}):
         #Radii are in nautical miles
         cone_climo_hr = [3,12,24,36,48,72,96,120]
         cone_size_atl = {}
+        cone_size_atl[2021] = [16,27,40,55,69,86,102,148,200]
         cone_size_atl[2020] = [16,26,41,55,69,86,103,151,196]
         cone_size_atl[2019] = [16,26,41,54,68,102,151,198]
         cone_size_atl[2018] = [16,26,43,56,74,103,151,198]
@@ -1439,6 +1709,7 @@ None,prop={},map_prop={}):
         cone_size_atl[2008] = [16,39,67,92,118,170,233,305]
 
         cone_size_pac = {}
+        cone_size_pac[2021] = [16,25,37,51,64,77,89,114,138]
         cone_size_pac[2020] = [16,25,38,51,65,78,91,115,138]
         cone_size_pac[2019] = [16,25,38,48,62,88,115,145]
         cone_size_pac[2018] = [16,25,39,50,66,94,125,162]
@@ -1466,17 +1737,26 @@ None,prop={},map_prop={}):
             else:
                 cone_size = 0
                 #raise RuntimeError("Error: No cone information is available for the requested basin.")
+        
+        elif cone_year > np.max([k for k in cone_size_atl.keys()]):
+            cone_year = [k for k in cone_size_atl.keys()][0]
+            warnings.warn(f"No cone information is available for the requested year. Defaulting to {cone_year} cone.")
+            if forecast['basin'] == 'north_atlantic':
+                cone_size = cone_size_atl[cone_year]
+            elif forecast['basin'] == 'east_pacific':
+                cone_size = cone_size_pac[cone_year]
+            else:
+                cone_size = 0
+            
         else:
             cone_year = 2008
             warnings.warn(f"No cone information is available for the requested year. Defaulting to 2008 cone.")
             if forecast['basin'] == 'north_atlantic':
-                cone_size = cone_size_atl[2008]
+                cone_size = cone_size_atl[cone_year]
             elif forecast['basin'] == 'east_pacific':
-                cone_size = cone_size_pac[2008]
+                cone_size = cone_size_pac[cone_year]
             else:
                 cone_size = 0
-                #raise RuntimeError("Error: No cone information is available for the requested basin.")
-            #raise RuntimeError("Error: No cone information is available for the requested year.")
         
         #Fix for 2020 that now incorporates 60 hour forecasts
         if fcst_year >= 2020:

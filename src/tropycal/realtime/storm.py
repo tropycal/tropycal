@@ -590,7 +590,10 @@ class RealtimeStorm(Storm):
             current_advisory['motion_direction'] = result.split(" OR ")[0]
             results = [i for i in content if 'systemDirectionOfMotion' in i][0]
             result = (results.split(">")[1]).split("<")[0]
-            current_advisory['motion_direction_degrees'] = int((result.split(" OR ")[1]).split(" DEGREES")[0])
+            try:
+                current_advisory['motion_direction_degrees'] = int((result.split(" OR ")[1]).split(" DEGREES")[0])
+            except:
+                current_advisory['motion_direction_degrees'] = 0
 
             #Get storm speed
             results = [i for i in content if 'systemSpeedMph' in i][0]

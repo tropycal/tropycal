@@ -465,7 +465,8 @@ class ReconDataset:
         #------------------------------------------------------------------------------
         
         #Create plot        
-        plt.figure(figsize=(9,11),dpi=150)
+        #plt.figure(figsize=(9,11),dpi=150)
+        plt.figure(figsize=(9,9),dpi=150) #CHANGE THIS OR ELSE
         ax = plt.subplot()
         
         #Plot surface category colors individually, necessitating normalizing colormap
@@ -613,7 +614,8 @@ class ReconDataset:
         if not ONE_MAP:
             
             if savetopath is True:
-                savetopath = f'{self.storm}{self.year}_{varname}_maps'
+                #savetopath = f'{self.storm}{self.year}_{varname}_maps'
+                savetopath = f'{self.storm}{self.year}_maps'
             try:
                 os.system(f'mkdir {savetopath}')
             except:

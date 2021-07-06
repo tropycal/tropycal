@@ -166,7 +166,7 @@ class interpRecon:
         for time in spaceInterpTimes:
             #Temporarily set dfRecon to this centered subset window
             self.dfRecon = tmpRecon[(tmpRecon['time']>time-window) & (tmpRecon['time']<=time)]
-            print(time)
+            #print(time) #temporarily disabling this
             grid_rho, grid_phi, grid_z_pol = self.interpPol() #Create polar centered grid
             grid_azim_mean = np.mean(grid_z_pol,axis=0) #Average azimuthally
             spaceInterpData[time] = grid_azim_mean #Append data for this time step to dictionary
@@ -178,7 +178,7 @@ class interpRecon:
         #Interpolate over every half hour
         newTimes = np.arange(mdates.date2num(trackTimes[0]),mdates.date2num(trackTimes[-1])+1e-3,1/48)    
         oldTimes = mdates.date2num(np.array(list(spaceInterpData.keys())))
-        print(len(oldTimes),reconArray.shape)
+        #print(len(oldTimes),reconArray.shape)
         reconTimeInterp=np.apply_along_axis(lambda x: np.interp(newTimes,oldTimes,x),
                                  axis=0,arr=reconArray)
         time_elapsed = dt.now() - start_time

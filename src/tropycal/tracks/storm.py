@@ -117,45 +117,51 @@ class Storm:
 
         return "\n".join(summary)
     
-    def __init__(self,storm,stormTors=None):
+    def __init__(self,storm,stormTors=None,read_path=""):
         
-        #Save the dict entry of the storm
-        self.dict = storm
+        if read_path == "" or os.path.isfile(read_path) == False:
+
+            #Save the dict entry of the storm
+            self.dict = storm
+
+            #Add other attributes about the storm
+            keys = self.dict.keys()
+            self.coords = {}
+            self.vars = {}
+            for key in keys:
+                if key == 'realtime': continue
+                if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
+                    self[key] = self.dict[key]
+                    self.coords[key] = self.dict[key]
+                if isinstance(self.dict[key], list) == True and isinstance(self.dict[key], dict) == False:
+                    self.vars[key] = np.array(self.dict[key])
+                    self[key] = np.array(self.dict[key])
+
+            #Assign tornado data
+            if stormTors != None and isinstance(stormTors,dict) == True:
+                self.stormTors = stormTors['data']
+                self.tornado_dist_thresh = stormTors['dist_thresh']
+                self.coords['Tornado Count'] = len(stormTors['data'])
+
+            #Get Archer track data for this storm, if it exists
+            try:
+                self.get_archer()
+            except:
+                pass
+
+            #Determine if storm object was retrieved via realtime object
+            if 'realtime' in keys and self.dict['realtime'] == True:
+                self.realtime = True
+                self.coords['realtime'] = True
+            else:
+                self.realtime = False
+                self.coords['realtime'] = False
         
-        #Add other attributes about the storm
-        keys = self.dict.keys()
-        self.coords = {}
-        self.vars = {}
-        for key in keys:
-            if key == 'realtime': continue
-            if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
-                self[key] = self.dict[key]
-                self.coords[key] = self.dict[key]
-            if isinstance(self.dict[key], list) == True and isinstance(self.dict[key], dict) == False:
-                self.vars[key] = np.array(self.dict[key])
-                self[key] = np.array(self.dict[key])
-                
-        #Assign tornado data
-        if stormTors != None and isinstance(stormTors,dict) == True:
-            self.stormTors = stormTors['data']
-            self.tornado_dist_thresh = stormTors['dist_thresh']
-            self.coords['Tornado Count'] = len(stormTors['data'])
-        
-        #Get Archer track data for this storm, if it exists
-        try:
-            self.get_archer()
-        except:
-            pass
-            
-        #Determine if storm object was retrieved via realtime object
-        if 'realtime' in keys and self.dict['realtime'] == True:
-            self.realtime = True
-            self.coords['realtime'] = True
         else:
-            self.realtime = False
-            self.coords['realtime'] = False
-
-
+            
+            #This functionality currently does not exist
+            raise ExceptionError("This functionality has not been implemented yet.")
+    
     def sel(self,time=None,lat=None,lon=None,vmax=None,mslp=None,\
             dvmax_dt=None,dmslp_dt=None,stormtype=None,method='exact'):
         
@@ -202,7 +208,7 @@ class Storm:
         """
         
         #create copy of storm object
-        NEW_STORM = copy.copy(self)
+        NEW_STORM = Storm(copy.deepcopy(self.dict))
         idx_final = np.arange(len(self.date))
         
         #apply time filter
@@ -210,7 +216,7 @@ class Storm:
             idx = copy.copy(idx_final)
         
         elif isinstance(time,dt):
-            time_diff = np.array([(time-i).total_seconds() for i in self.date])
+            time_diff = np.array([(time-i).total_seconds() for i in NEW_STORM.date])
             idx = np.abs(time_diff).argmin()
             if time_diff[idx]!=0:
                 if method=='exact':
@@ -230,16 +236,16 @@ class Storm:
         elif isinstance(time,(tuple,list)) and len(time)==2:
             time0,time1 = time
             if time0 is None:
-                time0 = min(self.date)
+                time0 = min(NEW_STORM.date)
             elif not isinstance(time0,dt):
                 msg = 'time bounds must be of type datetime.datetime or None.'
                 raise TypeError(msg)
             if time1 is None:
-                time1 = max(self.date)
+                time1 = max(NEW_STORM.date)
             elif not isinstance(time1,dt):
                 msg = 'time bounds must be of type datetime.datetime or None.'
                 raise TypeError(msg)            
-            tmptimes = np.array(self.date)
+            tmptimes = np.array(NEW_STORM.date)
             idx = np.where((tmptimes>=time0) & (tmptimes<=time1))[0]
             if len(idx)==0:
                 msg = f'no points between {time}. Use different time bounds.'
@@ -257,7 +263,7 @@ class Storm:
             idx = copy.copy(idx_final)
             
         elif isinstance(lat,(int,float)) and isinstance(lon,(int,float)):
-            dist = np.array([great_circle((lat,lon),(x,y)).kilometers for x,y in zip(self.lon,self.lat)])
+            dist = np.array([great_circle((lat,lon),(x,y)).kilometers for x,y in zip(NEW_STORM.lon,NEW_STORM.lat)])
             idx = np.abs(dist).argmin()
             if dist[idx]!=0:
                 if method=='exact':
@@ -277,27 +283,27 @@ class Storm:
             lat0,lat1 = lat
             lon0,lon1 = lon
             if lat0 is None:
-                lat0 = min(self.lat)
+                lat0 = min(NEW_STORM.lat)
             elif not isinstance(lat0,(float,int)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if lat1 is None:
-                lat1 = max(self.lat)
+                lat1 = max(NEW_STORM.lat)
             elif not isinstance(lat1,(float,int)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if lon0 is None:
-                lon0 = min(self.lon)
+                lon0 = min(NEW_STORM.lon)
             elif not isinstance(lon0,(float,int)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if lon1 is None:
-                lon1 = max(self.lon)
+                lon1 = max(NEW_STORM.lon)
             elif not isinstance(lon1,(float,int)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
                 
-            tmplat,tmplon = np.array(self.lat),np.array(self.lon)%360
+            tmplat,tmplon = np.array(NEW_STORM.lat),np.array(NEW_STORM.lon)%360
             idx = np.where((tmplat>=lat0) & (tmplat<=lat1) & \
                            (tmplon>=lon0%360) & (tmplon<=lon1%360))[0]
             if len(idx)==0:
@@ -318,16 +324,16 @@ class Storm:
         elif isinstance(vmax,(tuple,list)) and len(vmax)==2:
             vmax0,vmax1 = vmax
             if vmax0 is None:
-                vmax0 = np.nanmin(self.vmax)
+                vmax0 = np.nanmin(NEW_STORM.vmax)
             elif not isinstance(vmax0,(float,int)):
                 msg = 'vmax bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if vmax1 is None:
-                vmax1 = np.nanmax(self.vmax)
+                vmax1 = np.nanmax(NEW_STORM.vmax)
             elif not isinstance(vmax1,(float,int)):
                 msg = 'vmax bounds must be of type float/int or None.'
                 raise TypeError(msg)            
-            tmpvmax = np.array(self.vmax)
+            tmpvmax = np.array(NEW_STORM.vmax)
             idx = np.where((tmpvmax>=vmax0) & (tmpvmax<=vmax1))[0]
             if len(idx)==0:
                 msg = f'no points with vmax between {vmax}. Use different vmax bounds.'
@@ -347,16 +353,16 @@ class Storm:
         elif isinstance(mslp,(tuple,list)) and len(mslp)==2:
             mslp0,mslp1 = mslp
             if mslp0 is None:
-                mslp0 = np.nanmin(self.mslp)
+                mslp0 = np.nanmin(NEW_STORM.mslp)
             elif not isinstance(mslp0,(float,int)):
                 msg = 'mslp bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if mslp1 is None:
-                mslp1 = np.nanmax(self.mslp)
+                mslp1 = np.nanmax(NEW_STORM.mslp)
             elif not isinstance(mslp1,(float,int)):
                 msg = 'mslp bounds must be of type float/int or None.'
                 raise TypeError(msg)            
-            tmpmslp = np.array(self.mslp)
+            tmpmslp = np.array(NEW_STORM.mslp)
             idx = np.where((tmpmslp>=mslp0) & (tmpmslp<=mslp1))[0]
             if len(idx)==0:
                 msg = f'no points with mslp between {mslp}. Use different dmslp_dt bounds.'
@@ -373,24 +379,24 @@ class Storm:
         if dvmax_dt is None:
             idx = copy.copy(idx_final)
         
-        elif 'dvmax_dt' not in self.dict.keys():
+        elif 'dvmax_dt' not in NEW_STORM.dict.keys():
             msg = f'dvmax_dt not in storm data. Create new object with interp first.'
             raise KeyError(msg)            
         
         elif isinstance(dvmax_dt,(tuple,list)) and len(dvmax_dt)==2:
             dvmax_dt0,dvmax_dt1 = dvmax_dt
             if dvmax_dt0 is None:
-                dvmax_dt0 = np.nanmin(self.dvmax_dt)
+                dvmax_dt0 = np.nanmin(NEW_STORM.dvmax_dt)
             elif not isinstance(dvmax_dt0,(float,int)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if dvmax_dt1 is None:
-                dvmax_dt1 = np.nanmax(self.dvmax_dt)
+                dvmax_dt1 = np.nanmax(NEW_STORM.dvmax_dt)
             elif not isinstance(dvmax_dt1,(float,int)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)     
                         
-            tmpvmax = np.array(self.dvmax_dt)
+            tmpvmax = np.array(NEW_STORM.dvmax_dt)
             idx = np.where((tmpvmax>=dvmax_dt0) & (tmpvmax<=dvmax_dt1))[0]
             if len(idx)==0:
                 msg = f'no points with dvmax_dt between {dvmax_dt}. Use different dvmax_dt bounds.'
@@ -403,23 +409,23 @@ class Storm:
         if dmslp_dt is None:
             idx = copy.copy(idx_final)
             
-        elif 'dmslp_dt' not in self.dict.keys():
+        elif 'dmslp_dt' not in NEW_STORM.dict.keys():
             msg = f'dmslp_dt not in storm data. Create new object with interp first.'
             raise KeyError(msg)   
             
         elif isinstance(dmslp_dt,(tuple,list)) and len(dmslp_dt)==2:
             dmslp_dt0,dmslp_dt1 = dmslp_dt
             if dmslp_dt0 is None:
-                dmslp_dt0 = np.nanmin(self.dmslp_dt)
+                dmslp_dt0 = np.nanmin(NEW_STORM.dmslp_dt)
             elif not isinstance(dmslp_dt0,(float,int)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if dmslp_dt1 is None:
-                dmslp_dt1 = np.nanmax(self.dmslp_dt)
+                dmslp_dt1 = np.nanmax(NEW_STORM.dmslp_dt)
             elif not isinstance(dmslp_dt1,(float,int)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)            
-            tmpmslp = np.array(self.dmslp_dt)
+            tmpmslp = np.array(NEW_STORM.dmslp_dt)
             idx = np.where((tmpmslp>=dmslp_dt0) & (tmpmslp<=dmslp_dt1))[0]
             if len(idx)==0:
                 msg = f'no points with dmslp_dt between {dmslp_dt}. Use different dmslp_dt bounds.'
@@ -433,7 +439,7 @@ class Storm:
             idx = copy.copy(idx_final)
         
         elif isinstance(stormtype,(tuple,list,str)):
-            idx = [i for i,j in enumerate(self.type) if j in listify(stormtype)]
+            idx = [i for i,j in enumerate(NEW_STORM.type) if j in listify(stormtype)]
             if len(idx)==0:
                 msg = f'no points with type {stormtype}. Use different stormtype.'
                 raise ValueError(msg)
@@ -446,11 +452,11 @@ class Storm:
         idx_final = sorted(list(set(idx_final) & set(listify(idx))))
 
         #Construct new storm dict with subset elements
-        for key in self.dict.keys():
-            if isinstance(self.dict[key], list) == True:
-                NEW_STORM.dict[key] = [self.dict[key][i] for i in idx_final]
+        for key in NEW_STORM.dict.keys():
+            if isinstance(NEW_STORM.dict[key], list) == True:
+                NEW_STORM.dict[key] = [NEW_STORM.dict[key][i] for i in idx_final]
             else:
-                NEW_STORM.dict[key] = self.dict[key]
+                NEW_STORM.dict[key] = NEW_STORM.dict[key]
             
             #Add other attributes to new storm object
             if key == 'realtime': continue
@@ -800,6 +806,163 @@ class Storm:
         #Return axis
         if ax != None or return_ax == True: return plot_ax
         
+    
+    #PLOT FUNCTION FOR HURDAT
+    def plot_gefs_ensembles(self,forecast,fhr=None,
+                            prop_members = {'linewidth':0.5, 'linecolor':'k'},
+                            prop_mean = {'linewidth':2.0, 'linecolor':'k'},
+                            prop_gfs = {'linewidth':2.0, 'linecolor':'b'},
+                            prop_ellipse = {'linewidth':2.0, 'linecolor':'r'},
+                            prop_density = {'radius':200, 'cmap':plt.cm.YlOrRd, 'levels':[i for i in range(5,105,5)]},
+                            domain="dynamic",ax=None,return_ax=False,cartopy_proj=None,save_path=None,map_prop={}):
+        
+        r"""
+        (Add track history like we do for NHC forecasts)
+        (Add verification for archived events)
+        
+        Creates a plot of individual GEFS ensemble tracks.
+        
+        Parameters
+        ----------
+        forecast : datetime.datetime
+            Datetime object representing the GEFS run initialization.
+        fhr : int or list, optional
+            Forecast hour(s) to plot. If None (default), a plot of all forecast hours will be produced. If a list, multiple plots will be produced. If an integer, a single plot will be produced.
+        plot_density : bool, optional
+            If True, track density will be computed and plotted in addition to individual ensemble tracks.
+        domain : str
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        return_ax : bool
+            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
+        
+        Other Parameters
+        ----------------
+        prop : dict
+            Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
+        map_prop : dict
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        """
+        
+        #Create instance of plot object
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
+        
+        #Create cartopy projection
+        if cartopy_proj == None:
+            if max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+            else:
+                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        else:
+            self.plot_obj.proj = cartopy_proj
+        
+        #-------------------------------------------------------------------------
+        
+        #Get forecasts dict saved into storm object, if it hasn't been already
+        try:
+            self.forecast_dict
+        except:
+            self.get_operational_forecasts()
+        
+        #Create dict to store all data in
+        ds = {'gfs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]},
+              'gefs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[],
+                      'members':[],'ellipse_lat':[],'ellipse_lon':[]}
+              }
+        
+        #String formatting for ensembles
+        def str2(ens):
+            if ens == 0: return "AC00"
+            if ens < 10: return f"AP0{ens}"
+            return f"AP{ens}"
+
+        #Get GFS forecast entry
+        try:
+            forecast_gfs = self.forecast_dict['AVNO'][forecast.strftime("%Y%m%d%H")]
+        except:
+            raise RuntimeError("The requested initialization isn't available for this storm.")
+        
+        #Enter into dict entry
+        ds['gfs']['fhr'] = [int(i) for i in forecast_gfs['fhr']]
+        ds['gfs']['lat'] = [np.round(i,1) for i in forecast_gfs['lat']]
+        ds['gfs']['lon'] = [np.round(i,1) for i in forecast_gfs['lon']]
+        ds['gfs']['vmax'] = [float(i) for i in forecast_gfs['vmax']]
+        ds['gfs']['mslp'] = forecast_gfs['mslp']
+        ds['gfs']['date'] = [forecast+timedelta(hours=i) for i in forecast_gfs['fhr']]
+        
+        #Retrieve GEFS ensemble data (30 members 2019-present, 20 members prior)
+        nens = 0
+        for ens in range(0,31):
+            
+            #Create dict entry
+            ds[f'gefs_{ens}'] = {'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]}
+
+            #Retrieve ensemble member data
+            ens_str = str2(ens)
+            if ens_str not in self.forecast_dict.keys(): continue
+            forecast_ens = self.forecast_dict[ens_str][forecast.strftime("%Y%m%d%H")]
+
+            #Enter into dict entry
+            ds[f'gefs_{ens}']['fhr'] = [int(i) for i in forecast_ens['fhr']]
+            ds[f'gefs_{ens}']['lat'] = [np.round(i,1) for i in forecast_ens['lat']]
+            ds[f'gefs_{ens}']['lon'] = [np.round(i,1) for i in forecast_ens['lon']]
+            ds[f'gefs_{ens}']['vmax'] = [float(i) for i in forecast_ens['vmax']]
+            ds[f'gefs_{ens}']['mslp'] = forecast_ens['mslp']
+            ds[f'gefs_{ens}']['date'] = [forecast+timedelta(hours=i) for i in forecast_ens['fhr']]
+            nens += 1
+
+        #Construct ensemble mean data
+        #Iterate through all forecast hours
+        for iter_fhr in range(0,246,6):
+
+            #Temporary data arrays
+            temp_data = {}
+            for key in ds['gfs'].keys():
+                if key not in ['date','fhr']: temp_data[key] = []
+
+            #Iterate through ensemble member
+            for ens in range(nens):
+
+                #Determine if member has data valid at this forecast hour
+                if iter_fhr in ds[f'gefs_{ens}']['fhr']:
+
+                    #Retrieve index
+                    idx = ds[f'gefs_{ens}']['fhr'].index(iter_fhr)
+
+                    #Append data
+                    for key in ds['gfs'].keys():
+                        if key not in ['date','fhr']: temp_data[key].append(ds[f'gefs_{ens}'][key][idx])
+
+            #Proceed if 20 or more ensemble members
+            if len(temp_data['lat']) >= 10:
+
+                #Append data
+                for key in ds['gfs'].keys():
+                    if key not in ['date','fhr']:
+                        ds['gefs'][key].append(np.nanmean(temp_data[key]))
+                ds['gefs']['fhr'].append(iter_fhr)
+                ds['gefs']['date'].append(forecast+timedelta(hours=iter_fhr))
+                ds['gefs']['members'].append(len(temp_data['lat']))
+
+                #Calculate ellipse data
+                if prop_ellipse != None:
+                    ellipse_data = plot_ellipse(temp_data['lat'],temp_data['lon'])
+                    ds['gefs']['ellipse_lon'].append(ellipse_data['xell'])
+                    ds['gefs']['ellipse_lat'].append(ellipse_data['yell'])
+        
+        #Plot storm
+        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_members,prop_mean,prop_gfs,prop_ellipse,prop_density,nens,domain,ds,ax=ax,return_ax=return_ax,map_prop=map_prop,save_path=save_path)
+        
+        #Return axis
+        if ax != None or return_ax == True: return plot_ax
     
     def list_nhc_discussions(self):
         

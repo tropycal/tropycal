@@ -9,3 +9,5 @@ docs/_api/generated/
 
 *.egg-info
 .eggs/
+build/
+dist/

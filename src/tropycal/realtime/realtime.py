@@ -84,6 +84,11 @@ class Realtime():
         all_keys = [k for k in self.data.keys()]
         for key in all_keys:
             
+            #Filter for storm duration
+            if len(self.data[key]['date']) == 0:
+                del self.data[key]
+                continue
+            
             #Get last date
             last_date = self.data[key]['date'][-1]
             current_date = dt.utcnow()

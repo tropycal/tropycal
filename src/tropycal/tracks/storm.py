@@ -208,7 +208,7 @@ class Storm:
         """
         
         #create copy of storm object
-        NEW_STORM = copy.copy(self)
+        NEW_STORM = Storm(copy.deepcopy(self.dict))
         idx_final = np.arange(len(self.date))
         
         #apply time filter
@@ -216,7 +216,7 @@ class Storm:
             idx = copy.copy(idx_final)
         
         elif isinstance(time,dt):
-            time_diff = np.array([(time-i).total_seconds() for i in self.date])
+            time_diff = np.array([(time-i).total_seconds() for i in NEW_STORM.date])
             idx = np.abs(time_diff).argmin()
             if time_diff[idx]!=0:
                 if method=='exact':
@@ -236,16 +236,16 @@ class Storm:
         elif isinstance(time,(tuple,list)) and len(time)==2:
             time0,time1 = time
             if time0 is None:
-                time0 = min(self.date)
+                time0 = min(NEW_STORM.date)
             elif not isinstance(time0,dt):
                 msg = 'time bounds must be of type datetime.datetime or None.'
                 raise TypeError(msg)
             if time1 is None:
-                time1 = max(self.date)
+                time1 = max(NEW_STORM.date)
             elif not isinstance(time1,dt):
                 msg = 'time bounds must be of type datetime.datetime or None.'
                 raise TypeError(msg)            
-            tmptimes = np.array(self.date)
+            tmptimes = np.array(NEW_STORM.date)
             idx = np.where((tmptimes>=time0) & (tmptimes<=time1))[0]
             if len(idx)==0:
                 msg = f'no points between {time}. Use different time bounds.'
@@ -263,7 +263,7 @@ class Storm:
             idx = copy.copy(idx_final)
             
         elif isinstance(lat,(int,float)) and isinstance(lon,(int,float)):
-            dist = np.array([great_circle((lat,lon),(x,y)).kilometers for x,y in zip(self.lon,self.lat)])
+            dist = np.array([great_circle((lat,lon),(x,y)).kilometers for x,y in zip(NEW_STORM.lon,NEW_STORM.lat)])
             idx = np.abs(dist).argmin()
             if dist[idx]!=0:
                 if method=='exact':
@@ -283,27 +283,27 @@ class Storm:
             lat0,lat1 = lat
             lon0,lon1 = lon
             if lat0 is None:
-                lat0 = min(self.lat)
+                lat0 = min(NEW_STORM.lat)
             elif not isinstance(lat0,(float,int)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if lat1 is None:
-                lat1 = max(self.lat)
+                lat1 = max(NEW_STORM.lat)
             elif not isinstance(lat1,(float,int)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if lon0 is None:
-                lon0 = min(self.lon)
+                lon0 = min(NEW_STORM.lon)
             elif not isinstance(lon0,(float,int)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if lon1 is None:
-                lon1 = max(self.lon)
+                lon1 = max(NEW_STORM.lon)
             elif not isinstance(lon1,(float,int)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
                 
-            tmplat,tmplon = np.array(self.lat),np.array(self.lon)%360
+            tmplat,tmplon = np.array(NEW_STORM.lat),np.array(NEW_STORM.lon)%360
             idx = np.where((tmplat>=lat0) & (tmplat<=lat1) & \
                            (tmplon>=lon0%360) & (tmplon<=lon1%360))[0]
             if len(idx)==0:
@@ -324,16 +324,16 @@ class Storm:
         elif isinstance(vmax,(tuple,list)) and len(vmax)==2:
             vmax0,vmax1 = vmax
             if vmax0 is None:
-                vmax0 = np.nanmin(self.vmax)
+                vmax0 = np.nanmin(NEW_STORM.vmax)
             elif not isinstance(vmax0,(float,int)):
                 msg = 'vmax bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if vmax1 is None:
-                vmax1 = np.nanmax(self.vmax)
+                vmax1 = np.nanmax(NEW_STORM.vmax)
             elif not isinstance(vmax1,(float,int)):
                 msg = 'vmax bounds must be of type float/int or None.'
                 raise TypeError(msg)            
-            tmpvmax = np.array(self.vmax)
+            tmpvmax = np.array(NEW_STORM.vmax)
             idx = np.where((tmpvmax>=vmax0) & (tmpvmax<=vmax1))[0]
             if len(idx)==0:
                 msg = f'no points with vmax between {vmax}. Use different vmax bounds.'
@@ -353,16 +353,16 @@ class Storm:
         elif isinstance(mslp,(tuple,list)) and len(mslp)==2:
             mslp0,mslp1 = mslp
             if mslp0 is None:
-                mslp0 = np.nanmin(self.mslp)
+                mslp0 = np.nanmin(NEW_STORM.mslp)
             elif not isinstance(mslp0,(float,int)):
                 msg = 'mslp bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if mslp1 is None:
-                mslp1 = np.nanmax(self.mslp)
+                mslp1 = np.nanmax(NEW_STORM.mslp)
             elif not isinstance(mslp1,(float,int)):
                 msg = 'mslp bounds must be of type float/int or None.'
                 raise TypeError(msg)            
-            tmpmslp = np.array(self.mslp)
+            tmpmslp = np.array(NEW_STORM.mslp)
             idx = np.where((tmpmslp>=mslp0) & (tmpmslp<=mslp1))[0]
             if len(idx)==0:
                 msg = f'no points with mslp between {mslp}. Use different dmslp_dt bounds.'
@@ -379,24 +379,24 @@ class Storm:
         if dvmax_dt is None:
             idx = copy.copy(idx_final)
         
-        elif 'dvmax_dt' not in self.dict.keys():
+        elif 'dvmax_dt' not in NEW_STORM.dict.keys():
             msg = f'dvmax_dt not in storm data. Create new object with interp first.'
             raise KeyError(msg)            
         
         elif isinstance(dvmax_dt,(tuple,list)) and len(dvmax_dt)==2:
             dvmax_dt0,dvmax_dt1 = dvmax_dt
             if dvmax_dt0 is None:
-                dvmax_dt0 = np.nanmin(self.dvmax_dt)
+                dvmax_dt0 = np.nanmin(NEW_STORM.dvmax_dt)
             elif not isinstance(dvmax_dt0,(float,int)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if dvmax_dt1 is None:
-                dvmax_dt1 = np.nanmax(self.dvmax_dt)
+                dvmax_dt1 = np.nanmax(NEW_STORM.dvmax_dt)
             elif not isinstance(dvmax_dt1,(float,int)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)     
                         
-            tmpvmax = np.array(self.dvmax_dt)
+            tmpvmax = np.array(NEW_STORM.dvmax_dt)
             idx = np.where((tmpvmax>=dvmax_dt0) & (tmpvmax<=dvmax_dt1))[0]
             if len(idx)==0:
                 msg = f'no points with dvmax_dt between {dvmax_dt}. Use different dvmax_dt bounds.'
@@ -409,23 +409,23 @@ class Storm:
         if dmslp_dt is None:
             idx = copy.copy(idx_final)
             
-        elif 'dmslp_dt' not in self.dict.keys():
+        elif 'dmslp_dt' not in NEW_STORM.dict.keys():
             msg = f'dmslp_dt not in storm data. Create new object with interp first.'
             raise KeyError(msg)   
             
         elif isinstance(dmslp_dt,(tuple,list)) and len(dmslp_dt)==2:
             dmslp_dt0,dmslp_dt1 = dmslp_dt
             if dmslp_dt0 is None:
-                dmslp_dt0 = np.nanmin(self.dmslp_dt)
+                dmslp_dt0 = np.nanmin(NEW_STORM.dmslp_dt)
             elif not isinstance(dmslp_dt0,(float,int)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if dmslp_dt1 is None:
-                dmslp_dt1 = np.nanmax(self.dmslp_dt)
+                dmslp_dt1 = np.nanmax(NEW_STORM.dmslp_dt)
             elif not isinstance(dmslp_dt1,(float,int)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)            
-            tmpmslp = np.array(self.dmslp_dt)
+            tmpmslp = np.array(NEW_STORM.dmslp_dt)
             idx = np.where((tmpmslp>=dmslp_dt0) & (tmpmslp<=dmslp_dt1))[0]
             if len(idx)==0:
                 msg = f'no points with dmslp_dt between {dmslp_dt}. Use different dmslp_dt bounds.'
@@ -439,7 +439,7 @@ class Storm:
             idx = copy.copy(idx_final)
         
         elif isinstance(stormtype,(tuple,list,str)):
-            idx = [i for i,j in enumerate(self.type) if j in listify(stormtype)]
+            idx = [i for i,j in enumerate(NEW_STORM.type) if j in listify(stormtype)]
             if len(idx)==0:
                 msg = f'no points with type {stormtype}. Use different stormtype.'
                 raise ValueError(msg)
@@ -452,11 +452,11 @@ class Storm:
         idx_final = sorted(list(set(idx_final) & set(listify(idx))))
 
         #Construct new storm dict with subset elements
-        for key in self.dict.keys():
-            if isinstance(self.dict[key], list) == True:
-                NEW_STORM.dict[key] = [self.dict[key][i] for i in idx_final]
+        for key in NEW_STORM.dict.keys():
+            if isinstance(NEW_STORM.dict[key], list) == True:
+                NEW_STORM.dict[key] = [NEW_STORM.dict[key][i] for i in idx_final]
             else:
-                NEW_STORM.dict[key] = self.dict[key]
+                NEW_STORM.dict[key] = NEW_STORM.dict[key]
             
             #Add other attributes to new storm object
             if key == 'realtime': continue
@@ -959,7 +959,7 @@ class Storm:
                     ds['gefs']['ellipse_lat'].append(ellipse_data['yell'])
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_ensemble_members,prop_ensemble_mean,prop_gfs,prop_ellipse,prop_density,nens,domain,ds,ax=ax,return_ax=return_ax,map_prop=map_prop,save_path=save_path)
+        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_members,prop_mean,prop_gfs,prop_ellipse,prop_density,nens,domain,ds,ax=ax,return_ax=return_ax,map_prop=map_prop,save_path=save_path)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax

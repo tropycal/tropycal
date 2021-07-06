@@ -1693,6 +1693,7 @@ None,prop={},map_prop={}):
         #Radii are in nautical miles
         cone_climo_hr = [3,12,24,36,48,72,96,120]
         cone_size_atl = {}
+        cone_size_atl[2021] = [16,27,40,55,69,86,102,148,200]
         cone_size_atl[2020] = [16,26,41,55,69,86,103,151,196]
         cone_size_atl[2019] = [16,26,41,54,68,102,151,198]
         cone_size_atl[2018] = [16,26,43,56,74,103,151,198]
@@ -1708,6 +1709,7 @@ None,prop={},map_prop={}):
         cone_size_atl[2008] = [16,39,67,92,118,170,233,305]
 
         cone_size_pac = {}
+        cone_size_pac[2021] = [16,25,37,51,64,77,89,114,138]
         cone_size_pac[2020] = [16,25,38,51,65,78,91,115,138]
         cone_size_pac[2019] = [16,25,38,48,62,88,115,145]
         cone_size_pac[2018] = [16,25,39,50,66,94,125,162]
@@ -1735,17 +1737,26 @@ None,prop={},map_prop={}):
             else:
                 cone_size = 0
                 #raise RuntimeError("Error: No cone information is available for the requested basin.")
+        
+        elif cone_year > np.max([k for k in cone_size_atl.keys()]):
+            cone_year = [k for k in cone_size_atl.keys()][0]
+            warnings.warn(f"No cone information is available for the requested year. Defaulting to {cone_year} cone.")
+            if forecast['basin'] == 'north_atlantic':
+                cone_size = cone_size_atl[cone_year]
+            elif forecast['basin'] == 'east_pacific':
+                cone_size = cone_size_pac[cone_year]
+            else:
+                cone_size = 0
+            
         else:
             cone_year = 2008
             warnings.warn(f"No cone information is available for the requested year. Defaulting to 2008 cone.")
             if forecast['basin'] == 'north_atlantic':
-                cone_size = cone_size_atl[2008]
+                cone_size = cone_size_atl[cone_year]
             elif forecast['basin'] == 'east_pacific':
-                cone_size = cone_size_pac[2008]
+                cone_size = cone_size_pac[cone_year]
             else:
                 cone_size = 0
-                #raise RuntimeError("Error: No cone information is available for the requested basin.")
-            #raise RuntimeError("Error: No cone information is available for the requested year.")
         
         #Fix for 2020 that now incorporates 60 hour forecasts
         if fcst_year >= 2020:

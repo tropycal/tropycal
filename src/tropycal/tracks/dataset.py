@@ -121,8 +121,8 @@ class TrackDataset:
     def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,doInterp=False,**kwargs):
         
         #kwargs
-        atlantic_url = kwargs.pop('atlantic_url', 'https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2019-042820.txt')
-        pacific_url = kwargs.pop('pacific_url', 'https://www.nhc.noaa.gov/data/hurdat/hurdat2-nepac-1949-2019-042320.txt')
+        atlantic_url = kwargs.pop('atlantic_url', 'https://www.aoml.noaa.gov/hrd/hurdat/hurdat2.html')
+        pacific_url = kwargs.pop('pacific_url', 'https://www.aoml.noaa.gov/hrd/hurdat/hurdat2-nepac.html')
         ibtracs_url = kwargs.pop('ibtracs_url', 'https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv')
         ibtracs_mode = kwargs.pop('ibtracs_mode', 'jtwc')
         catarina = kwargs.pop('catarina', False)
@@ -212,14 +212,15 @@ class TrackDataset:
         atl_online = True
         pac_online = True
         fcheck = "https://www.nhc.noaa.gov/data/hurdat/"
-        if fcheck not in self.atlantic_url:
+        fcheck2 = "https://www.aoml.noaa.gov/hrd/hurdat/"
+        if fcheck not in self.atlantic_url and fcheck2 not in self.atlantic_url:
             if "http" in self.atlantic_url:
-                raise RuntimeError("URL provided is not via NHC")
+                raise RuntimeError("URL provided is not via NHC or HRD")
             else:
                 atl_online = False
-        if fcheck not in self.pacific_url:
+        if fcheck not in self.pacific_url and fcheck2 not in self.pacific_url:
             if "http" in self.pacific_url:
-                raise RuntimeError("URL provided is not via NHC")
+                raise RuntimeError("URL provided is not via NHC or HRD")
             else:
                 pac_online = False
         
@@ -259,6 +260,7 @@ class TrackDataset:
             
             #Skip if line is empty
             if len(line) < 2: continue
+            if len(line.replace(" ","")) < 2: continue
             
             #identify if this is a header for a storm or content of storm
             if line[0][0] in ['A','C','E']:
@@ -2802,7 +2804,6 @@ class TrackDataset:
                 
                 #Compute difference grid
                 grid_z = grid_z_1 - grid_z_2
-                print(np.nanmin(grid_z))
                 
                 #Reconstruct lat & lon grids
                 xi = grid_z.lon.values
@@ -2819,7 +2820,6 @@ class TrackDataset:
                 grid_z_2 = xr.DataArray(np.nan_to_num(grid_z_years[1]),coords=[grid_y_years[1].T[0],grid_x_years[1][0]],dims=['lat','lon'])
                 grid_z_check = (grid_z_1 - grid_z_2).values
                 grid_z[grid_z_check==-1000] = np.nan
-                print(np.nanmin(grid_z))
                 
             except ImportError as e:
                 raise RuntimeError("Error: xarray is not available. Install xarray in order to use the subtract year functionality.") from e

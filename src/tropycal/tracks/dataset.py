@@ -260,7 +260,7 @@ class TrackDataset:
             
             #Skip if line is empty
             if len(line) < 2: continue
-            if len(line.replace(" ","")) < 2: continue
+            if line[0][0] == "<": continue
             
             #identify if this is a header for a storm or content of storm
             if line[0][0] in ['A','C','E']:

@@ -33,7 +33,7 @@ author = 'Tropycal Developers'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.2.5s'
+release = '0.2.6'
 
 
 # -- General configuration ---------------------------------------------------

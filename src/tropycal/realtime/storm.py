@@ -175,21 +175,67 @@ class RealtimeStorm(Storm):
     def get_nhc_discussion_realtime(self):
         
         r"""
-        Retrieve the latest available NHC forecast discussion. Available only for NHC sources.
+        Retrieve the latest available forecast discussion. For JTWC storms, the Prognostic Reasoning product is retrieved.
         
         Returns
         -------
         dict
-            Dict entry containing the latest official NHC forecast discussion.
+            Dict entry containing the latest official forecast discussion.
         """
         
-        #Error check
-        if self.source != "hurdat":
-            msg = "This function is only available for storms in NHC's area of responsibility."
-            raise RuntimeError(msg)
+        #Warn about pending deprecation
+        warnings.warn("'get_nhc_discussion_realtime' will be deprecated in future Tropycal versions, use 'get_discussion_realtime' instead",DeprecationWarning)
         
-        #Get the latest forecast discussion
-        return self.get_nhc_discussion(forecast=-1)
+        #Get latest forecast discussion for HURDAT source storm objects
+        if self.source == "hurdat":
+            return self.get_nhc_discussion(forecast=-1)
+        
+        #Get latest forecast discussion for JTWC source storm objects
+        elif self.source == 'jtwc':
+            
+            #Read in discussion file
+            url = f"https://www.metoc.navy.mil/jtwc/products/{self.id[0:2].lower()}{self.id[2:4]}{self.id[6:8]}prog.txt"
+            f = urllib.request.urlopen(url)
+            content = f.read()
+            content = content.decode("utf-8")
+            f.close()
+            return content
+        
+        #Otherwise, return error message
+        else:
+            msg = "No realtime forecast discussion is available for this storm."
+            raise RuntimeError(msg)
+    
+    def get_discussion_realtime(self):
+        
+        r"""
+        Retrieve the latest available forecast discussion. For JTWC storms, the Prognostic Reasoning product is retrieved.
+        
+        Returns
+        -------
+        dict
+            Dict entry containing the latest official forecast discussion.
+        """
+        
+        #Get latest forecast discussion for HURDAT source storm objects
+        if self.source == "hurdat":
+            return self.get_nhc_discussion(forecast=-1)
+        
+        #Get latest forecast discussion for JTWC source storm objects
+        elif self.source == 'jtwc':
+            
+            #Read in discussion file
+            url = f"https://www.metoc.navy.mil/jtwc/products/{self.id[0:2].lower()}{self.id[2:4]}{self.id[6:8]}prog.txt"
+            f = urllib.request.urlopen(url)
+            content = f.read()
+            content = content.decode("utf-8")
+            f.close()
+            return content
+        
+        #Otherwise, return error message
+        else:
+            msg = "No realtime forecast discussion is available for this storm."
+            raise RuntimeError(msg)
     
     def get_forecast_realtime(self):
         
@@ -286,7 +332,7 @@ class RealtimeStorm(Storm):
         else:
             
             #Get forecast for this storm
-            url = f"https://www.nrlmry.navy.mil/atcf_web/docs/current_storms/{self.id.lower()}.sum"
+            url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{self.id.lower()}.com"
             if requests.get(url).status_code != 200: raise RuntimeError("JTWC forecast data is unavailable for this storm.")
             
             #Read file content
@@ -294,35 +340,27 @@ class RealtimeStorm(Storm):
             content = f.read()
             content = content.decode("utf-8")
             content = content.split("\n")
+            content = [(i.replace(" ","")).split(",") for i in content]
             f.close()
 
             #Iterate through every line in content:
-            run_init = content[2].split(" ")[0]
             forecasts = {}
 
-            for line in content[3:]:
-                
-                #Exit once done retrieving forecast
-                if line == "AMP": break
-                
+            for line in content:
+
                 #Get basic components
-                lineArray = line.split(" ")
-                if len(lineArray) < 4: continue
-                
-                #Exit once done retrieving forecast
-                if lineArray[0] == "AMP": break
-                    
+                lineArray = [i.replace(" ","") for i in line]
+                if len(lineArray) < 11: continue
+                basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
+                if model not in ["JTWC"]: continue
+
                 if len(forecasts) == 0:
                     forecasts = {
                         'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
                     }
 
-                #Forecast hour
-                fhr = int(lineArray[0].split("T")[1])
-                
                 #Format lat & lon
-                lat = lineArray[1]
-                lon = lineArray[2]
+                fhr = int(fhr)
                 if "N" in lat:
                     lat_temp = lat.split("N")[0]
                     lat = np.round(float(lat_temp) * 0.1,1)
@@ -337,22 +375,34 @@ class RealtimeStorm(Storm):
                     lon = np.round(float(lon_temp) * 0.1,1)
 
                 #Format vmax & MSLP
-                vmax = int(lineArray[3])
-                if vmax < 10 or vmax > 300: vmax = np.nan
-                mslp = np.nan
+                if vmax == '':
+                    vmax = np.nan
+                else:
+                    vmax = int(vmax)
+                    if vmax < 10 or vmax > 300: vmax = np.nan
+                if mslp == '':
+                    mslp = np.nan
+                else:
+                    mslp = int(mslp)
+                    if mslp < 1: mslp = np.nan
 
                 #Add forecast data to dict if forecast hour isn't already there
                 if fhr not in forecasts['fhr']:
-                    if lat == 0.0 and lon == 0.0: continue
-                    forecasts['fhr'].append(fhr)
-                    forecasts['lat'].append(lat)
-                    forecasts['lon'].append(lon)
-                    forecasts['vmax'].append(vmax)
-                    forecasts['mslp'].append(mslp)
+                    if model in ['OFCL','OFCI'] and fhr > 120:
+                        pass
+                    else:
+                        if lat == 0.0 and lon == 0.0:
+                            continue
+                        forecasts['fhr'].append(fhr)
+                        forecasts['lat'].append(lat)
+                        forecasts['lon'].append(lon)
+                        forecasts['vmax'].append(vmax)
+                        forecasts['mslp'].append(mslp)
 
-                    #Get storm type, if it can be determined
-                    stype = get_storm_type(vmax,False)
-                    forecasts['type'].append(stype)
+                        #Get storm type, if it can be determined
+                        if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
+                            stype = get_storm_type(vmax,False)
+                        forecasts['type'].append(stype)
             
         #Determine ACE thus far (prior to initial forecast hour)
         ace = 0.0

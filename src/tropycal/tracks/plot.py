@@ -1094,7 +1094,7 @@ None,prop={},map_prop={}):
 
                 #Create 0.5 degree grid for plotting
                 gridlats = np.arange(0,90,0.25)
-                gridlons = np.arange(180-360.0,360-360.0,0.25)
+                gridlons = np.arange(180-360.0,180.0,0.25) #gridlons = np.arange(180-360.0,360-360.0,0.25)
                 gridlons2d,gridlats2d = np.meshgrid(gridlons,gridlats)
                 griddata = np.zeros((gridlons2d.shape))
 
@@ -1137,6 +1137,7 @@ None,prop={},map_prop={}):
                 #Update coordinate bounds
                 skip_bounds = False
                 if hr in ds[f'gefs_{i}']['fhr']:
+                    idx = ds[f'gefs_{i}']['fhr'].index(hr)
                     use_lats = ds[f'gefs_{i}']['lat'][:idx+1]
                     use_lons = ds[f'gefs_{i}']['lon'][:idx+1]
                 else:
@@ -1736,7 +1737,6 @@ None,prop={},map_prop={}):
                 cone_size = cone_size_pac[cone_year]
             else:
                 cone_size = 0
-                #raise RuntimeError("Error: No cone information is available for the requested basin.")
         
         elif cone_year > np.max([k for k in cone_size_atl.keys()]):
             cone_year = [k for k in cone_size_atl.keys()][0]
@@ -1759,7 +1759,7 @@ None,prop={},map_prop={}):
                 cone_size = 0
         
         #Fix for 2020 that now incorporates 60 hour forecasts
-        if fcst_year >= 2020:
+        if fcst_year >= 2020 and cone_size > 0:
             cone_climo_hr = [3,12,24,36,48,60,72,96,120]
             cone_size = cone_size[:5]+[np.mean(cone_size[4:6])]+cone_size[5:]
 

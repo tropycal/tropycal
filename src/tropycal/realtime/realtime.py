@@ -251,7 +251,7 @@ class Realtime():
         current_year = (dt.now()).year
 
         #Get list of files in online directory
-        urlpath = urllib.request.urlopen('http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/')
+        urlpath = urllib.request.urlopen('https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/')
         string = urlpath.read().decode('utf-8')
 
         #Get relevant filenames from directory
@@ -285,7 +285,7 @@ class Realtime():
                 add_basin = ''
 
             #add empty entry into dict
-            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'source_method':"UCAR's Tropical Cyclone Guidance Project (TCGP)",'source_url':"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/"}
+            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'source_method':"NOAA SSD",'source_url':"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/"}
             self.data[stormid]['source'] = 'jtwc'
 
             #add empty lists
@@ -294,7 +294,7 @@ class Realtime():
             self.data[stormid]['ace'] = 0.0
 
             #Read in file
-            url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{file}"
+            url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{file}"
             f = urllib.request.urlopen(url)
             content = f.read()
             content = content.decode("utf-8")
@@ -338,7 +338,8 @@ class Realtime():
                 #Get other relevant variables
                 btk_wind = int(line[8])
                 btk_mslp = int(line[9])
-                btk_type = get_storm_type(btk_wind,False)
+                btk_type = line[10]
+                if btk_type == "TY": btk_type = "HU"
                 name = line[27]
 
                 #Replace with NaNs

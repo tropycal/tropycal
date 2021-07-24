@@ -958,6 +958,10 @@ class Storm:
                     ds['gefs']['ellipse_lon'].append(ellipse_data['xell'])
                     ds['gefs']['ellipse_lat'].append(ellipse_data['yell'])
         
+        #Convert fhr to list
+        if isinstance(fhr,int) == True or isinstance(fhr,float) == True:
+            fhr = [fhr]
+        
         #Plot storm
         plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_members,prop_mean,prop_gfs,prop_ellipse,prop_density,nens,domain,ds,ax=ax,return_ax=return_ax,map_prop=map_prop,save_path=save_path)
         
@@ -1485,49 +1489,69 @@ class Storm:
         #Real time ensemble data:
         #https://www.ftp.ncep.noaa.gov/data/nccf/com/ens_tracker/prod/
         
-        #Check to ensure the data source is HURDAT
-        if self.source != "hurdat":
-            msg = "NHC data can only be accessed when HURDAT is used as the data source."
-            raise RuntimeError(msg)
-            
         #If forecasts dict already exist, simply return the dict
         try:
             self.forecast_dict
             return self.forecast_dict
         except:
             pass
-
-        #Get storm ID & corresponding data URL
-        storm_id = self.dict['operational_id']
-        storm_year = self.dict['year']
-        if storm_year <= 2006: storm_id = self.dict['id']
-        if storm_year < 1954:
-            msg = "Forecast data is unavailable for storms prior to 1954."
-            raise RuntimeError(msg)
         
-        #Error check
-        if storm_id == '':
-            msg = "No NHC operational data is available for this storm."
-            raise RuntimeError(msg)
+        #Follow HURDAT procedure
+        if self.source == "hurdat":
+            
+            #Get storm ID & corresponding data URL
+            storm_id = self.dict['operational_id']
+            storm_year = self.dict['year']
+            if storm_year <= 2006: storm_id = self.dict['id']
+            if storm_year < 1954:
+                msg = "Forecast data is unavailable for storms prior to 1954."
+                raise RuntimeError(msg)
 
-        #Check if archive directory exists for requested year, if not redirect to realtime directory
-        url_models = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/a{storm_id.lower()}.dat.gz"
-        if requests.get(url_models).status_code != 200:
-            url_models = f"https://ftp.nhc.noaa.gov/atcf/aid_public/a{storm_id.lower()}.dat.gz"
+            #Error check
+            if storm_id == '':
+                msg = "No NHC operational data is available for this storm."
+                raise RuntimeError(msg)
 
-        #Retrieve model data text
-        if requests.get(url_models).status_code == 200:
-            request = urllib.request.Request(url_models)
-            response = urllib.request.urlopen(request)
-            sio_buffer = BytesIO(response.read())
-            gzf = gzip.GzipFile(fileobj = sio_buffer)
-            data = gzf.read()
-            content = data.splitlines()
-            content = [(i.decode()).split(",") for i in content]
-            content = [i for i in content if len(i) > 10]
-            response.close()
+            #Check if archive directory exists for requested year, if not redirect to realtime directory
+            url_models = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/a{storm_id.lower()}.dat.gz"
+            if requests.get(url_models).status_code != 200:
+                url_models = f"https://ftp.nhc.noaa.gov/atcf/aid_public/a{storm_id.lower()}.dat.gz"
+        
+            #Retrieve model data text
+            if requests.get(url_models).status_code == 200:
+                request = urllib.request.Request(url_models)
+                response = urllib.request.urlopen(request)
+                sio_buffer = BytesIO(response.read())
+                gzf = gzip.GzipFile(fileobj = sio_buffer)
+                data = gzf.read()
+                content = data.splitlines()
+                content = [(i.decode()).split(",") for i in content]
+                content = [i for i in content if len(i) > 10]
+                response.close()
+            else:
+                raise RuntimeError("No operational model data is available for this storm.")
+        
+        #Follow JTWC procedure
         else:
-            raise RuntimeError("No NHC operational data is available for this storm.")
+            
+            #Get storm ID & corresponding data URL
+            storm_year = self.dict['year']
+            if storm_year < 2016:
+                msg = "Forecast data is unavailable for JTWC storms prior to 2016."
+                raise RuntimeError(msg)
+            url_models = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/a{self.id.lower()}.dat"
+            
+            #Retrieve model data text
+            try:
+                f = urllib.request.urlopen(url_models)
+                content = f.read()
+                content = content.decode("utf-8")
+                content = content.split("\n")
+                content = [i.split(",") for i in content]
+                content = [i for i in content if len(i) > 10]
+                f.close()
+            except:
+                raise RuntimeError("No operational model data is available for this storm.")
 
         #Iterate through every line in content:
         forecasts = {}

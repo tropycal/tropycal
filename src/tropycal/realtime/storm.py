@@ -402,6 +402,7 @@ class RealtimeStorm(Storm):
                         #Get storm type, if it can be determined
                         if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
                             stype = get_storm_type(vmax,False)
+                        if stype == 'TY': stype = 'HU'
                         forecasts['type'].append(stype)
             
         #Determine ACE thus far (prior to initial forecast hour)

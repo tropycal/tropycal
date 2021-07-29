@@ -2414,7 +2414,7 @@ class TrackDataset:
                 
         return ace_rank
 
-    def filter_storms(self,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=None,doInterp=False,return_keys=True):
+    def filter_storms(self,storm=None,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=None,doInterp=False,return_keys=True):
         
         r"""
         Filters all storms by various thresholds.
@@ -2451,7 +2451,7 @@ class TrackDataset:
         """
         
         #Update thresh based on input
-        default_thresh={'sample_min':1,'p_max':9999,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,'speed_max':9999,'speed_min':-9999,
+        default_thresh={'sample_min':1,'p_max':9999,'p_min':0,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,'speed_max':9999,'speed_min':-9999,
                         'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
@@ -2493,7 +2493,20 @@ class TrackDataset:
             points[name] = []
         
         #Iterate over every storm in TrackDataset
-        for key in self.keys:
+        if storm is not None:
+            if isinstance(storm,list):
+                if isinstance(storm[0],tuple):
+                    stormkeys = [self.get_storm_id(s) for s in storm]
+                else:
+                    stormkeys=storm
+            elif isinsance(storm,tuple):
+                stormkeys = [self.get_storm_id(storm)]
+            else:
+                stormkeys = [storm]
+        else:
+            stormkeys = self.keys
+        
+        for key in stormkeys:
             
             #Retrieve storm dict
             istorm = self.data[key].copy()
@@ -2549,6 +2562,8 @@ class TrackDataset:
             p = p.loc[(p['vmax']<=thresh['v_max'])]
         if thresh['p_max']<9999:
             p = p.loc[(p['mslp']<=thresh['p_max'])]
+        if thresh['p_min']>0:
+            p = p.loc[(p['mslp']>=thresh['p_min'])]
         if doInterp:
             if thresh['dv_min']>-9999:
                 p = p.loc[(p['dvmax_dt']>=thresh['dv_min'])]
@@ -2569,7 +2584,7 @@ class TrackDataset:
         else:
             return p
 
-    def gridded_stats(self,request,thresh={},year_range=None,year_range_subtract=None,year_average=False,
+    def gridded_stats(self,request,thresh={},storm=None,year_range=None,year_range_subtract=None,year_average=False,
                       date_range=('1/1','12/31'),binsize=1,domain=None,ax=None,return_ax=False,\
                       return_array=False,cartopy_proj=None,prop={},map_prop={}):
         
@@ -2660,28 +2675,37 @@ class TrackDataset:
         thresh,func = find_func(request,thresh)
         thresh,varname = find_var(request,thresh)
         thresh,plot_subtitle = construct_title(thresh)
-        
+        if storm is not None:
+            thresh['sample_min']=1
+            plot_subtitle = ''
+            
         #Determine whether request includes a vector (i.e., TC motion vector)
         VEC_FLAG = isinstance(varname,tuple)
         
         #Determine year range of plot
-        if year_range == None:
+        def get_year_range(y_r):
             start_year = self.data[self.keys[0]]['year']
-            end_year = self.data[self.keys[-1]]['year']
-            year_range = (start_year,end_year)
+            end_year = self.data[self.keys[-1]]['year']  
+            if y_r is None:
+                new_y_r = (start_year,end_year)
+            else:
+                if isinstance(y_r,(list,tuple)) == False:
+                    msg = "\"year_range\" and \"year_range_subtract\" must be of type list or tuple."
+                    raise ValueError(msg)
+                if len(year_range_subtract) != 2:
+                    msg = "\"year_range\" and \"year_range_subtract\" must contain 2 elements."                
+                    raise ValueError(msg)
+                new_y_r = (max((start_year,min(y_r))),min((end_year,max(y_r))))
+            return new_y_r
+        
+        year_range = get_year_range(year_range)
         
         #Start date in numpy datetime64
         startdate = np.datetime64('2000-'+'-'.join([f'{int(d):02}' for d in date_range[0].split('/')]))
         
         #Determine year range to subtract, if making a difference plot
-        if year_range_subtract != None:
-            if isinstance(year_range_subtract,(list,tuple)) == False:
-                msg = "\"year_range_subtract\" must be of type list or tuple."
-                raise TypeError(msg)
-            if len(year_range_subtract) != 2:
-                msg = "\"year_range_subtract\" must contain 2 elements."
-                raise ValueError(msg)
-            year_range_subtract = tuple(year_range_subtract)
+        if year_range_subtract is not None:
+            year_range_subtract = get_year_range(year_range_subtract)
         
         #---------------------------------------------------------------------------------------------------
         
@@ -2698,7 +2722,7 @@ class TrackDataset:
 
             #Obtain all data points for the requested threshold and year/date ranges. Interpolate data to hourly.
             print("--> Getting filtered storm tracks")
-            points = self.filter_storms(year_range_temp,date_range,thresh=thresh,doInterp=True,return_keys=False)
+            points = self.filter_storms(storm,year_range_temp,date_range,thresh=thresh,doInterp=True,return_keys=False)
 
             #Round lat/lon points down to nearest bin
             to_bin = lambda x: np.floor(x / binsize) * binsize
@@ -2820,6 +2844,7 @@ class TrackDataset:
                 grid_z_2 = xr.DataArray(np.nan_to_num(grid_z_years[1]),coords=[grid_y_years[1].T[0],grid_x_years[1][0]],dims=['lat','lon'])
                 grid_z_check = (grid_z_1 - grid_z_2).values
                 grid_z[grid_z_check==-1000] = np.nan
+                print(np.nanmin(grid_z))
                 
             except ImportError as e:
                 raise RuntimeError("Error: xarray is not available. Install xarray in order to use the subtract year functionality.") from e
@@ -2861,12 +2886,28 @@ class TrackDataset:
         title_L = title_L[0].upper() + title_L[1:] + plot_subtitle
         
         #Format right title for plot
-        date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
-        add_avg = ' year-avg' if year_average == True else ''
-        if year_range_subtract == None:
-            title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")} {dot} {year_range[0]} {endash} {year_range[1]}{add_avg}'
+        if storm is not None:
+            if isinstance(storm,list):
+                title_R = 'Storm Composite'
+            else:
+                if isinstance(storm,str):
+                    storm = basin.get_storm_tuple(storm)
+                title_R = f'{storm[0]} {storm[1]}'
         else:
-            title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")}\n{year_range[0]}{endash}{year_range[1]}{add_avg} minus {year_range_subtract[0]}{endash}{year_range_subtract[1]}{add_avg}'
+            date_range = [dt.strptime(d,'%m/%d').strftime('%b/%d') for d in date_range]
+            if np.subtract(*year_range)==0:
+                y_r_title = f'{year_range[0]}'
+            else:
+                y_r_title = f'{year_range[0]} {endash} {year_range[1]}'
+            add_avg = ' year-avg' if year_average == True else ''
+            if year_range_subtract == None:
+                title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")} {dot} {y_r_title}{add_avg}'
+            else:
+                if np.subtract(*year_range_subtract)==0:
+                    y_r_s_title = f'{year_range_subtract[0]}'
+                else:
+                    y_r_s_title = f'{year_range_subtract[0]} {endash} {year_range_subtract[1]}'
+                title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")}\n{y_r_title}{add_avg} minus {y_r_s_title}{add_avg}'
         prop['title_L'],prop['title_R'] = title_L,title_R
         
         #Change the masking for variables that go out to zero near the edge of the data

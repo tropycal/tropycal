@@ -1759,7 +1759,7 @@ None,prop={},map_prop={}):
                 cone_size = 0
         
         #Fix for 2020 that now incorporates 60 hour forecasts
-        if fcst_year >= 2020 and cone_size > 0:
+        if fcst_year >= 2020 and isinstance(cone_size,int) == False:
             cone_climo_hr = [3,12,24,36,48,60,72,96,120]
             cone_size = cone_size[:5]+[np.mean(cone_size[4:6])]+cone_size[5:]
 

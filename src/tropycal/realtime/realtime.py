@@ -251,7 +251,7 @@ class Realtime():
         current_year = (dt.now()).year
 
         #Get list of files in online directory
-        urlpath = urllib.request.urlopen('https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/')
+        urlpath = urllib.request.urlopen(f'https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/')
         string = urlpath.read().decode('utf-8')
 
         #Get relevant filenames from directory
@@ -285,7 +285,7 @@ class Realtime():
                 add_basin = ''
 
             #add empty entry into dict
-            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'source_method':"NOAA SSD",'source_url':"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/"}
+            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'source_method':"JTWC ATCF",'source_url':f'https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/'}
             self.data[stormid]['source'] = 'jtwc'
 
             #add empty lists
@@ -294,7 +294,7 @@ class Realtime():
             self.data[stormid]['ace'] = 0.0
 
             #Read in file
-            url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{file}"
+            url = f"https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/{file}"
             f = urllib.request.urlopen(url)
             content = f.read()
             content = content.decode("utf-8")

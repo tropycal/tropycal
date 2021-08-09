@@ -884,11 +884,12 @@ class Storm:
             if ens < 10: return f"AP0{ens}"
             return f"AP{ens}"
 
-        #Get GFS forecast entry
+        #Get GFS forecast entry (AVNX is valid for RAL a-deck source)
+        gfs_key = 'AVNO' if 'AVNO' in self.forecast_dict.keys() else 'AVNX'
         try:
-            forecast_gfs = self.forecast_dict['AVNO'][forecast.strftime("%Y%m%d%H")]
+            forecast_gfs = self.forecast_dict[gfs_key][forecast.strftime("%Y%m%d%H")]
         except:
-            raise RuntimeError("The requested initialization isn't available for this storm.")
+            raise RuntimeError("The requested GFS initialization isn't available for this storm.")
         
         #Enter into dict entry
         ds['gfs']['fhr'] = [int(i) for i in forecast_gfs['fhr']]
@@ -1539,7 +1540,7 @@ class Storm:
             if storm_year < 2016:
                 msg = "Forecast data is unavailable for JTWC storms prior to 2016."
                 raise RuntimeError(msg)
-            url_models = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/a{self.id.lower()}.dat"
+            url_models = f"http://hurricanes.ral.ucar.edu/repository/data/adecks_open/a{self.id.lower()}.dat"
             
             #Retrieve model data text
             try:

@@ -2499,7 +2499,7 @@ class TrackDataset:
                     stormkeys = [self.get_storm_id(s) for s in storm]
                 else:
                     stormkeys=storm
-            elif isinsance(storm,tuple):
+            elif isinstance(storm,tuple):
                 stormkeys = [self.get_storm_id(storm)]
             else:
                 stormkeys = [storm]

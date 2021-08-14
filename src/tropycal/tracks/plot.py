@@ -115,10 +115,10 @@ class TrackPlot(Plot):
             type_array = np.array(storm_data['type'])
             idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
             use_lats = (np.array(storm_data['lat'])[idx]).tolist()
-            use_lons = (np.array(storm_data['lon'])[idx]).tolist()
+            use_lons = (np.array(lons)[idx]).tolist()
         else:
             use_lats = storm_data['lat']
-            use_lons = storm_data['lon']
+            use_lons = np.copy(lons).tolist()
         
         if max_lat == None:
             max_lat = max(use_lats)

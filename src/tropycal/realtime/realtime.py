@@ -62,7 +62,7 @@ class Realtime():
     def __getitem__(self, key):
         return self.__dict__[key]
     
-    def __init__(self):
+    def __init__(self,jtwc=False):
         
         #Define empty dict to store track data in
         self.data = {}
@@ -73,7 +73,7 @@ class Realtime():
         
         #Read in best track data
         self.__read_btk()
-        self.__read_btk_jtwc()
+        if jtwc == True: self.__read_btk_jtwc()
         
         #Determine time elapsed
         time_elapsed = dt.now() - start_time

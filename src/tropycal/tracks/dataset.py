@@ -2692,7 +2692,7 @@ class TrackDataset:
                 if isinstance(y_r,(list,tuple)) == False:
                     msg = "\"year_range\" and \"year_range_subtract\" must be of type list or tuple."
                     raise ValueError(msg)
-                if len(year_range_subtract) != 2:
+                if year_range_subtract is not None and len(year_range_subtract) != 2:
                     msg = "\"year_range\" and \"year_range_subtract\" must contain 2 elements."                
                     raise ValueError(msg)
                 new_y_r = (max((start_year,min(y_r))),min((end_year,max(y_r))))

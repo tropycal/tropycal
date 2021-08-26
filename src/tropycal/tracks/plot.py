@@ -110,6 +110,12 @@ class TrackPlot(Plot):
             new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
             lons = new_lons.tolist()
 
+        #Force dynamic_tropical to tropical if an invest
+        invest_bool = False
+        if 'invest' in storm_data.keys() and storm_data['invest'] == True:
+            invest_bool = True
+            if domain == 'dynamic_tropical': domain = 'dynamic'
+        
         #Add to coordinate extrema
         if domain == 'dynamic_tropical':
             type_array = np.array(storm_data['type'])
@@ -239,22 +245,38 @@ class TrackPlot(Plot):
         
         #Add left title
         type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
-        tropical_vmax = np.array(storm_data['vmax'])[idx]
-        
-        #Coerce to include non-TC points if storm hasn't been designated yet
-        add_ptc_flag = False
-        if len(tropical_vmax) == 0:
-            add_ptc_flag = True
-            idx = np.where((type_array == 'LO') | (type_array == 'DB'))
-        tropical_vmax = np.array(storm_data['vmax'])[idx]
+        if invest_bool == False:
+            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
             
-        subtrop = classify_subtropical(np.array(storm_data['type']))
-        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
-        peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
-        if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
-        self.ax.set_title(f"{storm_type} {storm_data['name']}",loc='left',fontsize=17,fontweight='bold')
+            #Coerce to include non-TC points if storm hasn't been designated yet
+            add_ptc_flag = False
+            if len(tropical_vmax) == 0:
+                add_ptc_flag = True
+                idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            subtrop = classify_subtropical(np.array(storm_data['type']))
+            peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+            peak_basin = storm_data['wmo_basin'][peak_idx]
+            storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
+            if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
+            self.ax.set_title(f"{storm_type} {storm_data['name']}",loc='left',fontsize=17,fontweight='bold')
+        else:
+            #Use all indices for invests
+            idx = np.array([True for i in type_array])
+            add_ptc_flag = False
+            tropical_vmax = np.array(storm_data['vmax'])
+            
+            #Determine letter in front of invest
+            add_letter = 'L'
+            if storm_data['id'][0] == 'C':
+                add_letter = 'C'
+            elif storm_data['id'][0] == 'E':
+                add_letter = 'E'
+            
+            #Add title
+            self.ax.set_title(f"INVEST {storm_data['id'][2:4]}{add_letter}",loc='left',fontsize=17,fontweight='bold')
 
         #Add right title
         ace = storm_data['ace']
@@ -1761,7 +1783,6 @@ None,prop={},map_prop={}):
         #Fix for 2020 that now incorporates 60 hour forecasts
         if fcst_year >= 2020 and isinstance(cone_size,int) == False:
             cone_climo_hr = [3,12,24,36,48,60,72,96,120]
-            cone_size = cone_size[:5]+[np.mean(cone_size[4:6])]+cone_size[5:]
 
         #Function for interpolating between 2 times
         def temporal_interpolation(value, orig_times, target_times):

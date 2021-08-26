@@ -69,6 +69,7 @@ class Storm:
         
         #Format keys for summary
         type_array = np.array(self.dict['type'])
+        if self.invest == True: idx = np.array([True for i in type_array])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))[0]
         if len(idx) == 0:
             start_date = 'N/A'
@@ -130,6 +131,7 @@ class Storm:
             self.vars = {}
             for key in keys:
                 if key == 'realtime': continue
+                if key == 'invest': continue
                 if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
                     self[key] = self.dict[key]
                     self.coords[key] = self.dict[key]
@@ -156,6 +158,14 @@ class Storm:
             else:
                 self.realtime = False
                 self.coords['realtime'] = False
+            
+            #Determine if storm object is an invest
+            if 'invest' in keys and self.dict['invest'] == True:
+                self.invest = True
+                self.coords['invest'] = True
+            else:
+                self.invest = False
+                self.coords['invest'] = False
         
         else:
             
@@ -683,6 +693,10 @@ class Storm:
         if self.source != "hurdat":
             raise RuntimeError("Error: NHC data can only be accessed when HURDAT is used as the data source.")
         
+        #Check to ensure storm is not an invest
+        if self.invest == True:
+            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
+        
         #Create instance of plot object
         try:
             self.plot_obj
@@ -983,6 +997,10 @@ class Storm:
         #Check to ensure the data source is HURDAT
         if self.source != "hurdat":
             raise RuntimeError("Error: NHC data can only be accessed when HURDAT is used as the data source.")
+        
+        #Check to ensure storm is not an invest
+        if self.invest == True:
+            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Get storm ID & corresponding data URL
         storm_id = self.dict['operational_id']
@@ -1303,6 +1321,10 @@ class Storm:
             msg = "Error: NHC data can only be accessed when HURDAT is used as the data source."
             raise RuntimeError(msg)
         
+        #Check to ensure storm is not an invest
+        if self.invest == True:
+            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
+        
         #Get storm ID & corresponding data URL
         storm_id = self.dict['operational_id']
         storm_year = self.dict['year']
@@ -1432,6 +1454,10 @@ class Storm:
         if self.source != "hurdat":
             msg = "Error: NHC data can only be accessed when HURDAT is used as the data source."
             raise RuntimeError(msg)
+        
+        #Check to ensure storm is not an invest
+        if self.invest == True:
+            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Get storm ID & corresponding data URL
         storm_id = self.dict['operational_id']
@@ -1630,6 +1656,10 @@ class Storm:
         save_path : str
             Path of directory to download the TCR into. Default is current working directory.
         """
+        
+        #Check to ensure storm is not an invest
+        if self.invest == True:
+            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Error check
         if self.source != "hurdat":

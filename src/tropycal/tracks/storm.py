@@ -1,6 +1,5 @@
 r"""Functionality for storing and analyzing an individual storm."""
 
-import calendar
 import numpy as np
 import pandas as pd
 import re
@@ -9,8 +8,9 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 import requests
-import copy 
+import copy
 
+#Import internal scripts
 from .plot import TrackPlot
 from ..tornado import *
 from ..recon import *

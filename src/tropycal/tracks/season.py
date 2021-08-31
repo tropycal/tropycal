@@ -1,15 +1,12 @@
 r"""Functionality for storing and analyzing a year/season of cyclones."""
 
-import calendar
 import numpy as np
 import pandas as pd
-import re
-import scipy.interpolate as interp
-import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 from copy import copy
 
+#Import internal scripts
 from .plot import TrackPlot
 from .storm import Storm
 

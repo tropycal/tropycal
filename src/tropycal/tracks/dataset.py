@@ -9,7 +9,8 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 from scipy.ndimage import gaussian_filter as gfilt
-#Import other tropycal objects
+
+#Import internal scripts
 from ..plot import Plot
 from .plot import TrackPlot
 from .storm import Storm

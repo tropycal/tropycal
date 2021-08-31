@@ -1,16 +1,14 @@
 import os, sys
 import calendar
 import numpy as np
-import pandas as pd
-import re
 import scipy.interpolate as interp
-import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 import scipy.ndimage as ndimage
 import networkx as nx
 from scipy.ndimage import gaussian_filter as gfilt
 
+#Import internal scripts
 from ..plot import Plot
 
 #Import tools

@@ -61,6 +61,7 @@ class RealtimeStorm(Storm):
         #Format keys for summary
         type_array = np.array(self.dict['type'])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))[0]
+        if self.invest == True: idx = np.array([True for i in type_array])
         if len(idx) == 0:
             start_date = 'N/A'
             end_date = 'N/A'
@@ -154,6 +155,10 @@ class RealtimeStorm(Storm):
             Filepath to save the image in. If blank, default is current working directory.
         """
         
+        #Check to ensure storm is not an invest
+        if self.invest == True:
+            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
+        
         #Determine data source
         if self.source == 'hurdat':
             part1 = f"AT{self.id[2:4]}" if self.id[0:2] == "AL" else self.id[0:4]
@@ -186,6 +191,10 @@ class RealtimeStorm(Storm):
         #Warn about pending deprecation
         warnings.warn("'get_nhc_discussion_realtime' will be deprecated in future Tropycal versions, use 'get_discussion_realtime' instead",DeprecationWarning)
         
+        #Check to ensure storm is not an invest
+        if self.invest == True:
+            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
+        
         #Get latest forecast discussion for HURDAT source storm objects
         if self.source == "hurdat":
             return self.get_nhc_discussion(forecast=-1)
@@ -216,6 +225,10 @@ class RealtimeStorm(Storm):
         dict
             Dict entry containing the latest official forecast discussion.
         """
+        
+        #Check to ensure storm is not an invest
+        if self.invest == True:
+            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Get latest forecast discussion for HURDAT source storm objects
         if self.source == "hurdat":
@@ -251,6 +264,10 @@ class RealtimeStorm(Storm):
         -----
         This dictionary includes a calculation for accumulated cyclone energy (ACE), cumulatively for the storm's lifespan through each forecast hour. This is done by linearly interpolating the forecast to 6-hour intervals and calculating 6-hourly ACE at each interval. For storms where forecast tropical cyclone type is available, ACE is not calculated for forecast periods that are neither tropical nor subtropical.
         """
+        
+        #Check to ensure storm is not an invest
+        if self.invest == True:
+            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #NHC forecast data
         if self.source == 'hurdat':
@@ -479,6 +496,10 @@ class RealtimeStorm(Storm):
             Property of cartopy map.
         """
         
+        #Check to ensure storm is not an invest
+        if self.invest == True:
+            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
+        
         #Create instance of plot object
         try:
             self.plot_obj
@@ -539,6 +560,12 @@ class RealtimeStorm(Storm):
         if source == 'public_advisory' and self.source != 'hurdat':
             msg = "A source of 'public_advisory' can only be used for storms in NHC's area of responsibility."
             raise RuntimeError(msg)
+        
+        #Check to ensure storm is not an invest
+        if self.invest == True:
+            msg = "NHC does not issue public advisories on invests. Defaulting to best track method."
+            warnings.warn(msg)
+            source = 'best_track'
         
         #Declare empty dict
         current_advisory = {}

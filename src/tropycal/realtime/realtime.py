@@ -52,7 +52,13 @@ class Realtime():
         if len(self.storms) > 0:
             summary.append("\nActive Storms:")
             for key in self.storms:
-                summary.append(f'{" "*4}{key}')
+                if self[key]['invest'] == False:
+                    summary.append(f'{" "*4}{key}')
+            
+            summary.append("\nActive Invests:")
+            for key in self.storms:
+                if self[key]['invest'] == True:
+                    summary.append(f'{" "*4}{key}')
         
         return "\n".join(summary)
 
@@ -132,7 +138,7 @@ class Realtime():
 
         #Get relevant filenames from directory
         files = []
-        search_pattern = f'b[aec][lp][01234][0123456789]{current_year}.dat'
+        search_pattern = f'b[aec][lp][012349][0123456789]{current_year}.dat'
 
         pattern = re.compile(search_pattern)
         filelist = pattern.findall(string)
@@ -144,6 +150,11 @@ class Realtime():
 
             #Get file ID
             stormid = ((file.split(".dat")[0])[1:]).upper()
+            
+            #Check for invest status
+            invest_bool = False
+            if int(stormid[2]) == 9:
+                invest_bool = True
 
             #Determine basin
             add_basin = 'north_atlantic'
@@ -153,7 +164,7 @@ class Realtime():
                 add_basin = 'east_pacific'
 
             #add empty entry into dict
-            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'NHC Hurricane Database','realtime':True,'source_method':"NHC's Automated Tropical Cyclone Forecasting System (ATCF)",'source_url':"https://ftp.nhc.noaa.gov/atcf/btk/"}
+            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'NHC Hurricane Database','realtime':True,'invest':invest_bool,'source_method':"NHC's Automated Tropical Cyclone Forecasting System (ATCF)",'source_url':"https://ftp.nhc.noaa.gov/atcf/btk/"}
             self.data[stormid]['source'] = 'hurdat'
 
             #add empty lists
@@ -168,10 +179,15 @@ class Realtime():
                 url = f"https://ftp.nhc.noaa.gov/atcf/btk/{file}"
             f = urllib.request.urlopen(url)
             content = f.read()
-            content = content.decode("utf-8")
-            content = content.split("\n")
+            content_full = content.decode("utf-8")
+            content = content_full.split("\n")
             content = [(i.replace(" ","")).split(",") for i in content]
             f.close()
+            
+            #Check if transition is in keywords for invests
+            if invest_bool == True and 'TRANSITION' in content_full:
+                del self.data[stormid]
+                continue
 
             #iterate through file lines
             for line in content:
@@ -187,7 +203,7 @@ class Realtime():
 
                 #Get latitude into number
                 btk_lat_temp = line[6].split("N")[0]
-                btk_lat = float(btk_lat_temp) * 0.1
+                btk_lat = np.round(float(btk_lat_temp) * 0.1,1)
 
                 #Get longitude into number
                 if "W" in line[7]:
@@ -195,7 +211,7 @@ class Realtime():
                     btk_lon = float(btk_lon_temp) * -0.1
                 elif "E" in line[7]:
                     btk_lon_temp = line[7].split("E")[0]
-                    btk_lon = float(btk_lon_temp) * 0.1
+                    btk_lon = np.round(float(btk_lon_temp) * 0.1,1)
 
                 #Get other relevant variables
                 btk_wind = int(line[8])

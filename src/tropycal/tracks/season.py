@@ -248,19 +248,23 @@ class Season:
             error_message = f"Multiple IDs were identified for the requested storm. Choose one of the following storm IDs and provide it as the 'storm' argument instead of a tuple:{error_message}"
             raise RuntimeError(error_message)
         
-    def plot(self,subset=None,domain=None,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot(self,domain=None,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of this season.
         
         Parameters
         ----------
+        domain : str
+            Domain for the plot. Default is basin-wide. Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         
         Other Parameters
         ----------------
@@ -269,15 +273,7 @@ class Season:
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         """
-        
-        season = copy(self)
-        stormkeys = list(season.dict.keys())
-        
-        if subset is not None:
-            subkeys = [stormskeys[i] for i in subset]
-            season.dict = {key: value for key, value in season.dict.items() if key in subkeys}
-            
-        
+
         #Create instance of plot object
         self.plot_obj = TrackPlot()
         
@@ -287,7 +283,7 @@ class Season:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        return_ax = self.plot_obj.plot_season(season,domain,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        return_ax = self.plot_obj.plot_season(season,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return return_ax

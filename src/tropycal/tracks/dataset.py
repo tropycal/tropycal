@@ -81,6 +81,25 @@ class TrackDataset:
     -------
     Dataset
         An instance of Dataset.
+    
+    Notes
+    -----
+    This object contains information about all storms in a basin, as well as methods to analyze the dataset and to retrieve individual storms from the dataset.
+    
+    The following block of code creates an instance of a TrackDataset() object and stores it in a variable called "basin":
+    
+    .. code-block:: python
+    
+        from tropycal import tracks
+        basin = tracks.TrackDataset()
+        
+    With an instance of TrackDataset created, any of the methods listed below can be accessed via the "basin" variable:
+    
+    .. code-block:: python
+    
+        storm = basin.get_storm(("katrina",2005))
+    
+    For IBTrACS datasets, please refer to :ref:`ibtracs-caveats` for pros and cons of each mode of IBTrACS data available.
     """
  
     def __repr__(self):
@@ -109,6 +128,7 @@ class TrackDataset:
                         'Maximum wind':f"{max_wind} knots ({max_wind_name})",
                         'Minimum pressure':f"{min_mslp} hPa ({min_mslp_name})",
                         'Year range':f"{self.data[self.keys[0]]['year']} {emdash} {self.data[self.keys[-1]]['year']}"}
+        
         #Add dataset summary
         summary.append("Dataset Summary:")
         add_space = np.max([len(key) for key in summary_keys.keys()])+3
@@ -995,7 +1015,7 @@ class TrackDataset:
         Parameters
         ----------
         storm : string
-            String containing the storm (e.g., "AL052019").
+            String containing the storm ID (e.g., "AL052019").
             
         Returns
         -------
@@ -1054,7 +1074,7 @@ class TrackDataset:
             raise RuntimeError(error_message)
     
     
-    def plot_storm(self,storm,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_storm(self,storm,domain="dynamic",plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm.
@@ -1064,8 +1084,8 @@ class TrackDataset:
         storm : str, tuple or dict
             Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
         domain : str
-            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
-        plot_all : bool
+            Domain for the plot. Default is "dynamic". "dynamic_tropical" is also available. Please refer to :ref:`options-domain` for available domain options.
+        plot_all_dots : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
@@ -1106,13 +1126,13 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all_dots,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
     
     
-    def plot_storms(self,storms,domain="dynamic",title_text="TC Track Composite",filter_dates=('1/1','12/31'),plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,labels=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of multiple storms.
@@ -1123,8 +1143,12 @@ class TrackDataset:
             List of requested storms. List can contain either strings of storm ID (e.g., "AL052019"), tuples with storm name and year (e.g., ("Matthew",2016)), or dict entries.
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
+        title : str
+            Title string to display on the plot. Default is "TC Track Composite".
         plot_all_dots : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
+        labels : bool
+            Whether to label storm titles on the plot. Default is False.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
@@ -1175,13 +1199,13 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title_text,filter_dates,plot_all_dots,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title,plot_all_dots,labels,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
         
         
-    def plot_season(self,year,domain=None,ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+    def plot_season(self,year,domain=None,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single season.
@@ -1190,12 +1214,16 @@ class TrackDataset:
         ----------
         year : int
             Year to retrieve season data. If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
+        domain : str
+            Domain for the plot. Default is basin-wide. Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         return_ax : bool
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         
         Other Parameters
         ----------------
@@ -1224,7 +1252,7 @@ class TrackDataset:
             self.plot_obj.proj = cartopy_proj
             
         #Plot season
-        plot_ax = self.plot_obj.plot_season(season,domain,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_season(season,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
@@ -1380,16 +1408,18 @@ class TrackDataset:
     def ace_climo(self,plot_year=None,compare_years=None,climo_year_range=None,date_range=None,rolling_sum=0,return_dict=False,plot=True,return_ax=False,save_path=None):
         
         r"""
-        Creates a climatology of accumulated cyclone energy (ACE).
+        Creates and plots a climatology of accumulated cyclone energy (ACE).
         
         Parameters
         ----------
         plot_year : int
-            Year to highlight. If current year, plot will be drawn through today.
+            Year to highlight. If current year, plot will be drawn through today. If none, no year will be highlighted.
         compare_years : int or list
             Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).
-        start_year : int
-            Year to begin calculating the climatology over. Default is 1950.
+        climo_year_range : tuple
+            Start and end years to compute the climatology over. Default is from 1950 to last year.
+        date_range : tuple
+            Start and end dates to plot, both strings formatted as "month/day". Default is entire calendar year.
         rolling_sum : int
             Days to calculate a rolling sum over. Default is 0 (annual running sum).
         return_dict : bool
@@ -1405,14 +1435,11 @@ class TrackDataset:
             If return_dict is True, a dictionary containing data about the ACE climatology is returned.
         """
         
+        #Retrieve current year
         cur_year = dt.now().year
         
         if climo_year_range is None:
             climo_year_range = (1950,dt.now().year-1)
-        #if plot_year!=None and plot_year<start_year:
-        #    raise ValueError("One of the years is before the climatology start_year.")            
-        #if compare_years!=None and np.any(np.asarray(compare_years)<start_year):
-        #    raise ValueError("One of the years is before the climatology start_year.")
         
         if self.source == 'ibtracs':
             warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
@@ -1543,22 +1570,13 @@ class TrackDataset:
         #Limit plot from May onward
         ax.set_xlim(julian_start[4],julian[-1])
 
-        
-        if date_range is None:
-            if plot_year == cur_year:
-                tmax = dt.now().strftime('%m/%d')
-            else:
-                tmax = '12/31'
-            date_range = ('1/1',tmax)
-        date_range = [dt.strptime(t,'%m/%d') for t in date_range]
-            
         #Add plot title
         if plot_year == None:
             title_string = f"{self.basin.title().replace('_',' ')} Accumulated Cyclone Energy Climatology"
         else:
             cur_year = (dt.now()).year
             if plot_year == cur_year:
-                add_current = f"(through {date_range[-1]:%b %d})"
+                add_current = f"(through {dt.now().strftime('%m/%d')})"
             else:
                 add_current = ""
             title_string = f"{plot_year} {self.basin.title().replace('_',' ')} Accumulated Cyclone Energy {add_current}"
@@ -1582,16 +1600,7 @@ class TrackDataset:
                 year_julian = year_julian[:cur_julian+1]
                 year_ace = year_ace[:cur_julian+1]
                 year_genesis = year_genesis[:cur_julian+1]
-        
-            END_julian = int(convert_to_julian( date_range[-1].replace(year=2019,minute=0,second=0) ))*4 - int(rolling_sum*4)
-            year_julian = year_julian[:END_julian+1]
-            year_ace = year_ace[:END_julian+1]
-            year_genesis = year_genesis[:END_julian+1]
-            #ax.plot(year_julian[-1],year_ace[-1],'o',color='#FF7CFF',ms=8,mec='#750775',mew=0.8,zorder=8)
-            #ax.plot(year_julian,year_ace,'-',color='#750775',linewidth=2.8,zorder=6)
-            #ax.plot(year_julian,year_ace,'-',color='#FF7CFF',linewidth=2.0,zorder=6,label=f'{plot_year} ACE ({np.max(year_ace):.1f})')
-            #ax.plot(year_julian[year_genesis],year_ace[year_genesis],'D',color='#FF7CFF',ms=5,mec='#750775',mew=0.5,zorder=7,label='TC Genesis')
-            
+
             ax.plot(year_julian[-1],year_ace[-1],'o',color='k',ms=8,mec='w',mew=0.8,zorder=8)
             ax.plot(year_julian,year_ace,'-',color='w',linewidth=2.8,zorder=6)
             ax.plot(year_julian,year_ace,'-',color='k',linewidth=2.0,zorder=6,label=f'{plot_year} ACE ({np.max(year_ace):.1f})')
@@ -1670,17 +1679,19 @@ class TrackDataset:
             Year to begin calculating the climatology over. Default is 1950.
         rolling_sum : int
             Days to calculate a rolling sum over. Default is 0 (annual running sum).
+        category : int
+            SSHWS Category to generate the data and plot for. Use 0 for tropical storm. If none (default), a plot will be generated for all categories.
         return_dict : bool
             Determines whether to return data from this function. Default is False.
         plot : bool
-            Determines whether to generate a plot or not. If False, function simply returns ace dictionary.
+            Determines whether to generate a plot or not. If False, function simply returns data dictionary.
         save_path : str
             Determines the file path to save the image to. If blank or none, image will be directly shown.
         
         Returns
         -------
         None or dict
-            If return_dict is True, a dictionary containing data about the ACE climatology is returned.
+            If return_dict is True, a dictionary containing data about the climatology is returned.
         """
         
         #Create empty dict
@@ -2147,7 +2158,7 @@ class TrackDataset:
         ascending : bool
             Whether to return rank in ascending order (True) or descending order (False). Default is False.
         domain : str
-            String representing either a bounded region 'latW/latE/latS/latN', or a basin name. Default is entire basin.
+            Geographic domain. Default is entire basin. Please refer to :ref:`options-domain` for available domain options.
         year_range : list or tuple
             List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
         date_range : list or tuple
@@ -2229,13 +2240,23 @@ class TrackDataset:
             
             #Filter geographically
             if domain != None:
-                if isinstance(domain,str) == False:
-                    raise TypeError("domain must be of type str.")
-                if '/' in domain:
-                    bound_w,bound_e,bound_s,bound_n = [float(i) for i in domain.split("/")]
+                if isinstance(domain,dict) == True:
+                    keys = domain.keys()
+                    check = [False, False, False, False]
+                    for key in keys:
+                        if key[0].lower() == 'n': check[0] = True; bound_n = domain[key]
+                        if key[0].lower() == 's': check[1] = True; bound_s = domain[key]
+                        if key[0].lower() == 'e': check[2] = True; bound_e = domain[key]
+                        if key[0].lower() == 'w': check[3] = True; bound_w = domain[key]
+                    if False in check:
+                        msg = "Custom domains must be of type dict with arguments for 'n', 's', 'e' and 'w'."
+                        raise ValueError(msg)
                     idx = np.where((lat_tropical >= bound_s) & (lat_tropical <= bound_n) & (lon_tropical >= bound_w) & (lon_tropical <= bound_e))
-                else:
+                elif isinstance(domain,str) == True:
                     idx = np.where(basin_tropical==domain)
+                else:
+                    msg = "domain must be of type str or dict."
+                    raise TypeError(msg)
                 if len(idx[0]) == 0: continue
                 
                 #Check for subset type
@@ -2439,7 +2460,7 @@ class TrackDataset:
             
             Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.
         domain : str
-            String or tuple representing a bounded region, 'latW/latE/latS/latN'.
+            Geographic domain. Default is entire basin. Please refer to :ref:`options-domain` for available domain options.
         doInterp : bool
             Whether to interpolate track data to hourly. Default is False.
         return_keys : bool
@@ -2452,25 +2473,31 @@ class TrackDataset:
         """
         
         #Update thresh based on input
-        default_thresh={'sample_min':1,'p_max':9999,'p_min':0,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,'speed_max':9999,'speed_min':-9999,
-                        'dt_window':24,'dt_align':'middle'}
+        default_thresh={'sample_min':1,'p_max':9999,'p_min':0,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,'speed_max':9999,'speed_min':-9999,'dt_window':24,'dt_align':'middle'}
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
 
         #Determine domain over which to filter data
-        
-        if domain is None:
-            domain = (0,360,-90,90)
+        if domain == None:
+            lon_min = 0
+            lon_max = 360
+            lat_min = -90
+            lat_max = 90
         else:
-            domain = (domain['w'],domain['e'],domain['s'],domain['n'])
-        lon_min,lon_max,lat_min,lat_max = domain
-        
-        #if isinstance(domain,str):
-        #    lon_min,lon_max,lat_min,lat_max = [float(i) for i in domain.split("/")]
-        #else:
-        #    lon_min,lon_max,lat_min,lat_max = domain
-        
+            keys = domain.keys()
+            check = [False, False, False, False]
+            for key in keys:
+                if key[0].lower() == 'n': check[0] = True; lat_max = domain[key]
+                if key[0].lower() == 's': check[1] = True; lat_min = domain[key]
+                if key[0].lower() == 'e': check[2] = True; lon_max = domain[key]
+                if key[0].lower() == 'w': check[3] = True; lon_min = domain[key]
+            if False in check:
+                msg = "Custom domains must be of type dict with arguments for 'n', 's', 'e' and 'w'."
+                raise ValueError(msg)
+            if lon_max < 0: lon_max += 360.0
+            if lon_min < 0: lon_min += 360.0
+
         #Determine year and date range
         year_min,year_max = year_range
         date_min,date_max = [dt.strptime(i,'%m/%d') for i in date_range]
@@ -2586,7 +2613,7 @@ class TrackDataset:
             return p
 
     def gridded_stats(self,request,thresh={},storm=None,year_range=None,year_range_subtract=None,year_average=False,
-                      date_range=('1/1','12/31'),binsize=1,domain=None,ax=None,return_ax=False,\
+                      date_range=('1/1','12/31'),binsize=1,domain=None,ax=None,return_ax=False,
                       return_array=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
@@ -2659,6 +2686,10 @@ class TrackDataset:
             Customization properties of plot. Please refer to :ref:`options-prop-gridded` for available options.
         map_prop : dict, optional
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        By default, nothing is returned and a plot is displayed. If either "return_ax" or "return_array" are set to True, those respective data are returned. If both are set to true, a dictionary is returned containing both.
         """
 
         default_prop = {'smooth':None}
@@ -3012,7 +3043,7 @@ class TrackDataset:
         #Update user on status
         print(f'--> Completed assigning tornadoes to storm (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
         
-    def plot_TCtors_rotated(self,storms,mag_thresh=0,return_ax=False,return_df=False):
+    def plot_TCtors_rotated(self,storms,mag_thresh=0,return_ax=False,return_df=False,save_path=None):
         
         r"""
         Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.
@@ -3027,6 +3058,8 @@ class TrackDataset:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         return_df : bool
             Whether to return the pandas DataFrame containing the composite tornado data. Default is False.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         
         Returns
         -------
@@ -3128,7 +3161,11 @@ class TrackDataset:
         if return_ax == True:
             return_dict['ax'] = ax
         else:
-            plt.show()
+            #Save image if specified
+            if save_path != None and isinstance(save_path,str) == True:
+                plt.savefig(save_path,bbox_inches='tight')
+            else:
+                plt.show()
             plt.close()
 
         if return_df == True:

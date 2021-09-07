@@ -297,7 +297,7 @@ class RealtimeStorm(Storm):
 
                 if len(forecasts) == 0:
                     forecasts = {
-                        'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
+                        'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
                     }
 
                 #Format lat & lon
@@ -377,7 +377,7 @@ class RealtimeStorm(Storm):
                     
                 if len(forecasts) == 0:
                     forecasts = {
-                        'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
+                        'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
                     }
 
                 #Forecast hour
@@ -426,6 +426,7 @@ class RealtimeStorm(Storm):
         
         #Add initial forecast hour ACE
         ace += accumulated_cyclone_energy(forecasts['vmax'][0],hours=6)
+        forecasts['cumulative_ace_fhr'].append(0)
         forecasts['cumulative_ace'].append(np.round(ace,1))
         
         #Interpolate forecast to 6-hour increments
@@ -458,6 +459,7 @@ class RealtimeStorm(Storm):
             #Add ACE to array
             if i_fhr in forecasts['fhr']:
                 forecasts['cumulative_ace'].append(np.round(ace,1))
+                forecasts['cumulative_ace_fhr'].append(i_fhr)
         
         #Save forecast as attribute
         self.latest_forecast = forecasts
@@ -854,7 +856,7 @@ class RealtimeStorm(Storm):
         disco_date = disco_date + timedelta(hours=offset*-1)
         
     def __get_ensembles_eps(self):
-        #Here it is:
+        #This function is currently not functioning. The path to retrieve EPS ensemble data is:
         #ftp://wmo:essential@dissemination.ecmwf.int/20200518120000/
         #A_JSXX01ECEP181200_C_ECMP_20200518120000_tropical_cyclone_track_AMPHAN_86p3degE_14degN_bufr4.bin
         return

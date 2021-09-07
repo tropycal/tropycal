@@ -178,7 +178,7 @@ class Plot:
         #Return map bounds
         return bound_w,bound_e,bound_s,bound_n
     
-    def plot_lat_lon_lines(self,bounds):
+    def plot_lat_lon_lines(self,bounds,zorder=None):
         
         r"""
         Plots parallels and meridians that are constrained by the map bounds.
@@ -225,10 +225,17 @@ class Plot:
             all_meridians = np.arange(0.0,360.0+rthres,rthres)
             all_parallels = np.arange(rdown(-90.0,rthres),90.0+rthres,rthres)
             
-            #First call with no labels but gridlines plotted
-            gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,xlocs=all_meridians,ylocs=all_parallels,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted')
-            #Second call with labels but no gridlines
-            gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,xlocs=meridians,ylocs=parallels,linewidth=0.0,color='k',alpha=0.0,linestyle='dotted')
+            if zorder == None:
+                #First call with no labels but gridlines plotted
+                gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,xlocs=all_meridians,ylocs=all_parallels,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted')
+                #Second call with labels but no gridlines
+                gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,xlocs=meridians,ylocs=parallels,linewidth=0.0,color='k',alpha=0.0,linestyle='dotted')
+            else:
+                #First call with no labels but gridlines plotted
+                gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,xlocs=all_meridians,ylocs=all_parallels,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted',zorder=zorder)
+                #Second call with labels but no gridlines
+                gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,xlocs=meridians,ylocs=parallels,linewidth=0.0,color='k',alpha=0.0,linestyle='dotted',zorder=zorder)
+            
             gl.xlabels_top = False
             gl.ylabels_right = False
             gl.xlocator = mticker.FixedLocator(meridians2)
@@ -238,7 +245,10 @@ class Plot:
 
         else:
             #Add meridians and parallels
-            gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted')
+            if zorder == None:
+                gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted')
+            else:
+                gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted',zorder=zorder)
             gl.xlabels_top = False
             gl.ylabels_right = False
             gl.xlocator = mticker.FixedLocator(meridians)
@@ -249,7 +259,7 @@ class Plot:
         #Reset plot bounds
         self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
         
-    def plot_init(self,ax,map_prop):
+    def plot_init(self,ax,map_prop,plot_geography=True):
         
         r"""
         Initializes the plot by creating a cartopy and axes instance, if one hasn't been created yet, and adds geography.
@@ -278,7 +288,8 @@ class Plot:
             self.ax = ax
         
         #Attach geography to plot, lat/lon lines, etc.
-        self.create_geography(map_prop)
+        if plot_geography == True:
+            self.create_geography(map_prop)
     
     def add_prop(self,input_prop,default_prop):
         
@@ -393,9 +404,9 @@ class Plot:
                 msg = "Custom domains must be of type dict."
                 raise TypeError(msg)
             
+            #Retrieve map bounds
             keys = domain.keys()
             check = [False, False, False, False]
-            values = [0, 0, 0, 0]
             for key in keys:
                 if key[0].lower() == 'n': check[0] = True; bound_n = domain[key]
                 if key[0].lower() == 's': check[1] = True; bound_s = domain[key]
@@ -421,4 +432,10 @@ class Plot:
                     transform=self.ax.transAxes,ha='right',va='bottom',zorder=10)
             a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='white'),
                            path_effects.Normal()])
-        
+    
+    def rgb(self,rgb):
+        r,g,b = rgb
+        r = int(r)
+        g = int(g)
+        b = int(b)
+        return '#%02x%02x%02x' % (r, g, b)

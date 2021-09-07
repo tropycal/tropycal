@@ -495,8 +495,8 @@ class Storm:
         
         Returns
         -------
-        storm object
-            New storm object containing the updated dictionary.
+        tropycal.tracks.Storm
+            New Storm object containing the updated dictionary.
         """
         
         NEW_STORM = copy.copy(self)
@@ -600,8 +600,7 @@ class Storm:
         #Return dataset
         return ds
     
-    #PLOT FUNCTION FOR HURDAT
-    def plot(self,domain="dynamic",plot_all=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot(self,domain="dynamic",plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of the observed track of the storm.
@@ -610,7 +609,7 @@ class Storm:
         ----------
         domain : str
             Domain for the plot. Default is "dynamic". "dynamic_tropical" is also available. Please refer to :ref:`options-domain` for available domain options.
-        plot_all : bool
+        plot_all_dots : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
@@ -645,7 +644,7 @@ class Storm:
             self.plot_obj.proj = cartopy_proj
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(self.dict,domain,plot_all,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop,save_path=save_path)
+        plot_ax = self.plot_obj.plot_storm(self.dict,domain,plot_all_dots,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop,save_path=save_path)
         
         #Return axis
         if ax != None or return_ax == True: return plot_ax
@@ -1691,7 +1690,7 @@ class Storm:
 
             
     def plot_tors(self,dist_thresh=1000,Tors=None,domain="dynamic",plotPPH=False,plot_all=False,\
-                  ax=None,return_ax=False,cartopy_proj=None,prop={},map_prop={}):
+                  ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
                 
         r"""
         Creates a plot of the storm and associated tornado tracks.
@@ -1720,6 +1719,9 @@ class Storm:
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
+        
         
         Other Parameters
         ----------------
@@ -1788,11 +1790,15 @@ class Storm:
         if ax != None or return_ax == True: 
             return plot_ax
         else:
-            plt.show()
+            #Save image if specified
+            if save_path != None and isinstance(save_path,str) == True:
+                plt.savefig(save_path,bbox_inches='tight')
+            else:
+                plt.show()
             plt.close()
 
 
-    def plot_TCtors_rotated(self,dist_thresh=1000,return_ax=False):
+    def plot_TCtors_rotated(self,dist_thresh=1000,return_ax=False,save_path=None):
         
         r"""
         Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.
@@ -1803,6 +1809,8 @@ class Storm:
             Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km. Ignored if tornado data was passed into Storm from TrackDataset.
         return_ax : bool
             If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
         
         Notes
         -----
@@ -1867,7 +1875,10 @@ class Storm:
         if return_ax == True:
             return ax
         else:
-            plt.show()
+            if save_path != None and isinstance(save_path,str) == True:
+                plt.savefig(save_path,bbox_inches='tight')
+            else:
+                plt.show()
             plt.close()
             
     def get_recon(self,deltap_thresh=8,save_path="",read_path="",mission_url_list=None,update=False):

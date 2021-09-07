@@ -567,7 +567,7 @@ class Storm:
         #Return dataset
         return ds
 
-    def to_dataframe(self):
+    def to_dataframe(self, attrs_as_columns=False):
         
         r"""
         Converts the storm dict into a pandas DataFrame object.
@@ -593,7 +593,10 @@ class Storm:
         for key in keys:
             if isinstance(self.dict[key], list) == True:
                 ds[key] = self.dict[key]
-                    
+            else:
+                if attrs_as_columns:
+                    ds[key] = self.dict[key]
+
         #Convert entire dict to a DataFrame
         ds = pd.DataFrame(ds)
 

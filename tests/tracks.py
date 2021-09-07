@@ -95,6 +95,7 @@ def test_code():
     storm.to_dict()
     storm.to_xarray()
     storm.to_dataframe()
+    storm.to_dataframe(attrs_as_columns=True)
     
     #------------------------------------------------------------
     

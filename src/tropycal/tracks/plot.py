@@ -2319,6 +2319,7 @@ None,prop={},map_prop={}):
                 cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=vmin,vmax=vmax,norm=norm,
                                        transform=ccrs.PlateCarree())
             else:
+                norm = mcolors.Normalize(vmin=vmin,vmax=vmax)
                 cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=vmin,vmax=vmax,
                                        transform=ccrs.PlateCarree())
         if prop['plot_values']:
@@ -2335,8 +2336,11 @@ None,prop={},map_prop={}):
             for xtext,ytext,ztext in zip(xs,ys,zs):
                 if not np.isnan(ztext) and xtext%360>bound_w%360 and xtext%360<bound_e%360 and\
                     ytext>bound_s and ytext<bound_n:
+                    square_color = cmap(norm(ztext))
+                    square_brightness = np.mean(square_color[:3])*square_color[3]
+                    text_color = 'k' if square_brightness>0.5 else 'w' 
                     self.ax.text(xtext,ytext,ztext.astype(int),ha='center',va='center',fontsize=fs,\
-                                     color='w',alpha=0.8,transform=ccrs.PlateCarree())
+                                     color=text_color,alpha=0.8,transform=ccrs.PlateCarree(), zorder=2)
                 
 
         #--------------------------------------------------------------------------------------
@@ -2387,7 +2391,7 @@ None,prop={},map_prop={}):
             
         rectangle = mpatches.Rectangle((bb.x0,bb.y0-0.1*bb.height),(2+rect_offset)*bb.width,1.1*bb.height,\
                                        fc = 'w',edgecolor = '0.8',alpha = 0.8,\
-                                       transform=self.fig.transFigure, zorder=2)
+                                       transform=self.fig.transFigure, zorder=3)
         self.ax.add_patch(rectangle)
         
         #--------------------------------------------------------------------------------------

@@ -25,18 +25,61 @@ from ..utils import *
 class Realtime():
     
     r"""
-    Creates an instance of a Realtime object containing currently active tropical cyclones.
+    Creates an instance of a Realtime object containing currently active tropical cyclones and invests.
     
     Realtime objects are used to retrieve RealtimeStorm objects, which are created for every active tropical cyclone globally upon creating an instance of Realtime.
     
     Data sources are as follows:
-    National Hurricane Center: https://ftp.nhc.noaa.gov/atcf/btk/
-    Joint Typhoon Warning Center: http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/
-
+    National Hurricane Center (NHC): https://ftp.nhc.noaa.gov/atcf/btk/
+    Joint Typhoon Warning Center (JTWC): (read notes for more details)
+    
+    Parameters
+    ----------
+    jtwc : bool, optional
+        Flag determining whether to read JTWC data in. If True, specify the JTWC data source using "jtwc_source". Default is False.
+    jtwc_source : str, optional
+        If jtwc is set to True, this specifies the JTWC data source to read from. Available options are "noaa", "ucar" or "jtwc". Default is "jtwc". Read the notes for more details.
+    
     Returns
     -------
     tropycal.realtime.Realtime
         An instance of Realtime.
+    
+    Notes
+    -----
+    As of 2021, the multiple sources offering a Best Track archive of raw JTWC tropical cyclone data experienced frequent outages and/or severe slowdowns, hampering the ability to easily retrieve this data. As such, JTWC data has been optional in Realtime objects since v0.2.7. There are three JTWC sources available:
+    
+    * **jtwc** - This is currently the default JTWC source if JTWC data is read in. As of September 2021, this source is working, but reading data is exceptionally slow (can take from 3 to as much as 10 minutes).
+    * **ucar** - As of September 2021, this source is available and fairly quick to read in, but offers a less compherensive storm history than the "jtwc" source. Between July and September 2021, this source did not update any active tropical cyclones outside of NHC's domain. If using this source, check to make sure it is in fact retrieving current global tropical cyclones.
+    * **noaa** - This source was active until about July 2021, and since then no longer appears to be online and accessible. The code retains the ability to read in data from this source should it return online.
+    
+    The following block of code creates an instance of a Realtime() object and stores it in a variable called "realtime_obj":
+    
+    .. code-block:: python
+    
+        from tropycal import realtime
+        realtime_obj = realtime.Realtime()
+        
+    With an instance of Realtime created, any of the methods listed below can be accessed via the "realtime_obj" variable. All active storms and invests are stored as attributes of this instance, and can be simply retrieved:
+    
+    .. code-block:: python
+        
+        #This stores an instance of a RealtimeStorm object for AL012021 in the "storm" variable.
+        storm = realtime_obj.AL012021
+        
+        #From there, you can use any method of a Storm object:
+        storm.plot()
+    
+    RealtimeStorm objects contain all the methods of Storm objects, in addition to special methods available only for storms retrieved via a Realtime object. As of Tropycal v0.3, this now includes invests, though Storm and RealtimeStorm objects retrieved for invests are blocked from performing functionality that does not apply to invests operationally (e.g., forecast discussions, official NHC/JTWC track forecasts).
+    
+    To check whether a RealtimeStorm object contains an invest, check the "invest" boolean stored in it:
+    
+    .. code-block:: python
+        
+        if storm.invest == True:
+            print("This is an invest!")
+        else:
+            print("This is not an invest!")
     """
     
     def __repr__(self):
@@ -68,7 +111,7 @@ class Realtime():
     def __getitem__(self, key):
         return self.__dict__[key]
     
-    def __init__(self,jtwc=False):
+    def __init__(self,jtwc=False,jtwc_source='ucar'):
         
         #Define empty dict to store track data in
         self.data = {}
@@ -79,7 +122,10 @@ class Realtime():
         
         #Read in best track data
         self.__read_btk()
-        if jtwc == True: self.__read_btk_jtwc()
+        if jtwc_source not in ['ucar','noaa','jtwc']:
+            msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
+            raise ValueError(msg)
+        if jtwc == True: self.__read_btk_jtwc(jtwc_source)
         
         #Determine time elapsed
         time_elapsed = dt.now() - start_time
@@ -257,7 +303,7 @@ class Realtime():
             self.data[stormid]['name'] = name
         
         
-    def __read_btk_jtwc(self):
+    def __read_btk_jtwc(self,source):
         
         r"""
         Reads in b-deck data from the Tropical Cyclone Guidance Project (TCGP) into the Dataset object.
@@ -267,7 +313,10 @@ class Realtime():
         current_year = (dt.now()).year
 
         #Get list of files in online directory
-        urlpath = urllib.request.urlopen(f'https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/')
+        url = f'https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/'
+        if source == 'noaa': url = f'https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/'
+        if source == 'ucar': url = f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/'
+        urlpath = urllib.request.urlopen(url)
         string = urlpath.read().decode('utf-8')
 
         #Get relevant filenames from directory
@@ -301,8 +350,18 @@ class Realtime():
                 add_basin = ''
 
             #add empty entry into dict
-            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'source_method':"JTWC ATCF",'source_url':f'https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/'}
+            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'invest':False}
             self.data[stormid]['source'] = 'jtwc'
+            
+            #Add source info
+            self.data[stormid]['source_method'] = "JTWC ATCF"
+            self.data[stormid]['source_url'] = f'https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/'
+            if source == 'noaa':
+                self.data[stormid]['source_method'] = "NOAA SSD"
+                self.data[stormid]['source_url'] = f'https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/'
+            if source == 'ucar':
+                self.data[stormid]['source_method'] = "UCAR's Tropical Cyclone Guidance Project (TCGP)"
+                self.data[stormid]['source_url'] = f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/'
 
             #add empty lists
             for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
@@ -311,6 +370,8 @@ class Realtime():
 
             #Read in file
             url = f"https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/{file}"
+            if source == 'noaa': url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{file}"
+            if source == 'ucar': url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/{file}"
             f = urllib.request.urlopen(url)
             content = f.read()
             content = content.decode("utf-8")
@@ -354,8 +415,11 @@ class Realtime():
                 #Get other relevant variables
                 btk_wind = int(line[8])
                 btk_mslp = int(line[9])
-                btk_type = line[10]
-                if btk_type == "TY": btk_type = "HU"
+                if source == 'ucar':
+                    btk_type = get_storm_type(btk_wind,False)
+                else:
+                    btk_type = line[10]
+                    if btk_type == "TY": btk_type = "HU"
                 name = line[27]
 
                 #Replace with NaNs

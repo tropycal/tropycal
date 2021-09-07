@@ -572,6 +572,11 @@ class Storm:
         r"""
         Converts the storm dict into a pandas DataFrame object.
         
+        Parameters
+        ----------
+        attrs_as_columns : bool
+            If True, adds Storm object attributes as columns in the DataFrame returned. Default is False.
+        
         Returns
         -------
         pandas.DataFrame

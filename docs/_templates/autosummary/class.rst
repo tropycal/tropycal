@@ -1,62 +1,31 @@
-{{ objname }}
-{{ underline }}
+{{ fullname | escape | underline}}
 
 .. currentmodule:: {{ module }}
 
 .. autoclass:: {{ objname }}
 
-   {% block attributes_summary %}
+   {% block methods %}
+   {% block attributes %}
    {% if attributes %}
-
-   .. rubric:: Attributes Summary
-
-   .. autosummary::
-   {% for item in attributes %}
-      ~{{ name }}.{{ item }}
-   {%- endfor %}
-
+      .. autosummary::
+         :toctree:
+      {% for item in all_attributes %}
+         {%- if not item.startswith('_') %}
+         {{ name }}.{{ item }}
+         {%- endif -%}
+      {%- endfor %}
    {% endif %}
    {% endblock %}
+   
+   Methods Summary
 
-   {% block methods_summary %}
    {% if methods %}
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-   {% for item in methods %}
-      ~{{ name }}.{{ item }}
-   {%- endfor %}
-
+      .. autosummary::
+         :toctree:
+      {% for item in all_methods %}
+         {%- if not item.startswith('_') or item in ['__call__'] %}
+         {{ name }}.{{ item }}
+         {%- endif -%}
+      {%- endfor %}
    {% endif %}
    {% endblock %}
-
-   {% block attributes_documentation %}
-   {% if attributes %}
-
-   .. rubric:: Attributes Documentation
-
-   {% for item in attributes %}
-   .. autoattribute:: {{ item }}
-   {%- endfor %}
-
-   {% endif %}
-   {% endblock %}
-
-   {% block methods_documentation %}
-   {% if methods %}
-
-   .. rubric:: Methods Documentation
-
-   {% for item in methods %}
-   .. automethod:: {{ item }}
-   {%- endfor %}
-
-   {% endif %}
-   {% endblock %}
-
-.. include:: {{fullname}}.examples
-
-.. raw:: html
-
-     <div style='clear:both'></div>

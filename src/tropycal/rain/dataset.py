@@ -17,8 +17,7 @@ try:
     from cartopy import crs as ccrs
     from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 except:
-    warn_message = "Warning: Cartopy is not installed in your python environment. Plotting functions will not work."
-    warnings.warn(warn_message)
+    warnings.warn("Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
 
 from .plot import RainPlot
 

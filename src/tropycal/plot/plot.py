@@ -288,7 +288,7 @@ class Plot:
             self.ax = ax
         
         #Attach geography to plot, lat/lon lines, etc.
-        if plot_geography == True:
+        if plot_geography:
             self.create_geography(map_prop)
     
     def add_prop(self,input_prop,default_prop):

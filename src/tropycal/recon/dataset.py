@@ -378,7 +378,7 @@ class ReconDataset:
         self.plot_obj = ReconPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             cartopy_proj = self.plot_obj.proj
         
@@ -387,7 +387,7 @@ class ReconDataset:
                                               ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax==True:
+        if ax is not None or return_ax==True:
             return plot_info
 
     
@@ -772,7 +772,7 @@ class ReconDataset:
         self.plot_obj = ReconPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             cartopy_proj = self.plot_obj.proj
         
@@ -781,5 +781,5 @@ class ReconDataset:
                                              domain,ax,return_ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax==True:
+        if ax is not None or return_ax==True:
             return plot_info

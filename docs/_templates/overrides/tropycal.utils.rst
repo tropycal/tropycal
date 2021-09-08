@@ -19,6 +19,16 @@ Generic Utilities
       get_storm_type
 
 
+Cartopy Utilities
+-----------------
+
+   .. autosummary::
+      :toctree: ./
+
+      add_tropycal
+      plot_storm
+
+
 Colors
 ------
 

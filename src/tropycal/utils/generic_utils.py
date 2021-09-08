@@ -134,6 +134,8 @@ def get_storm_classification(wind_speed,subtropical_flag,basin):
     r"""
     Retrieve the tropical cyclone classification given its subtropical status and current basin.
     
+    These strings take the format of "Tropical Storm", "Hurricane", "Typhoon", etc.
+    
     Warning: This function currently does not differentiate between 1-minute, 3-minute and 10-minute sustained wind speeds.
     
     Parameters
@@ -182,7 +184,7 @@ def get_storm_classification(wind_speed,subtropical_flag,basin):
                 return "Subtropical Storm"
             else:
                 return "Tropical Storm"
-        elif wind_speed < 120:
+        elif wind_speed < 130:
             return "Typhoon"
         else:
             return "Super Typhoon"
@@ -241,7 +243,7 @@ def get_storm_classification(wind_speed,subtropical_flag,basin):
 def get_storm_type(wind_speed,subtropical_flag):
     
     r"""
-    Retrieve the 2-character tropical cyclone type given its subtropical status.
+    Retrieve the 2-character tropical cyclone type (e.g., "TD", "TS", "HU") given its subtropical status.
     
     Parameters
     ----------
@@ -294,7 +296,7 @@ def get_basin(lat,lon,storm_id=""):
     Returns
     -------
     str
-        String representing the current basin.
+        String representing the current basin (e.g., "north_atlantic", "east_pacific").
     """
     
     #Error check
@@ -371,7 +373,7 @@ def knots_to_mph(wind_speed):
 def accumulated_cyclone_energy(wind_speed,hours=6):
     
     r"""
-    Calculate Cccumulated Cyclone Energy (ACE) based on sustained wind speed in knots.
+    Calculate Accumulated Cyclone Energy (ACE) based on sustained wind speed in knots.
     
     Parameters
     ----------

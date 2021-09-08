@@ -389,7 +389,7 @@ def filter_storms_vp(trackdata,year_min=0,year_max=9999,subset_domain=None):
     """
     
     #If no subset domain is passed, use global data
-    if subset_domain == None:
+    if subset_domain is None:
         lon_min,lon_max,lat_min,lat_max = [0,360,-90,90]
     else:
         lon_min,lon_max,lat_min,lat_max = [float(i) for i in subset_domain.split("/")]

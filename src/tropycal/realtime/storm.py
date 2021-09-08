@@ -61,7 +61,7 @@ class RealtimeStorm(Storm):
         #Format keys for summary
         type_array = np.array(self.dict['type'])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))[0]
-        if self.invest == True: idx = np.array([True for i in type_array])
+        if self.invest: idx = np.array([True for i in type_array])
         if len(idx) == 0:
             start_date = 'N/A'
             end_date = 'N/A'
@@ -128,7 +128,7 @@ class RealtimeStorm(Storm):
                 self[key] = np.array(self.dict[key])
                 
         #Assign tornado data
-        if stormTors != None and isinstance(stormTors,dict) == True:
+        if stormTors is not None and isinstance(stormTors,dict):
             self.stormTors = stormTors['data']
             self.tornado_dist_thresh = stormTors['dist_thresh']
             self.coords['Tornado Count'] = len(stormTors['data'])
@@ -137,7 +137,7 @@ class RealtimeStorm(Storm):
         self.get_archer()
         
         #Determine if storm object was retrieved via realtime object
-        if 'realtime' in keys and self.dict['realtime'] == True:
+        if 'realtime' in keys and self.dict['realtime']:
             self.realtime = True
             self.coords['realtime'] = True
         else:
@@ -156,7 +156,7 @@ class RealtimeStorm(Storm):
         """
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Determine data source
@@ -192,7 +192,7 @@ class RealtimeStorm(Storm):
         warnings.warn("'get_nhc_discussion_realtime' will be deprecated in future Tropycal versions, use 'get_discussion_realtime' instead",DeprecationWarning)
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Get latest forecast discussion for HURDAT source storm objects
@@ -227,7 +227,7 @@ class RealtimeStorm(Storm):
         """
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Get latest forecast discussion for HURDAT source storm objects
@@ -266,7 +266,7 @@ class RealtimeStorm(Storm):
         """
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #NHC forecast data
@@ -297,7 +297,7 @@ class RealtimeStorm(Storm):
 
                 if len(forecasts) == 0:
                     forecasts = {
-                        'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
+                        'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
                     }
 
                 #Format lat & lon
@@ -377,7 +377,7 @@ class RealtimeStorm(Storm):
                     
                 if len(forecasts) == 0:
                     forecasts = {
-                        'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
+                        'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
                     }
 
                 #Forecast hour
@@ -426,6 +426,7 @@ class RealtimeStorm(Storm):
         
         #Add initial forecast hour ACE
         ace += accumulated_cyclone_energy(forecasts['vmax'][0],hours=6)
+        forecasts['cumulative_ace_fhr'].append(0)
         forecasts['cumulative_ace'].append(np.round(ace,1))
         
         #Interpolate forecast to 6-hour increments
@@ -458,13 +459,14 @@ class RealtimeStorm(Storm):
             #Add ACE to array
             if i_fhr in forecasts['fhr']:
                 forecasts['cumulative_ace'].append(np.round(ace,1))
+                forecasts['cumulative_ace_fhr'].append(i_fhr)
         
         #Save forecast as attribute
         self.latest_forecast = forecasts
         return self.latest_forecast
 
     def plot_forecast_realtime(self,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
-                                   ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+                                   ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Plots the latest available official forecast. Available for both NHC and JTWC sources.
@@ -484,8 +486,6 @@ class RealtimeStorm(Storm):
             Domain for the plot. Default is "dynamic_forecast". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
@@ -494,10 +494,15 @@ class RealtimeStorm(Storm):
             Property of storm track lines.
         map_prop : dict
             Property of cartopy map.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Create instance of plot object
@@ -507,7 +512,7 @@ class RealtimeStorm(Storm):
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if max(self.dict['lon']) > 140 or min(self.dict['lon']) < -140:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
@@ -525,10 +530,10 @@ class RealtimeStorm(Storm):
         if self.source != "hurdat": nhc_forecasts['cone'] = False
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm_nhc(nhc_forecasts,self.dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm_nhc(nhc_forecasts,self.dict,track_labels,cone_days,domain,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return plot_ax
+        return plot_ax
         
     def get_realtime_info(self,source='all'):
         
@@ -562,7 +567,7 @@ class RealtimeStorm(Storm):
             raise RuntimeError(msg)
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             msg = "NHC does not issue public advisories on invests. Defaulting to best track method."
             warnings.warn(msg)
             source = 'best_track'
@@ -854,7 +859,7 @@ class RealtimeStorm(Storm):
         disco_date = disco_date + timedelta(hours=offset*-1)
         
     def __get_ensembles_eps(self):
-        #Here it is:
+        #This function is currently not functioning. The path to retrieve EPS ensemble data is:
         #ftp://wmo:essential@dissemination.ecmwf.int/20200518120000/
         #A_JSXX01ECEP181200_C_ECMP_20200518120000_tropical_cyclone_track_AMPHAN_86p3degE_14degN_bufr4.bin
         return

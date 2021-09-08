@@ -286,7 +286,7 @@ class Season:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_season(season,domain,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_season(self,domain,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         return plot_ax

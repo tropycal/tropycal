@@ -139,10 +139,10 @@ class RainDataset():
         grid = np.transpose(grid)
 
         #Return data
-        if return_xarray == False:
-            return {'grid':grid,'lat':grid_lat,'lon':grid_lon}
-        else:
+        if return_xarray:
             return xr.DataArray(grid,coords=[grid_lat,grid_lon],dims=['lat','lon'])
+        else:
+            return {'grid':grid,'lat':grid_lat,'lon':grid_lon}
 
     def plot_rain_grid(self,storm,grid,levels=None,cmap=None,domain="dynamic",plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         

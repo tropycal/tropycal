@@ -47,49 +47,46 @@ def test_code():
             ax = ax['ax']
         
         return fig
-
-    #method2(storm.plot, ['spam'], {'ham': 'ham'})
     
     #Retrieve HURDAT2 reanalysis dataset for North Atlantic
-    hurdat_atl = tracks.TrackDataset()
-
+    basin = tracks.TrackDataset()
         
     #Assign all tornadoes to storm
-    hurdat_atl.assign_storm_tornadoes()
+    basin.assign_storm_tornadoes()
     
     #------------------------------------------------------------
     
     #Search name
-    hurdat_atl.search_name('michael')
+    basin.search_name('michael')
     
     #Test getting storm ID
-    storm_id = hurdat_atl.get_storm_id(('michael', 2018))
+    storm_id = basin.get_storm_id(('michael', 2018))
     if storm_id != 'AL142018':
         raise AssertionError("Incorrect type")
     
     #Test retrieving hurricane Michael (2018)
-    storm = hurdat_atl.get_storm(('michael', 2018))
+    storm = basin.get_storm(('michael', 2018))
     
     #Cartopy proj
     proj = ccrs.PlateCarree(central_longitude=0.0)
     
     #Make plot of storm track
-    test_plot(storm.plot, proj, True, [], {'return_ax': True}, use_figsize=(14,9))
+    test_plot(storm.plot, proj, True, [], {}, use_figsize=(14,9))
+    
+    #Make plot of storm tracks
+    test_plot(basin.plot_storms, proj, True, [['AL012018','AL012019']], {}, use_figsize=(14,9))
     
     #Get NHC discussion
     disco = storm.get_nhc_discussion(forecast=1)
     
     #Plot NHC forecast
-    test_plot(storm.plot_nhc_forecast, proj, True, [], {'forecast': 1, 'return_ax': True}, use_figsize=(14,9))
-    #ax = storm.plot_nhc_forecast(forecast=1,return_ax=True)
+    test_plot(storm.plot_nhc_forecast, proj, True, [], {'forecast': 1}, use_figsize=(14,9))
     
     #Plot storm tornadoes
-    #test_plot(storm.plot_tors, proj, [], {'return_ax': True})
-    #ax = storm.plot_tors(return_ax=True)
+    test_plot(storm.plot_tors, proj, True, [], {'return_ax': True})
     
     #Plot rotated tornadoes
-    test_plot(storm.plot_TCtors_rotated, proj, False, [], {'return_ax': True}, use_figsize=(9,9), use_dpi=150)
-    #ax = storm.plot_TCtors_rotated(return_ax=True)
+    test_plot(storm.plot_TCtors_rotated, proj, False, [], {}, use_figsize=(9,9), use_dpi=150)
     
     #Convert to datatypes
     storm.to_dict()
@@ -100,11 +97,10 @@ def test_code():
     #------------------------------------------------------------
     
     #Test retrieving season
-    season = hurdat_atl.get_season(2017)
+    season = basin.get_season(2017)
     
     #Make plot of season
-    test_plot(season.plot, proj, True, [], {'return_ax': True}, use_figsize=(14,9))
-    #ax = season.plot(return_ax=True)
+    test_plot(season.plot, proj, True, [], {}, use_figsize=(14,9))
     
     #Annual summary
     season.summary()
@@ -115,9 +111,9 @@ def test_code():
     #------------------------------------------------------------
     
     #Rank storms
-    hurdat_atl.rank_storm('ace')
+    basin.rank_storm('ace')
     
     #Gridded stats
-    test_plot(hurdat_atl.gridded_stats, proj, True, ['maximum wind'], {}, use_figsize=(14,9))
-    #hurdat_atl.gridded_stats('maximum wind',return_ax=True)
+    test_plot(basin.gridded_stats, proj, True, ['maximum wind'], {}, use_figsize=(14,9))
     
+test_code()

@@ -184,7 +184,7 @@ def get_storm_classification(wind_speed,subtropical_flag,basin):
                 return "Subtropical Storm"
             else:
                 return "Tropical Storm"
-        elif wind_speed < 120:
+        elif wind_speed < 130:
             return "Typhoon"
         else:
             return "Super Typhoon"

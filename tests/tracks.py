@@ -9,6 +9,7 @@ import pytest
 
 from cartopy import crs as ccrs
 import tropycal.tracks as tracks
+import tropycal.rain as rain
 
 def assert_almost_equal(actual, desired, decimal=7):
     """Check that values are almost equal, including units.
@@ -83,7 +84,7 @@ def test_code():
     test_plot(storm.plot_nhc_forecast, proj, True, [], {'forecast': 1}, use_figsize=(14,9))
     
     #Plot storm tornadoes
-    test_plot(storm.plot_tors, proj, True, [], {'return_ax': True})
+    test_plot(storm.plot_tors, proj, True, [], {})
     
     #Plot rotated tornadoes
     test_plot(storm.plot_TCtors_rotated, proj, False, [], {}, use_figsize=(9,9), use_dpi=150)

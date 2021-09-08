@@ -82,8 +82,7 @@ class RainDataset():
         
         #Check if data is empty
         if len(df_storm) == 0:
-            msg = "No rainfall data is available for this storm."
-            raise RuntimeError(msg)
+            raise RuntimeError("No rainfall data is available for this storm.")
         
         #Return dataframe
         return df_storm

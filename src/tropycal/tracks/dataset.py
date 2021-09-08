@@ -1117,13 +1117,12 @@ class TrackDataset:
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if cartopy_proj is None:
-            if max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
-            else:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-        else:
+        if cartopy_proj is not None:
             self.plot_obj.proj = cartopy_proj
+        elif max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
         plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all_dots,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
@@ -1190,13 +1189,12 @@ class TrackDataset:
             if min(storm_dict['lon']) < min_lon: min_lon = min(storm_dict['lon'])
             
         #Create cartopy projection
-        if cartopy_proj is None:
-            if max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
-            else:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-        else:
+        if cartopy_proj is not None:
             self.plot_obj.proj = cartopy_proj
+        elif max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
         plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title,plot_all_dots,labels,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
@@ -1243,13 +1241,12 @@ class TrackDataset:
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if cartopy_proj is None:
-            if season.basin in ['east_pacific','west_pacific','south_pacific','australia','all']:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
-            else:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-        else:
+        if cartopy_proj is not None:
             self.plot_obj.proj = cartopy_proj
+        elif season.basin in ['east_pacific','west_pacific','south_pacific','australia','all']:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot season
         plot_ax = self.plot_obj.plot_season(season,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)

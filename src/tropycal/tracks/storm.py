@@ -643,13 +643,12 @@ class Storm:
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if cartopy_proj is None:
-            if max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
-            else:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-        else:
+        if cartopy_proj is not None:
             self.plot_obj.proj = cartopy_proj
+        elif max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
         plot_ax = self.plot_obj.plot_storm(self.dict,domain,plot_all_dots,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop,save_path=save_path)
@@ -877,13 +876,12 @@ class Storm:
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if cartopy_proj is None:
-            if max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
-            else:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-        else:
+        if cartopy_proj is not None:
             self.plot_obj.proj = cartopy_proj
+        elif max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
         
         #-------------------------------------------------------------------------
         

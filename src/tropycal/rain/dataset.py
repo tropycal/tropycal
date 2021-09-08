@@ -78,9 +78,7 @@ class RainDataset():
         df_storm = df_storm.drop(columns=['Storm','Year'])
         
         #Remove NaN entries
-        df_storm = df_storm.loc[~np.isnan(df_storm['Lat'])]
-        df_storm = df_storm.loc[~np.isnan(df_storm['Lon'])]
-        df_storm = df_storm.loc[~np.isnan(df_storm['Total'])]
+        df_storm = df_storm.loc[~np.isnan(df_storm['Lat']) & ~np.isnan(df_storm['Lon']) & ~np.isnan(df_storm['Total'])]
         
         #Check if data is empty
         if len(df_storm) == 0:

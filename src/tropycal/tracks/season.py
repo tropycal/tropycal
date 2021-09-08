@@ -60,7 +60,7 @@ class Season:
         new_coords = self.coords.copy()
         
         #Add year to list of years
-        if isinstance(self.coords['year'],int) == True:
+        if isinstance(self.coords['year'],int):
             new_coords['year'] = [self.year,new.year]
         else:
             new_coords['year'].append(new.year)
@@ -233,15 +233,15 @@ class Season:
         """
         
         #Check if storm is str or tuple
-        if isinstance(storm, str) == True:
+        if isinstance(storm, str):
             key = storm
-        elif isinstance(storm, tuple) == True:
+        elif isinstance(storm, tuple):
             key = self.get_storm_id((storm[0],storm[1]))
         else:
             raise RuntimeError("Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
         
         #Retrieve key of given storm
-        if isinstance(key, str) == True:
+        if isinstance(key, str):
             return Storm(self.dict[key])
         else:
             error_message = ''.join([f"\n{i}" for i in key])

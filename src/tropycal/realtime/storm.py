@@ -61,7 +61,7 @@ class RealtimeStorm(Storm):
         #Format keys for summary
         type_array = np.array(self.dict['type'])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))[0]
-        if self.invest == True: idx = np.array([True for i in type_array])
+        if self.invest: idx = np.array([True for i in type_array])
         if len(idx) == 0:
             start_date = 'N/A'
             end_date = 'N/A'
@@ -128,7 +128,7 @@ class RealtimeStorm(Storm):
                 self[key] = np.array(self.dict[key])
                 
         #Assign tornado data
-        if stormTors is not None and isinstance(stormTors,dict) == True:
+        if stormTors is not None and isinstance(stormTors,dict):
             self.stormTors = stormTors['data']
             self.tornado_dist_thresh = stormTors['dist_thresh']
             self.coords['Tornado Count'] = len(stormTors['data'])
@@ -137,7 +137,7 @@ class RealtimeStorm(Storm):
         self.get_archer()
         
         #Determine if storm object was retrieved via realtime object
-        if 'realtime' in keys and self.dict['realtime'] == True:
+        if 'realtime' in keys and self.dict['realtime']:
             self.realtime = True
             self.coords['realtime'] = True
         else:
@@ -156,7 +156,7 @@ class RealtimeStorm(Storm):
         """
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Determine data source
@@ -192,7 +192,7 @@ class RealtimeStorm(Storm):
         warnings.warn("'get_nhc_discussion_realtime' will be deprecated in future Tropycal versions, use 'get_discussion_realtime' instead",DeprecationWarning)
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Get latest forecast discussion for HURDAT source storm objects
@@ -227,7 +227,7 @@ class RealtimeStorm(Storm):
         """
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Get latest forecast discussion for HURDAT source storm objects
@@ -266,7 +266,7 @@ class RealtimeStorm(Storm):
         """
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #NHC forecast data
@@ -502,7 +502,7 @@ class RealtimeStorm(Storm):
         """
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Create instance of plot object
@@ -567,7 +567,7 @@ class RealtimeStorm(Storm):
             raise RuntimeError(msg)
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             msg = "NHC does not issue public advisories on invests. Defaulting to best track method."
             warnings.warn(msg)
             source = 'best_track'

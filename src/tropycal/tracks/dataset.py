@@ -181,7 +181,7 @@ class TrackDataset:
             raise RuntimeError("Accepted values for 'source' are 'hurdat' or 'ibtracs'")
             
         #Replace ibtracs with hurdat for atl/pac basins
-        if source == 'ibtracs' and ibtracs_hurdat == True:
+        if source == 'ibtracs' and ibtracs_hurdat:
             if self.basin in ['north_atlantic','east_pacific']:
                 self.__read_hurdat()
             elif self.basin == 'all':
@@ -250,7 +250,7 @@ class TrackDataset:
             raise RuntimeError("Only valid basins are 'north_atlantic', 'east_pacific' or 'both'")
         
         def read_hurdat(path,flag):
-            if flag == True:
+            if flag:
                 f = urllib.request.urlopen(path)
                 content = f.read()
                 content = content.decode("utf-8")
@@ -292,7 +292,7 @@ class TrackDataset:
                     add_basin = 'east_pacific'
                 elif line[0][0] == 'E':
                     add_basin = 'east_pacific'
-                if override_basin == True:
+                if override_basin:
                     add_basin = 'all'
                 
                 #add empty entry into dict
@@ -487,7 +487,7 @@ class TrackDataset:
             self.data[stormid]['ace'] = 0.0
 
             #Read in file
-            if use_ftp == True:
+            if use_ftp:
                 url = f"ftp://ftp.nhc.noaa.gov/atcf/btk/{file}"
             else:
                 url = f"https://ftp.nhc.noaa.gov/atcf/btk/{file}"
@@ -602,7 +602,7 @@ class TrackDataset:
         ibtracs_basin = basin_convert.get(self.basin,'')
         
         #read in ibtracs file
-        if ibtracs_online == True:
+        if ibtracs_online:
             path = self.ibtracs_url.replace("(basin)",ibtracs_basin)
             f = urllib.request.urlopen(path)
             content = f.read()
@@ -665,7 +665,7 @@ class TrackDataset:
                 self.data[use_id] = {'id':sid,'operational_id':'','name':name,'year':date.year,'season':int(year),'basin':self.basin}
                 self.data[use_id]['source'] = self.source
                 self.data[use_id]['source_info'] = 'Joint Typhoon Warning Center (unofficial)'
-                if self.neumann == True: self.data[use_id]['source_info'] += '& Charles Neumann reanalysis for South Hemisphere storms'
+                if self.neumann: self.data[use_id]['source_info'] += '& Charles Neumann reanalysis for South Hemisphere storms'
                 current_id = use_id
 
                 #add empty lists
@@ -675,7 +675,7 @@ class TrackDataset:
                 self.data[use_id]['ace'] = 0.0
 
             #Get neumann data for storms containing it
-            if self.neumann == True:
+            if self.neumann:
                 neumann_lat, neumann_lon, neumann_type, neumann_vmax, neumann_mslp = line[141:146]
                 if neumann_lat != "" and neumann_lon != "":
                     
@@ -744,7 +744,7 @@ class TrackDataset:
             
             
             #map JTWC to ibtracs ID (for neumann replacement)
-            if self.neumann == True:
+            if self.neumann:
                 if ibtracs_id not in map_id.keys():
                     map_id[ibtracs_id] = sid
             
@@ -789,7 +789,7 @@ class TrackDataset:
                 if wmo_type == "DS":
                     stype = "LO"
                 elif wmo_type == "TS":
-                    if np.isnan(jtwc_vmax) == True:
+                    if np.isnan(jtwc_vmax):
                         stype = 'LO'
                     elif jtwc_vmax < 34:
                         stype = 'TD'
@@ -798,7 +798,7 @@ class TrackDataset:
                     else:
                         stype = 'HU'
                 elif wmo_type == 'SS':
-                    if np.isnan(jtwc_vmax) == True:
+                    if np.isnan(jtwc_vmax):
                         stype = 'LO'
                     elif jtwc_vmax < 34:
                         stype = 'SD'
@@ -877,7 +877,7 @@ class TrackDataset:
                     elif stype == 'DS':
                         stype = 'LO'
                     else:
-                        if np.isnan(vmax) == True:
+                        if np.isnan(vmax):
                             stype = 'LO'
                         elif vmax < 34:
                             stype = 'TD'
@@ -931,7 +931,7 @@ class TrackDataset:
                 del(self.data[key])
         
         #Replace neumann entries
-        if self.neumann == True:
+        if self.neumann:
             
             #iterate through every neumann entry
             for key in neumann.keys():
@@ -949,9 +949,9 @@ class TrackDataset:
                 
         #Fix cyclone Catarina, if specified & requested
         all_keys = [k for k in self.data.keys()]
-        if '2004086S29318' in all_keys and self.catarina == True:
+        if '2004086S29318' in all_keys and self.catarina:
             self.data['2004086S29318'] = cyclone_catarina()
-        elif 'AL502004' in all_keys and self.catarina == True:
+        elif 'AL502004' in all_keys and self.catarina:
             self.data['AL502004'] = cyclone_catarina()
         
         #Determine time elapsed
@@ -1050,15 +1050,15 @@ class TrackDataset:
         """
         
         #Check if storm is str or tuple
-        if isinstance(storm, str) == True:
+        if isinstance(storm, str):
             key = storm
-        elif isinstance(storm, tuple) == True:
+        elif isinstance(storm, tuple):
             key = self.get_storm_id((storm[0],storm[1]))
         else:
             raise RuntimeError("Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
         
         #Retrieve key of given storm
-        if isinstance(key, str) == True:
+        if isinstance(key, str):
             
             #Check to see if tornado data exists for this storm
             if np.max(self.keys_tors) == 1:
@@ -1396,14 +1396,14 @@ class TrackDataset:
         if isinstance(year,int) == False and isinstance(year,list) == False:
             msg = "'year' must be of type int or list."
             raise TypeError(msg)
-        if isinstance(year,list) == True:
+        if isinstance(year,list):
             for i in year:
                 if isinstance(i,int) == False:
                     msg = "Elements of list 'year' must be of type int."
                     raise TypeError(msg)
         
         #Retrieve season object(s)
-        if isinstance(year,int) == True:
+        if isinstance(year,int):
             return self.__retrieve_season(year,basin)
         else:
             return_season = self.__retrieve_season(year[0],basin)
@@ -1556,7 +1556,7 @@ class TrackDataset:
         
         #Return if not plotting
         if plot == False:
-            if return_dict == True:
+            if return_dict:
                 return ace
             else:
                 return
@@ -1615,7 +1615,7 @@ class TrackDataset:
         #Plot comparison years
         if compare_years is not None:
             
-            if isinstance(compare_years, int) == True: compare_years = [compare_years]
+            if isinstance(compare_years, int): compare_years = [compare_years]
                 
             for year in compare_years:
                 
@@ -1826,7 +1826,7 @@ class TrackDataset:
         
         #Return if not plotting
         if plot == False:
-            if return_dict == True:
+            if return_dict:
                 return tc_days
             else:
                 return
@@ -1913,7 +1913,7 @@ class TrackDataset:
         #Plot comparison years
         if compare_years is not None and cat != 0:
             
-            if isinstance(compare_years, int) == True: compare_years = [compare_years]
+            if isinstance(compare_years, int): compare_years = [compare_years]
                 
             for year in compare_years:
                 
@@ -1969,7 +1969,7 @@ class TrackDataset:
                 transform=ax.transAxes,ha='right',va='top',zorder=10)
         
         #Show/save plot and close
-        if save_path is not None and isinstance(save_path,str) == True:
+        if save_path is not None and isinstance(save_path,str):
             plt.savefig(save_path,bbox_inches='tight')
         
         if return_dict:
@@ -2008,7 +2008,7 @@ class TrackDataset:
         if year_range is None:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
-        elif isinstance(year_range,(list,tuple)) == True:
+        elif isinstance(year_range,(list,tuple)):
             if len(year_range) != 2:
                 raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
             start_year = int(year_range[0])
@@ -2030,7 +2030,7 @@ class TrackDataset:
         
         #Return if plot is not requested
         if plot == False:
-            if return_dict == True:
+            if return_dict:
                 return relationship
             else:
                 return
@@ -2046,9 +2046,9 @@ class TrackDataset:
         if storm is not None:
             
             #Check if storm is str or tuple
-            if isinstance(storm, str) == True:
+            if isinstance(storm, str):
                 pass
-            elif isinstance(storm, tuple) == True:
+            elif isinstance(storm, tuple):
                 storm = self.get_storm_id((storm[0],storm[1]))
             else:
                 raise RuntimeError("Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
@@ -2079,7 +2079,7 @@ class TrackDataset:
                 check = False
                 if it in ['SD','SS','TD','TS','HU'] and tr_label == True: check = True
                 if not it in ['SD','SS','TD','TS','HU'] and xt_label == True: check = True
-                if check == True:
+                if check:
                     plt.scatter(iv, ip, marker='o',s=80,color=get_color(it)[0],edgecolor='k',zorder=9)
                 else:
                     if it in ['SD','SS','TD','TS','HU'] and tr_label == False:
@@ -2125,7 +2125,7 @@ class TrackDataset:
         if save_path is not None and isinstance(save_path,str):
             plt.savefig(save_path,bbox_inches='tight')
         
-        if return_dict == True:
+        if return_dict:
             return {'ax':ax,'data':relationship}
         else:
             return ax
@@ -2197,7 +2197,7 @@ class TrackDataset:
         if year_range is None:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
-        elif isinstance(year_range,(list,tuple)) == True:
+        elif isinstance(year_range,(list,tuple)):
             if len(year_range) != 2:
                 raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
             start_year = int(year_range[0])
@@ -2221,7 +2221,7 @@ class TrackDataset:
             
             #Filter for purely tropical/subtropical storm locations
             type_array = np.array(storm_data['type'])
-            if subtropical == True:
+            if subtropical:
                 idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
             else:
                 idx = np.where((type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
@@ -2237,7 +2237,7 @@ class TrackDataset:
             
             #Filter geographically
             if domain is not None:
-                if isinstance(domain,dict) == True:
+                if isinstance(domain,dict):
                     keys = domain.keys()
                     check = [False, False, False, False]
                     for key in keys:
@@ -2249,7 +2249,7 @@ class TrackDataset:
                         msg = "Custom domains must be of type dict with arguments for 'n', 's', 'e' and 'w'."
                         raise ValueError(msg)
                     idx = np.where((lat_tropical >= bound_s) & (lat_tropical <= bound_n) & (lon_tropical >= bound_w) & (lon_tropical <= bound_e))
-                elif isinstance(domain,str) == True:
+                elif isinstance(domain,str):
                     idx = np.where(basin_tropical==domain)
                 else:
                     msg = "domain must be of type str or dict."
@@ -2390,7 +2390,7 @@ class TrackDataset:
             start_year = self.data[self.keys[0]]['year']
             if start_year < 1950: start_year = 1950
             end_year = self.data[self.keys[-1]]['year']
-        elif isinstance(year_range,(list,tuple)) == True:
+        elif isinstance(year_range,(list,tuple)):
             if len(year_range) != 2:
                 raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
             start_year = int(year_range[0])
@@ -2401,9 +2401,9 @@ class TrackDataset:
             raise TypeError("year_range must be of type tuple or list")
             
         #Check if storm is str or tuple
-        if isinstance(storm, str) == True:
+        if isinstance(storm, str):
             pass
-        elif isinstance(storm, tuple) == True:
+        elif isinstance(storm, tuple):
             storm = self.get_storm_id((storm[0],storm[1]))
         else:
             raise RuntimeError("Storm must be a string (e.g., 'AL052019') or tuple (e.g., ('Matthew',2016)).")
@@ -2843,7 +2843,7 @@ class TrackDataset:
                 import xarray as xr
                 
                 #Determine whether to use averages
-                if year_average == True:
+                if year_average:
                     years_listed = len(range(year_range[0],year_range[1]+1))
                     grid_z_years[0] = grid_z_years[0] / years_listed
                     years_listed = len(range(year_range_subtract[0],year_range_subtract[1]+1))
@@ -2877,7 +2877,7 @@ class TrackDataset:
                 raise RuntimeError("Error: xarray is not available. Install xarray in order to use the subtract year functionality.") from e
         else:
             #Determine whether to use averages
-            if year_average == True:
+            if year_average:
                 years_listed = len(range(year_range[0],year_range[1]+1))
                 grid_z = grid_z / years_listed
         

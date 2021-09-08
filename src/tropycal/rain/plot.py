@@ -93,7 +93,7 @@ class RainPlot(Plot):
         
         #Retrieve grid coordinates and values
         plot_grid = True
-        if isinstance(grid,dict) == True:
+        if isinstance(grid,dict):
             if 'lat' in grid.keys():
                 grid_lat = grid['lat']
                 grid_lon = grid['lon']
@@ -117,7 +117,7 @@ class RainPlot(Plot):
         norm = col.BoundaryNorm(levels,cmap.N)
         
         #Contour fill grid if requested
-        if plot_grid == True:
+        if plot_grid:
             self.ax.contourf(grid_lon, grid_lat, grid, levels, cmap=cmap, norm=norm, zorder=2)
         
         #Plot dots if requested
@@ -168,7 +168,7 @@ class RainPlot(Plot):
 
         #Force dynamic_tropical to tropical if an invest
         invest_bool = False
-        if 'invest' in storm_data.keys() and storm_data['invest'] == True:
+        if 'invest' in storm_data.keys() and storm_data['invest']:
             invest_bool = True
             if domain == 'dynamic_tropical': domain = 'dynamic'
         

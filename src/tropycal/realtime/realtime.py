@@ -125,7 +125,7 @@ class Realtime():
         if jtwc_source not in ['ucar','noaa','jtwc']:
             msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
             raise ValueError(msg)
-        if jtwc == True: self.__read_btk_jtwc(jtwc_source)
+        if jtwc: self.__read_btk_jtwc(jtwc_source)
         
         #Determine time elapsed
         time_elapsed = dt.now() - start_time
@@ -219,7 +219,7 @@ class Realtime():
             self.data[stormid]['ace'] = 0.0
 
             #Read in file
-            if use_ftp == True:
+            if use_ftp:
                 url = f"ftp://ftp.nhc.noaa.gov/atcf/btk/{file}"
             else:
                 url = f"https://ftp.nhc.noaa.gov/atcf/btk/{file}"

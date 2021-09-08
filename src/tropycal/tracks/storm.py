@@ -69,7 +69,7 @@ class Storm:
         
         #Format keys for summary
         type_array = np.array(self.dict['type'])
-        if self.invest == True: idx = np.array([True for i in type_array])
+        if self.invest: idx = np.array([True for i in type_array])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))[0]
         if len(idx) == 0:
             start_date = 'N/A'
@@ -140,7 +140,7 @@ class Storm:
                     self[key] = np.array(self.dict[key])
 
             #Assign tornado data
-            if stormTors is not None and isinstance(stormTors,dict) == True:
+            if stormTors is not None and isinstance(stormTors,dict):
                 self.stormTors = stormTors['data']
                 self.tornado_dist_thresh = stormTors['dist_thresh']
                 self.coords['Tornado Count'] = len(stormTors['data'])
@@ -152,7 +152,7 @@ class Storm:
                 pass
 
             #Determine if storm object was retrieved via realtime object
-            if 'realtime' in keys and self.dict['realtime'] == True:
+            if 'realtime' in keys and self.dict['realtime']:
                 self.realtime = True
                 self.coords['realtime'] = True
             else:
@@ -160,7 +160,7 @@ class Storm:
                 self.coords['realtime'] = False
             
             #Determine if storm object is an invest
-            if 'invest' in keys and self.dict['invest'] == True:
+            if 'invest' in keys and self.dict['invest']:
                 self.invest = True
                 self.coords['invest'] = True
             else:
@@ -463,7 +463,7 @@ class Storm:
 
         #Construct new storm dict with subset elements
         for key in NEW_STORM.dict.keys():
-            if isinstance(NEW_STORM.dict[key], list) == True:
+            if isinstance(NEW_STORM.dict[key], list):
                 NEW_STORM.dict[key] = [NEW_STORM.dict[key][i] for i in idx_final]
             else:
                 NEW_STORM.dict[key] = NEW_STORM.dict[key]
@@ -556,7 +556,7 @@ class Storm:
         #Add every key containing a list into the dict, otherwise add as an attribute
         keys = [k for k in self.dict.keys() if k != 'date']
         for key in keys:
-            if isinstance(self.dict[key], list) == True:
+            if isinstance(self.dict[key], list):
                 ds[key] = xr.DataArray(self.dict[key],coords=[time],dims=['time'])
             else:
                 attrs[key] = self.dict[key]
@@ -596,7 +596,7 @@ class Storm:
         #Add every key containing a list into the dict
         keys = [k for k in self.dict.keys()]
         for key in keys:
-            if isinstance(self.dict[key], list) == True:
+            if isinstance(self.dict[key], list):
                 ds[key] = self.dict[key]
             else:
                 if attrs_as_columns:
@@ -706,7 +706,7 @@ class Storm:
             raise RuntimeError("Error: NHC data can only be accessed when HURDAT is used as the data source.")
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Create instance of plot object
@@ -737,10 +737,10 @@ class Storm:
         carq_forecast_init = [k for k in carq_forecasts.keys()]
 
         #Find closest matching time to the provided forecast date, or time
-        if isinstance(forecast,int) == True:
+        if isinstance(forecast,int):
             forecast_dict = nhc_forecasts[nhc_forecast_init[forecast-1]]
             advisory_num = forecast+0
-        elif isinstance(forecast,dt) == True:
+        elif isinstance(forecast,dt):
             nhc_forecast_init_dt = [dt.strptime(k,'%Y%m%d%H') for k in nhc_forecast_init]
             time_diff = np.array([(i-forecast).days + (i-forecast).seconds/86400 for i in nhc_forecast_init_dt])
             closest_idx = np.abs(time_diff).argmin()
@@ -1013,7 +1013,7 @@ class Storm:
             raise RuntimeError("Error: NHC data can only be accessed when HURDAT is used as the data source.")
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Get storm ID & corresponding data URL
@@ -1336,7 +1336,7 @@ class Storm:
             raise RuntimeError(msg)
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Get storm ID & corresponding data URL
@@ -1356,7 +1356,7 @@ class Storm:
         #Get list of storm discussions
         disco_dict = self.list_nhc_discussions()
         
-        if isinstance(forecast,dt) == True:
+        if isinstance(forecast,dt):
             #Find closest discussion to the time provided
             disco_times = disco_dict['utc_date']
             disco_ids = [int(i) for i in disco_dict['id']]
@@ -1370,7 +1370,7 @@ class Storm:
             if np.abs(closest_diff) >= 1.0:
                 warnings.warn(f"The date provided is unavailable or outside of the duration of the storm. Use the \"list_nhc_discussions()\" function to retrieve a list of available NHC discussions for this storm. Returning the closest available NHC discussion.")
                 
-        if isinstance(forecast,int) == True:
+        if isinstance(forecast,int):
             #Find closest discussion ID to the one provided
             disco_times = disco_dict['utc_date']
             disco_ids = [int(i) for i in disco_dict['id']]
@@ -1470,7 +1470,7 @@ class Storm:
             raise RuntimeError(msg)
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Get storm ID & corresponding data URL
@@ -1484,7 +1484,7 @@ class Storm:
         if isinstance(query,str) == False and isinstance(query,list) == False:
             msg = "'query' must be of type str or list."
             raise TypeError(msg)
-        if isinstance(query,list) == True:
+        if isinstance(query,list):
             for i in query:
                 if isinstance(i,str) == False:
                     msg = "Entries of list 'query' must be of type str."
@@ -1504,13 +1504,13 @@ class Storm:
             text = forecast['text'].lower()
             
             #If found, add into list
-            if isinstance(query,str) == True:
+            if isinstance(query,str):
                 if text.find(query.lower()) >= 0: output.append(forecast)
             else:
                 found = False
                 for i_query in query:
                     if text.find(i_query.lower()) >= 0: found = True
-                if found == True: output.append(forecast)
+                if found: output.append(forecast)
             
         #Return list
         return output
@@ -1672,7 +1672,7 @@ class Storm:
         """
         
         #Check to ensure storm is not an invest
-        if self.invest == True:
+        if self.invest:
             raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
         
         #Error check
@@ -1804,7 +1804,7 @@ class Storm:
         plot_ax.set_title(f'{storm_title}\n{tor_title}',loc='left',fontsize=17,fontweight='bold')
         
         #Save plot
-        if save_path is not None and isinstance(save_path,str) == True:
+        if save_path is not None and isinstance(save_path,str):
             plt.savefig(save_path,bbox_inches='tight')
         
         #Return axis
@@ -1887,7 +1887,7 @@ class Storm:
                 transform=ax.transAxes,ha='right',va='bottom',zorder=10)
         
         #Save plot
-        if save_path is not None and isinstance(save_path,str) == True:
+        if save_path is not None and isinstance(save_path,str):
             plt.savefig(save_path,bbox_inches='tight')
         
         #Return axis or show figure

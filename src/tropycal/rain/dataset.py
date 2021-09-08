@@ -267,13 +267,12 @@ class RainDataset():
             self.plot_obj = RainPlot()
         
         #Create cartopy projection
-        if cartopy_proj is None:
-            if max(storm['lon']) > 150 or min(storm['lon']) < -150:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
-            else:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-        else:
+        if cartopy_proj is not None:
             self.plot_obj.proj = cartopy_proj
+        elif max(storm['lon']) > 150 or min(storm['lon']) < -150:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
         plot_ax = self.plot_obj.plot_storm(storm,{'ms':ms,'minimum_threshold':minimum_threshold,'mew':mew,'mec':mec},levels,cmap,domain,plot_all_dots,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)

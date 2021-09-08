@@ -114,9 +114,9 @@ class RainPlot(Plot):
             grid_val = grid.values
         
         #Determine levels and colormap
-        if levels == None:
+        if levels is None:
             levels = [1,2,3,4,6,8,10,12,16,20]
-        if cmap == None:
+        if cmap is None:
             cmap = plt.cm.YlGn
         norm = col.BoundaryNorm(levels,cmap.N)
         
@@ -138,7 +138,7 @@ class RainPlot(Plot):
                 
                 #Specify additional kwargs
                 ms_kwargs = {}
-                if mec != None: ms_kwargs = {'mec':mec,'mew':mew}
+                if mec is not None: ms_kwargs = {'mec':mec,'mew':mew}
                 self.ax.plot(row['Lon'],row['Lat'],'o',ms=ms,color=color,**ms_kwargs,transform=ccrs.PlateCarree())
         
         #Produce colorbar
@@ -501,11 +501,11 @@ class RainPlot(Plot):
         #-----------------------------------------------------------------------------------------
         
         #Save image if specified
-        if save_path != None and isinstance(save_path,str) == True:
+        if save_path is not None and isinstance(save_path,str) == True:
             plt.savefig(save_path,bbox_inches='tight')
         
         #Return axis if specified, otherwise display figure
-        if ax != None or return_ax == True:
+        if ax is not None or return_ax == True:
             return self.ax
         else:
             plt.show()

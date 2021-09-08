@@ -104,19 +104,19 @@ class TornadoPlot(Plot):
         mnlon = (slon+elon)*.5
 
         #Add to coordinate extrema
-        if max_lat == None:
+        if max_lat is None:
             max_lat = max(mnlat)
         else:
             if max(mnlat) > max_lat: max_lat = max(mnlat)
-        if min_lat == None:
+        if min_lat is None:
             min_lat = min(mnlat)
         else:
             if min(mnlat) < min_lat: min_lat = min(mnlat)
-        if max_lon == None:
+        if max_lon is None:
             max_lon = max(mnlon)
         else:
             if max(mnlon) > max_lon: max_lon = max(mnlon)
-        if min_lon == None:
+        if min_lon is None:
             min_lon = min(mnlon)
         else:
             if min(mnlon) < min_lon: min_lon = min(mnlon)

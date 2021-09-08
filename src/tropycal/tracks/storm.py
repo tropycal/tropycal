@@ -140,7 +140,7 @@ class Storm:
                     self[key] = np.array(self.dict[key])
 
             #Assign tornado data
-            if stormTors != None and isinstance(stormTors,dict) == True:
+            if stormTors is not None and isinstance(stormTors,dict) == True:
                 self.stormTors = stormTors['data']
                 self.tornado_dist_thresh = stormTors['dist_thresh']
                 self.coords['Tornado Count'] = len(stormTors['data'])
@@ -643,7 +643,7 @@ class Storm:
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
@@ -655,7 +655,7 @@ class Storm:
         plot_ax = self.plot_obj.plot_storm(self.dict,domain,plot_all_dots,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop,save_path=save_path)
         
         #Return axis
-        if ax != None or return_ax == True: return plot_ax
+        if ax is not None or return_ax == True: return plot_ax
         
     #PLOT FUNCTION FOR HURDAT
     def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
@@ -711,7 +711,7 @@ class Storm:
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if max(self.dict['lon']) > 140 or min(self.dict['lon']) < -140:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
@@ -825,7 +825,7 @@ class Storm:
         plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return plot_ax
+        if ax is not None or return_ax == True: return plot_ax
         
     
     #PLOT FUNCTION FOR HURDAT
@@ -877,7 +877,7 @@ class Storm:
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
@@ -975,7 +975,7 @@ class Storm:
                 ds['gefs']['members'].append(len(temp_data['lat']))
 
                 #Calculate ellipse data
-                if prop_ellipse != None:
+                if prop_ellipse is not None:
                     ellipse_data = plot_ellipse(temp_data['lat'],temp_data['lon'])
                     ds['gefs']['ellipse_lon'].append(ellipse_data['xell'])
                     ds['gefs']['ellipse_lat'].append(ellipse_data['yell'])
@@ -988,7 +988,7 @@ class Storm:
         plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_members,prop_mean,prop_gfs,prop_ellipse,prop_density,nens,domain,ds,ax=ax,return_ax=return_ax,map_prop=map_prop,save_path=save_path)
         
         #Return axis
-        if ax != None or return_ax == True: return plot_ax
+        if ax is not None or return_ax == True: return plot_ax
     
     def list_nhc_discussions(self):
         
@@ -1430,7 +1430,7 @@ class Storm:
             response.close()
         
         #Save file, if specified
-        if save_path != None:
+        if save_path is not None:
             closest_time = disco_times[closest_idx].strftime("%Y%m%d_%H%M")
             fname = f"nhc_disco_{self.name.lower()}_{self.year}_{closest_time}.txt"
             o = open(save_path+fname,"w")
@@ -1745,7 +1745,7 @@ class Storm:
         except:
             prop['PPHcolors']='Wistia'
         
-        if Tors == None:
+        if Tors is None:
             try:
                 self.stormTors
             except:
@@ -1773,7 +1773,7 @@ class Storm:
             self.plot_obj_tor = TornadoPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
                 self.plot_obj_tor.create_cartopy(proj='PlateCarree',central_longitude=180.0)
                 self.plot_obj_tc.create_cartopy(proj='PlateCarree',central_longitude=180.0)
@@ -1795,11 +1795,11 @@ class Storm:
         plot_ax.set_title(f'{storm_title}\n{tor_title}',loc='left',fontsize=17,fontweight='bold')
         
         #Return axis
-        if ax != None or return_ax == True: 
+        if ax is not None or return_ax == True: 
             return plot_ax
         else:
             #Save image if specified
-            if save_path != None and isinstance(save_path,str) == True:
+            if save_path is not None and isinstance(save_path,str) == True:
                 plt.savefig(save_path,bbox_inches='tight')
             else:
                 plt.show()
@@ -1883,7 +1883,7 @@ class Storm:
         if return_ax == True:
             return ax
         else:
-            if save_path != None and isinstance(save_path,str) == True:
+            if save_path is not None and isinstance(save_path,str) == True:
                 plt.savefig(save_path,bbox_inches='tight')
             else:
                 plt.show()

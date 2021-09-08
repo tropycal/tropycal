@@ -286,7 +286,7 @@ class Season:
         return_ax = self.plot_obj.plot_season(season,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return return_ax
+        if ax is not None or return_ax == True: return return_ax
         
     def summary(self):
         

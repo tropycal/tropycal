@@ -1117,7 +1117,7 @@ class TrackDataset:
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
@@ -1129,7 +1129,7 @@ class TrackDataset:
         plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all_dots,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return plot_ax
+        if ax is not None or return_ax == True: return plot_ax
     
     
     def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,labels=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
@@ -1190,7 +1190,7 @@ class TrackDataset:
             if min(storm_dict['lon']) < min_lon: min_lon = min(storm_dict['lon'])
             
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
@@ -1202,7 +1202,7 @@ class TrackDataset:
         plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title,plot_all_dots,labels,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return plot_ax
+        if ax is not None or return_ax == True: return plot_ax
         
         
     def plot_season(self,year,domain=None,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
@@ -1243,7 +1243,7 @@ class TrackDataset:
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if season.basin in ['east_pacific','west_pacific','south_pacific','australia','all']:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
@@ -1255,7 +1255,7 @@ class TrackDataset:
         plot_ax = self.plot_obj.plot_season(season,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return plot_ax
+        if ax is not None or return_ax == True: return plot_ax
     
     
     def search_name(self,name):
@@ -1571,7 +1571,7 @@ class TrackDataset:
         ax.set_xlim(julian_start[4],julian[-1])
 
         #Add plot title
-        if plot_year == None:
+        if plot_year is None:
             title_string = f"{self.basin.title().replace('_',' ')} Accumulated Cyclone Energy Climatology"
         else:
             cur_year = (dt.now()).year
@@ -1587,7 +1587,7 @@ class TrackDataset:
         ax.set_title(f"{title_string}{title_add}",fontsize=12,fontweight='bold',loc='left')
         
         #Plot requested year
-        if plot_year != None:
+        if plot_year is not None:
             
             year_julian = np.copy(julian)
             year_ace = ace[str(plot_year)]['ace']
@@ -1607,7 +1607,7 @@ class TrackDataset:
             ax.plot(year_julian[year_genesis],year_ace[year_genesis],'D',color='k',ms=5,mec='w',mew=0.5,zorder=7,label='TC Genesis')
             
         #Plot comparison years
-        if compare_years != None:
+        if compare_years is not None:
             
             if isinstance(compare_years, int) == True: compare_years = [compare_years]
                 
@@ -1653,7 +1653,7 @@ class TrackDataset:
                 transform=ax.transAxes,ha='right',va='top',zorder=10)
         
         #Show/save plot and close
-        if save_path == None:
+        if save_path is None:
             plt.show()
         else:
             plt.savefig(save_path,bbox_inches='tight',facecolor='w')
@@ -1801,7 +1801,7 @@ class TrackDataset:
         
         #Determine type of plot to make
         category_match = {0:'ts',1:'c1',2:'c2',3:'c3',4:'c4',5:'c5'}
-        if category == None:
+        if category is None:
             cat = 0
         else:
             cat = category_match.get(category,'c1')
@@ -1851,7 +1851,7 @@ class TrackDataset:
             add_str = category_names.get(cat)
         
         #Add plot title
-        if plot_year == None:
+        if plot_year is None:
             title_string = f"{self.basin.title().replace('_',' ')} Accumulated {add_str} Days"
         else:
             cur_year = (dt.now()).year
@@ -1867,7 +1867,7 @@ class TrackDataset:
         ax.set_title(f"{title_string}{title_add}",fontsize=12,fontweight='bold',loc='left')
         
         #Plot requested year
-        if plot_year != None:
+        if plot_year is not None:
             
             if cat == 0:
                 year_labels = []
@@ -1908,7 +1908,7 @@ class TrackDataset:
                 ax.plot(year_julian[year_genesis],year_tc_days[year_genesis],'D',color='#FF7CFF',ms=5,mec='#750775',mew=0.5,zorder=7,label='TC Genesis')
             
         #Plot comparison years
-        if compare_years != None and cat != 0:
+        if compare_years is not None and cat != 0:
             
             if isinstance(compare_years, int) == True: compare_years = [compare_years]
                 
@@ -1937,7 +1937,7 @@ class TrackDataset:
         
         #Plot all climatological values
         if cat == 0:
-            if plot_year == None:
+            if plot_year is None:
                 add_str = ["" for i in all_thres]
             else:
                 add_str = [f" | {plot_year}: {i}" for i in year_labels[::-1]]
@@ -1966,7 +1966,7 @@ class TrackDataset:
                 transform=ax.transAxes,ha='right',va='top',zorder=10)
         
         #Show/save plot and close
-        if save_path == None:
+        if save_path is None:
             plt.show()
         else:
             plt.savefig(save_path,bbox_inches='tight')
@@ -2005,7 +2005,7 @@ class TrackDataset:
         relationship = {}
         
         #Determine year range of dataset
-        if year_range == None:
+        if year_range is None:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
         elif isinstance(year_range,(list,tuple)) == True:
@@ -2043,7 +2043,7 @@ class TrackDataset:
         plt.plot(xedges,[testfit(vp,x,2) for x in xedges],'k--',linewidth=2)
         
         #Plot storm, if specified
-        if storm != None:
+        if storm is not None:
             
             #Check if storm is str or tuple
             if isinstance(storm, str) == True:
@@ -2122,7 +2122,7 @@ class TrackDataset:
                 transform=plt.gca().transAxes,ha='right',va='bottom',zorder=10)        
         
         #Show/save plot and close
-        if save_path == None:
+        if save_path is None:
             plt.show()
         else:
             plt.savefig(save_path,bbox_inches='tight')
@@ -2197,7 +2197,7 @@ class TrackDataset:
             raise ValueError("Metric requested for sorting is not available. Please reference the documentation for acceptable entries for 'metric'.")
         
         #Determine year range of dataset
-        if year_range == None:
+        if year_range is None:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
         elif isinstance(year_range,(list,tuple)) == True:
@@ -2239,7 +2239,7 @@ class TrackDataset:
             basin_tropical = np.array(storm_data['wmo_basin'])[idx]
             
             #Filter geographically
-            if domain != None:
+            if domain is not None:
                 if isinstance(domain,dict) == True:
                     keys = domain.keys()
                     check = [False, False, False, False]
@@ -2271,7 +2271,7 @@ class TrackDataset:
                     basin_tropical = basin_tropical[idx]
             
             #Filter by time
-            if date_range != None:
+            if date_range is not None:
                 start_time = dt.strptime(f"{storm_data['year']}/{date_range[0]}",'%Y/%m/%d')
                 end_time = dt.strptime(f"{storm_data['year']}/{date_range[1]}",'%Y/%m/%d')
                 idx = np.array([i for i in range(len(lat_tropical)) if date_tropical[i] >= start_time and date_tropical[i] <= end_time])
@@ -2389,7 +2389,7 @@ class TrackDataset:
             warnings.warn(warning_str)
 
         #Determine year range of dataset
-        if year_range == None:
+        if year_range is None:
             start_year = self.data[self.keys[0]]['year']
             if start_year < 1950: start_year = 1950
             end_year = self.data[self.keys[-1]]['year']
@@ -2479,7 +2479,7 @@ class TrackDataset:
         thresh = default_thresh
 
         #Determine domain over which to filter data
-        if domain == None:
+        if domain is None:
             lon_min = 0
             lon_max = 360
             lat_min = -90
@@ -2742,7 +2742,7 @@ class TrackDataset:
         #---------------------------------------------------------------------------------------------------
         
         #Perform analysis either once or twice depending on year_range_subtract
-        if year_range_subtract == None:
+        if year_range_subtract is None:
             years_analysis = [year_range]
         else:
             years_analysis = [year_range,year_range_subtract]
@@ -2893,9 +2893,9 @@ class TrackDataset:
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection using basin
-        if domain == None:
+        if domain is None:
             domain = self.basin
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if max(points['lon']) > 150 or min(points['lon']) < -150:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
@@ -2932,7 +2932,7 @@ class TrackDataset:
             else:
                 y_r_title = f'{year_range[0]} {endash} {year_range[1]}'
             add_avg = ' year-avg' if year_average == True else ''
-            if year_range_subtract == None:
+            if year_range_subtract is None:
                 title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")} {dot} {y_r_title}{add_avg}'
             else:
                 if np.subtract(*year_range_subtract)==0:
@@ -2993,7 +2993,7 @@ class TrackDataset:
             return {'ax':plot_ax,'array':arr}
         if return_ax == False and return_array == True:
             return arr
-        if ax != None or return_ax == True: return plot_ax
+        if ax is not None or return_ax == True: return plot_ax
         
 
     
@@ -3162,7 +3162,7 @@ class TrackDataset:
             return_dict['ax'] = ax
         else:
             #Save image if specified
-            if save_path != None and isinstance(save_path,str) == True:
+            if save_path is not None and isinstance(save_path,str) == True:
                 plt.savefig(save_path,bbox_inches='tight')
             else:
                 plt.show()

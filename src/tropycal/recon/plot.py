@@ -108,19 +108,19 @@ class ReconPlot(Plot):
         lons = recon_data['lon']
 
         #Add to coordinate extrema
-        if max_lat == None:
+        if max_lat is None:
             max_lat = max(lats)
         else:
             if max(lats) > max_lat: max_lat = max(lats)
-        if min_lat == None:
+        if min_lat is None:
             min_lat = min(lats)
         else:
             if min(lats) < min_lat: min_lat = min(lats)
-        if max_lon == None:
+        if max_lon is None:
             max_lon = max(lons)
         else:
             if max(lons) > max_lon: max_lon = max(lons)
-        if min_lon == None:
+        if min_lon is None:
             min_lon = min(lons)
         else:
             if min(lons) < min_lon: min_lon = min(lons)
@@ -248,7 +248,7 @@ class ReconPlot(Plot):
         self.add_credit(text)
         
         #Return axis if specified, otherwise display figure
-        if ax != None or return_ax == True:
+        if ax is not None or return_ax == True:
             return self.ax,'/'.join([str(b) for b in [bound_w,bound_e,bound_s,bound_n]])
         else:
             plt.show()
@@ -284,19 +284,19 @@ class ReconPlot(Plot):
         sdate = storm_data['date']
 
         #Add to coordinate extrema
-        if max_lat == None:
+        if max_lat is None:
             max_lat = max(lats)+2.5
         else:
             if max(lats) > max_lat: max_lat = max(lats)
-        if min_lat == None:
+        if min_lat is None:
             min_lat = min(lats)-2.5
         else:
             if min(lats) < min_lat: min_lat = min(lats)
-        if max_lon == None:
+        if max_lon is None:
             max_lon = max(lons)+2.5
         else:
             if max(lons) > max_lon: max_lon = max(lons)
-        if min_lon == None:
+        if min_lon is None:
             min_lon = min(lons)-2.5
         else:
             if min(lons) < min_lon: min_lon = min(lons)      
@@ -458,7 +458,7 @@ class ReconPlot(Plot):
         #mlib.rcParams.update({'font.size': 16})
 
         fig = plt.figure(figsize=prop['figsize'])
-        if ax == None:
+        if ax is None:
             self.ax = plt.subplot()
         else:
             self.ax = ax
@@ -495,7 +495,7 @@ class ReconPlot(Plot):
         #--------------------------------------------------------------------------------------
            
         #Return axis if specified, otherwise display figure
-        if ax != None or return_ax == True:
+        if ax is not None or return_ax == True:
             return self.ax
         else:
             plt.show()

@@ -193,7 +193,7 @@ class RainDataset():
             self.plot_obj = RainPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if max(storm['lon']) > 150 or min(storm['lon']) < -150:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
@@ -205,7 +205,7 @@ class RainDataset():
         plot_ax = self.plot_obj.plot_storm(storm,grid,levels,cmap,domain,plot_all_dots,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return plot_ax
+        if ax is not None or return_ax == True: return plot_ax
 
     def plot_rain(self,storm,ms=7.5,mec=None,mew=0.5,minimum_threshold=1.0,levels=None,cmap=None,domain="dynamic",plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
@@ -262,7 +262,7 @@ class RainDataset():
             self.plot_obj = RainPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if max(storm['lon']) > 150 or min(storm['lon']) < -150:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
@@ -274,4 +274,4 @@ class RainDataset():
         plot_ax = self.plot_obj.plot_storm(storm,{'ms':ms,'minimum_threshold':minimum_threshold,'mew':mew,'mec':mec},levels,cmap,domain,plot_all_dots,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return plot_ax
+        if ax is not None or return_ax == True: return plot_ax

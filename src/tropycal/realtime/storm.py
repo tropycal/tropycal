@@ -128,7 +128,7 @@ class RealtimeStorm(Storm):
                 self[key] = np.array(self.dict[key])
                 
         #Assign tornado data
-        if stormTors != None and isinstance(stormTors,dict) == True:
+        if stormTors is not None and isinstance(stormTors,dict) == True:
             self.stormTors = stormTors['data']
             self.tornado_dist_thresh = stormTors['dist_thresh']
             self.coords['Tornado Count'] = len(stormTors['data'])
@@ -509,7 +509,7 @@ class RealtimeStorm(Storm):
             self.plot_obj = TrackPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             if max(self.dict['lon']) > 140 or min(self.dict['lon']) < -140:
                 self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
@@ -530,7 +530,7 @@ class RealtimeStorm(Storm):
         plot_ax = self.plot_obj.plot_storm_nhc(nhc_forecasts,self.dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax != None or return_ax == True: return plot_ax
+        if ax is not None or return_ax == True: return plot_ax
         
     def get_realtime_info(self,source='all'):
         

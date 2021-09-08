@@ -123,19 +123,19 @@ class TrackPlot(Plot):
             use_lats = storm_data['lat']
             use_lons = np.copy(lons).tolist()
         
-        if max_lat == None:
+        if max_lat is None:
             max_lat = max(use_lats)
         else:
             if max(use_lats) > max_lat: max_lat = max(use_lats)
-        if min_lat == None:
+        if min_lat is None:
             min_lat = min(use_lats)
         else:
             if min(use_lats) < min_lat: min_lat = min(use_lats)
-        if max_lon == None:
+        if max_lon is None:
             max_lon = max(use_lons)
         else:
             if max(use_lons) > max_lon: max_lon = max(use_lons)
-        if min_lon == None:
+        if min_lon is None:
             min_lon = min(use_lons)
         else:
             if min(use_lons) < min_lon: min_lon = min(use_lons)
@@ -441,11 +441,11 @@ class TrackPlot(Plot):
         #-----------------------------------------------------------------------------------------
         
         #Save image if specified
-        if save_path != None and isinstance(save_path,str) == True:
+        if save_path is not None and isinstance(save_path,str) == True:
             plt.savefig(save_path,bbox_inches='tight')
         
         #Return axis if specified, otherwise display figure
-        if ax != None or return_ax == True:
+        if ax is not None or return_ax == True:
             return self.ax
         else:
             plt.show()
@@ -523,19 +523,19 @@ class TrackPlot(Plot):
                 lons = new_lons.tolist()
 
             #Add to coordinate extrema
-            if max_lat == None:
+            if max_lat is None:
                 max_lat = max(lats)
             else:
                 if max(lats) > max_lat: max_lat = max(lats)
-            if min_lat == None:
+            if min_lat is None:
                 min_lat = min(lats)
             else:
                 if min(lats) < min_lat: min_lat = min(lats)
-            if max_lon == None:
+            if max_lon is None:
                 max_lon = max(lons)
             else:
                 if max(lons) > max_lon: max_lon = max(lons)
-            if min_lon == None:
+            if min_lon is None:
                 min_lon = min(lons)
             else:
                 if min(lons) < min_lon: min_lon = min(lons)
@@ -787,11 +787,11 @@ class TrackPlot(Plot):
         #-----------------------------------------------------------------------------------------
         
         #Save image if specified
-        if save_path != None and isinstance(save_path,str) == True:
+        if save_path is not None and isinstance(save_path,str) == True:
             plt.savefig(save_path,bbox_inches='tight')
         
         #Return axis if specified, otherwise display figure
-        if ax != None or return_ax == True:
+        if ax is not None or return_ax == True:
             return self.ax
         else:
             plt.show()
@@ -905,19 +905,19 @@ None,prop={},map_prop={}):
 
                 #Add to coordinate extrema
                 if domain != "dynamic_forecast":
-                    if max_lat == None:
+                    if max_lat is None:
                         max_lat = max(lats)
                     else:
                         if max(lats) > max_lat: max_lat = max(lats)
-                    if min_lat == None:
+                    if min_lat is None:
                         min_lat = min(lats)
                     else:
                         if min(lats) < min_lat: min_lat = min(lats)
-                    if max_lon == None:
+                    if max_lon is None:
                         max_lon = max(lons)
                     else:
                         if max(lons) > max_lon: max_lon = max(lons)
-                    if min_lon == None:
+                    if min_lon is None:
                         min_lon = min(lons)
                     else:
                         if min(lons) < min_lon: min_lon = min(lons)
@@ -1064,7 +1064,7 @@ None,prop={},map_prop={}):
                 
             #Add cone coordinates to coordinate extrema
             if 'cone' in forecast.keys() and forecast['cone'] == False:
-                if domain == "dynamic_forecast" or max_lat == None:
+                if domain == "dynamic_forecast" or max_lat is None:
                     max_lat = max(center_lat)
                     min_lat = min(center_lat)
                     max_lon = max(center_lon)
@@ -1075,7 +1075,7 @@ None,prop={},map_prop={}):
                     if max(center_lon) > max_lon: max_lon = max(center_lon)
                     if min(center_lon) < min_lon: min_lon = min(center_lon)
             else:
-                if domain == "dynamic_forecast" or max_lat == None:
+                if domain == "dynamic_forecast" or max_lat is None:
                     max_lat = max(cone_lat)
                     min_lat = min(cone_lat)
                     max_lon = max(cone_lon)
@@ -1219,11 +1219,11 @@ None,prop={},map_prop={}):
         self.add_credit(credit_text)
         
         #Save image if specified
-        if save_path != None and isinstance(save_path,str) == True:
+        if save_path is not None and isinstance(save_path,str) == True:
             plt.savefig(os.path.join(save_path,f"{storm_data['name']}_{storm_data['year']}_track.png"),bbox_inches='tight')
         
         #Return axis if specified, otherwise display figure
-        if ax != None or return_ax == True:
+        if ax is not None or return_ax == True:
             return self.ax
         else:
             plt.show()
@@ -1246,11 +1246,11 @@ None,prop={},map_prop={}):
         
         #Initialize plot
         map_prop = self.add_prop(map_prop,default_map_prop)
-        if prop_ensemble_members != None: prop_ensemble_members = self.add_prop(prop_ensemble_members,default_prop_ensemble_members)
-        if prop_ensemble_mean != None: prop_ensemble_mean = self.add_prop(prop_ensemble_mean,default_prop_ensemble_mean)
-        if prop_gfs != None: prop_gfs = self.add_prop(prop_gfs,default_prop_gfs)
-        if prop_ellipse != None: prop_ellipse = self.add_prop(prop_ellipse,default_prop_ellipse)
-        if prop_density != None: prop_density = self.add_prop(prop_density,default_prop_density)
+        if prop_ensemble_members is not None: prop_ensemble_members = self.add_prop(prop_ensemble_members,default_prop_ensemble_members)
+        if prop_ensemble_mean is not None: prop_ensemble_mean = self.add_prop(prop_ensemble_mean,default_prop_ensemble_mean)
+        if prop_gfs is not None: prop_gfs = self.add_prop(prop_gfs,default_prop_gfs)
+        if prop_ellipse is not None: prop_ellipse = self.add_prop(prop_ellipse,default_prop_ellipse)
+        if prop_density is not None: prop_density = self.add_prop(prop_density,default_prop_density)
         self.plot_init(ax,map_prop)
         
         #================================================================================================
@@ -1267,7 +1267,7 @@ None,prop={},map_prop={}):
             #================================================================================================
 
             #Plot density
-            if prop_density != None and hr in ds['gefs']['fhr']:
+            if prop_density is not None and hr in ds['gefs']['fhr']:
 
                 #Create 0.5 degree grid for plotting
                 gridlats = np.arange(0,90,0.25)
@@ -1297,7 +1297,7 @@ None,prop={},map_prop={}):
                 cbar.ax.tick_params(labelsize=12)
 
             #Plot ellipse
-            if hr in ds['gefs']['fhr'] and prop_ellipse != None:
+            if hr in ds['gefs']['fhr'] and prop_ellipse is not None:
                 idx = ds['gefs']['fhr'].index(hr)
 
                 try:
@@ -1327,19 +1327,19 @@ None,prop={},map_prop={}):
                         skip_bounds = True
                 
                 if skip_bounds == False:
-                    if max_lat == None:
+                    if max_lat is None:
                         max_lat = np.nanmax(use_lats)
                     else:
                         if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
-                    if min_lat == None:
+                    if min_lat is None:
                         min_lat = np.nanmin(use_lats)
                     else:
                         if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
-                    if max_lon == None:
+                    if max_lon is None:
                         max_lon = np.nanmax(use_lons)
                     else:
                         if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
-                    if min_lon == None:
+                    if min_lon is None:
                         min_lon = np.nanmin(use_lons)
                     else:
                         if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
@@ -1375,19 +1375,19 @@ None,prop={},map_prop={}):
                         skip_bounds = True
                 
                 if skip_bounds == False:
-                    if max_lat == None:
+                    if max_lat is None:
                         max_lat = np.nanmax(use_lats)
                     else:
                         if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
-                    if min_lat == None:
+                    if min_lat is None:
                         min_lat = np.nanmin(use_lats)
                     else:
                         if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
-                    if max_lon == None:
+                    if max_lon is None:
                         max_lon = np.nanmax(use_lons)
                     else:
                         if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
-                    if min_lon == None:
+                    if min_lon is None:
                         min_lon = np.nanmin(use_lons)
                     else:
                         if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
@@ -1419,19 +1419,19 @@ None,prop={},map_prop={}):
                         skip_bounds = True
                 
                 if skip_bounds == False:
-                    if max_lat == None:
+                    if max_lat is None:
                         max_lat = np.nanmax(use_lats)
                     else:
                         if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
-                    if min_lat == None:
+                    if min_lat is None:
                         min_lat = np.nanmin(use_lats)
                     else:
                         if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
-                    if max_lon == None:
+                    if max_lon is None:
                         max_lon = np.nanmax(use_lons)
                     else:
                         if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
-                    if min_lon == None:
+                    if min_lon is None:
                         min_lon = np.nanmin(use_lons)
                     else:
                         if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
@@ -1459,7 +1459,7 @@ None,prop={},map_prop={}):
 
             #Plot title
             plot_title = f"GEFS Forecast Tracks for {storm_dict['name'].title()}"
-            if prop_density != None: plot_title += f"\nTrack Density ({np.int(prop_density['radius'])}-km radius)"
+            if prop_density is not None: plot_title += f"\nTrack Density ({np.int(prop_density['radius'])}-km radius)"
             self.ax.set_title(plot_title,fontsize=18,loc='left',fontweight='bold')
 
             title_str = f"Hour {hr} | Valid {(forecast+timedelta(hours=hr)).strftime('%H%M UTC %d %B %Y')}\n"
@@ -1491,11 +1491,11 @@ None,prop={},map_prop={}):
             self.add_credit(credit_text)
 
             #Save image if specified
-            if save_path != None and isinstance(save_path,str) == True:
+            if save_path is not None and isinstance(save_path,str) == True:
                 plt.savefig(os.path.join(save_path),bbox_inches='tight')
 
             #Return axis if specified, otherwise display figure
-            if ax != None or return_ax == True:
+            if ax is not None or return_ax == True:
                 return self.ax
             else:
                 plt.show()
@@ -1560,19 +1560,19 @@ None,prop={},map_prop={}):
                 lons = new_lons.tolist()
 
             #Add to coordinate extrema
-            if max_lat == None:
+            if max_lat is None:
                 max_lat = max(lats)
             else:
                 if max(lats) > max_lat: max_lat = max(lats)
-            if min_lat == None:
+            if min_lat is None:
                 min_lat = min(lats)
             else:
                 if min(lats) < min_lat: min_lat = min(lats)
-            if max_lon == None:
+            if max_lon is None:
                 max_lon = max(lons)
             else:
                 if max(lons) > max_lon: max_lon = max(lons)
-            if min_lon == None:
+            if min_lon is None:
                 min_lon = min(lons)
             else:
                 if min(lons) < min_lon: min_lon = min(lons)
@@ -1839,11 +1839,11 @@ None,prop={},map_prop={}):
         #--------------------------------------------------------------------------------------
         
         #Save image if specified
-        if save_path != None and isinstance(save_path,str) == True:
+        if save_path is not None and isinstance(save_path,str) == True:
             plt.savefig(save_path,bbox_inches='tight')
         
         #Return axis if specified, otherwise display figure
-        if ax != None or return_ax == True:
+        if ax is not None or return_ax == True:
             return self.ax
         else:
             plt.show()
@@ -2415,7 +2415,7 @@ None,prop={},map_prop={}):
         self.add_credit(text)
         
         #Return axis if specified, otherwise display figure
-        if ax != None or return_ax == True:
+        if ax is not None or return_ax == True:
             return self.ax
         else:
             plt.show()

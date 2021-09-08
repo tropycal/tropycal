@@ -67,7 +67,7 @@ class Plot:
         """
         
         #Initialize an instance of cartopy if not passed
-        if mapobj == None:
+        if mapobj is None:
             self.proj = getattr(ccrs, proj)(**kwargs)
         else:
             self.proj = mapobj
@@ -225,7 +225,7 @@ class Plot:
             all_meridians = np.arange(0.0,360.0+rthres,rthres)
             all_parallels = np.arange(rdown(-90.0,rthres),90.0+rthres,rthres)
             
-            if zorder == None:
+            if zorder is None:
                 #First call with no labels but gridlines plotted
                 gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,xlocs=all_meridians,ylocs=all_parallels,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted')
                 #Second call with labels but no gridlines
@@ -245,7 +245,7 @@ class Plot:
 
         else:
             #Add meridians and parallels
-            if zorder == None:
+            if zorder is None:
                 gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted')
             else:
                 gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted',zorder=zorder)
@@ -273,11 +273,11 @@ class Plot:
         """
 
         #create cartopy projection, if none existing
-        if self.proj == None:
+        if self.proj is None:
             self.create_cartopy(proj='PlateCarree',central_longitude=0.0)
         
         #create figure
-        if ax == None:
+        if ax is None:
             self.fig = plt.figure(figsize=map_prop['figsize'],dpi=map_prop['dpi'])
             self.ax = plt.axes(projection=self.proj)
         else:

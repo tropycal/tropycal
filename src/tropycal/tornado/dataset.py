@@ -342,7 +342,7 @@ class TornadoDataset():
         self.plot_obj = TornadoPlot()
         
         #Create cartopy projection
-        if cartopy_proj == None:
+        if cartopy_proj is None:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             cartopy_proj = self.plot_obj.proj
         

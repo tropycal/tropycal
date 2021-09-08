@@ -1074,7 +1074,7 @@ class TrackDataset:
             raise RuntimeError(error_message)
     
     
-    def plot_storm(self,storm,domain="dynamic",plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_storm(self,storm,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm.
@@ -1089,8 +1089,6 @@ class TrackDataset:
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
@@ -1102,6 +1100,11 @@ class TrackDataset:
             Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Retrieve requested storm
@@ -1125,13 +1128,13 @@ class TrackDataset:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all_dots,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all_dots,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax is not None or return_ax == True: return plot_ax
+        return plot_ax
     
     
-    def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,labels=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,labels=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of multiple storms.
@@ -1150,8 +1153,6 @@ class TrackDataset:
             Whether to label storm titles on the plot. Default is False.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
@@ -1163,6 +1164,11 @@ class TrackDataset:
             Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Create instance of plot object
@@ -1197,13 +1203,13 @@ class TrackDataset:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title,plot_all_dots,labels,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title,plot_all_dots,labels,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax is not None or return_ax == True: return plot_ax
+        return plot_ax
         
         
-    def plot_season(self,year,domain=None,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_season(self,year,domain=None,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single season.
@@ -1216,8 +1222,6 @@ class TrackDataset:
             Domain for the plot. Default is basin-wide. Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
@@ -1229,6 +1233,11 @@ class TrackDataset:
             Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Retrieve season object
@@ -1249,10 +1258,10 @@ class TrackDataset:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot season
-        plot_ax = self.plot_obj.plot_season(season,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_season(season,domain,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax is not None or return_ax == True: return plot_ax
+        return plot_ax
     
     
     def search_name(self,name):
@@ -1402,7 +1411,7 @@ class TrackDataset:
                 return_season = return_season + self.__retrieve_season(i_year,basin)
             return return_season
     
-    def ace_climo(self,plot_year=None,compare_years=None,climo_year_range=None,date_range=None,rolling_sum=0,return_dict=False,plot=True,return_ax=False,save_path=None):
+    def ace_climo(self,plot_year=None,compare_years=None,climo_year_range=None,date_range=None,rolling_sum=0,return_dict=False,plot=True,save_path=None):
         
         r"""
         Creates and plots a climatology of accumulated cyclone energy (ACE).
@@ -1428,8 +1437,8 @@ class TrackDataset:
         
         Returns
         -------
-        None or dict
-            If return_dict is True, a dictionary containing data about the ACE climatology is returned.
+        axes or dict
+            By default, the plot axes is returned. If return_dict is True, a dictionary containing the axes and data about the ACE climatology is returned.
         """
         
         #Retrieve current year
@@ -1650,16 +1659,13 @@ class TrackDataset:
                 transform=ax.transAxes,ha='right',va='top',zorder=10)
         
         #Show/save plot and close
-        if save_path is None:
-            plt.show()
-        else:
+        if save_path is not None and isinstance(save_path,str):
             plt.savefig(save_path,bbox_inches='tight',facecolor='w')
-        plt.close()
         
-        if return_dict == True:
-            return ace
+        if return_dict:
+            return {'ax':ax,'ace':ace}
         else:
-            return
+            return ax
 
     def hurricane_days_climo(self,plot_year=None,compare_years=None,start_year=1950,rolling_sum=0,category=None,return_dict=False,plot=True,save_path=None):
         
@@ -1687,8 +1693,8 @@ class TrackDataset:
         
         Returns
         -------
-        None or dict
-            If return_dict is True, a dictionary containing data about the climatology is returned.
+        axes or dict
+            By default, the axes is returned. If return_dict is True, a dictionary containing the axes and data about the climatology is returned.
         """
         
         #Create empty dict
@@ -1963,16 +1969,13 @@ class TrackDataset:
                 transform=ax.transAxes,ha='right',va='top',zorder=10)
         
         #Show/save plot and close
-        if save_path is None:
-            plt.show()
-        else:
+        if save_path is not None and isinstance(save_path,str) == True:
             plt.savefig(save_path,bbox_inches='tight')
-        plt.close()
         
-        if return_dict == True:
-            return tc_days
+        if return_dict:
+            return {'ax':ax,'data':tc_days}
         else:
-            return
+            return ax
     
     def wind_pres_relationship(self,storm=None,year_range=None,return_dict=False,plot=True,save_path=None):
         
@@ -1994,8 +1997,8 @@ class TrackDataset:
         
         Returns
         -------
-        dict
-            If return_dict is True, a dictionary containing data about the wind vs. MSLP relationship climatology is returned.
+        ax or dict
+            By default, the plot axes is returned. If return_dict is True, a dictionary containing data about the wind vs. MSLP relationship climatology is returned.
         """
         
         #Define empty dictionary
@@ -2033,7 +2036,7 @@ class TrackDataset:
                 return
         
         #Create figure
-        fig = plt.figure(figsize=(12,9.5),dpi = 200)
+        fig,ax = plt.subplots(figsize=(12,9.5),dpi = 200)
 
         #Plot climatology
         CS = plt.pcolor(xedges,yedges,counts**0.3,vmin=0,vmax=np.amax(counts)**.3,cmap='gnuplot2_r')
@@ -2119,16 +2122,13 @@ class TrackDataset:
                 transform=plt.gca().transAxes,ha='right',va='bottom',zorder=10)        
         
         #Show/save plot and close
-        if save_path is None:
-            plt.show()
-        else:
+        if save_path is not None and isinstance(save_path,str):
             plt.savefig(save_path,bbox_inches='tight')
-        plt.close()
         
         if return_dict == True:
-            return relationship
+            return {'ax':ax,'data':relationship}
         else:
-            return
+            return ax
     
     def rank_storm(self,metric,return_df=True,ascending=False,domain=None,year_range=None,date_range=None,subtropical=True):
         
@@ -2610,7 +2610,7 @@ class TrackDataset:
             return p
 
     def gridded_stats(self,request,thresh={},storm=None,year_range=None,year_range_subtract=None,year_average=False,
-                      date_range=('1/1','12/31'),binsize=1,domain=None,ax=None,return_ax=False,
+                      date_range=('1/1','12/31'),binsize=1,domain=None,ax=None,
                       return_array=False,cartopy_proj=None,prop={},map_prop={}):
         
         r"""
@@ -2670,8 +2670,6 @@ class TrackDataset:
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes, optional
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool, optional
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         return_array : bool, optional
             If True, returns the gridded 2D array used to generate the plot. Default is False.
         cartopy_proj : ccrs, optional
@@ -2686,7 +2684,7 @@ class TrackDataset:
         
         Returns
         -------
-        By default, nothing is returned and a plot is displayed. If either "return_ax" or "return_array" are set to True, those respective data are returned. If both are set to true, a dictionary is returned containing both.
+        By default, the plot axes is returned. If "return_array" are set to True, a dictionary is returned containing both the axes and data array.
         """
 
         default_prop = {'smooth':None}
@@ -2973,10 +2971,10 @@ class TrackDataset:
             grid_z = grid_z_zeros.copy()
         
         #Plot gridded field
-        plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,varname,VEC_FLAG,domain,ax=ax,return_ax=True,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,varname,VEC_FLAG,domain,ax=ax,prop=prop,map_prop=map_prop)
         
         #Format grid into xarray if specified
-        if return_array == True:
+        if return_array:
             try:
                 #Import xarray and construct DataArray, replacing NaNs with zeros
                 import xarray as xr
@@ -2986,12 +2984,10 @@ class TrackDataset:
                 raise RuntimeError("Error: xarray is not available. Install xarray in order to use the 'return_array' flag.") from e
 
         #Return axis
-        if return_ax == True and return_array == True:
+        if return_array:
             return {'ax':plot_ax,'array':arr}
-        if return_ax == False and return_array == True:
-            return arr
-        if ax is not None or return_ax == True: return plot_ax
-        
+        else:
+            return plot_ax
 
     
     def assign_storm_tornadoes(self,dist_thresh=1000,tornado_path='spc'):
@@ -3040,7 +3036,7 @@ class TrackDataset:
         #Update user on status
         print(f'--> Completed assigning tornadoes to storm (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
         
-    def plot_TCtors_rotated(self,storms,mag_thresh=0,return_ax=False,return_df=False,save_path=None):
+    def plot_TCtors_rotated(self,storms,mag_thresh=0,return_df=False,save_path=None):
         
         r"""
         Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.
@@ -3051,8 +3047,6 @@ class TrackDataset:
             Storm(s) for which to plot motion-relative tornado data for. Can be either a list of storm IDs/tuples for which to create a composite of, or a string "all" for all storms containing tornado data.
         mag_thresh : int
             Minimum threshold for tornado rating.
-        return_ax : bool
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         return_df : bool
             Whether to return the pandas DataFrame containing the composite tornado data. Default is False.
         save_path : str
@@ -3060,8 +3054,8 @@ class TrackDataset:
         
         Returns
         -------
-        None or dict
-            If either "return_ax" or "return_df" are set to True, returns a dict containing their respective data.
+        ax or dict
+            By default, the plot axes is returned. If "return_df" is set to True, returns a dict containing both the data and the axes plot
         
         Notes
         -----
@@ -3153,19 +3147,12 @@ class TrackDataset:
         ax.text(0.99,0.01,plot_credit(),fontsize=8,color='k',alpha=0.7,
                 transform=ax.transAxes,ha='right',va='bottom',zorder=10)
         
-        #Return axis or show figure
-        return_dict = {}
-        if return_ax == True:
-            return_dict['ax'] = ax
+        #Save image if specified
+        if save_path is not None and isinstance(save_path,str):
+            plt.savefig(save_path,bbox_inches='tight')
+        
+        #Return data
+        if return_df:
+            return {'ax':ax,'df':stormTors}
         else:
-            #Save image if specified
-            if save_path is not None and isinstance(save_path,str) == True:
-                plt.savefig(save_path,bbox_inches='tight')
-            else:
-                plt.show()
-            plt.close()
-
-        if return_df == True:
-            return_dict['df'] = stormTors
-        if len(return_dict) > 0:
-            return return_dict
+            return ax

@@ -39,7 +39,7 @@ class TrackPlot(Plot):
         
         self.use_credit = True
     
-    def plot_storm(self,storm,domain="dynamic",plot_all_dots=False,ax=None,return_ax=False,track_labels=False,save_path=None,prop={},map_prop={}):
+    def plot_storm(self,storm,domain="dynamic",plot_all_dots=False,ax=None,track_labels=False,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -58,8 +58,6 @@ class TrackPlot(Plot):
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
         prop : dict
             Property of storm track lines.
         map_prop : dict
@@ -445,13 +443,9 @@ class TrackPlot(Plot):
             plt.savefig(save_path,bbox_inches='tight')
         
         #Return axis if specified, otherwise display figure
-        if ax is not None or return_ax == True:
-            return self.ax
-        else:
-            plt.show()
-            plt.close()
+        return self.ax
     
-    def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,labels=False,ax=None,return_ax=False,save_path=None,prop={},map_prop={}):
+    def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,labels=False,ax=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of multiple storm tracks.
@@ -470,8 +464,6 @@ class TrackPlot(Plot):
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
         prop : dict
             Property of storm track lines.
         map_prop : dict
@@ -791,13 +783,9 @@ class TrackPlot(Plot):
             plt.savefig(save_path,bbox_inches='tight')
         
         #Return axis if specified, otherwise display figure
-        if ax is not None or return_ax == True:
-            return self.ax
-        else:
-            plt.show()
-            plt.close()
+        return self.ax
         
-    def plot_storm_nhc(self,forecast,track=None,track_labels='fhr',cone_days=5,domain="dynamic_forecast",ax=None,return_ax=False,save_path=
+    def plot_storm_nhc(self,forecast,track=None,track_labels='fhr',cone_days=5,domain="dynamic_forecast",ax=None,save_path=
 None,prop={},map_prop={}):
         
         r"""
@@ -824,8 +812,6 @@ None,prop={},map_prop={}):
             "lonW/lonE/latS/latN" - Custom plot domain
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
         prop : dict
             Property of storm track lines.
         map_prop : dict
@@ -1223,14 +1209,10 @@ None,prop={},map_prop={}):
             plt.savefig(os.path.join(save_path,f"{storm_data['name']}_{storm_data['year']}_track.png"),bbox_inches='tight')
         
         #Return axis if specified, otherwise display figure
-        if ax is not None or return_ax == True:
-            return self.ax
-        else:
-            plt.show()
-            plt.close()
+        return self.ax
 
     def plot_ensembles(self,forecast,storm_dict,fhr,prop_ensemble_members,prop_ensemble_mean,prop_gfs,prop_ellipse,prop_density,nens,
-                       domain,ds,ax,return_ax,map_prop,save_path):
+                       domain,ds,ax,map_prop,save_path):
         
         r"""
         
@@ -1495,13 +1477,9 @@ None,prop={},map_prop={}):
                 plt.savefig(os.path.join(save_path),bbox_inches='tight')
 
             #Return axis if specified, otherwise display figure
-            if ax is not None or return_ax == True:
-                return self.ax
-            else:
-                plt.show()
-                plt.close()
+            return self.ax
     
-    def plot_season(self,season,domain=None,ax=None,return_ax=False,save_path=None,prop={},map_prop={}):
+    def plot_season(self,season,domain=None,ax=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single season.
@@ -1512,8 +1490,6 @@ None,prop={},map_prop={}):
             Instance of Season.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
         prop : dict
             Property of storm track lines.
         map_prop : dict
@@ -1843,11 +1819,7 @@ None,prop={},map_prop={}):
             plt.savefig(save_path,bbox_inches='tight')
         
         #Return axis if specified, otherwise display figure
-        if ax is not None or return_ax == True:
-            return self.ax
-        else:
-            plt.show()
-            plt.close()
+        return self.ax
         
     def generate_nhc_cone(self,forecast,dateline,cone_days=5,cone_year=None):
         
@@ -2205,7 +2177,7 @@ None,prop={},map_prop={}):
                                         color='k'),
                         transform=ccrs.PlateCarree(),clip_on=True)
 
-    def plot_gridded(self,xcoord,ycoord,zcoord,varname='type',VEC_FLAG=False,domain="north_atlantic",ax=None,return_ax=False,prop={},map_prop={}):
+    def plot_gridded(self,xcoord,ycoord,zcoord,varname='type',VEC_FLAG=False,domain="north_atlantic",ax=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -2223,8 +2195,6 @@ None,prop={},map_prop={}):
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
         prop : dict
             Property of storm track lines.
         map_prop : dict
@@ -2415,10 +2385,6 @@ None,prop={},map_prop={}):
         self.add_credit(text)
         
         #Return axis if specified, otherwise display figure
-        if ax is not None or return_ax == True:
-            return self.ax
-        else:
-            plt.show()
-            plt.close()
+        return self.ax
 
 

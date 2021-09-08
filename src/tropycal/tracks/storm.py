@@ -608,7 +608,7 @@ class Storm:
         #Return dataset
         return ds
     
-    def plot(self,domain="dynamic",plot_all_dots=False,ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot(self,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of the observed track of the storm.
@@ -621,8 +621,6 @@ class Storm:
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
@@ -634,6 +632,11 @@ class Storm:
             Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Create instance of plot object
@@ -651,14 +654,14 @@ class Storm:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(self.dict,domain,plot_all_dots,ax=ax,return_ax=return_ax,prop=prop,map_prop=map_prop,save_path=save_path)
+        plot_ax = self.plot_obj.plot_storm(self.dict,domain,plot_all_dots,ax=ax,prop=prop,map_prop=map_prop,save_path=save_path)
         
         #Return axis
-        if ax is not None or return_ax == True: return plot_ax
+        return plot_ax
         
     #PLOT FUNCTION FOR HURDAT
     def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
-                          ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+                          ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of the operational NHC forecast track along with observed track data.
@@ -680,8 +683,6 @@ class Storm:
             Domain for the plot. Default is "dynamic_forecast". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
@@ -693,6 +694,11 @@ class Storm:
             Customization properties of NHC forecast plot. Please refer to :ref:`options-prop-nhc` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Check to ensure the data source is HURDAT
@@ -821,10 +827,10 @@ class Storm:
         forecast_dict['basin'] = self.basin
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm_nhc(forecast_dict,track_dict,track_labels,cone_days,domain,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax is not None or return_ax == True: return plot_ax
+        return plot_ax
         
     
     #PLOT FUNCTION FOR HURDAT
@@ -834,7 +840,7 @@ class Storm:
                             prop_gfs = {'linewidth':2.0, 'linecolor':'b'},
                             prop_ellipse = {'linewidth':2.0, 'linecolor':'r'},
                             prop_density = {'radius':200, 'cmap':plt.cm.YlOrRd, 'levels':[i for i in range(5,105,5)]},
-                            domain="dynamic",ax=None,return_ax=False,cartopy_proj=None,save_path=None,map_prop={}):
+                            domain="dynamic",ax=None,cartopy_proj=None,save_path=None,map_prop={}):
         
         r"""
         (Add track history like we do for NHC forecasts)
@@ -854,8 +860,6 @@ class Storm:
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
@@ -867,6 +871,11 @@ class Storm:
             Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Create instance of plot object
@@ -983,10 +992,10 @@ class Storm:
             fhr = [fhr]
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_members,prop_mean,prop_gfs,prop_ellipse,prop_density,nens,domain,ds,ax=ax,return_ax=return_ax,map_prop=map_prop,save_path=save_path)
+        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_members,prop_mean,prop_gfs,prop_ellipse,prop_density,nens,domain,ds,ax=ax,map_prop=map_prop,save_path=save_path)
         
         #Return axis
-        if ax is not None or return_ax == True: return plot_ax
+        return plot_ax
     
     def list_nhc_discussions(self):
         
@@ -1696,7 +1705,7 @@ class Storm:
 
             
     def plot_tors(self,dist_thresh=1000,Tors=None,domain="dynamic",plotPPH=False,plot_all=False,\
-                  ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+                  ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
                 
         r"""
         Creates a plot of the storm and associated tornado tracks.
@@ -1721,13 +1730,10 @@ class Storm:
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
             Relative or full path of directory to save the image in. If none, image will not be saved.
-        
         
         Other Parameters
         ----------------
@@ -1735,6 +1741,11 @@ class Storm:
             Customization properties of plot.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Set default colormap for TC plots to Wistia
@@ -1792,19 +1803,14 @@ class Storm:
         storm_title = plot_ax.get_title('left')
         plot_ax.set_title(f'{storm_title}\n{tor_title}',loc='left',fontsize=17,fontweight='bold')
         
+        #Save plot
+        if save_path is not None and isinstance(save_path,str) == True:
+            plt.savefig(save_path,bbox_inches='tight')
+        
         #Return axis
-        if ax is not None or return_ax == True: 
-            return plot_ax
-        else:
-            #Save image if specified
-            if save_path is not None and isinstance(save_path,str) == True:
-                plt.savefig(save_path,bbox_inches='tight')
-            else:
-                plt.show()
-            plt.close()
+        return plot_ax
 
-
-    def plot_TCtors_rotated(self,dist_thresh=1000,return_ax=False,save_path=None):
+    def plot_TCtors_rotated(self,dist_thresh=1000,save_path=None):
         
         r"""
         Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.
@@ -1813,10 +1819,13 @@ class Storm:
         ----------
         dist_thresh : int
             Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km. Ignored if tornado data was passed into Storm from TrackDataset.
-        return_ax : bool
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         save_path : str
             Relative or full path of directory to save the image in. If none, image will not be saved.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         
         Notes
         -----
@@ -1877,15 +1886,12 @@ class Storm:
         ax.text(0.99,0.01,plot_credit(),fontsize=8,color='k',alpha=0.7,
                 transform=ax.transAxes,ha='right',va='bottom',zorder=10)
         
+        #Save plot
+        if save_path is not None and isinstance(save_path,str) == True:
+            plt.savefig(save_path,bbox_inches='tight')
+        
         #Return axis or show figure
-        if return_ax == True:
-            return ax
-        else:
-            if save_path is not None and isinstance(save_path,str) == True:
-                plt.savefig(save_path,bbox_inches='tight')
-            else:
-                plt.show()
-            plt.close()
+        return ax
             
     def get_recon(self,deltap_thresh=8,save_path="",read_path="",mission_url_list=None,update=False):
         

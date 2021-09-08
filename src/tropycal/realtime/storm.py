@@ -466,7 +466,7 @@ class RealtimeStorm(Storm):
         return self.latest_forecast
 
     def plot_forecast_realtime(self,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
-                                   ax=None,return_ax=False,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+                                   ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Plots the latest available official forecast. Available for both NHC and JTWC sources.
@@ -486,8 +486,6 @@ class RealtimeStorm(Storm):
             Domain for the plot. Default is "dynamic_forecast". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.
         cartopy_proj : ccrs
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
@@ -496,6 +494,11 @@ class RealtimeStorm(Storm):
             Property of storm track lines.
         map_prop : dict
             Property of cartopy map.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Check to ensure storm is not an invest
@@ -527,10 +530,10 @@ class RealtimeStorm(Storm):
         if self.source != "hurdat": nhc_forecasts['cone'] = False
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm_nhc(nhc_forecasts,self.dict,track_labels,cone_days,domain,ax=ax,return_ax=return_ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm_nhc(nhc_forecasts,self.dict,track_labels,cone_days,domain,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
-        if ax is not None or return_ax == True: return plot_ax
+        return plot_ax
         
     def get_realtime_info(self,source='all'):
         

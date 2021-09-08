@@ -36,7 +36,7 @@ class RainPlot(Plot):
         
         self.use_credit = True
     
-    def plot_storm(self,storm,grid,levels,cmap,domain="dynamic",plot_all_dots=False,ax=None,return_ax=False,track_labels=False,save_path=None,prop={},map_prop={}):
+    def plot_storm(self,storm,grid,levels,cmap,domain="dynamic",plot_all_dots=False,ax=None,track_labels=False,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of a single storm track.
@@ -55,8 +55,6 @@ class RainPlot(Plot):
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
         prop : dict
             Property of storm track lines.
         map_prop : dict
@@ -503,8 +501,4 @@ class RainPlot(Plot):
             plt.savefig(save_path,bbox_inches='tight')
         
         #Return axis if specified, otherwise display figure
-        if ax is not None or return_ax == True:
-            return self.ax
-        else:
-            plt.show()
-            plt.close()
+        return self.ax

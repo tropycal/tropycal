@@ -21,8 +21,6 @@ except:
 
 from .plot import RainPlot
 
-#Import tools
-#from .tools import *
 from ..utils import *
 
 class RainDataset():

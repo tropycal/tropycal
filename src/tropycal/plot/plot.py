@@ -214,6 +214,10 @@ class Plot:
         parallels = np.arange(rdown(bound_s,rthres),rup(bound_n,rthres)+rthres,rthres)
         meridians = np.arange(rdown(bound_w,rthres),rup(bound_e,rthres)+rthres,rthres)
         
+        add_kwargs = {}
+        if zorder is not None:
+            add_kwargs = {'zorder':zorder}
+        
         #Fix for dateline crossing
         if self.proj.proj4_params['lon_0'] == 180.0:
             
@@ -225,16 +229,10 @@ class Plot:
             all_meridians = np.arange(0.0,360.0+rthres,rthres)
             all_parallels = np.arange(rdown(-90.0,rthres),90.0+rthres,rthres)
             
-            if zorder is None:
-                #First call with no labels but gridlines plotted
-                gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,xlocs=all_meridians,ylocs=all_parallels,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted')
-                #Second call with labels but no gridlines
-                gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,xlocs=meridians,ylocs=parallels,linewidth=0.0,color='k',alpha=0.0,linestyle='dotted')
-            else:
-                #First call with no labels but gridlines plotted
-                gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,xlocs=all_meridians,ylocs=all_parallels,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted',zorder=zorder)
-                #Second call with labels but no gridlines
-                gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,xlocs=meridians,ylocs=parallels,linewidth=0.0,color='k',alpha=0.0,linestyle='dotted',zorder=zorder)
+            #First call with no labels but gridlines plotted
+            gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,xlocs=all_meridians,ylocs=all_parallels,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted',**add_kwargs)
+            #Second call with labels but no gridlines
+            gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,xlocs=meridians,ylocs=parallels,linewidth=0.0,color='k',alpha=0.0,linestyle='dotted',**add_kwargs)
             
             gl.xlabels_top = False
             gl.ylabels_right = False
@@ -245,10 +243,7 @@ class Plot:
 
         else:
             #Add meridians and parallels
-            if zorder is None:
-                gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted')
-            else:
-                gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted',zorder=zorder)
+            gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted',**add_kwargs)
             gl.xlabels_top = False
             gl.ylabels_right = False
             gl.xlocator = mticker.FixedLocator(meridians)

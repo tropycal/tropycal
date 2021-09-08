@@ -22,13 +22,22 @@ To fully leverage tropycal's plotting capabilities, it is strongly recommended t
 Installation
 ------------
 
+From Conda
+~~~~~~~~~~
+
 As of v0.3, Tropycal can be installed via conda::
 
     conda install -c conda-forge tropycal
 
+From Pip
+~~~~~~~~
+
 As with before, Tropycal can also be installed via pip::
 
     pip install tropycal
+
+From Source
+~~~~~~~~~~~
 
 Tropycal can also be installed via cloning it from github. Running the following commands
 will build and install tropycal into your python installation::

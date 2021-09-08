@@ -6,19 +6,27 @@ Tropycal can read in HURDAT2 and IBTrACS reanalysis data and operational Nationa
 The latest version of Tropycal is v0.3.
 
 ## Installation
-The currently recommended method of installation is via pip:
 
-```sh
-pip install tropycal
-```
 
-Installation is also available via conda:
+### Conda
+
+The currently recommended method of installation is via conda:
 
 ```sh
 conda install -c conda-forge tropycal
 ```
 
-Tropycal can also be installed by cloning the GitHub repository:
+### Pip
+
+Installation is also available via pip:
+
+```sh
+pip install tropycal
+```
+
+### From source
+
+Tropycal can also be installed from source by cloning the GitHub repository:
 
 ```sh
 git clone https://github.com/tropycal/tropycal

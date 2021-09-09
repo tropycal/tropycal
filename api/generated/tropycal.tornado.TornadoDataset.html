@@ -1,25 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>tropycal.tornado.TornadoDataset &mdash; tropycal </title>
+  <title>TornadoDataset &mdash; tropycal </title>
   
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
     <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
   
+
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -31,18 +44,9 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="TornadoDataset.get_storm_tornadoes" href="tropycal.tornado.TornadoDataset.get_storm_tornadoes.html" />
+    <link rel="next" title="recon" href="tropycal.recon.html" />
     <link rel="prev" title="tornado" href="tropycal.tornado.html" /> 
 </head>
 
@@ -83,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -97,16 +102,12 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">tracks</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.tornado.html">tornado</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">tropycal.tornado.TornadoDataset</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.tornado.TornadoDataset.get_storm_tornadoes.html">TornadoDataset.get_storm_tornadoes</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.tornado.TornadoDataset.plot_TCtors_rotated.html">TornadoDataset.plot_TCtors_rotated</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.tornado.TornadoDataset.plot_tors.html">TornadoDataset.plot_tors</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.tornado.TornadoDataset.rotateToHeading.html">TornadoDataset.rotateToHeading</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">TornadoDataset</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#examples-using-tropycal-tornado-tornadodataset">Examples using <code class="docutils literal notranslate"><span class="pre">tropycal.tornado.TornadoDataset</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
@@ -120,6 +121,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -154,22 +156,24 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">API Reference</a> &raquo;</li>
         
           <li><a href="tropycal.tornado.html">tornado</a> &raquo;</li>
         
-      <li>tropycal.tornado.TornadoDataset</li>
+      <li>TornadoDataset</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/api/generated/tropycal.tornado.TornadoDataset.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -183,8 +187,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="tropycal-tornado-tornadodataset">
-<h1>tropycal.tornado.TornadoDataset<a class="headerlink" href="#tropycal-tornado-tornadodataset" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tornadodataset">
+<h1>TornadoDataset<a class="headerlink" href="#tornadodataset" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="tropycal.tornado.TornadoDataset">
 <em class="property">class </em><code class="sig-prename descclassname">tropycal.tornado.</code><code class="sig-name descname">TornadoDataset</code><span class="sig-paren">(</span><em class="sig-param">mag_thresh=0</em>, <em class="sig-param">tornado_path='spc'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset" title="Permalink to this definition">¶</a></dt>
@@ -200,31 +204,127 @@
 <dd class="field-even"><p><em>TornadoDataset</em> – An instance of TornadoDataset.</p>
 </dd>
 </dl>
-<p>Methods Summary</p>
-<blockquote>
-<div><table class="longtable docutils align-default">
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tornado.TornadoDataset.get_storm_tornadoes.html#tropycal.tornado.TornadoDataset.get_storm_tornadoes" title="tropycal.tornado.TornadoDataset.get_storm_tornadoes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.get_storm_tornadoes</span></code></a>(storm, …)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.__init__" title="tropycal.tornado.TornadoDataset.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([mag_thresh, tornado_path])</p></td>
+<td><p>Initialize self.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.get_storm_tornadoes" title="tropycal.tornado.TornadoDataset.get_storm_tornadoes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm_tornadoes</span></code></a>(storm, dist_thresh)</p></td>
 <td><p>Retrieves all tornado tracks that occur along the track of a tropical cyclone.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tornado.TornadoDataset.plot_TCtors_rotated.html#tropycal.tornado.TornadoDataset.plot_TCtors_rotated" title="tropycal.tornado.TornadoDataset.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.plot_TCtors_rotated</span></code></a>(storm[, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.plot_TCtors_rotated" title="tropycal.tornado.TornadoDataset.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_TCtors_rotated</span></code></a>(storm[, dist_thresh, …])</p></td>
 <td><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tornado.TornadoDataset.plot_tors.html#tropycal.tornado.TornadoDataset.plot_tors" title="tropycal.tornado.TornadoDataset.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.plot_tors</span></code></a>(tor_info[, domain, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.plot_tors" title="tropycal.tornado.TornadoDataset.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_tors</span></code></a>(tor_info[, domain, plotPPH, ax, …])</p></td>
 <td><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPH).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tornado.TornadoDataset.rotateToHeading.html#tropycal.tornado.TornadoDataset.rotateToHeading" title="tropycal.tornado.TornadoDataset.rotateToHeading"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.rotateToHeading</span></code></a>(storm, stormTors)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tornado.TornadoDataset.rotateToHeading" title="tropycal.tornado.TornadoDataset.rotateToHeading"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotateToHeading</span></code></a>(storm, stormTors)</p></td>
 <td><p>Rotate tornado tracks to their position relative to the heading of the TC at the time.</p></td>
 </tr>
 </tbody>
 </table>
-</div></blockquote>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="tropycal.tornado.TornadoDataset.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">mag_thresh=0</em>, <em class="sig-param">tornado_path='spc'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="tropycal.tornado.TornadoDataset.get_storm_tornadoes">
+<code class="sig-name descname">get_storm_tornadoes</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">dist_thresh</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.get_storm_tornadoes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.get_storm_tornadoes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves all tornado tracks that occur along the track of a tropical cyclone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Instance of a Storm object.</p></li>
+<li><p><strong>dist_thresh</strong> (<em>int</em>) – Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>pandas.DataFrame</em> – Pandas DataFrame object containing data about the tornadoes associated with this tropical cyclone.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tornado.TornadoDataset.plot_TCtors_rotated">
+<code class="sig-name descname">plot_TCtors_rotated</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">dist_thresh=1000</em>, <em class="sig-param">return_ax=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_TCtors_rotated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Instance of a Storm object.</p></li>
+<li><p><strong>dist_thresh</strong> (<em>int</em>) – Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – Whether to return the axis plotted. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The motion vector is oriented upwards (in the +y direction).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tornado.TornadoDataset.plot_tors">
+<code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param">tor_info</em>, <em class="sig-param">domain='conus'</em>, <em class="sig-param">plotPPH=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">return_domain=True</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_tors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPH).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tor_info</strong> (<em>pandas.DataFrame / dict / datetime.datetime / list</em>) – <p>Requested tornadoes to plot. Can be one of the following:</p>
+<ul>
+<li><p><strong>Pandas DataFrame</strong> containing the requested tornadoes to plot.</p></li>
+<li><p><strong>dict</strong> entry containing the requested tornadoes to plot.</p></li>
+<li><p><strong>datetime.datetime</strong> object for a single day to plot tornadoes.</p></li>
+<li><p><strong>list</strong> with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.</p></li>
+</ul>
+</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “conus”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>plotPPH</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPH). True defaults to “daily”. Default is False.</p>
+<ul>
+<li><p><strong>False</strong> - no PPH plot.</p></li>
+<li><p><strong>True</strong> - defaults to “daily”.</p></li>
+<li><p><strong>”total”</strong> - probability of a tornado within 25mi of a point during the period of time selected.</p></li>
+<li><p><strong>”daily”</strong> - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.</p></li>
+</ul>
+</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Property of tornado tracks.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tornado.TornadoDataset.rotateToHeading">
+<code class="sig-name descname">rotateToHeading</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">stormTors</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.rotateToHeading"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.rotateToHeading" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate tornado tracks to their position relative to the heading of the TC at the time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stormTors</strong> (<em>pandas.DataFrame</em>) – Pandas DataFrame containing tornado tracks.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>pandas.DataFrame</em> – StormTors modified to include motion relative coordinates.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="examples-using-tropycal-tornado-tornadodataset">
+<h2>Examples using <code class="docutils literal notranslate"><span class="pre">tropycal.tornado.TornadoDataset</span></code><a class="headerlink" href="#examples-using-tropycal-tornado-tornadodataset" title="Permalink to this headline">¶</a></h2>
+<div class="sphx-glr-thumbcontainer" tooltip="For documentation generation purposes, return_ax must be set True for plotting functions. You d..."><div class="figure align-default" id="id1">
+<img alt="Tornado Analyses" src="../../_images/sphx_glr_tracks.tornado_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="../../examples/tracks.tornado.html#sphx-glr-examples-tracks-tornado-py"><span class="std std-ref">Tornado Analyses</span></a></span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+</div><div style='clear:both'></div></div>
 </div>
 
 
@@ -232,29 +332,29 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tropycal.tornado.TornadoDataset.get_storm_tornadoes.html" class="btn btn-neutral float-right" title="TornadoDataset.get_storm_tornadoes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tropycal.tornado.html" class="btn btn-neutral float-left" title="tornado" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="tropycal.recon.html" class="btn btn-neutral float-right" title="recon" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tropycal.tornado.html" class="btn btn-neutral float-left" title="tornado" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Tropycal Developers
+        &#169; Copyright 2020, Tropycal Developers.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -262,7 +362,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

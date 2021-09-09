@@ -1,25 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>tropycal.tornado.dataset &mdash; tropycal </title>
   
 
   
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
   
     <link rel="shortcut icon" href="../../../_static/logo_32.ico"/>
   
+
   
   
 
   
-  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -31,15 +44,6 @@
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -81,6 +85,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -100,6 +105,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -134,11 +140,13 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
@@ -204,7 +212,7 @@
 <span class="sd">        An instance of TornadoDataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mag_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tornado_path</span><span class="o">=</span><span class="s1">&#39;spc&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="TornadoDataset.__init__"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mag_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tornado_path</span><span class="o">=</span><span class="s1">&#39;spc&#39;</span><span class="p">):</span>
         
         <span class="c1">#Error check</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mag_thresh</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
@@ -248,9 +256,9 @@
         <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="p">[(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elon&#39;</span><span class="p">]</span><span class="o">&gt;=-</span><span class="mi">130</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">)]</span>
         <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="p">[(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elon&#39;</span><span class="p">]</span><span class="o">&lt;=-</span><span class="mi">65</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">)]</span>
         <span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">elat</span> <span class="o">=</span> <span class="p">[</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;slat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="n">i</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">elon</span> <span class="o">=</span> <span class="p">[</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;slon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="n">i</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Tors</span> <span class="o">=</span> <span class="n">Tors</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">elon</span> <span class="o">=</span> <span class="p">[</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;slon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="n">i</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;elon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)])</span></div>
 
-<div class="viewcode-block" id="TornadoDataset.get_storm_tornadoes"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.get_storm_tornadoes.html#tropycal.tornado.TornadoDataset.get_storm_tornadoes">[docs]</a>    <span class="k">def</span> <span class="nf">get_storm_tornadoes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">dist_thresh</span><span class="p">):</span>
+<div class="viewcode-block" id="TornadoDataset.get_storm_tornadoes"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.get_storm_tornadoes">[docs]</a>    <span class="k">def</span> <span class="nf">get_storm_tornadoes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">dist_thresh</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves all tornado tracks that occur along the track of a tropical cyclone.</span>
@@ -297,7 +305,7 @@
         <span class="c1">#Return DataFrame</span>
         <span class="k">return</span> <span class="n">stormTors</span></div>
 
-<div class="viewcode-block" id="TornadoDataset.rotateToHeading"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.rotateToHeading.html#tropycal.tornado.TornadoDataset.rotateToHeading">[docs]</a>    <span class="k">def</span> <span class="nf">rotateToHeading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">stormTors</span><span class="p">):</span>
+<div class="viewcode-block" id="TornadoDataset.rotateToHeading"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.rotateToHeading">[docs]</a>    <span class="k">def</span> <span class="nf">rotateToHeading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">stormTors</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Rotate tornado tracks to their position relative to the heading of the TC at the time.</span>
@@ -355,7 +363,7 @@
         <span class="k">return</span> <span class="n">stormTors</span></div>
         
 
-<div class="viewcode-block" id="TornadoDataset.plot_TCtors_rotated"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.plot_TCtors_rotated.html#tropycal.tornado.TornadoDataset.plot_TCtors_rotated">[docs]</a>    <span class="k">def</span> <span class="nf">plot_TCtors_rotated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">dist_thresh</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="TornadoDataset.plot_TCtors_rotated"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.plot_TCtors_rotated">[docs]</a>    <span class="k">def</span> <span class="nf">plot_TCtors_rotated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">dist_thresh</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</span>
@@ -430,7 +438,7 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
         
 
-<div class="viewcode-block" id="TornadoDataset.plot_tors"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.plot_tors.html#tropycal.tornado.TornadoDataset.plot_tors">[docs]</a>    <span class="k">def</span> <span class="nf">plot_tors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tor_info</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;conus&quot;</span><span class="p">,</span><span class="n">plotPPH</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">return_domain</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="TornadoDataset.plot_tors"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset.plot_tors">[docs]</a>    <span class="k">def</span> <span class="nf">plot_tors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tor_info</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;conus&quot;</span><span class="p">,</span><span class="n">plotPPH</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">return_domain</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a plot of tornado tracks and Practically Perfect Forecast (PPH).</span>
@@ -502,7 +510,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TornadoPlot</span><span class="p">()</span>
         
         <span class="c1">#Create cartopy projection</span>
-        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
             <span class="n">cartopy_proj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span>
         
@@ -532,20 +540,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Tropycal Developers
+        &#169; Copyright 2020, Tropycal Developers.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -553,7 +566,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

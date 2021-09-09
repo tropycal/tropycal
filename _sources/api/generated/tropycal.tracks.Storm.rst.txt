@@ -1,4 +1,4 @@
-tropycal.tracks.Storm
+Storm
 =====================
 
 .. currentmodule:: tropycal.tracks
@@ -8,30 +8,66 @@ tropycal.tracks.Storm
    
    
    
-   
-   
-   Methods Summary
 
    
-      .. autosummary::
-         :toctree:
-      
-         Storm.download_tcr
-         Storm.get_archer
-         Storm.get_nhc_discussion
-         Storm.get_operational_forecasts
-         Storm.get_recon
-         Storm.interp
-         Storm.list_nhc_discussions
-         Storm.plot
-         Storm.plot_TCtors_rotated
-         Storm.plot_gefs_ensembles
-         Storm.plot_nhc_forecast
-         Storm.plot_tors
-         Storm.query_nhc_discussions
-         Storm.sel
-         Storm.to_dataframe
-         Storm.to_dict
-         Storm.to_xarray
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Storm.__init__
+      ~Storm.download_tcr
+      ~Storm.get_archer
+      ~Storm.get_nhc_discussion
+      ~Storm.get_operational_forecasts
+      ~Storm.get_recon
+      ~Storm.list_nhc_discussions
+      ~Storm.plot
+      ~Storm.plot_TCtors_rotated
+      ~Storm.plot_nhc_forecast
+      ~Storm.plot_tors
+      ~Storm.query_nhc_discussions
+      ~Storm.sel_time
+      ~Storm.to_dataframe
+      ~Storm.to_dict
+      ~Storm.to_xarray
+
    
    
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: __init__
+   .. automethod:: download_tcr
+   .. automethod:: get_archer
+   .. automethod:: get_nhc_discussion
+   .. automethod:: get_operational_forecasts
+   .. automethod:: get_recon
+   .. automethod:: list_nhc_discussions
+   .. automethod:: plot
+   .. automethod:: plot_TCtors_rotated
+   .. automethod:: plot_nhc_forecast
+   .. automethod:: plot_tors
+   .. automethod:: query_nhc_discussions
+   .. automethod:: sel_time
+   .. automethod:: to_dataframe
+   .. automethod:: to_dict
+   .. automethod:: to_xarray
+
+   
+   
+
+.. include:: tropycal.tracks.Storm.examples
+
+.. raw:: html
+
+     <div style='clear:both'></div>

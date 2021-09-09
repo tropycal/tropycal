@@ -1,25 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>accumulated_cyclone_energy &mdash; tropycal </title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
   
     <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
   
+
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -31,15 +44,6 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="wind_to_category" href="tropycal.utils.wind_to_category.html" />
@@ -83,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -97,7 +102,6 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">tracks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.utils.html">utils</a><ul class="current">
@@ -111,7 +115,6 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.get_storm_type.html">get_storm_type</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="tropycal.utils.html#cartopy-utilities">Cartopy Utilities</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.utils.html#colors">Colors</a></li>
 </ul>
 </li>
@@ -125,6 +128,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -159,11 +163,13 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">API Reference</a> &raquo;</li>
         
@@ -174,7 +180,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/api/generated/tropycal.utils.accumulated_cyclone_energy.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -193,7 +199,7 @@
 <dl class="function">
 <dt id="tropycal.utils.accumulated_cyclone_energy">
 <code class="sig-prename descclassname">tropycal.utils.</code><code class="sig-name descname">accumulated_cyclone_energy</code><span class="sig-paren">(</span><em class="sig-param">wind_speed</em>, <em class="sig-param">hours=6</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/generic_utils.html#accumulated_cyclone_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.utils.accumulated_cyclone_energy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate Accumulated Cyclone Energy (ACE) based on sustained wind speed in knots.</p>
+<dd><p>Calculate Cccumulated Cyclone Energy (ACE) based on sustained wind speed in knots.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -214,29 +220,29 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tropycal.utils.wind_to_category.html" class="btn btn-neutral float-right" title="wind_to_category" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tropycal.utils.html" class="btn btn-neutral float-left" title="utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="tropycal.utils.wind_to_category.html" class="btn btn-neutral float-right" title="wind_to_category" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tropycal.utils.html" class="btn btn-neutral float-left" title="utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Tropycal Developers
+        &#169; Copyright 2020, Tropycal Developers.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -244,7 +250,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

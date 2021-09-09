@@ -15,7 +15,7 @@ Examples of using tropycal to generate images and text.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="For documentation generation purposes, return_ax must be set True for plotting functions only f...">
+    <div class="sphx-glr-thumbcontainer" tooltip="For documentation generation purposes, return_ax must be set True for plotting functions. You d...">
 
 .. only:: html
 
@@ -36,7 +36,7 @@ Examples of using tropycal to generate images and text.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Individual Storm Analysis">
+    <div class="sphx-glr-thumbcontainer" tooltip="For documentation generation purposes, return_ax must be set True for plotting functions. You d...">
 
 .. only:: html
 
@@ -57,7 +57,7 @@ Examples of using tropycal to generate images and text.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="TC Dataset Analysis">
+    <div class="sphx-glr-thumbcontainer" tooltip="For documentation generation purposes, return_ax must be set True for plotting functions. You d...">
 
 .. only:: html
 

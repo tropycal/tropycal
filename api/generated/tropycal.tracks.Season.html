@@ -1,25 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>tropycal.tracks.Season &mdash; tropycal </title>
+  <title>Season &mdash; tropycal </title>
   
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
     <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
   
+
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -31,18 +44,9 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Season.get_storm" href="tropycal.tracks.Season.get_storm.html" />
+    <link rel="next" title="Storm" href="tropycal.tracks.Storm.html" />
     <link rel="prev" title="tracks" href="tropycal.tracks.html" /> 
 </head>
 
@@ -83,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -96,20 +101,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.tracks.html">tracks</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">tropycal.tracks.Season</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Season.get_storm.html">Season.get_storm</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Season.get_storm_id.html">Season.get_storm_id</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Season.plot.html">Season.plot</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Season.summary.html">Season.summary</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Season.to_dataframe.html">Season.to_dataframe</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Season</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#examples-using-tropycal-tracks-season">Examples using <code class="docutils literal notranslate"><span class="pre">tropycal.tracks.Season</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Storm.html">tropycal.tracks.Storm</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Storm.html">Storm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">TrackDataset</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
@@ -123,6 +123,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -157,22 +158,24 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">API Reference</a> &raquo;</li>
         
           <li><a href="tropycal.tracks.html">tracks</a> &raquo;</li>
         
-      <li>tropycal.tracks.Season</li>
+      <li>Season</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/api/generated/tropycal.tracks.Season.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -186,8 +189,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="tropycal-tracks-season">
-<h1>tropycal.tracks.Season<a class="headerlink" href="#tropycal-tracks-season" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="season">
+<h1>Season<a class="headerlink" href="#season" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="tropycal.tracks.Season">
 <em class="property">class </em><code class="sig-prename descclassname">tropycal.tracks.</code><code class="sig-name descname">Season</code><span class="sig-paren">(</span><em class="sig-param">season</em>, <em class="sig-param">info</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season" title="Permalink to this definition">¶</a></dt>
@@ -203,34 +206,120 @@
 <dd class="field-even"><p><em>Season</em> – Instance of a Season object.</p>
 </dd>
 </dl>
-<p>Methods Summary</p>
-<blockquote>
-<div><table class="longtable docutils align-default">
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Season.get_storm.html#tropycal.tracks.Season.get_storm" title="tropycal.tracks.Season.get_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.get_storm</span></code></a>(storm)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Season.__init__" title="tropycal.tracks.Season.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(season, info)</p></td>
+<td><p>Initialize self.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Season.get_storm" title="tropycal.tracks.Season.get_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm</span></code></a>(storm)</p></td>
 <td><p>Retrieves a Storm object for the requested storm.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Season.get_storm_id.html#tropycal.tracks.Season.get_storm_id" title="tropycal.tracks.Season.get_storm_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.get_storm_id</span></code></a>(storm)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Season.get_storm_id" title="tropycal.tracks.Season.get_storm_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm_id</span></code></a>(storm)</p></td>
 <td><p>Returns the storm ID (e.g., “AL012019”) given the storm name and year.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Season.plot.html#tropycal.tracks.Season.plot" title="tropycal.tracks.Season.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.plot</span></code></a>([domain, ax, cartopy_proj, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Season.plot" title="tropycal.tracks.Season.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([ax, return_ax, cartopy_proj, prop, …])</p></td>
 <td><p>Creates a plot of this season.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Season.summary.html#tropycal.tracks.Season.summary" title="tropycal.tracks.Season.summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.summary</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.tracks.Season.summary" title="tropycal.tracks.Season.summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">summary</span></code></a>()</p></td>
 <td><p>Generates a summary for this season with various cumulative statistics.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Season.to_dataframe.html#tropycal.tracks.Season.to_dataframe" title="tropycal.tracks.Season.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.to_dataframe</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.tracks.Season.to_dataframe" title="tropycal.tracks.Season.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dataframe</span></code></a>()</p></td>
 <td><p>Converts the season dict into a pandas DataFrame object.</p></td>
 </tr>
 </tbody>
 </table>
-</div></blockquote>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="tropycal.tracks.Season.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">season</em>, <em class="sig-param">info</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="tropycal.tracks.Season.get_storm">
+<code class="sig-name descname">get_storm</code><span class="sig-paren">(</span><em class="sig-param">storm</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season.get_storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season.get_storm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a Storm object for the requested storm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>storm</strong> (<em>str</em><em> or </em><em>tuple</em>) – Requested storm. Can be either string of storm ID (e.g., “AL052019”), or tuple with storm name and year (e.g., (“Matthew”,2016)).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>tropycal.tracks.Storm</em> – Object containing information about the requested storm, and methods for analyzing and plotting the storm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Season.get_storm_id">
+<code class="sig-name descname">get_storm_id</code><span class="sig-paren">(</span><em class="sig-param">storm</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season.get_storm_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season.get_storm_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the storm ID (e.g., “AL012019”) given the storm name and year.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>storm</strong> (<em>tuple</em>) – Tuple containing the storm name and year (e.g., (“Matthew”,2016)).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>str or list</em> – If a single storm was found, returns a string containing its ID. Otherwise returns a list of matching IDs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Season.plot">
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of this season.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Tracks Properties</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Season.summary">
+<code class="sig-name descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a summary for this season with various cumulative statistics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – Dictionary containing various statistics about this season.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.tracks.Season.to_dataframe">
+<code class="sig-name descname">to_dataframe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season.to_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season.to_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the season dict into a pandas DataFrame object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><cite>pandas.DataFrame</cite> – A pandas DataFrame object containing information about the season.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="examples-using-tropycal-tracks-season">
+<h2>Examples using <code class="docutils literal notranslate"><span class="pre">tropycal.tracks.Season</span></code><a class="headerlink" href="#examples-using-tropycal-tracks-season" title="Permalink to this headline">¶</a></h2>
+<div class="sphx-glr-thumbcontainer" tooltip="For documentation generation purposes, return_ax must be set True for plotting functions. You d..."><div class="figure align-default" id="id1">
+<img alt="TC Dataset Analysis" src="../../_images/sphx_glr_tracks.TrackDataset_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="../../examples/tracks.TrackDataset.html#sphx-glr-examples-tracks-trackdataset-py"><span class="std std-ref">TC Dataset Analysis</span></a></span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+</div><div style='clear:both'></div></div>
 </div>
 
 
@@ -238,29 +327,29 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tropycal.tracks.Season.get_storm.html" class="btn btn-neutral float-right" title="Season.get_storm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tropycal.tracks.html" class="btn btn-neutral float-left" title="tracks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="tropycal.tracks.Storm.html" class="btn btn-neutral float-right" title="Storm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tropycal.tracks.html" class="btn btn-neutral float-left" title="tracks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Tropycal Developers
+        &#169; Copyright 2020, Tropycal Developers.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -268,7 +357,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

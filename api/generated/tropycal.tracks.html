@@ -1,25 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>tracks &mdash; tropycal </title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
   
     <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
   
+
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -31,18 +44,9 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="tropycal.tracks.Season" href="tropycal.tracks.Season.html" />
+    <link rel="next" title="Season" href="tropycal.tracks.Season.html" />
     <link rel="prev" title="API Reference" href="../index.html" /> 
 </head>
 
@@ -83,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -96,13 +101,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">tracks</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Season.html">tropycal.tracks.Season</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Storm.html">tropycal.tracks.Storm</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Season.html">Season</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Storm.html">Storm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">TrackDataset</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
@@ -116,6 +120,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -150,11 +155,13 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">API Reference</a> &raquo;</li>
         
@@ -163,7 +170,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/api/generated/tropycal.tracks.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -190,10 +197,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season</span></code></a>(season, info)</p></td>
 <td><p>Initializes an instance of Season, retrieved via <code class="docutils literal notranslate"><span class="pre">TrackDataset.get_season()</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm</span></code></a>(storm[, stormTors, read_path])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm</span></code></a>(storm[, stormTors])</p></td>
 <td><p>Initializes an instance of Storm, retrieved via <code class="docutils literal notranslate"><span class="pre">TrackDataset.get_storm()</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset</span></code></a>([basin, source, include_btk, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset</span></code></a>([basin, source, include_btk])</p></td>
 <td><p>Creates an instance of a TrackDataset object containing various cyclone data.</p></td>
 </tr>
 </tbody>
@@ -205,29 +212,29 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tropycal.tracks.Season.html" class="btn btn-neutral float-right" title="tropycal.tracks.Season" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="../index.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="tropycal.tracks.Season.html" class="btn btn-neutral float-right" title="Season" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Tropycal Developers
+        &#169; Copyright 2020, Tropycal Developers.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -235,7 +242,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

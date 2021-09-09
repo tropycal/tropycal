@@ -1,25 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>tropycal.recon.ReconDataset &mdash; tropycal </title>
+  <title>ReconDataset &mdash; tropycal </title>
   
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
     <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
   
+
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -31,18 +44,9 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="ReconDataset.allMissions" href="tropycal.recon.ReconDataset.allMissions.html" />
+    <link rel="next" title="realtime" href="tropycal.realtime.html" />
     <link rel="prev" title="recon" href="tropycal.recon.html" /> 
 </head>
 
@@ -83,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -97,20 +102,8 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">tracks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">recon</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">tropycal.recon.ReconDataset</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.allMissions.html">ReconDataset.allMissions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.findMission.html">ReconDataset.findMission</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.find_centers.html">ReconDataset.find_centers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.getMission.html">ReconDataset.getMission</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.plot_hovmoller.html">ReconDataset.plot_hovmoller</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.plot_maps.html">ReconDataset.plot_maps</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.plot_points.html">ReconDataset.plot_points</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.plot_swath.html">ReconDataset.plot_swath</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.recenter.html">ReconDataset.recenter</a></li>
-</ul>
-</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ReconDataset</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
@@ -125,6 +118,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -159,22 +153,24 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">API Reference</a> &raquo;</li>
         
           <li><a href="tropycal.recon.html">recon</a> &raquo;</li>
         
-      <li>tropycal.recon.ReconDataset</li>
+      <li>ReconDataset</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/api/generated/tropycal.recon.ReconDataset.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -188,11 +184,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="tropycal-recon-recondataset">
-<h1>tropycal.recon.ReconDataset<a class="headerlink" href="#tropycal-recon-recondataset" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="recondataset">
+<h1>ReconDataset<a class="headerlink" href="#recondataset" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="tropycal.recon.ReconDataset">
-<em class="property">class </em><code class="sig-prename descclassname">tropycal.recon.</code><code class="sig-name descname">ReconDataset</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">deltap_thresh=8</em>, <em class="sig-param">mission_url_list=None</em>, <em class="sig-param">save_path=''</em>, <em class="sig-param">read_path=''</em>, <em class="sig-param">update=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">tropycal.recon.</code><code class="sig-name descname">ReconDataset</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">deltap_thresh=8</em>, <em class="sig-param">save_path=''</em>, <em class="sig-param">read_path=''</em>, <em class="sig-param">update=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of a ReconDataset object containing all recon data for a single storm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -222,76 +218,240 @@ Dictionary keys are given by mission number and agency (e.g. ‘15_NOAA’).</p>
 </dl>
 <p class="rubric">Notes</p>
 <p>Recon data is currently read in via Tropical Atlantic. Future releases of Tropycal will incorporate NHC recon archives.</p>
-<p>Methods Summary</p>
-<blockquote>
-<div><table class="longtable docutils align-default">
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.allMissions.html#tropycal.recon.ReconDataset.allMissions" title="tropycal.recon.ReconDataset.allMissions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.allMissions</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.__init__" title="tropycal.recon.ReconDataset.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(storm[, deltap_thresh, save_path, …])</p></td>
+<td><p>Initialize self.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.allMissions" title="tropycal.recon.ReconDataset.allMissions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allMissions</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.findMission.html#tropycal.recon.ReconDataset.findMission" title="tropycal.recon.ReconDataset.findMission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.findMission</span></code></a>(time)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.findMission" title="tropycal.recon.ReconDataset.findMission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">findMission</span></code></a>(time)</p></td>
 <td><p>Returns the name of a mission or list of missions given a specified time.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.find_centers.html#tropycal.recon.ReconDataset.find_centers" title="tropycal.recon.ReconDataset.find_centers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.find_centers</span></code></a>(data)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.find_centers" title="tropycal.recon.ReconDataset.find_centers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_centers</span></code></a>(data)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.getMission.html#tropycal.recon.ReconDataset.getMission" title="tropycal.recon.ReconDataset.getMission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.getMission</span></code></a>(agency, mission_num)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.getMission" title="tropycal.recon.ReconDataset.getMission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getMission</span></code></a>(agency, mission_num[, url_mission])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.plot_hovmoller.html#tropycal.recon.ReconDataset.plot_hovmoller" title="tropycal.recon.ReconDataset.plot_hovmoller"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_hovmoller</span></code></a>([recon_select, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.plot_hovmoller" title="tropycal.recon.ReconDataset.plot_hovmoller"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_hovmoller</span></code></a>([recon_select, varname, …])</p></td>
 <td><p>Creates a hovmoller plot of azimuthally-averaged recon data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.plot_maps.html#tropycal.recon.ReconDataset.plot_maps" title="tropycal.recon.ReconDataset.plot_maps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_maps</span></code></a>([recon_select, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.plot_maps" title="tropycal.recon.ReconDataset.plot_maps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_maps</span></code></a>([recon_select, varname, …])</p></td>
 <td><p>Creates maps of interpolated recon data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.plot_points.html#tropycal.recon.ReconDataset.plot_points" title="tropycal.recon.ReconDataset.plot_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_points</span></code></a>([recon_select, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.plot_points" title="tropycal.recon.ReconDataset.plot_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_points</span></code></a>([recon_select, varname, domain, …])</p></td>
 <td><p>Creates a plot of recon data points.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.plot_swath.html#tropycal.recon.ReconDataset.plot_swath" title="tropycal.recon.ReconDataset.plot_swath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_swath</span></code></a>([recon_select, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.plot_swath" title="tropycal.recon.ReconDataset.plot_swath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_swath</span></code></a>([recon_select, varname, …])</p></td>
 <td><p>Creates a map plot of a swath of interpolated recon data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.recenter.html#tropycal.recon.ReconDataset.recenter" title="tropycal.recon.ReconDataset.recenter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.recenter</span></code></a>([use])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.recon.ReconDataset.recenter" title="tropycal.recon.ReconDataset.recenter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recenter</span></code></a>([use])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
-</div></blockquote>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="tropycal.recon.ReconDataset.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">deltap_thresh=8</em>, <em class="sig-param">save_path=''</em>, <em class="sig-param">read_path=''</em>, <em class="sig-param">update=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
-</div>
+<dl class="method">
+<dt id="tropycal.recon.ReconDataset.allMissions">
+<code class="sig-name descname">allMissions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.allMissions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.allMissions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tropycal.recon.ReconDataset.findMission">
+<code class="sig-name descname">findMission</code><span class="sig-paren">(</span><em class="sig-param">time</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.findMission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.findMission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of a mission or list of missions given a specified time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>time</strong> (<em>datetime.datetime</em><em> or </em><em>list</em>) – Datetime object or list of datetime objects representing the time of the requested mission.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>list</em> – The names of any/all missions that had in-storm observations during the specified time.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.recon.ReconDataset.find_centers">
+<code class="sig-name descname">find_centers</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.find_centers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.find_centers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tropycal.recon.ReconDataset.getMission">
+<code class="sig-name descname">getMission</code><span class="sig-paren">(</span><em class="sig-param">agency</em>, <em class="sig-param">mission_num</em>, <em class="sig-param">url_mission=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.getMission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.getMission" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tropycal.recon.ReconDataset.plot_hovmoller">
+<code class="sig-name descname">plot_hovmoller</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">radlim=None</em>, <em class="sig-param">track_dict=None</em>, <em class="sig-param">plane_p_range=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_hovmoller"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_hovmoller" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a hovmoller plot of azimuthally-averaged recon data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recon_select</strong> (<em>Requested recon data</em>) – pandas.DataFrame or dict,
+or datetime or list of start/end datetimes.</p></li>
+<li><p><strong>varname</strong> (<em>Variable to average and plot</em><em> (</em><em>e.g. 'wspd'</em><em>)</em><em></em>) – String</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><p><strong>prop</strong> (<em>dict</em>) – Customization properties for recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-hovmoller"><span class="std std-ref">plot_hovmoller</span></a> for available options.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.recon.ReconDataset.plot_maps">
+<code class="sig-name descname">plot_maps</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">track_dict=None</em>, <em class="sig-param">recon_stats=None</em>, <em class="sig-param">domain='dynamic'</em>, <em class="sig-param">radlim=None</em>, <em class="sig-param">plane_p_range=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">savetopath=None</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_maps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_maps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates maps of interpolated recon data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recon_select</strong> (<em>Requested recon data</em>) – pandas.DataFrame or dict,
+or string referencing the mission name (e.g. ‘12_NOAA’),
+or datetime or list of start/end datetimes.</p></li>
+<li><p><strong>varname</strong> (<em>str</em>) – <p>Variable to plot. Can be one of the following keys in recon_select dataframe:</p>
+<ul>
+<li><p><strong>”sfmr”</strong> = SFMR surface wind</p></li>
+<li><p><strong>”wspd”</strong> = 30-second flight level wind (default)</p></li>
+<li><p><strong>”pkwnd”</strong> = 10-second flight level wind</p></li>
+<li><p><strong>”p_sfc”</strong> = extrapolated surface pressure</p></li>
+</ul>
+</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-swath"><span class="std std-ref">plot_swath and plot_map</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.recon.ReconDataset.plot_points">
+<code class="sig-name descname">plot_points</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">domain='dynamic'</em>, <em class="sig-param">plane_p_range=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of recon data points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recon_select</strong> (<em>Requested recon data</em>) – pandas.DataFrame or dict,
+or string referencing the mission name (e.g. ‘12_NOAA’),
+or datetime or list of start/end datetimes.</p></li>
+<li><p><strong>varname</strong> (<em>str</em>) – <p>Variable to plot. Can be one of the following keys in recon_select dataframe:</p>
+<ul>
+<li><p><strong>”sfmr”</strong> = SFMR surface wind</p></li>
+<li><p><strong>”wspd”</strong> = 30-second flight level wind (default)</p></li>
+<li><p><strong>”pkwnd”</strong> = 10-second flight level wind</p></li>
+<li><p><strong>”p_sfc”</strong> = extrapolated surface pressure</p></li>
+</ul>
+</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-plot"><span class="std std-ref">Recon Properties</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.recon.ReconDataset.plot_swath">
+<code class="sig-name descname">plot_swath</code><span class="sig-paren">(</span><em class="sig-param">recon_select=None</em>, <em class="sig-param">varname='wspd'</em>, <em class="sig-param">swathfunc=None</em>, <em class="sig-param">track_dict=None</em>, <em class="sig-param">radlim=None</em>, <em class="sig-param">domain='dynamic'</em>, <em class="sig-param">plane_p_range=None</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.plot_swath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.plot_swath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a map plot of a swath of interpolated recon data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recon_select</strong> (<em>Requested recon data</em>) – pandas.DataFrame or dict,
+or string referencing the mission name (e.g. ‘12_NOAA’),
+or datetime or list of start/end datetimes.</p></li>
+<li><p><strong>varname</strong> (<em>str</em>) – <p>Variable to plot. Can be one of the following keys in recon_select dataframe:</p>
+<ul>
+<li><p><strong>”sfmr”</strong> = SFMR surface wind</p></li>
+<li><p><strong>”wspd”</strong> = 30-second flight level wind (default)</p></li>
+<li><p><strong>”pkwnd”</strong> = 10-second flight level wind</p></li>
+<li><p><strong>”p_sfc”</strong> = extrapolated surface pressure</p></li>
+</ul>
+</p></li>
+<li><p><strong>swathfunc</strong> (<em>function</em>) – Function to operate on interpolated recon data.
+e.g., np.max, np.min, or percentile function</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>return_ax</strong> (<em>bool</em>) – If True, returns the axes instance on which the plot was generated for the user to further modify. Default is False.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-swath"><span class="std std-ref">plot_swath and plot_map</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.recon.ReconDataset.recenter">
+<code class="sig-name descname">recenter</code><span class="sig-paren">(</span><em class="sig-param">use='all'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.recenter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.recenter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div style='clear:both'></div></div>
 
 
            </div>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tropycal.recon.ReconDataset.allMissions.html" class="btn btn-neutral float-right" title="ReconDataset.allMissions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tropycal.recon.html" class="btn btn-neutral float-left" title="recon" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="tropycal.realtime.html" class="btn btn-neutral float-right" title="realtime" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tropycal.recon.html" class="btn btn-neutral float-left" title="recon" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Tropycal Developers
+        &#169; Copyright 2020, Tropycal Developers.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -299,7 +459,6 @@ Dictionary keys are given by mission number and agency (e.g. ‘15_NOAA’).</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

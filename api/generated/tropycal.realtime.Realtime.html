@@ -1,25 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>tropycal.realtime.Realtime &mdash; tropycal </title>
+  <title>Realtime &mdash; tropycal </title>
   
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
 
   
   
     <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
   
+
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -31,18 +44,9 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Realtime.get_storm" href="tropycal.realtime.Realtime.get_storm.html" />
+    <link rel="next" title="RealtimeStorm" href="tropycal.realtime.RealtimeStorm.html" />
     <link rel="prev" title="realtime" href="tropycal.realtime.html" /> 
 </head>
 
@@ -83,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -97,15 +102,10 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">tracks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.realtime.html">realtime</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">tropycal.realtime.Realtime</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.Realtime.get_storm.html">Realtime.get_storm</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.Realtime.list_active_storms.html">Realtime.list_active_storms</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.html">tropycal.realtime.RealtimeStorm</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Realtime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.html">RealtimeStorm</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
@@ -119,6 +119,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -153,22 +154,24 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">API Reference</a> &raquo;</li>
         
           <li><a href="tropycal.realtime.html">realtime</a> &raquo;</li>
         
-      <li>tropycal.realtime.Realtime</li>
+      <li>Realtime</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/api/generated/tropycal.realtime.Realtime.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -182,104 +185,103 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="tropycal-realtime-realtime">
-<h1>tropycal.realtime.Realtime<a class="headerlink" href="#tropycal-realtime-realtime" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="realtime">
+<h1>Realtime<a class="headerlink" href="#realtime" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="tropycal.realtime.Realtime">
-<em class="property">class </em><code class="sig-prename descclassname">tropycal.realtime.</code><code class="sig-name descname">Realtime</code><span class="sig-paren">(</span><em class="sig-param">jtwc=False</em>, <em class="sig-param">jtwc_source='ucar'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.Realtime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates an instance of a Realtime object containing currently active tropical cyclones and invests.</p>
+<em class="property">class </em><code class="sig-prename descclassname">tropycal.realtime.</code><code class="sig-name descname">Realtime</code><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.Realtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of a Realtime object containing currently active tropical cyclones.</p>
 <p>Realtime objects are used to retrieve RealtimeStorm objects, which are created for every active tropical cyclone globally upon creating an instance of Realtime.</p>
 <p>Data sources are as follows:
-National Hurricane Center (NHC): <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/btk/">https://ftp.nhc.noaa.gov/atcf/btk/</a>
-Joint Typhoon Warning Center (JTWC): (read notes for more details)</p>
+National Hurricane Center: <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/btk/">https://ftp.nhc.noaa.gov/atcf/btk/</a>
+Joint Typhoon Warning Center: <a class="reference external" href="http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/">http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>jtwc</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag determining whether to read JTWC data in. If True, specify the JTWC data source using “jtwc_source”. Default is False.</p></li>
-<li><p><strong>jtwc_source</strong> (<em>str</em><em>, </em><em>optional</em>) – If jtwc is set to True, this specifies the JTWC data source to read from. Available options are “noaa”, “ucar” or “jtwc”. Default is “jtwc”. Read the notes for more details.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>tropycal.realtime.Realtime</em> – An instance of Realtime.</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>tropycal.realtime.Realtime</em> – An instance of Realtime.</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>As of 2021, the multiple sources offering a Best Track archive of raw JTWC tropical cyclone data experienced frequent outages and/or severe slowdowns, hampering the ability to easily retrieve this data. As such, JTWC data has been optional in Realtime objects since v0.2.7. There are three JTWC sources available:</p>
-<ul class="simple">
-<li><p><strong>jtwc</strong> - This is currently the default JTWC source if JTWC data is read in. As of September 2021, this source is working, but reading data is exceptionally slow (can take from 3 to as much as 10 minutes).</p></li>
-<li><p><strong>ucar</strong> - As of September 2021, this source is available and fairly quick to read in, but offers a less compherensive storm history than the “jtwc” source. Between July and September 2021, this source did not update any active tropical cyclones outside of NHC’s domain. If using this source, check to make sure it is in fact retrieving current global tropical cyclones.</p></li>
-<li><p><strong>noaa</strong> - This source was active until about July 2021, and since then no longer appears to be online and accessible. The code retains the ability to read in data from this source should it return online.</p></li>
-</ul>
-<p>The following block of code creates an instance of a Realtime() object and stores it in a variable called “realtime_obj”:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">realtime</span>
-<span class="n">realtime_obj</span> <span class="o">=</span> <span class="n">realtime</span><span class="o">.</span><span class="n">Realtime</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>With an instance of Realtime created, any of the methods listed below can be accessed via the “realtime_obj” variable. All active storms and invests are stored as attributes of this instance, and can be simply retrieved:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#This stores an instance of a RealtimeStorm object for AL012021 in the &quot;storm&quot; variable.</span>
-<span class="n">storm</span> <span class="o">=</span> <span class="n">realtime_obj</span><span class="o">.</span><span class="n">AL012021</span>
-
-<span class="c1">#From there, you can use any method of a Storm object:</span>
-<span class="n">storm</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>RealtimeStorm objects contain all the methods of Storm objects, in addition to special methods available only for storms retrieved via a Realtime object. As of Tropycal v0.3, this now includes invests, though Storm and RealtimeStorm objects retrieved for invests are blocked from performing functionality that does not apply to invests operationally (e.g., forecast discussions, official NHC/JTWC track forecasts).</p>
-<p>To check whether a RealtimeStorm object contains an invest, check the “invest” boolean stored in it:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">storm</span><span class="o">.</span><span class="n">invest</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This is an invest!&quot;</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This is not an invest!&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Methods Summary</p>
-<blockquote>
-<div><table class="longtable docutils align-default">
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.Realtime.get_storm.html#tropycal.realtime.Realtime.get_storm" title="tropycal.realtime.Realtime.get_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Realtime.get_storm</span></code></a>(storm)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.Realtime.__init__" title="tropycal.realtime.Realtime.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>()</p></td>
+<td><p>Initialize self.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tropycal.realtime.Realtime.get_storm" title="tropycal.realtime.Realtime.get_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm</span></code></a>(storm)</p></td>
 <td><p>Returns a RealtimeStorm object for the requested storm ID.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.Realtime.list_active_storms.html#tropycal.realtime.Realtime.list_active_storms" title="tropycal.realtime.Realtime.list_active_storms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Realtime.list_active_storms</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#tropycal.realtime.Realtime.list_active_storms" title="tropycal.realtime.Realtime.list_active_storms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_active_storms</span></code></a>()</p></td>
 <td><p>Produces a list of storms currently stored in Realtime.</p></td>
 </tr>
 </tbody>
 </table>
-</div></blockquote>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="tropycal.realtime.Realtime.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.Realtime.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
-</div>
+<dl class="method">
+<dt id="tropycal.realtime.Realtime.get_storm">
+<code class="sig-name descname">get_storm</code><span class="sig-paren">(</span><em class="sig-param">storm</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime.get_storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.Realtime.get_storm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a RealtimeStorm object for the requested storm ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>storm</strong> (<em>str</em>) – Storm ID for the requested storm (e.g., “AL012020”).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>tropycal.realtime.RealtimeStorm</em> – An instance of RealtimeStorm.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="tropycal.realtime.Realtime.list_active_storms">
+<code class="sig-name descname">list_active_storms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime.list_active_storms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.Realtime.list_active_storms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a list of storms currently stored in Realtime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>list</em> – List containing the storm IDs for currently active storms. Each ID has a Storm object stored as an attribute of Realtime.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div style='clear:both'></div></div>
 
 
            </div>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tropycal.realtime.Realtime.get_storm.html" class="btn btn-neutral float-right" title="Realtime.get_storm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tropycal.realtime.html" class="btn btn-neutral float-left" title="realtime" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="tropycal.realtime.RealtimeStorm.html" class="btn btn-neutral float-right" title="RealtimeStorm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tropycal.realtime.html" class="btn btn-neutral float-left" title="realtime" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2021, Tropycal Developers
+        &#169; Copyright 2020, Tropycal Developers.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -287,7 +289,6 @@ Joint Typhoon Warning Center (JTWC): (read notes for more details)</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

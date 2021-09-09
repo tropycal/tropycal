@@ -1,0 +1,12 @@
+RealtimeStorm.plot_nhc_forecast
+=================================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.plot_nhc_forecast
+
+.. include:: tropycal.realtime.RealtimeStorm.plot_nhc_forecast.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -1,0 +1,12 @@
+Realtime.get_storm
+====================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: Realtime.get_storm
+
+.. include:: tropycal.realtime.Realtime.get_storm.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

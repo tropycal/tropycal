@@ -1,0 +1,12 @@
+plot_storm
+=========================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: plot_storm
+
+.. include:: tropycal.utils.plot_storm.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -1,0 +1,12 @@
+RealtimeStorm.get_archer
+==========================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.get_archer
+
+.. include:: tropycal.realtime.RealtimeStorm.get_archer.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

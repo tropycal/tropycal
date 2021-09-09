@@ -1,0 +1,12 @@
+TrackDataset.storm_ace_vs_season
+================================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.storm_ace_vs_season
+
+.. include:: tropycal.tracks.TrackDataset.storm_ace_vs_season.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

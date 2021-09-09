@@ -1,0 +1,24 @@
+tropycal.rain.RainDataset
+=========================
+
+.. currentmodule:: tropycal.rain
+
+.. autoclass:: RainDataset
+
+   
+   
+   
+   
+   
+   Methods Summary
+
+   
+      .. autosummary::
+         :toctree:
+      
+         RainDataset.get_storm_rainfall
+         RainDataset.interpolate_to_grid
+         RainDataset.plot_rain
+         RainDataset.plot_rain_grid
+   
+   

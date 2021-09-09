@@ -1,0 +1,12 @@
+Storm.interp
+============================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Storm.interp
+
+.. include:: tropycal.tracks.Storm.interp.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

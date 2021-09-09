@@ -1,0 +1,12 @@
+Season.get_storm_id
+===================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Season.get_storm_id
+
+.. include:: tropycal.tracks.Season.get_storm_id.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

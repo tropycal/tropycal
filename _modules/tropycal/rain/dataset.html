@@ -1,0 +1,483 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tropycal.rain.dataset &mdash; tropycal </title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/logo_32.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data.html">Data Sources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>tropycal.rain.dataset</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tropycal.rain.dataset</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Functionality for reading and analyzing SPC tornado dataset.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">griddata</span>
+<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.lines</span> <span class="k">as</span> <span class="nn">mlines</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patheffects</span> <span class="k">as</span> <span class="nn">patheffects</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
+    <span class="kn">from</span> <span class="nn">cartopy</span> <span class="kn">import</span> <span class="n">crs</span> <span class="k">as</span> <span class="n">ccrs</span>
+    <span class="kn">from</span> <span class="nn">cartopy.mpl.gridliner</span> <span class="kn">import</span> <span class="n">LONGITUDE_FORMATTER</span><span class="p">,</span> <span class="n">LATITUDE_FORMATTER</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Warning: Cartopy is not installed in your python environment. Plotting functions will not work.&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.plot</span> <span class="kn">import</span> <span class="n">RainPlot</span>
+
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="RainDataset"><a class="viewcode-back" href="../../../api/generated/tropycal.rain.RainDataset.html#tropycal.rain.RainDataset">[docs]</a><span class="k">class</span> <span class="nc">RainDataset</span><span class="p">():</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates an instance of a RainDataset object containing tropical cyclone rainfall data, courtesy of the Weather Prediction Center (WPC).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_path : str</span>
+<span class="sd">        Source to read tropical cyclone rainfall data from. Default is &quot;wpc&quot;, which reads from the online Weather Prediction Center (WPC) database. Can change this to a local file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    RainDataset</span>
+<span class="sd">        An instance of RainDataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="o">=</span><span class="s1">&#39;wpc&#39;</span><span class="p">):</span>
+
+        <span class="c1">#Start timer</span>
+        <span class="n">timer_start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;--&gt; Starting to read in rainfall data&#39;</span><span class="p">)</span>
+        
+        <span class="c1">#Read in storm rainfall dataset</span>
+        <span class="k">if</span> <span class="n">data_path</span> <span class="o">==</span> <span class="s1">&#39;wpc&#39;</span><span class="p">:</span>
+            <span class="n">data_path</span> <span class="o">=</span> <span class="s2">&quot;https://www.wpc.ncep.noaa.gov/tropical/rain/CONUS_rainfall_obs_1900-2020.csv&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rain_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;https://www.wpc.ncep.noaa.gov/tropical/rain/CONUS_rainfall_obs_1900-2020.csv&quot;</span><span class="p">)</span>
+
+        <span class="c1">#Update user on duration</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;--&gt; Completed reading in rainfall data (%.2f seconds)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timer_start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+        
+<div class="viewcode-block" id="RainDataset.get_storm_rainfall"><a class="viewcode-back" href="../../../api/generated/tropycal.rain.RainDataset.get_storm_rainfall.html#tropycal.rain.RainDataset.get_storm_rainfall">[docs]</a>    <span class="k">def</span> <span class="nf">get_storm_rainfall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves all rainfall observations in inches associated with a tropical cyclone.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        storm : tropycal.tracks.Storm</span>
+<span class="sd">            Instance of a Storm object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">            Pandas DataFrame object containing rainfall data associated with this tropical cyclone, in inches.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Filter dataset to this specific storm</span>
+        <span class="n">name_1</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">storm</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">storm</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">name_2</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">storm</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">storm</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">df_storm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rain_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">rain_df</span><span class="p">[</span><span class="s1">&#39;Storm&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name_1</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rain_df</span><span class="p">[</span><span class="s1">&#39;Storm&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name_2</span><span class="p">)]</span>
+
+        <span class="c1">#Drop Storm and Year column, no longer necessary</span>
+        <span class="n">df_storm</span> <span class="o">=</span> <span class="n">df_storm</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Storm&#39;</span><span class="p">,</span><span class="s1">&#39;Year&#39;</span><span class="p">])</span>
+        
+        <span class="c1">#Remove NaN entries</span>
+        <span class="n">df_storm</span> <span class="o">=</span> <span class="n">df_storm</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">df_storm</span><span class="p">[</span><span class="s1">&#39;Lat&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">df_storm</span><span class="p">[</span><span class="s1">&#39;Lon&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">df_storm</span><span class="p">[</span><span class="s1">&#39;Total&#39;</span><span class="p">])]</span>
+        
+        <span class="c1">#Check if data is empty</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_storm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No rainfall data is available for this storm.&quot;</span><span class="p">)</span>
+        
+        <span class="c1">#Return dataframe</span>
+        <span class="k">return</span> <span class="n">df_storm</span></div>
+    
+<div class="viewcode-block" id="RainDataset.interpolate_to_grid"><a class="viewcode-back" href="../../../api/generated/tropycal.rain.RainDataset.interpolate_to_grid.html#tropycal.rain.RainDataset.interpolate_to_grid">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate_to_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">grid_res</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span><span class="n">return_xarray</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interpolates storm rainfall data to a horizontal grid.</span>
+<span class="sd">        </span>
+<span class="sd">        Interpolation is performed using Scipy&#39;s `scipy.interpolate.griddata()` interpolation function.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        storm : tropycal.tracks.Storm</span>
+<span class="sd">            Instance of a Storm object.</span>
+<span class="sd">        grid_res : int or float</span>
+<span class="sd">            Horizontal resolution of the desired grid in degrees. Default is 0.1 degrees.</span>
+<span class="sd">        method : str</span>
+<span class="sd">            Method for interpolation to pass to scipy&#39;s interpolation function. Default is &quot;linear&quot;.</span>
+<span class="sd">        return_xarray : bool</span>
+<span class="sd">            If True, output is returned as an xarray DataArray with coordinates included. Default is false.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict or xarray.DataArray</span>
+<span class="sd">            If return_xarray is True, an xarray DataArray is returned. Otherwise, a dict including the grid lat, lon and grid values is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Check if xarray is installed</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">return_xarray</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;xarray is not installed in your python environment. Defaulting to return_xarray=False.&quot;</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="c1">#Check if Storm object contains rainfall data</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">storm</span><span class="o">.</span><span class="n">rain</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">storm</span><span class="o">.</span><span class="n">rain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_storm_rainfall</span><span class="p">(</span><span class="n">storm</span><span class="p">)</span>
+        
+        <span class="c1">#Create grid to interpolate observations to</span>
+        <span class="n">grid_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">140</span><span class="p">,</span><span class="o">-</span><span class="mi">60</span><span class="o">+</span><span class="n">grid_res</span><span class="p">,</span><span class="n">grid_res</span><span class="p">)</span>
+        <span class="n">grid_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">50</span><span class="o">+</span><span class="n">grid_res</span><span class="p">,</span><span class="n">grid_res</span><span class="p">)</span>
+        
+        <span class="c1">#Retrieve data for interpolation</span>
+        <span class="n">rainfall</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">rain</span><span class="p">[</span><span class="s1">&#39;Total&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">rain</span><span class="p">[</span><span class="s1">&#39;Lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">rain</span><span class="p">[</span><span class="s1">&#39;Lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1">#Perform the interpolation</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">((</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">),</span> <span class="n">rainfall</span><span class="p">,</span> <span class="p">(</span><span class="n">grid_lat</span><span class="p">[</span><span class="kc">None</span><span class="p">,:],</span> <span class="n">grid_lon</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]),</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+
+        <span class="c1">#Return data</span>
+        <span class="k">if</span> <span class="n">return_xarray</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="n">coords</span><span class="o">=</span><span class="p">[</span><span class="n">grid_lat</span><span class="p">,</span><span class="n">grid_lon</span><span class="p">],</span><span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;grid&#39;</span><span class="p">:</span><span class="n">grid</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span><span class="n">grid_lat</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">:</span><span class="n">grid_lon</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="RainDataset.plot_rain_grid"><a class="viewcode-back" href="../../../api/generated/tropycal.rain.RainDataset.plot_rain_grid.html#tropycal.rain.RainDataset.plot_rain_grid">[docs]</a>    <span class="k">def</span> <span class="nf">plot_rain_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">grid</span><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">plot_all_dots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a plot of a storm track and its associated rainfall (gridded).</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        storm : tropycal.tracks.Storm</span>
+<span class="sd">            Storm object to be plotted.</span>
+<span class="sd">        grid : dict or xarray.DataArray</span>
+<span class="sd">            Output from `interpolate_to_grid()` to be plotted. Can also be any dict with &quot;lat&quot;, &quot;lon&quot; and &quot;grid&quot; entries, or an xarray DataArray with &quot;lat&quot; and &quot;lon&quot; dimensions.</span>
+<span class="sd">        levels : list or numpy.ndarray</span>
+<span class="sd">            List of contour fill levels to plot the grid values, in inches. If none, this is automatically generated.</span>
+<span class="sd">        cmap : colormap</span>
+<span class="sd">            Colormap to use for contour filling rainfall. If none, this is automatically generated.</span>
+<span class="sd">        domain : str</span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
+<span class="sd">        plot_all_dots : bool</span>
+<span class="sd">            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</span>
+<span class="sd">        ax : axes</span>
+<span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        cartopy_proj : ccrs</span>
+<span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
+<span class="sd">        save_path : str</span>
+<span class="sd">            Relative or full path of directory to save the image in. If none, image will not be saved.</span>
+<span class="sd">        </span>
+<span class="sd">        Other Parameters</span>
+<span class="sd">        ----------------</span>
+<span class="sd">        prop : dict</span>
+<span class="sd">            Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.</span>
+<span class="sd">        map_prop : dict</span>
+<span class="sd">            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ax</span>
+<span class="sd">            Instance of axes containing the plot is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Check if Storm object contains rainfall data</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">storm</span><span class="o">.</span><span class="n">rain</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">storm</span><span class="o">.</span><span class="n">rain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_storm_rainfall</span><span class="p">(</span><span class="n">storm</span><span class="p">)</span>
+        
+        <span class="c1">#Create instance of plot object</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">RainPlot</span><span class="p">()</span>
+        
+        <span class="c1">#Create cartopy projection</span>
+        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">cartopy_proj</span>
+        <span class="k">elif</span> <span class="nb">max</span><span class="p">(</span><span class="n">storm</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">150</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">(</span><span class="n">storm</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">150</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            
+        <span class="c1">#Plot storm</span>
+        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><span class="n">storm</span><span class="p">,</span><span class="n">grid</span><span class="p">,</span><span class="n">levels</span><span class="p">,</span><span class="n">cmap</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">plot_all_dots</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="n">save_path</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        
+        <span class="c1">#Return axis</span>
+        <span class="k">return</span> <span class="n">plot_ax</span></div>
+
+<div class="viewcode-block" id="RainDataset.plot_rain"><a class="viewcode-back" href="../../../api/generated/tropycal.rain.RainDataset.plot_rain.html#tropycal.rain.RainDataset.plot_rain">[docs]</a>    <span class="k">def</span> <span class="nf">plot_rain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">ms</span><span class="o">=</span><span class="mf">7.5</span><span class="p">,</span><span class="n">mec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">mew</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">minimum_threshold</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">plot_all_dots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{},</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a plot of a storm track and its associated rainfall (individual dots).</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        storm : tropycal.tracks.Storm</span>
+<span class="sd">            Storm object to be plotted.</span>
+<span class="sd">        ms : float or int</span>
+<span class="sd">            Marker size for individual rainfall observations. Default is 7.5.</span>
+<span class="sd">        mec : str or rgb tuple</span>
+<span class="sd">            Marker edge color for dots. If none (default), none will be colored.</span>
+<span class="sd">        mew : float or int</span>
+<span class="sd">            Marker edge width for dots. If mec is specified, the default is 0.5.</span>
+<span class="sd">        minimum_threshold : float or int</span>
+<span class="sd">            Minimum threshold (in inches) to plot dots. Default is 1.00 inch.</span>
+<span class="sd">        levels : list or numpy.ndarray</span>
+<span class="sd">            List of levels, in inches, corresponding to the colormap used to color fill the observation dots. If none, this is automatically generated.</span>
+<span class="sd">        cmap : colormap</span>
+<span class="sd">            Colormap to use for color filling the observation dots. If none, this is automatically generated.</span>
+<span class="sd">        domain : str</span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
+<span class="sd">        plot_all_dots : bool</span>
+<span class="sd">            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</span>
+<span class="sd">        ax : axes</span>
+<span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        cartopy_proj : ccrs</span>
+<span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
+<span class="sd">        save_path : str</span>
+<span class="sd">            Relative or full path of directory to save the image in. If none, image will not be saved.</span>
+<span class="sd">        </span>
+<span class="sd">        Other Parameters</span>
+<span class="sd">        ----------------</span>
+<span class="sd">        prop : dict</span>
+<span class="sd">            Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.</span>
+<span class="sd">        map_prop : dict</span>
+<span class="sd">            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ax</span>
+<span class="sd">            Instance of axes containing the plot is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Check if Storm object contains rainfall data</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">storm</span><span class="o">.</span><span class="n">rain</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">storm</span><span class="o">.</span><span class="n">rain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_storm_rainfall</span><span class="p">(</span><span class="n">storm</span><span class="p">)</span>
+        
+        <span class="c1">#Create instance of plot object</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">RainPlot</span><span class="p">()</span>
+        
+        <span class="c1">#Create cartopy projection</span>
+        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">cartopy_proj</span>
+        <span class="k">elif</span> <span class="nb">max</span><span class="p">(</span><span class="n">storm</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">150</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">(</span><span class="n">storm</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">150</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            
+        <span class="c1">#Plot storm</span>
+        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><span class="n">storm</span><span class="p">,{</span><span class="s1">&#39;ms&#39;</span><span class="p">:</span><span class="n">ms</span><span class="p">,</span><span class="s1">&#39;minimum_threshold&#39;</span><span class="p">:</span><span class="n">minimum_threshold</span><span class="p">,</span><span class="s1">&#39;mew&#39;</span><span class="p">:</span><span class="n">mew</span><span class="p">,</span><span class="s1">&#39;mec&#39;</span><span class="p">:</span><span class="n">mec</span><span class="p">},</span><span class="n">levels</span><span class="p">,</span><span class="n">cmap</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">plot_all_dots</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="n">save_path</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
+        
+        <span class="c1">#Return axis</span>
+        <span class="k">return</span> <span class="n">plot_ax</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+RealtimeStorm.plot_TCtors_rotated
+===================================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.plot_TCtors_rotated
+
+.. include:: tropycal.realtime.RealtimeStorm.plot_TCtors_rotated.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

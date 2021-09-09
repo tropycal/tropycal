@@ -1,0 +1,12 @@
+RealtimeStorm.get_realtime_info
+=================================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.get_realtime_info
+
+.. include:: tropycal.realtime.RealtimeStorm.get_realtime_info.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

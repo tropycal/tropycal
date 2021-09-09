@@ -19,6 +19,8 @@ The HURDAT2_ reanalysis is an actively updated reanalysis dataset for tropical c
 
 ----
 
+.. _ibtracs-caveats:
+
 IBTrACS
 -------
 The IBTrACS_ reanalysis is a comprehensive dataset combining tropical cyclone data from multiple WMO agencies across the world. IBTrACS contains many data sources, some which have advantages over others. This results in discrepancies in storm tracks, storms that were or were not tropical, or sustained wind measurement that vary between agency. tropycal offers 3 modes of reading in IBTrACS data, with the pros and cons of each method listed below.

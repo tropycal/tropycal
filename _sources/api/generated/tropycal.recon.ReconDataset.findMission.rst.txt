@@ -1,0 +1,12 @@
+ReconDataset.findMission
+=======================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: ReconDataset.findMission
+
+.. include:: tropycal.recon.ReconDataset.findMission.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

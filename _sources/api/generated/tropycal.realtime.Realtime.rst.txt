@@ -1,4 +1,4 @@
-Realtime
+tropycal.realtime.Realtime
 ==========================
 
 .. currentmodule:: tropycal.realtime
@@ -8,40 +8,15 @@ Realtime
    
    
    
+   
+   
+   Methods Summary
 
    
-   
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-   
-      ~Realtime.__init__
-      ~Realtime.get_storm
-      ~Realtime.list_active_storms
-
+      .. autosummary::
+         :toctree:
+      
+         Realtime.get_storm
+         Realtime.list_active_storms
    
    
-
-   
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: __init__
-   .. automethod:: get_storm
-   .. automethod:: list_active_storms
-
-   
-   
-
-.. include:: tropycal.realtime.Realtime.examples
-
-.. raw:: html
-
-     <div style='clear:both'></div>

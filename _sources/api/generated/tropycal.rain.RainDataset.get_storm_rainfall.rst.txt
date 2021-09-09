@@ -1,0 +1,12 @@
+RainDataset.get_storm_rainfall
+============================================
+
+.. currentmodule:: tropycal.rain
+
+.. automethod:: RainDataset.get_storm_rainfall
+
+.. include:: tropycal.rain.RainDataset.get_storm_rainfall.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

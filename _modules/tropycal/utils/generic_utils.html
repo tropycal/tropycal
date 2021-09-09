@@ -1,38 +1,25 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>tropycal.utils.generic_utils &mdash; tropycal </title>
   
 
   
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
-
-  
   
     <link rel="shortcut icon" href="../../../_static/logo_32.ico"/>
   
-
   
   
 
   
-
-  
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -44,6 +31,15 @@
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -85,7 +81,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -105,7 +100,6 @@
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -140,13 +134,11 @@
 
 
 
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
@@ -302,6 +294,8 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve the tropical cyclone classification given its subtropical status and current basin.</span>
 <span class="sd">    </span>
+<span class="sd">    These strings take the format of &quot;Tropical Storm&quot;, &quot;Hurricane&quot;, &quot;Typhoon&quot;, etc.</span>
+<span class="sd">    </span>
 <span class="sd">    Warning: This function currently does not differentiate between 1-minute, 3-minute and 10-minute sustained wind speeds.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -350,7 +344,7 @@
                 <span class="k">return</span> <span class="s2">&quot;Subtropical Storm&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="s2">&quot;Tropical Storm&quot;</span>
-        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">120</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">wind_speed</span> <span class="o">&lt;</span> <span class="mi">130</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;Typhoon&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;Super Typhoon&quot;</span>
@@ -409,7 +403,7 @@
 <div class="viewcode-block" id="get_storm_type"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.get_storm_type.html#tropycal.utils.get_storm_type">[docs]</a><span class="k">def</span> <span class="nf">get_storm_type</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">,</span><span class="n">subtropical_flag</span><span class="p">):</span>
     
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Retrieve the 2-character tropical cyclone type given its subtropical status.</span>
+<span class="sd">    Retrieve the 2-character tropical cyclone type (e.g., &quot;TD&quot;, &quot;TS&quot;, &quot;HU&quot;) given its subtropical status.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -462,7 +456,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
-<span class="sd">        String representing the current basin.</span>
+<span class="sd">        String representing the current basin (e.g., &quot;north_atlantic&quot;, &quot;east_pacific&quot;).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="c1">#Error check</span>
@@ -539,7 +533,7 @@
 <div class="viewcode-block" id="accumulated_cyclone_energy"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.accumulated_cyclone_energy.html#tropycal.utils.accumulated_cyclone_energy">[docs]</a><span class="k">def</span> <span class="nf">accumulated_cyclone_energy</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">,</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
     
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate Cccumulated Cyclone Energy (ACE) based on sustained wind speed in knots.</span>
+<span class="sd">    Calculate Accumulated Cyclone Energy (ACE) based on sustained wind speed in knots.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -688,8 +682,8 @@
     <span class="k">def</span> <span class="nf">measure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_point</span><span class="p">,</span> <span class="n">end_point</span><span class="p">):</span>
         
         <span class="c1">#Retrieve latitude and longitude coordinates from input pairs</span>
-        <span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">start_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">start_point</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">lat2</span><span class="p">,</span> <span class="n">lon2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">end_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">end_point</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">start_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">start_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">%</span><span class="mi">360</span><span class="p">)</span>
+        <span class="n">lat2</span><span class="p">,</span> <span class="n">lon2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">end_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">end_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">%</span><span class="mi">360</span><span class="p">)</span>
 
         <span class="c1">#Compute sin and cos of coordinates</span>
         <span class="n">sin_lat1</span><span class="p">,</span> <span class="n">cos_lat1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat1</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat1</span><span class="p">)</span>
@@ -713,25 +707,20 @@
            
           </div>
           <footer>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Tropycal Developers.
+        &copy; Copyright 2021, Tropycal Developers
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
+
         </div>
       </div>
 
@@ -739,6 +728,7 @@
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {

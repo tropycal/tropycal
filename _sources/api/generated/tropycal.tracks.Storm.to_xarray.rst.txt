@@ -1,0 +1,12 @@
+Storm.to_xarray
+===============================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Storm.to_xarray
+
+.. include:: tropycal.tracks.Storm.to_xarray.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

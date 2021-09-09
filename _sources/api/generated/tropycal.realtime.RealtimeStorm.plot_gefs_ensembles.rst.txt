@@ -1,0 +1,12 @@
+RealtimeStorm.plot_gefs_ensembles
+===================================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.plot_gefs_ensembles
+
+.. include:: tropycal.realtime.RealtimeStorm.plot_gefs_ensembles.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

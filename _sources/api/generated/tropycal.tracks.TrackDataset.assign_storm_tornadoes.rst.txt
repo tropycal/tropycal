@@ -1,0 +1,12 @@
+TrackDataset.assign_storm_tornadoes
+===================================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.assign_storm_tornadoes
+
+.. include:: tropycal.tracks.TrackDataset.assign_storm_tornadoes.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

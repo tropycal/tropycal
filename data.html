@@ -1,38 +1,25 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Data Sources &mdash; tropycal </title>
   
 
   
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery-rendered-html.css" type="text/css" />
-
-  
   
     <link rel="shortcut icon" href="_static/logo_32.ico"/>
   
-
   
   
 
   
-
-  
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -44,6 +31,15 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="TC Dataset Analysis" href="samples/tracks.TrackDataset.html" /> 
@@ -86,7 +82,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -115,7 +110,6 @@
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -150,20 +144,18 @@
 
 
 
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
       <li>Data Sources</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-          
+            
             <a href="_sources/data.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -188,10 +180,10 @@
 <li><p>The “Satellite Era” is generally considered to have begun in 1979 with consistent, reliable satellite observations. Satellite data was generally available before then but on a more limited basis. As such, there are more storms in earlier years that were detected post-operationally from the <a class="reference external" href="https://www.aoml.noaa.gov/hrd/data_sub/re_anal.html">HURDAT2 Re-analysis Project</a>. Because of a higher likelihood of missed storms in earlier years, some climatological analyses, such as accumulated cyclone energy (ACE) or count of major hurricanes, should be started from a more recent year (e.g., 1950) as opposed to 1851.</p></li>
 <li><p>The methodology for identifying and naming subtropical cyclones has changed over the years. Some decades had more frequent subtropical cyclones identified in HURDAT2 (e.g., 1970s) than others. The current methodology of naming subtropical storms using the same naming list as tropical storms dates back to 2002. Keep this caveat in mind when using tropycal to analyze subtropical cyclones.</p></li>
 </ul>
-</div>
 <hr class="docutils" />
+</div>
 <div class="section" id="ibtracs">
-<h2>IBTrACS<a class="headerlink" href="#ibtracs" title="Permalink to this headline">¶</a></h2>
+<span id="ibtracs-caveats"></span><h2>IBTrACS<a class="headerlink" href="#ibtracs" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference external" href="https://www.ncdc.noaa.gov/ibtracs/">IBTrACS</a> reanalysis is a comprehensive dataset combining tropical cyclone data from multiple WMO agencies across the world. IBTrACS contains many data sources, some which have advantages over others. This results in discrepancies in storm tracks, storms that were or were not tropical, or sustained wind measurement that vary between agency. tropycal offers 3 modes of reading in IBTrACS data, with the pros and cons of each method listed below.</p>
 <p><strong>General Caveats:</strong></p>
 <ul class="simple">
@@ -250,28 +242,27 @@
            
           </div>
           <footer>
+  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="samples/tracks.TrackDataset.html" class="btn btn-neutral float-left" title="TC Dataset Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+      
+        <a href="samples/tracks.TrackDataset.html" class="btn btn-neutral float-left" title="TC Dataset Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Tropycal Developers.
+        &copy; Copyright 2021, Tropycal Developers
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
+
         </div>
       </div>
 
@@ -279,6 +270,7 @@
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {

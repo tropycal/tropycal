@@ -1,0 +1,12 @@
+Storm.get_operational_forecasts
+===============================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Storm.get_operational_forecasts
+
+.. include:: tropycal.tracks.Storm.get_operational_forecasts.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

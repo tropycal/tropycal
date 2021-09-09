@@ -1,4 +1,4 @@
-Season
+tropycal.tracks.Season
 ======================
 
 .. currentmodule:: tropycal.tracks
@@ -8,46 +8,18 @@ Season
    
    
    
+   
+   
+   Methods Summary
 
    
-   
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-   
-      ~Season.__init__
-      ~Season.get_storm
-      ~Season.get_storm_id
-      ~Season.plot
-      ~Season.summary
-      ~Season.to_dataframe
-
+      .. autosummary::
+         :toctree:
+      
+         Season.get_storm
+         Season.get_storm_id
+         Season.plot
+         Season.summary
+         Season.to_dataframe
    
    
-
-   
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: __init__
-   .. automethod:: get_storm
-   .. automethod:: get_storm_id
-   .. automethod:: plot
-   .. automethod:: summary
-   .. automethod:: to_dataframe
-
-   
-   
-
-.. include:: tropycal.tracks.Season.examples
-
-.. raw:: html
-
-     <div style='clear:both'></div>

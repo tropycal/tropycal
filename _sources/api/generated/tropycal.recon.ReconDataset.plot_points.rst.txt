@@ -1,0 +1,12 @@
+ReconDataset.plot_points
+=======================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: ReconDataset.plot_points
+
+.. include:: tropycal.recon.ReconDataset.plot_points.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

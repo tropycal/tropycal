@@ -1,0 +1,12 @@
+RealtimeStorm.get_recon
+=========================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.get_recon
+
+.. include:: tropycal.realtime.RealtimeStorm.get_recon.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

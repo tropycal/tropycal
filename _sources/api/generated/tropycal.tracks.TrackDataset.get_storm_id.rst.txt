@@ -1,0 +1,12 @@
+TrackDataset.get_storm_id
+=========================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.get_storm_id
+
+.. include:: tropycal.tracks.TrackDataset.get_storm_id.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

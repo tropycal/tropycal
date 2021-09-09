@@ -1,0 +1,12 @@
+TornadoDataset.plot_TCtors_rotated
+===================================================
+
+.. currentmodule:: tropycal.tornado
+
+.. automethod:: TornadoDataset.plot_TCtors_rotated
+
+.. include:: tropycal.tornado.TornadoDataset.plot_TCtors_rotated.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

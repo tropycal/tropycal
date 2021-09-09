@@ -1,0 +1,12 @@
+TrackDataset.ace_climo
+======================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.ace_climo
+
+.. include:: tropycal.tracks.TrackDataset.ace_climo.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

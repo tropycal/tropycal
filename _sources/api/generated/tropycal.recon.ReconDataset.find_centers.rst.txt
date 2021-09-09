@@ -1,0 +1,12 @@
+ReconDataset.find_centers
+========================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: ReconDataset.find_centers
+
+.. include:: tropycal.recon.ReconDataset.find_centers.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

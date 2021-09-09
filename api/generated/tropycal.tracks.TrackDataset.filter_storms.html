@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>TrackDataset.filter_storms &mdash; tropycal </title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="TrackDataset.get_season" href="tropycal.tracks.TrackDataset.get_season.html" />
+    <link rel="prev" title="TrackDataset.download_tcr" href="tropycal.tracks.TrackDataset.download_tcr.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.tracks.html">tracks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Season.html">tropycal.tracks.Season</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Storm.html">tropycal.tracks.Storm</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.ace_climo.html">TrackDataset.ace_climo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.assign_storm_tornadoes.html">TrackDataset.assign_storm_tornadoes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.download_tcr.html">TrackDataset.download_tcr</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">TrackDataset.filter_storms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.get_season.html">TrackDataset.get_season</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.get_storm.html">TrackDataset.get_storm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.get_storm_id.html">TrackDataset.get_storm_id</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.get_storm_tuple.html">TrackDataset.get_storm_tuple</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.gridded_stats.html">TrackDataset.gridded_stats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.hurricane_days_climo.html">TrackDataset.hurricane_days_climo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.plot_TCtors_rotated.html">TrackDataset.plot_TCtors_rotated</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.plot_season.html">TrackDataset.plot_season</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.plot_storm.html">TrackDataset.plot_storm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.plot_storms.html">TrackDataset.plot_storms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.rank_storm.html">TrackDataset.rank_storm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.search_name.html">TrackDataset.search_name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html">TrackDataset.storm_ace_vs_season</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.wind_pres_relationship.html">TrackDataset.wind_pres_relationship</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="tropycal.tracks.html">tracks</a> &raquo;</li>
+        
+          <li><a href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a> &raquo;</li>
+        
+      <li>TrackDataset.filter_storms</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/api/generated/tropycal.tracks.TrackDataset.filter_storms.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="trackdataset-filter-storms">
+<h1>TrackDataset.filter_storms<a class="headerlink" href="#trackdataset-filter-storms" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="tropycal.tracks.TrackDataset.filter_storms">
+<code class="sig-prename descclassname">TrackDataset.</code><code class="sig-name descname">filter_storms</code><span class="sig-paren">(</span><em class="sig-param">storm=None</em>, <em class="sig-param">year_range=(0</em>, <em class="sig-param">9999)</em>, <em class="sig-param">date_range=('1/1'</em>, <em class="sig-param">'12/31')</em>, <em class="sig-param">thresh={}</em>, <em class="sig-param">domain=None</em>, <em class="sig-param">doInterp=False</em>, <em class="sig-param">return_keys=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.filter_storms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.filter_storms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters all storms by various thresholds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year_range</strong> (<em>list</em><em> or </em><em>tuple</em>) – List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.</p></li>
+<li><p><strong>date_range</strong> (<em>list</em><em> or </em><em>tuple</em>) – List or tuple representing the start and end dates as a string in ‘month/day’ format (e.g., (‘6/1’,’8/15’)). Default is (‘1/1’,’12/31’) or full year.</p></li>
+<li><p><strong>thresh</strong> (<em>dict</em>) – <p>Keywords include:</p>
+<ul>
+<li><p><strong>sample_min</strong> - minimum number of storms in a grid box for the cmd_request to be applied. For the functions ‘percentile’ and ‘average’, ‘sample_min’ defaults to 5 and will override any value less than 5.</p></li>
+<li><p><strong>v_min</strong> - minimum wind for a given point to be included in the cmd_request.</p></li>
+<li><p><strong>p_max</strong> - maximum pressure for a given point to be included in the cmd_request.</p></li>
+<li><p><strong>dv_min</strong> - minimum change in wind over dt_window for a given point to be included in the cmd_request.</p></li>
+<li><p><strong>dp_max</strong> - maximum change in pressure over dt_window for a given point to be included in the cmd_request.</p></li>
+<li><p><strong>dt_window</strong> - time window over which change variables are calculated (hours). Default is 24.</p></li>
+<li><p><strong>dt_align</strong> - alignment of dt_window for change variables – ‘start’,’middle’,’end’ – e.g. ‘end’ for dt_window=24 associates a TC point with change over the past 24 hours. Default is middle.</p></li>
+</ul>
+<p>Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.</p>
+</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Geographic domain. Default is entire basin. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>doInterp</strong> (<em>bool</em>) – Whether to interpolate track data to hourly. Default is False.</p></li>
+<li><p><strong>return_keys</strong> (<em>bool</em>) – If True, returns a list of storm IDs that match the specified criteria. Otherwise returns a pandas.DataFrame object with all matching data points. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>list or pandas.DataFrame</em> – Check return_keys for more information.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div style='clear:both'></div></div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tropycal.tracks.TrackDataset.get_season.html" class="btn btn-neutral float-right" title="TrackDataset.get_season" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tropycal.tracks.TrackDataset.download_tcr.html" class="btn btn-neutral float-left" title="TrackDataset.download_tcr" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

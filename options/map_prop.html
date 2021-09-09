@@ -1,38 +1,25 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Map Plotting Options &mdash; tropycal </title>
   
 
   
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery-rendered-html.css" type="text/css" />
-
-  
   
     <link rel="shortcut icon" href="../_static/logo_32.ico"/>
   
-
   
   
 
   
-
-  
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -44,6 +31,15 @@
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
@@ -85,7 +81,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -105,7 +100,6 @@
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -140,20 +134,18 @@
 
 
 
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="../index.html">Docs</a> &raquo;</li>
         
       <li>Map Plotting Options</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-          
+            
             <a href="../_sources/options/map_prop.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -235,18 +227,21 @@
 <td><p>Boolean whether to plot storm track dots along the storm track. Default is False.</p></td>
 </tr>
 <tr class="row-odd"><td><p>fillcolor</p></td>
-<td><p>Fill color for storm track dots. If ‘category’, then uses a color scale varying by category.</p></td>
+<td><p>Fill color for storm track dots. If ‘category’, then uses a color scale varying by SSHWS category. This can also be ‘vmax’ or ‘mslp’ for coloring by variable value.</p></td>
 </tr>
 <tr class="row-even"><td><p>linecolor</p></td>
-<td><p>Line color for storm track. If ‘category’, then uses a color scale varying by category.</p></td>
+<td><p>Line color for storm track. If ‘category’, then uses a color scale varying by SSHWS category. This can also be ‘vmax’ or ‘mslp’ for coloring by variable value.</p></td>
 </tr>
-<tr class="row-odd"><td><p>category_colors</p></td>
-<td><p>Color scale to use for categories. Default is ‘default’. Currently no other option is available.</p></td>
+<tr class="row-odd"><td><p>cmap</p></td>
+<td><p>Colormap used for fill and/or line color, if not a single color nor ‘category’.</p></td>
 </tr>
-<tr class="row-even"><td><p>linewidth</p></td>
+<tr class="row-even"><td><p>levels</p></td>
+<td><p>List of levels corresponding to cmap, if not coloring by a single color nor ‘category’.</p></td>
+</tr>
+<tr class="row-odd"><td><p>linewidth</p></td>
 <td><p>Line width for storm track. Default varies by function.</p></td>
 </tr>
-<tr class="row-odd"><td><p>ms</p></td>
+<tr class="row-even"><td><p>ms</p></td>
 <td><p>Size of storm track dots. Default is 7.5.</p></td>
 </tr>
 </tbody>
@@ -402,25 +397,20 @@
            
           </div>
           <footer>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Tropycal Developers.
+        &copy; Copyright 2021, Tropycal Developers
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
+
         </div>
       </div>
 
@@ -428,6 +418,7 @@
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {

@@ -1,0 +1,12 @@
+Realtime.list_active_storms
+=============================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: Realtime.list_active_storms
+
+.. include:: tropycal.realtime.Realtime.list_active_storms.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

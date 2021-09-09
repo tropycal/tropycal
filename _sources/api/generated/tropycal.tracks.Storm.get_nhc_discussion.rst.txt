@@ -1,0 +1,12 @@
+Storm.get_nhc_discussion
+========================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Storm.get_nhc_discussion
+
+.. include:: tropycal.tracks.Storm.get_nhc_discussion.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

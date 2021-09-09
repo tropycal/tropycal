@@ -1,0 +1,12 @@
+Season.summary
+==============================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Season.summary
+
+.. include:: tropycal.tracks.Season.summary.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

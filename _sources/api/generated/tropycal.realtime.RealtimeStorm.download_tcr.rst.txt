@@ -1,0 +1,12 @@
+RealtimeStorm.download_tcr
+============================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.download_tcr
+
+.. include:: tropycal.realtime.RealtimeStorm.download_tcr.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

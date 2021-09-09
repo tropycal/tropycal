@@ -1,0 +1,12 @@
+TrackDataset.get_storm
+======================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.get_storm
+
+.. include:: tropycal.tracks.TrackDataset.get_storm.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

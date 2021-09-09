@@ -1,0 +1,12 @@
+Storm.get_archer
+================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Storm.get_archer
+
+.. include:: tropycal.tracks.Storm.get_archer.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

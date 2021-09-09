@@ -1,0 +1,12 @@
+TrackDataset.wind_pres_relationship
+===================================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.wind_pres_relationship
+
+.. include:: tropycal.tracks.TrackDataset.wind_pres_relationship.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -1,38 +1,25 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>tropycal.recon.dataset &mdash; tropycal </title>
   
 
   
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
-
-  
   
     <link rel="shortcut icon" href="../../../_static/logo_32.ico"/>
   
-
   
   
 
   
-
-  
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -44,6 +31,15 @@
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -85,7 +81,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -105,7 +100,6 @@
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -140,13 +134,11 @@
 
 
 
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
@@ -224,7 +216,7 @@
 <span class="sd">    Recon data is currently read in via Tropical Atlantic. Future releases of Tropycal will incorporate NHC recon archives.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ReconDataset.__init__"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="n">deltap_thresh</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">read_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storm</span><span class="p">,</span> <span class="n">deltap_thresh</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">mission_url_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">read_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         
         <span class="c1">#Error check</span>
         <span class="c1">#if save_path != &quot;&quot; and read_path != &quot;&quot;:</span>
@@ -237,27 +229,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">storm</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">deltap_thresh</span> <span class="o">=</span> <span class="n">deltap_thresh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">UPDATE</span> <span class="o">=</span> <span class="n">update</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mission_url_list</span> <span class="o">=</span> <span class="n">mission_url_list</span>
+        
         <span class="c1">#If reading in a pickled file, load it in</span>
         <span class="k">if</span> <span class="n">read_path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">read_path</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">))</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">UPDATE</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allMissions</span><span class="p">()</span>
-        
+
         <span class="c1">#Otherwise, retrieve all mission data for this storm</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allMissions</span><span class="p">()</span>
-            
+
             <span class="c1">#Save mission data as a pickle if necessary</span>
         <span class="k">if</span> <span class="n">save_path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span><span class="p">,</span><span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        
+
         <span class="c1">#Convert recon data to storm-centered coordinates</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recentered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recenter</span><span class="p">()</span></div>
-        
-        <span class="c1">#print(f&#39;Most recent data: {max(self.recentered[&#39;time&#39;]):%Y %b %d %H:%M} UTC&#39;)</span>
-        <span class="c1">#print(f&#39;Most recent center pass: {max(self.recentered.loc[self.recentered[&#39;iscenter&#39;]&gt;0][&#39;time&#39;]):%Y %b %d %H:%M} UTC&#39;)</span>
-            
-        
-<div class="viewcode-block" id="ReconDataset.getMission"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.getMission">[docs]</a>    <span class="k">def</span> <span class="nf">getMission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">agency</span><span class="p">,</span><span class="n">mission_num</span><span class="p">,</span><span class="n">url_mission</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recentered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recenter</span><span class="p">()</span>
+
+    <span class="c1">#print(f&#39;Most recent data: {max(self.recentered[&#39;time&#39;]):%Y %b %d %H:%M} UTC&#39;)</span>
+    <span class="c1">#print(f&#39;Most recent center pass: {max(self.recentered.loc[self.recentered[&#39;iscenter&#39;]&gt;0][&#39;time&#39;]):%Y %b %d %H:%M} UTC&#39;)</span>
+
+<div class="viewcode-block" id="ReconDataset.getMission"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.getMission.html#tropycal.recon.ReconDataset.getMission">[docs]</a>    <span class="k">def</span> <span class="nf">getMission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">agency</span><span class="p">,</span><span class="n">mission_num</span><span class="p">,</span><span class="n">url_mission</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">url_mission</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">url_mission</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url_prefix</span><span class="si">}</span><span class="s1">basin=al&amp;year=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s1">&amp;product=hdob&amp;storm=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">storm</span><span class="si">}</span><span class="s1">&amp;mission=</span><span class="si">{</span><span class="n">mission_num</span><span class="si">}</span><span class="s1">&amp;agency=</span><span class="si">{</span><span class="n">agency</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="n">content</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_mission</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
@@ -328,9 +321,13 @@
         <span class="k">return</span> <span class="n">return_data</span></div>
     
 
-<div class="viewcode-block" id="ReconDataset.allMissions"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.allMissions">[docs]</a>    <span class="k">def</span> <span class="nf">allMissions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ReconDataset.allMissions"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.allMissions.html#tropycal.recon.ReconDataset.allMissions">[docs]</a>    <span class="k">def</span> <span class="nf">allMissions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">url_storm</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url_prefix</span><span class="si">}</span><span class="s1">basin=al&amp;year=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s1">&amp;storm=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">storm</span><span class="si">}</span><span class="s1">&amp;product=hdob&#39;</span>
-        <span class="n">missions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_html</span><span class="p">(</span><span class="n">url_storm</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_url_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">missions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_html</span><span class="p">(</span><span class="n">url_storm</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">URL_LIST</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_url_list</span>
+            <span class="n">missions</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s1">&#39;Agency&#39;</span><span class="p">:[</span><span class="s1">&#39;listedurl&#39;</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">URL_LIST</span><span class="p">),</span><span class="s1">&#39;MissionNumber&#39;</span><span class="p">:[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s1">02</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URL_LIST</span><span class="p">))],</span><span class="s1">&#39;URL&#39;</span><span class="p">:</span><span class="n">URL_LIST</span><span class="p">})</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">UPDATE</span><span class="p">:</span>
             <span class="n">missiondata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">missiondata</span>
             <span class="n">lastMissionNumber</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">missiondata</span><span class="o">.</span><span class="n">keys</span><span class="p">())])</span>
@@ -342,14 +339,20 @@
         <span class="n">timer_start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;--&gt; Starting to read in recon missions&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i_mission</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">idxf</span><span class="p">):</span>
-            <span class="n">mission_num</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">missions</span><span class="p">[</span><span class="s1">&#39;MissionNumber&#39;</span><span class="p">][</span><span class="n">i_mission</span><span class="p">])</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-            <span class="n">agency</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isalpha</span><span class="p">,</span> <span class="n">missions</span><span class="p">[</span><span class="s1">&#39;Agency&#39;</span><span class="p">][</span><span class="n">i_mission</span><span class="p">]))</span>
-            <span class="n">missiondata</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mission_num</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">agency</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getMission</span><span class="p">(</span><span class="n">agency</span><span class="p">,</span><span class="n">mission_num</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission_url_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">mission_num</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">missions</span><span class="p">[</span><span class="s1">&#39;MissionNumber&#39;</span><span class="p">][</span><span class="n">i_mission</span><span class="p">])</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">agency</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isalpha</span><span class="p">,</span> <span class="n">missions</span><span class="p">[</span><span class="s1">&#39;Agency&#39;</span><span class="p">][</span><span class="n">i_mission</span><span class="p">]))</span>
+                <span class="n">missiondata</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mission_num</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">agency</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getMission</span><span class="p">(</span><span class="n">agency</span><span class="p">,</span><span class="n">mission_num</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mission_num</span> <span class="o">=</span> <span class="n">missions</span><span class="p">[</span><span class="s1">&#39;MissionNumber&#39;</span><span class="p">][</span><span class="n">i_mission</span><span class="p">]</span>
+                <span class="n">agency</span> <span class="o">=</span> <span class="n">missions</span><span class="p">[</span><span class="s1">&#39;Agency&#39;</span><span class="p">][</span><span class="n">i_mission</span><span class="p">]</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">missions</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">][</span><span class="n">i_mission</span><span class="p">]</span>
+                <span class="n">missiondata</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mission_num</span><span class="si">}{</span><span class="n">agency</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getMission</span><span class="p">(</span><span class="n">agency</span><span class="p">,</span><span class="n">mission_num</span><span class="p">,</span><span class="n">url</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mission_num</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">agency</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--&gt; Completed reading in recon missions (</span><span class="si">%.2f</span><span class="s1"> seconds)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timer_start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">missiondata</span></div>
 
-<div class="viewcode-block" id="ReconDataset.find_centers"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.find_centers">[docs]</a>    <span class="k">def</span> <span class="nf">find_centers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="ReconDataset.find_centers"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.find_centers.html#tropycal.recon.ReconDataset.find_centers">[docs]</a>    <span class="k">def</span> <span class="nf">find_centers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
         
         <span class="k">def</span> <span class="nf">fill_nan</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
             <span class="c1">#Interpolate to fill nan values</span>
@@ -390,7 +393,7 @@
             <span class="n">data</span><span class="p">[</span><span class="s1">&#39;iscenter&#39;</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">data</span></div>
 
-<div class="viewcode-block" id="ReconDataset.recenter"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.recenter">[docs]</a>    <span class="k">def</span> <span class="nf">recenter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">use</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span> 
+<div class="viewcode-block" id="ReconDataset.recenter"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.recenter.html#tropycal.recon.ReconDataset.recenter">[docs]</a>    <span class="k">def</span> <span class="nf">recenter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">use</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">use</span> <span class="o">=</span> <span class="n">use</span>        
         <span class="k">def</span> <span class="nf">stitchMissions</span><span class="p">():</span>
             <span class="n">list_of_dfs</span><span class="o">=</span><span class="p">[]</span>
@@ -442,7 +445,7 @@
         <span class="k">return</span> <span class="n">subRecon</span>
     
     
-<div class="viewcode-block" id="ReconDataset.findMission"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.findMission">[docs]</a>    <span class="k">def</span> <span class="nf">findMission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time</span><span class="p">):</span>
+<div class="viewcode-block" id="ReconDataset.findMission"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.findMission.html#tropycal.recon.ReconDataset.findMission">[docs]</a>    <span class="k">def</span> <span class="nf">findMission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the name of a mission or list of missions given a specified time.</span>
@@ -474,7 +477,7 @@
         <span class="k">return</span> <span class="n">selected</span></div>
 
 
-<div class="viewcode-block" id="ReconDataset.plot_points"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_points">[docs]</a>    <span class="k">def</span> <span class="nf">plot_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">plane_p_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+<div class="viewcode-block" id="ReconDataset.plot_points"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.plot_points.html#tropycal.recon.ReconDataset.plot_points">[docs]</a>    <span class="k">def</span> <span class="nf">plot_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">plane_p_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
                     <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -535,7 +538,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">ReconPlot</span><span class="p">()</span>
         
         <span class="c1">#Create cartopy projection</span>
-        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
             <span class="n">cartopy_proj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span>
         
@@ -544,12 +547,12 @@
                                               <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
         
         <span class="c1">#Return axis</span>
-        <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">plot_info</span></div>
 
     
-<div class="viewcode-block" id="ReconDataset.plot_hovmoller"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_hovmoller">[docs]</a>    <span class="k">def</span> <span class="nf">plot_hovmoller</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">radlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">track_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">plane_p_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
-                       <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ReconDataset.plot_hovmoller"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.plot_hovmoller.html#tropycal.recon.ReconDataset.plot_hovmoller">[docs]</a>    <span class="k">def</span> <span class="nf">plot_hovmoller</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">radlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">track_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">plane_p_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+                       <span class="n">window</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="n">align</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a hovmoller plot of azimuthally-averaged recon data.</span>
@@ -600,7 +603,7 @@
             <span class="n">track_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storm_obj</span><span class="o">.</span><span class="n">dict</span>
         
         <span class="c1">#Interpolate recon data to a hovmoller</span>
-        <span class="n">iRecon</span> <span class="o">=</span> <span class="n">interpRecon</span><span class="p">(</span><span class="n">dfRecon</span><span class="p">,</span><span class="n">varname</span><span class="p">,</span><span class="n">radlim</span><span class="p">)</span>
+        <span class="n">iRecon</span> <span class="o">=</span> <span class="n">interpRecon</span><span class="p">(</span><span class="n">dfRecon</span><span class="p">,</span><span class="n">varname</span><span class="p">,</span><span class="n">radlim</span><span class="p">,</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span><span class="n">align</span><span class="o">=</span><span class="n">align</span><span class="p">)</span>
         <span class="n">Hov_dict</span> <span class="o">=</span> <span class="n">iRecon</span><span class="o">.</span><span class="n">interpHovmoller</span><span class="p">(</span><span class="n">track_dict</span><span class="p">)</span>
 
         <span class="c1">#title = get_recon_title(varname) #may not be necessary</span>
@@ -622,7 +625,8 @@
         <span class="c1">#------------------------------------------------------------------------------</span>
         
         <span class="c1">#Create plot        </span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">11</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+        <span class="c1">#plt.figure(figsize=(9,11),dpi=150)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span> <span class="c1">#CHANGE THIS OR ELSE</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">()</span>
         
         <span class="c1">#Plot surface category colors individually, necessitating normalizing colormap</span>
@@ -652,10 +656,6 @@
         <span class="k">for</span> <span class="n">tick</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">get_major_ticks</span><span class="p">():</span>
                 <span class="n">tick</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span>
         
-        <span class="c1">#Format x-axis ticks</span>
-        <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">clevs</span><span class="p">)))</span>
-        <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">(</span><span class="n">clevs</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-        
         <span class="c1">#Set axes labels</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;UTC Time (MM-DD HH)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Radius (km)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
@@ -673,8 +673,8 @@
 
 
     <span class="c1">#PLOT FUNCTION FOR RECON MAPS</span>
-<div class="viewcode-block" id="ReconDataset.plot_maps"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_maps">[docs]</a>    <span class="k">def</span> <span class="nf">plot_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">track_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">recon_stats</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span>\
-                  <span class="n">radlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">plane_p_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">savetopath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ReconDataset.plot_maps"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.plot_maps.html#tropycal.recon.ReconDataset.plot_maps">[docs]</a>    <span class="k">def</span> <span class="nf">plot_maps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">track_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">recon_stats</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span>\
+                  <span class="n">window</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="n">align</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">radlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">plane_p_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">savetopath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     
         <span class="c1">#plot_time, plot_mission (only for dots)</span>
         
@@ -746,18 +746,23 @@
                 <span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span>
                 
         <span class="k">if</span> <span class="n">ONE_MAP</span><span class="p">:</span>
-            <span class="n">clon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">recon_select</span><span class="p">),</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]),</span><span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
-            <span class="n">clat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">recon_select</span><span class="p">),</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]),</span><span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">])</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]),</span><span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">],</span> <span class="n">fill_value</span><span class="o">=</span><span class="s1">&#39;extrapolate&#39;</span><span class="p">)</span>
+            <span class="n">clon</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">recon_select</span><span class="p">))</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]),</span><span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span> <span class="n">fill_value</span><span class="o">=</span><span class="s1">&#39;extrapolate&#39;</span><span class="p">)</span>
+            <span class="n">clat</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">recon_select</span><span class="p">))</span>
+            
+            <span class="c1">#clon = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict[&#39;time&#39;]),track_dict[&#39;lon&#39;])</span>
+            <span class="c1">#clat = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict[&#39;time&#39;]),track_dict[&#39;lat&#39;])</span>
             <span class="n">track_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span><span class="n">recon_select</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">:</span><span class="n">clon</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span><span class="n">clat</span><span class="p">}</span>
         
         <span class="k">if</span> <span class="n">MULTIVAR</span><span class="p">:</span>
             <span class="n">Maps</span><span class="o">=</span><span class="p">[]</span>
             <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">varname</span><span class="p">:</span>
-                <span class="n">iRecon</span> <span class="o">=</span> <span class="n">interpRecon</span><span class="p">(</span><span class="n">dfRecon</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">radlim</span><span class="p">)</span>
+                <span class="n">iRecon</span> <span class="o">=</span> <span class="n">interpRecon</span><span class="p">(</span><span class="n">dfRecon</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">radlim</span><span class="p">,</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span><span class="n">align</span><span class="o">=</span><span class="n">align</span><span class="p">)</span>
                 <span class="n">tmpMaps</span> <span class="o">=</span> <span class="n">iRecon</span><span class="o">.</span><span class="n">interpMaps</span><span class="p">(</span><span class="n">track_dict</span><span class="p">)</span>
                 <span class="n">Maps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmpMaps</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">iRecon</span> <span class="o">=</span> <span class="n">interpRecon</span><span class="p">(</span><span class="n">dfRecon</span><span class="p">,</span><span class="n">varname</span><span class="p">,</span><span class="n">radlim</span><span class="p">)</span>
+            <span class="n">iRecon</span> <span class="o">=</span> <span class="n">interpRecon</span><span class="p">(</span><span class="n">dfRecon</span><span class="p">,</span><span class="n">varname</span><span class="p">,</span><span class="n">radlim</span><span class="p">,</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span><span class="n">align</span><span class="o">=</span><span class="n">align</span><span class="p">)</span>
             <span class="n">Maps</span> <span class="o">=</span> <span class="n">iRecon</span><span class="o">.</span><span class="n">interpMaps</span><span class="p">(</span><span class="n">track_dict</span><span class="p">)</span>
                 
         <span class="c1">#titlename,units = get_recon_title(varname)</span>
@@ -769,7 +774,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">ONE_MAP</span><span class="p">:</span>
             
             <span class="k">if</span> <span class="n">savetopath</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="n">savetopath</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">storm</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">varname</span><span class="si">}</span><span class="s1">_maps&#39;</span>
+                <span class="c1">#savetopath = f&#39;{self.storm}{self.year}_{varname}_maps&#39;</span>
+                <span class="n">savetopath</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">storm</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s1">_maps&#39;</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mkdir </span><span class="si">{</span><span class="n">savetopath</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
@@ -851,7 +857,7 @@
  
     
     <span class="c1">#PLOT FUNCTION FOR RECON SWATH</span>
-<div class="viewcode-block" id="ReconDataset.plot_swath"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset.plot_swath">[docs]</a>    <span class="k">def</span> <span class="nf">plot_swath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">swathfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">track_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">radlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+<div class="viewcode-block" id="ReconDataset.plot_swath"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.ReconDataset.plot_swath.html#tropycal.recon.ReconDataset.plot_swath">[docs]</a>    <span class="k">def</span> <span class="nf">plot_swath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">recon_select</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">swathfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">track_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">radlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
                    <span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">plane_p_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -926,7 +932,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">ReconPlot</span><span class="p">()</span>
         
         <span class="c1">#Create cartopy projection</span>
-        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
             <span class="n">cartopy_proj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span>
         
@@ -935,7 +941,7 @@
                                              <span class="n">domain</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">return_ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
         
         <span class="c1">#Return axis</span>
-        <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">return_ax</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">plot_info</span></div></div>
 </pre></div>
 
@@ -943,25 +949,20 @@
            
           </div>
           <footer>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Tropycal Developers.
+        &copy; Copyright 2021, Tropycal Developers
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
+
         </div>
       </div>
 
@@ -969,6 +970,7 @@
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {

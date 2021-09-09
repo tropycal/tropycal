@@ -1,0 +1,12 @@
+TrackDataset.gridded_stats
+==========================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.gridded_stats
+
+.. include:: tropycal.tracks.TrackDataset.gridded_stats.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

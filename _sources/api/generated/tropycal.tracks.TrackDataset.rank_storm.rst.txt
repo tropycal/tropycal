@@ -1,0 +1,12 @@
+TrackDataset.rank_storm
+=======================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.rank_storm
+
+.. include:: tropycal.tracks.TrackDataset.rank_storm.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

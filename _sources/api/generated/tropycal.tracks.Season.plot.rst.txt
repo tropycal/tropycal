@@ -1,0 +1,12 @@
+Season.plot
+===========================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Season.plot
+
+.. include:: tropycal.tracks.Season.plot.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

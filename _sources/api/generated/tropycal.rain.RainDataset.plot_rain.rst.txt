@@ -1,0 +1,12 @@
+RainDataset.plot_rain
+===================================
+
+.. currentmodule:: tropycal.rain
+
+.. automethod:: RainDataset.plot_rain
+
+.. include:: tropycal.rain.RainDataset.plot_rain.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

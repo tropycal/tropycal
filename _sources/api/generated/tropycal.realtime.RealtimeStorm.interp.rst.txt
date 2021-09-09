@@ -1,0 +1,12 @@
+RealtimeStorm.interp
+======================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.interp
+
+.. include:: tropycal.realtime.RealtimeStorm.interp.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

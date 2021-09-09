@@ -1,0 +1,286 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Storm.plot_gefs_ensembles &mdash; tropycal </title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Storm.plot_nhc_forecast" href="tropycal.tracks.Storm.plot_nhc_forecast.html" />
+    <link rel="prev" title="Storm.plot_TCtors_rotated" href="tropycal.tracks.Storm.plot_TCtors_rotated.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> tropycal
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.tracks.html">tracks</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Season.html">tropycal.tracks.Season</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="tropycal.tracks.Storm.html">tropycal.tracks.Storm</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.download_tcr.html">Storm.download_tcr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_archer.html">Storm.get_archer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_nhc_discussion.html">Storm.get_nhc_discussion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_operational_forecasts.html">Storm.get_operational_forecasts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_recon.html">Storm.get_recon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.interp.html">Storm.interp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.list_nhc_discussions.html">Storm.list_nhc_discussions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot.html">Storm.plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_TCtors_rotated.html">Storm.plot_TCtors_rotated</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Storm.plot_gefs_ensembles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_nhc_forecast.html">Storm.plot_nhc_forecast</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_tors.html">Storm.plot_tors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.query_nhc_discussions.html">Storm.query_nhc_discussions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.sel.html">Storm.sel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.to_dataframe.html">Storm.to_dataframe</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.to_dict.html">Storm.to_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.to_xarray.html">Storm.to_xarray</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tropycal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="tropycal.tracks.html">tracks</a> &raquo;</li>
+        
+          <li><a href="tropycal.tracks.Storm.html">tropycal.tracks.Storm</a> &raquo;</li>
+        
+      <li>Storm.plot_gefs_ensembles</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/api/generated/tropycal.tracks.Storm.plot_gefs_ensembles.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="storm-plot-gefs-ensembles">
+<h1>Storm.plot_gefs_ensembles<a class="headerlink" href="#storm-plot-gefs-ensembles" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="tropycal.tracks.Storm.plot_gefs_ensembles">
+<code class="sig-prename descclassname">Storm.</code><code class="sig-name descname">plot_gefs_ensembles</code><span class="sig-paren">(</span><em class="sig-param">forecast, fhr=None, prop_members={'linecolor': 'k', 'linewidth': 0.5}, prop_mean={'linecolor': 'k', 'linewidth': 2.0}, prop_gfs={'linecolor': 'b', 'linewidth': 2.0}, prop_ellipse={'linecolor': 'r', 'linewidth': 2.0}, prop_density={'cmap': &lt;matplotlib.colors.LinearSegmentedColormap object&gt;, 'levels': [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100], 'radius': 200}, domain='dynamic', ax=None, cartopy_proj=None, save_path=None, map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.plot_gefs_ensembles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.plot_gefs_ensembles" title="Permalink to this definition">¶</a></dt>
+<dd><p>(Add track history like we do for NHC forecasts)
+(Add verification for archived events)</p>
+<p>Creates a plot of individual GEFS ensemble tracks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>forecast</strong> (<em>datetime.datetime</em>) – Datetime object representing the GEFS run initialization.</p></li>
+<li><p><strong>fhr</strong> (<em>int</em><em> or </em><em>list</em><em>, </em><em>optional</em>) – Forecast hour(s) to plot. If None (default), a plot of all forecast hours will be produced. If a list, multiple plots will be produced. If an integer, a single plot will be produced.</p></li>
+<li><p><strong>plot_density</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, track density will be computed and plotted in addition to individual ensemble tracks.</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Tracks Properties</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>ax</em> – Instance of axes containing the plot is returned.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div style='clear:both'></div></div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tropycal.tracks.Storm.plot_nhc_forecast.html" class="btn btn-neutral float-right" title="Storm.plot_nhc_forecast" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tropycal.tracks.Storm.plot_TCtors_rotated.html" class="btn btn-neutral float-left" title="Storm.plot_TCtors_rotated" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Tropycal Developers
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

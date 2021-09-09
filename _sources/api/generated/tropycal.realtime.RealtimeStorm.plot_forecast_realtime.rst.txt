@@ -1,0 +1,12 @@
+RealtimeStorm.plot_forecast_realtime
+======================================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.plot_forecast_realtime
+
+.. include:: tropycal.realtime.RealtimeStorm.plot_forecast_realtime.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

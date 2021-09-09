@@ -1,0 +1,12 @@
+TrackDataset.filter_storms
+==========================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.filter_storms
+
+.. include:: tropycal.tracks.TrackDataset.filter_storms.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -1,0 +1,12 @@
+TrackDataset.download_tcr
+=========================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.download_tcr
+
+.. include:: tropycal.tracks.TrackDataset.download_tcr.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -1,0 +1,12 @@
+RainDataset.interpolate_to_grid
+=============================================
+
+.. currentmodule:: tropycal.rain
+
+.. automethod:: RainDataset.interpolate_to_grid
+
+.. include:: tropycal.rain.RainDataset.interpolate_to_grid.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

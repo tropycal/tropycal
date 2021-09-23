@@ -702,6 +702,16 @@ class RealtimeStorm(Storm):
             #Get storm type
             subtrop_flag = True if self.type[-1] in ['SS','SD'] else False
             current_advisory['type'] = get_storm_classification(self.vmax[-1],subtrop_flag,self.basin)
+            
+            #Check for non-tropical storm types
+            if self.type[-1] not in ['SD','SS','TD','TS','HU']:
+                if 'SD' not in self.type and 'SS' not in self.type and 'TD' not in self.type and 'TS' not in self.type and 'HU' not in self.type:
+                    if self.invest:
+                        current_advisory['type'] = 'Invest'
+                    else:
+                        current_advisory['type'] = 'Potential Tropical Cyclone'
+                else:
+                    current_advisory['type'] = 'Post-Tropical Cyclone'
 
             #Get storm name
             current_advisory['name'] = self.name.title()

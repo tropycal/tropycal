@@ -162,7 +162,7 @@ class TrackPlot(Plot):
 
             #For tropical/subtropical types, color-code if requested
             if i > 0:
-                if i_type in ['SD','TD','SS','TS','HU']:
+                if i_type in ['SD','TD','SS','TS','HU'] and storm_data['type'][i-1] in ['SD','TD','SS','TS','HU']:
 
                     #Plot underlying black and overlying colored line
                     self.ax.plot([lons[i-1],lons[i]],[storm_data['lat'][i-1],storm_data['lat'][i]],'-',
@@ -563,7 +563,7 @@ class TrackPlot(Plot):
 
                 #For tropical/subtropical types, color-code if requested
                 if i > 0:
-                    if i_type in ['SD','TD','SS','TS','HU']:
+                    if i_type in ['SD','TD','SS','TS','HU'] and storm_data['type'][i-1] in ['SD','TD','SS','TS','HU']:
 
                         #Plot underlying black and overlying colored line
                         self.ax.plot([lons[i-1],lons[i]],[storm_data['lat'][i-1],storm_data['lat'][i]],'-',
@@ -1583,7 +1583,7 @@ None,prop={},map_prop={}):
 
                 #For tropical/subtropical types, color-code if requested
                 if i > 0:
-                    if i_type in ['SD','TD','SS','TS','HU']:
+                    if i_type in ['SD','TD','SS','TS','HU'] and storm['type'][i-1] in ['SD','TD','SS','TS','HU']:
 
                         #Plot underlying black and overlying colored line
                         self.ax.plot([lons[i-1],lons[i]],[storm['lat'][i-1],storm['lat'][i]],'-',

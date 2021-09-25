@@ -264,6 +264,10 @@ class Realtime():
                 btk_mslp = int(line[9])
                 btk_type = line[10]
                 name = line[27]
+                
+                #Get last tropical date
+                if btk_type in ['SD','SS','TD','TS','HU']:
+                    last_tropical_date = date + timedelta(hours=0)
 
                 #Replace with NaNs
                 if btk_wind > 250 or btk_wind < 10: btk_wind = np.nan
@@ -301,6 +305,16 @@ class Realtime():
 
             #Add storm name
             self.data[stormid]['name'] = name
+            
+            #Check if storm is still tropical, if not an invest.
+            #Re-designate as an invest if has not been a TC for over 18 hours.
+            try:
+                current_date = dt.utcnow()
+                date_diff = (current_date - last_tropical_date).total_seconds() / 3600
+                if date_diff > 18:
+                    self.data[stormid]['invest'] = True
+            except:
+                pass
         
         
     def __read_btk_jtwc(self,source):

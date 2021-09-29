@@ -256,7 +256,7 @@ class TrackPlot(Plot):
         #Add left title
         type_array = np.array(storm_data['type'])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
-        if invest_bool == False or len(idx) > 0:
+        if invest_bool == False or len(idx[0]) > 0:
             tropical_vmax = np.array(storm_data['vmax'])[idx]
             
             #Coerce to include non-TC points if storm hasn't been designated yet

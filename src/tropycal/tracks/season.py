@@ -13,7 +13,8 @@ from .storm import Storm
 #Import tools
 from .tools import *
 from ..utils import *
-    
+from .. import constants
+
 class Season:
     
     r"""
@@ -407,7 +408,7 @@ class Season:
                 #Handle operational vs. non-operational storms
 
                 #Check for purely subtropical storms
-                if 'SS' in temp_type and True not in np.isin(temp_type,['TD','TS','HU']):
+                if 'SS' in temp_type and True not in np.isin(temp_type,constants.TROPICAL_ONLY_STORM_TYPES):
                     count_ss_pure += 1
 
                 #Check for partially subtropical storms

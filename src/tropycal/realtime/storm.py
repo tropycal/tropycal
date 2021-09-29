@@ -13,6 +13,7 @@ import requests
 from ..tracks import *
 from ..tracks.tools import *
 from ..utils import *
+from .. import constants
 
 try:
     import zipfile
@@ -421,7 +422,7 @@ class RealtimeStorm(Storm):
         ace = 0.0
         for i in range(len(self.date)):
             if self.date[i] >= forecasts['init']: continue
-            if self.type[i] not in ['TS','SS','HU']: continue
+            if self.type[i] not in constants.NAMED_TROPICAL_STORM_TYPES: continue
             ace += accumulated_cyclone_energy(self.vmax[i],hours=6)
         
         #Add initial forecast hour ACE
@@ -446,14 +447,14 @@ class RealtimeStorm(Storm):
                     break
                 use_i = int(i + 0.0)
             i_type = forecasts['type'][use_i]
-            if i_type in ['TD','TS','SD','SS','HU','TY']: i_type = get_storm_type(i_vmax,False)
+            if i_type in constants.TROPICAL_STORM_TYPES: i_type = get_storm_type(i_vmax,False)
             interp_type.append(i_type)
         
         #Add forecast ACE
         for i,(i_fhr,i_vmax,i_type) in enumerate(zip(interp_fhr[1:],interp_vmax[1:],interp_type[1:])):
             
             #Add ACE if storm is a TC
-            if i_type in ['TS','SS','HU','TY']:
+            if i_type in constants.NAMED_TROPICAL_STORM_TYPES:
                 ace += accumulated_cyclone_energy(i_vmax,hours=6)
             
             #Add ACE to array
@@ -700,11 +701,11 @@ class RealtimeStorm(Storm):
             current_advisory['time_utc'] = self.date[-1]
 
             #Get storm type
-            subtrop_flag = True if self.type[-1] in ['SS','SD'] else False
+            subtrop_flag = True if self.type[-1] in constants.SUBTROPICAL_ONLY_STORM_TYPES else False
             current_advisory['type'] = get_storm_classification(self.vmax[-1],subtrop_flag,self.basin)
             
             #Check for non-tropical storm types
-            if self.type[-1] not in ['SD','SS','TD','TS','HU']:
+            if self.type[-1] not in constants.TROPICAL_STORM_TYPES:
                 if 'SD' not in self.type and 'SS' not in self.type and 'TD' not in self.type and 'TS' not in self.type and 'HU' not in self.type:
                     if self.invest:
                         current_advisory['type'] = 'Invest'

@@ -17,10 +17,10 @@ except:
     warn_message = "Warning: Cartopy is not installed in your python environment. Plotting functions will not work."
     warnings.warn(warn_message)
 
+#Internal imports
 from .storm import RealtimeStorm
-
-#Import tools
 from ..utils import *
+from .. import constants
 
 class Realtime():
     
@@ -266,7 +266,7 @@ class Realtime():
                 name = line[27]
                 
                 #Get last tropical date
-                if btk_type in ['SD','SS','TD','TS','HU']:
+                if btk_type in constants.TROPICAL_STORM_TYPES:
                     last_tropical_date = date + timedelta(hours=0)
 
                 #Replace with NaNs
@@ -300,7 +300,7 @@ class Realtime():
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:
                     ace = (10**-4) * (btk_wind**2)
-                    if btk_type in ['SS','TS','HU']:
+                    if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
             #Add storm name
@@ -458,7 +458,7 @@ class Realtime():
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:
                     ace = (10**-4) * (btk_wind**2)
-                    if btk_type in ['SS','TS','HU']:
+                    if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
             #Add storm name

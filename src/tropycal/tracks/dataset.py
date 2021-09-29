@@ -20,6 +20,7 @@ from ..tornado import *
 #Import tools
 from .tools import *
 from ..utils import *
+from .. import constants
 
 #Import matplotlib
 try:
@@ -362,7 +363,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(vmax) == False:
                     ace = (10**-4) * (vmax**2)
-                    if hhmm in ['0000','0600','1200','1800'] and storm_type in ['SS','TS','HU']:
+                    if hhmm in ['0000','0600','1200','1800'] and storm_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[current_id]['ace'] += np.round(ace,4)
         
         #Account for operationally unnamed storms
@@ -559,7 +560,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:
                     ace = (10**-4) * (btk_wind**2)
-                    if btk_type in ['SS','TS','HU']:
+                    if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
             #Add storm name
@@ -729,7 +730,7 @@ class TrackDataset:
                     #Calculate ACE & append to storm total
                     if np.isnan(neumann_vmax) == False:
                         ace = (10**-4) * (neumann_vmax**2)
-                        if hhmm in ['0000','0600','1200','1800'] and neumann_type in ['SS','TS','HU']:
+                        if hhmm in ['0000','0600','1200','1800'] and neumann_type in constants.NAMED_TROPICAL_STORM_TYPES:
                             neumann[ibtracs_id]['ace'] += np.round(ace,4)
                         
             #Skip missing entries
@@ -832,7 +833,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(jtwc_vmax) == False:
                     ace = (10**-4) * (jtwc_vmax**2)
-                    if hhmm in ['0000','0600','1200','1800'] and stype in ['SS','TS','HU']:
+                    if hhmm in ['0000','0600','1200','1800'] and stype in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[ibtracs_id]['ace'] += np.round(ace,4)
                 
             #Handle non-WMO mode
@@ -921,7 +922,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(vmax) == False:
                     ace = (10**-4) * (vmax**2)
-                    if hhmm in ['0000','0600','1200','1800'] and stype in ['SS','TS','HU']:
+                    if hhmm in ['0000','0600','1200','1800'] and stype in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[sid]['ace'] += np.round(ace,4)
                     
         #Remove empty entries
@@ -2060,16 +2061,16 @@ class TrackDataset:
             T = np.array(storm_data['type'])
 
             def get_color(itype):
-                if itype in ['SD','SS','TD','TS','HU']:
+                if itype in constants.TROPICAL_STORM_TYPES:
                     return ['#00EE00','palegreen'] #lime
                 else:
                     return ['#00A600','#3BD73B']
                 
             def getMarker(itype):
                 mtype = '^'
-                if itype in ['SD','SS']:
+                if itype in constants.SUBTROPICAL_ONLY_STORM_TYPES:
                     mtype = 's'
-                elif itype in ['TD','TS','HU']:
+                elif itype in constants.TROPICAL_ONLY_STORM_TYPES:
                     mtype = 'o'
                 return mtype
             
@@ -2077,15 +2078,15 @@ class TrackDataset:
             tr_label = False
             for i,(iv,ip,it) in enumerate(zip(V[:-1],P[:-1],T[:-1])):
                 check = False
-                if it in ['SD','SS','TD','TS','HU'] and tr_label == True: check = True
-                if not it in ['SD','SS','TD','TS','HU'] and xt_label == True: check = True
+                if it in constants.TROPICAL_STORM_TYPES and tr_label == True: check = True
+                if not it in constants.TROPICAL_STORM_TYPES and xt_label == True: check = True
                 if check:
                     plt.scatter(iv, ip, marker='o',s=80,color=get_color(it)[0],edgecolor='k',zorder=9)
                 else:
-                    if it in ['SD','SS','TD','TS','HU'] and tr_label == False:
+                    if it in constants.TROPICAL_STORM_TYPES and tr_label == False:
                         tr_label = True
                         label_content = f"{storm_data['name'].title()} {storm_data['year']} (Tropical)"
-                    if it not in ['SD','SS','TD','TS','HU'] and xt_label == False:
+                    if it not in constants.TROPICAL_STORM_TYPES and xt_label == False:
                         xt_label = True
                         label_content = f"{storm_data['name'].title()} {storm_data['year']} (Non-Tropical)"
                     plt.scatter(iv, ip, marker='o',s=80,color=get_color(it)[0],edgecolor='k',label=label_content,zorder=9)
@@ -2549,7 +2550,7 @@ class TrackDataset:
             for i in range(len(istorm['date'])):
                 
                 #Filter to only tropical cyclones, and filter by dates & coordiates
-                if istorm['type'][i] in ['TD','SD','TS','SS','HU','TY'] \
+                if istorm['type'][i] in constants.TROPICAL_STORM_TYPES \
                 and lat_min<=istorm['lat'][i]<=lat_max and lon_min<=istorm['lon'][i]%360<=lon_max \
                 and year_min<=istorm['date'][i].year<=year_max \
                 and date_range_test(istorm['date'][i],date_min,date_max):

@@ -147,7 +147,10 @@ class Realtime():
             
             #Get time difference
             hours_diff = (current_date - last_date).total_seconds() / 3600.0
-            if hours_diff >= 18.0: del self.data[key]
+            if self.data[key]['invest']:
+                if hours_diff >= 9.0: del self.data[key]
+            else:
+                if hours_diff >= 18.0: del self.data[key]
         
         #For each storm remaining, create a Storm object
         if len(self.data) > 0:

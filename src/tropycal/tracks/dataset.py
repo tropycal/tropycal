@@ -404,7 +404,7 @@ class TrackDataset:
                 if storm_id in increment_but_pass: current_year_id += 1
                 pass
             elif storm_id[0:2] == 'CP':
-                pass
+                self.data[key]['operational_id'] = f"{storm_id[0:2]}{num_to_str2(current_year_id)}{storm_year}"
             else:
                 #Skip potential TCs
                 if f"{storm_id[0:2]}{num_to_str2(current_year_id)}{storm_year}" in potential_tcs:

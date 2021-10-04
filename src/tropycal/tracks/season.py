@@ -13,7 +13,8 @@ from .storm import Storm
 #Import tools
 from .tools import *
 from ..utils import *
-    
+from .. import constants
+
 class Season:
     
     r"""
@@ -303,7 +304,7 @@ class Season:
         """
         
         #Determine if season object has a single or multiple seasons
-        multi_season = True if isinstance(self.year,list) == True else False
+        multi_season = isinstance(self.year,list)
         
         #Initialize dict with info about all of year's storms
         if multi_season == False:
@@ -407,7 +408,7 @@ class Season:
                 #Handle operational vs. non-operational storms
 
                 #Check for purely subtropical storms
-                if 'SS' in temp_type and True not in np.isin(temp_type,['TD','TS','HU']):
+                if 'SS' in temp_type and True not in np.isin(temp_type,constants.TROPICAL_ONLY_STORM_TYPES):
                     count_ss_pure += 1
 
                 #Check for partially subtropical storms

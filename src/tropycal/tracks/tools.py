@@ -10,6 +10,8 @@ import matplotlib.colors as mcolors
 import matplotlib as mlib
 import warnings
 
+from .. import constants
+
 def find_var(request,thresh):
     
     r"""
@@ -294,9 +296,9 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
         new_storm['wmo_basin'] = [basindict[k] for k in basininterp]
         
         #Interpolate and fill in storm type
-        stormtype = [1 if i in ('TD','SD','TS','SS','HU') else -1 for i in storm_dict['type']]
+        stormtype = [1 if i in constants.TROPICAL_STORM_TYPES else -1 for i in storm_dict['type']]
         isTROP = np.interp(targettimes,times,stormtype)
-        stormtype = [1 if i in ('SD','SS') else -1 for i in storm_dict['type']]
+        stormtype = [1 if i in constants.SUBTROPICAL_ONLY_STORM_TYPES else -1 for i in storm_dict['type']]
         isSUB = np.interp(targettimes,times,stormtype)
         stormtype = [1 if i=='LO' else -1 for i in storm_dict['type']]
         isLO = np.interp(targettimes,times,stormtype)

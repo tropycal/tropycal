@@ -14,6 +14,7 @@ from ..plot import Plot
 #Import tools
 from .tools import *
 from ..utils import *
+from .. import constants
 
 try:
     import cartopy.feature as cfeature
@@ -162,7 +163,7 @@ class TrackPlot(Plot):
 
             #For tropical/subtropical types, color-code if requested
             if i > 0:
-                if i_type in ['SD','TD','SS','TS','HU']:
+                if i_type in constants.TROPICAL_STORM_TYPES and storm_data['type'][i-1] in constants.TROPICAL_STORM_TYPES:
 
                     #Plot underlying black and overlying colored line
                     self.ax.plot([lons[i-1],lons[i]],[storm_data['lat'][i-1],storm_data['lat'][i]],'-',
@@ -191,7 +192,7 @@ class TrackPlot(Plot):
                 
                 #Skip if plot_all_dots == False and not in 0,6,12,18z
                 if plot_all_dots == False:
-                    if i_date.strftime('%H%M') not in ['0000','0600','1200','1800']: continue
+                    if i_date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
 
                 #Determine fill color, with SSHWS scale used as default
                 if prop['fillcolor'] == 'category':
@@ -214,9 +215,9 @@ class TrackPlot(Plot):
 
                 #Determine dot type
                 marker_type = '^'
-                if i_type in ['SD','SS']:
+                if i_type in constants.SUBTROPICAL_ONLY_STORM_TYPES:
                     marker_type = 's'
-                elif i_type in ['TD','TS','HU']:
+                elif i_type in constants.TROPICAL_ONLY_STORM_TYPES:
                     marker_type = 'o'
 
                 #Plot marker
@@ -254,8 +255,8 @@ class TrackPlot(Plot):
         
         #Add left title
         type_array = np.array(storm_data['type'])
-        if invest_bool == False:
-            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        if invest_bool == False or len(idx[0]) > 0:
             tropical_vmax = np.array(storm_data['vmax'])[idx]
             
             #Coerce to include non-TC points if storm hasn't been designated yet
@@ -563,7 +564,7 @@ class TrackPlot(Plot):
 
                 #For tropical/subtropical types, color-code if requested
                 if i > 0:
-                    if i_type in ['SD','TD','SS','TS','HU']:
+                    if i_type in constants.TROPICAL_STORM_TYPES and storm_data['type'][i-1] in constants.TROPICAL_STORM_TYPES:
 
                         #Plot underlying black and overlying colored line
                         self.ax.plot([lons[i-1],lons[i]],[storm_data['lat'][i-1],storm_data['lat'][i]],'-',
@@ -592,7 +593,7 @@ class TrackPlot(Plot):
 
                     #Skip if plot_all_dots == False and not in 0,6,12,18z
                     if plot_all_dots == False:
-                        if i_date.strftime('%H%M') not in ['0000','0600','1200','1800']: continue
+                        if i_date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
 
                     #Determine fill color, with SSHWS scale used as default
                     if prop['fillcolor'] == 'category':
@@ -615,9 +616,9 @@ class TrackPlot(Plot):
 
                     #Determine dot type
                     marker_type = '^'
-                    if i_type in ['SD','SS']:
+                    if i_type in constants.SUBTROPICAL_ONLY_STORM_TYPES:
                         marker_type = 's'
-                    elif i_type in ['TD','TS','HU']:
+                    elif i_type in constants.TROPICAL_ONLY_STORM_TYPES:
                         marker_type = 'o'
 
                     #Plot marker
@@ -918,7 +919,7 @@ None,prop={},map_prop={}):
                     type6 = np.array(styp)
                     for i in (np.arange(len(lats[1:]))+1):
                         ltype = 'solid'
-                        if type6[i] not in ['SS','SD','TD','TS','HU']: ltype = 'dotted'
+                        if type6[i] not in constants.TROPICAL_STORM_TYPES: ltype = 'dotted'
                         self.ax.plot([lons[i-1],lons[i]],[lats[i-1],lats[i]],
                                       '-',color=get_colors_sshws(np.nan_to_num(vmax[i])),linewidth=prop['linewidth'],linestyle=ltype,
                                       transform=ccrs.PlateCarree(),
@@ -937,9 +938,9 @@ None,prop={},map_prop={}):
                     type6 = np.array(styp)#[time_idx]
                     for i,(ilon,ilat,iwnd,itype) in enumerate(zip(lon6,lat6,vmax6,type6)):
                         mtype = '^'
-                        if itype in ['SD','SS']:
+                        if itype in constants.SUBTROPICAL_ONLY_STORM_TYPES:
                             mtype = 's'
-                        elif itype in ['TD','TS','HU']:
+                        elif itype in constants.TROPICAL_ONLY_STORM_TYPES:
                             mtype = 'o'
                         if prop['fillcolor'] == 'category':
                             ncol = get_colors_sshws(np.nan_to_num(iwnd))
@@ -1018,7 +1019,7 @@ None,prop={},map_prop={}):
             #Plot forecast dots
             for i,(ilon,ilat,itype,iwnd,ihr) in enumerate(zip(fcst_lon,fcst_lat,fcst_type,fcst_vmax,iter_hr)):
                 mtype = '^'
-                if itype in ['SD','SS']:
+                if itype in constants.SUBTROPICAL_ONLY_STORM_TYPES:
                     mtype = 's'
                 elif itype in ['TD','TS','HU','']:
                     mtype = 'o'
@@ -1100,7 +1101,7 @@ None,prop={},map_prop={}):
         if all_nan(first_fcst_wind) == True:
             storm_type = 'Unknown'
         else:
-            subtrop = True if first_fcst_type in ['SD','SS'] else False
+            subtrop = first_fcst_type in constants.SUBTROPICAL_ONLY_STORM_TYPES
             cur_wind = first_fcst_wind + 0
             storm_type = get_storm_classification(np.nan_to_num(cur_wind),subtrop,'north_atlantic')
         
@@ -1111,8 +1112,8 @@ None,prop={},map_prop={}):
                 storm_name = storm_data['name']
             else:
                 storm_name = num_to_text(int(storm_data['id'][2:4])).upper()
-                if first_fcst_wind >= 34 and first_fcst_type in ['TD','SD','SS','TS','HU']: storm_name = storm_data['name'];
-                if first_fcst_type not in ['TD','SD','SS','TS','HU']: storm_type = 'Potential Tropical Cyclone'
+                if first_fcst_wind >= 34 and first_fcst_type in constants.TROPICAL_STORM_TYPES: storm_name = storm_data['name'];
+                if first_fcst_type not in constants.TROPICAL_STORM_TYPES: storm_type = 'Potential Tropical Cyclone'
         else:
             storm_name = num_to_text(int(storm_data['id'][2:4])).upper()
             storm_type = 'Potential Tropical Cyclone'
@@ -1122,14 +1123,14 @@ None,prop={},map_prop={}):
                 storm_name = storm_data['name']
             else:
                 for i,(iwnd,ityp) in enumerate(zip(vmax,styp)):
-                    if ityp in ['SD','SS','TD','TS','HU']:
+                    if ityp in constants.TROPICAL_STORM_TYPES:
                         storm_tropical = True
-                        subtrop = True if ityp in ['SD','SS'] else False
+                        subtrop = ityp in constants.SUBTROPICAL_ONLY_STORM_TYPES
                         storm_type = get_storm_classification(np.nan_to_num(iwnd),subtrop,'north_atlantic')
                         if np.isnan(iwnd) == True: storm_type = 'Unknown'
                     else:
                         if storm_tropical == True: storm_type = 'Post Tropical Cyclone'
-                    if ityp in ['SS','TS','HU']:
+                    if ityp in constants.NAMED_TROPICAL_STORM_TYPES:
                         storm_name = storm_data['name']
         
         #Fix storm types for non-NHC basins
@@ -1583,7 +1584,7 @@ None,prop={},map_prop={}):
 
                 #For tropical/subtropical types, color-code if requested
                 if i > 0:
-                    if i_type in ['SD','TD','SS','TS','HU']:
+                    if i_type in constants.TROPICAL_STORM_TYPES and storm['type'][i-1] in constants.TROPICAL_STORM_TYPES:
 
                         #Plot underlying black and overlying colored line
                         self.ax.plot([lons[i-1],lons[i]],[storm['lat'][i-1],storm['lat'][i]],'-',
@@ -1631,9 +1632,9 @@ None,prop={},map_prop={}):
                     
                     #Determine dot type
                     marker_type = '^'
-                    if i_type in ['SD','SS']:
+                    if i_type in constants.SUBTROPICAL_ONLY_STORM_TYPES:
                         marker_type = 's'
-                    elif i_type in ['TD','TS','HU']:
+                    elif i_type in constants.TROPICAL_ONLY_STORM_TYPES:
                         marker_type = 'o'
                     
                     #Plot marker

@@ -706,7 +706,7 @@ class RealtimeStorm(Storm):
             
             #Check for non-tropical storm types
             if self.type[-1] not in constants.TROPICAL_STORM_TYPES:
-                if 'SD' not in self.type and 'SS' not in self.type and 'TD' not in self.type and 'TS' not in self.type and 'HU' not in self.type:
+                if all(type not in self.type for type in constants.TROPICAL_STORM_TYPES):
                     if self.invest:
                         current_advisory['type'] = 'Invest'
                     else:

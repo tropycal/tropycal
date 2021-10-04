@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import re
 import scipy.interpolate as interp
+import scipy.stats as stats
 import urllib
 import warnings
 from datetime import datetime as dt,timedelta
@@ -3196,17 +3197,15 @@ class TrackDataset:
         #Return dataset
         return ds.set_index('season')
 
-    def climatology(self,start_season=1991,end_season=2020):
+    def climatology(self,year_range=(1991,2020)):
 
         r"""
         Create a climatology for this dataset given start and end seasons. If none passed, defaults to 1991-2020.
         
         Parameters
         ----------
-        start_season : int, optional
-            First season for the climatology range.
-        end_season : int, optional
-            Ending season for the climatology range.
+        year_range : list or tuple, optional
+            Start and end year for the climatology range. Default is (1991,2020).
         
         Returns
         -------
@@ -3215,6 +3214,11 @@ class TrackDataset:
         """
 
         #Error check
+        if isinstance(year_range,(list,tuple)) == False:
+            raise TypeError("year_range must be of type list or tuple.")
+        if len(year_range) != 2:
+            raise TypeError("year_range must have two elements, start and end year.")
+        start_season,end_season = year_range
         if start_season >= end_season:
             raise ValueError("start_season cannot be greater than end_season.")
         if isinstance(start_season,int) == False or isinstance(end_season,int) == False:
@@ -3279,7 +3283,7 @@ class TrackDataset:
         summary = self.get_season(seasons).summary()
 
         #Get basin climatology
-        climatology = self.climatology(climo_bounds[0],climo_bounds[1])
+        climatology = self.climatology(climo_bounds)
         full_climo = self.to_dataframe()
         subset_climo = full_climo.loc[climo_bounds[0]:climo_bounds[1]+1]
 

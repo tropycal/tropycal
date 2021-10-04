@@ -272,7 +272,7 @@ class Storm:
         if lat is None and lon is None:
             idx = copy.copy(idx_final)
             
-        elif isinstance(lat,(int,float)) and isinstance(lon,(int,float)):
+        elif isinstance(lat,(int,np.int,np.integer,float,np.floating)) and isinstance(lon,(int,np.int,np.integer,float,np.floating)):
             dist = np.array([great_circle((lat,lon),(x,y)).kilometers for x,y in zip(NEW_STORM.lon,NEW_STORM.lat)])
             idx = np.abs(dist).argmin()
             if dist[idx]!=0:
@@ -294,22 +294,22 @@ class Storm:
             lon0,lon1 = lon
             if lat0 is None:
                 lat0 = min(NEW_STORM.lat)
-            elif not isinstance(lat0,(float,int)):
+            elif not isinstance(lat0,(int,np.int,np.integer,float,np.floating)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if lat1 is None:
                 lat1 = max(NEW_STORM.lat)
-            elif not isinstance(lat1,(float,int)):
+            elif not isinstance(lat1,(int,np.int,np.integer,float,np.floating)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if lon0 is None:
                 lon0 = min(NEW_STORM.lon)
-            elif not isinstance(lon0,(float,int)):
+            elif not isinstance(lon0,(int,np.int,np.integer,float,np.floating)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if lon1 is None:
                 lon1 = max(NEW_STORM.lon)
-            elif not isinstance(lon1,(float,int)):
+            elif not isinstance(lon1,(int,np.int,np.integer,float,np.floating)):
                 msg = 'lat/lon bounds must be of type float/int or None.'
                 raise TypeError(msg)
                 
@@ -335,12 +335,12 @@ class Storm:
             vmax0,vmax1 = vmax
             if vmax0 is None:
                 vmax0 = np.nanmin(NEW_STORM.vmax)
-            elif not isinstance(vmax0,(float,int)):
+            elif not isinstance(vmax0,(int,np.int,np.integer,float,np.floating)):
                 msg = 'vmax bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if vmax1 is None:
                 vmax1 = np.nanmax(NEW_STORM.vmax)
-            elif not isinstance(vmax1,(float,int)):
+            elif not isinstance(vmax1,(int,np.int,np.integer,float,np.floating)):
                 msg = 'vmax bounds must be of type float/int or None.'
                 raise TypeError(msg)            
             tmpvmax = np.array(NEW_STORM.vmax)
@@ -364,12 +364,12 @@ class Storm:
             mslp0,mslp1 = mslp
             if mslp0 is None:
                 mslp0 = np.nanmin(NEW_STORM.mslp)
-            elif not isinstance(mslp0,(float,int)):
+            elif not isinstance(mslp0,(int,np.int,np.integer,float,np.floating)):
                 msg = 'mslp bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if mslp1 is None:
                 mslp1 = np.nanmax(NEW_STORM.mslp)
-            elif not isinstance(mslp1,(float,int)):
+            elif not isinstance(mslp1,(int,np.int,np.integer,float,np.floating)):
                 msg = 'mslp bounds must be of type float/int or None.'
                 raise TypeError(msg)            
             tmpmslp = np.array(NEW_STORM.mslp)
@@ -397,12 +397,12 @@ class Storm:
             dvmax_dt0,dvmax_dt1 = dvmax_dt
             if dvmax_dt0 is None:
                 dvmax_dt0 = np.nanmin(NEW_STORM.dvmax_dt)
-            elif not isinstance(dvmax_dt0,(float,int)):
+            elif not isinstance(dvmax_dt0,(int,np.int,np.integer,float,np.floating)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if dvmax_dt1 is None:
                 dvmax_dt1 = np.nanmax(NEW_STORM.dvmax_dt)
-            elif not isinstance(dvmax_dt1,(float,int)):
+            elif not isinstance(dvmax_dt1,(int,np.int,np.integer,float,np.floating)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)     
                         
@@ -427,12 +427,12 @@ class Storm:
             dmslp_dt0,dmslp_dt1 = dmslp_dt
             if dmslp_dt0 is None:
                 dmslp_dt0 = np.nanmin(NEW_STORM.dmslp_dt)
-            elif not isinstance(dmslp_dt0,(float,int)):
+            elif not isinstance(dmslp_dt0,(int,np.int,np.integer,float,np.floating)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)
             if dmslp_dt1 is None:
                 dmslp_dt1 = np.nanmax(NEW_STORM.dmslp_dt)
-            elif not isinstance(dmslp_dt1,(float,int)):
+            elif not isinstance(dmslp_dt1,(int,np.int,np.integer,float,np.floating)):
                 msg = 'dmslp_dt bounds must be of type float/int or None.'
                 raise TypeError(msg)            
             tmpmslp = np.array(NEW_STORM.dmslp_dt)

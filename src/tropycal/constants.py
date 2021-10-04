@@ -11,3 +11,6 @@ TROPICAL_ONLY_STORM_TYPES = frozenset(['TD','TS','HU'])
 
 #Tropical only storm types
 SUBTROPICAL_ONLY_STORM_TYPES = frozenset(['SD','SS'])
+
+#Standard 00/06/12/18 UTC hours
+STANDARD_HOURS = frozenset(['0000','0600','1200','1800'])

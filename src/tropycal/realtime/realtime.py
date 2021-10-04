@@ -147,10 +147,8 @@ class Realtime():
             
             #Get time difference
             hours_diff = (current_date - last_date).total_seconds() / 3600.0
-            if self.data[key]['invest']:
-                if hours_diff >= 9.0: del self.data[key]
-            else:
-                if hours_diff >= 18.0: del self.data[key]
+            if hours_diff >= 18.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
+                del self.data[key]
         
         #For each storm remaining, create a Storm object
         if len(self.data) > 0:
@@ -245,7 +243,7 @@ class Realtime():
 
                 #Get date of obs
                 date = dt.strptime(line[2],'%Y%m%d%H')
-                if date.hour not in [0,6,12,18]: continue
+                if date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
 
                 #Ensure obs aren't being repeated
                 if date in self.data[stormid]['date']: continue
@@ -403,7 +401,7 @@ class Realtime():
 
                 #Get date of obs
                 date = dt.strptime(line[2],'%Y%m%d%H')
-                if date.hour not in [0,6,12,18]: continue
+                if date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
 
                 #Ensure obs aren't being repeated
                 if date in self.data[stormid]['date']: continue

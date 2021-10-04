@@ -304,7 +304,7 @@ class Season:
         """
         
         #Determine if season object has a single or multiple seasons
-        multi_season = True if isinstance(self.year,list) == True else False
+        multi_season = isinstance(self.year,list)
         
         #Initialize dict with info about all of year's storms
         if multi_season == False:

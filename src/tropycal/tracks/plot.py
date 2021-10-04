@@ -192,7 +192,7 @@ class TrackPlot(Plot):
                 
                 #Skip if plot_all_dots == False and not in 0,6,12,18z
                 if plot_all_dots == False:
-                    if i_date.strftime('%H%M') not in ['0000','0600','1200','1800']: continue
+                    if i_date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
 
                 #Determine fill color, with SSHWS scale used as default
                 if prop['fillcolor'] == 'category':
@@ -593,7 +593,7 @@ class TrackPlot(Plot):
 
                     #Skip if plot_all_dots == False and not in 0,6,12,18z
                     if plot_all_dots == False:
-                        if i_date.strftime('%H%M') not in ['0000','0600','1200','1800']: continue
+                        if i_date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
 
                     #Determine fill color, with SSHWS scale used as default
                     if prop['fillcolor'] == 'category':
@@ -1101,7 +1101,7 @@ None,prop={},map_prop={}):
         if all_nan(first_fcst_wind) == True:
             storm_type = 'Unknown'
         else:
-            subtrop = True if first_fcst_type in constants.SUBTROPICAL_ONLY_STORM_TYPES else False
+            subtrop = first_fcst_type in constants.SUBTROPICAL_ONLY_STORM_TYPES
             cur_wind = first_fcst_wind + 0
             storm_type = get_storm_classification(np.nan_to_num(cur_wind),subtrop,'north_atlantic')
         
@@ -1125,7 +1125,7 @@ None,prop={},map_prop={}):
                 for i,(iwnd,ityp) in enumerate(zip(vmax,styp)):
                     if ityp in constants.TROPICAL_STORM_TYPES:
                         storm_tropical = True
-                        subtrop = True if ityp in constants.SUBTROPICAL_ONLY_STORM_TYPES else False
+                        subtrop = ityp in constants.SUBTROPICAL_ONLY_STORM_TYPES
                         storm_type = get_storm_classification(np.nan_to_num(iwnd),subtrop,'north_atlantic')
                         if np.isnan(iwnd) == True: storm_type = 'Unknown'
                     else:

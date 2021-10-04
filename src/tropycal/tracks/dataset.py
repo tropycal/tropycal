@@ -330,7 +330,7 @@ class TrackDataset:
                 if mslp < 800: mslp = np.nan
                     
                 #Handle off-hour obs
-                if hhmm in ['0000','0600','1200','1800']:
+                if hhmm in constants.STANDARD_HOURS:
                     self.data[current_id]['extra_obs'].append(0)
                 else:
                     self.data[current_id]['extra_obs'].append(1)
@@ -363,7 +363,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(vmax) == False:
                     ace = (10**-4) * (vmax**2)
-                    if hhmm in ['0000','0600','1200','1800'] and storm_type in constants.NAMED_TROPICAL_STORM_TYPES:
+                    if hhmm in constants.STANDARD_HOURS and storm_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[current_id]['ace'] += np.round(ace,4)
         
         #Account for operationally unnamed storms
@@ -506,7 +506,8 @@ class TrackDataset:
 
                 #Get date of obs
                 date = dt.strptime(line[2],'%Y%m%d%H')
-                if date.hour not in [0,6,12,18]: continue
+                date_hhmm = date.strftime('%H%M')
+                if date_hhmm not in constants.STANDARD_HOURS: continue
 
                 #Ensure obs aren't being repeated
                 if date in self.data[stormid]['date']: continue
@@ -626,11 +627,7 @@ class TrackDataset:
         
         for line in content[2:]:
             
-            #LANDFALL	IFLAG	USA_AGENCY	USA_ATCF_ID	USA_LAT	USA_LON	USA_RECORD	USA_STATUS	USA_WIND	USA_PRES
-
-
             if len(line) < 150: continue
-            #sid, year, adv_number, basin, subbasin, name, time, wmo_type, wmo_lat, wmo_lon, wmo_vmax, wmo_mslp, agency, track_type, dist_land = line[:15]
             
             ibtracs_id, year, adv_number, basin, subbasin, name, time, wmo_type, wmo_lat, wmo_lon, wmo_vmax, wmo_mslp, agency, track_type, dist_land, dist_landfall, iflag, usa_agency, sid, lat, lon, special, stype, vmax, mslp = line[:25]
             
@@ -715,7 +712,7 @@ class TrackDataset:
                     neumann[ibtracs_id]['mslp'].append(neumann_mslp)
                     
                     hhmm = neumann_date.strftime('%H%M')
-                    if hhmm in ['0000','0600','1200','1800']:
+                    if hhmm in constants.STANDARD_HOURS:
                         neumann[ibtracs_id]['extra_obs'].append(0)
                     else:
                         neumann[ibtracs_id]['extra_obs'].append(1)
@@ -730,7 +727,7 @@ class TrackDataset:
                     #Calculate ACE & append to storm total
                     if np.isnan(neumann_vmax) == False:
                         ace = (10**-4) * (neumann_vmax**2)
-                        if hhmm in ['0000','0600','1200','1800'] and neumann_type in constants.NAMED_TROPICAL_STORM_TYPES:
+                        if hhmm in constants.STANDARD_HOURS and neumann_type in constants.NAMED_TROPICAL_STORM_TYPES:
                             neumann[ibtracs_id]['ace'] += np.round(ace,4)
                         
             #Skip missing entries
@@ -825,7 +822,7 @@ class TrackDataset:
                 self.data[ibtracs_id]['mslp'].append(wmo_mslp)
 
                 hhmm = date.strftime('%H%M')
-                if hhmm in ['0000','0600','1200','1800']:
+                if hhmm in constants.STANDARD_HOURS:
                     self.data[ibtracs_id]['extra_obs'].append(0)
                 else:
                     self.data[ibtracs_id]['extra_obs'].append(1)
@@ -833,7 +830,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(jtwc_vmax) == False:
                     ace = (10**-4) * (jtwc_vmax**2)
-                    if hhmm in ['0000','0600','1200','1800'] and stype in constants.NAMED_TROPICAL_STORM_TYPES:
+                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[ibtracs_id]['ace'] += np.round(ace,4)
                 
             #Handle non-WMO mode
@@ -914,7 +911,7 @@ class TrackDataset:
                 self.data[sid]['wmo_basin'].append(wmo_basin)
 
                 hhmm = date.strftime('%H%M')
-                if hhmm in ['0000','0600','1200','1800']:
+                if hhmm in constants.STANDARD_HOURS:
                     self.data[sid]['extra_obs'].append(0)
                 else:
                     self.data[sid]['extra_obs'].append(1)
@@ -922,7 +919,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(vmax) == False:
                     ace = (10**-4) * (vmax**2)
-                    if hhmm in ['0000','0600','1200','1800'] and stype in constants.NAMED_TROPICAL_STORM_TYPES:
+                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[sid]['ace'] += np.round(ace,4)
                     
         #Remove empty entries

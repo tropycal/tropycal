@@ -3,8 +3,6 @@
 Individual Storm Analysis
 =========================
 This sample script illustrates how to retrieve a single storm from the HURDAT2 dataset, and make plots and analyses of this storm.
-
-For documentation generation purposes, return_ax must be set True for plotting functions. You don't need to have this extra argument in every plotting function call (e.g., "storm.plot(return_ax=True)" will produce the same output as "storm.plot()").
 """
 
 import tropycal.tracks as tracks
@@ -50,7 +48,7 @@ print(storm.to_dataframe())
 # 
 # Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The only cartopy projection # currently offered is PlateCarree. Read through the documentation for more customization options.
 
-storm.plot(return_ax=True)
+storm.plot()
 
 ###########################################
 # Plot the tornado tracks associated with Michael, along with the accompanying daily practically perfect forecast (PPH):
@@ -77,14 +75,14 @@ disco = storm.get_nhc_discussion(forecast=2)
 # 
 # Let's plot Michael's second forecast cone:
 
-storm.plot_nhc_forecast(forecast=2,return_ax=True)
+storm.plot_nhc_forecast(forecast=2)
 
 ###########################################
 # Now let's look at the 12th forecast for Michael.
 # 
 # Note that the observed track here differs from the HURDAT2 track plotted previously! This is because this plot displays the operationally analyzed location and intensity, rather than the post-storm analysis data. This is done to account for differences between HURDAT2 and operational data.
 
-storm.plot_nhc_forecast(forecast=12,return_ax=True)
+storm.plot_nhc_forecast(forecast=12)
 
 ###########################################
 # IBTrACS Dataset
@@ -108,7 +106,7 @@ ibtracs = tracks.TrackDataset(basin='all',source='ibtracs',ibtracs_mode='jtwc_ne
 # .. _Super Typhoon Haiyan: https://en.wikipedia.org/wiki/Typhoon_Haiyan
 
 storm = ibtracs.get_storm(('haiyan',2013))
-storm.plot(return_ax=True)
+storm.plot()
 
 ###########################################
 # `Cyclone Catarina`_ (2004) was an extremely rare hurricane-force tropical cyclone that developed in the South Atlantic basin, which normally doesn't see tropical cyclone activity, and subsequently made landfall in Brazil. The "Catarina" name is unofficial; it was not assigned a name in real time, and JTWC assigned it the ID "AL502004". Recall that when reading in the IBTrACS dataset previously, we set ``Catarina=True``. This read in data for Cyclone Catarina from a special post-storm reanalysis from McTaggart-Cowan et al. (2006). Let's make a plot of Catarina's observed track and intensity per this reanalysis:
@@ -116,7 +114,7 @@ storm.plot(return_ax=True)
 # .. _Cyclone Catarina: https://en.wikipedia.org/wiki/Hurricane_Catarina
 
 storm = ibtracs.get_storm(('catarina',2004))
-storm.plot(return_ax=True)
+storm.plot()
 
 ###########################################
 # If we were to read in IBTrACS without setting ``Catarina=True`` (which sets it to False by default) and plot the track for "AL502004", we would get a noticeably different (shorter) and weaker track.

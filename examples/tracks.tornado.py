@@ -45,12 +45,12 @@ hurdat_atl.assign_storm_tornadoes(dist_thresh=750)
 # 
 # Most tornadoes associated with tropical cyclones occur in the front right quadrant (i.e., forward and right of the storm track). We can visualize this by plotting all tornadoes associated with tropical cyclones in a motion relative framework:
 
-hurdat_atl.plot_TCtors_rotated('all',return_ax=True)
+hurdat_atl.plot_TCtors_rotated('all')
 
 ###########################################
 # We can also make the same plot for a composite subset of tropical cyclones, given either their IDs (e.g., "AL052004"), or a storm tuple. For instance, let's composite the four hurricanes that made landfall in Florida in 2004:
 
-hurdat_atl.plot_TCtors_rotated(storms=[('charley',2004),('frances',2004),('ivan',2004),('jeanne',2004)],return_ax=True)
+hurdat_atl.plot_TCtors_rotated(storms=[('charley',2004),('frances',2004),('ivan',2004),('jeanne',2004)])
 
 ###########################################
 # Using a Storm object
@@ -67,9 +67,9 @@ storm = hurdat_atl.get_storm(('ivan',2004))
 ###########################################
 # Let's plot all the tornado tracks, and daily PPH, associated with Hurricane Ivan:
 
-storm.plot_tors(plotPPH=True,return_ax=True)
+storm.plot_tors(plotPPH=True)
 
 ###########################################
 # Let's make a plot of the tornadoes in storm motion relative coordinates:
 
-storm.plot_TCtors_rotated(return_ax=True)
+storm.plot_TCtors_rotated()

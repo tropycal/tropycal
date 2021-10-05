@@ -309,7 +309,7 @@ class Realtime():
             
             #Check if storm is still tropical, if not an invest.
             #Re-designate as an invest if has not been a TC for over 18 hours.
-            if any(type in self.data[stormid]['type'] for type in constants.TROPICAL_STORM_TYPES)
+            if any(type in self.data[stormid]['type'] for type in constants.TROPICAL_STORM_TYPES):
                 current_date = dt.utcnow()
                 date_diff = (current_date - last_tropical_date).total_seconds() / 3600
                 if date_diff > 18:

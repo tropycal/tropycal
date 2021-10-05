@@ -17,10 +17,10 @@ except:
     warn_message = "Warning: Cartopy is not installed in your python environment. Plotting functions will not work."
     warnings.warn(warn_message)
 
+#Internal imports
 from .storm import RealtimeStorm
-
-#Import tools
 from ..utils import *
+from .. import constants
 
 class Realtime():
     
@@ -147,7 +147,8 @@ class Realtime():
             
             #Get time difference
             hours_diff = (current_date - last_date).total_seconds() / 3600.0
-            if hours_diff >= 18.0: del self.data[key]
+            if hours_diff >= 18.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
+                del self.data[key]
         
         #For each storm remaining, create a Storm object
         if len(self.data) > 0:
@@ -242,7 +243,7 @@ class Realtime():
 
                 #Get date of obs
                 date = dt.strptime(line[2],'%Y%m%d%H')
-                if date.hour not in [0,6,12,18]: continue
+                if date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
 
                 #Ensure obs aren't being repeated
                 if date in self.data[stormid]['date']: continue
@@ -264,6 +265,10 @@ class Realtime():
                 btk_mslp = int(line[9])
                 btk_type = line[10]
                 name = line[27]
+                
+                #Get last tropical date
+                if btk_type in constants.TROPICAL_STORM_TYPES:
+                    last_tropical_date = date + timedelta(hours=0)
 
                 #Replace with NaNs
                 if btk_wind > 250 or btk_wind < 10: btk_wind = np.nan
@@ -296,11 +301,19 @@ class Realtime():
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:
                     ace = (10**-4) * (btk_wind**2)
-                    if btk_type in ['SS','TS','HU']:
+                    if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
             #Add storm name
             self.data[stormid]['name'] = name
+            
+            #Check if storm is still tropical, if not an invest.
+            #Re-designate as an invest if has not been a TC for over 18 hours.
+            if True in [type in self.data[stormid]['type'] for type in constants.TROPICAL_STORM_TYPES]:
+                current_date = dt.utcnow()
+                date_diff = (current_date - last_tropical_date).total_seconds() / 3600
+                if date_diff > 18:
+                    self.data[stormid]['invest'] = True
         
         
     def __read_btk_jtwc(self,source):
@@ -386,7 +399,7 @@ class Realtime():
 
                 #Get date of obs
                 date = dt.strptime(line[2],'%Y%m%d%H')
-                if date.hour not in [0,6,12,18]: continue
+                if date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
 
                 #Ensure obs aren't being repeated
                 if date in self.data[stormid]['date']: continue
@@ -419,7 +432,7 @@ class Realtime():
                     btk_type = get_storm_type(btk_wind,False)
                 else:
                     btk_type = line[10]
-                    if btk_type == "TY": btk_type = "HU"
+                    if btk_type == "TY" or btk_type == "ST": btk_type = "HU"
                 name = line[27]
 
                 #Replace with NaNs
@@ -444,7 +457,7 @@ class Realtime():
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:
                     ace = (10**-4) * (btk_wind**2)
-                    if btk_type in ['SS','TS','HU']:
+                    if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
             #Add storm name

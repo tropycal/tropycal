@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import re
 import scipy.interpolate as interp
+import scipy.stats as stats
 import urllib
 import warnings
 from datetime import datetime as dt,timedelta
@@ -20,6 +21,7 @@ from ..tornado import *
 #Import tools
 from .tools import *
 from ..utils import *
+from .. import constants
 
 #Import matplotlib
 try:
@@ -329,7 +331,7 @@ class TrackDataset:
                 if mslp < 800: mslp = np.nan
                     
                 #Handle off-hour obs
-                if hhmm in ['0000','0600','1200','1800']:
+                if hhmm in constants.STANDARD_HOURS:
                     self.data[current_id]['extra_obs'].append(0)
                 else:
                     self.data[current_id]['extra_obs'].append(1)
@@ -362,7 +364,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(vmax) == False:
                     ace = (10**-4) * (vmax**2)
-                    if hhmm in ['0000','0600','1200','1800'] and storm_type in ['SS','TS','HU']:
+                    if hhmm in constants.STANDARD_HOURS and storm_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[current_id]['ace'] += np.round(ace,4)
         
         #Account for operationally unnamed storms
@@ -404,7 +406,7 @@ class TrackDataset:
                 if storm_id in increment_but_pass: current_year_id += 1
                 pass
             elif storm_id[0:2] == 'CP':
-                pass
+                self.data[key]['operational_id'] = f"{storm_id[0:2]}{num_to_str2(current_year_id)}{storm_year}"
             else:
                 #Skip potential TCs
                 if f"{storm_id[0:2]}{num_to_str2(current_year_id)}{storm_year}" in potential_tcs:
@@ -505,7 +507,8 @@ class TrackDataset:
 
                 #Get date of obs
                 date = dt.strptime(line[2],'%Y%m%d%H')
-                if date.hour not in [0,6,12,18]: continue
+                date_hhmm = date.strftime('%H%M')
+                if date_hhmm not in constants.STANDARD_HOURS: continue
 
                 #Ensure obs aren't being repeated
                 if date in self.data[stormid]['date']: continue
@@ -559,7 +562,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:
                     ace = (10**-4) * (btk_wind**2)
-                    if btk_type in ['SS','TS','HU']:
+                    if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
             #Add storm name
@@ -625,11 +628,7 @@ class TrackDataset:
         
         for line in content[2:]:
             
-            #LANDFALL	IFLAG	USA_AGENCY	USA_ATCF_ID	USA_LAT	USA_LON	USA_RECORD	USA_STATUS	USA_WIND	USA_PRES
-
-
             if len(line) < 150: continue
-            #sid, year, adv_number, basin, subbasin, name, time, wmo_type, wmo_lat, wmo_lon, wmo_vmax, wmo_mslp, agency, track_type, dist_land = line[:15]
             
             ibtracs_id, year, adv_number, basin, subbasin, name, time, wmo_type, wmo_lat, wmo_lon, wmo_vmax, wmo_mslp, agency, track_type, dist_land, dist_landfall, iflag, usa_agency, sid, lat, lon, special, stype, vmax, mslp = line[:25]
             
@@ -714,7 +713,7 @@ class TrackDataset:
                     neumann[ibtracs_id]['mslp'].append(neumann_mslp)
                     
                     hhmm = neumann_date.strftime('%H%M')
-                    if hhmm in ['0000','0600','1200','1800']:
+                    if hhmm in constants.STANDARD_HOURS:
                         neumann[ibtracs_id]['extra_obs'].append(0)
                     else:
                         neumann[ibtracs_id]['extra_obs'].append(1)
@@ -729,7 +728,7 @@ class TrackDataset:
                     #Calculate ACE & append to storm total
                     if np.isnan(neumann_vmax) == False:
                         ace = (10**-4) * (neumann_vmax**2)
-                        if hhmm in ['0000','0600','1200','1800'] and neumann_type in ['SS','TS','HU']:
+                        if hhmm in constants.STANDARD_HOURS and neumann_type in constants.NAMED_TROPICAL_STORM_TYPES:
                             neumann[ibtracs_id]['ace'] += np.round(ace,4)
                         
             #Skip missing entries
@@ -824,7 +823,7 @@ class TrackDataset:
                 self.data[ibtracs_id]['mslp'].append(wmo_mslp)
 
                 hhmm = date.strftime('%H%M')
-                if hhmm in ['0000','0600','1200','1800']:
+                if hhmm in constants.STANDARD_HOURS:
                     self.data[ibtracs_id]['extra_obs'].append(0)
                 else:
                     self.data[ibtracs_id]['extra_obs'].append(1)
@@ -832,7 +831,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(jtwc_vmax) == False:
                     ace = (10**-4) * (jtwc_vmax**2)
-                    if hhmm in ['0000','0600','1200','1800'] and stype in ['SS','TS','HU']:
+                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[ibtracs_id]['ace'] += np.round(ace,4)
                 
             #Handle non-WMO mode
@@ -913,7 +912,7 @@ class TrackDataset:
                 self.data[sid]['wmo_basin'].append(wmo_basin)
 
                 hhmm = date.strftime('%H%M')
-                if hhmm in ['0000','0600','1200','1800']:
+                if hhmm in constants.STANDARD_HOURS:
                     self.data[sid]['extra_obs'].append(0)
                 else:
                     self.data[sid]['extra_obs'].append(1)
@@ -921,7 +920,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(vmax) == False:
                     ace = (10**-4) * (vmax**2)
-                    if hhmm in ['0000','0600','1200','1800'] and stype in ['SS','TS','HU']:
+                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[sid]['ace'] += np.round(ace,4)
                     
         #Remove empty entries
@@ -2060,16 +2059,16 @@ class TrackDataset:
             T = np.array(storm_data['type'])
 
             def get_color(itype):
-                if itype in ['SD','SS','TD','TS','HU']:
+                if itype in constants.TROPICAL_STORM_TYPES:
                     return ['#00EE00','palegreen'] #lime
                 else:
                     return ['#00A600','#3BD73B']
                 
             def getMarker(itype):
                 mtype = '^'
-                if itype in ['SD','SS']:
+                if itype in constants.SUBTROPICAL_ONLY_STORM_TYPES:
                     mtype = 's'
-                elif itype in ['TD','TS','HU']:
+                elif itype in constants.TROPICAL_ONLY_STORM_TYPES:
                     mtype = 'o'
                 return mtype
             
@@ -2077,15 +2076,15 @@ class TrackDataset:
             tr_label = False
             for i,(iv,ip,it) in enumerate(zip(V[:-1],P[:-1],T[:-1])):
                 check = False
-                if it in ['SD','SS','TD','TS','HU'] and tr_label == True: check = True
-                if not it in ['SD','SS','TD','TS','HU'] and xt_label == True: check = True
+                if it in constants.TROPICAL_STORM_TYPES and tr_label == True: check = True
+                if not it in constants.TROPICAL_STORM_TYPES and xt_label == True: check = True
                 if check:
                     plt.scatter(iv, ip, marker='o',s=80,color=get_color(it)[0],edgecolor='k',zorder=9)
                 else:
-                    if it in ['SD','SS','TD','TS','HU'] and tr_label == False:
+                    if it in constants.TROPICAL_STORM_TYPES and tr_label == False:
                         tr_label = True
                         label_content = f"{storm_data['name'].title()} {storm_data['year']} (Tropical)"
-                    if it not in ['SD','SS','TD','TS','HU'] and xt_label == False:
+                    if it not in constants.TROPICAL_STORM_TYPES and xt_label == False:
                         xt_label = True
                         label_content = f"{storm_data['name'].title()} {storm_data['year']} (Non-Tropical)"
                     plt.scatter(iv, ip, marker='o',s=80,color=get_color(it)[0],edgecolor='k',label=label_content,zorder=9)
@@ -2549,7 +2548,7 @@ class TrackDataset:
             for i in range(len(istorm['date'])):
                 
                 #Filter to only tropical cyclones, and filter by dates & coordiates
-                if istorm['type'][i] in ['TD','SD','TS','SS','HU','TY'] \
+                if istorm['type'][i] in constants.TROPICAL_STORM_TYPES \
                 and lat_min<=istorm['lat'][i]<=lat_max and lon_min<=istorm['lon'][i]%360<=lon_max \
                 and year_min<=istorm['date'][i].year<=year_max \
                 and date_range_test(istorm['date'][i],date_min,date_max):
@@ -3156,3 +3155,162 @@ class TrackDataset:
             return {'ax':ax,'df':stormTors}
         else:
             return ax
+
+    
+    def to_dataframe(self):
+
+        r"""
+        Retrieve a Pandas DataFrame for all seasons within TrackDataset.
+        
+        Returns
+        -------
+        pandas.DataFrame
+            Returns a Pandas DataFrame containing requested data.
+        """
+
+        #Get start and end seasons in this TrackDataset object
+        start_season = self.data[self.keys[0]]['year']
+        end_season = self.data[self.keys[-1]]['year']
+
+        #Create empty dict to be used for making pandas DataFrame object
+        ds = {'season':[],'all_storms':[],'named_storms':[],'hurricanes':[],'major_hurricanes':[],'ace':[],'start_time':[],'end_time':[]}
+
+        #Iterate over all seasons in the TrackDataset object
+        for season in range(start_season,end_season+1):
+
+            #Get season summary
+            season_summary = self.get_season(season).summary()
+
+            #Add information to dict
+            ds['season'].append(season)
+            ds['all_storms'].append(season_summary['season_storms'])
+            ds['named_storms'].append(season_summary['season_named'])
+            ds['hurricanes'].append(season_summary['season_hurricane'])
+            ds['major_hurricanes'].append(season_summary['season_major'])
+            ds['ace'].append(season_summary['season_ace'])
+            ds['start_time'].append(season_summary['season_start'])
+            ds['end_time'].append(season_summary['season_end'])
+
+        #Convert entire dict to a DataFrame
+        ds = pd.DataFrame(ds)
+
+        #Return dataset
+        return ds.set_index('season')
+
+    def climatology(self,year_range=(1991,2020)):
+
+        r"""
+        Create a climatology for this dataset given start and end seasons. If none passed, defaults to 1991-2020.
+        
+        Parameters
+        ----------
+        year_range : list or tuple, optional
+            Start and end year for the climatology range. Default is (1991,2020).
+        
+        Returns
+        -------
+        dict
+            Dictionary containing the climatology for this dataset.
+        """
+
+        #Error check
+        if isinstance(year_range,(list,tuple)) == False:
+            raise TypeError("year_range must be of type list or tuple.")
+        if len(year_range) != 2:
+            raise TypeError("year_range must have two elements, start and end year.")
+        start_season,end_season = year_range
+        if start_season >= end_season:
+            raise ValueError("start_season cannot be greater than end_season.")
+        if isinstance(start_season,int) == False or isinstance(end_season,int) == False:
+            raise TypeError("start_season and end_season must be of type int.")
+        if (end_season - start_season) < 5:
+            raise ValueError("A minimum of 5 seasons is required for constructing a climatology.")
+
+        #Retrieve data for all seasons in this dataset
+        full_climo = self.to_dataframe()
+
+        #Subset rows by year range
+        subset_climo = full_climo.loc[start_season:end_season+1]
+
+        #Convert dates to julian days
+        julian_start = [convert_to_julian(pd.to_datetime(i)) for i in subset_climo['start_time'].values]
+        julian_end = [convert_to_julian(pd.to_datetime(i)) for i in subset_climo['end_time'].values]
+        julian_end = [i+365 if i < 100 else i for i in julian_end]
+        subset_climo = subset_climo.drop(columns=['start_time','end_time'])
+        subset_climo['start_time'] = julian_start
+        subset_climo['end_time'] = julian_end
+
+        #Calculate means
+        subset_climo_means = (subset_climo.mean(axis=0)).round(1)
+
+        #Compile averages
+        climatology = {}
+        for key in ['all_storms','named_storms','hurricanes','major_hurricanes','ace']:
+            climatology[key] = subset_climo_means[key]
+        for key in ['start_time','end_time']:
+            climatology[key] = dt(dt.now().year-1,12,31)+timedelta(hours=24*subset_climo_means[key])
+
+        #Return dict
+        return climatology
+
+    def season_composite(self,seasons,climo_bounds=None):
+
+        r"""
+        Create composite statistics for a list of seasons.
+        
+        Parameters
+        ----------
+        seasons : list
+            List of seasons to create a composite of. For Southern Hemisphere, season is the start of the two-year period.
+        climo_bounds : list or tuple
+            List or tuple of start and end years of climatology bounds. If none, defaults to (1991,2020).
+        
+        Returns
+        -------
+        dict
+            Dictionary containing the composite of the requested seasons.
+        """
+
+        #Error check
+        if isinstance(seasons,list) == False:
+            raise TypeError("'seasons' must be of type list.")
+
+        #Create climo bounds
+        if climo_bounds is None:
+            climo_bounds = (1991,2020)
+
+        #Get Season object for the composite
+        summary = self.get_season(seasons).summary()
+
+        #Get basin climatology
+        climatology = self.climatology(climo_bounds)
+        full_climo = self.to_dataframe()
+        subset_climo = full_climo.loc[climo_bounds[0]:climo_bounds[1]+1]
+
+        #Create composite dictionary
+        map_keys = {'all_storms':'season_storms',
+                    'named_storms':'season_named',
+                    'hurricanes':'season_hurricane',
+                    'major_hurricanes':'season_major',
+                    'ace':'season_ace',
+                   }
+        composite = {}
+        for key in map_keys.keys():
+
+            #Get list from seasons
+            season_list = summary[map_keys.get(key)]
+
+            #Get climatology
+            season_climo = climatology[key]
+
+            #Get individual years in climatology
+            season_fullclimo = subset_climo[key].values
+
+            #Create dictionary of relevant calculations for this entry
+            composite[key] = {'list':season_list,
+                              'average':np.round(np.average(season_list),1),
+                              'composite_anomaly':np.round(np.average(season_list)-season_climo,1),
+                              'percentile_ranks':[np.round(stats.percentileofscore(season_fullclimo,i),1) for i in season_list],
+                             }
+
+        return composite

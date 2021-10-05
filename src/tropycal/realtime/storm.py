@@ -13,6 +13,7 @@ import requests
 from ..tracks import *
 from ..tracks.tools import *
 from ..utils import *
+from .. import constants
 
 try:
     import zipfile
@@ -61,7 +62,7 @@ class RealtimeStorm(Storm):
         #Format keys for summary
         type_array = np.array(self.dict['type'])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))[0]
-        if self.invest: idx = np.array([True for i in type_array])
+        if self.invest and len(idx) == 0: idx = np.array([True for i in type_array])
         if len(idx) == 0:
             start_date = 'N/A'
             end_date = 'N/A'
@@ -421,7 +422,7 @@ class RealtimeStorm(Storm):
         ace = 0.0
         for i in range(len(self.date)):
             if self.date[i] >= forecasts['init']: continue
-            if self.type[i] not in ['TS','SS','HU']: continue
+            if self.type[i] not in constants.NAMED_TROPICAL_STORM_TYPES: continue
             ace += accumulated_cyclone_energy(self.vmax[i],hours=6)
         
         #Add initial forecast hour ACE
@@ -446,14 +447,14 @@ class RealtimeStorm(Storm):
                     break
                 use_i = int(i + 0.0)
             i_type = forecasts['type'][use_i]
-            if i_type in ['TD','TS','SD','SS','HU','TY']: i_type = get_storm_type(i_vmax,False)
+            if i_type in constants.TROPICAL_STORM_TYPES: i_type = get_storm_type(i_vmax,False)
             interp_type.append(i_type)
         
         #Add forecast ACE
         for i,(i_fhr,i_vmax,i_type) in enumerate(zip(interp_fhr[1:],interp_vmax[1:],interp_type[1:])):
             
             #Add ACE if storm is a TC
-            if i_type in ['TS','SS','HU','TY']:
+            if i_type in constants.NAMED_TROPICAL_STORM_TYPES:
                 ace += accumulated_cyclone_energy(i_vmax,hours=6)
             
             #Add ACE to array
@@ -700,8 +701,18 @@ class RealtimeStorm(Storm):
             current_advisory['time_utc'] = self.date[-1]
 
             #Get storm type
-            subtrop_flag = True if self.type[-1] in ['SS','SD'] else False
+            subtrop_flag = self.type[-1] in constants.SUBTROPICAL_ONLY_STORM_TYPES
             current_advisory['type'] = get_storm_classification(self.vmax[-1],subtrop_flag,self.basin)
+            
+            #Check for non-tropical storm types
+            if self.type[-1] not in constants.TROPICAL_STORM_TYPES:
+                if all(type not in self.type for type in constants.TROPICAL_STORM_TYPES):
+                    if self.invest:
+                        current_advisory['type'] = 'Invest'
+                    else:
+                        current_advisory['type'] = 'Potential Tropical Cyclone'
+                else:
+                    current_advisory['type'] = 'Post-Tropical Cyclone'
 
             #Get storm name
             current_advisory['name'] = self.name.title()

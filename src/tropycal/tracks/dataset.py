@@ -3214,22 +3214,20 @@ class TrackDataset:
         """
 
         #Error check
-        if isinstance(year_range,(list,tuple)) == False:
+        if not isinstance(year_range,(list,tuple)):
             raise TypeError("year_range must be of type list or tuple.")
         if len(year_range) != 2:
             raise TypeError("year_range must have two elements, start and end year.")
         start_season,end_season = year_range
         if start_season >= end_season:
             raise ValueError("start_season cannot be greater than end_season.")
-        if isinstance(start_season,int) == False or isinstance(end_season,int) == False:
+        if not isinstance(start_season,int) or not isinstance(end_season,int):
             raise TypeError("start_season and end_season must be of type int.")
         if (end_season - start_season) < 5:
             raise ValueError("A minimum of 5 seasons is required for constructing a climatology.")
 
         #Retrieve data for all seasons in this dataset
         full_climo = self.to_dataframe()
-
-        #Subset rows by year range
         subset_climo = full_climo.loc[start_season:end_season+1]
 
         #Convert dates to julian days
@@ -3240,17 +3238,14 @@ class TrackDataset:
         subset_climo['start_time'] = julian_start
         subset_climo['end_time'] = julian_end
 
-        #Calculate means
         subset_climo_means = (subset_climo.mean(axis=0)).round(1)
 
-        #Compile averages
         climatology = {}
         for key in ['all_storms','named_storms','hurricanes','major_hurricanes','ace']:
             climatology[key] = subset_climo_means[key]
         for key in ['start_time','end_time']:
             climatology[key] = dt(dt.now().year-1,12,31)+timedelta(hours=24*subset_climo_means[key])
 
-        #Return dict
         return climatology
 
     def season_composite(self,seasons,climo_bounds=None):
@@ -3271,18 +3266,14 @@ class TrackDataset:
             Dictionary containing the composite of the requested seasons.
         """
 
-        #Error check
         if isinstance(seasons,list) == False:
             raise TypeError("'seasons' must be of type list.")
 
-        #Create climo bounds
         if climo_bounds is None:
             climo_bounds = (1991,2020)
 
-        #Get Season object for the composite
         summary = self.get_season(seasons).summary()
 
-        #Get basin climatology
         climatology = self.climatology(climo_bounds)
         full_climo = self.to_dataframe()
         subset_climo = full_climo.loc[climo_bounds[0]:climo_bounds[1]+1]
@@ -3299,11 +3290,7 @@ class TrackDataset:
 
             #Get list from seasons
             season_list = summary[map_keys.get(key)]
-
-            #Get climatology
             season_climo = climatology[key]
-
-            #Get individual years in climatology
             season_fullclimo = subset_climo[key].values
 
             #Create dictionary of relevant calculations for this entry

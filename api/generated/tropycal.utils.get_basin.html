@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="get_storm_classification" href="tropycal.utils.get_storm_classification.html" />
@@ -192,22 +198,27 @@
 <h1>get_basin<a class="headerlink" href="#get-basin" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="tropycal.utils.get_basin">
-<code class="sig-prename descclassname">tropycal.utils.</code><code class="sig-name descname">get_basin</code><span class="sig-paren">(</span><em class="sig-param">lat</em>, <em class="sig-param">lon</em>, <em class="sig-param">storm_id=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/generic_utils.html#get_basin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.utils.get_basin" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">tropycal.utils.</code><code class="descname">get_basin</code><span class="sig-paren">(</span><em>lat</em>, <em>lon</em>, <em>storm_id=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/generic_utils.html#get_basin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.utils.get_basin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the current basin of the tropical cyclone.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lat</strong> (<em>int</em><em> or </em><em>float</em>) – Latitude of the storm.</p></li>
-<li><p><strong>lon</strong> (<em>int</em><em> or </em><em>float</em>) – Longitude of the storm.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lat</strong> (<em>int</em><em> or </em><em>float</em>) – Latitude of the storm.</li>
+<li><strong>lon</strong> (<em>int</em><em> or </em><em>float</em>) – Longitude of the storm.</li>
 </ul>
-</dd>
-<dt class="field-even">Other Parameters</dt>
-<dd class="field-even"><p><strong>storm_id</strong> (<em>str</em>) – String representing storm ID. Used to distinguish between Atlantic and Pacific basins.</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>str</em> – String representing the current basin (e.g., “north_atlantic”, “east_pacific”).</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first"><strong>storm_id</strong> (<em>str</em>) – String representing storm ID. Used to distinguish between Atlantic and Pacific basins.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>str</em> – String representing the current basin (e.g., “north_atlantic”, “east_pacific”).</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

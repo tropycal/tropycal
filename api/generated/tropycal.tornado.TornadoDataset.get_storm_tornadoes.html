@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="TornadoDataset.plot_TCtors_rotated" href="tropycal.tornado.TornadoDataset.plot_TCtors_rotated.html" />
@@ -189,19 +195,23 @@
 <h1>TornadoDataset.get_storm_tornadoes<a class="headerlink" href="#tornadodataset-get-storm-tornadoes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.tornado.TornadoDataset.get_storm_tornadoes">
-<code class="sig-prename descclassname">TornadoDataset.</code><code class="sig-name descname">get_storm_tornadoes</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">dist_thresh</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.get_storm_tornadoes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.get_storm_tornadoes" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">TornadoDataset.</code><code class="descname">get_storm_tornadoes</code><span class="sig-paren">(</span><em>storm</em>, <em>dist_thresh</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.get_storm_tornadoes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.get_storm_tornadoes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves all tornado tracks that occur along the track of a tropical cyclone.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Instance of a Storm object.</p></li>
-<li><p><strong>dist_thresh</strong> (<em>int</em>) – Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Instance of a Storm object.</li>
+<li><strong>dist_thresh</strong> (<em>int</em>) – Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>pandas.DataFrame</em> – Pandas DataFrame object containing data about the tornadoes associated with this tropical cyclone.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>pandas.DataFrame</em> – Pandas DataFrame object containing data about the tornadoes associated with this tropical cyclone.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

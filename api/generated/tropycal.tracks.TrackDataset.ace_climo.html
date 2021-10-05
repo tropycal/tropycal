@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="TrackDataset.assign_storm_tornadoes" href="tropycal.tracks.TrackDataset.assign_storm_tornadoes.html" />
@@ -101,6 +107,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">TrackDataset.ace_climo</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.assign_storm_tornadoes.html">TrackDataset.assign_storm_tornadoes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.climatology.html">TrackDataset.climatology</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.download_tcr.html">TrackDataset.download_tcr</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.filter_storms.html">TrackDataset.filter_storms</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.get_season.html">TrackDataset.get_season</a></li>
@@ -115,7 +122,9 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.plot_storms.html">TrackDataset.plot_storms</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.rank_storm.html">TrackDataset.rank_storm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.search_name.html">TrackDataset.search_name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.season_composite.html">TrackDataset.season_composite</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html">TrackDataset.storm_ace_vs_season</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.to_dataframe.html">TrackDataset.to_dataframe</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.wind_pres_relationship.html">TrackDataset.wind_pres_relationship</a></li>
 </ul>
 </li>
@@ -205,25 +214,29 @@
 <h1>TrackDataset.ace_climo<a class="headerlink" href="#trackdataset-ace-climo" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.tracks.TrackDataset.ace_climo">
-<code class="sig-prename descclassname">TrackDataset.</code><code class="sig-name descname">ace_climo</code><span class="sig-paren">(</span><em class="sig-param">plot_year=None</em>, <em class="sig-param">compare_years=None</em>, <em class="sig-param">climo_year_range=None</em>, <em class="sig-param">date_range=None</em>, <em class="sig-param">rolling_sum=0</em>, <em class="sig-param">return_dict=False</em>, <em class="sig-param">plot=True</em>, <em class="sig-param">save_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.ace_climo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.ace_climo" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">TrackDataset.</code><code class="descname">ace_climo</code><span class="sig-paren">(</span><em>plot_year=None</em>, <em>compare_years=None</em>, <em>climo_year_range=None</em>, <em>date_range=None</em>, <em>rolling_sum=0</em>, <em>return_dict=False</em>, <em>plot=True</em>, <em>save_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.ace_climo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.ace_climo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates and plots a climatology of accumulated cyclone energy (ACE).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>plot_year</strong> (<em>int</em>) – Year to highlight. If current year, plot will be drawn through today. If none, no year will be highlighted.</p></li>
-<li><p><strong>compare_years</strong> (<em>int</em><em> or </em><em>list</em>) – Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).</p></li>
-<li><p><strong>climo_year_range</strong> (<em>tuple</em>) – Start and end years to compute the climatology over. Default is from 1950 to last year.</p></li>
-<li><p><strong>date_range</strong> (<em>tuple</em>) – Start and end dates to plot, both strings formatted as “month/day”. Default is entire calendar year.</p></li>
-<li><p><strong>rolling_sum</strong> (<em>int</em>) – Days to calculate a rolling sum over. Default is 0 (annual running sum).</p></li>
-<li><p><strong>return_dict</strong> (<em>bool</em>) – Determines whether to return data from this function. Default is False.</p></li>
-<li><p><strong>plot</strong> (<em>bool</em>) – Determines whether to generate a plot or not. If False, function simply returns ace dictionary.</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – Determines the file path to save the image to. If blank or none, image will be directly shown.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>plot_year</strong> (<em>int</em>) – Year to highlight. If current year, plot will be drawn through today. If none, no year will be highlighted.</li>
+<li><strong>compare_years</strong> (<em>int</em><em> or </em><em>list</em>) – Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).</li>
+<li><strong>climo_year_range</strong> (<em>tuple</em>) – Start and end years to compute the climatology over. Default is from 1950 to last year.</li>
+<li><strong>date_range</strong> (<em>tuple</em>) – Start and end dates to plot, both strings formatted as “month/day”. Default is entire calendar year.</li>
+<li><strong>rolling_sum</strong> (<em>int</em>) – Days to calculate a rolling sum over. Default is 0 (annual running sum).</li>
+<li><strong>return_dict</strong> (<em>bool</em>) – Determines whether to return data from this function. Default is False.</li>
+<li><strong>plot</strong> (<em>bool</em>) – Determines whether to generate a plot or not. If False, function simply returns ace dictionary.</li>
+<li><strong>save_path</strong> (<em>str</em>) – Determines the file path to save the image to. If blank or none, image will be directly shown.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>axes or dict</em> – By default, the plot axes is returned. If return_dict is True, a dictionary containing the axes and data about the ACE climatology is returned.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>axes or dict</em> – By default, the plot axes is returned. If return_dict is True, a dictionary containing the axes and data about the ACE climatology is returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

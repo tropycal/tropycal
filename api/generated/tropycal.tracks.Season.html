@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Season.get_storm" href="tropycal.tracks.Season.get_storm.html" />
@@ -190,41 +196,45 @@
 <h1>tropycal.tracks.Season<a class="headerlink" href="#tropycal-tracks-season" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="tropycal.tracks.Season">
-<em class="property">class </em><code class="sig-prename descclassname">tropycal.tracks.</code><code class="sig-name descname">Season</code><span class="sig-paren">(</span><em class="sig-param">season</em>, <em class="sig-param">info</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">tropycal.tracks.</code><code class="descname">Season</code><span class="sig-paren">(</span><em>season</em>, <em>info</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/season.html#Season"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Season" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes an instance of Season, retrieved via <code class="docutils literal notranslate"><span class="pre">TrackDataset.get_season()</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>season</strong> (<em>dict</em>) – Dict entry containing all storms within the requested season.</p></li>
-<li><p><strong>info</strong> (<em>dict</em>) – Dict entry containing general information about the season.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>season</strong> (<em>dict</em>) – Dict entry containing all storms within the requested season.</li>
+<li><strong>info</strong> (<em>dict</em>) – Dict entry containing general information about the season.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>Season</em> – Instance of a Season object.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>Season</em> – Instance of a Season object.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Methods Summary</p>
 <blockquote>
-<div><table class="longtable docutils align-default">
+<div><table border="1" class="longtable docutils">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Season.get_storm.html#tropycal.tracks.Season.get_storm" title="tropycal.tracks.Season.get_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.get_storm</span></code></a>(storm)</p></td>
-<td><p>Retrieves a Storm object for the requested storm.</p></td>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Season.get_storm.html#tropycal.tracks.Season.get_storm" title="tropycal.tracks.Season.get_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.get_storm</span></code></a>(storm)</td>
+<td>Retrieves a Storm object for the requested storm.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Season.get_storm_id.html#tropycal.tracks.Season.get_storm_id" title="tropycal.tracks.Season.get_storm_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.get_storm_id</span></code></a>(storm)</p></td>
-<td><p>Returns the storm ID (e.g., “AL012019”) given the storm name and year.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.tracks.Season.get_storm_id.html#tropycal.tracks.Season.get_storm_id" title="tropycal.tracks.Season.get_storm_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.get_storm_id</span></code></a>(storm)</td>
+<td>Returns the storm ID (e.g., “AL012019”) given the storm name and year.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Season.plot.html#tropycal.tracks.Season.plot" title="tropycal.tracks.Season.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.plot</span></code></a>([domain, ax, cartopy_proj, …])</p></td>
-<td><p>Creates a plot of this season.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Season.plot.html#tropycal.tracks.Season.plot" title="tropycal.tracks.Season.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.plot</span></code></a>([domain,&nbsp;ax,&nbsp;cartopy_proj,&nbsp;…])</td>
+<td>Creates a plot of this season.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Season.summary.html#tropycal.tracks.Season.summary" title="tropycal.tracks.Season.summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.summary</span></code></a>()</p></td>
-<td><p>Generates a summary for this season with various cumulative statistics.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.tracks.Season.summary.html#tropycal.tracks.Season.summary" title="tropycal.tracks.Season.summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.summary</span></code></a>()</td>
+<td>Generates a summary for this season with various cumulative statistics.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Season.to_dataframe.html#tropycal.tracks.Season.to_dataframe" title="tropycal.tracks.Season.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.to_dataframe</span></code></a>()</p></td>
-<td><p>Converts the season dict into a pandas DataFrame object.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Season.to_dataframe.html#tropycal.tracks.Season.to_dataframe" title="tropycal.tracks.Season.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season.to_dataframe</span></code></a>()</td>
+<td>Converts the season dict into a pandas DataFrame object.</td>
 </tr>
 </tbody>
 </table>

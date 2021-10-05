@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="category_to_wind" href="tropycal.utils.category_to_wind.html" />
@@ -192,16 +198,18 @@
 <h1>wind_to_category<a class="headerlink" href="#wind-to-category" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="tropycal.utils.wind_to_category">
-<code class="sig-prename descclassname">tropycal.utils.</code><code class="sig-name descname">wind_to_category</code><span class="sig-paren">(</span><em class="sig-param">wind_speed</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/generic_utils.html#wind_to_category"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.utils.wind_to_category" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">tropycal.utils.</code><code class="descname">wind_to_category</code><span class="sig-paren">(</span><em>wind_speed</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/generic_utils.html#wind_to_category"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.utils.wind_to_category" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert sustained wind speed in knots to Saffir-Simpson Hurricane Wind Scale category.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>wind_speed</strong> (<em>int</em>) – Sustained wind speed in knots.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>int</em> – Category corresponding to the sustained wind. 0 is tropical storm, -1 is tropical depression.</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>wind_speed</strong> (<em>int</em>) – Sustained wind speed in knots.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>int</em> – Category corresponding to the sustained wind. 0 is tropical storm, -1 is tropical depression.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

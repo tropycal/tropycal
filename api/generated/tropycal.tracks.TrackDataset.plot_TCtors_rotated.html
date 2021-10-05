@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="TrackDataset.plot_season" href="tropycal.tracks.TrackDataset.plot_season.html" />
@@ -101,6 +107,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.ace_climo.html">TrackDataset.ace_climo</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.assign_storm_tornadoes.html">TrackDataset.assign_storm_tornadoes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.climatology.html">TrackDataset.climatology</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.download_tcr.html">TrackDataset.download_tcr</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.filter_storms.html">TrackDataset.filter_storms</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.get_season.html">TrackDataset.get_season</a></li>
@@ -115,7 +122,9 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.plot_storms.html">TrackDataset.plot_storms</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.rank_storm.html">TrackDataset.rank_storm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.search_name.html">TrackDataset.search_name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.season_composite.html">TrackDataset.season_composite</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html">TrackDataset.storm_ace_vs_season</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.to_dataframe.html">TrackDataset.to_dataframe</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.wind_pres_relationship.html">TrackDataset.wind_pres_relationship</a></li>
 </ul>
 </li>
@@ -205,21 +214,25 @@
 <h1>TrackDataset.plot_TCtors_rotated<a class="headerlink" href="#trackdataset-plot-tctors-rotated" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.tracks.TrackDataset.plot_TCtors_rotated">
-<code class="sig-prename descclassname">TrackDataset.</code><code class="sig-name descname">plot_TCtors_rotated</code><span class="sig-paren">(</span><em class="sig-param">storms</em>, <em class="sig-param">mag_thresh=0</em>, <em class="sig-param">return_df=False</em>, <em class="sig-param">save_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_TCtors_rotated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">TrackDataset.</code><code class="descname">plot_TCtors_rotated</code><span class="sig-paren">(</span><em>storms</em>, <em>mag_thresh=0</em>, <em>return_df=False</em>, <em>save_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_TCtors_rotated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>storms</strong> (<em>list</em><em> or </em><em>str</em>) – Storm(s) for which to plot motion-relative tornado data for. Can be either a list of storm IDs/tuples for which to create a composite of, or a string “all” for all storms containing tornado data.</p></li>
-<li><p><strong>mag_thresh</strong> (<em>int</em>) – Minimum threshold for tornado rating.</p></li>
-<li><p><strong>return_df</strong> (<em>bool</em>) – Whether to return the pandas DataFrame containing the composite tornado data. Default is False.</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>storms</strong> (<em>list</em><em> or </em><em>str</em>) – Storm(s) for which to plot motion-relative tornado data for. Can be either a list of storm IDs/tuples for which to create a composite of, or a string “all” for all storms containing tornado data.</li>
+<li><strong>mag_thresh</strong> (<em>int</em>) – Minimum threshold for tornado rating.</li>
+<li><strong>return_df</strong> (<em>bool</em>) – Whether to return the pandas DataFrame containing the composite tornado data. Default is False.</li>
+<li><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>ax or dict</em> – By default, the plot axes is returned. If “return_df” is set to True, returns a dict containing both the data and the axes plot</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>ax or dict</em> – By default, the plot axes is returned. If “return_df” is set to True, returns a dict containing both the data and the axes plot</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Notes</p>
 <p>The motion vector is oriented upwards (in the +y direction).</p>
 </dd></dl>

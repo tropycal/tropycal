@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Individual Storm Analysis" href="tracks.storm.html" />
@@ -174,14 +180,13 @@
            <div itemprop="articleBody">
             
   <div class="sphx-glr-download-link-note admonition note">
-<p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-examples-tracks-tornado-py"><span class="std std-ref">here</span></a>
-to download the full example code</p>
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-examples-tracks-tornado-py"><span class="std std-ref">here</span></a> to download the full example code</p>
 </div>
 <div class="sphx-glr-example-title section" id="tornado-analyses">
 <span id="sphx-glr-examples-tracks-tornado-py"></span><h1>Tornado Analyses<a class="headerlink" href="#tornado-analyses" title="Permalink to this headline">¶</a></h1>
 <p>This sample script illustrates how to retrieve and analyze the Storm Prediction Center (SPC) tornado database (1950-present), using both the tornado and tracks modules.</p>
-<p>For documentation generation purposes, return_ax must be set True for plotting functions only for the Tornado and Recon classes. You don’t need to have this extra argument in every plotting function call (e.g., “storm.plot(return_ax=True)” will produce the same output as “storm.plot()”).</p>
+<p>For documentation generation purposes, return_ax must be set True for plotting functions. You don’t need to have this extra argument in every plotting function call (e.g., “storm.plot(return_ax=True)” will produce the same output as “storm.plot()”).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="k">as</span> <span class="nn">tracks</span>
 <span class="kn">import</span> <span class="nn">tropycal.tornado</span> <span class="k">as</span> <span class="nn">tornado</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
@@ -190,112 +195,92 @@ to download the full example code</p>
 <div class="section" id="using-tornadodataset">
 <h2>Using TornadoDataset<a class="headerlink" href="#using-tornadodataset" title="Permalink to this headline">¶</a></h2>
 <p>Let’s start by creating an instance of a TornadoDataset object. By default, this reads in the SPC tornado database from their website.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset" title="tropycal.tornado.TornadoDataset" class="sphx-glr-backref-module-tropycal-tornado sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">tor_data</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset" title="tropycal.tornado.TornadoDataset" class="sphx-glr-backref-module-tropycal-tornado sphx-glr-backref-type-py-class"><span class="n">tornado</span><span class="o">.</span><span class="n">TornadoDataset</span></a><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tor_data</span> <span class="o">=</span> <a href="../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset" title="View documentation for tropycal.tornado.TornadoDataset"><span class="n">tornado</span><span class="o">.</span><span class="n">TornadoDataset</span></a><span class="p">()</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in tornado track data
---&gt; Completed reading in tornado data for 1950-2019 (11.02 seconds)
+--&gt; Completed reading in tornado data for 1950-2019 (10.97 seconds)
 </pre></div>
 </div>
 <p>We can use a TornadoDataset object to analyze both tornadoes associated with tropical cyclones and non-TC tornadoes. As an example of the latter, we can make a plot of all tornadoes during the 27 April 2011 tornado outbreak, along with the Practically Perfect Forecast (PPH) in filled contours:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tor_ax</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">leg_tor</span> <span class="o">=</span> <a href="../api/generated/tropycal.tornado.TornadoDataset.plot_tors.html#tropycal.tornado.TornadoDataset.plot_tors" title="tropycal.tornado.TornadoDataset.plot_tors" class="sphx-glr-backref-module-tropycal-tornado sphx-glr-backref-type-py-method"><span class="n">tor_data</span><span class="o">.</span><span class="n">plot_tors</span></a><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2011</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">27</span><span class="p">),</span><span class="n">plotPPH</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tor_ax</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">leg_tor</span> <span class="o">=</span> <span class="n">tor_data</span><span class="o">.</span><span class="n">plot_tors</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2011</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">27</span><span class="p">),</span><span class="n">plotPPH</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">return_ax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">tor_ax</span>
 </pre></div>
 </div>
-<img alt="Tornado tracks and daily PPH (%), Start ... 12:02 UTC 27 Apr 2011 End ... 11:50 UTC 28 Apr 2011" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_001.png" />
+<img alt="../_images/sphx_glr_tracks.tornado_001.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_001.png" />
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>c:\users\tomer\documents\python\github\tomerburg_account\tropycal\src\tropycal\tornado\tools.py:36: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame.
 Try using .loc[row_indexer,col_indexer] = value instead
 
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
   dfTors[&#39;SPC_time&#39;] = dfTors[&#39;UTC_time&#39;] - timedelta(hours=12)
-
-&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x000002182EF980F0&gt;
 </pre></div>
 </div>
 </div>
 <div class="section" id="using-trackdataset">
 <h2>Using TrackDataset<a class="headerlink" href="#using-trackdataset" title="Permalink to this headline">¶</a></h2>
 <p>We can also use TornadoDataset to assess tornadoes associated with tropical cyclones. First off let’s get an instance of TrackDataset for the North Atlantic HURDAT2 basin:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">hurdat_atl</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="View documentation for tropycal.tracks.TrackDataset"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (7.17 seconds)
+--&gt; Completed reading in HURDAT2 data (5.64 seconds)
 </pre></div>
 </div>
 <p>This instance of Storm contains several methods that return the storm data back in different data types. The following examples will show how to retrieve 3 different data types.</p>
 <p>Now we want to attribute tornadoes from the SPC database to all tropical cyclones which produced tornadoes. We do so using the <code class="docutils literal notranslate"><span class="pre">assign_storm_tornadoes()</span></code> method of TrackDataset. The main input parameter is “dist_thresh”, which controls the distance from the tropical cyclone center over which to attribute tornadoes to. For this example we’ll use 750 kilometers as the threshold.</p>
 <p>This code block will take a while to run, as it will iterate over every storm in HURDAT2 and match tornadoes to those that produced them.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.assign_storm_tornadoes.html#tropycal.tracks.TrackDataset.assign_storm_tornadoes" title="tropycal.tracks.TrackDataset.assign_storm_tornadoes" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">assign_storm_tornadoes</span></a><span class="p">(</span><span class="n">dist_thresh</span><span class="o">=</span><span class="mi">750</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">assign_storm_tornadoes</span><span class="p">(</span><span class="n">dist_thresh</span><span class="o">=</span><span class="mi">750</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in tornado track data
---&gt; Completed reading in tornado data for 1950-2019 (10.89 seconds)
+--&gt; Completed reading in tornado data for 1950-2019 (9.29 seconds)
 --&gt; Starting to assign tornadoes to storms
---&gt; Completed assigning tornadoes to storm (122.30 seconds)
+--&gt; Completed assigning tornadoes to storm (125.07 seconds)
 </pre></div>
 </div>
 <p>Once the above block is done running, we can now look at a climatology of tornadoes associated with North Atlantic tropical cyclones. The current method of analysis is via the <code class="docutils literal notranslate"><span class="pre">plot_TCtors_rotated()</span></code> method, which rotates tropical cyclones to a storm motion relative framework.</p>
 <p>Most tornadoes associated with tropical cyclones occur in the front right quadrant (i.e., forward and right of the storm track). We can visualize this by plotting all tornadoes associated with tropical cyclones in a motion relative framework:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.plot_TCtors_rotated.html#tropycal.tracks.TrackDataset.plot_TCtors_rotated" title="tropycal.tracks.TrackDataset.plot_TCtors_rotated" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">plot_TCtors_rotated</span></a><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">plot_TCtors_rotated</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="Composite motion-relative tornadoes Min threshold: EF-0 | n=219 storms" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_002.png" />
-<p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot object at 0x0000021833D3C438&gt;
-</pre></div>
-</div>
+<img alt="../_images/sphx_glr_tracks.tornado_002.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_002.png" />
 <p>We can also make the same plot for a composite subset of tropical cyclones, given either their IDs (e.g., “AL052004”), or a storm tuple. For instance, let’s composite the four hurricanes that made landfall in Florida in 2004:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.plot_TCtors_rotated.html#tropycal.tracks.TrackDataset.plot_TCtors_rotated" title="tropycal.tracks.TrackDataset.plot_TCtors_rotated" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">plot_TCtors_rotated</span></a><span class="p">(</span><span class="n">storms</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;charley&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">),(</span><span class="s1">&#39;frances&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">),(</span><span class="s1">&#39;ivan&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">),(</span><span class="s1">&#39;jeanne&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">)])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">plot_TCtors_rotated</span><span class="p">(</span><span class="n">storms</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;charley&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">),(</span><span class="s1">&#39;frances&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">),(</span><span class="s1">&#39;ivan&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">),(</span><span class="s1">&#39;jeanne&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">)])</span>
 </pre></div>
 </div>
-<img alt="Composite motion-relative tornadoes Min threshold: EF-0 | n=4 storms" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_003.png" />
-<p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot object at 0x00000218340748D0&gt;
-</pre></div>
-</div>
+<img alt="../_images/sphx_glr_tracks.tornado_003.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_003.png" />
 </div>
 <div class="section" id="using-a-storm-object">
 <h2>Using a Storm object<a class="headerlink" href="#using-a-storm-object" title="Permalink to this headline">¶</a></h2>
 <p>Tropical cyclone tornado analyses can also be done via a Storm object. Let’s get the data for Hurricane Ivan from 2004, which produced a major tornado outbreak:</p>
 <div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>If you retrieve an instance of a Storm object without first running <code class="docutils literal notranslate"><span class="pre">TrackDataset.assign_storm_tornadoes()</span></code> method, doing tornado analyses with a Storm object will require re-downloading the tornado database for each new instance of Storm. If you plan to analyze multiple storms with tornadoes, it is recommended to run <code class="docutils literal notranslate"><span class="pre">assign_storm_tornadoes()</span></code> first.</p>
+<p class="first admonition-title">Warning</p>
+<p class="last">If you retrieve an instance of a Storm object without first running <code class="docutils literal notranslate"><span class="pre">TrackDataset.assign_storm_tornadoes()</span></code> method, doing tornado analyses with a Storm object will require re-downloading the tornado database for each new instance of Storm. If you plan to analyze multiple storms with tornadoes, it is recommended to run <code class="docutils literal notranslate"><span class="pre">assign_storm_tornadoes()</span></code> first.</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_storm.html#tropycal.tracks.TrackDataset.get_storm" title="tropycal.tracks.TrackDataset.get_storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">((</span><span class="s1">&#39;ivan&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span> <span class="o">=</span> <span class="n">hurdat_atl</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;ivan&#39;</span><span class="p">,</span><span class="mi">2004</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Let’s plot all the tornado tracks, and daily PPH, associated with Hurricane Ivan:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Storm.plot_tors.html#tropycal.tracks.Storm.plot_tors" title="tropycal.tracks.Storm.plot_tors" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">plot_tors</span></a><span class="p">(</span><span class="n">plotPPH</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_tors</span><span class="p">(</span><span class="n">plotPPH</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="Hurricane IVAN Tornado tracks and daily PPH (%), 02 Sep 2004 – 24 Sep 2004 145 kt • 910 hPa • 70.4 ACE" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_004.png" />
-<p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;cartopy.mpl.geoaxes.GeoAxesSubplot object at 0x00000218340D3048&gt;
-</pre></div>
-</div>
+<img alt="../_images/sphx_glr_tracks.tornado_004.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_004.png" />
 <p>Let’s make a plot of the tornadoes in storm motion relative coordinates:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Storm.plot_TCtors_rotated.html#tropycal.tracks.Storm.plot_TCtors_rotated" title="tropycal.tracks.Storm.plot_TCtors_rotated" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">plot_TCtors_rotated</span></a><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot_TCtors_rotated</span><span class="p">()</span>
 </pre></div>
 </div>
-<img alt="IVAN 2004 tornadoes relative to heading" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_005.png" />
-<p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.axes._subplots.AxesSubplot object at 0x0000021833D3ACC0&gt;
-</pre></div>
-</div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  49.950 seconds)</p>
+<img alt="../_images/sphx_glr_tracks.tornado_005.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.tornado_005.png" />
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  51.535 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-tornado-py">
-<div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/b4af498486d5d6233016b0de1ddf29be/tracks.tornado.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.tornado.py</span></code></a></p>
-</div>
-<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../_downloads/54c0239c6da304453316a1de4bc41b75/tracks.tornado.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tracks.tornado.ipynb</span></code></a></p>
-</div>
+<div class="sphx-glr-download docutils container">
+<a class="reference download internal" href="../_downloads/tracks.tornado.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.tornado.py</span></code></a></div>
+<div class="sphx-glr-download docutils container">
+<a class="reference download internal" href="../_downloads/tracks.tornado.ipynb" download=""><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tracks.tornado.ipynb</span></code></a></div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
 </div>

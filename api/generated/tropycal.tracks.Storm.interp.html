@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Storm.list_nhc_discussions" href="tropycal.tracks.Storm.list_nhc_discussions.html" />
@@ -204,20 +210,24 @@
 <h1>Storm.interp<a class="headerlink" href="#storm-interp" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.tracks.Storm.interp">
-<code class="sig-prename descclassname">Storm.</code><code class="sig-name descname">interp</code><span class="sig-paren">(</span><em class="sig-param">timeres=1</em>, <em class="sig-param">dt_window=24</em>, <em class="sig-param">dt_align='middle'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.interp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.interp" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Storm.</code><code class="descname">interp</code><span class="sig-paren">(</span><em>timeres=1</em>, <em>dt_window=24</em>, <em>dt_align='middle'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.interp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.interp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate a storm temporally to a specified time resolution.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>timeres</strong> (<em>int</em>) – Temporal resolution in hours to interpolate storm data to. Default is 1 hour.</p></li>
-<li><p><strong>dt_window</strong> (<em>int</em>) – Time window in hours over which to calculate temporal change data. Default is 24 hours.</p></li>
-<li><p><strong>dt_align</strong> (<em>str</em>) – Whether to align the temporal change window as “start”, “middle” or “end” of the dt_window time period.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>timeres</strong> (<em>int</em>) – Temporal resolution in hours to interpolate storm data to. Default is 1 hour.</li>
+<li><strong>dt_window</strong> (<em>int</em>) – Time window in hours over which to calculate temporal change data. Default is 24 hours.</li>
+<li><strong>dt_align</strong> (<em>str</em>) – Whether to align the temporal change window as “start”, “middle” or “end” of the dt_window time period.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>tropycal.tracks.Storm</em> – New Storm object containing the updated dictionary.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>tropycal.tracks.Storm</em> – New Storm object containing the updated dictionary.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

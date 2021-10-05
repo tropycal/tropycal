@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -167,20 +173,20 @@
 <span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">interp</span>
 <span class="kn">import</span> <span class="nn">urllib</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
-    <span class="kn">from</span> <span class="nn">cartopy</span> <span class="kn">import</span> <span class="n">crs</span> <span class="k">as</span> <span class="n">ccrs</span>
-    <span class="kn">from</span> <span class="nn">cartopy.mpl.gridliner</span> <span class="kn">import</span> <span class="n">LONGITUDE_FORMATTER</span><span class="p">,</span> <span class="n">LATITUDE_FORMATTER</span>
+    <span class="kn">from</span> <span class="nn">cartopy</span> <span class="k">import</span> <span class="n">crs</span> <span class="k">as</span> <span class="n">ccrs</span>
+    <span class="kn">from</span> <span class="nn">cartopy.mpl.gridliner</span> <span class="k">import</span> <span class="n">LONGITUDE_FORMATTER</span><span class="p">,</span> <span class="n">LATITUDE_FORMATTER</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">warn_message</span> <span class="o">=</span> <span class="s2">&quot;Warning: Cartopy is not installed in your python environment. Plotting functions will not work.&quot;</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn_message</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.storm</span> <span class="kn">import</span> <span class="n">RealtimeStorm</span>
-
-<span class="c1">#Import tools</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="c1">#Internal imports</span>
+<span class="kn">from</span> <span class="nn">.storm</span> <span class="k">import</span> <span class="n">RealtimeStorm</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">constants</span>
 
 <div class="viewcode-block" id="Realtime"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.Realtime.html#tropycal.realtime.Realtime">[docs]</a><span class="k">class</span> <span class="nc">Realtime</span><span class="p">():</span>
     
@@ -242,7 +248,7 @@
 <span class="sd">            print(&quot;This is not an invest!&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
          
         <span class="n">summary</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&lt;tropycal.realtime.Realtime&gt;&quot;</span><span class="p">]</span>
 
@@ -250,28 +256,28 @@
         
         <span class="c1">#Add dataset summary</span>
         <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Dataset Summary:&quot;</span><span class="p">)</span>
-        <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s1">Numbers of active storms: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{&quot; &quot;*4}Numbers of active storms: {len(self.storms)}&#39;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Active Storms:&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-                    <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="mi">4</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{&quot; &quot;*4}</span><span class="si">{key}</span><span class="s1">&#39;</span><span class="p">)</span>
             
             <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Active Invests:&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="mi">4</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{&quot; &quot;*4}</span><span class="si">{key}</span><span class="s1">&#39;</span><span class="p">)</span>
         
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
     
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">jtwc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">jtwc_source</span><span class="o">=</span><span class="s1">&#39;ucar&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">jtwc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">jtwc_source</span><span class="o">=</span><span class="s1">&#39;ucar&#39;</span><span class="p">):</span>
         
         <span class="c1">#Define empty dict to store track data in</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
@@ -290,7 +296,7 @@
         <span class="c1">#Determine time elapsed</span>
         <span class="n">time_elapsed</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
         <span class="n">tsec</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">time_elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">(),</span><span class="mi">2</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--&gt; Completed reading in current storm data (</span><span class="si">{</span><span class="n">tsec</span><span class="si">}</span><span class="s2"> seconds)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;--&gt; Completed reading in current storm data (</span><span class="si">{tsec}</span><span class="s2"> seconds)&quot;</span><span class="p">)</span>
         
         <span class="c1">#Remove storms that haven&#39;t been active in 18 hours</span>
         <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
@@ -307,7 +313,8 @@
             
             <span class="c1">#Get time difference</span>
             <span class="n">hours_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_date</span> <span class="o">-</span> <span class="n">last_date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span>
-            <span class="k">if</span> <span class="n">hours_diff</span> <span class="o">&gt;=</span> <span class="mf">18.0</span><span class="p">:</span> <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">hours_diff</span> <span class="o">&gt;=</span> <span class="mf">18.0</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">hours_diff</span> <span class="o">&gt;=</span> <span class="mf">9.0</span><span class="p">):</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         
         <span class="c1">#For each storm remaining, create a Storm object</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -344,7 +351,7 @@
 
         <span class="c1">#Get relevant filenames from directory</span>
         <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;b[aec][lp][012349][0123456789]</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">.dat&#39;</span>
+        <span class="n">search_pattern</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;b[aec][lp][012349][0123456789]</span><span class="si">{current_year}</span><span class="s1">.dat&#39;</span>
 
         <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">search_pattern</span><span class="p">)</span>
         <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
@@ -380,9 +387,9 @@
 
             <span class="c1">#Read in file</span>
             <span class="k">if</span> <span class="n">use_ftp</span><span class="p">:</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ftp://ftp.nhc.noaa.gov/atcf/btk/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;ftp://ftp.nhc.noaa.gov/atcf/btk/</span><span class="si">{file}</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://ftp.nhc.noaa.gov/atcf/btk/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;https://ftp.nhc.noaa.gov/atcf/btk/</span><span class="si">{file}</span><span class="s2">&quot;</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
             <span class="n">content_full</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
@@ -402,7 +409,7 @@
 
                 <span class="c1">#Get date of obs</span>
                 <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">hour</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">18</span><span class="p">]:</span> <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M&#39;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">STANDARD_HOURS</span><span class="p">:</span> <span class="k">continue</span>
 
                 <span class="c1">#Ensure obs aren&#39;t being repeated</span>
                 <span class="k">if</span> <span class="n">date</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]:</span> <span class="k">continue</span>
@@ -424,6 +431,10 @@
                 <span class="n">btk_mslp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span>
                 <span class="n">btk_type</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span>
+                
+                <span class="c1">#Get last tropical date</span>
+                <span class="k">if</span> <span class="n">btk_type</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">TROPICAL_STORM_TYPES</span><span class="p">:</span>
+                    <span class="n">last_tropical_date</span> <span class="o">=</span> <span class="n">date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
                 <span class="c1">#Replace with NaNs</span>
                 <span class="k">if</span> <span class="n">btk_wind</span> <span class="o">&gt;</span> <span class="mi">250</span> <span class="ow">or</span> <span class="n">btk_wind</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span> <span class="n">btk_wind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
@@ -456,11 +467,19 @@
                 <span class="c1">#Calculate ACE &amp; append to storm total</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
                     <span class="n">ace</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">btk_wind</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">btk_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SS&#39;</span><span class="p">,</span><span class="s1">&#39;TS&#39;</span><span class="p">,</span><span class="s1">&#39;HU&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">btk_type</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">NAMED_TROPICAL_STORM_TYPES</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">ace</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
 
             <span class="c1">#Add storm name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+            
+            <span class="c1">#Check if storm is still tropical, if not an invest.</span>
+            <span class="c1">#Re-designate as an invest if has not been a TC for over 18 hours.</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">TROPICAL_STORM_TYPES</span><span class="p">):</span>
+                <span class="n">current_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+                <span class="n">date_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_date</span> <span class="o">-</span> <span class="n">last_tropical_date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">3600</span>
+                <span class="k">if</span> <span class="n">date_diff</span> <span class="o">&gt;</span> <span class="mi">18</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         
         
     <span class="k">def</span> <span class="nf">__read_btk_jtwc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">source</span><span class="p">):</span>
@@ -473,15 +492,15 @@
         <span class="n">current_year</span> <span class="o">=</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="o">.</span><span class="n">year</span>
 
         <span class="c1">#Get list of files in online directory</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.nrlmry.navy.mil/atcf_web/docs/tracks/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">/&#39;</span>
-        <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;noaa&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/&#39;</span>
-        <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ucar&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">/&#39;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;https://www.nrlmry.navy.mil/atcf_web/docs/tracks/</span><span class="si">{current_year}</span><span class="s1">/&#39;</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;noaa&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/&#39;</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ucar&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/</span><span class="si">{current_year}</span><span class="s1">/&#39;</span>
         <span class="n">urlpath</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="n">string</span> <span class="o">=</span> <span class="n">urlpath</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 
         <span class="c1">#Get relevant filenames from directory</span>
         <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;b[isw][ohp][01234][0123456789]</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">.dat&#39;</span>
+        <span class="n">search_pattern</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;b[isw][ohp][01234][0123456789]</span><span class="si">{current_year}</span><span class="s1">.dat&#39;</span>
 
         <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">search_pattern</span><span class="p">)</span>
         <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
@@ -489,7 +508,7 @@
             <span class="k">if</span> <span class="n">filename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         
         <span class="c1">#Search for following year (for SH storms)</span>
-        <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;b[isw][ohp][01234][0123456789]</span><span class="si">{</span><span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">.dat&#39;</span>
+        <span class="n">search_pattern</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;b[isw][ohp][01234][0123456789]{current_year+1}.dat&#39;</span>
 
         <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">search_pattern</span><span class="p">)</span>
         <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
@@ -515,13 +534,13 @@
             
             <span class="c1">#Add source info</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;JTWC ATCF&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.nrlmry.navy.mil/atcf_web/docs/tracks/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">/&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;https://www.nrlmry.navy.mil/atcf_web/docs/tracks/</span><span class="si">{current_year}</span><span class="s1">/&#39;</span>
             <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;noaa&#39;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;NOAA SSD&quot;</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/&#39;</span>
             <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ucar&#39;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;UCAR&#39;s Tropical Cyclone Guidance Project (TCGP)&quot;</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/&#39;</span>
 
             <span class="c1">#add empty lists</span>
             <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;extra_obs&#39;</span><span class="p">,</span><span class="s1">&#39;special&#39;</span><span class="p">,</span><span class="s1">&#39;type&#39;</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;mslp&#39;</span><span class="p">,</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]:</span>
@@ -529,9 +548,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
             <span class="c1">#Read in file</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.nrlmry.navy.mil/atcf_web/docs/tracks/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;noaa&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ucar&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;https://www.nrlmry.navy.mil/atcf_web/docs/tracks/</span><span class="si">{current_year}</span><span class="s2">/</span><span class="si">{file}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;noaa&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/</span><span class="si">{file}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ucar&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/</span><span class="si">{current_year}</span><span class="s2">/</span><span class="si">{file}</span><span class="s2">&quot;</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
@@ -546,7 +565,7 @@
 
                 <span class="c1">#Get date of obs</span>
                 <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">hour</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">18</span><span class="p">]:</span> <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M&#39;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">STANDARD_HOURS</span><span class="p">:</span> <span class="k">continue</span>
 
                 <span class="c1">#Ensure obs aren&#39;t being repeated</span>
                 <span class="k">if</span> <span class="n">date</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]:</span> <span class="k">continue</span>
@@ -579,7 +598,7 @@
                     <span class="n">btk_type</span> <span class="o">=</span> <span class="n">get_storm_type</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">btk_type</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">btk_type</span> <span class="o">==</span> <span class="s2">&quot;TY&quot;</span><span class="p">:</span> <span class="n">btk_type</span> <span class="o">=</span> <span class="s2">&quot;HU&quot;</span>
+                    <span class="k">if</span> <span class="n">btk_type</span> <span class="o">==</span> <span class="s2">&quot;TY&quot;</span> <span class="ow">or</span> <span class="n">btk_type</span> <span class="o">==</span> <span class="s2">&quot;ST&quot;</span><span class="p">:</span> <span class="n">btk_type</span> <span class="o">=</span> <span class="s2">&quot;HU&quot;</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span>
 
                 <span class="c1">#Replace with NaNs</span>
@@ -604,7 +623,7 @@
                 <span class="c1">#Calculate ACE &amp; append to storm total</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
                     <span class="n">ace</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">btk_wind</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">btk_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;SS&#39;</span><span class="p">,</span><span class="s1">&#39;TS&#39;</span><span class="p">,</span><span class="s1">&#39;HU&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">btk_type</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">NAMED_TROPICAL_STORM_TYPES</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">ace</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
 
             <span class="c1">#Add storm name</span>

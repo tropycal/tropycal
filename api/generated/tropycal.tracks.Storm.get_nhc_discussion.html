@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Storm.get_operational_forecasts" href="tropycal.tracks.Storm.get_operational_forecasts.html" />
@@ -204,19 +210,23 @@
 <h1>Storm.get_nhc_discussion<a class="headerlink" href="#storm-get-nhc-discussion" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.tracks.Storm.get_nhc_discussion">
-<code class="sig-prename descclassname">Storm.</code><code class="sig-name descname">get_nhc_discussion</code><span class="sig-paren">(</span><em class="sig-param">forecast</em>, <em class="sig-param">save_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_nhc_discussion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_nhc_discussion" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Storm.</code><code class="descname">get_nhc_discussion</code><span class="sig-paren">(</span><em>forecast</em>, <em>save_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_nhc_discussion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_nhc_discussion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves a single NHC forecast discussion.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>forecast</strong> (<em>datetime.datetime</em><em> or </em><em>int</em>) – Datetime object representing the desired forecast discussion time (in UTC), or integer representing the forecast discussion ID. If -1 is passed, the latest forecast discussion is returned.</p></li>
-<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory path to save the forecast discussion text to. If None (default), forecast won’t be saved.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>forecast</strong> (<em>datetime.datetime</em><em> or </em><em>int</em>) – Datetime object representing the desired forecast discussion time (in UTC), or integer representing the forecast discussion ID. If -1 is passed, the latest forecast discussion is returned.</li>
+<li><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory path to save the forecast discussion text to. If None (default), forecast won’t be saved.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>dict</em> – Dictionary containing the forecast discussion text and accompanying information about this discussion.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>dict</em> – Dictionary containing the forecast discussion text and accompanying information about this discussion.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

@@ -4,7 +4,7 @@ Tornado Analyses
 =========================
 This sample script illustrates how to retrieve and analyze the Storm Prediction Center (SPC) tornado database (1950-present), using both the tornado and tracks modules.
 
-For documentation generation purposes, return_ax must be set True for plotting functions only for the Tornado and Recon classes. You don't need to have this extra argument in every plotting function call (e.g., "storm.plot(return_ax=True)" will produce the same output as "storm.plot()").
+For documentation generation purposes, return_ax must be set True for plotting functions. You don't need to have this extra argument in every plotting function call (e.g., "storm.plot(return_ax=True)" will produce the same output as "storm.plot()").
 """
 
 import tropycal.tracks as tracks

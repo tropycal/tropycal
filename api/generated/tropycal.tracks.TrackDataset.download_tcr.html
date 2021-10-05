@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,15 +45,11 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="TrackDataset.filter_storms" href="tropycal.tracks.TrackDataset.filter_storms.html" />
-    <link rel="prev" title="TrackDataset.assign_storm_tornadoes" href="tropycal.tracks.TrackDataset.assign_storm_tornadoes.html" /> 
+    <link rel="prev" title="TrackDataset.climatology" href="tropycal.tracks.TrackDataset.climatology.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -101,6 +107,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.ace_climo.html">TrackDataset.ace_climo</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.assign_storm_tornadoes.html">TrackDataset.assign_storm_tornadoes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.climatology.html">TrackDataset.climatology</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">TrackDataset.download_tcr</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.filter_storms.html">TrackDataset.filter_storms</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.get_season.html">TrackDataset.get_season</a></li>
@@ -115,7 +122,9 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.plot_storms.html">TrackDataset.plot_storms</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.rank_storm.html">TrackDataset.rank_storm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.search_name.html">TrackDataset.search_name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.season_composite.html">TrackDataset.season_composite</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html">TrackDataset.storm_ace_vs_season</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.to_dataframe.html">TrackDataset.to_dataframe</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.wind_pres_relationship.html">TrackDataset.wind_pres_relationship</a></li>
 </ul>
 </li>
@@ -205,16 +214,20 @@
 <h1>TrackDataset.download_tcr<a class="headerlink" href="#trackdataset-download-tcr" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.tracks.TrackDataset.download_tcr">
-<code class="sig-prename descclassname">TrackDataset.</code><code class="sig-name descname">download_tcr</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">save_path=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.download_tcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.download_tcr" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">TrackDataset.</code><code class="descname">download_tcr</code><span class="sig-paren">(</span><em>storm</em>, <em>save_path=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.download_tcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.download_tcr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads the NHC offical Tropical Cyclone Report (TCR) for the requested storm to the requested directory. Available only for storms with advisories issued by the National Hurricane Center.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>storm</strong> (<em>str</em><em>, </em><em>tuple</em><em> or </em><em>dict</em>) – Requested storm. Can be either string of storm ID (e.g., “AL052019”), tuple with storm name and year (e.g., (“Matthew”,2016)), or a dict entry.</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – Path of directory to download the TCR into. Default is current working directory.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>storm</strong> (<em>str</em><em>, </em><em>tuple</em><em> or </em><em>dict</em>) – Requested storm. Can be either string of storm ID (e.g., “AL052019”), tuple with storm name and year (e.g., (“Matthew”,2016)), or a dict entry.</li>
+<li><strong>save_path</strong> (<em>str</em>) – Path of directory to download the TCR into. Default is current working directory.</li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>
@@ -230,7 +243,7 @@
         <a href="tropycal.tracks.TrackDataset.filter_storms.html" class="btn btn-neutral float-right" title="TrackDataset.filter_storms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tropycal.tracks.TrackDataset.assign_storm_tornadoes.html" class="btn btn-neutral float-left" title="TrackDataset.assign_storm_tornadoes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tropycal.tracks.TrackDataset.climatology.html" class="btn btn-neutral float-left" title="TrackDataset.climatology" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

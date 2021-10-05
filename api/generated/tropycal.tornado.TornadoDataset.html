@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="TornadoDataset.get_storm_tornadoes" href="tropycal.tornado.TornadoDataset.get_storm_tornadoes.html" />
@@ -187,38 +193,42 @@
 <h1>tropycal.tornado.TornadoDataset<a class="headerlink" href="#tropycal-tornado-tornadodataset" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="tropycal.tornado.TornadoDataset">
-<em class="property">class </em><code class="sig-prename descclassname">tropycal.tornado.</code><code class="sig-name descname">TornadoDataset</code><span class="sig-paren">(</span><em class="sig-param">mag_thresh=0</em>, <em class="sig-param">tornado_path='spc'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">tropycal.tornado.</code><code class="descname">TornadoDataset</code><span class="sig-paren">(</span><em>mag_thresh=0</em>, <em>tornado_path='spc'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of a TornadoDataset object containing tornado data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mag_thresh</strong> (<em>int</em>) – Minimum threshold for tornado rating.</p></li>
-<li><p><strong>tornado_path</strong> (<em>str</em>) – Source to read tornado data from. Default is “spc”, which reads from the online Storm Prediction Center (SPC) 1950-present tornado database. Can change this to a local file.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mag_thresh</strong> (<em>int</em>) – Minimum threshold for tornado rating.</li>
+<li><strong>tornado_path</strong> (<em>str</em>) – Source to read tornado data from. Default is “spc”, which reads from the online Storm Prediction Center (SPC) 1950-present tornado database. Can change this to a local file.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>TornadoDataset</em> – An instance of TornadoDataset.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>TornadoDataset</em> – An instance of TornadoDataset.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Methods Summary</p>
 <blockquote>
-<div><table class="longtable docutils align-default">
+<div><table border="1" class="longtable docutils">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tornado.TornadoDataset.get_storm_tornadoes.html#tropycal.tornado.TornadoDataset.get_storm_tornadoes" title="tropycal.tornado.TornadoDataset.get_storm_tornadoes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.get_storm_tornadoes</span></code></a>(storm, …)</p></td>
-<td><p>Retrieves all tornado tracks that occur along the track of a tropical cyclone.</p></td>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.tornado.TornadoDataset.get_storm_tornadoes.html#tropycal.tornado.TornadoDataset.get_storm_tornadoes" title="tropycal.tornado.TornadoDataset.get_storm_tornadoes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.get_storm_tornadoes</span></code></a>(storm,&nbsp;…)</td>
+<td>Retrieves all tornado tracks that occur along the track of a tropical cyclone.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tornado.TornadoDataset.plot_TCtors_rotated.html#tropycal.tornado.TornadoDataset.plot_TCtors_rotated" title="tropycal.tornado.TornadoDataset.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.plot_TCtors_rotated</span></code></a>(storm[, …])</p></td>
-<td><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.tornado.TornadoDataset.plot_TCtors_rotated.html#tropycal.tornado.TornadoDataset.plot_TCtors_rotated" title="tropycal.tornado.TornadoDataset.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.plot_TCtors_rotated</span></code></a>(storm[,&nbsp;…])</td>
+<td>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tornado.TornadoDataset.plot_tors.html#tropycal.tornado.TornadoDataset.plot_tors" title="tropycal.tornado.TornadoDataset.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.plot_tors</span></code></a>(tor_info[, domain, …])</p></td>
-<td><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPH).</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.tornado.TornadoDataset.plot_tors.html#tropycal.tornado.TornadoDataset.plot_tors" title="tropycal.tornado.TornadoDataset.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.plot_tors</span></code></a>(tor_info[,&nbsp;domain,&nbsp;…])</td>
+<td>Creates a plot of tornado tracks and Practically Perfect Forecast (PPH).</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tornado.TornadoDataset.rotateToHeading.html#tropycal.tornado.TornadoDataset.rotateToHeading" title="tropycal.tornado.TornadoDataset.rotateToHeading"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.rotateToHeading</span></code></a>(storm, stormTors)</p></td>
-<td><p>Rotate tornado tracks to their position relative to the heading of the TC at the time.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.tornado.TornadoDataset.rotateToHeading.html#tropycal.tornado.TornadoDataset.rotateToHeading" title="tropycal.tornado.TornadoDataset.rotateToHeading"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TornadoDataset.rotateToHeading</span></code></a>(storm,&nbsp;stormTors)</td>
+<td>Rotate tornado tracks to their position relative to the heading of the TC at the time.</td>
 </tr>
 </tbody>
 </table>

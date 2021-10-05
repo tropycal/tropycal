@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="RainDataset.plot_rain" href="tropycal.rain.RainDataset.plot_rain.html" />
@@ -189,22 +195,26 @@
 <h1>RainDataset.interpolate_to_grid<a class="headerlink" href="#raindataset-interpolate-to-grid" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.rain.RainDataset.interpolate_to_grid">
-<code class="sig-prename descclassname">RainDataset.</code><code class="sig-name descname">interpolate_to_grid</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">grid_res=0.1</em>, <em class="sig-param">method='linear'</em>, <em class="sig-param">return_xarray=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/rain/dataset.html#RainDataset.interpolate_to_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.rain.RainDataset.interpolate_to_grid" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">RainDataset.</code><code class="descname">interpolate_to_grid</code><span class="sig-paren">(</span><em>storm</em>, <em>grid_res=0.1</em>, <em>method='linear'</em>, <em>return_xarray=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/rain/dataset.html#RainDataset.interpolate_to_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.rain.RainDataset.interpolate_to_grid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolates storm rainfall data to a horizontal grid.</p>
 <p>Interpolation is performed using Scipy’s <cite>scipy.interpolate.griddata()</cite> interpolation function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Instance of a Storm object.</p></li>
-<li><p><strong>grid_res</strong> (<em>int</em><em> or </em><em>float</em>) – Horizontal resolution of the desired grid in degrees. Default is 0.1 degrees.</p></li>
-<li><p><strong>method</strong> (<em>str</em>) – Method for interpolation to pass to scipy’s interpolation function. Default is “linear”.</p></li>
-<li><p><strong>return_xarray</strong> (<em>bool</em>) – If True, output is returned as an xarray DataArray with coordinates included. Default is false.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Instance of a Storm object.</li>
+<li><strong>grid_res</strong> (<em>int</em><em> or </em><em>float</em>) – Horizontal resolution of the desired grid in degrees. Default is 0.1 degrees.</li>
+<li><strong>method</strong> (<em>str</em>) – Method for interpolation to pass to scipy’s interpolation function. Default is “linear”.</li>
+<li><strong>return_xarray</strong> (<em>bool</em>) – If True, output is returned as an xarray DataArray with coordinates included. Default is false.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>dict or xarray.DataArray</em> – If return_xarray is True, an xarray DataArray is returned. Otherwise, a dict including the grid lat, lon and grid values is returned.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>dict or xarray.DataArray</em> – If return_xarray is True, an xarray DataArray is returned. Otherwise, a dict including the grid lat, lon and grid values is returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

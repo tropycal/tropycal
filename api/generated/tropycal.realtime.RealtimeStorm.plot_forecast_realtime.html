@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="RealtimeStorm.plot_gefs_ensembles" href="tropycal.realtime.RealtimeStorm.plot_gefs_ensembles.html" />
@@ -209,32 +215,36 @@
 <h1>RealtimeStorm.plot_forecast_realtime<a class="headerlink" href="#realtimestorm-plot-forecast-realtime" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.realtime.RealtimeStorm.plot_forecast_realtime">
-<code class="sig-prename descclassname">RealtimeStorm.</code><code class="sig-name descname">plot_forecast_realtime</code><span class="sig-paren">(</span><em class="sig-param">track_labels='fhr'</em>, <em class="sig-param">cone_days=5</em>, <em class="sig-param">domain='dynamic_forecast'</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">save_path=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.plot_forecast_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_forecast_realtime" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">RealtimeStorm.</code><code class="descname">plot_forecast_realtime</code><span class="sig-paren">(</span><em>track_labels='fhr'</em>, <em>cone_days=5</em>, <em>domain='dynamic_forecast'</em>, <em>ax=None</em>, <em>cartopy_proj=None</em>, <em>save_path=None</em>, <em>prop={}</em>, <em>map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.plot_forecast_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_forecast_realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the latest available official forecast. Available for both NHC and JTWC sources.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>track_labels</strong> (<em>str</em>) – <p>Label forecast hours with the following methods:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>track_labels</strong> (<em>str</em>) – <p>Label forecast hours with the following methods:</p>
 <ul>
-<li><p><strong>””</strong> = no label</p></li>
-<li><p><strong>”fhr”</strong> = forecast hour (default)</p></li>
-<li><p><strong>”valid_utc”</strong> = UTC valid time</p></li>
-<li><p><strong>”valid_edt”</strong> = EDT valid time</p></li>
+<li><strong>”“</strong> = no label</li>
+<li><strong>”fhr”</strong> = forecast hour (default)</li>
+<li><strong>”valid_utc”</strong> = UTC valid time</li>
+<li><strong>”valid_edt”</strong> = EDT valid time</li>
 </ul>
-</p></li>
-<li><p><strong>cone_days</strong> (<em>int</em>) – Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic_forecast”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
-<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</p></li>
-<li><p><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</p></li>
-<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</li>
+<li><strong>cone_days</strong> (<em>int</em>) – Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.</li>
+<li><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic_forecast”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</li>
+<li><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</li>
+<li><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</li>
+<li><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</li>
+<li><strong>prop</strong> (<em>dict</em>) – Property of storm track lines.</li>
+<li><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>ax</em> – Instance of axes containing the plot is returned.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>ax</em> – Instance of axes containing the plot is returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

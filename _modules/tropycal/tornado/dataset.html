@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -162,8 +168,8 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
-<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">interp1d</span>
 <span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
@@ -174,17 +180,17 @@
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
-    <span class="kn">from</span> <span class="nn">cartopy</span> <span class="kn">import</span> <span class="n">crs</span> <span class="k">as</span> <span class="n">ccrs</span>
-    <span class="kn">from</span> <span class="nn">cartopy.mpl.gridliner</span> <span class="kn">import</span> <span class="n">LONGITUDE_FORMATTER</span><span class="p">,</span> <span class="n">LATITUDE_FORMATTER</span>
+    <span class="kn">from</span> <span class="nn">cartopy</span> <span class="k">import</span> <span class="n">crs</span> <span class="k">as</span> <span class="n">ccrs</span>
+    <span class="kn">from</span> <span class="nn">cartopy.mpl.gridliner</span> <span class="k">import</span> <span class="n">LONGITUDE_FORMATTER</span><span class="p">,</span> <span class="n">LATITUDE_FORMATTER</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">warn_message</span> <span class="o">=</span> <span class="s2">&quot;Warning: Cartopy is not installed in your python environment. Plotting functions will not work.&quot;</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn_message</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.plot</span> <span class="kn">import</span> <span class="n">TornadoPlot</span>
+<span class="kn">from</span> <span class="nn">.plot</span> <span class="k">import</span> <span class="n">TornadoPlot</span>
 
 <span class="c1">#Import tools</span>
-<span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="o">*</span>
 
 <div class="viewcode-block" id="TornadoDataset"><a class="viewcode-back" href="../../../api/generated/tropycal.tornado.TornadoDataset.html#tropycal.tornado.TornadoDataset">[docs]</a><span class="k">class</span> <span class="nc">TornadoDataset</span><span class="p">():</span>
     
@@ -204,7 +210,7 @@
 <span class="sd">        An instance of TornadoDataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mag_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tornado_path</span><span class="o">=</span><span class="s1">&#39;spc&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mag_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tornado_path</span><span class="o">=</span><span class="s1">&#39;spc&#39;</span><span class="p">):</span>
         
         <span class="c1">#Error check</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mag_thresh</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
@@ -215,21 +221,21 @@
         <span class="c1">#Read in tornado dataset</span>
         <span class="n">timer_start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="n">yrnow</span> <span class="o">=</span> <span class="n">timer_start</span><span class="o">.</span><span class="n">year</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;--&gt; Starting to read in tornado track data&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;--&gt; Starting to read in tornado track data&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tornado_path</span> <span class="o">==</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">yrlast</span> <span class="o">=</span> <span class="n">yrnow</span><span class="o">-</span><span class="mi">1</span>
-                <span class="n">Tors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;https://www.spc.noaa.gov/wcm/data/1950-</span><span class="si">{</span><span class="n">yrlast</span><span class="si">}</span><span class="s1">_actual_tornadoes.csv&#39;</span><span class="p">,</span>\
+                <span class="n">Tors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;https://www.spc.noaa.gov/wcm/data/1950-</span><span class="si">{yrlast}</span><span class="s1">_actual_tornadoes.csv&#39;</span><span class="p">,</span>\
                                    <span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">parse_dates</span><span class="o">=</span><span class="p">[[</span><span class="s1">&#39;mo&#39;</span><span class="p">,</span><span class="s1">&#39;dy&#39;</span><span class="p">,</span><span class="s1">&#39;yr&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">]])</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="n">yrlast</span> <span class="o">=</span> <span class="n">yrnow</span><span class="o">-</span><span class="mi">2</span>
-                <span class="n">Tors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;https://www.spc.noaa.gov/wcm/data/1950-</span><span class="si">{</span><span class="n">yrlast</span><span class="si">}</span><span class="s1">_actual_tornadoes.csv&#39;</span><span class="p">,</span>\
+                <span class="n">Tors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;https://www.spc.noaa.gov/wcm/data/1950-</span><span class="si">{yrlast}</span><span class="s1">_actual_tornadoes.csv&#39;</span><span class="p">,</span>\
                                    <span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">parse_dates</span><span class="o">=</span><span class="p">[[</span><span class="s1">&#39;mo&#39;</span><span class="p">,</span><span class="s1">&#39;dy&#39;</span><span class="p">,</span><span class="s1">&#39;yr&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">]])</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;--&gt; Completed reading in tornado data for 1950-</span><span class="si">{</span><span class="n">yrlast</span><span class="si">}</span><span class="s1"> (%.2f seconds)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timer_start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;--&gt; Completed reading in tornado data for 1950-</span><span class="si">{yrlast}</span><span class="s1"> (</span><span class="si">%.2f</span><span class="s1"> seconds)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timer_start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">Tors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">tornado_path</span><span class="p">,</span>\
                                <span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">parse_dates</span><span class="o">=</span><span class="p">[[</span><span class="s1">&#39;mo&#39;</span><span class="p">,</span><span class="s1">&#39;dy&#39;</span><span class="p">,</span><span class="s1">&#39;yr&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">]])</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;--&gt; Completed reading in tornado data from local file (%.2f seconds)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timer_start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;--&gt; Completed reading in tornado data from local file (</span><span class="si">%.2f</span><span class="s1"> seconds)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timer_start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span>
         
         <span class="c1">#Get UTC from timezone (most are 3 = CST, but some 0 and 9 = GMT)</span>
         <span class="n">tz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">9</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Tors</span><span class="p">[</span><span class="s1">&#39;tz&#39;</span><span class="p">]])</span>
@@ -412,14 +418,14 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">,</span> <span class="s1">&#39;box&#39;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Left/Right of Storm Heading (km)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Behind/Ahead of Storm Heading (km)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">storm</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">storm</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s1"> tornadoes relative to heading&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{storm.name}</span><span class="s1"> </span><span class="si">{storm.year}</span><span class="s1"> tornadoes relative to heading&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mf">11.5</span><span class="p">)</span>
         
         <span class="c1">#Add legend</span>
         <span class="n">handles</span><span class="o">=</span><span class="p">[]</span>
         <span class="k">for</span> <span class="n">ef</span><span class="p">,</span><span class="n">color</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">EFcolors</span><span class="p">):</span>
             <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stormTors</span><span class="p">[</span><span class="n">stormTors</span><span class="p">[</span><span class="s1">&#39;mag&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">ef</span><span class="p">])</span>
-            <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mlines</span><span class="o">.</span><span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;EF-</span><span class="si">{</span><span class="n">ef</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">))</span>
+            <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mlines</span><span class="o">.</span><span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;EF-</span><span class="si">{ef}</span><span class="s1"> (</span><span class="si">{count}</span><span class="s1">)&#39;</span><span class="p">))</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mf">11.5</span><span class="p">)</span>
         
         <span class="c1">#Return axis or show figure</span>

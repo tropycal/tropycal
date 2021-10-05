@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="RealtimeStorm.interp" href="tropycal.realtime.RealtimeStorm.interp.html" />
@@ -209,17 +215,21 @@
 <h1>RealtimeStorm.get_recon<a class="headerlink" href="#realtimestorm-get-recon" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.realtime.RealtimeStorm.get_recon">
-<code class="sig-prename descclassname">RealtimeStorm.</code><code class="sig-name descname">get_recon</code><span class="sig-paren">(</span><em class="sig-param">deltap_thresh=8</em>, <em class="sig-param">save_path=''</em>, <em class="sig-param">read_path=''</em>, <em class="sig-param">mission_url_list=None</em>, <em class="sig-param">update=False</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_recon" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">RealtimeStorm.</code><code class="descname">get_recon</code><span class="sig-paren">(</span><em>deltap_thresh=8</em>, <em>save_path=''</em>, <em>read_path=''</em>, <em>mission_url_list=None</em>, <em>update=False</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_recon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of ReconDataset for this storm’s data. Saves it as an attribute of this object (storm.recon).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Requested storm as an instance of a Storm object.</p></li>
-<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.</p></li>
-<li><p><strong>read_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to read saved recon data from. If specified, “save_path” cannot be passed as an argument.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Requested storm as an instance of a Storm object.</li>
+<li><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.</li>
+<li><strong>read_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to read saved recon data from. If specified, “save_path” cannot be passed as an argument.</li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

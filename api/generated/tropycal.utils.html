@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="accumulated_cyclone_energy" href="tropycal.utils.accumulated_cyclone_energy.html" />
@@ -201,32 +207,32 @@
 <div class="section" id="generic-utilities">
 <h2>Generic Utilities<a class="headerlink" href="#generic-utilities" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><table class="longtable docutils align-default">
+<div><table border="1" class="longtable docutils">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.accumulated_cyclone_energy.html#tropycal.utils.accumulated_cyclone_energy" title="tropycal.utils.accumulated_cyclone_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">accumulated_cyclone_energy</span></code></a>(wind_speed[, hours])</p></td>
-<td><p>Calculate Accumulated Cyclone Energy (ACE) based on sustained wind speed in knots.</p></td>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.utils.accumulated_cyclone_energy.html#tropycal.utils.accumulated_cyclone_energy" title="tropycal.utils.accumulated_cyclone_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">accumulated_cyclone_energy</span></code></a>(wind_speed[,&nbsp;hours])</td>
+<td>Calculate Accumulated Cyclone Energy (ACE) based on sustained wind speed in knots.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.wind_to_category.html#tropycal.utils.wind_to_category" title="tropycal.utils.wind_to_category"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_to_category</span></code></a>(wind_speed)</p></td>
-<td><p>Convert sustained wind speed in knots to Saffir-Simpson Hurricane Wind Scale category.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.utils.wind_to_category.html#tropycal.utils.wind_to_category" title="tropycal.utils.wind_to_category"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wind_to_category</span></code></a>(wind_speed)</td>
+<td>Convert sustained wind speed in knots to Saffir-Simpson Hurricane Wind Scale category.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.category_to_wind.html#tropycal.utils.category_to_wind" title="tropycal.utils.category_to_wind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">category_to_wind</span></code></a>(category)</p></td>
-<td><p>Convert Saffir-Simpson Hurricane Wind Scale category to minimum threshold sustained wind speed in knots.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.utils.category_to_wind.html#tropycal.utils.category_to_wind" title="tropycal.utils.category_to_wind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">category_to_wind</span></code></a>(category)</td>
+<td>Convert Saffir-Simpson Hurricane Wind Scale category to minimum threshold sustained wind speed in knots.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.classify_subtropical.html#tropycal.utils.classify_subtropical" title="tropycal.utils.classify_subtropical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classify_subtropical</span></code></a>(storm_type)</p></td>
-<td><p>Determine whether a tropical cyclone was purely subtropical.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.utils.classify_subtropical.html#tropycal.utils.classify_subtropical" title="tropycal.utils.classify_subtropical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classify_subtropical</span></code></a>(storm_type)</td>
+<td>Determine whether a tropical cyclone was purely subtropical.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.get_basin.html#tropycal.utils.get_basin" title="tropycal.utils.get_basin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_basin</span></code></a>(lat, lon[, storm_id])</p></td>
-<td><p>Returns the current basin of the tropical cyclone.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.utils.get_basin.html#tropycal.utils.get_basin" title="tropycal.utils.get_basin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_basin</span></code></a>(lat,&nbsp;lon[,&nbsp;storm_id])</td>
+<td>Returns the current basin of the tropical cyclone.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.get_storm_classification.html#tropycal.utils.get_storm_classification" title="tropycal.utils.get_storm_classification"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm_classification</span></code></a>(wind_speed, …)</p></td>
-<td><p>Retrieve the tropical cyclone classification given its subtropical status and current basin.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.utils.get_storm_classification.html#tropycal.utils.get_storm_classification" title="tropycal.utils.get_storm_classification"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm_classification</span></code></a>(wind_speed,&nbsp;…)</td>
+<td>Retrieve the tropical cyclone classification given its subtropical status and current basin.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.get_storm_type.html#tropycal.utils.get_storm_type" title="tropycal.utils.get_storm_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm_type</span></code></a>(wind_speed, subtropical_flag)</p></td>
-<td><p>Retrieve the 2-character tropical cyclone type (e.g., “TD”, “TS”, “HU”) given its subtropical status.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.utils.get_storm_type.html#tropycal.utils.get_storm_type" title="tropycal.utils.get_storm_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm_type</span></code></a>(wind_speed,&nbsp;subtropical_flag)</td>
+<td>Retrieve the 2-character tropical cyclone type (e.g., “TD”, “TS”, “HU”) given its subtropical status.</td>
 </tr>
 </tbody>
 </table>
@@ -235,17 +241,17 @@
 <div class="section" id="cartopy-utilities">
 <h2>Cartopy Utilities<a class="headerlink" href="#cartopy-utilities" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><table class="longtable docutils align-default">
+<div><table border="1" class="longtable docutils">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.add_tropycal.html#tropycal.utils.add_tropycal" title="tropycal.utils.add_tropycal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_tropycal</span></code></a>(ax)</p></td>
-<td><p>Adds Tropycal plotting capability to a matplotlib.pyplot axes instance with a Cartopy projection.</p></td>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.utils.add_tropycal.html#tropycal.utils.add_tropycal" title="tropycal.utils.add_tropycal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_tropycal</span></code></a>(ax)</td>
+<td>Adds Tropycal plotting capability to a matplotlib.pyplot axes instance with a Cartopy projection.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.plot_storm.html#tropycal.utils.plot_storm" title="tropycal.utils.plot_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_storm</span></code></a>(self, storm, *args, **kwargs)</p></td>
-<td><p>Plot a Storm object on the axes instance.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.utils.plot_storm.html#tropycal.utils.plot_storm" title="tropycal.utils.plot_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_storm</span></code></a>(self,&nbsp;storm,&nbsp;*args,&nbsp;**kwargs)</td>
+<td>Plot a Storm object on the axes instance.</td>
 </tr>
 </tbody>
 </table>
@@ -254,20 +260,20 @@
 <div class="section" id="colors">
 <h2>Colors<a class="headerlink" href="#colors" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><table class="longtable docutils align-default">
+<div><table border="1" class="longtable docutils">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.get_colors_sshws.html#tropycal.utils.get_colors_sshws" title="tropycal.utils.get_colors_sshws"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_colors_sshws</span></code></a>(wind_speed)</p></td>
-<td><p>Retrieve the default colors for the Saffir-Simpson Hurricane Wind Scale (SSHWS).</p></td>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.utils.get_colors_sshws.html#tropycal.utils.get_colors_sshws" title="tropycal.utils.get_colors_sshws"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_colors_sshws</span></code></a>(wind_speed)</td>
+<td>Retrieve the default colors for the Saffir-Simpson Hurricane Wind Scale (SSHWS).</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.get_colors_ef.html#tropycal.utils.get_colors_ef" title="tropycal.utils.get_colors_ef"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_colors_ef</span></code></a>([colormap])</p></td>
-<td><p>Retrieve a list of colors for the Enhanced Fujita (EF) tornado scale.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.utils.get_colors_ef.html#tropycal.utils.get_colors_ef" title="tropycal.utils.get_colors_ef"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_colors_ef</span></code></a>([colormap])</td>
+<td>Retrieve a list of colors for the Enhanced Fujita (EF) tornado scale.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.get_colors_pph.html#tropycal.utils.get_colors_pph" title="tropycal.utils.get_colors_pph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_colors_pph</span></code></a>(plot_type, colormap[, levels])</p></td>
-<td><p>Retrieve a list of colors for Practically Perfect Hindcast (PPH) for tornadoes.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.utils.get_colors_pph.html#tropycal.utils.get_colors_pph" title="tropycal.utils.get_colors_pph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_colors_pph</span></code></a>(plot_type,&nbsp;colormap[,&nbsp;levels])</td>
+<td>Retrieve a list of colors for Practically Perfect Hindcast (PPH) for tornadoes.</td>
 </tr>
 </tbody>
 </table>

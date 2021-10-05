@@ -1,0 +1,12 @@
+TrackDataset.season_composite
+=============================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.season_composite
+
+.. include:: tropycal.tracks.TrackDataset.season_composite.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -1,0 +1,12 @@
+TrackDataset.climatology
+========================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.climatology
+
+.. include:: tropycal.tracks.TrackDataset.climatology.examples
+
+.. raw:: html
+
+      <div style='clear:both'></div>

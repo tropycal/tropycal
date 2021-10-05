@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="RealtimeStorm.to_dataframe" href="tropycal.realtime.RealtimeStorm.to_dataframe.html" />
@@ -209,38 +215,42 @@
 <h1>RealtimeStorm.sel<a class="headerlink" href="#realtimestorm-sel" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.realtime.RealtimeStorm.sel">
-<code class="sig-prename descclassname">RealtimeStorm.</code><code class="sig-name descname">sel</code><span class="sig-paren">(</span><em class="sig-param">time=None</em>, <em class="sig-param">lat=None</em>, <em class="sig-param">lon=None</em>, <em class="sig-param">vmax=None</em>, <em class="sig-param">mslp=None</em>, <em class="sig-param">dvmax_dt=None</em>, <em class="sig-param">dmslp_dt=None</em>, <em class="sig-param">stormtype=None</em>, <em class="sig-param">method='exact'</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.sel" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">RealtimeStorm.</code><code class="descname">sel</code><span class="sig-paren">(</span><em>time=None</em>, <em>lat=None</em>, <em>lon=None</em>, <em>vmax=None</em>, <em>mslp=None</em>, <em>dvmax_dt=None</em>, <em>dmslp_dt=None</em>, <em>stormtype=None</em>, <em>method='exact'</em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.sel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Subset this storm by any of its parameters and return a new storm object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>time</strong> (<em>datetime.datetime</em><em> or </em><em>list/tuple of datetimes</em>) – Datetime object for single point, or list/tuple of start time and end time.
-Default is None, which returns all points</p></li>
-<li><p><strong>lat</strong> (<em>float/int</em><em> or </em><em>list/tuple of float/int</em>) – Float/int for single point, or list/tuple of latitude bounds (S,N).
-None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>lon</strong> (<em>float/int</em><em> or </em><em>list/tuple of float/int</em>) – Float/int for single point, or list/tuple of longitude bounds (W,E).
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time</strong> (<em>datetime.datetime</em><em> or </em><em>list/tuple of datetimes</em>) – Datetime object for single point, or list/tuple of start time and end time.
+Default is None, which returns all points</li>
+<li><strong>lat</strong> (<em>float/int</em><em> or </em><em>list/tuple of float/int</em>) – Float/int for single point, or list/tuple of latitude bounds (S,N).
+None in either position of a tuple means it is boundless on that side.</li>
+<li><strong>lon</strong> (<em>float/int</em><em> or </em><em>list/tuple of float/int</em>) – Float/int for single point, or list/tuple of longitude bounds (W,E).
 If either lat or lon is a tuple, the other can be None for no bounds.
-If either is a tuple, the other canNOT be a float/int.</p></li>
-<li><p><strong>vmax</strong> (<em>list/tuple of float/int</em>) – list/tuple of vmax bounds (min,max).
-None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>mslp</strong> (<em>list/tuple of float/int</em>) – list/tuple of mslp bounds (min,max).
-None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>dvmax_dt</strong> (<em>list/tuple of float/int</em>) – list/tuple of vmax bounds (min,max). ONLY AVAILABLE AFTER INTERP.
-None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>dmslp_dt</strong> (<em>list/tuple of float/int</em>) – list/tuple of mslp bounds (min,max). ONLY AVAILABLE AFTER INTERP.
-None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>stormtype</strong> (<em>list/tuple of str</em>) – list/tuple of stormtypes (options: ‘LO’,’EX’,’TD’,’SD’,’TS’,’SS’,’HU’)</p></li>
-<li><p><strong>method</strong> (<em>str</em>) – Applies for single point selection in time and lat/lon.
+If either is a tuple, the other canNOT be a float/int.</li>
+<li><strong>vmax</strong> (<em>list/tuple of float/int</em>) – list/tuple of vmax bounds (min,max).
+None in either position of a tuple means it is boundless on that side.</li>
+<li><strong>mslp</strong> (<em>list/tuple of float/int</em>) – list/tuple of mslp bounds (min,max).
+None in either position of a tuple means it is boundless on that side.</li>
+<li><strong>dvmax_dt</strong> (<em>list/tuple of float/int</em>) – list/tuple of vmax bounds (min,max). ONLY AVAILABLE AFTER INTERP.
+None in either position of a tuple means it is boundless on that side.</li>
+<li><strong>dmslp_dt</strong> (<em>list/tuple of float/int</em>) – list/tuple of mslp bounds (min,max). ONLY AVAILABLE AFTER INTERP.
+None in either position of a tuple means it is boundless on that side.</li>
+<li><strong>stormtype</strong> (<em>list/tuple of str</em>) – list/tuple of stormtypes (options: ‘LO’,’EX’,’TD’,’SD’,’TS’,’SS’,’HU’)</li>
+<li><strong>method</strong> (<em>str</em>) – Applies for single point selection in time and lat/lon.
 ‘exact’ requires a point to match exactly with the request. (default)
 ‘nearest’ returns the nearest point to the request
 ‘floor’ ONLY for time, returns the nearest point before the request
-‘ceil’ ONLY for time, returns the neartest point after the request</p></li>
+‘ceil’ ONLY for time, returns the neartest point after the request</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>storm object</em> – A new storm object that satisfies the intersection of all subsetting.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>storm object</em> – A new storm object that satisfies the intersection of all subsetting.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

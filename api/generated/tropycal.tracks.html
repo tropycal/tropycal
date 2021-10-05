@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="tropycal.tracks.Season" href="tropycal.tracks.Season.html" />
@@ -181,20 +187,20 @@
 <span id="tracks"></span><h1>tracks<a class="headerlink" href="#module-tropycal.tracks" title="Permalink to this headline">¶</a></h1>
 <p>Functionality for reading and analyzing storm tracks.</p>
 <p class="rubric">Classes</p>
-<table class="longtable docutils align-default">
+<table border="1" class="longtable docutils">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season</span></code></a>(season, info)</p></td>
-<td><p>Initializes an instance of Season, retrieved via <code class="docutils literal notranslate"><span class="pre">TrackDataset.get_season()</span></code>.</p></td>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Season</span></code></a>(season,&nbsp;info)</td>
+<td>Initializes an instance of Season, retrieved via <code class="docutils literal notranslate"><span class="pre">TrackDataset.get_season()</span></code>.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm</span></code></a>(storm[, stormTors, read_path])</p></td>
-<td><p>Initializes an instance of Storm, retrieved via <code class="docutils literal notranslate"><span class="pre">TrackDataset.get_storm()</span></code>.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm</span></code></a>(storm[,&nbsp;stormTors,&nbsp;read_path])</td>
+<td>Initializes an instance of Storm, retrieved via <code class="docutils literal notranslate"><span class="pre">TrackDataset.get_storm()</span></code>.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset</span></code></a>([basin, source, include_btk, …])</p></td>
-<td><p>Creates an instance of a TrackDataset object containing various cyclone data.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset</span></code></a>([basin,&nbsp;source,&nbsp;include_btk,&nbsp;…])</td>
+<td>Creates an instance of a TrackDataset object containing various cyclone data.</td>
 </tr>
 </tbody>
 </table>

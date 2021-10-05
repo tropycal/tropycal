@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="ReconDataset.find_centers" href="tropycal.recon.ReconDataset.find_centers.html" />
@@ -194,16 +200,18 @@
 <h1>ReconDataset.findMission<a class="headerlink" href="#recondataset-findmission" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.recon.ReconDataset.findMission">
-<code class="sig-prename descclassname">ReconDataset.</code><code class="sig-name descname">findMission</code><span class="sig-paren">(</span><em class="sig-param">time</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.findMission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.findMission" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">ReconDataset.</code><code class="descname">findMission</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.findMission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.findMission" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the name of a mission or list of missions given a specified time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>time</strong> (<em>datetime.datetime</em><em> or </em><em>list</em>) – Datetime object or list of datetime objects representing the time of the requested mission.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>list</em> – The names of any/all missions that had in-storm observations during the specified time.</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>time</strong> (<em>datetime.datetime</em><em> or </em><em>list</em>) – Datetime object or list of datetime objects representing the time of the requested mission.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>list</em> – The names of any/all missions that had in-storm observations during the specified time.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

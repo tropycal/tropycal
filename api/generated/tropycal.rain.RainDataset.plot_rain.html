@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="RainDataset.plot_rain_grid" href="tropycal.rain.RainDataset.plot_rain_grid.html" />
@@ -189,35 +195,40 @@
 <h1>RainDataset.plot_rain<a class="headerlink" href="#raindataset-plot-rain" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.rain.RainDataset.plot_rain">
-<code class="sig-prename descclassname">RainDataset.</code><code class="sig-name descname">plot_rain</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">ms=7.5</em>, <em class="sig-param">mec=None</em>, <em class="sig-param">mew=0.5</em>, <em class="sig-param">minimum_threshold=1.0</em>, <em class="sig-param">levels=None</em>, <em class="sig-param">cmap=None</em>, <em class="sig-param">domain='dynamic'</em>, <em class="sig-param">plot_all_dots=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">save_path=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/rain/dataset.html#RainDataset.plot_rain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.rain.RainDataset.plot_rain" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">RainDataset.</code><code class="descname">plot_rain</code><span class="sig-paren">(</span><em>storm</em>, <em>ms=7.5</em>, <em>mec=None</em>, <em>mew=0.5</em>, <em>minimum_threshold=1.0</em>, <em>levels=None</em>, <em>cmap=None</em>, <em>domain='dynamic'</em>, <em>plot_all_dots=False</em>, <em>ax=None</em>, <em>cartopy_proj=None</em>, <em>save_path=None</em>, <em>prop={}</em>, <em>map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/rain/dataset.html#RainDataset.plot_rain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.rain.RainDataset.plot_rain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of a storm track and its associated rainfall (individual dots).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Storm object to be plotted.</p></li>
-<li><p><strong>ms</strong> (<em>float</em><em> or </em><em>int</em>) – Marker size for individual rainfall observations. Default is 7.5.</p></li>
-<li><p><strong>mec</strong> (<em>str</em><em> or </em><em>rgb tuple</em>) – Marker edge color for dots. If none (default), none will be colored.</p></li>
-<li><p><strong>mew</strong> (<em>float</em><em> or </em><em>int</em>) – Marker edge width for dots. If mec is specified, the default is 0.5.</p></li>
-<li><p><strong>minimum_threshold</strong> (<em>float</em><em> or </em><em>int</em>) – Minimum threshold (in inches) to plot dots. Default is 1.00 inch.</p></li>
-<li><p><strong>levels</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – List of levels, in inches, corresponding to the colormap used to color fill the observation dots. If none, this is automatically generated.</p></li>
-<li><p><strong>cmap</strong> (<em>colormap</em>) – Colormap to use for color filling the observation dots. If none, this is automatically generated.</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
-<li><p><strong>plot_all_dots</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</p></li>
-<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Storm object to be plotted.</li>
+<li><strong>ms</strong> (<em>float</em><em> or </em><em>int</em>) – Marker size for individual rainfall observations. Default is 7.5.</li>
+<li><strong>mec</strong> (<em>str</em><em> or </em><em>rgb tuple</em>) – Marker edge color for dots. If none (default), none will be colored.</li>
+<li><strong>mew</strong> (<em>float</em><em> or </em><em>int</em>) – Marker edge width for dots. If mec is specified, the default is 0.5.</li>
+<li><strong>minimum_threshold</strong> (<em>float</em><em> or </em><em>int</em>) – Minimum threshold (in inches) to plot dots. Default is 1.00 inch.</li>
+<li><strong>levels</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – List of levels, in inches, corresponding to the colormap used to color fill the observation dots. If none, this is automatically generated.</li>
+<li><strong>cmap</strong> (<em>colormap</em>) – Colormap to use for color filling the observation dots. If none, this is automatically generated.</li>
+<li><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</li>
+<li><strong>plot_all_dots</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</li>
+<li><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</li>
+<li><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</li>
+<li><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</li>
 </ul>
-</dd>
-<dt class="field-even">Other Parameters</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Tracks Properties</span></a> for available options.</p></li>
-<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Tracks Properties</span></a> for available options.</li>
+<li><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</li>
 </ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>ax</em> – Instance of axes containing the plot is returned.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>ax</em> – Instance of axes containing the plot is returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

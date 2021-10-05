@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="TrackDataset.rank_storm" href="tropycal.tracks.TrackDataset.rank_storm.html" />
@@ -101,6 +107,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.ace_climo.html">TrackDataset.ace_climo</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.assign_storm_tornadoes.html">TrackDataset.assign_storm_tornadoes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.climatology.html">TrackDataset.climatology</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.download_tcr.html">TrackDataset.download_tcr</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.filter_storms.html">TrackDataset.filter_storms</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.get_season.html">TrackDataset.get_season</a></li>
@@ -115,7 +122,9 @@
 <li class="toctree-l4 current"><a class="current reference internal" href="#">TrackDataset.plot_storms</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.rank_storm.html">TrackDataset.rank_storm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.search_name.html">TrackDataset.search_name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.season_composite.html">TrackDataset.season_composite</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html">TrackDataset.storm_ace_vs_season</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.to_dataframe.html">TrackDataset.to_dataframe</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.wind_pres_relationship.html">TrackDataset.wind_pres_relationship</a></li>
 </ul>
 </li>
@@ -205,31 +214,36 @@
 <h1>TrackDataset.plot_storms<a class="headerlink" href="#trackdataset-plot-storms" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.tracks.TrackDataset.plot_storms">
-<code class="sig-prename descclassname">TrackDataset.</code><code class="sig-name descname">plot_storms</code><span class="sig-paren">(</span><em class="sig-param">storms</em>, <em class="sig-param">domain='dynamic'</em>, <em class="sig-param">title='TC Track Composite'</em>, <em class="sig-param">plot_all_dots=False</em>, <em class="sig-param">labels=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">save_path=None</em>, <em class="sig-param">prop={}</em>, <em class="sig-param">map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_storms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_storms" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">TrackDataset.</code><code class="descname">plot_storms</code><span class="sig-paren">(</span><em>storms</em>, <em>domain='dynamic'</em>, <em>title='TC Track Composite'</em>, <em>plot_all_dots=False</em>, <em>labels=False</em>, <em>ax=None</em>, <em>cartopy_proj=None</em>, <em>save_path=None</em>, <em>prop={}</em>, <em>map_prop={}</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.plot_storms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.plot_storms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of multiple storms.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>storms</strong> (<em>list</em>) – List of requested storms. List can contain either strings of storm ID (e.g., “AL052019”), tuples with storm name and year (e.g., (“Matthew”,2016)), or dict entries.</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
-<li><p><strong>title</strong> (<em>str</em>) – Title string to display on the plot. Default is “TC Track Composite”.</p></li>
-<li><p><strong>plot_all_dots</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</p></li>
-<li><p><strong>labels</strong> (<em>bool</em>) – Whether to label storm titles on the plot. Default is False.</p></li>
-<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>storms</strong> (<em>list</em>) – List of requested storms. List can contain either strings of storm ID (e.g., “AL052019”), tuples with storm name and year (e.g., (“Matthew”,2016)), or dict entries.</li>
+<li><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</li>
+<li><strong>title</strong> (<em>str</em>) – Title string to display on the plot. Default is “TC Track Composite”.</li>
+<li><strong>plot_all_dots</strong> (<em>bool</em>) – Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.</li>
+<li><strong>labels</strong> (<em>bool</em>) – Whether to label storm titles on the plot. Default is False.</li>
+<li><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</li>
+<li><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</li>
+<li><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</li>
 </ul>
-</dd>
-<dt class="field-even">Other Parameters</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Tracks Properties</span></a> for available options.</p></li>
-<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li><strong>prop</strong> (<em>dict</em>) – Customization properties of storm track lines. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop"><span class="std std-ref">Tracks Properties</span></a> for available options.</li>
+<li><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</li>
 </ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>ax</em> – Instance of axes containing the plot is returned.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>ax</em> – Instance of axes containing the plot is returned.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

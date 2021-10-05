@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="rain" href="tropycal.rain.html" />
@@ -189,16 +195,18 @@
 <h1>TornadoDataset.rotateToHeading<a class="headerlink" href="#tornadodataset-rotatetoheading" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.tornado.TornadoDataset.rotateToHeading">
-<code class="sig-prename descclassname">TornadoDataset.</code><code class="sig-name descname">rotateToHeading</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">stormTors</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.rotateToHeading"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.rotateToHeading" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">TornadoDataset.</code><code class="descname">rotateToHeading</code><span class="sig-paren">(</span><em>storm</em>, <em>stormTors</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.rotateToHeading"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.rotateToHeading" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rotate tornado tracks to their position relative to the heading of the TC at the time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stormTors</strong> (<em>pandas.DataFrame</em>) – Pandas DataFrame containing tornado tracks.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>pandas.DataFrame</em> – StormTors modified to include motion relative coordinates.</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stormTors</strong> (<em>pandas.DataFrame</em>) – Pandas DataFrame containing tornado tracks.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>pandas.DataFrame</em> – StormTors modified to include motion relative coordinates.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

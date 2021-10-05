@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="TornadoDataset.rotateToHeading" href="tropycal.tornado.TornadoDataset.rotateToHeading.html" />
@@ -189,35 +195,39 @@
 <h1>TornadoDataset.plot_tors<a class="headerlink" href="#tornadodataset-plot-tors" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="tropycal.tornado.TornadoDataset.plot_tors">
-<code class="sig-prename descclassname">TornadoDataset.</code><code class="sig-name descname">plot_tors</code><span class="sig-paren">(</span><em class="sig-param">tor_info</em>, <em class="sig-param">domain='conus'</em>, <em class="sig-param">plotPPH=False</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">return_ax=False</em>, <em class="sig-param">return_domain=True</em>, <em class="sig-param">cartopy_proj=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_tors" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">TornadoDataset.</code><code class="descname">plot_tors</code><span class="sig-paren">(</span><em>tor_info</em>, <em>domain='conus'</em>, <em>plotPPH=False</em>, <em>ax=None</em>, <em>return_ax=False</em>, <em>return_domain=True</em>, <em>cartopy_proj=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_tors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPH).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tor_info</strong> (<em>pandas.DataFrame / dict / datetime.datetime / list</em>) – <p>Requested tornadoes to plot. Can be one of the following:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tor_info</strong> (<em>pandas.DataFrame / dict / datetime.datetime / list</em>) – <p>Requested tornadoes to plot. Can be one of the following:</p>
 <ul>
-<li><p><strong>Pandas DataFrame</strong> containing the requested tornadoes to plot.</p></li>
-<li><p><strong>dict</strong> entry containing the requested tornadoes to plot.</p></li>
-<li><p><strong>datetime.datetime</strong> object for a single day to plot tornadoes.</p></li>
-<li><p><strong>list</strong> with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.</p></li>
+<li><strong>Pandas DataFrame</strong> containing the requested tornadoes to plot.</li>
+<li><strong>dict</strong> entry containing the requested tornadoes to plot.</li>
+<li><strong>datetime.datetime</strong> object for a single day to plot tornadoes.</li>
+<li><strong>list</strong> with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.</li>
 </ul>
-</p></li>
-<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “conus”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
-<li><p><strong>plotPPH</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPH). True defaults to “daily”. Default is False.</p>
+</li>
+<li><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “conus”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</li>
+<li><strong>plotPPH</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPH). True defaults to “daily”. Default is False.</p>
 <ul>
-<li><p><strong>False</strong> - no PPH plot.</p></li>
-<li><p><strong>True</strong> - defaults to “daily”.</p></li>
-<li><p><strong>”total”</strong> - probability of a tornado within 25mi of a point during the period of time selected.</p></li>
-<li><p><strong>”daily”</strong> - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.</p></li>
+<li><strong>False</strong> - no PPH plot.</li>
+<li><strong>True</strong> - defaults to “daily”.</li>
+<li><strong>”total”</strong> - probability of a tornado within 25mi of a point during the period of time selected.</li>
+<li><strong>”daily”</strong> - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.</li>
 </ul>
-</p></li>
-<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
-<li><p><strong>prop</strong> (<em>dict</em>) – Property of tornado tracks.</p></li>
-<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
+</li>
+<li><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</li>
+<li><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</li>
+<li><strong>prop</strong> (<em>dict</em>) – Property of tornado tracks.</li>
+<li><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

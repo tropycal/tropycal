@@ -22,11 +22,21 @@
   <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="ReconDataset.allMissions" href="tropycal.recon.ReconDataset.allMissions.html" />
@@ -192,70 +198,74 @@
 <h1>tropycal.recon.ReconDataset<a class="headerlink" href="#tropycal-recon-recondataset" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="tropycal.recon.ReconDataset">
-<em class="property">class </em><code class="sig-prename descclassname">tropycal.recon.</code><code class="sig-name descname">ReconDataset</code><span class="sig-paren">(</span><em class="sig-param">storm</em>, <em class="sig-param">deltap_thresh=8</em>, <em class="sig-param">mission_url_list=None</em>, <em class="sig-param">save_path=''</em>, <em class="sig-param">read_path=''</em>, <em class="sig-param">update=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">tropycal.recon.</code><code class="descname">ReconDataset</code><span class="sig-paren">(</span><em>storm</em>, <em>deltap_thresh=8</em>, <em>mission_url_list=None</em>, <em>save_path=''</em>, <em>read_path=''</em>, <em>update=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of a ReconDataset object containing all recon data for a single storm.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>stormtuple</strong> (<em>tuple</em><em> or </em><em>list</em>) – Requested storm. Can be either tuple or list containing storm name and year (e.g., (“Matthew”,2016)).</p></li>
-<li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.</p></li>
-<li><p><strong>read_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to read saved recon data from. If specified, “save_path” cannot be passed as an argument.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stormtuple</strong> (<em>tuple</em><em> or </em><em>list</em>) – Requested storm. Can be either tuple or list containing storm name and year (e.g., (“Matthew”,2016)).</li>
+<li><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.</li>
+<li><strong>read_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to read saved recon data from. If specified, “save_path” cannot be passed as an argument.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><em>Dataset</em> – An instance of ReconDataset, initialized with the following:</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p><em>Dataset</em> – An instance of ReconDataset, initialized with the following:</p>
 <ul class="simple">
-<li><dl class="simple">
-<dt><strong>missiondata</strong> - A dictionary of missions.</dt><dd><p>Each entry is a dateframe from a single mission.
-Dictionary keys are given by mission number and agency (e.g. ‘15_NOAA’).</p>
-</dd>
+<li><dl class="first docutils">
+<dt><strong>missiondata</strong> - A dictionary of missions.</dt>
+<dd>Each entry is a dateframe from a single mission.
+Dictionary keys are given by mission number and agency (e.g. ‘15_NOAA’).</dd>
 </dl>
 </li>
-<li><dl class="simple">
-<dt><strong>recentered</strong> - A dataframe with all missions concatenated together, and columns ‘xdist’ and ‘ydist’</dt><dd><p>indicating the distance (km) of the ob from the interpolated center of the storm.</p>
-</dd>
+<li><dl class="first docutils">
+<dt><strong>recentered</strong> - A dataframe with all missions concatenated together, and columns ‘xdist’ and ‘ydist’</dt>
+<dd>indicating the distance (km) of the ob from the interpolated center of the storm.</dd>
 </dl>
 </li>
 </ul>
 </p>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Notes</p>
 <p>Recon data is currently read in via Tropical Atlantic. Future releases of Tropycal will incorporate NHC recon archives.</p>
 <p>Methods Summary</p>
 <blockquote>
-<div><table class="longtable docutils align-default">
+<div><table border="1" class="longtable docutils">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.allMissions.html#tropycal.recon.ReconDataset.allMissions" title="tropycal.recon.ReconDataset.allMissions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.allMissions</span></code></a>()</p></td>
-<td><p></p></td>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.recon.ReconDataset.allMissions.html#tropycal.recon.ReconDataset.allMissions" title="tropycal.recon.ReconDataset.allMissions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.allMissions</span></code></a>()</td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.findMission.html#tropycal.recon.ReconDataset.findMission" title="tropycal.recon.ReconDataset.findMission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.findMission</span></code></a>(time)</p></td>
-<td><p>Returns the name of a mission or list of missions given a specified time.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.recon.ReconDataset.findMission.html#tropycal.recon.ReconDataset.findMission" title="tropycal.recon.ReconDataset.findMission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.findMission</span></code></a>(time)</td>
+<td>Returns the name of a mission or list of missions given a specified time.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.find_centers.html#tropycal.recon.ReconDataset.find_centers" title="tropycal.recon.ReconDataset.find_centers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.find_centers</span></code></a>(data)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.recon.ReconDataset.find_centers.html#tropycal.recon.ReconDataset.find_centers" title="tropycal.recon.ReconDataset.find_centers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.find_centers</span></code></a>(data)</td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.getMission.html#tropycal.recon.ReconDataset.getMission" title="tropycal.recon.ReconDataset.getMission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.getMission</span></code></a>(agency, mission_num)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.recon.ReconDataset.getMission.html#tropycal.recon.ReconDataset.getMission" title="tropycal.recon.ReconDataset.getMission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.getMission</span></code></a>(agency,&nbsp;mission_num)</td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.plot_hovmoller.html#tropycal.recon.ReconDataset.plot_hovmoller" title="tropycal.recon.ReconDataset.plot_hovmoller"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_hovmoller</span></code></a>([recon_select, …])</p></td>
-<td><p>Creates a hovmoller plot of azimuthally-averaged recon data.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.recon.ReconDataset.plot_hovmoller.html#tropycal.recon.ReconDataset.plot_hovmoller" title="tropycal.recon.ReconDataset.plot_hovmoller"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_hovmoller</span></code></a>([recon_select,&nbsp;…])</td>
+<td>Creates a hovmoller plot of azimuthally-averaged recon data.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.plot_maps.html#tropycal.recon.ReconDataset.plot_maps" title="tropycal.recon.ReconDataset.plot_maps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_maps</span></code></a>([recon_select, …])</p></td>
-<td><p>Creates maps of interpolated recon data.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.recon.ReconDataset.plot_maps.html#tropycal.recon.ReconDataset.plot_maps" title="tropycal.recon.ReconDataset.plot_maps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_maps</span></code></a>([recon_select,&nbsp;…])</td>
+<td>Creates maps of interpolated recon data.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.plot_points.html#tropycal.recon.ReconDataset.plot_points" title="tropycal.recon.ReconDataset.plot_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_points</span></code></a>([recon_select, …])</p></td>
-<td><p>Creates a plot of recon data points.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.recon.ReconDataset.plot_points.html#tropycal.recon.ReconDataset.plot_points" title="tropycal.recon.ReconDataset.plot_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_points</span></code></a>([recon_select,&nbsp;…])</td>
+<td>Creates a plot of recon data points.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.plot_swath.html#tropycal.recon.ReconDataset.plot_swath" title="tropycal.recon.ReconDataset.plot_swath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_swath</span></code></a>([recon_select, …])</p></td>
-<td><p>Creates a map plot of a swath of interpolated recon data.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="tropycal.recon.ReconDataset.plot_swath.html#tropycal.recon.ReconDataset.plot_swath" title="tropycal.recon.ReconDataset.plot_swath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_swath</span></code></a>([recon_select,&nbsp;…])</td>
+<td>Creates a map plot of a swath of interpolated recon data.</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.recenter.html#tropycal.recon.ReconDataset.recenter" title="tropycal.recon.ReconDataset.recenter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.recenter</span></code></a>([use])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><a class="reference internal" href="tropycal.recon.ReconDataset.recenter.html#tropycal.recon.ReconDataset.recenter" title="tropycal.recon.ReconDataset.recenter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.recenter</span></code></a>([use])</td>
+<td></td>
 </tr>
 </tbody>
 </table>

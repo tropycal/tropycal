@@ -22,11 +22,21 @@
   <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'0.3.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -35,11 +45,7 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery-binder.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery-dataframe.css" type="text/css" />
-  <link rel="stylesheet" href="_static/gallery-rendered-html.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Support" href="support.html" />
@@ -176,13 +182,13 @@
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>The primary dependencies of tropycal are as follows:</p>
 <ul class="simple">
-<li><p>matplotlib &gt;= 2.2.2</p></li>
-<li><p>numpy &gt;= 1.14.3</p></li>
-<li><p>scipy &gt;= 1.1.0</p></li>
-<li><p>pandas &gt;= 0.23.0</p></li>
-<li><p>geopy &gt;= 1.18.1</p></li>
-<li><p>xarray &gt;= 0.10.7</p></li>
-<li><p>networkx &gt;= 2.0.0</p></li>
+<li>matplotlib &gt;= 2.2.2</li>
+<li>numpy &gt;= 1.14.3</li>
+<li>scipy &gt;= 1.1.0</li>
+<li>pandas &gt;= 0.23.0</li>
+<li>geopy &gt;= 1.18.1</li>
+<li>xarray &gt;= 0.10.7</li>
+<li>networkx &gt;= 2.0.0</li>
 </ul>
 <p>To fully leverage tropycal’s plotting capabilities, it is strongly recommended to have cartopy &gt;= 0.17.0 installed.</p>
 </div>

@@ -304,6 +304,23 @@ class Realtime():
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
+            #Determine storm name for invests
+            if invest_bool == True:
+                
+                #Determine letter in front of invest
+                add_letter = 'L'
+                if stormid[0] == 'C':
+                    add_letter = 'C'
+                elif stormid[0] == 'E':
+                    add_letter = 'E'
+                elif stormid[0] == 'W':
+                    add_letter = 'W'
+                elif stormid[0] == 'I':
+                    add_letter = 'I'
+                elif stormid[0] == 'S':
+                    add_letter = 'S'
+                name = stormid[2:4] + add_letter
+            
             #Add storm name
             self.data[stormid]['name'] = name
             
@@ -334,7 +351,7 @@ class Realtime():
 
         #Get relevant filenames from directory
         files = []
-        search_pattern = f'b[isw][ohp][01234][0123456789]{current_year}.dat'
+        search_pattern = f'b[isw][ohp][012349][0123456789]{current_year}.dat'
 
         pattern = re.compile(search_pattern)
         filelist = pattern.findall(string)
@@ -342,7 +359,7 @@ class Realtime():
             if filename not in files: files.append(filename)
         
         #Search for following year (for SH storms)
-        search_pattern = f'b[isw][ohp][01234][0123456789]{current_year+1}.dat'
+        search_pattern = f'b[isw][ohp][012349][0123456789]{current_year+1}.dat'
 
         pattern = re.compile(search_pattern)
         filelist = pattern.findall(string)
@@ -354,6 +371,11 @@ class Realtime():
 
             #Get file ID
             stormid = ((file.split(".dat")[0])[1:]).upper()
+            
+            #Check for invest status
+            invest_bool = False
+            if int(stormid[2]) == 9:
+                invest_bool = True
 
             #Determine basin based on where storm developed
             add_basin = 'west_pacific'
@@ -363,7 +385,7 @@ class Realtime():
                 add_basin = ''
 
             #add empty entry into dict
-            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'invest':False}
+            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'invest':invest_bool}
             self.data[stormid]['source'] = 'jtwc'
             
             #Add source info
@@ -460,6 +482,23 @@ class Realtime():
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
+            #Determine storm name for invests
+            if invest_bool == True:
+                
+                #Determine letter in front of invest
+                add_letter = 'L'
+                if stormid[0] == 'C':
+                    add_letter = 'C'
+                elif stormid[0] == 'E':
+                    add_letter = 'E'
+                elif stormid[0] == 'W':
+                    add_letter = 'W'
+                elif stormid[0] == 'I':
+                    add_letter = 'I'
+                elif stormid[0] == 'S':
+                    add_letter = 'S'
+                name = stormid[2:4] + add_letter
+            
             #Add storm name
             self.data[stormid]['name'] = name
             

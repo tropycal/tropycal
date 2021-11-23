@@ -365,6 +365,18 @@ class Realtime():
         filelist = pattern.findall(string)
         for filename in filelist:
             if filename not in files: files.append(filename)
+        
+        if source in ['jtwc','ucar']:
+            try:
+                urlpath_nextyear = urllib.request.urlopen(url.replace(str(current_year),str(current_year+1)))
+                string_nextyear = urlpath_nextyear.read().decode('utf-8')
+
+                pattern = re.compile(search_pattern)
+                filelist = pattern.findall(string_nextyear)
+                for filename in filelist:
+                    if filename not in files: files.append(filename)
+            except:
+                pass
 
         #For each file, read in file content and add to hurdat dict
         for file in files:
@@ -407,6 +419,7 @@ class Realtime():
             url = f"https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/{file}"
             if source == 'noaa': url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{file}"
             if source == 'ucar': url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/{file}"
+            if f"{current_year+1}.dat" in url: url = url.replace(str(current_year),str(current_year+1))
             f = urllib.request.urlopen(url)
             content = f.read()
             content = content.decode("utf-8")

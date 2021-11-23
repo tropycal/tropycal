@@ -276,10 +276,11 @@ class Plot:
             self.fig = plt.figure(figsize=map_prop['figsize'],dpi=map_prop['dpi'])
             self.ax = plt.axes(projection=self.proj)
         else:
-            # get the figure numbers of all existing figures
             fig_numbers = [x.num for x in mlib._pylab_helpers.Gcf.get_all_fig_managers()]
-            # set figure as last figure number
-            self.fig = plt.figure(fig_numbers[-1])
+            if len(fig_numbers) > 0:
+                self.fig = plt.figure(fig_numbers[-1])
+            else:
+                self.fig = plt.figure(figsize=map_prop['figsize'],dpi=map_prop['dpi'])
             self.ax = ax
         
         #Attach geography to plot, lat/lon lines, etc.

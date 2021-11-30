@@ -234,8 +234,14 @@ class Plot:
             #Second call with labels but no gridlines
             gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,xlocs=meridians,ylocs=parallels,linewidth=0.0,color='k',alpha=0.0,linestyle='dotted',**add_kwargs)
             
-            gl.xlabels_top = False
-            gl.ylabels_right = False
+            #this syntax is deprecated in newer functions of cartopy
+            try:
+                gl.xlabels_top = False
+                gl.ylabels_right = False
+            except:
+                gl.top_labels = False
+                gl.right_labels = False
+            
             gl.xlocator = mticker.FixedLocator(meridians2)
             gl.ylocator = mticker.FixedLocator(parallels)
             gl.xformatter = LONGITUDE_FORMATTER
@@ -244,8 +250,15 @@ class Plot:
         else:
             #Add meridians and parallels
             gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted',**add_kwargs)
-            gl.xlabels_top = False
-            gl.ylabels_right = False
+            
+            #this syntax is deprecated in newer functions of cartopy
+            try:
+                gl.xlabels_top = False
+                gl.ylabels_right = False
+            except:
+                gl.top_labels = False
+                gl.right_labels = False
+            
             gl.xlocator = mticker.FixedLocator(meridians)
             gl.ylocator = mticker.FixedLocator(parallels)
             gl.xformatter = LONGITUDE_FORMATTER

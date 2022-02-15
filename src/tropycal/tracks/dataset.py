@@ -313,8 +313,16 @@ class TrackDataset:
                 #Retrieve important info about storm
                 yyyymmdd,hhmm,special,storm_type,lat,lon,vmax,mslp = line[0:8]
                 
-                #Parse into format to be entered into dict
+                #Check date doesn't already exist in dict
                 date = dt.strptime(yyyymmdd+hhmm,'%Y%m%d%H%M')
+                if date in self.data[current_id]['date']:
+                    #Hard-code fix
+                    if current_id == "AL151966" and yyyymmdd == "19661004":
+                        date = dt.strptime("19661006"+hhmm,'%Y%m%d%H%M')
+                    else:
+                        continue
+                
+                #Parse into format to be entered into dict
                 if "N" in lat:
                     lat = float(lat.split("N")[0])
                 elif "S" in lat:

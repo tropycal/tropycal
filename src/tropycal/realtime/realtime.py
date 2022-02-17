@@ -39,6 +39,8 @@ class Realtime():
         Flag determining whether to read JTWC data in. If True, specify the JTWC data source using "jtwc_source". Default is False.
     jtwc_source : str, optional
         If jtwc is set to True, this specifies the JTWC data source to read from. Available options are "noaa", "ucar" or "jtwc". Default is "jtwc". Read the notes for more details.
+    ssl_certificate : boolean, optional
+        If jtwc is set to True, this determines whether to disable SSL certificate when retrieving data from the default JTWC source ("jtwc"). Default is True. Use False *ONLY* if True causes an SSL certification error.
     
     Returns
     -------
@@ -111,7 +113,7 @@ class Realtime():
     def __getitem__(self, key):
         return self.__dict__[key]
     
-    def __init__(self,jtwc=False,jtwc_source='ucar'):
+    def __init__(self,jtwc=False,jtwc_source='ucar',ssl_certificate=True):
         
         #Define empty dict to store track data in
         self.data = {}
@@ -125,7 +127,7 @@ class Realtime():
         if jtwc_source not in ['ucar','noaa','jtwc']:
             msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
             raise ValueError(msg)
-        if jtwc: self.__read_btk_jtwc(jtwc_source)
+        if jtwc: self.__read_btk_jtwc(jtwc_source,ssl_certificate)
         
         #Determine time elapsed
         time_elapsed = dt.now() - start_time
@@ -333,7 +335,7 @@ class Realtime():
                     self.data[stormid]['invest'] = True
         
         
-    def __read_btk_jtwc(self,source):
+    def __read_btk_jtwc(self,source,ssl_certificate):
         
         r"""
         Reads in b-deck data from the Tropical Cyclone Guidance Project (TCGP) into the Dataset object.
@@ -346,7 +348,11 @@ class Realtime():
         url = f'https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/'
         if source == 'noaa': url = f'https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/'
         if source == 'ucar': url = f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/'
-        urlpath = urllib.request.urlopen(url)
+        if ssl_certificate == False and source == 'jtwc':
+            import ssl
+            urlpath = urllib.request.urlopen(url,context=ssl._create_unverified_context())
+        else:
+            urlpath = urllib.request.urlopen(url)
         string = urlpath.read().decode('utf-8')
 
         #Get relevant filenames from directory
@@ -368,8 +374,12 @@ class Realtime():
         
         if source in ['jtwc','ucar']:
             try:
-                urlpath_nextyear = urllib.request.urlopen(url.replace(str(current_year),str(current_year+1)))
-                string_nextyear = urlpath_nextyear.read().decode('utf-8')
+                if ssl_certificate == False and source == 'jtwc':
+                    urlpath_nextyear = urllib.request.urlopen(url.replace(str(current_year),str(current_year+1)),context=ssl._create_unverified_context())
+                    string_nextyear = urlpath_nextyear.read().decode('utf-8')
+                else:
+                    urlpath_nextyear = urllib.request.urlopen(url.replace(str(current_year),str(current_year+1)))
+                    string_nextyear = urlpath_nextyear.read().decode('utf-8')
 
                 pattern = re.compile(search_pattern)
                 filelist = pattern.findall(string_nextyear)
@@ -420,7 +430,11 @@ class Realtime():
             if source == 'noaa': url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{file}"
             if source == 'ucar': url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/{file}"
             if f"{current_year+1}.dat" in url: url = url.replace(str(current_year),str(current_year+1))
-            f = urllib.request.urlopen(url)
+            
+            if ssl_certificate == False and source == 'jtwc':
+                f = urllib.request.urlopen(url,context=ssl._create_unverified_context())
+            else:
+                f = urllib.request.urlopen(url)
             content = f.read()
             content = content.decode("utf-8")
             content = content.split("\n")

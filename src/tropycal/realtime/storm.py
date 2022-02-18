@@ -713,6 +713,9 @@ class RealtimeStorm(Storm):
                         current_advisory['type'] = 'Potential Tropical Cyclone'
                 else:
                     current_advisory['type'] = 'Post-Tropical Cyclone'
+            elif self.source in ['jtwc','ucar']:
+                if self.invest:
+                    current_advisory['type'] = 'Invest'
 
             #Get storm name
             current_advisory['name'] = self.name.title()

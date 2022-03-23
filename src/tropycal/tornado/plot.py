@@ -184,7 +184,7 @@ class TornadoPlot(Plot):
         plt.draw()
 
         # Get the bbox
-        bb = leg_tor.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        bb = leg_tor.legendPatch.get_bbox().inverted().transform(self.fig.transFigure)
         bb_ax = self.ax.get_position()
 
         rectangle = mpatches.Rectangle((bb_ax.x0,bb_ax.y0),bb.width+bb.x0-bb_ax.x0,bb.height+2*bb.y0-2*bb_ax.y0,\

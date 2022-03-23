@@ -429,7 +429,7 @@ class RainPlot(Plot):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            bb = l.legendPatch.get_bbox().inverted().transform(self.fig.transFigure)
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
@@ -466,7 +466,7 @@ class RainPlot(Plot):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            bb = l.legendPatch.get_bbox().inverted().transform(self.fig.transFigure)
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])

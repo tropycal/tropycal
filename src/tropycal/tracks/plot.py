@@ -284,6 +284,12 @@ class TrackPlot(Plot):
                 add_letter = 'C'
             elif storm_data['id'][0] == 'E':
                 add_letter = 'E'
+            elif storm_data['id'][0] == 'W':
+                add_letter = 'W'
+            elif storm_data['id'][0] == 'I':
+                add_letter = 'I'
+            elif storm_data['id'][0] == 'S':
+                add_letter = 'S'
             
             #Add title
             self.ax.set_title(f"INVEST {storm_data['id'][2:4]}{add_letter}",loc='left',fontsize=17,fontweight='bold')

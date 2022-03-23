@@ -1,5 +1,6 @@
 r"""Functionality for reading and analyzing SPC tornado dataset."""
 
+import requests
 import numpy as np
 import pandas as pd
 from datetime import datetime as dt,timedelta
@@ -57,15 +58,19 @@ class TornadoDataset():
         yrnow = timer_start.year
         print(f'--> Starting to read in tornado track data')
         if tornado_path == 'spc':
-            try:
-                yrlast = yrnow-1
-                Tors = pd.read_csv(f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv',\
-                                   error_bad_lines=False,parse_dates=[['mo','dy','yr','time']])
-            except:
-                yrlast = yrnow-2
-                Tors = pd.read_csv(f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv',\
-                                   error_bad_lines=False,parse_dates=[['mo','dy','yr','time']])
-            print(f'--> Completed reading in tornado data for 1950-{yrlast} (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
+            #Find most recent year
+            year_found = False
+            for year_diff in [0,1,2,3,4,5]:
+                yrlast = yrnow - year_diff
+                url = f"https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv"
+                if requests.get(url).status_code == 200:
+                    year_found = True
+                    Tors = pd.read_csv(f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv',\
+                                       error_bad_lines=False,parse_dates=[['mo','dy','yr','time']])
+                    print(f'--> Completed reading in tornado data for 1950-{yrlast} (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
+                    break
+            if year_found == False:
+                raise RuntimeError("Error: No SPC tornado dataset available within the last 5 years.")
         else:
             Tors = pd.read_csv(tornado_path,\
                                error_bad_lines=False,parse_dates=[['mo','dy','yr','time']])

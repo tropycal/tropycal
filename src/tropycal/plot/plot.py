@@ -234,8 +234,14 @@ class Plot:
             #Second call with labels but no gridlines
             gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,xlocs=meridians,ylocs=parallels,linewidth=0.0,color='k',alpha=0.0,linestyle='dotted',**add_kwargs)
             
-            gl.xlabels_top = False
-            gl.ylabels_right = False
+            #this syntax is deprecated in newer functions of cartopy
+            try:
+                gl.xlabels_top = False
+                gl.ylabels_right = False
+            except:
+                gl.top_labels = False
+                gl.right_labels = False
+            
             gl.xlocator = mticker.FixedLocator(meridians2)
             gl.ylocator = mticker.FixedLocator(parallels)
             gl.xformatter = LONGITUDE_FORMATTER
@@ -244,8 +250,15 @@ class Plot:
         else:
             #Add meridians and parallels
             gl = self.ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=True,linewidth=1.0,color='k',alpha=0.5,linestyle='dotted',**add_kwargs)
-            gl.xlabels_top = False
-            gl.ylabels_right = False
+            
+            #this syntax is deprecated in newer functions of cartopy
+            try:
+                gl.xlabels_top = False
+                gl.ylabels_right = False
+            except:
+                gl.top_labels = False
+                gl.right_labels = False
+            
             gl.xlocator = mticker.FixedLocator(meridians)
             gl.ylocator = mticker.FixedLocator(parallels)
             gl.xformatter = LONGITUDE_FORMATTER
@@ -276,10 +289,11 @@ class Plot:
             self.fig = plt.figure(figsize=map_prop['figsize'],dpi=map_prop['dpi'])
             self.ax = plt.axes(projection=self.proj)
         else:
-            # get the figure numbers of all existing figures
             fig_numbers = [x.num for x in mlib._pylab_helpers.Gcf.get_all_fig_managers()]
-            # set figure as last figure number
-            self.fig = plt.figure(fig_numbers[-1])
+            if len(fig_numbers) > 0:
+                self.fig = plt.figure(fig_numbers[-1])
+            else:
+                self.fig = plt.figure(figsize=map_prop['figsize'],dpi=map_prop['dpi'])
             self.ax = ax
         
         #Attach geography to plot, lat/lon lines, etc.

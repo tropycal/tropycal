@@ -39,6 +39,8 @@ class Realtime():
         Flag determining whether to read JTWC data in. If True, specify the JTWC data source using "jtwc_source". Default is False.
     jtwc_source : str, optional
         If jtwc is set to True, this specifies the JTWC data source to read from. Available options are "noaa", "ucar" or "jtwc". Default is "jtwc". Read the notes for more details.
+    ssl_certificate : boolean, optional
+        If jtwc is set to True, this determines whether to disable SSL certificate when retrieving data from the default JTWC source ("jtwc"). Default is True. Use False *ONLY* if True causes an SSL certification error.
     
     Returns
     -------
@@ -111,7 +113,7 @@ class Realtime():
     def __getitem__(self, key):
         return self.__dict__[key]
     
-    def __init__(self,jtwc=False,jtwc_source='ucar'):
+    def __init__(self,jtwc=False,jtwc_source='ucar',ssl_certificate=True):
         
         #Define empty dict to store track data in
         self.data = {}
@@ -125,7 +127,7 @@ class Realtime():
         if jtwc_source not in ['ucar','noaa','jtwc']:
             msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
             raise ValueError(msg)
-        if jtwc: self.__read_btk_jtwc(jtwc_source)
+        if jtwc: self.__read_btk_jtwc(jtwc_source,ssl_certificate)
         
         #Determine time elapsed
         time_elapsed = dt.now() - start_time
@@ -148,6 +150,8 @@ class Realtime():
             #Get time difference
             hours_diff = (current_date - last_date).total_seconds() / 3600.0
             if hours_diff >= 18.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
+                del self.data[key]
+            if hours_diff <= -48.0:
                 del self.data[key]
         
         #For each storm remaining, create a Storm object
@@ -304,6 +308,23 @@ class Realtime():
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
+            #Determine storm name for invests
+            if invest_bool == True:
+                
+                #Determine letter in front of invest
+                add_letter = 'L'
+                if stormid[0] == 'C':
+                    add_letter = 'C'
+                elif stormid[0] == 'E':
+                    add_letter = 'E'
+                elif stormid[0] == 'W':
+                    add_letter = 'W'
+                elif stormid[0] == 'I':
+                    add_letter = 'I'
+                elif stormid[0] == 'S':
+                    add_letter = 'S'
+                name = stormid[2:4] + add_letter
+            
             #Add storm name
             self.data[stormid]['name'] = name
             
@@ -316,7 +337,7 @@ class Realtime():
                     self.data[stormid]['invest'] = True
         
         
-    def __read_btk_jtwc(self,source):
+    def __read_btk_jtwc(self,source,ssl_certificate):
         
         r"""
         Reads in b-deck data from the Tropical Cyclone Guidance Project (TCGP) into the Dataset object.
@@ -329,12 +350,16 @@ class Realtime():
         url = f'https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/'
         if source == 'noaa': url = f'https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/'
         if source == 'ucar': url = f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/'
-        urlpath = urllib.request.urlopen(url)
+        if ssl_certificate == False and source == 'jtwc':
+            import ssl
+            urlpath = urllib.request.urlopen(url,context=ssl._create_unverified_context())
+        else:
+            urlpath = urllib.request.urlopen(url)
         string = urlpath.read().decode('utf-8')
 
         #Get relevant filenames from directory
         files = []
-        search_pattern = f'b[isw][ohp][01234][0123456789]{current_year}.dat'
+        search_pattern = f'b[isw][ohp][012349][0123456789]{current_year}.dat'
 
         pattern = re.compile(search_pattern)
         filelist = pattern.findall(string)
@@ -342,18 +367,39 @@ class Realtime():
             if filename not in files: files.append(filename)
         
         #Search for following year (for SH storms)
-        search_pattern = f'b[isw][ohp][01234][0123456789]{current_year+1}.dat'
+        search_pattern = f'b[isw][ohp][012349][0123456789]{current_year+1}.dat'
 
         pattern = re.compile(search_pattern)
         filelist = pattern.findall(string)
         for filename in filelist:
             if filename not in files: files.append(filename)
+        
+        if source in ['jtwc','ucar']:
+            try:
+                if ssl_certificate == False and source == 'jtwc':
+                    urlpath_nextyear = urllib.request.urlopen(url.replace(str(current_year),str(current_year+1)),context=ssl._create_unverified_context())
+                    string_nextyear = urlpath_nextyear.read().decode('utf-8')
+                else:
+                    urlpath_nextyear = urllib.request.urlopen(url.replace(str(current_year),str(current_year+1)))
+                    string_nextyear = urlpath_nextyear.read().decode('utf-8')
+
+                pattern = re.compile(search_pattern)
+                filelist = pattern.findall(string_nextyear)
+                for filename in filelist:
+                    if filename not in files: files.append(filename)
+            except:
+                pass
 
         #For each file, read in file content and add to hurdat dict
         for file in files:
 
             #Get file ID
             stormid = ((file.split(".dat")[0])[1:]).upper()
+            
+            #Check for invest status
+            invest_bool = False
+            if int(stormid[2]) == 9:
+                invest_bool = True
 
             #Determine basin based on where storm developed
             add_basin = 'west_pacific'
@@ -363,7 +409,7 @@ class Realtime():
                 add_basin = ''
 
             #add empty entry into dict
-            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'invest':False}
+            self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'invest':invest_bool}
             self.data[stormid]['source'] = 'jtwc'
             
             #Add source info
@@ -385,7 +431,12 @@ class Realtime():
             url = f"https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/{file}"
             if source == 'noaa': url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{file}"
             if source == 'ucar': url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/{file}"
-            f = urllib.request.urlopen(url)
+            if f"{current_year+1}.dat" in url: url = url.replace(str(current_year),str(current_year+1))
+            
+            if ssl_certificate == False and source == 'jtwc':
+                f = urllib.request.urlopen(url,context=ssl._create_unverified_context())
+            else:
+                f = urllib.request.urlopen(url)
             content = f.read()
             content = content.decode("utf-8")
             content = content.split("\n")
@@ -460,6 +511,23 @@ class Realtime():
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
+            #Determine storm name for invests
+            if invest_bool == True:
+                
+                #Determine letter in front of invest
+                add_letter = 'L'
+                if stormid[0] == 'C':
+                    add_letter = 'C'
+                elif stormid[0] == 'E':
+                    add_letter = 'E'
+                elif stormid[0] == 'W':
+                    add_letter = 'W'
+                elif stormid[0] == 'I':
+                    add_letter = 'I'
+                elif stormid[0] == 'S':
+                    add_letter = 'S'
+                name = stormid[2:4] + add_letter
+            
             #Add storm name
             self.data[stormid]['name'] = name
             

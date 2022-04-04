@@ -251,7 +251,7 @@ class RealtimeStorm(Storm):
             msg = "No realtime forecast discussion is available for this storm."
             raise RuntimeError(msg)
     
-    def get_forecast_realtime(self):
+    def get_forecast_realtime(self,ssl_certificate=True):
         
         r"""
         Retrieve a dictionary containing the latest official forecast. Available for both NHC and JTWC sources.
@@ -351,10 +351,19 @@ class RealtimeStorm(Storm):
             
             #Get forecast for this storm
             url = f"https://www.nrlmry.navy.mil/atcf_web/docs/current_storms/{self.id.lower()}.sum"
-            if requests.get(url).status_code != 200: raise RuntimeError("JTWC forecast data is unavailable for this storm.")
-            
+            if ssl_certificate == False and self.source == 'jtwc':
+                import ssl
+                if requests.get(url,verify=False).status_code != 200:
+                    raise RuntimeError("JTWC forecast data is unavailable for this storm.")
+            else:
+                if requests.get(url).status_code != 200: raise RuntimeError("JTWC forecast data is unavailable for this storm.")
+
             #Read file content
-            f = urllib.request.urlopen(url)
+            if ssl_certificate == False and self.source == 'jtwc':
+                import ssl
+                f = urllib.request.urlopen(url,context=ssl._create_unverified_context())
+            else:
+                f = urllib.request.urlopen(url)
             content = f.read()
             content = content.decode("utf-8")
             content = content.split("\n")
@@ -467,7 +476,7 @@ class RealtimeStorm(Storm):
         return self.latest_forecast
 
     def plot_forecast_realtime(self,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
-                                   ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+                                   ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={},ssl_certificate=True):
         
         r"""
         Plots the latest available official forecast. Available for both NHC and JTWC sources.
@@ -523,7 +532,7 @@ class RealtimeStorm(Storm):
         try:
             nhc_forecasts = (self.latest_forecast).copy()
         except:
-            nhc_forecasts = self.get_forecast_realtime()
+            nhc_forecasts = self.get_forecast_realtime(ssl_certificate=ssl_certificate)
         
         #Add other info to forecast dict
         nhc_forecasts['advisory_num'] = -1

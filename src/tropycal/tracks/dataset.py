@@ -334,6 +334,10 @@ class TrackDataset:
                 vmax = int(vmax)
                 mslp = int(mslp)
                 
+                #Fix longitude for Atlantic storms east of the prime meridian
+                if add_basin == 'north_atlantic' and lon < -180:
+                    lon += 360.0
+                
                 #Handle missing data
                 if vmax < 0: vmax = np.nan
                 if mslp < 800: mslp = np.nan

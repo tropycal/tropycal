@@ -17,6 +17,8 @@ import matplotlib.colors as mcolors
 import matplotlib as mlib
 import warnings
 
+from .. import constants
+
 #===========================================================================================================
 # Public utilities
 # These are used internally and have use externally. Add these to documentation.
@@ -396,6 +398,79 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
     
     #Return ACE
     return ace
+
+def nhc_cone_radii(year,basin,forecast_hour=None):
+    
+    r"""
+    Retrieve the official NHC Cone of Uncertainty radii by basin, year and forecast hour(s). Units are in nautical miles.
+    
+    Parameters
+    ----------
+    year : int
+        Valid year for cone of uncertainty radii.
+    basin : str
+        Basin for cone of uncertainty radii. If basin is invalid, return value will be an empty dict.
+    forecast_hour : int or list, optional
+        Forecast hour(s) to retrieve the cone of uncertainty for. If empty, all available forecast hours will be retrieved.
+    
+    Returns
+    -------
+    dict
+        Dictionary with forecast hour(s) as the keys, and the cone radius in nautical miles for each respective forecast hour as the values.
+    
+    Notes
+    -----
+    1. NHC cone radii are available beginning 2008 onward. Radii for years before 2008 will be defaulted to 2008, and if the current year's radii are not available yet, the radii for the most recent year will be returned.
+    
+    2. NHC began producing cone radii for forecast hour 60 in 2020. Years before 2020 do not have a forecast hour 60.
+    """
+    
+    #Source: https://www.nhc.noaa.gov/verification/verify3.shtml
+    #Source 2: https://www.nhc.noaa.gov/aboutcone.shtml
+    #Radii are in nautical miles
+    cone_climo_hr = [3,12,24,36,48,72,96,120]
+    
+    #Basin check
+    if basin not in ['north_atlantic','east_pacific']:
+        return {}
+    
+    #Fix for 2020 and later that incorporates 60 hour forecasts
+    if year >= 2020:
+        cone_climo_hr = [3,12,24,36,48,60,72,96,120]
+    
+    #Forecast hour check
+    if forecast_hour is None:
+        forecast_hour = cone_climo_hr
+    elif isinstance(forecast_hour,int) == True:
+        if forecast_hour not in cone_climo_hr:
+            raise ValueError(f"Forecast hour {forecast_hour} is invalid. Available forecast hours for {year} are: {cone_climo_hr}")
+        else:
+            forecast_hour = [forecast_hour]
+    elif isinstance(forecast_hour,list) == True:
+        forecast_hour = [i for i in forecast_hour if i in cone_climo_hr]
+        if len(forecast_hour) == 0:
+            raise ValueError(f"Requested forecast hours are invalid. Available forecast hours for {year} are: {cone_climo_hr}")
+    else:
+        raise TypeError("forecast_hour must be of type int or list")
+    
+    #Year check
+    if year > np.max([k for k in constants.CONE_SIZE_ATL.keys()]):
+        year = [k for k in constants.CONE_SIZE_ATL.keys()][0]
+        warnings.warn(f"No cone information is available for the requested year. Defaulting to {year} cone.")
+    elif year not in constants.CONE_SIZE_ATL.keys():
+        year = 2008
+        warnings.warn(f"No cone information is available for the requested year. Defaulting to 2008 cone.")
+    
+    #Retrieve data
+    cone_radii = {}
+    for hour in list(np.sort(forecast_hour)):
+        hour_index = cone_climo_hr.index(hour)
+        if basin == 'north_atlantic':
+            cone_radii[hour] = constants.CONE_SIZE_ATL[year][hour_index]
+        elif basin == 'east_pacific':
+            cone_radii[hour] = constants.CONE_SIZE_PAC[year][hour_index]
+    
+    return cone_radii
 
 #===========================================================================================================
 # Private utilities

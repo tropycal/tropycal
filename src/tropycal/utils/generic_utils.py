@@ -729,7 +729,7 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
     
     if return_xarray:
         import xarray as xr
-        cone = xr.DataArray(griddata,coords=[gridlats,gridlons],dims=['lat','lon'])
+        cone = xr.DataArray(griddata,coords=[gridlats,gridlons],dims=['grid_lat','grid_lon'])
         return_ds = {
             'cone':cone,
             'center_lon':interp_lon,

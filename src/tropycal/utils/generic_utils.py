@@ -326,7 +326,7 @@ def get_basin(lat,lon,storm_id=""):
             if storm_id[0:2] == "AL":
                 return "north_atlantic"
             else:
-                return "north_pacific"
+                return "east_pacific"
     
     #Southern hemisphere check
     else:
@@ -398,6 +398,31 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
     
     #Return ACE
     return ace
+
+def dropsonde_mslp_estimate(mslp,surface_wind):
+    
+    r"""
+    Apply a NHC rule of thumb for estimating a TC's minimum central mean sea level pressure (MSLP) from a dropsonde released in the eye, accounting for drifting by factoring in the surface wind in knots.
+    
+    Parameters
+    ----------
+    mslp : int or float
+        Dropsonde surface MSLP, in hPa.
+    surface_wind : int or float
+        Surface wind as measured by the dropsonde. This **must** be surface wind; this cannot be substituted by a level just above the surface.
+    
+    Returns
+    -------
+    float
+        Estimated TC minimum central MSLP using the NHC estimation method.
+    
+    Notes
+    -----
+    Source is from NHC presentation:
+    https://www.nhc.noaa.gov/outreach/presentations/nhc2013_aircraftData.pdf
+    """
+    
+    return mslp - (surface_wind / 10.0)
 
 def nhc_cone_radii(year,basin,forecast_hour=None):
     

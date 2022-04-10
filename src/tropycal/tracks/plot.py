@@ -378,7 +378,10 @@ class TrackPlot(Plot):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
@@ -415,7 +418,10 @@ class TrackPlot(Plot):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
@@ -718,7 +724,10 @@ class TrackPlot(Plot):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
@@ -755,7 +764,10 @@ class TrackPlot(Plot):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
@@ -1754,8 +1766,11 @@ None,prop={},map_prop={}):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
-                
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
+
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
             norm = mlib.colors.Normalize(vmin=min(levels), vmax=max(levels))
@@ -1791,7 +1806,10 @@ None,prop={},map_prop={}):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
@@ -2279,7 +2297,10 @@ None,prop={},map_prop={}):
         plt.draw()
 
         #Get the bbox
-        bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        try:
+            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        except:
+            bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
         bb_ax = self.ax.get_position()
 
         #Define colorbar axis

@@ -205,7 +205,10 @@ class ReconPlot(Plot):
         plt.draw()
 
         #Get the bbox
-        bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        try:
+            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        except:
+            bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
         bb_ax = self.ax.get_position()
 
         #Define colorbar axis
@@ -393,7 +396,10 @@ class ReconPlot(Plot):
         plt.draw()
 
         #Get the bbox
-        bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        try:
+            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        except:
+            bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
         bb_ax = self.ax.get_position()
 
         #Define colorbar axis

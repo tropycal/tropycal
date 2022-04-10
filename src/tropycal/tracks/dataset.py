@@ -465,6 +465,7 @@ class TrackDataset:
 
         #Get relevant filenames from directory
         files = []
+        files_years = []
         for iyear in range(start_year,end_year+1):
             if self.basin == 'north_atlantic':
                 search_pattern = f'bal[01234][0123456789]{iyear}.dat'
@@ -477,7 +478,24 @@ class TrackDataset:
             filelist = pattern.findall(string)
             for filename in filelist:
                 if filename not in files: files.append(filename)
+                if iyear not in files_years: files_years.append(iyear)
 
+        #If no files are available, go into archive directory
+        archive_years = []
+        for iyear in range(start_year,end_year):
+            if iyear not in files_years:
+                archive_years.append(iyear)
+            
+            #retrieve list of storms for that year from the archive
+            path_season = urllib.request.urlopen(f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{iyear}/')
+            string = path_season.read().decode('utf-8')
+            nums = "[0123456789]"
+            search_pattern = f'bal[0123]{nums}{iyear}.dat'
+            pattern = re.compile(search_pattern)
+            filelist = pattern.findall(string)
+            for file in filelist:
+                if file not in files: files.append(file)
+        
         #For each file, read in file content and add to hurdat dict
         for file in files:
 
@@ -505,6 +523,9 @@ class TrackDataset:
                 url = f"ftp://ftp.nhc.noaa.gov/atcf/btk/{file}"
             else:
                 url = f"https://ftp.nhc.noaa.gov/atcf/btk/{file}"
+            if int(stormid[4:8]) in archive_years:
+                url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{int(stormid[4:8])}/b{stormid.lower()}.dat"
+                
             f = urllib.request.urlopen(url)
             content = f.read()
             content = content.decode("utf-8")

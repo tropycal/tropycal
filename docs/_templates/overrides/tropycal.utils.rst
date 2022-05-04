@@ -14,9 +14,13 @@ Generic Utilities
       wind_to_category
       category_to_wind
       classify_subtropical
+      dropsonde_mslp_estimate
+      generate_nhc_cone
       get_basin
       get_storm_classification
       get_storm_type
+      knots_to_mph
+      nhc_cone_radii
 
 
 Cartopy Utilities

@@ -48,7 +48,7 @@ class RainDataset():
         #Read in storm rainfall dataset
         if data_path == 'wpc':
             data_path = "https://www.wpc.ncep.noaa.gov/tropical/rain/CONUS_rainfall_obs_1900-2020.csv"
-        self.rain_df = pd.read_csv("https://www.wpc.ncep.noaa.gov/tropical/rain/CONUS_rainfall_obs_1900-2020.csv")
+        self.rain_df = pd.read_csv(data_path)
 
         #Update user on duration
         print(f'--> Completed reading in rainfall data (%.2f seconds)' % (dt.now()-timer_start).total_seconds())

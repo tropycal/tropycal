@@ -641,7 +641,7 @@ class ReconDataset:
                 
                 #Maintain the same lat / lon dimensions for all dynamic maps
                 #Determined by the dynamic domain from the first map
-                if i>0 and domain is 'dynamic':
+                if i>0 and domain == 'dynamic':
                     d1 = {'n':Maps_sub['center_lat']+dlat,\
                           's':Maps_sub['center_lat']-dlat,\
                           'e':Maps_sub['center_lon']+dlon,\

@@ -378,7 +378,10 @@ class TrackPlot(Plot):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
@@ -415,7 +418,10 @@ class TrackPlot(Plot):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
@@ -718,7 +724,10 @@ class TrackPlot(Plot):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
@@ -755,7 +764,10 @@ class TrackPlot(Plot):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
@@ -1754,8 +1766,11 @@ None,prop={},map_prop={}):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
-                
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
+
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
             norm = mlib.colors.Normalize(vmin=min(levels), vmax=max(levels))
@@ -1791,7 +1806,10 @@ None,prop={},map_prop={}):
             plt.draw()
             
             #Get the bbox
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
                 
             #Define colorbar axis
             cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
@@ -1841,80 +1859,28 @@ None,prop={},map_prop={}):
             If true, grid will be shifted to +0 to +360 degrees longitude. Default is False (-180 to +180 degrees).
         cone_days : int
             Number of forecast days to generate the cone through. Default is 5 days.
-        
         """
 
-        #Source: https://www.nhc.noaa.gov/verification/verify3.shtml
-        #Radii are in nautical miles
-        cone_climo_hr = [3,12,24,36,48,72,96,120]
-        cone_size_atl = {}
-        cone_size_atl[2021] = [16,27,40,55,69,86,102,148,200]
-        cone_size_atl[2020] = [16,26,41,55,69,86,103,151,196]
-        cone_size_atl[2019] = [16,26,41,54,68,102,151,198]
-        cone_size_atl[2018] = [16,26,43,56,74,103,151,198]
-        cone_size_atl[2017] = [16,29,45,63,78,107,159,211]
-        cone_size_atl[2016] = [16,30,49,66,84,115,165,237]
-        cone_size_atl[2015] = [16,32,52,71,90,122,170,225]
-        cone_size_atl[2014] = [16,33,52,72,92,125,170,226]
-        cone_size_atl[2013] = [16,33,52,72,92,128,177,229]
-        cone_size_atl[2012] = [16,36,56,75,95,141,180,236]
-        cone_size_atl[2011] = [16,36,59,79,98,144,190,239]
-        cone_size_atl[2010] = [16,36,62,85,108,161,220,285]
-        cone_size_atl[2009] = [16,36,62,89,111,167,230,302]
-        cone_size_atl[2008] = [16,39,67,92,118,170,233,305]
-
-        cone_size_pac = {}
-        cone_size_pac[2021] = [16,25,37,51,64,77,89,114,138]
-        cone_size_pac[2020] = [16,25,38,51,65,78,91,115,138]
-        cone_size_pac[2019] = [16,25,38,48,62,88,115,145]
-        cone_size_pac[2018] = [16,25,39,50,66,94,125,162]
-        cone_size_pac[2017] = [16,25,40,51,66,93,116,151]
-        cone_size_pac[2016] = [16,27,42,55,70,100,137,172]
-        cone_size_pac[2015] = [16,26,42,54,69,100,143,182]
-        cone_size_pac[2014] = [16,30,46,62,79,105,154,190]
-        cone_size_pac[2013] = [16,30,49,66,82,111,157,197]
-        cone_size_pac[2012] = [16,33,52,72,89,121,170,216]
-        cone_size_pac[2011] = [16,33,59,79,98,134,187,230]
-        cone_size_pac[2010] = [16,36,59,82,102,138,174,220]
-        cone_size_pac[2009] = [16,36,59,85,105,148,187,230]
-        cone_size_pac[2008] = [16,36,66,92,115,161,210,256]
-        
         fcst_year = forecast['init'].year
         if cone_year is None:
             cone_year = forecast['init'].year
-
-        #Retrieve cone size for given year
-        if cone_year in cone_size_atl.keys():
-            if forecast['basin'] == 'north_atlantic':
-                cone_size = cone_size_atl[cone_year]
-            elif forecast['basin'] == 'east_pacific':
-                cone_size = cone_size_pac[cone_year]
-            else:
-                cone_size = 0
         
-        elif cone_year > np.max([k for k in cone_size_atl.keys()]):
-            cone_year = [k for k in cone_size_atl.keys()][0]
+        #Fix cone year
+        if cone_year > np.max([k for k in constants.CONE_SIZE_ATL.keys()]):
+            cone_year = [k for k in constants.CONE_SIZE_ATL.keys()][0]
             warnings.warn(f"No cone information is available for the requested year. Defaulting to {cone_year} cone.")
-            if forecast['basin'] == 'north_atlantic':
-                cone_size = cone_size_atl[cone_year]
-            elif forecast['basin'] == 'east_pacific':
-                cone_size = cone_size_pac[cone_year]
-            else:
-                cone_size = 0
-            
-        else:
+        elif cone_year not in constants.CONE_SIZE_ATL.keys():
             cone_year = 2008
             warnings.warn(f"No cone information is available for the requested year. Defaulting to 2008 cone.")
-            if forecast['basin'] == 'north_atlantic':
-                cone_size = cone_size_atl[cone_year]
-            elif forecast['basin'] == 'east_pacific':
-                cone_size = cone_size_pac[cone_year]
-            else:
-                cone_size = 0
-        
-        #Fix for 2020 that now incorporates 60 hour forecasts
-        if fcst_year >= 2020 and isinstance(cone_size,int) == False:
-            cone_climo_hr = [3,12,24,36,48,60,72,96,120]
+
+        #Retrieve cone size and hours for given year
+        if forecast['basin'] in ['north_atlantic','east_pacific']:
+            output = nhc_cone_radii(cone_year,forecast['basin'])
+            cone_climo_hr = [k for k in output.keys()]
+            cone_size = [output[k] for k in output.keys()]
+        else:
+            cone_climo_hr = [3,12,24,36,48,72,96,120]
+            cone_size = 0
 
         #Function for interpolating between 2 times
         def temporal_interpolation(value, orig_times, target_times):
@@ -2331,7 +2297,10 @@ None,prop={},map_prop={}):
         plt.draw()
 
         #Get the bbox
-        bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        try:
+            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+        except:
+            bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
         bb_ax = self.ax.get_position()
 
         #Define colorbar axis

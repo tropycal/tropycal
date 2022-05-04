@@ -189,6 +189,9 @@ class Plot:
             List containing map bounds.
         """
         
+        #Suppress gridliner warnings
+        warnings.filterwarnings("ignore")
+        
         #Retrieve bounds from list
         bound_w,bound_e,bound_s,bound_n = bounds
         

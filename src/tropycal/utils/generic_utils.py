@@ -529,6 +529,10 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
     if False in check_dict:
         raise ValueError("forecast dict must contain keys 'fhr', 'lat', 'lon' and 'init'. You may retrieve a forecast dict for a Storm object through 'storm.get_operational_forecasts()'.")
     
+    #Check forecast basin
+    if basin not in constants.ALL_BASINS:
+        raise ValueError("basin cannot be identified.")
+    
     #Determine storm basin
     if 'basin' not in forecast.keys():
         forecast['basin'] = basin

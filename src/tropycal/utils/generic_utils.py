@@ -532,10 +532,6 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
     #Check forecast basin
     if basin not in constants.ALL_BASINS:
         raise ValueError("basin cannot be identified.")
-    
-    #Determine storm basin
-    if 'basin' not in forecast.keys():
-        forecast['basin'] = basin
 
     #Retrieve cone of uncertainty year
     if cone_year is None:
@@ -548,8 +544,8 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
         warnings.warn(f"No cone information is available for the requested year. Defaulting to 2008 cone.")
 
     #Retrieve cone size and hours for given year
-    if forecast['basin'] in ['north_atlantic','east_pacific']:
-        output = nhc_cone_radii(cone_year,forecast['basin'])
+    if basin in ['north_atlantic','east_pacific']:
+        output = nhc_cone_radii(cone_year,basin)
         cone_climo_hr = [k for k in output.keys()]
         cone_size = [output[k] for k in output.keys()]
     else:
@@ -703,7 +699,11 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
     #Return if no cone specified
     if cone_size == 0:
         return_dict = {'center_lon':interp_lon,'center_lat':interp_lat}
-        return return_dict
+        if return_xarray:
+            import xarray as xr
+            return xr.Dataset(return_dict)
+        else:
+            return return_dict
 
     #Interpolate cone radius temporally
     cone_climo_hr = cone_climo_hr[:cone_day_cap]

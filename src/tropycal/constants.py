@@ -15,6 +15,12 @@ SUBTROPICAL_ONLY_STORM_TYPES = frozenset(['SD','SS'])
 #Standard 00/06/12/18 UTC hours
 STANDARD_HOURS = frozenset(['0000','0600','1200','1800'])
 
+#Accepted basins
+ALL_BASINS = frozenset(['north_atlantic','east_pacific','west_pacific','north_indian','south_atlantic','south_indian','australia','south_pacific'])
+
+#Accepted NHC basins
+NHC_BASINS = frozenset(['north_atlantic','east_pacific'])
+
 #NHC Cone Radii, in nautical miles
 CONE_SIZE_ATL = {
     2022: [16,26,39,52,67,84,100,142,200],

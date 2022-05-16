@@ -403,7 +403,7 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
 def dropsonde_mslp_estimate(mslp,surface_wind):
     
     r"""
-    Apply a NHC rule of thumb for estimating a TC's minimum central mean sea level pressure (MSLP) from a dropsonde released in the eye, accounting for drifting by factoring in the surface wind in knots.
+    Apply a NHC rule of thumb for estimating a TC's minimum central MSLP. This is intended for a dropsonde released in the eye, accounting for drifting by factoring in the surface wind in knots.
     
     Parameters
     ----------

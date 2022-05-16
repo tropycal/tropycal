@@ -2259,11 +2259,11 @@ None,prop={},map_prop={}):
             
             if prop['cmap']=='category' and varname=='vmax':
                 norm = mcolors.BoundaryNorm(clevs,cmap.N)
-                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=vmin,vmax=vmax,norm=norm,
+                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,norm=norm,
                                        transform=ccrs.PlateCarree())
             else:
                 norm = mcolors.Normalize(vmin=vmin,vmax=vmax)
-                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=vmin,vmax=vmax,
+                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,norm=norm,
                                        transform=ccrs.PlateCarree())
         if prop['plot_values']:
             binsize = abs(xcoord[0,0]-xcoord[0,1])

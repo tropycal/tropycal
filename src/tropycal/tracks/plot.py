@@ -548,9 +548,9 @@ class TrackPlot(Plot):
             #Add storm label at start and end points
             if labels == True:
                 self.ax.text(lons[0]+0.0,storm_data['lat'][0]+1.0,f"{storm_data['name'].upper()} {storm_data['year']}",
-                             fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center')
+                             fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center',transform=ccrs.PlateCarree())
                 self.ax.text(lons[-1]+0.0,storm_data['lat'][-1]+1.0,f"{storm_data['name'].upper()} {storm_data['year']}",
-                             fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center')
+                             fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center',transform=ccrs.PlateCarree())
             
             #Iterate over storm data to plot
             for i,(i_lat,i_lon,i_vmax,i_mslp,i_date,i_type) in enumerate(zip(storm_data['lat'],lons,storm_data['vmax'],storm_data['mslp'],storm_data['date'],storm_data['type'])):
@@ -1574,9 +1574,9 @@ None,prop={},map_prop={}):
             
             #Add storm label at start and end points
             self.ax.text(lons[0]+0.0,storm['lat'][0]+1.0,storm['name'].upper(),
-                         fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center')
+                         fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center',transform=ccrs.PlateCarree())
             self.ax.text(lons[-1]+0.0,storm['lat'][-1]+1.0,storm['name'].upper(),
-                         fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center')
+                         fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center',transform=ccrs.PlateCarree())
 
             #Iterate over storm data to plot
             for i,(i_lat,i_lon,i_vmax,i_mslp,i_date,i_type) in enumerate(zip(storm['lat'],lons,storm['vmax'],storm['mslp'],storm['date'],storm['type'])):

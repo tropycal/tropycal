@@ -2238,7 +2238,7 @@ None,prop={},map_prop={}):
         
         if VEC_FLAG:
             binsize = abs(xcoord[0,0]-xcoord[0,1])
-            cbmap = self.ax.pcolor(xcoord,ycoord,vecmag,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+            cbmap = self.ax.pcolor(xcoord,ycoord,vecmag[:-1,:-1],cmap=cmap,vmin=min(clevs),vmax=max(clevs),
                                transform=ccrs.PlateCarree())            
             zcoord = zcoord/vecmag*binsize
             x_center = (xcoord[:-1,:-1]+xcoord[1:,1:])*.5
@@ -2259,11 +2259,11 @@ None,prop={},map_prop={}):
             
             if prop['cmap']=='category' and varname=='vmax':
                 norm = mcolors.BoundaryNorm(clevs,cmap.N)
-                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,norm=norm,
+                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord[:-1,:-1],cmap=cmap,norm=norm,
                                        transform=ccrs.PlateCarree())
             else:
                 norm = mcolors.Normalize(vmin=vmin,vmax=vmax)
-                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,norm=norm,
+                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord[:-1,:-1],cmap=cmap,norm=norm,
                                        transform=ccrs.PlateCarree())
         if prop['plot_values']:
             binsize = abs(xcoord[0,0]-xcoord[0,1])

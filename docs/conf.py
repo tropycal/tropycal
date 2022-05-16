@@ -40,7 +40,7 @@ release = '0.3.4'
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = '1.0'
+needs_sphinx = '2.1'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -86,6 +86,10 @@ templates_path = ['_templates']
 #
 # source_suffix = ['.rst', '.md']
 source_suffix = '.rst'
+
+# Controlling automatically generating summary tables in the docs
+autosummary_generate = True
+autosummary_imported_members = True
 
 # The master toctree document.
 master_doc = 'index'

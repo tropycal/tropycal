@@ -218,8 +218,9 @@ class TrackDataset:
         self.data_tors = {}
         
         # If doInterp, interpolate each storm and save to dictionary.
+        self.data_interp = {}
         if doInterp:
-            self.__getInterp()    
+            self.__getInterp(self.keys)
     
     def __read_hurdat(self,override_basin=False):
         
@@ -991,16 +992,19 @@ class TrackDataset:
         tsec = str(round(time_elapsed.total_seconds(),2))
         print(f"--> Completed reading in ibtracs data ({tsec} seconds)")
     
-    def __getInterp(self):
-        self.data_interp = {}
-        for key in self.keys:
-            
-            #Retrieve storm dict
-            istorm = self.data[key].copy()
-            
-            #Interpolate temporally
-            istorm = interp_storm(istorm,timeres=1,dt_window=24,dt_align='middle')
-            self.data_interp[key]=istorm
+    def __getInterp(self,keys):
+        
+        r"""
+        Interpolates storm data temporally to hourly. This is done for every provided key, and is stored in a separate internal dict.
+        
+        Parameters
+        ----------
+        keys : list
+            List of keys to be interpolated to hourly data.
+        """
+        
+        for key in keys:
+            self.data_interp[key] = interp_storm(self.data[key].copy(),timeres=1,dt_window=24,dt_align='middle')
 
     def get_storm_id(self,storm):
         
@@ -2569,18 +2573,25 @@ class TrackDataset:
         
         for key in stormkeys:
             
-            #Retrieve storm dict
-            istorm = self.data[key].copy()
+            #Only interpolate storms within the provided temporal range
+            if self.data[key]['year'] <= (year_range[0]-1) or self.data[key]['year'] >= (year_range[-1]+1): continue
+            subset_dates = np.array(self.data[key]['date'])[np.array([i in constants.TROPICAL_STORM_TYPES for i in self.data[key]['type']])]
+            if len(subset_dates) == 0: continue
+            verify_dates = [date_range_test(i,date_min,date_max) for i in subset_dates]
+            if True not in verify_dates: continue
             
             #Interpolate temporally if requested
             if doInterp:
                 try:
                     istorm = self.data_interp[key]
                 except:
-                    istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
+                    istorm = interp_storm(self.data[key].copy(),timeres=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
+                    self.data_interp[key] = istorm.copy()
                 timeres = 1
             else:
+                istorm = self.data[key]
                 timeres = 6
+            
             #Iterate over every timestep of the storm
             for i in range(len(istorm['date'])):
                 

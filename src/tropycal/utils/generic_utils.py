@@ -403,7 +403,7 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
 def dropsonde_mslp_estimate(mslp,surface_wind):
     
     r"""
-    Apply a NHC rule of thumb for estimating a TC's minimum central mean sea level pressure (MSLP) from a dropsonde released in the eye, accounting for drifting by factoring in the surface wind in knots.
+    Apply a NHC rule of thumb for estimating a TC's minimum central MSLP. This is intended for a dropsonde released in the eye, accounting for drifting by factoring in the surface wind in knots.
     
     Parameters
     ----------
@@ -529,9 +529,9 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
     if False in check_dict:
         raise ValueError("forecast dict must contain keys 'fhr', 'lat', 'lon' and 'init'. You may retrieve a forecast dict for a Storm object through 'storm.get_operational_forecasts()'.")
     
-    #Determine storm basin
-    if 'basin' not in forecast.keys():
-        forecast['basin'] = basin
+    #Check forecast basin
+    if basin not in constants.ALL_BASINS:
+        raise ValueError("basin cannot be identified.")
 
     #Retrieve cone of uncertainty year
     if cone_year is None:
@@ -544,8 +544,8 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
         warnings.warn(f"No cone information is available for the requested year. Defaulting to 2008 cone.")
 
     #Retrieve cone size and hours for given year
-    if forecast['basin'] in ['north_atlantic','east_pacific']:
-        output = nhc_cone_radii(cone_year,forecast['basin'])
+    if basin in ['north_atlantic','east_pacific']:
+        output = nhc_cone_radii(cone_year,basin)
         cone_climo_hr = [k for k in output.keys()]
         cone_size = [output[k] for k in output.keys()]
     else:
@@ -699,7 +699,11 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
     #Return if no cone specified
     if cone_size == 0:
         return_dict = {'center_lon':interp_lon,'center_lat':interp_lat}
-        return return_dict
+        if return_xarray:
+            import xarray as xr
+            return xr.Dataset(return_dict)
+        else:
+            return return_dict
 
     #Interpolate cone radius temporally
     cone_climo_hr = cone_climo_hr[:cone_day_cap]

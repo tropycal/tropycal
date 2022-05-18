@@ -578,8 +578,9 @@ class RealtimeStorm(Storm):
         
         #Check to ensure storm is not an invest
         if self.invest:
-            msg = "NHC does not issue public advisories on invests. Defaulting to best track method."
-            warnings.warn(msg)
+            if self.source == 'hurdat':
+                msg = "NHC does not issue public advisories on invests. Defaulting to best track method."
+                warnings.warn(msg)
             source = 'best_track'
         
         #Declare empty dict

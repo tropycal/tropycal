@@ -229,7 +229,7 @@ class Plot:
             meridians = np.arange(rup(bound_w,rthres),rdown(bound_e,rthres)+rthres,rthres)
             meridians2 = np.copy(meridians)
             meridians2[meridians2>180.0] = meridians2[meridians2>180.0]-360.0
-            all_meridians = np.arange(0.0,360.0+rthres,rthres)
+            all_meridians = np.arange(-180.0,180.0+rthres,rthres)
             all_parallels = np.arange(rdown(-90.0,rthres),90.0+rthres,rthres)
             
             #First call with no labels but gridlines plotted

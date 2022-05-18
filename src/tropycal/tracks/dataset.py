@@ -2501,6 +2501,10 @@ class TrackDataset:
             Check return_keys for more information.
         """
         
+        #Add interpolation automatically if requested threshold necessitates it
+        check_keys = [True if i in thresh else False for i in ['dv_min','dv_max','dp_min','dp_max','speed_min','speed_max']]
+        if True in check_keys: doInterp = True
+        
         #Update thresh based on input
         default_thresh={'sample_min':1,'p_max':9999,'p_min':0,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,'speed_max':9999,'speed_min':-9999,'dt_window':24,'dt_align':'middle'}
         for key in thresh:

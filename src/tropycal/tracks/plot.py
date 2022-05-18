@@ -548,9 +548,9 @@ class TrackPlot(Plot):
             #Add storm label at start and end points
             if labels == True:
                 self.ax.text(lons[0]+0.0,storm_data['lat'][0]+1.0,f"{storm_data['name'].upper()} {storm_data['year']}",
-                             fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center')
+                             fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center',transform=ccrs.PlateCarree())
                 self.ax.text(lons[-1]+0.0,storm_data['lat'][-1]+1.0,f"{storm_data['name'].upper()} {storm_data['year']}",
-                             fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center')
+                             fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center',transform=ccrs.PlateCarree())
             
             #Iterate over storm data to plot
             for i,(i_lat,i_lon,i_vmax,i_mslp,i_date,i_type) in enumerate(zip(storm_data['lat'],lons,storm_data['vmax'],storm_data['mslp'],storm_data['date'],storm_data['type'])):
@@ -1574,9 +1574,9 @@ None,prop={},map_prop={}):
             
             #Add storm label at start and end points
             self.ax.text(lons[0]+0.0,storm['lat'][0]+1.0,storm['name'].upper(),
-                         fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center')
+                         fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center',transform=ccrs.PlateCarree())
             self.ax.text(lons[-1]+0.0,storm['lat'][-1]+1.0,storm['name'].upper(),
-                         fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center')
+                         fontsize=9,clip_on=True,zorder=1000,alpha=0.7,ha='center',va='center',transform=ccrs.PlateCarree())
 
             #Iterate over storm data to plot
             for i,(i_lat,i_lon,i_vmax,i_mslp,i_date,i_type) in enumerate(zip(storm['lat'],lons,storm['vmax'],storm['mslp'],storm['date'],storm['type'])):
@@ -2238,7 +2238,7 @@ None,prop={},map_prop={}):
         
         if VEC_FLAG:
             binsize = abs(xcoord[0,0]-xcoord[0,1])
-            cbmap = self.ax.pcolor(xcoord,ycoord,vecmag,cmap=cmap,vmin=min(clevs),vmax=max(clevs),
+            cbmap = self.ax.pcolor(xcoord,ycoord,vecmag[:-1,:-1],cmap=cmap,vmin=min(clevs),vmax=max(clevs),
                                transform=ccrs.PlateCarree())            
             zcoord = zcoord/vecmag*binsize
             x_center = (xcoord[:-1,:-1]+xcoord[1:,1:])*.5
@@ -2259,11 +2259,11 @@ None,prop={},map_prop={}):
             
             if prop['cmap']=='category' and varname=='vmax':
                 norm = mcolors.BoundaryNorm(clevs,cmap.N)
-                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=vmin,vmax=vmax,norm=norm,
+                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord[:-1,:-1],cmap=cmap,norm=norm,
                                        transform=ccrs.PlateCarree())
             else:
                 norm = mcolors.Normalize(vmin=vmin,vmax=vmax)
-                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord,cmap=cmap,vmin=vmin,vmax=vmax,
+                cbmap = self.ax.pcolor(xcoord,ycoord,zcoord[:-1,:-1],cmap=cmap,norm=norm,
                                        transform=ccrs.PlateCarree())
         if prop['plot_values']:
             binsize = abs(xcoord[0,0]-xcoord[0,1])

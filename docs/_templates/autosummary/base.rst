@@ -5,7 +5,7 @@
 
 .. auto{{ objtype }}:: {{ objname }}
 
-.. include:: {{fullname}}.examples
+.. include:: {{fullname}}
 
 .. raw:: html
 

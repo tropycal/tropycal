@@ -145,7 +145,7 @@ class RealtimeStorm(Storm):
             self.realtime = False
             self.coords['realtime'] = False
             
-    def get_formation_probability(self):
+    def get_realtime_formation_prob(self):
         
         r"""
         Retrieve the latest NHC formation probability. Only valid for invests within NHC's area of responsibility.
@@ -153,11 +153,8 @@ class RealtimeStorm(Storm):
         Returns
         -------
         dict
-            Dictionary containing latest NHC forecast formation probability, if available. If none, defaults to zero.
+            Dictionary containing latest NHC forecast formation probability, if available. If none, defaults to zero or N/A.
         """
-        
-        if self.invest == False:
-            raise RuntimeError("This function is only valid for invests.")
         
         return {
             'prob_2day': self.dict['prob_2day'],

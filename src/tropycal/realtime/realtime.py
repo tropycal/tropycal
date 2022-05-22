@@ -10,6 +10,14 @@ import warnings
 from datetime import datetime as dt,timedelta
 
 try:
+    import shapefile
+    import zipfile
+    from io import StringIO, BytesIO
+except:
+    warn_message = "Warning: The libraries necessary for online NHC forecast retrieval aren't available (shapefile, gzip, io)."
+    warnings.warn(warn_message)
+
+try:
     import cartopy.feature as cfeature
     from cartopy import crs as ccrs
     from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
@@ -19,6 +27,7 @@ except:
 
 #Internal imports
 from .storm import RealtimeStorm
+from .tools import BasicReader
 from ..utils import *
 from .. import constants
 
@@ -156,7 +165,26 @@ class Realtime():
         
         #For each storm remaining, create a Storm object
         if len(self.data) > 0:
+            self.__read_nhc_shapefile()
+            
+            #Add probability attributes for storms where it's unavailable
             for key in self.data.keys():
+                if key[0:2] in ['AL','EP'] and 'prob_2day' not in self.data[key].keys():
+                    if int(key[2]) == 9:
+                        self.data[storm_id]['prob_2day'] = '0%'
+                        self.data[storm_id]['prob_5day'] = '0%'
+                        self.data[storm_id]['risk_2day'] = 'Low'
+                        self.data[storm_id]['risk_5day'] = 'Low'
+                    else:
+                        self.data[storm_id]['prob_2day'] = 'N/A'
+                        self.data[storm_id]['prob_5day'] = 'N/A'
+                        self.data[storm_id]['risk_2day'] = 'N/A'
+                        self.data[storm_id]['risk_5day'] = 'N/A'
+                if key[0:2] not in ['AL','EP']:
+                    self.data[storm_id]['prob_2day'] = 'N/A'
+                    self.data[storm_id]['prob_5day'] = 'N/A'
+                    self.data[storm_id]['risk_2day'] = 'N/A'
+                    self.data[storm_id]['risk_5day'] = 'N/A'
                 self[key] = RealtimeStorm(self.data[key])
 
             #Delete data dict while retaining active storm keys
@@ -531,6 +559,66 @@ class Realtime():
             #Add storm name
             self.data[stormid]['name'] = name
             
+    def __read_nhc_shapefile(self):
+        
+        try:
+            
+            #Read in shapefile zip from NHC
+            url = 'https://www.nhc.noaa.gov/xgtwo/gtwo_shapefiles.zip'
+            request = urllib.request.Request(url)
+            response = urllib.request.urlopen(request)
+            file_like_object = BytesIO(response.read())
+            tar = zipfile.ZipFile(file_like_object)
+
+            #Get file list (points, areas)
+            members = '\n'.join([i for i in tar.namelist()])
+            nums = "[0123456789]"
+            search_pattern = f'gtwo_points_202{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}.shp'
+            pattern = re.compile(search_pattern)
+            filelist = pattern.findall(members)
+            files = []
+            for file in filelist:
+                if file not in files: files.append(file.split(".shp")[0]) #remove duplicates
+
+            #Retrieve necessary components for shapefile
+            members = tar.namelist()
+            members_names = [i for i in members]
+            data = {'shp':0,'dbf':0,'prj':0,'shx':0}
+            for key in data.keys():
+                idx = members_names.index(files[0]+"."+key)
+                data[key] = BytesIO(tar.read(members[idx]))
+
+            #Read in shapefile
+            orig_reader = shapefile.Reader(shp=data['shp'], dbf=data['dbf'], prj=data['prj'], shx=data['shx'])
+            shp = BasicReader(orig_reader)
+
+            #Iterate through all areas to match to existing invests
+            for record, point in zip(shp.records(), shp.geometries()):
+
+                #Read relevant data
+                lon = (list(point.coords)[0][0])
+                lat = (list(point.coords)[0][1])
+                prob_2day = record.attributes['PROB2DAY']
+                prob_5day = record.attributes['PROB5DAY']
+                risk_2day = record.attributes['RISK2DAY']
+                risk_5day = record.attributes['RISK5DAY']
+                
+                #Match to existing invests
+                distances = [great_circle((lat,lon),(self.data[storm_id]['lat'][-1],self.data[storm_id]['lon'][-1])).miles for storm_id in self.data.keys()]
+                min_distance = np.min(distances)
+                idx = distances.index(min_distance)
+                storm_id = [k for k in self.data.keys()][idx]
+                if min_distance <= 150:
+                    self.data[storm_id]['prob_2day'] = prob_2day
+                    self.data[storm_id]['prob_5day'] = prob_5day
+                    self.data[storm_id]['risk_2day'] = risk_2day
+                    self.data[storm_id]['risk_5day'] = risk_5day
+            
+        except:
+            
+            msg = "Error in retrieving NHC invest data."
+            warnings.warn(msg)
+    
     def list_active_storms(self):
         
         r"""

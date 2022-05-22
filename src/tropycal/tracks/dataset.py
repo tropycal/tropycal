@@ -199,18 +199,6 @@ class TrackDataset:
         keys = self.data.keys()
         self.keys = [k for k in keys]
         
-        #Placeholder for 2006 Pacific cyclone
-        """
-        if 'EP182006' in self.keys:
-            data = {}
-            for key in keys:
-                data[key] = self.data[key]
-                if key == 'EP182006':
-                    data['CP052006'] = pac_2006_cyclone()
-            self.data = data
-            self.keys = [k for k in self.data.keys()]
-         """
-        
         #Create array of zero-ones for existence of tornado data for a given storm
         self.keys_tors = [0 for key in self.keys]
         

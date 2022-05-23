@@ -63,17 +63,36 @@ The following properties are available for any function that involves plotting s
    * - dots
      - Boolean whether to plot storm track dots along the storm track. Default is False.
    * - fillcolor
-     - Fill color for storm track dots. If 'category', then uses a color scale varying by SSHWS category. This can also be 'vmax' or 'mslp' for coloring by variable value.
+     - Fill color for storm track dots. Refer to table below for special color options.
    * - linecolor
-     - Line color for storm track. If 'category', then uses a color scale varying by SSHWS category. This can also be 'vmax' or 'mslp' for coloring by variable value.
+     - Line color for storm track. Refer to table below for special color options.
    * - cmap
-     - Colormap used for fill and/or line color, if not a single color nor 'category'.
+     - Colormap used for fill and/or line color, if not a single color nor 'category'. Can be a string or a dict of values and corresponding colors.
    * - levels
      - List of levels corresponding to cmap, if not coloring by a single color nor 'category'.
    * - linewidth
      - Line width for storm track. Default varies by function.
    * - ms
      - Size of storm track dots. Default is 7.5.
+   * - plot_names
+     - For plotting multiple storms or seasons, determines whether to plot storm name labels.
+
+The following special fill or line color options are available:
+
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
+
+   * - "category"
+     - Default color map for SSHWS category.
+   * - "vmax"
+     - Color by maximum sustained wind.
+   * - "mslp"
+     - Color by minimum MSLP.
+   * - "dvmax_dt"
+     - Fill color by change in sustained wind speed. Only available for interpolated storm objects, retrieved using `storm.interp()`.
+   * - "speed"
+     - Fill color by forward speed of tropical cyclone. Only available for interpolated storm objects, retrieved using `storm.interp()`.
 
 .. _options-prop-nhc:
 

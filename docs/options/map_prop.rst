@@ -77,12 +77,14 @@ The following properties are available for any function that involves plotting s
    * - plot_names
      - For plotting multiple storms or seasons, determines whether to plot storm name labels.
 
-The following special fill or line color options are available:
+The following special options are available for ``linecolor`` or ``fillcolor``:
 
 .. list-table:: 
    :widths: 25 75
    :header-rows: 1
 
+   * - Value
+     - Description
    * - "category"
      - Default color map for SSHWS category.
    * - "vmax"
@@ -90,9 +92,9 @@ The following special fill or line color options are available:
    * - "mslp"
      - Color by minimum MSLP.
    * - "dvmax_dt"
-     - Fill color by change in sustained wind speed. Only available for interpolated storm objects, retrieved using `storm.interp()`.
+     - Fill color by change in sustained wind speed. Only available for interpolated storm objects, retrieved using ``storm.interp()``.
    * - "speed"
-     - Fill color by forward speed of tropical cyclone. Only available for interpolated storm objects, retrieved using `storm.interp()`.
+     - Fill color by forward speed of tropical cyclone. Only available for interpolated storm objects, retrieved using ``storm.interp()``.
 
 .. _options-prop-nhc:
 

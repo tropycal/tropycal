@@ -59,6 +59,8 @@ class TrackDataset:
         * **ibtracs** - ibtracs data source for regional or global data
     include_btk : bool, optional
         If True, the best track data from NHC for the most recent years where it doesn't exist in HURDAT2 will be added into the dataset. Valid for "north_atlantic" and "east_pacific" basins. Default is False.
+    interpolate_data : bool, optional
+        If True, interpolates all storm data to hourly. Default is False.
     
     Other Parameters
     ----------------
@@ -141,7 +143,7 @@ class TrackDataset:
         return "\n".join(summary)
     
     
-    def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,doInterp=False,**kwargs):
+    def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,interpolate_data=False,**kwargs):
         
         #kwargs
         atlantic_url = kwargs.pop('atlantic_url', 'https://www.aoml.noaa.gov/hrd/hurdat/hurdat2.html')
@@ -205,9 +207,9 @@ class TrackDataset:
         #Add dict to store all storm-specific tornado data in
         self.data_tors = {}
         
-        # If doInterp, interpolate each storm and save to dictionary.
+        # If interpolate_data, interpolate each storm and save to dictionary.
         self.data_interp = {}
-        if doInterp:
+        if interpolate_data:
             self.__getInterp(self.keys)
     
     def __read_hurdat(self,override_basin=False):
@@ -2455,7 +2457,7 @@ class TrackDataset:
                 
         return ace_rank
 
-    def filter_storms(self,storm=None,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=None,doInterp=False,return_keys=True):
+    def filter_storms(self,storm=None,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=None,interpolate_data=False,return_keys=True):
         
         r"""
         Filters all storms by various thresholds.
@@ -2480,7 +2482,7 @@ class TrackDataset:
             Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.
         domain : str
             Geographic domain. Default is entire basin. Please refer to :ref:`options-domain` for available domain options.
-        doInterp : bool
+        interpolate_data : bool
             Whether to interpolate track data to hourly. Default is False.
         return_keys : bool
             If True, returns a list of storm IDs that match the specified criteria. Otherwise returns a pandas.DataFrame object with all matching data points. Default is True.
@@ -2493,7 +2495,7 @@ class TrackDataset:
         
         #Add interpolation automatically if requested threshold necessitates it
         check_keys = [True if i in thresh else False for i in ['dv_min','dv_max','dp_min','dp_max','speed_min','speed_max']]
-        if True in check_keys: doInterp = True
+        if True in check_keys: interpolate_data = True
         
         #Update thresh based on input
         default_thresh={'sample_min':1,'p_max':9999,'p_min':0,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,'speed_max':9999,'speed_min':-9999,'dt_window':24,'dt_align':'middle'}
@@ -2540,7 +2542,7 @@ class TrackDataset:
         #Create empty dictionary to store output in
         points = {}
         for name in ['vmax','mslp','type','lat','lon','date','season','stormid','ace']+ \
-                    ['dmslp_dt','dvmax_dt','acie','dx_dt','dy_dt','speed']*int(doInterp):
+                    ['dmslp_dt','dvmax_dt','acie','dx_dt','dy_dt','speed']*int(interpolate_data):
             points[name] = []
         
         #Iterate over every storm in TrackDataset
@@ -2567,7 +2569,7 @@ class TrackDataset:
             if True not in verify_dates: continue
             
             #Interpolate temporally if requested
-            if doInterp:
+            if interpolate_data:
                 try:
                     istorm = self.data_interp[key]
                 except:
@@ -2602,7 +2604,7 @@ class TrackDataset:
                         points['ace'].append(0)                        
                         
                     #Append separately for interpolated data
-                    if doInterp:
+                    if interpolate_data:
                         points['dvmax_dt'].append(istorm['dvmax_dt'][i])
                         points['acie'].append([0,istorm['dvmax_dt'][i]**2*1e-4*timeres/6][istorm['dvmax_dt'][i]>0])
                         points['dmslp_dt'].append(istorm['dmslp_dt'][i])
@@ -2622,7 +2624,7 @@ class TrackDataset:
             p = p.loc[(p['mslp']<=thresh['p_max'])]
         if thresh['p_min']>0:
             p = p.loc[(p['mslp']>=thresh['p_min'])]
-        if doInterp:
+        if interpolate_data:
             if thresh['dv_min']>-9999:
                 p = p.loc[(p['dvmax_dt']>=thresh['dv_min'])]
             if thresh['dp_max']<9999:
@@ -2782,7 +2784,7 @@ class TrackDataset:
 
             #Obtain all data points for the requested threshold and year/date ranges. Interpolate data to hourly.
             print("--> Getting filtered storm tracks")
-            points = self.filter_storms(storm,year_range_temp,date_range,thresh=thresh,doInterp=True,return_keys=False)
+            points = self.filter_storms(storm,year_range_temp,date_range,thresh=thresh,interpolate_data=True,return_keys=False)
 
             #Round lat/lon points down to nearest bin
             to_bin = lambda x: np.floor(x / binsize) * binsize

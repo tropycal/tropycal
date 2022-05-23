@@ -654,7 +654,7 @@ class Storm:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(self.dict,domain,plot_all_dots,ax=ax,prop=prop,map_prop=map_prop,save_path=save_path)
+        plot_ax = self.plot_obj.plot_storms([self.dict],domain,plot_all_dots=plot_all_dots,ax=ax,prop=prop,map_prop=map_prop,save_path=save_path)
         
         #Return axis
         return plot_ax
@@ -1796,7 +1796,7 @@ class Storm:
         tor_title = plot_ax.get_title('left')
 
         #Plot storm
-        plot_ax = self.plot_obj_tc.plot_storm(self.dict,domain=domain,ax=plot_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj_tc.plot_storms([self.dict],domain=domain,ax=plot_ax,prop=prop,map_prop=map_prop)
         
         plot_ax.add_artist(leg_tor)
         

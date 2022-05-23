@@ -1152,13 +1152,13 @@ class TrackDataset:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all_dots,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storms([storm_dict],domain,plot_all_dots=plot_all_dots,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         return plot_ax
     
     
-    def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,labels=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
         
         r"""
         Creates a plot of multiple storms.
@@ -1173,8 +1173,6 @@ class TrackDataset:
             Title string to display on the plot. Default is "TC Track Composite".
         plot_all_dots : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
-        labels : bool
-            Whether to label storm titles on the plot. Default is False.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
@@ -1227,7 +1225,7 @@ class TrackDataset:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title,plot_all_dots,labels,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title,plot_all_dots,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         return plot_ax

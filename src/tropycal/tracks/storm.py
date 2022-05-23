@@ -499,8 +499,8 @@ class Storm:
             New Storm object containing the updated dictionary.
         """
         
-        NEW_STORM = copy.copy(self)
-        newdict = interp_storm(self.dict,timeres,dt_window,dt_align)
+        NEW_STORM = copy.deepcopy(self)
+        newdict = interp_storm(NEW_STORM.dict,timeres,dt_window,dt_align)
         for key in newdict.keys(): 
             NEW_STORM.dict[key] = newdict[key]
 

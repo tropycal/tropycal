@@ -494,7 +494,7 @@ class RealtimeStorm(Storm):
         return self.latest_forecast
 
     def plot_forecast_realtime(self,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
-                                   ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={},ssl_certificate=True):
+                                   ax=None,cartopy_proj=None,save_path=None,ssl_certificate=True,**kwargs):
         
         r"""
         Plots the latest available official forecast. Available for both NHC and JTWC sources.
@@ -518,6 +518,9 @@ class RealtimeStorm(Storm):
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
             Relative or full path of directory to save the image in. If none, image will not be saved.
+        
+        Other Parameters
+        ----------------
         prop : dict
             Property of storm track lines.
         map_prop : dict
@@ -528,6 +531,10 @@ class RealtimeStorm(Storm):
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Check to ensure storm is not an invest
         if self.invest:

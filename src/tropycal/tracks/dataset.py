@@ -1100,7 +1100,7 @@ class TrackDataset:
             raise RuntimeError(error_message)
     
     
-    def plot_storm(self,storm,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_storm(self,storm,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of a single storm.
@@ -1133,6 +1133,10 @@ class TrackDataset:
             Instance of axes containing the plot is returned.
         """
         
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
+        
         #Retrieve requested storm
         if isinstance(storm,dict) == False:
             storm_dict = self.get_storm(storm).dict
@@ -1160,7 +1164,7 @@ class TrackDataset:
         return plot_ax
     
     
-    def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of multiple storms.
@@ -1194,6 +1198,10 @@ class TrackDataset:
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Create instance of plot object
         try:
@@ -1233,7 +1241,7 @@ class TrackDataset:
         return plot_ax
         
         
-    def plot_season(self,year,domain=None,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_season(self,year,domain=None,ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of a single season.
@@ -1263,6 +1271,10 @@ class TrackDataset:
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Retrieve season object
         season = self.get_season(year)
@@ -2646,7 +2658,7 @@ class TrackDataset:
 
     def gridded_stats(self,request,thresh={},storm=None,year_range=None,year_range_subtract=None,year_average=False,
                       date_range=('1/1','12/31'),binsize=1,domain=None,ax=None,
-                      return_array=False,cartopy_proj=None,prop={},map_prop={}):
+                      return_array=False,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of gridded statistics.
@@ -2721,6 +2733,10 @@ class TrackDataset:
         -------
         By default, the plot axes is returned. If "return_array" are set to True, a dictionary is returned containing both the axes and data array.
         """
+        
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
 
         default_prop = {'smooth':None}
         for key in prop.keys():

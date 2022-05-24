@@ -10,6 +10,7 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 from scipy.ndimage import gaussian_filter as gfilt
+from matplotlib import path
 
 #Import internal scripts
 from ..plot import Plot
@@ -993,9 +994,23 @@ class TrackDataset:
             List of keys to be interpolated to hourly data.
         """
         
+        #Check if operation needs to be performed
+        count = 0
+        for key in keys:
+            if key not in self.data_interp.keys(): count += 1
+        if count == 0: return
+        
+        start_time = dt.now()
+        print("--> Starting to interpolate storms")
+        
         for key in keys:
             if key not in self.data_interp.keys():
                 self.data_interp[key] = interp_storm(self.data[key].copy(),timeres=1,dt_window=24,dt_align='middle')
+        
+        #Determine time elapsed
+        time_elapsed = dt.now() - start_time
+        tsec = str(round(time_elapsed.total_seconds(),2))
+        print(f"--> Completed interpolating storms ({tsec} seconds)")
 
     def get_storm_id(self,storm):
         
@@ -3432,6 +3447,88 @@ class TrackDataset:
                 if np.nanmin(mslp) >= thresh['p_max']: continue
                 
             data[key] = np.round(np.nanmin([i[0] for i in storm_data]),1)
+        
+        return data
+        
+    def analogs_from_shape(self,points,thresh={},non_tropical=False,year_range=None,date_range=None):
+        
+        r"""
+        Retrieve historical TC tracks within a bounded region.
+        
+        Parameters
+        ----------
+        points : list
+            List of tuples ordered by (latitude, longitude) corresponding to the bounded region.
+        thresh : dict
+            Dict for threshold(s) that storms within the requested radius must meet. The following options are available:
+            
+            * **v_min** - Search for sustained wind (kt) above this threshold
+            * **v_max** - Search for sustained wind (kt) below this threshold
+            * **p_min** - Search for MSLP (hPa) below this threshold
+            * **p_max** - Search for MSLP (hPa) above this threshold
+        non_tropical : bool
+            If True, non-tropical (e.g., tropical disturbance, extra-tropical cyclone) points are included in the search. Default is False.
+        year_range : tuple
+            Year range over which to search. If None, defaults to entire dataset.
+        date_range : tuple
+            Start and end dates, formatted as a "month/day" string. If None, defaults to year round.
+        
+        Returns
+        -------
+        list
+            List of tropical cyclones that meet the criteria.
+        
+        Notes
+        -----
+        This function automatically interpolates all storm data within this TrackDataset instance to hourly, if this hasn't already been done previously.
+        """
+        
+        #Determine year range of dataset
+        if year_range == None:
+            start_year = self.data[self.keys[0]]['year']
+            end_year = self.data[self.keys[-1]]['year']
+        elif isinstance(year_range,(list,tuple)):
+            if len(year_range) != 2:
+                raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
+            start_year = int(year_range[0])
+            if start_year < self.data[self.keys[0]]['year']: start_year = self.data[self.keys[0]]['year']
+            end_year = int(year_range[1])
+            if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
+        else:
+            raise TypeError("year_range must be of type tuple or list")
+        
+        #Determine date range
+        if date_range == None:
+            date_range = ('1/1','12/31')
+        
+        #Interpolate all storm data, if hasn't been done already
+        self.__interpolate_storms(self.keys)
+        
+        #Check for last entry of tuple
+        if points[-1] != points[0]: points.append(points[0])
+        p = path.Path(points)
+        
+        data = []
+        for key in self.keys:
+            if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year: continue
+            storm_data = [[p.contains_point((self.data[key]['lat'][i],self.data[key]['lon'][i])),self.data[key]['vmax'][i],self.data[key]['mslp'][i],self.data[key]['date'][i]] for i in range(len(self.data[key]['lat'])) if self.data[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
+            storm_data = [i for i in storm_data if i[0] == True]
+            storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= dt.strptime(date_range[1],'%m/%d').replace(year=i[3].year)]
+            if len(storm_data) == 0: continue
+            if 'v_min' in thresh.keys():
+                vmax = [i[1] for i in storm_data]
+                if np.nanmin(vmax) <= thresh['v_min']: continue
+            if 'v_max' in thresh.keys():
+                vmax = [i[1] for i in storm_data]
+                if np.nanmin(vmax) >= thresh['v_max']: continue
+            if 'p_min' in thresh.keys():
+                mslp = [i[2] for i in storm_data]
+                if np.nanmin(mslp) <= thresh['p_min']: continue
+            if 'p_max' in thresh.keys():
+                mslp = [i[2] for i in storm_data]
+                if np.nanmin(mslp) >= thresh['p_max']: continue
+                
+            data.append(key)
         
         return data
         

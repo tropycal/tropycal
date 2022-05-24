@@ -3532,3 +3532,203 @@ class TrackDataset:
         
         return data
         
+    def plot_analogs_from_point(self,point,radius,thresh={},non_tropical=False,year_range=None,date_range=None,**kwargs):
+        
+        r"""
+        Plot historical TC tracks surrounding a point.
+        
+        Parameters
+        ----------
+        point : tuple
+            Tuple ordered by (latitude, longitude).
+        radius : int or float
+            Radius in kilometers surrounding the point to search for storms.
+        thresh : dict
+            Dict for threshold(s) that storms within the requested radius must meet. The following options are available:
+            
+            * **v_min** - Search for sustained wind (kt) above this threshold
+            * **v_max** - Search for sustained wind (kt) below this threshold
+            * **p_min** - Search for MSLP (hPa) below this threshold
+            * **p_max** - Search for MSLP (hPa) above this threshold
+        non_tropical : bool
+            If True, non-tropical (e.g., tropical disturbance, extra-tropical cyclone) points are included in the search. Default is False.
+        year_range : tuple
+            Year range over which to search. If None, defaults to entire dataset.
+        date_range : tuple
+            Start and end dates, formatted as a "month/day" string. If None, defaults to year round.
+        
+        Other Parameters
+        ----------------
+        ms : int or float
+            Marker fill size for point. Defaults to 12.
+        linewidth : int or float
+            Width of circle surrounding point. Defaults to 2.0.
+        color : str
+            Color of point and line surrounding point. Defaults to black.
+        **kwargs
+            Refer to ``tropycal.tracks.TrackDataset.plot_storms`` for plotting keyword arguments.
+        
+        Returns
+        -------
+        ax
+            Axes instance of the plot.
+        
+        Notes
+        -----
+        This function automatically interpolates all storm data within this TrackDataset instance to hourly, if this hasn't already been done previously.
+        """
+        
+        #Determine year range of dataset
+        if year_range == None:
+            start_year = self.data[self.keys[0]]['year']
+            end_year = self.data[self.keys[-1]]['year']
+        elif isinstance(year_range,(list,tuple)):
+            if len(year_range) != 2:
+                raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
+            start_year = int(year_range[0])
+            if start_year < self.data[self.keys[0]]['year']: start_year = self.data[self.keys[0]]['year']
+            end_year = int(year_range[1])
+            if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
+        else:
+            raise TypeError("year_range must be of type tuple or list")
+        
+        #Determine date range
+        if date_range == None:
+            date_range = ('1/1','12/31')
+        
+        #Reconfigure domain to be centered around circle
+        import cartopy.geodesic as geodesic
+        circle_points = geodesic.Geodesic().circle(lon=point[1],lat=point[0],radius=radius*1000,n_samples=360,endpoint=False)
+        domain = kwargs.pop('domain', None)
+        if domain == None:
+            lons = [i[0] for i in circle_points]
+            lats = [i[1] for i in circle_points]
+            bounds = dynamic_map_extent(np.nanmin(lons),np.nanmax(lons),np.nanmin(lats),np.nanmax(lats))
+            kwargs['domain'] = {'w':bounds[0],'e':bounds[1],'s':bounds[2],'n':bounds[3]}
+        else:
+            kwargs['domain'] = domain
+        
+        #Retrieve storms and plot on axes
+        storms = self.analogs_from_point(point,radius,thresh,non_tropical,year_range,date_range).keys()
+        ax = self.plot_storms(storms,**kwargs)
+        
+        #Plot circle and dot
+        import cartopy
+        import shapely
+        ms = kwargs.pop('ms', 12)
+        linewidth = kwargs.pop('linewidth', 2.0)
+        color = kwargs.pop('color', 'black')
+        ax.plot(point[1],point[0],'o',mfc=color,mec=color,ms=ms, zorder=30)
+        geom = shapely.geometry.Polygon(circle_points)
+        ax.add_geometries((geom,), crs=cartopy.crs.PlateCarree(), facecolor='none', edgecolor=color, linewidth=linewidth, zorder=30)
+        
+        #Change title
+        title = kwargs.pop('title','')
+        if title == '':
+            endash = u"\u2013"
+            dot = u"\u2022"
+            degree_sign = u'\N{DEGREE SIGN}'
+            lat_formatter = f"{point[0]:.1f}{degree_sign}N"
+            if point[0] < 0: lat_formatter = f"{abs(point[0]):.1f}{degree_sign}S"
+            lon_formatter = f"{point[1]:.1f}{degree_sign}E"
+            if point[1] < 0: lon_formatter = f"{abs(point[1]):.1f}{degree_sign}W"
+            if point[1] > 180: lon_formatter = f"{abs(point[1]-360.0):.1f}{degree_sign}W"
+            start_day = dt.strptime(date_range[0],'%m/%d').strftime('%b %d')
+            end_day = dt.strptime(date_range[1],'%m/%d').strftime('%b %d')
+            ax.set_title(f"TCs Within {radius} km of {lat_formatter}, {lon_formatter}",loc='left',fontsize=17,fontweight='bold')
+            ax.set_title(f"Number of storms: {len(storms)}\n{start_day} {endash} {end_day} {dot} {start_year} {endash} {end_year}",loc='right',fontsize=13)
+        
+        return ax
+
+    def plot_analogs_from_shape(self,points,thresh={},non_tropical=False,year_range=None,date_range=None,**kwargs):
+        
+        r"""
+        Plot historical TC tracks surrounding a point.
+        
+        Parameters
+        ----------
+        points : list
+            List of tuples ordered by (latitude, longitude) corresponding to the bounded region.
+        thresh : dict
+            Dict for threshold(s) that storms within the requested radius must meet. The following options are available:
+            
+            * **v_min** - Search for sustained wind (kt) above this threshold
+            * **v_max** - Search for sustained wind (kt) below this threshold
+            * **p_min** - Search for MSLP (hPa) below this threshold
+            * **p_max** - Search for MSLP (hPa) above this threshold
+        non_tropical : bool
+            If True, non-tropical (e.g., tropical disturbance, extra-tropical cyclone) points are included in the search. Default is False.
+        year_range : tuple
+            Year range over which to search. If None, defaults to entire dataset.
+        date_range : tuple
+            Start and end dates, formatted as a "month/day" string. If None, defaults to year round.
+        
+        Other Parameters
+        ----------------
+        linewidth : int or float
+            Width of bounded shape line. Defaults to 2.0.
+        color : str
+            Color of bounded shape line. Defaults to black.
+        **kwargs
+            Refer to ``tropycal.tracks.TrackDataset.plot_storms`` for plotting keyword arguments.
+        
+        Returns
+        -------
+        ax
+            Axes instance of the plot.
+        
+        Notes
+        -----
+        This function automatically interpolates all storm data within this TrackDataset instance to hourly, if this hasn't already been done previously.
+        """
+        
+        #Determine year range of dataset
+        if year_range == None:
+            start_year = self.data[self.keys[0]]['year']
+            end_year = self.data[self.keys[-1]]['year']
+        elif isinstance(year_range,(list,tuple)):
+            if len(year_range) != 2:
+                raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
+            start_year = int(year_range[0])
+            if start_year < self.data[self.keys[0]]['year']: start_year = self.data[self.keys[0]]['year']
+            end_year = int(year_range[1])
+            if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
+        else:
+            raise TypeError("year_range must be of type tuple or list")
+        
+        #Determine date range
+        if date_range == None:
+            date_range = ('1/1','12/31')
+        
+        #Reconfigure domain to be centered around circle
+        domain = kwargs.pop('domain', None)
+        if domain == None:
+            lons = [i[1] for i in points]
+            lats = [i[0] for i in points]
+            bounds = dynamic_map_extent(np.nanmin(lons),np.nanmax(lons),np.nanmin(lats),np.nanmax(lats))
+            kwargs['domain'] = {'w':bounds[0],'e':bounds[1],'s':bounds[2],'n':bounds[3]}
+        else:
+            kwargs['domain'] = domain
+        
+        #Retrieve storms and plot on axes
+        storms = self.analogs_from_shape(points,thresh,non_tropical,year_range,date_range)
+        ax = self.plot_storms(storms,**kwargs)
+        
+        #Plot circle and dot
+        import cartopy.crs as ccrs
+        linewidth = kwargs.pop('linewidth', 2.0)
+        color = kwargs.pop('color', 'black')
+        if points[-1] != points[0]: points.append(points[0])
+        ax.plot([i[1] for i in points],[i[0] for i in points],color=color,linewidth=linewidth,zorder=30,transform=ccrs.PlateCarree())
+        
+        #Change title
+        title = kwargs.pop('title','')
+        if title == '':
+            endash = u"\u2013"
+            dot = u"\u2022"
+            start_day = dt.strptime(date_range[0],'%m/%d').strftime('%b %d')
+            end_day = dt.strptime(date_range[1],'%m/%d').strftime('%b %d')
+            ax.set_title(f"TC Tracks Within Bounded Region",loc='left',fontsize=17,fontweight='bold')
+            ax.set_title(f"Number of storms: {len(storms)}\n{start_day} {endash} {end_day} {dot} {start_year} {endash} {end_year}",loc='right',fontsize=13)
+        
+        return ax

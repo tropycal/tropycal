@@ -274,6 +274,11 @@ class RealtimeStorm(Storm):
         r"""
         Retrieve a dictionary containing the latest official forecast. Available for both NHC and JTWC sources.
         
+        Parameters
+        ----------
+        ssl_certificate : boolean, optional
+            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from the default JTWC source ("jtwc"). Default is True. Use False *ONLY* if True causes an SSL certification error.
+        
         Returns
         -------
         dict
@@ -521,6 +526,8 @@ class RealtimeStorm(Storm):
         
         Other Parameters
         ----------------
+        ssl_certificate : boolean, optional
+            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from the default JTWC source ("jtwc"). Default is True. Use False *ONLY* if True causes an SSL certification error.
         prop : dict
             Property of storm track lines.
         map_prop : dict

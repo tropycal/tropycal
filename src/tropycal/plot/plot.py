@@ -121,65 +121,8 @@ class Plot:
         list
             List containing new west, east, north, south map bounds, respectively.
         """
-
-        #Get lat/lon bounds
-        bound_w = min_lon+0.0
-        bound_e = max_lon+0.0
-        bound_s = min_lat+0.0
-        bound_n = max_lat+0.0
         
-        #If only one coordinate point, artificially induce a spread
-        if bound_w == bound_e:
-            bound_w = bound_w - 0.6
-            bound_e = bound_e + 0.6
-        if bound_s == bound_n:
-            bound_n = bound_n + 0.6
-            bound_s = bound_s - 0.6
-
-        #Function for fixing map ratio
-        def fix_map_ratio(bound_w,bound_e,bound_n,bound_s,nthres=1.45):
-            xrng = abs(bound_w-bound_e)
-            yrng = abs(bound_n-bound_s)
-            diff = float(xrng) / float(yrng)
-            if diff < nthres: #plot too tall, need to make it wider
-                goal_diff = nthres * (yrng)
-                factor = abs(xrng - goal_diff) / 2.0
-                bound_w = bound_w - factor
-                bound_e = bound_e + factor
-            elif diff > nthres: #plot too wide, need to make it taller
-                goal_diff = xrng / nthres
-                factor = abs(yrng - goal_diff) / 2.0
-                bound_s = bound_s - factor
-                bound_n = bound_n + factor
-            return bound_w,bound_e,bound_n,bound_s
-
-        #First round of fixing ratio
-        bound_w,bound_e,bound_n,bound_s = fix_map_ratio(bound_w,bound_e,bound_n,bound_s,1.45)
-
-        #Adjust map width depending on extent of storm
-        xrng = abs(bound_e-bound_w)
-        yrng = abs(bound_n-bound_s)
-        factor = 0.1
-        if min(xrng,yrng) < 15.0:
-            factor = 0.2
-        if min(xrng,yrng) < 12.0:
-            factor = 0.4
-        if min(xrng,yrng) < 10.0:
-            factor = 0.6
-        if min(xrng,yrng) < 8.0:
-            factor = 0.75
-        if min(xrng,yrng) < 6.0:
-            factor = 0.9
-        bound_w = bound_w-(xrng*factor)
-        bound_e = bound_e+(xrng*factor)
-        bound_s = bound_s-(yrng*factor)
-        bound_n = bound_n+(yrng*factor)
-
-        #Second round of fixing ratio
-        bound_w,bound_e,bound_n,bound_s = fix_map_ratio(bound_w,bound_e,bound_n,bound_s,1.45)
-        
-        #Return map bounds
-        return bound_w,bound_e,bound_s,bound_n
+        return dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
     
     def plot_lat_lon_lines(self,bounds,zorder=None):
         

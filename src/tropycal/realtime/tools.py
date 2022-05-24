@@ -93,10 +93,12 @@ class BasicReader:
         :meth:`~Record.geometry` method.
 
         """
+        to_return = []
         for shape in self._reader.iterShapes():
             # Skip the shape that can not be represented as geometry.
             if shape.shapeType != shapefile.NULL:
-                yield sgeom.shape(shape)
+                to_return.append(sgeom.shape(shape))
+        return to_return
 
     def records(self):
         """
@@ -104,7 +106,9 @@ class BasicReader:
 
         """
         # Ignore the "DeletionFlag" field which always comes first
+        to_return = []
         fields = self._reader.fields[1:]
         for shape_record in self._reader.iterShapeRecords():
             attributes = shape_record.record.as_dict()
-            yield Record(shape_record.shape, attributes, fields)
+            to_return.append(Record(shape_record.shape, attributes, fields))
+        return to_return

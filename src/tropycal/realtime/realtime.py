@@ -30,6 +30,7 @@ from .storm import RealtimeStorm
 from .tools import BasicReader
 from ..utils import *
 from .. import constants
+from ..tracks.plot import TrackPlot
 
 class Realtime():
     
@@ -659,3 +660,100 @@ class Realtime():
         #Return RealtimeStorm object
         return self[storm]
 
+    def plot_summary(self,domain='all',ax=None,cartopy_proj=None,save_path=None,**kwargs):
+        
+        r"""
+        Plot a summary map of ongoing tropical cyclone and potential development activity.
+        
+        Parameters
+        ----------
+        domain : str
+            Domain for the plot. Default is "all". Please refer to :ref:`options-domain` for available domain options.
+        ax : axes, optional
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs, optional
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str, optional
+            Relative or full path of directory to save the image in. If none, image will not be saved.
+        
+        Other Parameters
+        ----------------
+        two_prop : dict
+            Customization properties of NHC Tropical Weather Outlook (TWO). Please refer to :ref:`options-summary` for available options.
+        invest_prop : dict
+            Customization properties of active invests. Please refer to :ref:`options-summary` for available options.
+        storm_prop : dict
+            Customization properties of active storms. Please refer to :ref:`options-summary` for available options.
+        cone_prop : dict
+            Customization properties of cone of uncertainty. Please refer to :ref:`options-summary` for available options.
+        map_prop : dict
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
+        """
+        
+        #Retrieve NHC shapefiles for development areas
+        shapefiles = {}
+        for name in ['areas','points']:
+            
+            try:
+                #Read in shapefile zip from NHC
+                url = 'https://www.nhc.noaa.gov/xgtwo/gtwo_shapefiles.zip'
+                request = urllib.request.Request(url)
+                response = urllib.request.urlopen(request)
+                file_like_object = BytesIO(response.read())
+                tar = zipfile.ZipFile(file_like_object)
+
+                #Get file list (points, areas)
+                members = '\n'.join([i for i in tar.namelist()])
+                nums = "[0123456789]"
+                search_pattern = f'gtwo_{name}_202{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}.shp'
+                pattern = re.compile(search_pattern)
+                filelist = pattern.findall(members)
+                files = []
+                for file in filelist:
+                    if file not in files: files.append(file.split(".shp")[0]) #remove duplicates
+
+                #Retrieve necessary components for shapefile
+                members = tar.namelist()
+                members_names = [i for i in members]
+                data = {'shp':0,'dbf':0,'prj':0,'shx':0}
+                for key in data.keys():
+                    idx = members_names.index(files[0]+"."+key)
+                    data[key] = BytesIO(tar.read(members[idx]))
+
+                #Read in shapefile
+                orig_reader = shapefile.Reader(shp=data['shp'], dbf=data['dbf'], prj=data['prj'], shx=data['shx'])
+                shapefiles[name] = BasicReader(orig_reader)
+            except:
+                shapefiles[name] = None
+        
+        #Retrieve kwargs
+        two_prop = kwargs.pop('two_prop',{})
+        invest_prop = kwargs.pop('invest_prop',{})
+        storm_prop = kwargs.pop('storm_prop',{})
+        cone_prop = kwargs.pop('cone_prop',{})
+        map_prop = kwargs.pop('map_prop',{})
+        
+        #Create instance of plot object
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
+        
+        #Create cartopy projection
+        if cartopy_proj is not None:
+            self.plot_obj.proj = cartopy_proj
+            #elif max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
+            #    self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0) #0.0
+        
+        #Plot
+        ax = self.plot_obj.plot_summary(self,shapefiles,domain,ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
+        
+        return ax
+        

@@ -1530,4 +1530,181 @@ None,prop={},map_prop={}):
         #Return axis if specified, otherwise display figure
         return self.ax
 
+    def plot_summary(self,realtime_obj,shapefiles,domain,ax=None,save_path=None,two_prop={},invest_prop={},storm_prop={},cone_prop={},map_prop={}):
+        
+        r"""
+        Creates a realtime summary plot.
+        """
+        
+        #Set default properties
+        default_two_prop={'plot':True,'days':5}
+        default_invest_prop={'plot':True,'linewidth':0.8,'linecolor':'k','linestyle':'dotted'}
+        default_storm_prop={'plot':True,'linewidth':0.8,'linecolor':'k','linestyle':'dotted'}
+        default_cone_prop={'plot':True,'linewidth':1.5,'linecolor':'k','linestyle':'solid'}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        if domain == 'all': default_map_prop['res'] = 'l'
+        
+        #Initialize plot
+        two_prop = self.add_prop(two_prop,default_two_prop)
+        invest_prop = self.add_prop(invest_prop,default_invest_prop)
+        storm_prop = self.add_prop(storm_prop,default_storm_prop)
+        cone_prop = self.add_prop(cone_prop,default_cone_prop)
+        map_prop = self.add_prop(map_prop,default_map_prop)
+        self.plot_init(ax,map_prop)
+        
+        #Plot domain
+        bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
+        
+        #Format title
+        add_title = ""
+        if two_prop['plot'] == True:
+            if two_prop['days'] == 2:
+                add_title = " & NHC 2-Day Formation Outlook"
+            else:
+                add_title = " & NHC 5-Day Formation Outlook"
+        
+        #--------------------------------------------------------------------------------------
+        
+        bbox_prop = {'facecolor':'white','alpha':0.5,'edgecolor':'black','boxstyle':'round,pad=0.3'}
+        
+        if two_prop['plot'] == True:
+            
+            #Store color
+            color_base = {'Low':'yellow','Medium':'orange','High':'red'}
 
+            #Plot areas
+            for record, geom in zip(shapefiles['areas'].records(), shapefiles['areas'].geometries()):
+
+                #Read relevant data
+                if two_prop['days'] == 2:
+                    color = color_base.get(record.attributes['RISK2DAY'],'yellow')
+                else:
+                    color = color_base.get(record.attributes['RISK5DAY'],'yellow')
+
+                #Plot area
+                self.ax.add_feature(cfeature.ShapelyFeature([geom], ccrs.PlateCarree()),
+                                    facecolor=color, edgecolor=color, alpha=0.3, linewidth=1.5, zorder=3)
+
+                #Plot hatching
+                self.ax.add_feature(cfeature.ShapelyFeature([geom], ccrs.PlateCarree()),
+                                    facecolor='none', edgecolor='k', linewidth=2.25, zorder=4)
+                self.ax.add_feature(cfeature.ShapelyFeature([geom], ccrs.PlateCarree()),
+                                    facecolor='none', edgecolor=color, linewidth=1.5, zorder=4)
+
+            #Plot points
+            for record, point in zip(shapefiles['points'].records(), shapefiles['points'].geometries()):
+
+                #Read relevant data
+                lon = (list(point.coords)[0][0])
+                lat = (list(point.coords)[0][1])
+                prob_2day = record.attributes['PROB2DAY'].replace(" ","")
+                prob_5day = record.attributes['PROB5DAY'].replace(" ","")
+                risk_2day = record.attributes['RISK2DAY'].replace(" ","")
+                risk_5day = record.attributes['RISK5DAY'].replace(" ","")
+
+                #Label area
+                if two_prop['days'] == 2:
+                    color = color_base.get(risk_2day,'yellow')
+                    text = prob_2day
+                else:
+                    color = color_base.get(risk_5day,'yellow')
+                    text = prob_5day
+                self.ax.plot(lon,lat,'X',ms=15,color=color,mec='k',mew=1.5,transform=ccrs.PlateCarree(),zorder=6)
+
+                #Transform coordinates for label
+                x1, y1 = self.ax.projection.transform_point(lon, lat, ccrs.PlateCarree())
+                x2, y2 = self.ax.transData.transform((x1, y1))
+                x, y = self.ax.transAxes.inverted().transform((x2, y2))
+
+                # plot same point but using axes coordinates
+                a = self.ax.text(x,y-0.03,text,ha='center',va='top',transform=self.ax.transAxes,zorder=7,fontweight='bold',fontsize=12,clip_on=True,bbox=bbox_prop)
+                a.set_path_effects([path_effects.Stroke(linewidth=0.5,foreground='w'),path_effects.Normal()])
+        
+        #--------------------------------------------------------------------------------------
+        
+        if invest_prop['plot'] == True or storm_prop['plot'] == True:
+            
+            #Iterate over all realtime storms
+            for key in realtime_obj.storms:
+                
+                #Get storm object
+                storm = realtime_obj.get_storm(key)
+                
+                #Skip if it's already associated with a risk area, if TWO is being plotted
+                if storm.prob_2day != 'N/A' and two_prop['plot'] == True: continue
+                
+                #Plot invests
+                if storm.invest and invest_prop['plot'] == True:
+                    
+                    #Test
+                    self.ax.plot(storm.lon[-1],storm.lat[-1],'X',ms=14,color='k',transform=ccrs.PlateCarree(),zorder=6)
+                    
+                    #Transform coordinates for label
+                    x1, y1 = self.ax.projection.transform_point(storm.lon[-1], storm.lat[-1], ccrs.PlateCarree())
+                    x2, y2 = self.ax.transData.transform((x1, y1))
+                    x, y = self.ax.transAxes.inverted().transform((x2, y2))
+
+                    # plot same point but using axes coordinates
+                    a = self.ax.text(x,y-0.03,f"{storm.name.title()}",ha='center',va='top',transform=self.ax.transAxes,zorder=7,fontweight='bold',fontsize=12,clip_on=True,bbox=bbox_prop)
+                    a.set_path_effects([path_effects.Stroke(linewidth=0.5,foreground='w'),path_effects.Normal()])
+                    
+                    #Plot archive track
+                    if invest_prop['linewidth'] > 0:
+                        self.ax.plot(storm.lon,storm.lat,color=invest_prop['linecolor'],linestyle=invest_prop['linestyle'],zorder=5,transform=ccrs.PlateCarree())
+                
+                #Plot TCs
+                elif storm.invest == False and storm_prop['plot'] == True:
+                    
+                    #Label dot
+                    self.ax.plot(storm.lon[-1],storm.lat[-1],'O',ms=14,color='none',transform=ccrs.PlateCarree(),zorder=6)
+                    
+                    #Transform coordinates for label
+                    x1, y1 = self.ax.projection.transform_point(storm.lon[-1], storm.lat[-1], ccrs.PlateCarree())
+                    x2, y2 = self.ax.transData.transform((x1, y1))
+                    x, y = self.ax.transAxes.inverted().transform((x2, y2))
+
+                    # plot same point but using axes coordinates
+                    a = self.ax.text(x,y-0.03,f"{storm.name.title()}",ha='center',va='top',transform=self.ax.transAxes,zorder=7,fontweight='bold',fontsize=12,clip_on=True,bbox=bbox_prop)
+                    a.set_path_effects([path_effects.Stroke(linewidth=0.5,foreground='w'),path_effects.Normal()])
+                    
+                    #Plot archive track
+                    if storm_prop['linewidth'] > 0:
+                        self.ax.plot(storm.lon,storm.lat,color=storm_prop['linecolor'],linestyle=storm_prop['linestyle'],zorder=5,transform=ccrs.PlateCarree())
+        
+        #--------------------------------------------------------------------------------------
+        
+        #Plot domain
+        bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
+        
+        #Plot parallels and meridians
+        #This is currently not supported for all cartopy projections.
+        try:
+            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        except:
+            pass
+        
+        #--------------------------------------------------------------------------------------
+        
+        #Add title
+        self.ax.set_title(f"Current Summary{add_title}",loc='left',fontsize=17,fontweight='bold')
+        self.ax.set_title(f"Valid: {dt.utcnow().strftime('%H UTC %d %b %Y')}",loc='right',fontsize=13)
+
+        #--------------------------------------------------------------------------------------
+        
+        #Add credit
+        credit_text = self.plot_credit()
+        self.add_credit(credit_text)
+        
+        #--------------------------------------------------------------------------------------
+                
+        #Add legend
+        #self.add_legend(prop,segmented_colors,levels,cmap,storm_data)
+                
+        #-----------------------------------------------------------------------------------------
+        
+        #Save image if specified
+        if save_path is not None and isinstance(save_path,str) == True:
+            plt.savefig(save_path,bbox_inches='tight')
+        
+        #Return axis if specified, otherwise display figure
+        return self.ax

@@ -136,6 +136,85 @@ The following properties are available only for the ``tropycal.tracks.TrackDatas
    * - right_title
      - Title string for the right side of the plot. Default is 'All storms'.
 
+.. _options-summary:
+
+Realtime Summary
+================
+
+The following properties are available only for the ``tropycal.realtime.Realtime.plot_summary()`` function.
+
+prop_two
+--------
+
+The following properties are available for plotting NHC Tropical Weather Outlook (TWO).
+
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Property
+     - Description
+   * - plot
+     - Boolean to determine whether to plot NHC TWO. Default is True.
+   * - days
+     - Number of days for TWO. Can be either 2 or 5. Default is 5.
+
+prop_invest
+-----------
+
+The following properties are available for plotting invests.
+
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Property
+     - Description
+   * - plot
+     - Boolean to determine whether to plot active invests. Default is True.
+   * - linewidth
+     - Line width for past track. Default is 0.8. Set to zero to not plot line.
+   * - linecolor
+     - Line color for past track. Default is black.
+   * - linestyle
+     - Line style for past track. Default is dotted.
+
+prop_storm
+----------
+
+The following properties are available for plotting storms.
+
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Property
+     - Description
+   * - plot
+     - Boolean to determine whether to plot active storms. Default is True.
+   * - linewidth
+     - Line width for past track. Default is 0.8. Set to zero to not plot line.
+   * - linecolor
+     - Line color for past track. Default is black.
+   * - linestyle
+     - Line style for past track. Default is dotted.
+
+prop_cone
+---------
+
+The following properties are available for plotting realtime cone of uncertainty.
+
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Property
+     - Description
+   * - plot
+     - Boolean to determine whether to plot cone of uncertainty & forecast track for active storms. Default is True.
+   * - linewidth
+     - Line width for past track. Default is 1.5. Set to zero to not plot line.
+
 .. _options-prop-recon-plot:
 
 Recon Properties

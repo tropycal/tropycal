@@ -10,6 +10,7 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 from scipy.ndimage import gaussian_filter as gfilt
+from matplotlib import path
 
 #Import internal scripts
 from ..plot import Plot
@@ -59,6 +60,8 @@ class TrackDataset:
         * **ibtracs** - ibtracs data source for regional or global data
     include_btk : bool, optional
         If True, the best track data from NHC for the most recent years where it doesn't exist in HURDAT2 will be added into the dataset. Valid for "north_atlantic" and "east_pacific" basins. Default is False.
+    interpolate_data : bool, optional
+        If True, interpolates all storm data to hourly. Default is False.
     
     Other Parameters
     ----------------
@@ -141,7 +144,7 @@ class TrackDataset:
         return "\n".join(summary)
     
     
-    def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,doInterp=False,**kwargs):
+    def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,interpolate_data=False,**kwargs):
         
         #kwargs
         atlantic_url = kwargs.pop('atlantic_url', 'https://www.aoml.noaa.gov/hrd/hurdat/hurdat2.html')
@@ -199,27 +202,16 @@ class TrackDataset:
         keys = self.data.keys()
         self.keys = [k for k in keys]
         
-        #Placeholder for 2006 Pacific cyclone
-        """
-        if 'EP182006' in self.keys:
-            data = {}
-            for key in keys:
-                data[key] = self.data[key]
-                if key == 'EP182006':
-                    data['CP052006'] = pac_2006_cyclone()
-            self.data = data
-            self.keys = [k for k in self.data.keys()]
-         """
-        
         #Create array of zero-ones for existence of tornado data for a given storm
         self.keys_tors = [0 for key in self.keys]
         
         #Add dict to store all storm-specific tornado data in
         self.data_tors = {}
         
-        # If doInterp, interpolate each storm and save to dictionary.
-        if doInterp:
-            self.__getInterp()    
+        # If interpolate_data, interpolate each storm and save to dictionary.
+        self.data_interp = {}
+        if interpolate_data:
+            self.__interpolate_storms(self.keys)
     
     def __read_hurdat(self,override_basin=False):
         
@@ -991,16 +983,34 @@ class TrackDataset:
         tsec = str(round(time_elapsed.total_seconds(),2))
         print(f"--> Completed reading in ibtracs data ({tsec} seconds)")
     
-    def __getInterp(self):
-        self.data_interp = {}
-        for key in self.keys:
-            
-            #Retrieve storm dict
-            istorm = self.data[key].copy()
-            
-            #Interpolate temporally
-            istorm = interp_storm(istorm,timeres=1,dt_window=24,dt_align='middle')
-            self.data_interp[key]=istorm
+    def __interpolate_storms(self,keys):
+        
+        r"""
+        Interpolates storm data temporally to hourly. This is done for every provided key, and is stored in a separate internal dict.
+        
+        Parameters
+        ----------
+        keys : list
+            List of keys to be interpolated to hourly data.
+        """
+        
+        #Check if operation needs to be performed
+        count = 0
+        for key in keys:
+            if key not in self.data_interp.keys(): count += 1
+        if count == 0: return
+        
+        start_time = dt.now()
+        print("--> Starting to interpolate storms")
+        
+        for key in keys:
+            if key not in self.data_interp.keys():
+                self.data_interp[key] = interp_storm(self.data[key].copy(),timeres=1,dt_window=24,dt_align='middle')
+        
+        #Determine time elapsed
+        time_elapsed = dt.now() - start_time
+        tsec = str(round(time_elapsed.total_seconds(),2))
+        print(f"--> Completed interpolating storms ({tsec} seconds)")
 
     def get_storm_id(self,storm):
         
@@ -1106,7 +1116,7 @@ class TrackDataset:
             raise RuntimeError(error_message)
     
     
-    def plot_storm(self,storm,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_storm(self,storm,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of a single storm.
@@ -1139,6 +1149,10 @@ class TrackDataset:
             Instance of axes containing the plot is returned.
         """
         
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
+        
         #Retrieve requested storm
         if isinstance(storm,dict) == False:
             storm_dict = self.get_storm(storm).dict
@@ -1160,13 +1174,13 @@ class TrackDataset:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm_dict,domain,plot_all_dots,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storms([storm_dict],domain,plot_all_dots=plot_all_dots,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         return plot_ax
     
     
-    def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,labels=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_storms(self,storms,domain="dynamic",title="TC Track Composite",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of multiple storms.
@@ -1181,8 +1195,6 @@ class TrackDataset:
             Title string to display on the plot. Default is "TC Track Composite".
         plot_all_dots : bool
             Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
-        labels : bool
-            Whether to label storm titles on the plot. Default is False.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
@@ -1202,6 +1214,10 @@ class TrackDataset:
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Create instance of plot object
         try:
@@ -1235,13 +1251,13 @@ class TrackDataset:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title,plot_all_dots,labels,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storms(storm_dicts,domain,title,plot_all_dots,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
         
         #Return axis
         return plot_ax
         
         
-    def plot_season(self,year,domain=None,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_season(self,year,domain=None,ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of a single season.
@@ -1271,6 +1287,10 @@ class TrackDataset:
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Retrieve season object
         season = self.get_season(year)
@@ -2465,7 +2485,7 @@ class TrackDataset:
                 
         return ace_rank
 
-    def filter_storms(self,storm=None,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=None,doInterp=False,return_keys=True):
+    def filter_storms(self,storm=None,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=None,interpolate_data=False,return_keys=True):
         
         r"""
         Filters all storms by various thresholds.
@@ -2490,7 +2510,7 @@ class TrackDataset:
             Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.
         domain : str
             Geographic domain. Default is entire basin. Please refer to :ref:`options-domain` for available domain options.
-        doInterp : bool
+        interpolate_data : bool
             Whether to interpolate track data to hourly. Default is False.
         return_keys : bool
             If True, returns a list of storm IDs that match the specified criteria. Otherwise returns a pandas.DataFrame object with all matching data points. Default is True.
@@ -2503,7 +2523,7 @@ class TrackDataset:
         
         #Add interpolation automatically if requested threshold necessitates it
         check_keys = [True if i in thresh else False for i in ['dv_min','dv_max','dp_min','dp_max','speed_min','speed_max']]
-        if True in check_keys: doInterp = True
+        if True in check_keys: interpolate_data = True
         
         #Update thresh based on input
         default_thresh={'sample_min':1,'p_max':9999,'p_min':0,'v_min':0,'v_max':9999,'dv_min':-9999,'dp_max':9999,'dv_max':9999,'dp_min':-9999,'speed_max':9999,'speed_min':-9999,'dt_window':24,'dt_align':'middle'}
@@ -2550,7 +2570,7 @@ class TrackDataset:
         #Create empty dictionary to store output in
         points = {}
         for name in ['vmax','mslp','type','lat','lon','date','season','stormid','ace']+ \
-                    ['dmslp_dt','dvmax_dt','acie','dx_dt','dy_dt','speed']*int(doInterp):
+                    ['dmslp_dt','dvmax_dt','acie','dx_dt','dy_dt','speed']*int(interpolate_data):
             points[name] = []
         
         #Iterate over every storm in TrackDataset
@@ -2569,18 +2589,25 @@ class TrackDataset:
         
         for key in stormkeys:
             
-            #Retrieve storm dict
-            istorm = self.data[key].copy()
+            #Only interpolate storms within the provided temporal range
+            if self.data[key]['year'] <= (year_range[0]-1) or self.data[key]['year'] >= (year_range[-1]+1): continue
+            subset_dates = np.array(self.data[key]['date'])[np.array([i in constants.TROPICAL_STORM_TYPES for i in self.data[key]['type']])]
+            if len(subset_dates) == 0: continue
+            verify_dates = [date_range_test(i,date_min,date_max) for i in subset_dates]
+            if True not in verify_dates: continue
             
             #Interpolate temporally if requested
-            if doInterp:
+            if interpolate_data:
                 try:
                     istorm = self.data_interp[key]
                 except:
-                    istorm = interp_storm(istorm,timeres=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
+                    istorm = interp_storm(self.data[key].copy(),timeres=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
+                    self.data_interp[key] = istorm.copy()
                 timeres = 1
             else:
+                istorm = self.data[key]
                 timeres = 6
+            
             #Iterate over every timestep of the storm
             for i in range(len(istorm['date'])):
                 
@@ -2605,7 +2632,7 @@ class TrackDataset:
                         points['ace'].append(0)                        
                         
                     #Append separately for interpolated data
-                    if doInterp:
+                    if interpolate_data:
                         points['dvmax_dt'].append(istorm['dvmax_dt'][i])
                         points['acie'].append([0,istorm['dvmax_dt'][i]**2*1e-4*timeres/6][istorm['dvmax_dt'][i]>0])
                         points['dmslp_dt'].append(istorm['dmslp_dt'][i])
@@ -2625,7 +2652,7 @@ class TrackDataset:
             p = p.loc[(p['mslp']<=thresh['p_max'])]
         if thresh['p_min']>0:
             p = p.loc[(p['mslp']>=thresh['p_min'])]
-        if doInterp:
+        if interpolate_data:
             if thresh['dv_min']>-9999:
                 p = p.loc[(p['dvmax_dt']>=thresh['dv_min'])]
             if thresh['dp_max']<9999:
@@ -2647,7 +2674,7 @@ class TrackDataset:
 
     def gridded_stats(self,request,thresh={},storm=None,year_range=None,year_range_subtract=None,year_average=False,
                       date_range=('1/1','12/31'),binsize=1,domain=None,ax=None,
-                      return_array=False,cartopy_proj=None,prop={},map_prop={}):
+                      return_array=False,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of gridded statistics.
@@ -2722,6 +2749,10 @@ class TrackDataset:
         -------
         By default, the plot axes is returned. If "return_array" are set to True, a dictionary is returned containing both the axes and data array.
         """
+        
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
 
         default_prop = {'smooth':None}
         for key in prop.keys():
@@ -2785,7 +2816,7 @@ class TrackDataset:
 
             #Obtain all data points for the requested threshold and year/date ranges. Interpolate data to hourly.
             print("--> Getting filtered storm tracks")
-            points = self.filter_storms(storm,year_range_temp,date_range,thresh=thresh,doInterp=True,return_keys=False)
+            points = self.filter_storms(storm,year_range_temp,date_range,thresh=thresh,interpolate_data=True,return_keys=False)
 
             #Round lat/lon points down to nearest bin
             to_bin = lambda x: np.floor(x / binsize) * binsize
@@ -3338,3 +3369,366 @@ class TrackDataset:
                              }
 
         return composite
+    
+    def analogs_from_point(self,point,radius,thresh={},non_tropical=False,year_range=None,date_range=None):
+        
+        r"""
+        Retrieve historical TC tracks surrounding a point.
+        
+        Parameters
+        ----------
+        point : tuple
+            Tuple ordered by (latitude, longitude).
+        radius : int or float
+            Radius in kilometers surrounding the point to search for storms.
+        thresh : dict
+            Dict for threshold(s) that storms within the requested radius must meet. The following options are available:
+            
+            * **v_min** - Search for sustained wind (kt) above this threshold
+            * **v_max** - Search for sustained wind (kt) below this threshold
+            * **p_min** - Search for MSLP (hPa) below this threshold
+            * **p_max** - Search for MSLP (hPa) above this threshold
+        non_tropical : bool
+            If True, non-tropical (e.g., tropical disturbance, extra-tropical cyclone) points are included in the search. Default is False.
+        year_range : tuple
+            Year range over which to search. If None, defaults to entire dataset.
+        date_range : tuple
+            Start and end dates, formatted as a "month/day" string. If None, defaults to year round.
+        
+        Returns
+        -------
+        dict
+            Dict of tropical cyclones that meet the criteria, with storm ID as the key and its closest distance to point as the value.
+        
+        Notes
+        -----
+        This function automatically interpolates all storm data within this TrackDataset instance to hourly, if this hasn't already been done previously.
+        """
+        
+        #Determine year range of dataset
+        if year_range == None:
+            start_year = self.data[self.keys[0]]['year']
+            end_year = self.data[self.keys[-1]]['year']
+        elif isinstance(year_range,(list,tuple)):
+            if len(year_range) != 2:
+                raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
+            start_year = int(year_range[0])
+            if start_year < self.data[self.keys[0]]['year']: start_year = self.data[self.keys[0]]['year']
+            end_year = int(year_range[1])
+            if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
+        else:
+            raise TypeError("year_range must be of type tuple or list")
+        
+        #Determine date range
+        if date_range == None:
+            date_range = ('1/1','12/31')
+        
+        #Interpolate all storm data, if hasn't been done already
+        self.__interpolate_storms(self.keys)
+        
+        data = {}
+        for key in self.keys:
+            if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year: continue
+            storm_data = [[great_circle(point,(self.data[key]['lat'][i],self.data[key]['lon'][i])).kilometers,self.data[key]['vmax'][i],self.data[key]['mslp'][i],self.data[key]['date'][i]] for i in range(len(self.data[key]['lat'])) if self.data[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
+            storm_data = [i for i in storm_data if i[0] <= radius]
+            storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= dt.strptime(date_range[1],'%m/%d').replace(year=i[3].year)]
+            if len(storm_data) == 0: continue
+            if 'v_min' in thresh.keys():
+                vmax = [i[1] for i in storm_data]
+                if np.nanmin(vmax) <= thresh['v_min']: continue
+            if 'v_max' in thresh.keys():
+                vmax = [i[1] for i in storm_data]
+                if np.nanmin(vmax) >= thresh['v_max']: continue
+            if 'p_min' in thresh.keys():
+                mslp = [i[2] for i in storm_data]
+                if np.nanmin(mslp) <= thresh['p_min']: continue
+            if 'p_max' in thresh.keys():
+                mslp = [i[2] for i in storm_data]
+                if np.nanmin(mslp) >= thresh['p_max']: continue
+                
+            data[key] = np.round(np.nanmin([i[0] for i in storm_data]),1)
+        
+        return data
+        
+    def analogs_from_shape(self,points,thresh={},non_tropical=False,year_range=None,date_range=None):
+        
+        r"""
+        Retrieve historical TC tracks within a bounded region.
+        
+        Parameters
+        ----------
+        points : list
+            List of tuples ordered by (latitude, longitude) corresponding to the bounded region.
+        thresh : dict
+            Dict for threshold(s) that storms within the requested radius must meet. The following options are available:
+            
+            * **v_min** - Search for sustained wind (kt) above this threshold
+            * **v_max** - Search for sustained wind (kt) below this threshold
+            * **p_min** - Search for MSLP (hPa) below this threshold
+            * **p_max** - Search for MSLP (hPa) above this threshold
+        non_tropical : bool
+            If True, non-tropical (e.g., tropical disturbance, extra-tropical cyclone) points are included in the search. Default is False.
+        year_range : tuple
+            Year range over which to search. If None, defaults to entire dataset.
+        date_range : tuple
+            Start and end dates, formatted as a "month/day" string. If None, defaults to year round.
+        
+        Returns
+        -------
+        list
+            List of tropical cyclones that meet the criteria.
+        
+        Notes
+        -----
+        This function automatically interpolates all storm data within this TrackDataset instance to hourly, if this hasn't already been done previously.
+        """
+        
+        #Determine year range of dataset
+        if year_range == None:
+            start_year = self.data[self.keys[0]]['year']
+            end_year = self.data[self.keys[-1]]['year']
+        elif isinstance(year_range,(list,tuple)):
+            if len(year_range) != 2:
+                raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
+            start_year = int(year_range[0])
+            if start_year < self.data[self.keys[0]]['year']: start_year = self.data[self.keys[0]]['year']
+            end_year = int(year_range[1])
+            if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
+        else:
+            raise TypeError("year_range must be of type tuple or list")
+        
+        #Determine date range
+        if date_range == None:
+            date_range = ('1/1','12/31')
+        
+        #Interpolate all storm data, if hasn't been done already
+        self.__interpolate_storms(self.keys)
+        
+        #Check for last entry of tuple
+        if points[-1] != points[0]: points.append(points[0])
+        p = path.Path(points)
+        
+        data = []
+        for key in self.keys:
+            if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year: continue
+            storm_data = [[p.contains_point((self.data[key]['lat'][i],self.data[key]['lon'][i])),self.data[key]['vmax'][i],self.data[key]['mslp'][i],self.data[key]['date'][i]] for i in range(len(self.data[key]['lat'])) if self.data[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
+            storm_data = [i for i in storm_data if i[0] == True]
+            storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= dt.strptime(date_range[1],'%m/%d').replace(year=i[3].year)]
+            if len(storm_data) == 0: continue
+            if 'v_min' in thresh.keys():
+                vmax = [i[1] for i in storm_data]
+                if np.nanmin(vmax) <= thresh['v_min']: continue
+            if 'v_max' in thresh.keys():
+                vmax = [i[1] for i in storm_data]
+                if np.nanmin(vmax) >= thresh['v_max']: continue
+            if 'p_min' in thresh.keys():
+                mslp = [i[2] for i in storm_data]
+                if np.nanmin(mslp) <= thresh['p_min']: continue
+            if 'p_max' in thresh.keys():
+                mslp = [i[2] for i in storm_data]
+                if np.nanmin(mslp) >= thresh['p_max']: continue
+                
+            data.append(key)
+        
+        return data
+        
+    def plot_analogs_from_point(self,point,radius,thresh={},non_tropical=False,year_range=None,date_range=None,**kwargs):
+        
+        r"""
+        Plot historical TC tracks surrounding a point.
+        
+        Parameters
+        ----------
+        point : tuple
+            Tuple ordered by (latitude, longitude).
+        radius : int or float
+            Radius in kilometers surrounding the point to search for storms.
+        thresh : dict
+            Dict for threshold(s) that storms within the requested radius must meet. The following options are available:
+            
+            * **v_min** - Search for sustained wind (kt) above this threshold
+            * **v_max** - Search for sustained wind (kt) below this threshold
+            * **p_min** - Search for MSLP (hPa) below this threshold
+            * **p_max** - Search for MSLP (hPa) above this threshold
+        non_tropical : bool
+            If True, non-tropical (e.g., tropical disturbance, extra-tropical cyclone) points are included in the search. Default is False.
+        year_range : tuple
+            Year range over which to search. If None, defaults to entire dataset.
+        date_range : tuple
+            Start and end dates, formatted as a "month/day" string. If None, defaults to year round.
+        
+        Other Parameters
+        ----------------
+        ms : int or float
+            Marker fill size for point. Defaults to 12.
+        linewidth : int or float
+            Width of circle surrounding point. Defaults to 2.0.
+        color : str
+            Color of point and line surrounding point. Defaults to black.
+        **kwargs
+            Refer to ``tropycal.tracks.TrackDataset.plot_storms`` for plotting keyword arguments.
+        
+        Returns
+        -------
+        ax
+            Axes instance of the plot.
+        
+        Notes
+        -----
+        This function automatically interpolates all storm data within this TrackDataset instance to hourly, if this hasn't already been done previously.
+        """
+        
+        #Determine year range of dataset
+        if year_range == None:
+            start_year = self.data[self.keys[0]]['year']
+            end_year = self.data[self.keys[-1]]['year']
+        elif isinstance(year_range,(list,tuple)):
+            if len(year_range) != 2:
+                raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
+            start_year = int(year_range[0])
+            if start_year < self.data[self.keys[0]]['year']: start_year = self.data[self.keys[0]]['year']
+            end_year = int(year_range[1])
+            if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
+        else:
+            raise TypeError("year_range must be of type tuple or list")
+        
+        #Determine date range
+        if date_range == None:
+            date_range = ('1/1','12/31')
+        
+        #Reconfigure domain to be centered around circle
+        import cartopy.geodesic as geodesic
+        circle_points = geodesic.Geodesic().circle(lon=point[1],lat=point[0],radius=radius*1000,n_samples=360,endpoint=False)
+        domain = kwargs.pop('domain', None)
+        if domain == None:
+            lons = [i[0] for i in circle_points]
+            lats = [i[1] for i in circle_points]
+            bounds = dynamic_map_extent(np.nanmin(lons),np.nanmax(lons),np.nanmin(lats),np.nanmax(lats))
+            kwargs['domain'] = {'w':bounds[0],'e':bounds[1],'s':bounds[2],'n':bounds[3]}
+        else:
+            kwargs['domain'] = domain
+        
+        #Retrieve storms and plot on axes
+        storms = self.analogs_from_point(point,radius,thresh,non_tropical,year_range,date_range).keys()
+        ax = self.plot_storms(storms,**kwargs)
+        
+        #Plot circle and dot
+        import cartopy
+        import shapely
+        ms = kwargs.pop('ms', 12)
+        linewidth = kwargs.pop('linewidth', 2.0)
+        color = kwargs.pop('color', 'black')
+        ax.plot(point[1],point[0],'o',mfc=color,mec=color,ms=ms, zorder=30)
+        geom = shapely.geometry.Polygon(circle_points)
+        ax.add_geometries((geom,), crs=cartopy.crs.PlateCarree(), facecolor='none', edgecolor=color, linewidth=linewidth, zorder=30)
+        
+        #Change title
+        title = kwargs.pop('title','')
+        if title == '':
+            endash = u"\u2013"
+            dot = u"\u2022"
+            degree_sign = u'\N{DEGREE SIGN}'
+            lat_formatter = f"{point[0]:.1f}{degree_sign}N"
+            if point[0] < 0: lat_formatter = f"{abs(point[0]):.1f}{degree_sign}S"
+            lon_formatter = f"{point[1]:.1f}{degree_sign}E"
+            if point[1] < 0: lon_formatter = f"{abs(point[1]):.1f}{degree_sign}W"
+            if point[1] > 180: lon_formatter = f"{abs(point[1]-360.0):.1f}{degree_sign}W"
+            start_day = dt.strptime(date_range[0],'%m/%d').strftime('%b %d')
+            end_day = dt.strptime(date_range[1],'%m/%d').strftime('%b %d')
+            ax.set_title(f"TCs Within {radius} km of {lat_formatter}, {lon_formatter}",loc='left',fontsize=17,fontweight='bold')
+            ax.set_title(f"Number of storms: {len(storms)}\n{start_day} {endash} {end_day} {dot} {start_year} {endash} {end_year}",loc='right',fontsize=13)
+        
+        return ax
+
+    def plot_analogs_from_shape(self,points,thresh={},non_tropical=False,year_range=None,date_range=None,**kwargs):
+        
+        r"""
+        Plot historical TC tracks surrounding a point.
+        
+        Parameters
+        ----------
+        points : list
+            List of tuples ordered by (latitude, longitude) corresponding to the bounded region.
+        thresh : dict
+            Dict for threshold(s) that storms within the requested radius must meet. The following options are available:
+            
+            * **v_min** - Search for sustained wind (kt) above this threshold
+            * **v_max** - Search for sustained wind (kt) below this threshold
+            * **p_min** - Search for MSLP (hPa) below this threshold
+            * **p_max** - Search for MSLP (hPa) above this threshold
+        non_tropical : bool
+            If True, non-tropical (e.g., tropical disturbance, extra-tropical cyclone) points are included in the search. Default is False.
+        year_range : tuple
+            Year range over which to search. If None, defaults to entire dataset.
+        date_range : tuple
+            Start and end dates, formatted as a "month/day" string. If None, defaults to year round.
+        
+        Other Parameters
+        ----------------
+        linewidth : int or float
+            Width of bounded shape line. Defaults to 2.0.
+        color : str
+            Color of bounded shape line. Defaults to black.
+        **kwargs
+            Refer to ``tropycal.tracks.TrackDataset.plot_storms`` for plotting keyword arguments.
+        
+        Returns
+        -------
+        ax
+            Axes instance of the plot.
+        
+        Notes
+        -----
+        This function automatically interpolates all storm data within this TrackDataset instance to hourly, if this hasn't already been done previously.
+        """
+        
+        #Determine year range of dataset
+        if year_range == None:
+            start_year = self.data[self.keys[0]]['year']
+            end_year = self.data[self.keys[-1]]['year']
+        elif isinstance(year_range,(list,tuple)):
+            if len(year_range) != 2:
+                raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
+            start_year = int(year_range[0])
+            if start_year < self.data[self.keys[0]]['year']: start_year = self.data[self.keys[0]]['year']
+            end_year = int(year_range[1])
+            if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
+        else:
+            raise TypeError("year_range must be of type tuple or list")
+        
+        #Determine date range
+        if date_range == None:
+            date_range = ('1/1','12/31')
+        
+        #Reconfigure domain to be centered around circle
+        domain = kwargs.pop('domain', None)
+        if domain == None:
+            lons = [i[1] for i in points]
+            lats = [i[0] for i in points]
+            bounds = dynamic_map_extent(np.nanmin(lons),np.nanmax(lons),np.nanmin(lats),np.nanmax(lats))
+            kwargs['domain'] = {'w':bounds[0],'e':bounds[1],'s':bounds[2],'n':bounds[3]}
+        else:
+            kwargs['domain'] = domain
+        
+        #Retrieve storms and plot on axes
+        storms = self.analogs_from_shape(points,thresh,non_tropical,year_range,date_range)
+        ax = self.plot_storms(storms,**kwargs)
+        
+        #Plot circle and dot
+        import cartopy.crs as ccrs
+        linewidth = kwargs.pop('linewidth', 2.0)
+        color = kwargs.pop('color', 'black')
+        if points[-1] != points[0]: points.append(points[0])
+        ax.plot([i[1] for i in points],[i[0] for i in points],color=color,linewidth=linewidth,zorder=30,transform=ccrs.PlateCarree())
+        
+        #Change title
+        title = kwargs.pop('title','')
+        if title == '':
+            endash = u"\u2013"
+            dot = u"\u2022"
+            start_day = dt.strptime(date_range[0],'%m/%d').strftime('%b %d')
+            end_day = dt.strptime(date_range[1],'%m/%d').strftime('%b %d')
+            ax.set_title(f"TC Tracks Within Bounded Region",loc='left',fontsize=17,fontweight='bold')
+            ax.set_title(f"Number of storms: {len(storms)}\n{start_day} {endash} {end_day} {dot} {start_year} {endash} {end_year}",loc='right',fontsize=13)
+        
+        return ax

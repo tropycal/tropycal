@@ -249,7 +249,7 @@ class Season:
             error_message = f"Multiple IDs were identified for the requested storm. Choose one of the following storm IDs and provide it as the 'storm' argument instead of a tuple:{error_message}"
             raise RuntimeError(error_message)
         
-    def plot(self,domain=None,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot(self,domain=None,ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of this season.
@@ -277,6 +277,10 @@ class Season:
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
 
         #Create instance of plot object
         self.plot_obj = TrackPlot()

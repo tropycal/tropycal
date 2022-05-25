@@ -145,6 +145,24 @@ class RealtimeStorm(Storm):
             self.realtime = False
             self.coords['realtime'] = False
             
+    def get_realtime_formation_prob(self):
+        
+        r"""
+        Retrieve the latest NHC formation probability. Only valid for invests within NHC's area of responsibility.
+        
+        Returns
+        -------
+        dict
+            Dictionary containing latest NHC forecast formation probability, if available. If none, defaults to zero or N/A.
+        """
+        
+        return {
+            'prob_2day': self.dict['prob_2day'],
+            'risk_2day': self.dict['risk_2day'],
+            'prob_5day': self.dict['prob_5day'],
+            'risk_5day': self.dict['risk_5day']
+        }
+    
     def download_graphic_realtime(self,save_path=""):
         
         r"""
@@ -255,6 +273,11 @@ class RealtimeStorm(Storm):
         
         r"""
         Retrieve a dictionary containing the latest official forecast. Available for both NHC and JTWC sources.
+        
+        Parameters
+        ----------
+        ssl_certificate : boolean, optional
+            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from the default JTWC source ("jtwc"). Default is True. Use False *ONLY* if True causes an SSL certification error.
         
         Returns
         -------
@@ -476,7 +499,7 @@ class RealtimeStorm(Storm):
         return self.latest_forecast
 
     def plot_forecast_realtime(self,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
-                                   ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={},ssl_certificate=True):
+                                   ax=None,cartopy_proj=None,save_path=None,ssl_certificate=True,**kwargs):
         
         r"""
         Plots the latest available official forecast. Available for both NHC and JTWC sources.
@@ -500,6 +523,11 @@ class RealtimeStorm(Storm):
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
             Relative or full path of directory to save the image in. If none, image will not be saved.
+        
+        Other Parameters
+        ----------------
+        ssl_certificate : boolean, optional
+            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from the default JTWC source ("jtwc"). Default is True. Use False *ONLY* if True causes an SSL certification error.
         prop : dict
             Property of storm track lines.
         map_prop : dict
@@ -510,6 +538,10 @@ class RealtimeStorm(Storm):
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Check to ensure storm is not an invest
         if self.invest:

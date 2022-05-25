@@ -48,6 +48,8 @@ needs_sphinx = '2.1'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
+    'sphinx.ext.coverage',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
@@ -231,3 +233,5 @@ texinfo_documents = [
 ]
 
 #--------------- autosummary -------------------------------------------------
+
+napoleon_custom_sections = [('Other Parameters','params_style')]

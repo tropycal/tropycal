@@ -8,6 +8,9 @@ import warnings
 from datetime import datetime as dt,timedelta
 import pkg_resources
 
+from ..tracks.tools import *
+from ..utils import *
+
 try:
     import cartopy.feature as cfeature
     from cartopy import crs as ccrs
@@ -118,65 +121,8 @@ class Plot:
         list
             List containing new west, east, north, south map bounds, respectively.
         """
-
-        #Get lat/lon bounds
-        bound_w = min_lon+0.0
-        bound_e = max_lon+0.0
-        bound_s = min_lat+0.0
-        bound_n = max_lat+0.0
         
-        #If only one coordinate point, artificially induce a spread
-        if bound_w == bound_e:
-            bound_w = bound_w - 0.6
-            bound_e = bound_e + 0.6
-        if bound_s == bound_n:
-            bound_n = bound_n + 0.6
-            bound_s = bound_s - 0.6
-
-        #Function for fixing map ratio
-        def fix_map_ratio(bound_w,bound_e,bound_n,bound_s,nthres=1.45):
-            xrng = abs(bound_w-bound_e)
-            yrng = abs(bound_n-bound_s)
-            diff = float(xrng) / float(yrng)
-            if diff < nthres: #plot too tall, need to make it wider
-                goal_diff = nthres * (yrng)
-                factor = abs(xrng - goal_diff) / 2.0
-                bound_w = bound_w - factor
-                bound_e = bound_e + factor
-            elif diff > nthres: #plot too wide, need to make it taller
-                goal_diff = xrng / nthres
-                factor = abs(yrng - goal_diff) / 2.0
-                bound_s = bound_s - factor
-                bound_n = bound_n + factor
-            return bound_w,bound_e,bound_n,bound_s
-
-        #First round of fixing ratio
-        bound_w,bound_e,bound_n,bound_s = fix_map_ratio(bound_w,bound_e,bound_n,bound_s,1.45)
-
-        #Adjust map width depending on extent of storm
-        xrng = abs(bound_e-bound_w)
-        yrng = abs(bound_n-bound_s)
-        factor = 0.1
-        if min(xrng,yrng) < 15.0:
-            factor = 0.2
-        if min(xrng,yrng) < 12.0:
-            factor = 0.4
-        if min(xrng,yrng) < 10.0:
-            factor = 0.6
-        if min(xrng,yrng) < 8.0:
-            factor = 0.75
-        if min(xrng,yrng) < 6.0:
-            factor = 0.9
-        bound_w = bound_w-(xrng*factor)
-        bound_e = bound_e+(xrng*factor)
-        bound_s = bound_s-(yrng*factor)
-        bound_n = bound_n+(yrng*factor)
-
-        #Second round of fixing ratio
-        bound_w,bound_e,bound_n,bound_s = fix_map_ratio(bound_w,bound_e,bound_n,bound_s,1.45)
-        
-        #Return map bounds
-        return bound_w,bound_e,bound_s,bound_n
+        return dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
     
     def plot_lat_lon_lines(self,bounds,zorder=None):
         
@@ -302,6 +248,72 @@ class Plot:
         #Attach geography to plot, lat/lon lines, etc.
         if plot_geography:
             self.create_geography(map_prop)
+    
+    def plot_dot(self,lon,lat,date,vmax,i_type,zorder,storm_data,prop):
+
+        r"""
+        Plot a dot on the map per user settings.
+
+        Parameters
+        ----------
+        lon : int, float
+            Longitude of the dot
+        lat : int, float
+            Latitude of the dot
+        date : datetime.datetime
+            Datetime object corresponding to the time of the dot in UTC
+        vmax : int, float
+            Sustained wind in knots
+        i_type : str
+            Storm type
+
+        Other Parameters
+        ----------------
+        zorder : int
+            Z-order of dots on the map.
+        storm_data : dict
+            Storm data dictionary.
+        prop : dict
+            Dictionary containing plot properties.
+        
+        Returns
+        -------
+        segmented_colors : bool
+            Information for colorbar generation on whether a segmented colormap was used or not.
+        """
+
+        #Determine fill color, with SSHWS scale used as default
+        if prop['fillcolor'] == 'category':
+            segmented_colors = True
+            fill_color = get_colors_sshws(np.nan_to_num(vmax))
+
+        #Use user-defined colormap if another storm variable
+        elif isinstance(prop['fillcolor'],str) == True and prop['fillcolor'] in ['vmax','mslp','dvmax_dt','speed']:
+            segmented_colors = True
+            color_variable = storm_data[prop['fillcolor']]
+            if prop['levels'] is None: #Auto-determine color levels if needed
+                prop['levels'] = [np.nanmin(color_variable),np.nanmax(color_variable)]
+            cmap,levels = get_cmap_levels(prop['fillcolor'],prop['cmap'],prop['levels'])
+            fill_color = cmap((color_variable-min(levels))/(max(levels)-min(levels)))[i]
+
+        #Otherwise go with user input as is
+        else:
+            segmented_colors = False
+            fill_color = prop['fillcolor']
+
+        #Determine dot type
+        marker_type = '^'
+        if i_type in constants.SUBTROPICAL_ONLY_STORM_TYPES:
+            marker_type = 's'
+        elif i_type in constants.TROPICAL_ONLY_STORM_TYPES:
+            marker_type = 'o'
+
+        #Plot marker
+        self.ax.plot(lon,lat,marker_type,mfc=fill_color,mec='k',mew=0.5,
+                     zorder=zorder,ms=prop['ms'],transform=ccrs.PlateCarree())
+
+        return segmented_colors
+
     
     def add_prop(self,input_prop,default_prop):
         
@@ -451,3 +463,129 @@ class Plot:
         g = int(g)
         b = int(b)
         return '#%02x%02x%02x' % (r, g, b)
+    
+    def add_legend(self,prop,segmented_colors,levels=None,cmap=None,storm=None):
+        
+        #Linecolor category with dots
+        if prop['fillcolor'] == 'category' and prop['dots'] == True:
+            ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
+            sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Depression', marker='o', color=get_colors_sshws(33))
+            ts = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical Storm', marker='o', color=get_colors_sshws(34))
+            c1 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 1', marker='o', color=get_colors_sshws(64))
+            c2 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 2', marker='o', color=get_colors_sshws(83))
+            c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=get_colors_sshws(96))
+            c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=get_colors_sshws(113))
+            c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
+            self.ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5}, loc=1)
+
+        #Linecolor category without dots
+        elif prop['linecolor'] == 'category' and prop['dots'] == False:
+            ex = mlines.Line2D([], [], linestyle='dotted', label='Non-Tropical', color='k')
+            td = mlines.Line2D([], [], linestyle='solid', label='Sub/Tropical Depression', color=get_colors_sshws(33))
+            ts = mlines.Line2D([], [], linestyle='solid', label='Sub/Tropical Storm', color=get_colors_sshws(34))
+            c1 = mlines.Line2D([], [], linestyle='solid', label='Category 1', color=get_colors_sshws(64))
+            c2 = mlines.Line2D([], [], linestyle='solid', label='Category 2', color=get_colors_sshws(83))
+            c3 = mlines.Line2D([], [], linestyle='solid', label='Category 3', color=get_colors_sshws(96))
+            c4 = mlines.Line2D([], [], linestyle='solid', label='Category 4', color=get_colors_sshws(113))
+            c5 = mlines.Line2D([], [], linestyle='solid', label='Category 5', color=get_colors_sshws(137))
+            self.ax.legend(handles=[ex,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5}, loc=1)
+
+        #Non-segmented custom colormap with dots
+        elif prop['dots'] == True and segmented_colors == False:
+            ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color=prop['fillcolor'])
+            sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color=prop['fillcolor'])
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical', marker='o', color=prop['fillcolor'])
+            handles=[ex,sb,td]
+            self.ax.legend(handles=handles,fontsize=11.5, prop={'size':11.5}, loc=1)
+        
+        #Non-segmented custom colormap without dots
+        elif prop['dots'] == False and segmented_colors == False:
+            ex = mlines.Line2D([], [], linestyle='dotted',label='Non-Tropical', color=prop['linecolor'])
+            td = mlines.Line2D([], [], linestyle='solid',label='Tropical', color=prop['linecolor'])
+            handles=[ex,td]
+            self.ax.legend(handles=handles,fontsize=11.5, prop={'size':11.5}, loc=1)
+
+        #Custom colormap with dots
+        elif prop['dots'] == True and segmented_colors == True:
+            ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Non-Tropical', marker='^', color='w')
+            sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color='w')
+            td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical', marker='o', color='w')
+            handles=[ex,sb,td]
+            for _ in range(7):
+                handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
+            l = self.ax.legend(handles=handles,fontsize=11.5)
+            plt.draw()
+            
+            #Get the bbox
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
+
+            #Define colorbar axis
+            cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
+            norm = mlib.colors.Normalize(vmin=min(levels), vmax=max(levels))
+            cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
+            cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
+                                     ticks=levels)
+            
+            cax.tick_params(labelsize=11.5)
+            cax.yaxis.set_ticks_position('left')
+            cbar.set_label(prop['fillcolor'],fontsize=11.5,rotation=90)
+        
+            rect_offset = 0.0
+            if prop['cmap'] == 'category' and prop['fillcolor'] == 'vmax':
+                cax.yaxis.set_ticks(np.linspace(min(levels),max(levels),len(levels)))
+                cax.yaxis.set_ticklabels(levels)
+                cax2 = cax.twinx()
+                cax2.yaxis.set_ticks_position('right')
+                cax2.yaxis.set_ticks((np.linspace(0,1,len(levels))[:-1]+np.linspace(0,1,len(levels))[1:])*.5)
+                cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+                cax2.tick_params('both', length=0, width=0, which='major')
+                cax.yaxis.set_ticks_position('left')
+                rect_offset = 0.7
+            if prop['fillcolor'] == 'date':
+                cax.set_yticklabels([f'{mdates.num2date(i):%b %-d}' for i in levels],fontsize=11.5)
+        
+        #Custom colormap without dots
+        else:
+            ex = mlines.Line2D([], [], linestyle='dotted',label='Non-Tropical', color='k')
+            td = mlines.Line2D([], [], linestyle='solid',label='Tropical', color='k')
+            handles=[ex,td]
+            for _ in range(7):
+                handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
+            l=self.ax.legend(handles=handles,fontsize=11.5)
+            plt.draw()
+            
+            #Get the bbox
+            try:
+                bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
+            except:
+                bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
+                
+            #Define colorbar axis
+            cax = self.fig.add_axes([bb.x0+0.47*bb.width, bb.y0+.057*bb.height, 0.015, .65*bb.height])
+            norm = mlib.colors.Normalize(vmin=min(levels), vmax=max(levels))
+            cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
+            cbar = self.fig.colorbar(cbmap,cax=cax,orientation='vertical',\
+                                     ticks=levels)
+            
+            cax.tick_params(labelsize=11.5)
+            cax.yaxis.set_ticks_position('left')
+            cbarlab = make_var_label(prop['linecolor'],storm)
+            cbar.set_label(cbarlab,fontsize=11.5,rotation=90)
+        
+            rect_offset = 0.0
+            if prop['cmap'] == 'category' and prop['linecolor'] == 'vmax':
+                cax.yaxis.set_ticks(np.linspace(min(levels),max(levels),len(levels)))
+                cax.yaxis.set_ticklabels(levels)
+                cax2 = cax.twinx()
+                cax2.yaxis.set_ticks_position('right')
+                cax2.yaxis.set_ticks((np.linspace(0,1,len(levels))[:-1]+np.linspace(0,1,len(levels))[1:])*.5)
+                cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+                cax2.tick_params('both', length=0, width=0, which='major')
+                cax.yaxis.set_ticks_position('left')
+                rect_offset = 0.7
+            if prop['linecolor'] == 'date':
+                cax.set_yticklabels([f'{mdates.num2date(i):%b %-d}' for i in levels],fontsize=11.5)

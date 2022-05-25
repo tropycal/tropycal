@@ -499,8 +499,8 @@ class Storm:
             New Storm object containing the updated dictionary.
         """
         
-        NEW_STORM = copy.copy(self)
-        newdict = interp_storm(self.dict,timeres,dt_window,dt_align)
+        NEW_STORM = copy.deepcopy(self)
+        newdict = interp_storm(NEW_STORM.dict,timeres,dt_window,dt_align)
         for key in newdict.keys(): 
             NEW_STORM.dict[key] = newdict[key]
 
@@ -608,7 +608,7 @@ class Storm:
         #Return dataset
         return ds
     
-    def plot(self,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot(self,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of the observed track of the storm.
@@ -639,6 +639,10 @@ class Storm:
             Instance of axes containing the plot is returned.
         """
         
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
+        
         #Create instance of plot object
         try:
             self.plot_obj
@@ -654,14 +658,14 @@ class Storm:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             
         #Plot storm
-        plot_ax = self.plot_obj.plot_storm(self.dict,domain,plot_all_dots,ax=ax,prop=prop,map_prop=map_prop,save_path=save_path)
+        plot_ax = self.plot_obj.plot_storms([self.dict],domain,plot_all_dots=plot_all_dots,ax=ax,prop=prop,map_prop=map_prop,save_path=save_path)
         
         #Return axis
         return plot_ax
         
     #PLOT FUNCTION FOR HURDAT
     def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
-                          ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+                          ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of the operational NHC forecast track along with observed track data.
@@ -700,6 +704,10 @@ class Storm:
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Check to ensure the data source is HURDAT
         if self.source != "hurdat":
@@ -1705,7 +1713,7 @@ class Storm:
 
             
     def plot_tors(self,dist_thresh=1000,Tors=None,domain="dynamic",plotPPH=False,plot_all=False,\
-                  ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+                  ax=None,cartopy_proj=None,save_path=None,**kwargs):
                 
         r"""
         Creates a plot of the storm and associated tornado tracks.
@@ -1747,6 +1755,10 @@ class Storm:
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        #Retrieve kwargs
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Set default colormap for TC plots to Wistia
         try:
@@ -1796,7 +1808,7 @@ class Storm:
         tor_title = plot_ax.get_title('left')
 
         #Plot storm
-        plot_ax = self.plot_obj_tc.plot_storm(self.dict,domain=domain,ax=plot_ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj_tc.plot_storms([self.dict],domain=domain,ax=plot_ax,prop=prop,map_prop=map_prop)
         
         plot_ax.add_artist(leg_tor)
         

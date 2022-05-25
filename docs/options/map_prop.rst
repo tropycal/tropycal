@@ -63,17 +63,38 @@ The following properties are available for any function that involves plotting s
    * - dots
      - Boolean whether to plot storm track dots along the storm track. Default is False.
    * - fillcolor
-     - Fill color for storm track dots. If 'category', then uses a color scale varying by SSHWS category. This can also be 'vmax' or 'mslp' for coloring by variable value.
+     - Fill color for storm track dots. Refer to table below for special color options.
    * - linecolor
-     - Line color for storm track. If 'category', then uses a color scale varying by SSHWS category. This can also be 'vmax' or 'mslp' for coloring by variable value.
+     - Line color for storm track. Refer to table below for special color options.
    * - cmap
-     - Colormap used for fill and/or line color, if not a single color nor 'category'.
+     - Colormap used for fill and/or line color, if not a single color nor 'category'. Can be a string or a dict of values and corresponding colors.
    * - levels
      - List of levels corresponding to cmap, if not coloring by a single color nor 'category'.
    * - linewidth
      - Line width for storm track. Default varies by function.
    * - ms
      - Size of storm track dots. Default is 7.5.
+   * - plot_names
+     - For plotting multiple storms or seasons, determines whether to plot storm name labels.
+
+The following special options are available for ``linecolor`` or ``fillcolor``:
+
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Value
+     - Description
+   * - "category"
+     - Default color map for SSHWS category.
+   * - "vmax"
+     - Color by maximum sustained wind.
+   * - "mslp"
+     - Color by minimum MSLP.
+   * - "dvmax_dt"
+     - Fill color by change in sustained wind speed. Only available for interpolated storm objects, retrieved using ``storm.interp()``.
+   * - "speed"
+     - Fill color by forward speed of tropical cyclone. Only available for interpolated storm objects, retrieved using ``storm.interp()``.
 
 .. _options-prop-nhc:
 
@@ -114,6 +135,85 @@ The following properties are available only for the ``tropycal.tracks.TrackDatas
      - Title string for the left side of the plot. Default is the string passed via the 'request' keyword argument.
    * - right_title
      - Title string for the right side of the plot. Default is 'All storms'.
+
+.. _options-summary:
+
+Realtime Summary
+================
+
+The following properties are available only for the ``tropycal.realtime.Realtime.plot_summary()`` function.
+
+prop_two
+--------
+
+The following properties are available for plotting NHC Tropical Weather Outlook (TWO).
+
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Property
+     - Description
+   * - plot
+     - Boolean to determine whether to plot NHC TWO. Default is True.
+   * - days
+     - Number of days for TWO. Can be either 2 or 5. Default is 5.
+
+prop_invest
+-----------
+
+The following properties are available for plotting invests.
+
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Property
+     - Description
+   * - plot
+     - Boolean to determine whether to plot active invests. Default is True.
+   * - linewidth
+     - Line width for past track. Default is 0.8. Set to zero to not plot line.
+   * - linecolor
+     - Line color for past track. Default is black.
+   * - linestyle
+     - Line style for past track. Default is dotted.
+
+prop_storm
+----------
+
+The following properties are available for plotting storms.
+
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Property
+     - Description
+   * - plot
+     - Boolean to determine whether to plot active storms. Default is True.
+   * - linewidth
+     - Line width for past track. Default is 0.8. Set to zero to not plot line.
+   * - linecolor
+     - Line color for past track. Default is black.
+   * - linestyle
+     - Line style for past track. Default is dotted.
+
+prop_cone
+---------
+
+The following properties are available for plotting realtime cone of uncertainty.
+
+.. list-table:: 
+   :widths: 25 75
+   :header-rows: 1
+
+   * - Property
+     - Description
+   * - plot
+     - Boolean to determine whether to plot cone of uncertainty & forecast track for active storms. Default is True.
+   * - linewidth
+     - Line width for past track. Default is 1.5. Set to zero to not plot line.
 
 .. _options-prop-recon-plot:
 

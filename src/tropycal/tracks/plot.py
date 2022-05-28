@@ -1676,7 +1676,7 @@ None,prop={},map_prop={}):
                             color = mcolors.to_rgb(color)
                             red,green,blue = color
                             textcolor = 'w'
-                            if (red*0.299 + green*0.587 + blue*0.114) > (186.0/255.0): textcolor = 'k'
+                            if (red*0.299 + green*0.587 + blue*0.114) > (160.0/255.0): textcolor = 'k'
                             self.ax.text(storm.lon[-1],storm.lat[-1],category,fontsize=storm_prop['ms']*0.83,ha='center',va='center',color=textcolor,
                                          zorder=30,transform=ccrs.PlateCarree(),clip_on=True)
                     
@@ -1728,9 +1728,9 @@ None,prop={},map_prop={}):
                                 color = mcolors.to_rgb(color)
                                 red,green,blue = color
                                 textcolor = 'w'
-                                if (red*0.299 + green*0.587 + blue*0.114) > (186.0/255.0): textcolor = 'k'
+                                if (red*0.299 + green*0.587 + blue*0.114) > (160.0/255.0): textcolor = 'k'
                                 
-                                self.ax.text(forecast_dict['lon'][idx],forecast_dict['lat'][idx],category,fontsize=cone_prop['ms']*0.83,ha='center',va='center',color=textcolor,
+                                self.ax.text(forecast_dict['lon'][idx],forecast_dict['lat'][idx],category,fontsize=cone_prop['ms']*0.81,ha='center',va='center',color=textcolor,
                                             zorder=19,transform=ccrs.PlateCarree(),clip_on=True)
         
         #--------------------------------------------------------------------------------------

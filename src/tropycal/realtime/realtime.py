@@ -620,18 +620,30 @@ class Realtime():
             msg = "Error in retrieving NHC invest data."
             warnings.warn(msg)
     
-    def list_active_storms(self):
+    def list_active_storms(self,basin='all'):
         
         r"""
         Produces a list of storms currently stored in Realtime.
         
+        Parameters
+        ----------
+        basin : str
+            Basin for which to return active storms for. Default is 'all'.
+        
         Returns
         -------
         list
-            List containing the storm IDs for currently active storms. Each ID has a Storm object stored as an attribute of Realtime.
+            List containing the storm IDs for currently active storms in the requested basin. Each ID has a Storm object stored as an attribute of Realtime.
         """
         
-        return self.storms
+        if basin == 'all':
+            return self.storms
+        
+        keys = []
+        for key in self.storms:
+            if self[key].basin == basin: keys.append(key)
+        
+        return keys
     
     def get_storm(self,storm):
         

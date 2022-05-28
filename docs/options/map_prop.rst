@@ -52,7 +52,7 @@ The following sections lists options that can be passed to the "prop" argument a
 Generic prop options
 --------------------
 
-The following properties are available for any function that involves plotting storm tracks.
+The following properties are availabel for any function that involves plotting storm tracks.
 
 .. list-table:: 
    :widths: 25 75
@@ -77,7 +77,7 @@ The following properties are available for any function that involves plotting s
    * - plot_names
      - For plotting multiple storms or seasons, determines whether to plot storm name labels.
 
-The following special options are available for ``linecolor`` or ``fillcolor``:
+The following special options are availabel for ``linecolor`` or ``fillcolor``:
 
 .. list-table:: 
    :widths: 25 75
@@ -92,16 +92,16 @@ The following special options are available for ``linecolor`` or ``fillcolor``:
    * - "mslp"
      - Color by minimum MSLP.
    * - "dvmax_dt"
-     - Fill color by change in sustained wind speed. Only available for interpolated storm objects, retrieved using ``storm.interp()``.
+     - Fill color by change in sustained wind speed. Only availabel for interpolated storm objects, retrieved using ``storm.interp()``.
    * - "speed"
-     - Fill color by forward speed of tropical cyclone. Only available for interpolated storm objects, retrieved using ``storm.interp()``.
+     - Fill color by forward speed of tropical cyclone. Only availabel for interpolated storm objects, retrieved using ``storm.interp()``.
 
 .. _options-prop-nhc:
 
 plot_nhc_forecast
 -----------------
 
-The following properties are available only for the ``tropycal.tracks.Storm.plot_nhc_forecast()`` function.
+The following properties are availabel only for the ``tropycal.tracks.Storm.plot_nhc_forecast()`` function.
 
 .. list-table:: 
    :widths: 25 75
@@ -119,7 +119,7 @@ The following properties are available only for the ``tropycal.tracks.Storm.plot
 gridded_stats
 -------------
 
-The following properties are available only for the ``tropycal.tracks.TrackDataset.gridded_stats()`` function.
+The following properties are availabel only for the ``tropycal.tracks.TrackDataset.gridded_stats()`` function.
 
 .. list-table:: 
    :widths: 25 75
@@ -141,12 +141,12 @@ The following properties are available only for the ``tropycal.tracks.TrackDatas
 Realtime Summary
 ================
 
-The following properties are available only for the ``tropycal.realtime.Realtime.plot_summary()`` function.
+The following properties are availabel only for the ``tropycal.realtime.Realtime.plot_summary()`` function.
 
 prop_two
 --------
 
-The following properties are available for plotting NHC Tropical Weather Outlook (TWO).
+The following properties are availabel for plotting NHC Tropical Weather Outlook (TWO).
 
 .. list-table:: 
    :widths: 25 75
@@ -158,11 +158,13 @@ The following properties are available for plotting NHC Tropical Weather Outlook
      - Boolean to determine whether to plot NHC TWO. Default is True.
    * - days
      - Number of days for TWO. Can be either 2 or 5. Default is 5.
+   * - fontsize
+     - Font size for text label. Default is 12.
 
 prop_invest
 -----------
 
-The following properties are available for plotting invests.
+The following properties are availabel for plotting invests.
 
 .. list-table:: 
    :widths: 25 75
@@ -178,11 +180,15 @@ The following properties are available for plotting invests.
      - Line color for past track. Default is black.
    * - linestyle
      - Line style for past track. Default is dotted.
+   * - fontsize
+     - Font size for invest name label. Default is 12.
+   * - ms
+     - Marker size for invest location. Default is 14.
 
 prop_storm
 ----------
 
-The following properties are available for plotting storms.
+The following properties are availabel for plotting storms.
 
 .. list-table:: 
    :widths: 25 75
@@ -198,11 +204,19 @@ The following properties are available for plotting storms.
      - Line color for past track. Default is black.
    * - linestyle
      - Line style for past track. Default is dotted.
+   * - fontsize
+     - Font size for storm name label. Default is 12.
+   * - fillcolor
+     - Fill color for storm location marker. Default is color by SSHWS category ("category").
+   * - label_category
+     - Boolean for whether to plot SSHWS category on top of storm location marker. Default is True.
+   * - ms
+     - Marker size for storm location. Default is 14.
 
 prop_cone
 ---------
 
-The following properties are available for plotting realtime cone of uncertainty.
+The following properties are availabel for plotting realtime cone of uncertainty.
 
 .. list-table:: 
    :widths: 25 75
@@ -213,7 +227,17 @@ The following properties are available for plotting realtime cone of uncertainty
    * - plot
      - Boolean to determine whether to plot cone of uncertainty & forecast track for active storms. Default is True.
    * - linewidth
-     - Line width for past track. Default is 1.5. Set to zero to not plot line.
+     - Line width for forecast track. Default is 1.5. Set to zero to not plot line.
+   * - alpha
+     - Opacity for cone of uncertainty. Default is 0.6.
+   * - days
+     - Number of days for cone of uncertainty, from 2 through 5. Default is 5.
+   * - fillcolor
+     - Fill color for forecast dots. Default is color by SSHWS category ("category").
+   * - label_category
+     - Boolean for whether to plot SSHWS category on top of forecast dots. Default is True.
+   * - ms
+     - Marker size for forecast dots. Default is 12.
 
 .. _options-prop-recon-plot:
 
@@ -223,7 +247,7 @@ Recon Properties
 plot_points
 -----------
 
-The following properties are available only for the ``tropycal.recon.ReconDataset.plot_points()`` function.
+The following properties are availabel only for the ``tropycal.recon.ReconDataset.plot_points()`` function.
 
 .. list-table:: 
    :widths: 25 75
@@ -245,7 +269,7 @@ The following properties are available only for the ``tropycal.recon.ReconDatase
 plot_swath and plot_map
 -----------------------
 
-The following properties are available only for the ``tropycal.recon.ReconDataset.plot_swath()`` and ``tropycal.recon.ReconDataset.plot_map()`` functions.
+The following properties are availabel only for the ``tropycal.recon.ReconDataset.plot_swath()`` and ``tropycal.recon.ReconDataset.plot_map()`` functions.
 
 .. list-table:: 
    :widths: 25 75
@@ -269,7 +293,7 @@ The following properties are available only for the ``tropycal.recon.ReconDatase
 plot_hovmoller
 --------------
 
-The following properties are available only for the ``tropycal.recon.ReconDataset.plot_hovmoller()`` function.
+The following properties are availabel only for the ``tropycal.recon.ReconDataset.plot_hovmoller()`` function.
 
 .. list-table:: 
    :widths: 25 75

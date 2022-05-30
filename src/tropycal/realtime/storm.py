@@ -103,10 +103,10 @@ class RealtimeStorm(Storm):
         
         #Add additional information
         summary.append("\nMore Information:")
-        add_space = np.max([len(key) for key in self.coords.keys()])+3
-        for key in self.coords.keys():
+        add_space = np.max([len(key) for key in self.attrs.keys()])+3
+        for key in self.attrs.keys():
             key_name = key+":"
-            val = '%0.1f'%(self.coords[key]) if key == 'ace' else self.coords[key]
+            val = '%0.1f'%(self.attrs[key]) if key == 'ace' else self.attrs[key]
             summary.append(f'{" "*4}{key_name:<{add_space}}{val}')
 
         return "\n".join(summary)
@@ -118,13 +118,13 @@ class RealtimeStorm(Storm):
         
         #Add other attributes about the storm
         keys = self.dict.keys()
-        self.coords = {}
+        self.attrs = {}
         self.vars = {}
         for key in keys:
             if key == 'realtime': continue
             if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
                 self[key] = self.dict[key]
-                self.coords[key] = self.dict[key]
+                self.attrs[key] = self.dict[key]
             if isinstance(self.dict[key], list) == True and isinstance(self.dict[key], dict) == False:
                 self.vars[key] = np.array(self.dict[key])
                 self[key] = np.array(self.dict[key])
@@ -133,7 +133,7 @@ class RealtimeStorm(Storm):
         if stormTors is not None and isinstance(stormTors,dict):
             self.stormTors = stormTors['data']
             self.tornado_dist_thresh = stormTors['dist_thresh']
-            self.coords['Tornado Count'] = len(stormTors['data'])
+            self.attrs['Tornado Count'] = len(stormTors['data'])
         
         #Get Archer track data for this storm, if it exists
         self.get_archer()
@@ -141,10 +141,10 @@ class RealtimeStorm(Storm):
         #Determine if storm object was retrieved via realtime object
         if 'realtime' in keys and self.dict['realtime']:
             self.realtime = True
-            self.coords['realtime'] = True
+            self.attrs['realtime'] = True
         else:
             self.realtime = False
-            self.coords['realtime'] = False
+            self.attrs['realtime'] = False
             
     def get_realtime_formation_prob(self):
         

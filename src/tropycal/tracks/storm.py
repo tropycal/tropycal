@@ -127,14 +127,14 @@ class Storm:
 
             #Add other attributes about the storm
             keys = self.dict.keys()
-            self.coords = {}
+            self.attrs = {}
             self.vars = {}
             for key in keys:
                 if key == 'realtime': continue
                 if key == 'invest': continue
                 if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
                     self[key] = self.dict[key]
-                    self.coords[key] = self.dict[key]
+                    self.attrs[key] = self.dict[key]
                 if isinstance(self.dict[key], list) == True and isinstance(self.dict[key], dict) == False:
                     self.vars[key] = np.array(self.dict[key])
                     self[key] = np.array(self.dict[key])
@@ -143,7 +143,7 @@ class Storm:
             if stormTors is not None and isinstance(stormTors,dict):
                 self.stormTors = stormTors['data']
                 self.tornado_dist_thresh = stormTors['dist_thresh']
-                self.coords['Tornado Count'] = len(stormTors['data'])
+                self.attrs['Tornado Count'] = len(stormTors['data'])
 
             #Get Archer track data for this storm, if it exists
             try:
@@ -154,18 +154,18 @@ class Storm:
             #Determine if storm object was retrieved via realtime object
             if 'realtime' in keys and self.dict['realtime']:
                 self.realtime = True
-                self.coords['realtime'] = True
+                self.attrs['realtime'] = True
             else:
                 self.realtime = False
-                self.coords['realtime'] = False
+                self.attrs['realtime'] = False
             
             #Determine if storm object is an invest
             if 'invest' in keys and self.dict['invest']:
                 self.invest = True
-                self.coords['invest'] = True
+                self.attrs['invest'] = True
             else:
                 self.invest = False
-                self.coords['invest'] = False
+                self.attrs['invest'] = False
         
         else:
             
@@ -472,7 +472,7 @@ class Storm:
             if key == 'realtime': continue
             if isinstance(NEW_STORM.dict[key], list) == False and isinstance(NEW_STORM.dict[key], dict) == False:
                 NEW_STORM[key] = NEW_STORM.dict[key]
-                NEW_STORM.coords[key] = NEW_STORM.dict[key]
+                NEW_STORM.attrs[key] = NEW_STORM.dict[key]
             if isinstance(NEW_STORM.dict[key], list) == True and isinstance(NEW_STORM.dict[key], dict) == False:
                 NEW_STORM.vars[key] = np.array(NEW_STORM.dict[key])
                 NEW_STORM[key] = np.array(NEW_STORM.dict[key])                
@@ -509,7 +509,7 @@ class Storm:
             if key == 'realtime': continue
             if isinstance(NEW_STORM.dict[key], (np.ndarray,list)) == False and isinstance(NEW_STORM.dict[key], dict) == False:
                 NEW_STORM[key] = NEW_STORM.dict[key]
-                NEW_STORM.coords[key] = NEW_STORM.dict[key]
+                NEW_STORM.attrs[key] = NEW_STORM.dict[key]
             if isinstance(NEW_STORM.dict[key], (np.ndarray,list)) == True and isinstance(NEW_STORM.dict[key], dict) == False:
                 NEW_STORM.dict[key] = list(NEW_STORM.dict[key])
                 NEW_STORM.vars[key] = np.array(NEW_STORM.dict[key])

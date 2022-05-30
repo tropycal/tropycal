@@ -47,6 +47,57 @@ class RealtimeStorm(Storm):
     -------
     RealtimeStorm
         Instance of a RealtimeStorm object.
+    
+    Notes
+    -----
+    A RealtimeStorm object is retrieved from a Realtime object's ``get_storm()`` method, or directly as an attribute of the Realtime object. For example, if an active storm has an ID of 'EP012022', it can be retrieved as such:
+    
+    .. code-block:: python
+    
+        from tropycal import realtime
+        realtime_obj = realtime.Realtime()
+        storm = realtime_obj.get_storm('EP012022')
+    
+    Now this storm's data is stored in the variable ``storm``, which is an instance of RealtimeStorm and can access all of the methods and attributes of a RealtimeStorm object.
+    
+    All the variables associated with a RealtimeStorm object (e.g., lat, lon, date, vmax) can be accessed in two ways. The first is directly from the RealtimeStorm object:
+    
+    >>> storm.lat
+    array([ 9.8, 10.3, 10.8, 11.4, 11.9, 12.1, 12.2, 12.4, 12.6, 12.8, 13. ,
+           12.9, 12.8, 12.9, 13.2, 13.6, 13.8, 13.9, 14. , 14. , 14.3, 14.6,
+           15.1, 15.4])
+    
+    The second is via ``storm.vars``, which returns a dictionary of the variables associated with the RealtimeStorm object. This is also a quick way to access all of the variables associated with a RealtimeStorm object:
+    
+    >>> variable_dict = storm.vars
+    >>> lat = variable_dict['lat']
+    >>> lon = variable_dict['lon']
+    >>> print(variable_dict.keys())
+    dict_keys(['date', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin'])
+    
+    RealtimeStorm objects also have numerous attributes with information about the storm. ``storm.attrs`` returns a dictionary of the attributes for this RealtimeStorm object.
+    
+    It should be noted that RealtimeStorm objects have additional attributes that Storm objects do not, specifically for 2 and 5 day NHC formation probability. These only display values for invests within NHC's area of responsibility; tropical cyclones or invests in JTWC's area of responsibility display "N/A".
+    
+    >>> print(storm.attrs)
+    {'id': 'EP012022',
+     'operational_id': 'EP012022',
+     'name': 'AGATHA',
+     'year': 2022,
+     'season': 2022,
+     'basin': 'east_pacific',
+     'source_info': 'NHC Hurricane Database',
+     'invest': False,
+     'source_method': "NHC's Automated Tropical Cyclone Forecasting System (ATCF)",
+     'source_url': 'https://ftp.nhc.noaa.gov/atcf/btk/',
+     'source': 'hurdat',
+     'ace': 6.055,
+     'prob_2day': 'N/A',
+     'prob_5day': 'N/A',
+     'risk_2day': 'N/A',
+     'risk_5day': 'N/A',
+     'realtime': True}
+    
     """
     
     def __setitem__(self, key, value):

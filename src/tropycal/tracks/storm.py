@@ -54,6 +54,51 @@ class Storm:
     -------
     Storm
         Instance of a Storm object.
+    
+    Notes
+    -----
+    A Storm object is retrieved from TrackDataset's ``get_storm()`` method. For example, if the dataset read in is the default North Atlantic and the desired storm is Hurricane Michael (2018), it would be retrieved as follows:
+    
+    .. code-block:: python
+    
+        from tropycal import tracks
+        basin = tracks.TrackDataset()
+        storm = basin.get_storm(('michael',2018))
+    
+    Now Hurricane Michael's data is stored in the variable ``storm``, which is an instance of Storm and can access all of the methods and attributes of a Storm object.
+    
+    All the variables associated with a Storm object (e.g., lat, lon, date, vmax) can be accessed in two ways. The first is directly from the Storm object:
+    
+    >>> storm.lat
+    array([17.8, 18.1, 18.4, 18.8, 19.1, 19.7, 20.2, 20.9, 21.7, 22.7, 23.7,
+           24.6, 25.6, 26.6, 27.7, 29. , 30. , 30.2, 31.5, 32.8, 34.1, 35.6,
+           36.5, 37.3, 39.1, 41.1, 43.1, 44.8, 46.4, 47.6, 48.4, 48.8, 48.6,
+           47.5, 45.9, 44.4, 42.8, 41.2])
+    
+    The second is via ``storm.vars``, which returns a dictionary of the variables associated with the Storm object. This is also a quick way to access all of the variables associated with a Storm object:
+    
+    >>> variable_dict = storm.vars
+    >>> lat = variable_dict['lat']
+    >>> lon = variable_dict['lon']
+    >>> print(variable_dict.keys())
+    dict_keys(['date', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin'])
+    
+    Storm objects also have numerous attributes with information about the storm. ``storm.attrs`` returns a dictionary of the attributes for this Storm object.
+    
+    >>> print(storm.attrs)
+    {'id': 'AL142018',
+     'operational_id': 'AL142018',
+     'name': 'MICHAEL',
+     'year': 2018,
+     'season': 2018,
+     'basin': 'north_atlantic',
+     'source_info': 'NHC Hurricane Database',
+     'source': 'hurdat',
+     'ace': 12.5,
+     'realtime': False,
+     'invest': False}
+    
+    
     """
     
     def __setitem__(self, key, value):

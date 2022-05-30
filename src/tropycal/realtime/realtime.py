@@ -466,11 +466,7 @@ class Realtime():
                 f = urllib.request.urlopen(url,context=ssl._create_unverified_context())
             else:
                 f = urllib.request.urlopen(url)
-            content = f.read()
-            content = content.decode("utf-8")
-            content = content.split("\n")
-            content = [(i.replace(" ","")).split(",") for i in content]
-            f.close()
+            content = read_url(url)
 
             #iterate through file lines
             for line in content:

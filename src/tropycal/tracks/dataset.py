@@ -245,12 +245,7 @@ class TrackDataset:
         
         def read_hurdat(path,flag):
             if flag:
-                f = urllib.request.urlopen(path)
-                content = f.read()
-                content = content.decode("utf-8")
-                content = content.split("\n")
-                content = [(i.replace(" ","")).split(",") for i in content]
-                f.close()
+                content = read_url(path)
             else:
                 f = open(path,"r")
                 content = f.readlines()
@@ -517,13 +512,7 @@ class TrackDataset:
                 url = f"https://ftp.nhc.noaa.gov/atcf/btk/{file}"
             if int(stormid[4:8]) in archive_years:
                 url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{int(stormid[4:8])}/b{stormid.lower()}.dat"
-                
-            f = urllib.request.urlopen(url)
-            content = f.read()
-            content = content.decode("utf-8")
-            content = content.split("\n")
-            content = [(i.replace(" ","")).split(",") for i in content]
-            f.close()
+            content = read_url(url)
 
             #iterate through file lines
             for line in content:
@@ -632,12 +621,7 @@ class TrackDataset:
         #read in ibtracs file
         if ibtracs_online:
             path = self.ibtracs_url.replace("(basin)",ibtracs_basin)
-            f = urllib.request.urlopen(path)
-            content = f.read()
-            content = content.decode("utf-8")
-            content = content.split("\n")
-            content = [(i.replace(" ","")).split(",") for i in content]
-            f.close()
+            content = read_url(path)
         else:
             f = open(self.ibtracs_url,"r")
             content = f.readlines()

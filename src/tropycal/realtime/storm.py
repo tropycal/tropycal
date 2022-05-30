@@ -9,6 +9,7 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 import requests
+from ftplib import FTP
 
 from ..tracks import *
 from ..tracks.tools import *
@@ -297,16 +298,13 @@ class RealtimeStorm(Storm):
         if self.source == 'hurdat':
         
             #Get forecast for this storm
-            url = f"https://ftp.nhc.noaa.gov/atcf/fst/{self.id.lower()}.fst"
-            if requests.get(url).status_code != 200: raise RuntimeError("NHC forecast data is unavailable for this storm.")
-
-            #Read file content
-            f = urllib.request.urlopen(url)
-            content = f.read()
-            content = content.decode("utf-8")
-            content = content.split("\n")
-            content = [(i.replace(" ","")).split(",") for i in content]
-            f.close()
+            try:
+                content = read_url(f"https://ftp.nhc.noaa.gov/atcf/fst/{self.id.lower()}.fst")
+            except:
+                try:
+                    content = read_url(f"ftp://ftp.nhc.noaa.gov/atcf/fst/{self.id.lower()}.fst")
+                except:
+                    raise RuntimeError("NHC forecast data is unavailable for this storm.")
 
             #Iterate through every line in content:
             forecasts = {}
@@ -625,11 +623,10 @@ class RealtimeStorm(Storm):
                 latest_btk = self.date[-1]
                 
                 #Get latest available public advisory
-                f = urllib.request.urlopen(f"https://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml")
-                content = f.read()
-                content = content.decode("utf-8")
-                content = content.split("\n")
-                f.close()
+                try:
+                    content = read_url(f"https://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml",subsplit=False)
+                except:
+                    content = read_url(f"ftp://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml",subsplit=False)
                 
                 #Get UTC time of advisory
                 results = [i for i in content if 'messageDateTimeUTC' in i][0]
@@ -651,11 +648,10 @@ class RealtimeStorm(Storm):
             current_advisory['source'] = 'NHC Public Advisory'
 
             #Get latest available public advisory
-            f = urllib.request.urlopen(f"https://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml")
-            content = f.read()
-            content = content.decode("utf-8")
-            content = content.split("\n")
-            f.close()
+            try:
+                content = read_url(f"https://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml",subsplit=False)
+            except:
+                content = read_url(f"ftp://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml",subsplit=False)
 
             #Get public advisory number
             results = [i for i in content if 'advisoryNumber' in i][0]
@@ -850,15 +846,22 @@ class RealtimeStorm(Storm):
 
         #Get list of all public advisories for this storm
         url_disco = 'https://ftp.nhc.noaa.gov/atcf/pub/'
-        page = requests.get(url_disco).text
-        content = page.split("\n")
-        files = []
-        for line in content:
-            if ".public" in line and self.id.lower() in line:
-                filename = line.split('">')[1]
-                filename = filename.split("</a>")[0]
-                files.append(filename)
-        del content
+        try:
+            page = requests.get(url_disco).text
+            content = page.split("\n")
+            files = []
+            for line in content:
+                if ".public" in line and self.id.lower() in line:
+                    filename = line.split('">')[1]
+                    filename = filename.split("</a>")[0]
+                    files.append(filename)
+            del content
+        except:
+            ftp = FTP('ftp.nhc.noaa.gov')
+            ftp.login()
+            ftp.cwd('atcf/pub')
+            files = ftp.nlst()
+            out = ftp.quit()
 
         #Keep only largest number
         numbers = [int(i.split(".")[-1]) for i in files]
@@ -882,11 +885,7 @@ class RealtimeStorm(Storm):
             files = [i for i in files if f".public_{max_letter}" in i]
 
         #Read file containing advisory
-        f = urllib.request.urlopen(url_disco + files[0])
-        content = f.read()
-        content = content.decode("utf-8")
-        content = content.split("\n")
-        f.close()
+        content = read_url(url_disco + files[0],subsplit=False)
 
         #Figure out time issued
         hr = content[6].split(" ")[0]

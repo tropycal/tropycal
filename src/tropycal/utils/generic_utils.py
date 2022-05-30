@@ -894,6 +894,17 @@ def dynamic_map_extent(min_lon,max_lon,min_lat,max_lat):
     #Return map bounds
     return bound_w,bound_e,bound_s,bound_n
 
+def read_url(url,split=True,subsplit=True):
+    
+    f = urllib.request.urlopen(url)
+    content = f.read()
+    content = content.decode("utf-8")
+    if split: content = content.split("\n")
+    if subsplit: content = [(i.replace(" ","")).split(",") for i in content]
+    f.close()
+    
+    return content
+
 class Distance:
     
     def __init__(self,dist,units='kilometers'):

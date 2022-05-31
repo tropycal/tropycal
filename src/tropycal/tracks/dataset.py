@@ -3413,22 +3413,19 @@ class TrackDataset:
         data = {}
         for key in self.keys:
             if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year: continue
-            storm_data = [[great_circle(point,(self.data[key]['lat'][i],self.data[key]['lon'][i])).kilometers,self.data[key]['vmax'][i],self.data[key]['mslp'][i],self.data[key]['date'][i]] for i in range(len(self.data[key]['lat'])) if self.data[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
+            storm_data = [[great_circle(point,(self.data_interp[key]['lat'][i],self.data_interp[key]['lon'][i])).kilometers,self.data_interp[key]['vmax'][i],self.data_interp[key]['mslp'][i],self.data_interp[key]['date'][i]] for i in range(len(self.data_interp[key]['lat'])) if self.data_interp[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
             storm_data = [i for i in storm_data if i[0] <= radius]
             storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= dt.strptime(date_range[1],'%m/%d').replace(year=i[3].year)]
             if len(storm_data) == 0: continue
             if 'v_min' in thresh.keys():
-                vmax = [i[1] for i in storm_data]
-                if np.nanmin(vmax) <= thresh['v_min']: continue
+                storm_data = [i for i in storm_data if i[1] >= thresh['v_min']]
             if 'v_max' in thresh.keys():
-                vmax = [i[1] for i in storm_data]
-                if np.nanmin(vmax) >= thresh['v_max']: continue
+                storm_data = [i for i in storm_data if i[1] <= thresh['v_max']]
             if 'p_min' in thresh.keys():
-                mslp = [i[2] for i in storm_data]
-                if np.nanmin(mslp) <= thresh['p_min']: continue
+                storm_data = [i for i in storm_data if i[2] >= thresh['p_min']]
             if 'p_max' in thresh.keys():
-                mslp = [i[2] for i in storm_data]
-                if np.nanmin(mslp) >= thresh['p_max']: continue
+                storm_data = [i for i in storm_data if i[2] <= thresh['p_max']]
+            if len(storm_data) == 0: continue
                 
             data[key] = np.round(np.nanmin([i[0] for i in storm_data]),1)
         
@@ -3492,25 +3489,28 @@ class TrackDataset:
         if points[-1] != points[0]: points.append(points[0])
         p = path.Path(points)
         
+        #Coerce points longitudes to -180 to 180
+        for point in points:
+            if point[1] > 180.0: point[1] = point[1] - 360.0
+        
         data = []
         for key in self.keys:
+            lon_shift = self.data_interp[key]['lon'] + 0.0
+            lon_shift[lon_shift > 180.0] = lon_shift[lon_shift > 180.0] - 360.0
             if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year: continue
-            storm_data = [[p.contains_point((self.data[key]['lat'][i],self.data[key]['lon'][i])),self.data[key]['vmax'][i],self.data[key]['mslp'][i],self.data[key]['date'][i]] for i in range(len(self.data[key]['lat'])) if self.data[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
+            storm_data = [[p.contains_point((self.data_interp[key]['lat'][i],lon_shift[i])),self.data_interp[key]['vmax'][i],self.data_interp[key]['mslp'][i],self.data_interp[key]['date'][i]] for i in range(len(self.data_interp[key]['lat'])) if self.data_interp[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
             storm_data = [i for i in storm_data if i[0] == True]
             storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= dt.strptime(date_range[1],'%m/%d').replace(year=i[3].year)]
             if len(storm_data) == 0: continue
             if 'v_min' in thresh.keys():
-                vmax = [i[1] for i in storm_data]
-                if np.nanmin(vmax) <= thresh['v_min']: continue
+                storm_data = [i for i in storm_data if i[1] >= thresh['v_min']]
             if 'v_max' in thresh.keys():
-                vmax = [i[1] for i in storm_data]
-                if np.nanmin(vmax) >= thresh['v_max']: continue
+                storm_data = [i for i in storm_data if i[1] <= thresh['v_max']]
             if 'p_min' in thresh.keys():
-                mslp = [i[2] for i in storm_data]
-                if np.nanmin(mslp) <= thresh['p_min']: continue
+                storm_data = [i for i in storm_data if i[2] >= thresh['p_min']]
             if 'p_max' in thresh.keys():
-                mslp = [i[2] for i in storm_data]
-                if np.nanmin(mslp) >= thresh['p_max']: continue
+                storm_data = [i for i in storm_data if i[2] <= thresh['p_max']]
+            if len(storm_data) == 0: continue
                 
             data.append(key)
         

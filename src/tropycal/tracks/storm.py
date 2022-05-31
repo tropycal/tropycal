@@ -1081,16 +1081,24 @@ class Storm:
         if storm_year == (dt.now()).year:
             
             #Get list of all discussions for all storms this year
-            url_disco = 'https://ftp.nhc.noaa.gov/atcf/dis/'
-            page = requests.get(url_disco).text
-            content = page.split("\n")
-            files = []
-            for line in content:
-                if ".discus." in line and self.id.lower() in line:
-                    filename = line.split('">')[1]
-                    filename = filename.split("</a>")[0]
-                    files.append(filename)
-            del content
+            try:
+                url_disco = 'https://ftp.nhc.noaa.gov/atcf/dis/'
+                page = requests.get(url_disco).text
+                content = page.split("\n")
+                files = []
+                for line in content:
+                    if ".discus." in line and self.id.lower() in line:
+                        filename = line.split('">')[1]
+                        filename = filename.split("</a>")[0]
+                        files.append(filename)
+                del content
+            except:
+                ftp = FTP('ftp.nhc.noaa.gov')
+                ftp.login()
+                ftp.cwd('atcf/dis')
+                files = ftp.nlst()
+                files = [i for i in files if ".discus." in i and self.id.lower() in i]
+                out = ftp.quit()
             
             #Read in all NHC forecast discussions
             discos = {'id':[],'utc_date':[],'url':[],'mode':0}
@@ -1144,11 +1152,21 @@ class Storm:
             #Get directory path of storm and read it in
             url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
             url = url_disco + f'{storm_id.lower()}_msg.zip'
-            if requests.get(url).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
-            request = urllib.request.Request(url)
-            response = urllib.request.urlopen(request)
-            file_like_object = BytesIO(response.read())
-            tar = zipfile.ZipFile(file_like_object)
+            try:
+                request = urllib.request.Request(url)
+                response = urllib.request.urlopen(request)
+                file_like_object = BytesIO(response.read())
+                tar = zipfile.ZipFile(file_like_object)
+            except:
+                try:
+                    url_disco = f"ftp://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                    url = url_disco + f'{storm_id.lower()}_msg.zip'
+                    request = urllib.request.Request(url)
+                    response = urllib.request.urlopen(request)
+                    file_like_object = BytesIO(response.read())
+                    tar = zipfile.ZipFile(file_like_object)
+                except:
+                    raise RuntimeError("NHC discussion data is unavailable.")
             
             #Get file list
             members = '\n'.join([i for i in tar.namelist()])
@@ -1218,11 +1236,21 @@ class Storm:
             #Get directory path of storm and read it in
             url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
             url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
-            if requests.get(url).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
-            request = urllib.request.Request(url)
-            response = urllib.request.urlopen(request)
-            file_like_object = BytesIO(response.read())
-            tar = tarfile.open(fileobj=file_like_object)
+            try:
+                request = urllib.request.Request(url)
+                response = urllib.request.urlopen(request)
+                file_like_object = BytesIO(response.read())
+                tar = tarfile.open(fileobj=file_like_object)
+            except:
+                try:
+                    url_disco = f"ftp://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                    url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
+                    request = urllib.request.Request(url)
+                    response = urllib.request.urlopen(request)
+                    file_like_object = BytesIO(response.read())
+                    tar = tarfile.open(fileobj=file_like_object)
+                except:
+                    raise RuntimeError("NHC discussion data is unavailable.")
             
             #Get file list
             members = '\n'.join([i.name for i in tar.getmembers()])
@@ -1283,14 +1311,25 @@ class Storm:
             
         elif storm_year in range(2001,2006):
             #Get directory path of storm and read it in
-            url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
-            url = url_disco + f'{storm_id.lower()}_msgs.tar.gz'
-            if storm_year < 2003: url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
-            if requests.get(url).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
-            request = urllib.request.Request(url)
-            response = urllib.request.urlopen(request)
-            file_like_object = BytesIO(response.read())
-            tar = tarfile.open(fileobj=file_like_object)
+            try:
+                url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                url = url_disco + f'{storm_id.lower()}_msgs.tar.gz'
+                if storm_year < 2003: url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
+                request = urllib.request.Request(url)
+                response = urllib.request.urlopen(request)
+                file_like_object = BytesIO(response.read())
+                tar = tarfile.open(fileobj=file_like_object)
+            except:
+                try:
+                    url_disco = f"ftp://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                    url = url_disco + f'{storm_id.lower()}_msgs.tar.gz'
+                    if storm_year < 2003: url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
+                    request = urllib.request.Request(url)
+                    response = urllib.request.urlopen(request)
+                    file_like_object = BytesIO(response.read())
+                    tar = tarfile.open(fileobj=file_like_object)
+                except:
+                    raise RuntimeError("NHC discussion data is unavailable.")
 
             #Get file list
             members = '\n'.join([i.name for i in tar.getmembers()])
@@ -1325,18 +1364,33 @@ class Storm:
             
         else:
             #Retrieve list of NHC discussions for this storm
-            url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
-            if requests.get(url_disco).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
-            path_disco = urllib.request.urlopen(url_disco)
-            string = path_disco.read().decode('utf-8')
-            nums = "[0123456789]"
-            search_pattern = f'{storm_id.lower()}.discus.[01]{nums}{nums}.{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}'
-            pattern = re.compile(search_pattern)
-            filelist = pattern.findall(string)
-            files = []
-            for file in filelist:
-                if file not in files: files.append(file) #remove duplicates
-            path_disco.close()
+            try:
+                url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                path_disco = urllib.request.urlopen(url_disco)
+                string = path_disco.read().decode('utf-8')
+                nums = "[0123456789]"
+                search_pattern = f'{storm_id.lower()}.discus.[01]{nums}{nums}.{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}'
+                pattern = re.compile(search_pattern)
+                filelist = pattern.findall(string)
+                files = []
+                for file in filelist:
+                    if file not in files: files.append(file) #remove duplicates
+                path_disco.close()
+            except:
+                try:
+                    url_disco = f"ftp://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                    path_disco = urllib.request.urlopen(url_disco)
+                    string = path_disco.read().decode('utf-8')
+                    nums = "[0123456789]"
+                    search_pattern = f'{storm_id.lower()}.discus.[01]{nums}{nums}.{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}'
+                    pattern = re.compile(search_pattern)
+                    filelist = pattern.findall(string)
+                    files = []
+                    for file in filelist:
+                        if file not in files: files.append(file) #remove duplicates
+                    path_disco.close()
+                except:
+                    raise RuntimeError("NHC discussion data is unavailable.")
 
             #Read in all NHC forecast discussions
             discos = {'id':[],'utc_date':[],'url':[],'mode':0}

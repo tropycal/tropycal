@@ -3700,8 +3700,8 @@ class TrackDataset:
         
         #Plot circle and dot
         import cartopy.crs as ccrs
-        linewidth = kwargs.pop('linewidth', 2.0)
-        color = kwargs.pop('color', 'black')
+        linewidth = 3.0
+        color = 'k'
         if points[-1] != points[0]: points.append(points[0])
         ax.plot([i[1] for i in points],[i[0] for i in points],color=color,linewidth=linewidth,zorder=30,transform=ccrs.PlateCarree())
         

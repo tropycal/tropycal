@@ -27,7 +27,6 @@ except:
 
 #Internal imports
 from .storm import RealtimeStorm
-from .tools import BasicReader
 from ..utils import *
 from .. import constants
 from ..tracks.plot import TrackPlot
@@ -791,40 +790,7 @@ class Realtime():
         """
         
         #Retrieve NHC shapefiles for development areas
-        shapefiles = {}
-        for name in ['areas','points']:
-            
-            try:
-                #Read in shapefile zip from NHC
-                url = 'https://www.nhc.noaa.gov/xgtwo/gtwo_shapefiles.zip'
-                request = urllib.request.Request(url)
-                response = urllib.request.urlopen(request)
-                file_like_object = BytesIO(response.read())
-                tar = zipfile.ZipFile(file_like_object)
-
-                #Get file list (points, areas)
-                members = '\n'.join([i for i in tar.namelist()])
-                nums = "[0123456789]"
-                search_pattern = f'gtwo_{name}_202{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}.shp'
-                pattern = re.compile(search_pattern)
-                filelist = pattern.findall(members)
-                files = []
-                for file in filelist:
-                    if file not in files: files.append(file.split(".shp")[0]) #remove duplicates
-
-                #Retrieve necessary components for shapefile
-                members = tar.namelist()
-                members_names = [i for i in members]
-                data = {'shp':0,'dbf':0,'prj':0,'shx':0}
-                for key in data.keys():
-                    idx = members_names.index(files[0]+"."+key)
-                    data[key] = BytesIO(tar.read(members[idx]))
-
-                #Read in shapefile
-                orig_reader = shapefile.Reader(shp=data['shp'], dbf=data['dbf'], prj=data['prj'], shx=data['shx'])
-                shapefiles[name] = BasicReader(orig_reader)
-            except:
-                shapefiles[name] = None
+        shapefiles = get_two_current()
         
         #Retrieve kwargs
         two_prop = kwargs.pop('two_prop',{})
@@ -842,13 +808,13 @@ class Realtime():
         #Create cartopy projection
         if cartopy_proj is not None:
             self.plot_obj.proj = cartopy_proj
-            #elif max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
-            #    self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
         else:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0) #0.0
         
         #Plot
-        ax = self.plot_obj.plot_summary(self,shapefiles,domain,ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
+        ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms],
+                                        [self.get_storm(key).get_forecast_realtime() for key in self.storms],
+                                        shapefiles,dt.utcnow(),domain,ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
         
         return ax
         

@@ -17,6 +17,10 @@ import matplotlib.colors as mcolors
 import matplotlib as mlib
 import warnings
 import scipy.interpolate as interp
+import re
+import shapefile
+import zipfile
+from io import StringIO, BytesIO
 
 from .. import constants
 
@@ -424,6 +428,138 @@ def dropsonde_mslp_estimate(mslp,surface_wind):
     """
     
     return mslp - (surface_wind / 10.0)
+
+def get_two_current():
+    
+    r"""
+    Retrieve the latest NHC Tropical Weather Outlook (TWO).
+    
+    Returns
+    -------
+    dict
+        A dictionary of shapefiles for points, areas and lines.
+    
+    Notes
+    -----
+    The shapefiles returned are modified versions of Cartopy's BasicReader, allowing to read in shapefiles directly from URL without having to download the shapefile locally first.
+    """
+    
+    #Retrieve NHC shapefiles for development areas
+    shapefiles = {}
+    for name in ['areas','lines','points']:
+
+        try:
+            #Read in shapefile zip from NHC
+            url = 'https://www.nhc.noaa.gov/xgtwo/gtwo_shapefiles.zip'
+            request = urllib.request.Request(url)
+            response = urllib.request.urlopen(request)
+            file_like_object = BytesIO(response.read())
+            tar = zipfile.ZipFile(file_like_object)
+
+            #Get file list (points, areas)
+            members = '\n'.join([i for i in tar.namelist()])
+            nums = "[0123456789]"
+            search_pattern = f'gtwo_{name}_20{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}.shp'
+            pattern = re.compile(search_pattern)
+            filelist = pattern.findall(members)
+            files = []
+            for file in filelist:
+                if file not in files: files.append(file.split(".shp")[0]) #remove duplicates
+
+            #Retrieve necessary components for shapefile
+            members = tar.namelist()
+            members_names = [i for i in members]
+            data = {'shp':0,'dbf':0,'prj':0,'shx':0}
+            for key in data.keys():
+                idx = members_names.index(files[0]+"."+key)
+                data[key] = BytesIO(tar.read(members[idx]))
+
+            #Read in shapefile
+            orig_reader = shapefile.Reader(shp=data['shp'], dbf=data['dbf'], prj=data['prj'], shx=data['shx'])
+            shapefiles[name] = BasicReader(orig_reader)
+        except:
+            shapefiles[name] = None
+    
+    return shapefiles
+    
+def get_two_archive(time):
+    
+    r"""
+    Retrieve an archived NHC Tropical Weather Outlook (TWO). If none available within 30 hours of the specified date, an empty dict is returned.
+    
+    Parameters
+    ----------
+    time : datetime
+        Valid time for archived shapefile.
+    
+    Returns
+    -------
+    dict
+        A dictionary of shapefiles for points, areas and lines.
+    
+    Notes
+    -----
+    The shapefiles returned are modified versions of Cartopy's BasicReader, allowing to read in shapefiles directly from URL without having to download the shapefile locally first.
+    """
+    
+    #Find closest NHC shapefile if within 24 hours
+    url = 'https://www.nhc.noaa.gov/gis/archive_gtwo.php'
+    page = requests.get(url).text
+    content = page.split("\n")
+    files = []
+    for line in content:
+        if '<a href="gtwo/archive/2' in line:
+            filename = line.split('zip">')[1]
+            filename = filename.split("</a>")[0]
+            files.append(filename)
+    del content
+    dates = [dt.strptime(i.split("_")[0],'%Y%m%d%H%M') for i in files]
+    diff = [(time-i).total_seconds()/3600 for i in dates]
+    diff = [i for i in diff if i >= 0]
+
+    #Continue if less than 24 hours difference
+    if np.nanmin(diff) <= 30:
+        two_date = dates[diff.index(np.nanmin(diff))].strftime('%Y%m%d%H%M')
+
+        #Retrieve NHC shapefiles for development areas
+        shapefiles = {}
+        for name in ['areas','lines','points']:
+
+            try:
+                #Read in shapefile zip from NHC
+                url = f'https://www.nhc.noaa.gov/gis/gtwo/archive/{two_date}_gtwo.zip'
+                request = urllib.request.Request(url)
+                response = urllib.request.urlopen(request)
+                file_like_object = BytesIO(response.read())
+                tar = zipfile.ZipFile(file_like_object)
+
+                #Get file list (points, areas)
+                members = '\n'.join([i for i in tar.namelist()])
+                nums = "[0123456789]"
+                search_pattern = f'gtwo_{name}_20{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}.shp'
+                pattern = re.compile(search_pattern)
+                filelist = pattern.findall(members)
+                files = []
+                for file in filelist:
+                    if file not in files: files.append(file.split(".shp")[0]) #remove duplicates
+
+                #Retrieve necessary components for shapefile
+                members = tar.namelist()
+                members_names = [i for i in members]
+                data = {'shp':0,'dbf':0,'prj':0,'shx':0}
+                for key in data.keys():
+                    idx = members_names.index(files[0]+"."+key)
+                    data[key] = BytesIO(tar.read(members[idx]))
+
+                #Read in shapefile
+                orig_reader = shapefile.Reader(shp=data['shp'], dbf=data['dbf'], prj=data['prj'], shx=data['shx'])
+                shapefiles[name] = BasicReader(orig_reader)
+            except:
+                shapefiles[name] = None
+    else:
+        shapefiles = {'areas':None,'lines':None,'points':None}
+    
+    return shapefiles
 
 def nhc_cone_radii(year,basin,forecast_hour=None):
     
@@ -984,3 +1120,118 @@ class great_circle(Distance):
 
         #Return great circle distance
         return self.RADIUS * d
+
+r"""
+This is a modified version of Cartopy's shapereader functionality, specified to directly read in an already-existing
+Shapely object as opposed to expecting a local shapefile to be read in.
+"""
+import shapely.geometry as sgeom
+import shapefile
+
+class Record:
+    """
+    A single logical entry from a shapefile, combining the attributes with
+    their associated geometry.
+
+    """
+    def __init__(self, shape, attributes, fields):
+        self._shape = shape
+
+        self._bounds = None
+        # if the record defines a bbox, then use that for the shape's bounds,
+        # rather than using the full geometry in the bounds property
+        if hasattr(shape, 'bbox'):
+            self._bounds = tuple(shape.bbox)
+
+        self._geometry = None
+        """The cached geometry instance for this Record."""
+
+        self.attributes = attributes
+        """A dictionary mapping attribute names to attribute values."""
+
+        self._fields = fields
+
+    def __repr__(self):
+        return f'<Record: {self.geometry!r}, {self.attributes!r}, <fields>>'
+
+    def __str__(self):
+        return f'Record({self.geometry}, {self.attributes}, <fields>)'
+
+    @property
+    def bounds(self):
+        """
+        The bounds of this Record's :meth:`~Record.geometry`.
+
+        """
+        if self._bounds is None:
+            self._bounds = self.geometry.bounds
+        return self._bounds
+
+    @property
+    def geometry(self):
+        """
+        A shapely.geometry instance for this Record.
+
+        The geometry may be ``None`` if a null shape is defined in the
+        shapefile.
+
+        """
+        if not self._geometry and self._shape.shapeType != shapefile.NULL:
+            self._geometry = sgeom.shape(self._shape)
+        return self._geometry
+
+class BasicReader:
+    """
+    Provide an interface for accessing the contents of a shapefile.
+
+    The primary methods used on a Reader instance are
+    :meth:`~Reader.records` and :meth:`~Reader.geometries`.
+
+    """
+    def __init__(self, reader):
+        # Validate the filename/shapefile
+        self._reader = reader
+        if reader.shp is None or reader.shx is None or reader.dbf is None:
+            raise ValueError("Incomplete shapefile definition "
+                             "in '%s'." % filename)
+
+        self._fields = self._reader.fields
+
+
+    def close(self):
+        return self._reader.close()
+
+    def __len__(self):
+        return len(self._reader)
+
+    def geometries(self):
+        """
+        Return an iterator of shapely geometries from the shapefile.
+
+        This interface is useful for accessing the geometries of the
+        shapefile where knowledge of the associated metadata is not necessary.
+        In the case where further metadata is needed use the
+        :meth:`~Reader.records`
+        interface instead, extracting the geometry from the record with the
+        :meth:`~Record.geometry` method.
+
+        """
+        to_return = []
+        for shape in self._reader.iterShapes():
+            # Skip the shape that can not be represented as geometry.
+            if shape.shapeType != shapefile.NULL:
+                to_return.append(sgeom.shape(shape))
+        return to_return
+
+    def records(self):
+        """
+        Return an iterator of :class:`~Record` instances.
+
+        """
+        # Ignore the "DeletionFlag" field which always comes first
+        to_return = []
+        fields = self._reader.fields[1:]
+        for shape_record in self._reader.iterShapeRecords():
+            attributes = shape_record.record.as_dict()
+            to_return.append(Record(shape_record.shape, attributes, fields))
+        return to_return

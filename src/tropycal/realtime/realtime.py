@@ -813,7 +813,7 @@ class Realtime():
         
         #Plot
         ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms],
-                                        [self.get_storm(key).get_forecast_realtime() for key in self.storms],
+                                        [self.get_storm(key).get_forecast_realtime() if self[key].invest == False else {} for key in self.storms],
                                         shapefiles,dt.utcnow(),domain,ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
         
         return ax

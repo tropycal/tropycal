@@ -3354,7 +3354,7 @@ class TrackDataset:
 
         return composite
     
-    def analogs_from_point(self,point,radius,thresh={},non_tropical=False,year_range=None,date_range=None):
+    def analogs_from_point(self,point,radius,units='km',thresh={},non_tropical=False,year_range=None,date_range=None):
         
         r"""
         Retrieve historical TC tracks surrounding a point.
@@ -3365,6 +3365,8 @@ class TrackDataset:
             Tuple ordered by (latitude, longitude).
         radius : int or float
             Radius in kilometers surrounding the point to search for storms.
+        units : str, optional
+            Units of distance for radius. Can be "miles" or "km". Default is "km".
         thresh : dict
             Dict for threshold(s) that storms within the requested radius must meet. The following options are available:
             
@@ -3407,6 +3409,11 @@ class TrackDataset:
         if date_range == None:
             date_range = ('1/1','12/31')
         
+        #Units error check
+        if units not in ['km','miles']:
+            raise ValueError("units must be 'km' or 'miles'.")
+        unit_factor = 1.0 if units == 'km' else 0.621371
+        
         #Interpolate all storm data, if hasn't been done already
         self.__interpolate_storms(self.keys)
         
@@ -3414,7 +3421,7 @@ class TrackDataset:
         for key in self.keys:
             if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year: continue
             storm_data = [[great_circle(point,(self.data_interp[key]['lat'][i],self.data_interp[key]['lon'][i])).kilometers,self.data_interp[key]['vmax'][i],self.data_interp[key]['mslp'][i],self.data_interp[key]['date'][i]] for i in range(len(self.data_interp[key]['lat'])) if self.data_interp[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
-            storm_data = [i for i in storm_data if i[0] <= radius]
+            storm_data = [i for i in storm_data if i[0] <= radius*unit_factor]
             storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= dt.strptime(date_range[1],'%m/%d').replace(year=i[3].year)]
             if len(storm_data) == 0: continue
             if 'v_min' in thresh.keys():
@@ -3426,8 +3433,8 @@ class TrackDataset:
             if 'p_max' in thresh.keys():
                 storm_data = [i for i in storm_data if i[2] <= thresh['p_max']]
             if len(storm_data) == 0: continue
-                
-            data[key] = np.round(np.nanmin([i[0] for i in storm_data]),1)
+            
+            data[key] = np.round(np.nanmin([i[0]*unit_factor for i in storm_data]),1)
         
         return data
         
@@ -3516,7 +3523,7 @@ class TrackDataset:
         
         return data
         
-    def plot_analogs_from_point(self,point,radius,thresh={},non_tropical=False,year_range=None,date_range=None,**kwargs):
+    def plot_analogs_from_point(self,point,radius,units='km',thresh={},non_tropical=False,year_range=None,date_range=None,**kwargs):
         
         r"""
         Plot historical TC tracks surrounding a point.
@@ -3527,6 +3534,8 @@ class TrackDataset:
             Tuple ordered by (latitude, longitude).
         radius : int or float
             Radius in kilometers surrounding the point to search for storms.
+        units : str, optional
+            Units of distance for radius. Can be "miles" or "km". Default is "km".
         thresh : dict
             Dict for threshold(s) that storms within the requested radius must meet. The following options are available:
             
@@ -3543,12 +3552,6 @@ class TrackDataset:
         
         Other Parameters
         ----------------
-        ms : int or float
-            Marker fill size for point. Defaults to 12.
-        linewidth : int or float
-            Width of circle surrounding point. Defaults to 2.0.
-        color : str
-            Color of point and line surrounding point. Defaults to black.
         **kwargs
             Refer to ``tropycal.tracks.TrackDataset.plot_storms`` for plotting keyword arguments.
         
@@ -3582,7 +3585,8 @@ class TrackDataset:
         
         #Reconfigure domain to be centered around circle
         import cartopy.geodesic as geodesic
-        circle_points = geodesic.Geodesic().circle(lon=point[1],lat=point[0],radius=radius*1000,n_samples=360,endpoint=False)
+        unit_factor = 1.0 if units == 'km' else 0.621371
+        circle_points = geodesic.Geodesic().circle(lon=point[1],lat=point[0],radius=radius*1000*unit_factor,n_samples=360,endpoint=False)
         domain = kwargs.pop('domain', None)
         if domain == None:
             lons = [i[0] for i in circle_points]
@@ -3593,16 +3597,16 @@ class TrackDataset:
             kwargs['domain'] = domain
         
         #Retrieve storms and plot on axes
-        storms = self.analogs_from_point(point,radius,thresh,non_tropical,year_range,date_range).keys()
+        storms = self.analogs_from_point(point,radius,units,thresh,non_tropical,year_range,date_range).keys()
         ax = self.plot_storms(storms,**kwargs)
         
         #Plot circle and dot
         import cartopy
         import shapely
-        ms = kwargs.pop('ms', 12)
-        linewidth = kwargs.pop('linewidth', 2.0)
-        color = kwargs.pop('color', 'black')
-        ax.plot(point[1],point[0],'o',mfc=color,mec=color,ms=ms, zorder=30)
+        ms = 12
+        linewidth = 2.5
+        color = 'k'
+        ax.plot(point[1],point[0],'o',mfc=color,mec=color,ms=ms,zorder=30)
         geom = shapely.geometry.Polygon(circle_points)
         ax.add_geometries((geom,), crs=cartopy.crs.PlateCarree(), facecolor='none', edgecolor=color, linewidth=linewidth, zorder=30)
         
@@ -3619,7 +3623,7 @@ class TrackDataset:
             if point[1] > 180: lon_formatter = f"{abs(point[1]-360.0):.1f}{degree_sign}W"
             start_day = dt.strptime(date_range[0],'%m/%d').strftime('%b %d')
             end_day = dt.strptime(date_range[1],'%m/%d').strftime('%b %d')
-            ax.set_title(f"TCs Within {radius} km of {lat_formatter}, {lon_formatter}",loc='left',fontsize=17,fontweight='bold')
+            ax.set_title(f"TCs Within {radius} {units} of {lat_formatter}, {lon_formatter}",loc='left',fontsize=17,fontweight='bold')
             ax.set_title(f"Number of storms: {len(storms)}\n{start_day} {endash} {end_day} {dot} {start_year} {endash} {end_year}",loc='right',fontsize=13)
         
         return ax

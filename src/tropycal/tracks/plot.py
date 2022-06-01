@@ -1530,7 +1530,7 @@ None,prop={},map_prop={}):
         #Return axis if specified, otherwise display figure
         return self.ax
 
-    def plot_summary(self,realtime_obj,shapefiles,domain,ax=None,save_path=None,two_prop={},invest_prop={},storm_prop={},cone_prop={},map_prop={}):
+    def plot_summary(self,storms,forecasts,shapefiles,valid_date,domain,ax=None,save_path=None,two_prop={},invest_prop={},storm_prop={},cone_prop={},map_prop={}):
         
         r"""
         Creates a realtime summary plot.
@@ -1624,11 +1624,8 @@ None,prop={},map_prop={}):
         
         if invest_prop['plot'] == True or storm_prop['plot'] == True:
             
-            #Iterate over all realtime storms
-            for key in realtime_obj.storms:
-                
-                #Get storm object
-                storm = realtime_obj.get_storm(key)
+            #Iterate over all storms
+            for storm_idx,storm in enumerate(storms):
                 
                 #Skip if it's already associated with a risk area, if TWO is being plotted
                 if storm.prob_2day != 'N/A' and two_prop['plot'] == True: continue
@@ -1697,41 +1694,45 @@ None,prop={},map_prop={}):
                     if cone_prop['plot'] == True:
                         
                         #Retrieve cone
-                        forecast_dict = storm.get_forecast_realtime()
-                        cone = generate_nhc_cone(forecast_dict,storm.basin,cone_days=cone_prop['days'])
+                        forecast_dict = forecasts[storm_idx]
                         
-                        #Plot cone
-                        if cone_prop['alpha'] > 0 and storm.basin in constants.NHC_BASINS:
-                            cone_2d = cone['cone']
-                            cone_2d = ndimage.gaussian_filter(cone_2d,sigma=0.5,order=0)
-                            self.ax.contourf(cone['lon2d'],cone['lat2d'],cone_2d,[0.9,1.1],colors=['#ffffff','#ffffff'],alpha=cone_prop['alpha'],zorder=4,transform=ccrs.PlateCarree())
-                            self.ax.contour(cone['lon2d'],cone['lat2d'],cone_2d,[0.9],linewidths=1.5,colors=['k'],zorder=4,transform=ccrs.PlateCarree())
-                        
-                        #Plot center line & account for dateline crossing
-                        if cone_prop['linewidth'] > 0:
-                            self.ax.plot(cone['center_lon'],cone['center_lat'],color='w',linewidth=2.5,zorder=5,transform=ccrs.PlateCarree())
-                            self.ax.plot(cone['center_lon'],cone['center_lat'],color='k',linewidth=2.0,zorder=6,transform=ccrs.PlateCarree()) 
-                        
-                        #Plot forecast dots
-                        for idx in range(len(forecast_dict['lat'])):
-                            if cone_prop['ms'] == 0: continue
-                            color = get_colors_sshws(forecast_dict['vmax'][idx])
-                            if cone_prop['fillcolor'] != 'category': color = cone_prop['fillcolor']
+                        try:
+                            cone = generate_nhc_cone(forecast_dict,storm.basin,cone_days=cone_prop['days'])
 
-                            self.ax.plot(forecast_dict['lon'][idx],forecast_dict['lat'][idx],'o',ms=cone_prop['ms'],mfc=color,mec='k',zorder=7,transform=ccrs.PlateCarree(),clip_on=True)
+                            #Plot cone
+                            if cone_prop['alpha'] > 0 and storm.basin in constants.NHC_BASINS:
+                                cone_2d = cone['cone']
+                                cone_2d = ndimage.gaussian_filter(cone_2d,sigma=0.5,order=0)
+                                self.ax.contourf(cone['lon2d'],cone['lat2d'],cone_2d,[0.9,1.1],colors=['#ffffff','#ffffff'],alpha=cone_prop['alpha'],zorder=4,transform=ccrs.PlateCarree())
+                                self.ax.contour(cone['lon2d'],cone['lat2d'],cone_2d,[0.9],linewidths=1.5,colors=['k'],zorder=4,transform=ccrs.PlateCarree())
 
-                            if cone_prop['label_category'] == True:
-                                category = str(wind_to_category(forecast_dict['vmax'][idx]))
-                                if category == "0": category = 'S'
-                                if category == "-1": category = 'D'
-                                
-                                color = mcolors.to_rgb(color)
-                                red,green,blue = color
-                                textcolor = 'w'
-                                if (red*0.299 + green*0.587 + blue*0.114) > (160.0/255.0): textcolor = 'k'
-                                
-                                self.ax.text(forecast_dict['lon'][idx],forecast_dict['lat'][idx],category,fontsize=cone_prop['ms']*0.81,ha='center',va='center',color=textcolor,
-                                            zorder=19,transform=ccrs.PlateCarree(),clip_on=True)
+                            #Plot center line & account for dateline crossing
+                            if cone_prop['linewidth'] > 0:
+                                self.ax.plot(cone['center_lon'],cone['center_lat'],color='w',linewidth=2.5,zorder=5,transform=ccrs.PlateCarree())
+                                self.ax.plot(cone['center_lon'],cone['center_lat'],color='k',linewidth=2.0,zorder=6,transform=ccrs.PlateCarree()) 
+
+                            #Plot forecast dots
+                            for idx in range(len(forecast_dict['lat'])):
+                                if cone_prop['ms'] == 0: continue
+                                color = get_colors_sshws(forecast_dict['vmax'][idx])
+                                if cone_prop['fillcolor'] != 'category': color = cone_prop['fillcolor']
+
+                                self.ax.plot(forecast_dict['lon'][idx],forecast_dict['lat'][idx],'o',ms=cone_prop['ms'],mfc=color,mec='k',zorder=7,transform=ccrs.PlateCarree(),clip_on=True)
+
+                                if cone_prop['label_category'] == True:
+                                    category = str(wind_to_category(forecast_dict['vmax'][idx]))
+                                    if category == "0": category = 'S'
+                                    if category == "-1": category = 'D'
+
+                                    color = mcolors.to_rgb(color)
+                                    red,green,blue = color
+                                    textcolor = 'w'
+                                    if (red*0.299 + green*0.587 + blue*0.114) > (160.0/255.0): textcolor = 'k'
+
+                                    self.ax.text(forecast_dict['lon'][idx],forecast_dict['lat'][idx],category,fontsize=cone_prop['ms']*0.81,ha='center',va='center',color=textcolor,
+                                                zorder=19,transform=ccrs.PlateCarree(),clip_on=True)
+                        except:
+                            pass
         
         #--------------------------------------------------------------------------------------
         
@@ -1748,8 +1749,8 @@ None,prop={},map_prop={}):
         #--------------------------------------------------------------------------------------
         
         #Add title
-        self.ax.set_title(f"Current Summary{add_title}",loc='left',fontsize=17,fontweight='bold')
-        self.ax.set_title(f"Valid: {dt.utcnow().strftime('%H UTC %d %b %Y')}",loc='right',fontsize=13)
+        self.ax.set_title(f"Summary{add_title}",loc='left',fontsize=17,fontweight='bold')
+        self.ax.set_title(f"Valid: {valid_date.strftime('%H UTC %d %b %Y')}",loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
         

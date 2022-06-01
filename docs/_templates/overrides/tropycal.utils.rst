@@ -19,6 +19,8 @@ Generic Utilities
       get_basin
       get_storm_classification
       get_storm_type
+      get_two_current
+      get_two_archive
       knots_to_mph
       nhc_cone_radii
 

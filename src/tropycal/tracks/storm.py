@@ -155,10 +155,10 @@ class Storm:
         
         #Add additional information
         summary.append("\nMore Information:")
-        add_space = np.max([len(key) for key in self.coords.keys()])+3
-        for key in self.coords.keys():
+        add_space = np.max([len(key) for key in self.attrs.keys()])+3
+        for key in self.attrs.keys():
             key_name = key+":"
-            val = '%0.1f'%(self.coords[key]) if key == 'ace' else self.coords[key]
+            val = '%0.1f'%(self.attrs[key]) if key == 'ace' else self.attrs[key]
             summary.append(f'{" "*4}{key_name:<{add_space}}{val}')
 
         return "\n".join(summary)
@@ -896,9 +896,6 @@ class Storm:
                             domain="dynamic",ax=None,cartopy_proj=None,save_path=None,map_prop={}):
         
         r"""
-        (Add track history like we do for NHC forecasts)
-        (Add verification for archived events)
-        
         Creates a plot of individual GEFS ensemble tracks.
         
         Parameters
@@ -1766,6 +1763,57 @@ class Storm:
         #Return dict
         return forecasts
 
+    
+    def get_nhc_forecast_dict(self,time):
+        
+        r"""
+        Retreive a dictionary of official NHC forecasts for a valid time.
+        
+        Parameters
+        ----------
+        time : datetime.datetime
+            Time of requested forecast.
+        
+        Returns
+        -------
+        dict
+            Dictionary containing forecast data.
+        
+        Notes
+        -----
+        This dict can be provided to ``utils.generate_nhc_cone()`` to generate the cone of uncertainty.
+        """
+        
+        #Check to ensure the data source is HURDAT
+        if self.source != "hurdat":
+            raise RuntimeError("Error: NHC data can only be accessed when HURDAT is used as the data source.")
+        
+        #Check to ensure storm is not an invest
+        if self.invest:
+            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
+        
+        #Get forecasts dict saved into storm object, if it hasn't been already
+        try:
+            self.forecast_dict
+        except:
+            self.get_operational_forecasts()
+
+        #Get all NHC forecast entries
+        nhc_forecasts = self.forecast_dict['OFCL']
+
+        #Get list of all NHC forecast initializations
+        nhc_forecast_init = [k for k in nhc_forecasts.keys()]
+
+        #Find closest matching time to the provided forecast time
+        nhc_forecast_init_dt = [dt.strptime(k,'%Y%m%d%H') for k in nhc_forecast_init]
+        time_diff = np.array([(i-time).days + (i-time).seconds/86400 for i in nhc_forecast_init_dt])
+        closest_idx = np.abs(time_diff).argmin()
+        forecast_dict = nhc_forecasts[nhc_forecast_init[closest_idx]]
+        if np.abs(time_diff[closest_idx]) >= 1.0:
+            warnings.warn(f"The date provided is outside of the duration of the storm. Returning the closest available NHC forecast.")
+        
+        return forecast_dict
+    
     
     def download_tcr(self,save_path=""):
         

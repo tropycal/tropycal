@@ -7,7 +7,7 @@ import requests
 import pickle
 import copy
 
-from scipy.interpolate import interp1d,splrep,splev
+from scipy.interpolate import interp1d
 from scipy.ndimage import gaussian_filter as gfilt,gaussian_filter1d as gfilt1d
 from scipy.ndimage.filters import minimum_filter
 import matplotlib.dates as mdates
@@ -108,47 +108,34 @@ class ReconDataset:
         """
         
         #Get track best fit model
-        if False:
+        
+        if time is None or 'trackfunc' not in self.__dict__.keys():
             btk = self.storm.to_dataframe()[['date','lon','lat']].rename(columns={'date':'time'})
             try:
-                recon = pd.DataFrame([{k:d[k] for k in ('time','lon','lat')} for d in self.vdms])
-            else:
-                recon = self.sel(iscenter=1).data
+                rec = pd.DataFrame([{k:d[k] for k in ('time','lon','lat')} for d in self.storm.recon.vdms.data])
             except:
-                recon = None
-          
+                try:
+                    rec = storm.recon.hdobs.sel(iscenter=1).data
+                except:
+                    rec = None
+
+            if rec is None:
+                track = copy.copy(btk)
+            else:
+                track = copy.copy(rec)
+                for i,row in btk.iterrows():
+                    if min(abs(row['time']-rec['time']))>timedelta(hours=3):
+                        track.loc[len(track.index)] = row
+            track = track.sort_values(by='time').reset_index(drop=True)
+
             #Interpolate center position to time of each ob
-            f1 = interp1d(mdates.date2num(btk['time']),btk['lon'],fill_value='extrapolate',kind='quadratic')
-            ibtk_lon = f1(mdates.date2num(hdob['time']))
-            f2 = interp1d(mdates.date2num(btk['time']),btk['lat'],fill_value='extrapolate',kind='quadratic')
-            ibtk_lat = f2(mdates.date2num(hdob['time']))
-            dist = [great_circle( (ibtk_lat[i],ibtk_lon[i]), \
-                (ilat,ilon) ).kilometers for i,(ilat,ilon) in enumerate(zip(hdob['lat'],hdob['lon']))]
+            f1 = interp1d(mdates.date2num(track['time']),track['lon'],fill_value='extrapolate',kind='quadratic')
+            f2 = interp1d(mdates.date2num(track['time']),track['lat'],fill_value='extrapolate',kind='quadratic')
+            self.trackfunc = (f1,f2)
 
-            hdob_lat = [l for l,d in zip(hdob['lat'],dist) if d<30]
-            hdob_lon = [l for l,d in zip(hdob['lon'],dist) if d<30]
-            hdob_time = [l for l,d in zip(hdob['time'],dist) if d<30]
-            btk_lat = self.storm.dict['lat']
-            btk_lon = self.storm.dict['lon']
-            btk_time = self.storm.dict['date']
-
-            oldtimes = [mdates.date2num(t) for t in hdob_time*2+btk_time]
-            oldlons = hdob_lon*2+btk_lon
-            oldlats = hdob_lat*2+btk_lat
-
-            inlons = sorted([(t,l) for t,l in zip(oldtimes,oldlons)], key=lambda x: x[0])
-            inlats = sorted([(t,l) for t,l in zip(oldtimes,oldlats)], key=lambda x: x[0])
-
-            self.tck_lon = splrep([i[0] for i in inlons], [i[1] for i in inlons], s=.5)
-            self.tck_lat = splrep([i[0] for i in inlats], [i[1] for i in inlats], s=.5)
-        
-        if time is not None:
-            if isinstance(time,list):
-                time = np.array(time)
-            time = mdates.date2num(np.array(time))
-            lonnew = splev(time, self.tck_lon, der=0)
-            latnew = splev(time, self.tck_lat, der=0)
-            return (latnew,lonnew)
+        if time is not None:   
+            track = tuple([f(mdates.date2num(time)) for f in self.trackfunc])
+            return track
         
     def center_relative(self):
         
@@ -156,14 +143,14 @@ class ReconDataset:
         Calculates center relative coordinates based on recon-btk track.
         """ 
         
-        if 'track' not in self.__dict__.keys():
+        if 'trackfunc' not in self.__dict__.keys():
             self.get_track()
         
-        for name in ['hdobs','dropsondes','vdms']:
+        for name in ['hdobs','dropsondes']:
             try:
-                self.__dict__[name]._recenter()
+                self.__dict__[name]._recenter(self.get_track)
             except:
-                print(f'No {name} object to recenter')
+                print(f'Cannot recenter {name} object')
                 
     def find_mission(self,time,distance=None):
         
@@ -315,11 +302,12 @@ class hdobs:
             linksub = [self.archiveURL+'.'.join(l) for l in linktimes if l[1][:8] in timestr]
             timer_start = dt.now()
             print(f'Searching through recon HDOB files between {timestr[0]} and {timestr[-1]} ...')
-            unreadable = 0
+            filecount,unreadable = 0,0
             for link in linksub:
                 content = requests.get(link).text
                 missionname = [i.split() for i in content.split('\n')][3][1]
                 if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
+                    filecount+=1
                     try:
                         tmp = self._decode_hdob(content)
                     except:
@@ -331,9 +319,9 @@ class hdobs:
                     else:
                         pass
             print(f'--> Completed reading in recon HDOB files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
+                  f'\nRead {filecount} files'+\
                   f'\nUnable to decode {unreadable} files')
             #self.data = self._find_centers()
-            #self._get_track()
             #self.data = self._recenter()
 
         self.keys = list(self.data.keys())
@@ -454,24 +442,25 @@ class hdobs:
         print(f'Found {numcenters} center passes')
         return data
         
-    def _recenter(self,use='btk'): 
-        data = self.sel(iscenter=1).data.sort_values(by='time').reset_index(drop=True)
-          
+    def _recenter(self,get_track): 
+        data = self.data
         #Interpolate center position to time of each ob
-        interp_clat,interp_clon = self._get_track(data['time'])
+        interp_clon,interp_clat = get_track(data['time'])
 
         #Get x,y distance of each ob from coinciding interped center position
         data['xdist'] = [great_circle( (interp_clat[i],interp_clon[i]), \
-            (interp_clat[i],data['lon'][i]) ).kilometers* \
-            [1,-1][int(data['lon'][i] < interp_clon[i])] for i in range(len(data))]
+            (interp_clat[i],data['lon'].values[i]) ).kilometers* \
+            [1,-1][int(data['lon'].values[i] < interp_clon[i])] for i in range(len(data))]
         data['ydist'] = [great_circle( (interp_clat[i],interp_clon[i]), \
-            (data['lat'][i],interp_clon[i]) ).kilometers* \
-            [1,-1][int(data['lat'][i] < interp_clat[i])] for i in range(len(data))]
+            (data['lat'].values[i],interp_clon[i]) ).kilometers* \
+            [1,-1][int(data['lat'].values[i] < interp_clat[i])] for i in range(len(data))]
         data['distance'] = [(i**2+j**2)**.5 for i,j in zip(data['xdist'],data['ydist'])]
-
-        print('Completed center-relative coordinates')
         
-        return data
+        imin = np.nonzero(data['distance'].values == minimum_filter(data['distance'].values,40))[0]
+        data['iscenter'] = np.array([1 if i in imin and data['distance'].values[i]<10 else 0 for i in range(len(data))])        
+
+        print('Completed hdob center-relative coordinates')
+        self.data = data
     
     def sel(self,mission=None,time=None,domain=None,plane_p=None,plane_z=None,p_sfc=None,\
             temp=None,dwpt=None,wdir=None,wspd=None,pkwnd=None,sfmr=None,noflag=None,\
@@ -1010,26 +999,10 @@ class hdobs:
             Example usage: "maximum wind change in 24 hours", "50th percentile wind", "number of storms"
             
         thresh : dict, optional
-            Keywords include:
-                
-            * **sample_min** - minimum number of storms in a grid box for the request to be applied. For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
-            * **v_min** - minimum wind for a given point to be included in the request.
-            * **p_max** - maximum pressure for a given point to be included in the request.
-            * **dv_min** - minimum change in wind over dt_window for a given point to be included in the request.
-            * **dp_max** - maximum change in pressure over dt_window for a given point to be included in the request.
-            * **dt_window** - time window over which change variables are calculated (hours). Default is 24.
-            * **dt_align** - alignment of dt_window for change variables -- 'start','middle','end' -- e.g. 'end' for dt_window=24 associates a TC point with change over the past 24 hours. Default is middle.
+            Keywords in self.keys
             
             Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.
 
-        year_range : list or tuple, optional
-            List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
-        year_range_subtract : list or tuple, optional
-            A year range to subtract from the previously specified "year_range". If specified, will create a difference plot.
-        year_average : bool, optional
-            If True, both year ranges will be computed and plotted as an annual average.
-        date_range : list or tuple, optional
-            List or tuple representing the start and end dates as a string in 'month/day' format (e.g., ('6/1','8/15')). Default is ('1/1','12/31') or full year.
         binsize : float, optional
             Grid resolution in degrees. Default is 1 degree.
         domain : str, optional
@@ -1165,24 +1138,17 @@ class dropsondes:
     
     Parameters
     ----------
-    stormtuple : tuple or list
-        Requested storm. Can be either tuple or list containing storm name and year (e.g., ("Matthew",2016)).
-    save_path : str, optional
-        Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.
-    read_path : str, optional
-        Filepath to read saved recon data from. If specified, "save_path" cannot be passed as an argument.
-        
+    storm : storm object
+        Requested storm.
+    data : str, or list of dictionaries, optional
+        String with filepath to pickle file with list of dictionaries, or the list, containing dropsonde data.
+    update : bool
+        True = search for new data, following existing data in the dropsonde object, and concatenate.
+
     Returns
     -------
     Dataset
-        An instance of ReconDataset, initialized with the following:
-        
-        * **missiondata** - A dictionary of missions.
-            Each entry is a dateframe from a single mission.
-            Dictionary keys are given by mission number and agency (e.g. '15_NOAA').
-        * **recentered** - A dataframe with all missions concatenated together, and columns 'xdist' and 'ydist'
-            indicating the distance (km) of the ob from the interpolated center of the storm.
-
+        An instance of dropsondes.
     """
 
     def __repr__(self):
@@ -1471,32 +1437,31 @@ class dropsondes:
             
         return missionname,data
 
-    def _recenter(self,use='btk'): 
+    def _recenter(self,get_track):
         data = self.data
-        if use=='btk':
-            centers = self.storm.to_dataframe()[['date','lon','lat']].rename(columns={'date':'time'})
 
-        if len(centers)<2:
-            print('Sorry, less than 2 center passes')
-        else:
-            for stage in ('TOP','BOTTOM'):
-                #Interpolate center position to time of each ob
-                f1 = interp1d(mdates.date2num(centers['time']),centers['lon'],fill_value='extrapolate',kind='quadratic')
-                interp_clon = f1([mdates.date2num(d[f'{stage}time']) for d in data])
-                f2 = interp1d(mdates.date2num(centers['time']),centers['lat'],fill_value='extrapolate',kind='quadratic')
-                interp_clat = f2([mdates.date2num(d[f'{stage}time']) for d in data])
+        #Interpolate center position to time of each ob
+        interp_clat,interp_clon = get_track(data['time'])
 
-                #Get x,y distance of each ob from coinciding interped center position
-                for i,d in enumerate(data):
-                    d.update({f'{stage}xdist':great_circle( (interp_clat[i],interp_clon[i]), \
-                        (interp_clat[i],d[f'{stage}lon']) ).kilometers* \
-                        [1,-1][int(d[f'{stage}lon'] < interp_clon[i])]})
-                    d.update({f'{stage}ydist':great_circle( (interp_clat[i],interp_clon[i]), \
-                        (d[f'{stage}lat'],interp_clon[i]) ).kilometers* \
-                        [1,-1][int(d[f'{stage}lat'] < interp_clat[i])]})
-                    d.update({f'{stage}distance':(d[f'{stage}xdist']**2+d[f'{stage}ydist']**2)**.5})
-                        
-            print('Completed center-relative coordinates')
+        #Get x,y distance of each ob from coinciding interped center position
+        for stage in ('TOP','BOTTOM'):
+            #Interpolate center position to time of each ob
+            f1 = interp1d(mdates.date2num(centers['time']),centers['lon'],fill_value='extrapolate',kind='quadratic')
+            interp_clon = f1([mdates.date2num(d[f'{stage}time']) for d in data])
+            f2 = interp1d(mdates.date2num(centers['time']),centers['lat'],fill_value='extrapolate',kind='quadratic')
+            interp_clat = f2([mdates.date2num(d[f'{stage}time']) for d in data])
+
+            #Get x,y distance of each ob from coinciding interped center position
+            for i,d in enumerate(data):
+                d.update({f'{stage}xdist':great_circle( (interp_clat[i],interp_clon[i]), \
+                    (interp_clat[i],d[f'{stage}lon']) ).kilometers* \
+                    [1,-1][int(d[f'{stage}lon'] < interp_clon[i])]})
+                d.update({f'{stage}ydist':great_circle( (interp_clat[i],interp_clon[i]), \
+                    (d[f'{stage}lat'],interp_clon[i]) ).kilometers* \
+                    [1,-1][int(d[f'{stage}lat'] < interp_clat[i])]})
+                d.update({f'{stage}distance':(d[f'{stage}xdist']**2+d[f'{stage}ydist']**2)**.5})
+
+        print('Completed dropsonde center-relative coordinates')
         return data
     
     def isel(self,i):
@@ -1910,7 +1875,7 @@ class vdms:
         
         return "\n".join(summary)
             
-    def __init__(self, storm, data=None):
+    def __init__(self, storm, data=None, update=False):
 
         self.storm = storm
         archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT2/'
@@ -1921,6 +1886,7 @@ class vdms:
         self.data = []
 
         if data is None:
+            filecount = 0
             timer_start = dt.now()
             print(f'Searching through recon VDM files between {timestr[0]} and {timestr[-1]} ...')
             for link in linksub:
@@ -1931,15 +1897,28 @@ class vdms:
                 month = int(date[4:6])
                 day = int(date[6:8])
                 missionname,tmp = self._decode_vdm(content,date=dt(year,month,day))
+                testkeys = ('time','lat','lon')
                 if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
-                    self.data.append(tmp)
-            print('--> Completed reading in recon missions (%.1f seconds)' % (dt.now()-timer_start).total_seconds())
+                    if self.data is None:
+                        self.data = [copy.copy(tmp)]
+                        filecount+=1
+                    elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
+                        self.data.append(tmp)
+                        filecount+=1
+                    else:
+                        pass
+            print('--> Completed reading in recon missions (%.1f seconds)' % (dt.now()-timer_start).total_seconds()+\
+                  f'\nRead {filecount} files')
         elif isinstance(data,str):
             with open(data, 'rb') as f:
                 self.data = pickle.load(f)
         else:
             self.data = data
         self.keys = sorted(list(set([k for d in self.data for k in d.keys()])))
+
+    def update(self):
+        newobj = vdms(storm=self.storm,data=self.data,update=True)
+        return newobj
         
     def _decode_vdm(self,content,date):
         data = {}
@@ -2135,11 +2114,12 @@ class vdms:
                 info = line[3:]
                 if FORMAT==2:
                     data['Aircraft'] = info.split()[0]
-                    data['mission'] = info.split()[1][:2]
+                    missionname = info.split()[1]
+                    data['mission'] = missionname[:2]
                     data['Remarks'] = ''
                     RemarksNext = True
         
-        return data['mission'],data
+        return missionname,data
 
     def isel(self,i):
         r"""

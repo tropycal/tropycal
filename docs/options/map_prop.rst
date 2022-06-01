@@ -158,6 +158,8 @@ The following properties are available for plotting NHC Tropical Weather Outlook
      - Boolean to determine whether to plot NHC TWO. Default is True.
    * - days
      - Number of days for TWO. Can be either 2 or 5. Default is 5.
+   * - fontsize
+     - Font size for text label. Default is 12.
 
 prop_invest
 -----------
@@ -178,6 +180,10 @@ The following properties are available for plotting invests.
      - Line color for past track. Default is black.
    * - linestyle
      - Line style for past track. Default is dotted.
+   * - fontsize
+     - Font size for invest name label. Default is 12.
+   * - ms
+     - Marker size for invest location. Default is 14.
 
 prop_storm
 ----------
@@ -198,6 +204,14 @@ The following properties are available for plotting storms.
      - Line color for past track. Default is black.
    * - linestyle
      - Line style for past track. Default is dotted.
+   * - fontsize
+     - Font size for storm name label. Default is 12.
+   * - fillcolor
+     - Fill color for storm location marker. Default is color by SSHWS category ("category").
+   * - label_category
+     - Boolean for whether to plot SSHWS category on top of storm location marker. Default is True.
+   * - ms
+     - Marker size for storm location. Default is 14.
 
 prop_cone
 ---------
@@ -213,7 +227,17 @@ The following properties are available for plotting realtime cone of uncertainty
    * - plot
      - Boolean to determine whether to plot cone of uncertainty & forecast track for active storms. Default is True.
    * - linewidth
-     - Line width for past track. Default is 1.5. Set to zero to not plot line.
+     - Line width for forecast track. Default is 1.5. Set to zero to not plot line.
+   * - alpha
+     - Opacity for cone of uncertainty. Default is 0.6.
+   * - days
+     - Number of days for cone of uncertainty, from 2 through 5. Default is 5.
+   * - fillcolor
+     - Fill color for forecast dots. Default is color by SSHWS category ("category").
+   * - label_category
+     - Boolean for whether to plot SSHWS category on top of forecast dots. Default is True.
+   * - ms
+     - Marker size for forecast dots. Default is 12.
 
 .. _options-prop-recon-plot:
 

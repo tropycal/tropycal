@@ -9,6 +9,7 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 import requests
+from ftplib import FTP
 
 from ..tracks import *
 from ..tracks.tools import *
@@ -46,6 +47,57 @@ class RealtimeStorm(Storm):
     -------
     RealtimeStorm
         Instance of a RealtimeStorm object.
+    
+    Notes
+    -----
+    A RealtimeStorm object is retrieved from a Realtime object's ``get_storm()`` method, or directly as an attribute of the Realtime object. For example, if an active storm has an ID of 'EP012022', it can be retrieved as such:
+    
+    .. code-block:: python
+    
+        from tropycal import realtime
+        realtime_obj = realtime.Realtime()
+        storm = realtime_obj.get_storm('EP012022')
+    
+    Now this storm's data is stored in the variable ``storm``, which is an instance of RealtimeStorm and can access all of the methods and attributes of a RealtimeStorm object.
+    
+    All the variables associated with a RealtimeStorm object (e.g., lat, lon, date, vmax) can be accessed in two ways. The first is directly from the RealtimeStorm object:
+    
+    >>> storm.lat
+    array([ 9.8, 10.3, 10.8, 11.4, 11.9, 12.1, 12.2, 12.4, 12.6, 12.8, 13. ,
+           12.9, 12.8, 12.9, 13.2, 13.6, 13.8, 13.9, 14. , 14. , 14.3, 14.6,
+           15.1, 15.4])
+    
+    The second is via ``storm.vars``, which returns a dictionary of the variables associated with the RealtimeStorm object. This is also a quick way to access all of the variables associated with a RealtimeStorm object:
+    
+    >>> variable_dict = storm.vars
+    >>> lat = variable_dict['lat']
+    >>> lon = variable_dict['lon']
+    >>> print(variable_dict.keys())
+    dict_keys(['date', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin'])
+    
+    RealtimeStorm objects also have numerous attributes with information about the storm. ``storm.attrs`` returns a dictionary of the attributes for this RealtimeStorm object.
+    
+    It should be noted that RealtimeStorm objects have additional attributes that Storm objects do not, specifically for 2 and 5 day NHC formation probability. These only display values for invests within NHC's area of responsibility; tropical cyclones or invests in JTWC's area of responsibility display "N/A".
+    
+    >>> print(storm.attrs)
+    {'id': 'EP012022',
+     'operational_id': 'EP012022',
+     'name': 'AGATHA',
+     'year': 2022,
+     'season': 2022,
+     'basin': 'east_pacific',
+     'source_info': 'NHC Hurricane Database',
+     'invest': False,
+     'source_method': "NHC's Automated Tropical Cyclone Forecasting System (ATCF)",
+     'source_url': 'https://ftp.nhc.noaa.gov/atcf/btk/',
+     'source': 'hurdat',
+     'ace': 6.055,
+     'prob_2day': 'N/A',
+     'prob_5day': 'N/A',
+     'risk_2day': 'N/A',
+     'risk_5day': 'N/A',
+     'realtime': True}
+    
     """
     
     def __setitem__(self, key, value):
@@ -102,10 +154,10 @@ class RealtimeStorm(Storm):
         
         #Add additional information
         summary.append("\nMore Information:")
-        add_space = np.max([len(key) for key in self.coords.keys()])+3
-        for key in self.coords.keys():
+        add_space = np.max([len(key) for key in self.attrs.keys()])+3
+        for key in self.attrs.keys():
             key_name = key+":"
-            val = '%0.1f'%(self.coords[key]) if key == 'ace' else self.coords[key]
+            val = '%0.1f'%(self.attrs[key]) if key == 'ace' else self.attrs[key]
             summary.append(f'{" "*4}{key_name:<{add_space}}{val}')
 
         return "\n".join(summary)
@@ -117,13 +169,13 @@ class RealtimeStorm(Storm):
         
         #Add other attributes about the storm
         keys = self.dict.keys()
-        self.coords = {}
+        self.attrs = {}
         self.vars = {}
         for key in keys:
             if key == 'realtime': continue
             if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
                 self[key] = self.dict[key]
-                self.coords[key] = self.dict[key]
+                self.attrs[key] = self.dict[key]
             if isinstance(self.dict[key], list) == True and isinstance(self.dict[key], dict) == False:
                 self.vars[key] = np.array(self.dict[key])
                 self[key] = np.array(self.dict[key])
@@ -132,7 +184,7 @@ class RealtimeStorm(Storm):
         if stormTors is not None and isinstance(stormTors,dict):
             self.stormTors = stormTors['data']
             self.tornado_dist_thresh = stormTors['dist_thresh']
-            self.coords['Tornado Count'] = len(stormTors['data'])
+            self.attrs['Tornado Count'] = len(stormTors['data'])
         
         #Get Archer track data for this storm, if it exists
         self.get_archer()
@@ -140,10 +192,10 @@ class RealtimeStorm(Storm):
         #Determine if storm object was retrieved via realtime object
         if 'realtime' in keys and self.dict['realtime']:
             self.realtime = True
-            self.coords['realtime'] = True
+            self.attrs['realtime'] = True
         else:
             self.realtime = False
-            self.coords['realtime'] = False
+            self.attrs['realtime'] = False
             
     def get_realtime_formation_prob(self):
         
@@ -297,16 +349,13 @@ class RealtimeStorm(Storm):
         if self.source == 'hurdat':
         
             #Get forecast for this storm
-            url = f"https://ftp.nhc.noaa.gov/atcf/fst/{self.id.lower()}.fst"
-            if requests.get(url).status_code != 200: raise RuntimeError("NHC forecast data is unavailable for this storm.")
-
-            #Read file content
-            f = urllib.request.urlopen(url)
-            content = f.read()
-            content = content.decode("utf-8")
-            content = content.split("\n")
-            content = [(i.replace(" ","")).split(",") for i in content]
-            f.close()
+            try:
+                content = read_url(f"https://ftp.nhc.noaa.gov/atcf/fst/{self.id.lower()}.fst")
+            except:
+                try:
+                    content = read_url(f"ftp://ftp.nhc.noaa.gov/atcf/fst/{self.id.lower()}.fst")
+                except:
+                    raise RuntimeError("NHC forecast data is unavailable for this storm.")
 
             #Iterate through every line in content:
             forecasts = {}
@@ -625,11 +674,10 @@ class RealtimeStorm(Storm):
                 latest_btk = self.date[-1]
                 
                 #Get latest available public advisory
-                f = urllib.request.urlopen(f"https://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml")
-                content = f.read()
-                content = content.decode("utf-8")
-                content = content.split("\n")
-                f.close()
+                try:
+                    content = read_url(f"https://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml",subsplit=False)
+                except:
+                    content = read_url(f"ftp://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml",subsplit=False)
                 
                 #Get UTC time of advisory
                 results = [i for i in content if 'messageDateTimeUTC' in i][0]
@@ -651,11 +699,10 @@ class RealtimeStorm(Storm):
             current_advisory['source'] = 'NHC Public Advisory'
 
             #Get latest available public advisory
-            f = urllib.request.urlopen(f"https://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml")
-            content = f.read()
-            content = content.decode("utf-8")
-            content = content.split("\n")
-            f.close()
+            try:
+                content = read_url(f"https://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml",subsplit=False)
+            except:
+                content = read_url(f"ftp://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml",subsplit=False)
 
             #Get public advisory number
             results = [i for i in content if 'advisoryNumber' in i][0]
@@ -850,15 +897,22 @@ class RealtimeStorm(Storm):
 
         #Get list of all public advisories for this storm
         url_disco = 'https://ftp.nhc.noaa.gov/atcf/pub/'
-        page = requests.get(url_disco).text
-        content = page.split("\n")
-        files = []
-        for line in content:
-            if ".public" in line and self.id.lower() in line:
-                filename = line.split('">')[1]
-                filename = filename.split("</a>")[0]
-                files.append(filename)
-        del content
+        try:
+            page = requests.get(url_disco).text
+            content = page.split("\n")
+            files = []
+            for line in content:
+                if ".public" in line and self.id.lower() in line:
+                    filename = line.split('">')[1]
+                    filename = filename.split("</a>")[0]
+                    files.append(filename)
+            del content
+        except:
+            ftp = FTP('ftp.nhc.noaa.gov')
+            ftp.login()
+            ftp.cwd('atcf/pub')
+            files = ftp.nlst()
+            out = ftp.quit()
 
         #Keep only largest number
         numbers = [int(i.split(".")[-1]) for i in files]
@@ -882,11 +936,7 @@ class RealtimeStorm(Storm):
             files = [i for i in files if f".public_{max_letter}" in i]
 
         #Read file containing advisory
-        f = urllib.request.urlopen(url_disco + files[0])
-        content = f.read()
-        content = content.decode("utf-8")
-        content = content.split("\n")
-        f.close()
+        content = read_url(url_disco + files[0],subsplit=False)
 
         #Figure out time issued
         hr = content[6].split(" ")[0]

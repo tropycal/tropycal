@@ -27,7 +27,6 @@ except:
 
 #Internal imports
 from .storm import RealtimeStorm
-from .tools import BasicReader
 from ..utils import *
 from .. import constants
 from ..tracks.plot import TrackPlot
@@ -466,11 +465,7 @@ class Realtime():
                 f = urllib.request.urlopen(url,context=ssl._create_unverified_context())
             else:
                 f = urllib.request.urlopen(url)
-            content = f.read()
-            content = content.decode("utf-8")
-            content = content.split("\n")
-            content = [(i.replace(" ","")).split(",") for i in content]
-            f.close()
+            content = read_url(url)
 
             #iterate through file lines
             for line in content:
@@ -620,18 +615,30 @@ class Realtime():
             msg = "Error in retrieving NHC invest data."
             warnings.warn(msg)
     
-    def list_active_storms(self):
+    def list_active_storms(self,basin='all'):
         
         r"""
         Produces a list of storms currently stored in Realtime.
         
+        Parameters
+        ----------
+        basin : str
+            Basin for which to return active storms for. Default is 'all'.
+        
         Returns
         -------
         list
-            List containing the storm IDs for currently active storms. Each ID has a Storm object stored as an attribute of Realtime.
+            List containing the storm IDs for currently active storms in the requested basin. Each ID has a Storm object stored as an attribute of Realtime.
         """
         
-        return self.storms
+        if basin == 'all':
+            return self.storms
+        
+        keys = []
+        for key in self.storms:
+            if self[key].basin == basin: keys.append(key)
+        
+        return keys
     
     def get_storm(self,storm):
         
@@ -693,43 +700,97 @@ class Realtime():
         -------
         ax
             Instance of axes containing the plot is returned.
+        
+        Notes
+        -----
+
+        The following properties are available for plotting NHC Tropical Weather Outlook (TWO), via ``two_prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot NHC TWO. Default is True.
+           * - days
+             - Number of days for TWO. Can be either 2 or 5. Default is 5.
+           * - fontsize
+             - Font size for text label. Default is 12.
+
+        The following properties are available for plotting invests, via ``invest_prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot active invests. Default is True.
+           * - linewidth
+             - Line width for past track. Default is 0.8. Set to zero to not plot line.
+           * - linecolor
+             - Line color for past track. Default is black.
+           * - linestyle
+             - Line style for past track. Default is dotted.
+           * - fontsize
+             - Font size for invest name label. Default is 12.
+           * - ms
+             - Marker size for invest location. Default is 14.
+
+        The following properties are available for plotting storms, via ``storm_prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot active storms. Default is True.
+           * - linewidth
+             - Line width for past track. Default is 0.8. Set to zero to not plot line.
+           * - linecolor
+             - Line color for past track. Default is black.
+           * - linestyle
+             - Line style for past track. Default is dotted.
+           * - fontsize
+             - Font size for storm name label. Default is 12.
+           * - fillcolor
+             - Fill color for storm location marker. Default is color by SSHWS category ("category").
+           * - label_category
+             - Boolean for whether to plot SSHWS category on top of storm location marker. Default is True.
+           * - ms
+             - Marker size for storm location. Default is 14.
+
+        The following properties are available for plotting realtime cone of uncertainty, via ``cone_prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot cone of uncertainty & forecast track for active storms. Default is True.
+           * - linewidth
+             - Line width for forecast track. Default is 1.5. Set to zero to not plot line.
+           * - alpha
+             - Opacity for cone of uncertainty. Default is 0.6.
+           * - days
+             - Number of days for cone of uncertainty, from 2 through 5. Default is 5.
+           * - fillcolor
+             - Fill color for forecast dots. Default is color by SSHWS category ("category").
+           * - label_category
+             - Boolean for whether to plot SSHWS category on top of forecast dots. Default is True.
+           * - ms
+             - Marker size for forecast dots. Default is 12.
         """
         
         #Retrieve NHC shapefiles for development areas
-        shapefiles = {}
-        for name in ['areas','points']:
-            
-            try:
-                #Read in shapefile zip from NHC
-                url = 'https://www.nhc.noaa.gov/xgtwo/gtwo_shapefiles.zip'
-                request = urllib.request.Request(url)
-                response = urllib.request.urlopen(request)
-                file_like_object = BytesIO(response.read())
-                tar = zipfile.ZipFile(file_like_object)
-
-                #Get file list (points, areas)
-                members = '\n'.join([i for i in tar.namelist()])
-                nums = "[0123456789]"
-                search_pattern = f'gtwo_{name}_202{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}.shp'
-                pattern = re.compile(search_pattern)
-                filelist = pattern.findall(members)
-                files = []
-                for file in filelist:
-                    if file not in files: files.append(file.split(".shp")[0]) #remove duplicates
-
-                #Retrieve necessary components for shapefile
-                members = tar.namelist()
-                members_names = [i for i in members]
-                data = {'shp':0,'dbf':0,'prj':0,'shx':0}
-                for key in data.keys():
-                    idx = members_names.index(files[0]+"."+key)
-                    data[key] = BytesIO(tar.read(members[idx]))
-
-                #Read in shapefile
-                orig_reader = shapefile.Reader(shp=data['shp'], dbf=data['dbf'], prj=data['prj'], shx=data['shx'])
-                shapefiles[name] = BasicReader(orig_reader)
-            except:
-                shapefiles[name] = None
+        shapefiles = get_two_current()
         
         #Retrieve kwargs
         two_prop = kwargs.pop('two_prop',{})
@@ -747,13 +808,13 @@ class Realtime():
         #Create cartopy projection
         if cartopy_proj is not None:
             self.plot_obj.proj = cartopy_proj
-            #elif max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
-            #    self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
         else:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0) #0.0
         
         #Plot
-        ax = self.plot_obj.plot_summary(self,shapefiles,domain,ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
+        ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms],
+                                        [self.get_storm(key).get_forecast_realtime() for key in self.storms],
+                                        shapefiles,dt.utcnow(),domain,ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
         
         return ax
         

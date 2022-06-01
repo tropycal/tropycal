@@ -54,6 +54,51 @@ class Storm:
     -------
     Storm
         Instance of a Storm object.
+    
+    Notes
+    -----
+    A Storm object is retrieved from TrackDataset's ``get_storm()`` method. For example, if the dataset read in is the default North Atlantic and the desired storm is Hurricane Michael (2018), it would be retrieved as follows:
+    
+    .. code-block:: python
+    
+        from tropycal import tracks
+        basin = tracks.TrackDataset()
+        storm = basin.get_storm(('michael',2018))
+    
+    Now Hurricane Michael's data is stored in the variable ``storm``, which is an instance of Storm and can access all of the methods and attributes of a Storm object.
+    
+    All the variables associated with a Storm object (e.g., lat, lon, date, vmax) can be accessed in two ways. The first is directly from the Storm object:
+    
+    >>> storm.lat
+    array([17.8, 18.1, 18.4, 18.8, 19.1, 19.7, 20.2, 20.9, 21.7, 22.7, 23.7,
+           24.6, 25.6, 26.6, 27.7, 29. , 30. , 30.2, 31.5, 32.8, 34.1, 35.6,
+           36.5, 37.3, 39.1, 41.1, 43.1, 44.8, 46.4, 47.6, 48.4, 48.8, 48.6,
+           47.5, 45.9, 44.4, 42.8, 41.2])
+    
+    The second is via ``storm.vars``, which returns a dictionary of the variables associated with the Storm object. This is also a quick way to access all of the variables associated with a Storm object:
+    
+    >>> variable_dict = storm.vars
+    >>> lat = variable_dict['lat']
+    >>> lon = variable_dict['lon']
+    >>> print(variable_dict.keys())
+    dict_keys(['date', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin'])
+    
+    Storm objects also have numerous attributes with information about the storm. ``storm.attrs`` returns a dictionary of the attributes for this Storm object.
+    
+    >>> print(storm.attrs)
+    {'id': 'AL142018',
+     'operational_id': 'AL142018',
+     'name': 'MICHAEL',
+     'year': 2018,
+     'season': 2018,
+     'basin': 'north_atlantic',
+     'source_info': 'NHC Hurricane Database',
+     'source': 'hurdat',
+     'ace': 12.5,
+     'realtime': False,
+     'invest': False}
+    
+    
     """
     
     def __setitem__(self, key, value):
@@ -127,14 +172,14 @@ class Storm:
 
             #Add other attributes about the storm
             keys = self.dict.keys()
-            self.coords = {}
+            self.attrs = {}
             self.vars = {}
             for key in keys:
                 if key == 'realtime': continue
                 if key == 'invest': continue
                 if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
                     self[key] = self.dict[key]
-                    self.coords[key] = self.dict[key]
+                    self.attrs[key] = self.dict[key]
                 if isinstance(self.dict[key], list) == True and isinstance(self.dict[key], dict) == False:
                     self.vars[key] = np.array(self.dict[key])
                     self[key] = np.array(self.dict[key])
@@ -143,7 +188,7 @@ class Storm:
             if stormTors is not None and isinstance(stormTors,dict):
                 self.stormTors = stormTors['data']
                 self.tornado_dist_thresh = stormTors['dist_thresh']
-                self.coords['Tornado Count'] = len(stormTors['data'])
+                self.attrs['Tornado Count'] = len(stormTors['data'])
 
             #Get Archer track data for this storm, if it exists
             try:
@@ -154,18 +199,18 @@ class Storm:
             #Determine if storm object was retrieved via realtime object
             if 'realtime' in keys and self.dict['realtime']:
                 self.realtime = True
-                self.coords['realtime'] = True
+                self.attrs['realtime'] = True
             else:
                 self.realtime = False
-                self.coords['realtime'] = False
+                self.attrs['realtime'] = False
             
             #Determine if storm object is an invest
             if 'invest' in keys and self.dict['invest']:
                 self.invest = True
-                self.coords['invest'] = True
+                self.attrs['invest'] = True
             else:
                 self.invest = False
-                self.coords['invest'] = False
+                self.attrs['invest'] = False
         
         else:
             
@@ -472,7 +517,7 @@ class Storm:
             if key == 'realtime': continue
             if isinstance(NEW_STORM.dict[key], list) == False and isinstance(NEW_STORM.dict[key], dict) == False:
                 NEW_STORM[key] = NEW_STORM.dict[key]
-                NEW_STORM.coords[key] = NEW_STORM.dict[key]
+                NEW_STORM.attrs[key] = NEW_STORM.dict[key]
             if isinstance(NEW_STORM.dict[key], list) == True and isinstance(NEW_STORM.dict[key], dict) == False:
                 NEW_STORM.vars[key] = np.array(NEW_STORM.dict[key])
                 NEW_STORM[key] = np.array(NEW_STORM.dict[key])                
@@ -509,7 +554,7 @@ class Storm:
             if key == 'realtime': continue
             if isinstance(NEW_STORM.dict[key], (np.ndarray,list)) == False and isinstance(NEW_STORM.dict[key], dict) == False:
                 NEW_STORM[key] = NEW_STORM.dict[key]
-                NEW_STORM.coords[key] = NEW_STORM.dict[key]
+                NEW_STORM.attrs[key] = NEW_STORM.dict[key]
             if isinstance(NEW_STORM.dict[key], (np.ndarray,list)) == True and isinstance(NEW_STORM.dict[key], dict) == False:
                 NEW_STORM.dict[key] = list(NEW_STORM.dict[key])
                 NEW_STORM.vars[key] = np.array(NEW_STORM.dict[key])
@@ -1036,16 +1081,24 @@ class Storm:
         if storm_year == (dt.now()).year:
             
             #Get list of all discussions for all storms this year
-            url_disco = 'https://ftp.nhc.noaa.gov/atcf/dis/'
-            page = requests.get(url_disco).text
-            content = page.split("\n")
-            files = []
-            for line in content:
-                if ".discus." in line and self.id.lower() in line:
-                    filename = line.split('">')[1]
-                    filename = filename.split("</a>")[0]
-                    files.append(filename)
-            del content
+            try:
+                url_disco = 'https://ftp.nhc.noaa.gov/atcf/dis/'
+                page = requests.get(url_disco).text
+                content = page.split("\n")
+                files = []
+                for line in content:
+                    if ".discus." in line and self.id.lower() in line:
+                        filename = line.split('">')[1]
+                        filename = filename.split("</a>")[0]
+                        files.append(filename)
+                del content
+            except:
+                ftp = FTP('ftp.nhc.noaa.gov')
+                ftp.login()
+                ftp.cwd('atcf/dis')
+                files = ftp.nlst()
+                files = [i for i in files if ".discus." in i and self.id.lower() in i]
+                out = ftp.quit()
             
             #Read in all NHC forecast discussions
             discos = {'id':[],'utc_date':[],'url':[],'mode':0}
@@ -1099,11 +1152,21 @@ class Storm:
             #Get directory path of storm and read it in
             url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
             url = url_disco + f'{storm_id.lower()}_msg.zip'
-            if requests.get(url).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
-            request = urllib.request.Request(url)
-            response = urllib.request.urlopen(request)
-            file_like_object = BytesIO(response.read())
-            tar = zipfile.ZipFile(file_like_object)
+            try:
+                request = urllib.request.Request(url)
+                response = urllib.request.urlopen(request)
+                file_like_object = BytesIO(response.read())
+                tar = zipfile.ZipFile(file_like_object)
+            except:
+                try:
+                    url_disco = f"ftp://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                    url = url_disco + f'{storm_id.lower()}_msg.zip'
+                    request = urllib.request.Request(url)
+                    response = urllib.request.urlopen(request)
+                    file_like_object = BytesIO(response.read())
+                    tar = zipfile.ZipFile(file_like_object)
+                except:
+                    raise RuntimeError("NHC discussion data is unavailable.")
             
             #Get file list
             members = '\n'.join([i for i in tar.namelist()])
@@ -1173,11 +1236,21 @@ class Storm:
             #Get directory path of storm and read it in
             url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
             url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
-            if requests.get(url).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
-            request = urllib.request.Request(url)
-            response = urllib.request.urlopen(request)
-            file_like_object = BytesIO(response.read())
-            tar = tarfile.open(fileobj=file_like_object)
+            try:
+                request = urllib.request.Request(url)
+                response = urllib.request.urlopen(request)
+                file_like_object = BytesIO(response.read())
+                tar = tarfile.open(fileobj=file_like_object)
+            except:
+                try:
+                    url_disco = f"ftp://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                    url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
+                    request = urllib.request.Request(url)
+                    response = urllib.request.urlopen(request)
+                    file_like_object = BytesIO(response.read())
+                    tar = tarfile.open(fileobj=file_like_object)
+                except:
+                    raise RuntimeError("NHC discussion data is unavailable.")
             
             #Get file list
             members = '\n'.join([i.name for i in tar.getmembers()])
@@ -1238,14 +1311,25 @@ class Storm:
             
         elif storm_year in range(2001,2006):
             #Get directory path of storm and read it in
-            url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
-            url = url_disco + f'{storm_id.lower()}_msgs.tar.gz'
-            if storm_year < 2003: url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
-            if requests.get(url).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
-            request = urllib.request.Request(url)
-            response = urllib.request.urlopen(request)
-            file_like_object = BytesIO(response.read())
-            tar = tarfile.open(fileobj=file_like_object)
+            try:
+                url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                url = url_disco + f'{storm_id.lower()}_msgs.tar.gz'
+                if storm_year < 2003: url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
+                request = urllib.request.Request(url)
+                response = urllib.request.urlopen(request)
+                file_like_object = BytesIO(response.read())
+                tar = tarfile.open(fileobj=file_like_object)
+            except:
+                try:
+                    url_disco = f"ftp://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                    url = url_disco + f'{storm_id.lower()}_msgs.tar.gz'
+                    if storm_year < 2003: url = url_disco + f'{storm_id.lower()}.msgs.tar.gz'
+                    request = urllib.request.Request(url)
+                    response = urllib.request.urlopen(request)
+                    file_like_object = BytesIO(response.read())
+                    tar = tarfile.open(fileobj=file_like_object)
+                except:
+                    raise RuntimeError("NHC discussion data is unavailable.")
 
             #Get file list
             members = '\n'.join([i.name for i in tar.getmembers()])
@@ -1280,18 +1364,33 @@ class Storm:
             
         else:
             #Retrieve list of NHC discussions for this storm
-            url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
-            if requests.get(url_disco).status_code != 200: raise RuntimeError("NHC discussion data is unavailable.")
-            path_disco = urllib.request.urlopen(url_disco)
-            string = path_disco.read().decode('utf-8')
-            nums = "[0123456789]"
-            search_pattern = f'{storm_id.lower()}.discus.[01]{nums}{nums}.{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}'
-            pattern = re.compile(search_pattern)
-            filelist = pattern.findall(string)
-            files = []
-            for file in filelist:
-                if file not in files: files.append(file) #remove duplicates
-            path_disco.close()
+            try:
+                url_disco = f"https://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                path_disco = urllib.request.urlopen(url_disco)
+                string = path_disco.read().decode('utf-8')
+                nums = "[0123456789]"
+                search_pattern = f'{storm_id.lower()}.discus.[01]{nums}{nums}.{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}'
+                pattern = re.compile(search_pattern)
+                filelist = pattern.findall(string)
+                files = []
+                for file in filelist:
+                    if file not in files: files.append(file) #remove duplicates
+                path_disco.close()
+            except:
+                try:
+                    url_disco = f"ftp://ftp.nhc.noaa.gov/atcf/archive/{storm_year}/messages/"
+                    path_disco = urllib.request.urlopen(url_disco)
+                    string = path_disco.read().decode('utf-8')
+                    nums = "[0123456789]"
+                    search_pattern = f'{storm_id.lower()}.discus.[01]{nums}{nums}.{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}'
+                    pattern = re.compile(search_pattern)
+                    filelist = pattern.findall(string)
+                    files = []
+                    for file in filelist:
+                        if file not in files: files.append(file) #remove duplicates
+                    path_disco.close()
+                except:
+                    raise RuntimeError("NHC discussion data is unavailable.")
 
             #Read in all NHC forecast discussions
             discos = {'id':[],'utc_date':[],'url':[],'mode':0}

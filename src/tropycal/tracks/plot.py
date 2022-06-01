@@ -1530,17 +1530,17 @@ None,prop={},map_prop={}):
         #Return axis if specified, otherwise display figure
         return self.ax
 
-    def plot_summary(self,realtime_obj,shapefiles,domain,ax=None,save_path=None,two_prop={},invest_prop={},storm_prop={},cone_prop={},map_prop={}):
+    def plot_summary(self,storms,forecasts,shapefiles,valid_date,domain,ax=None,save_path=None,two_prop={},invest_prop={},storm_prop={},cone_prop={},map_prop={}):
         
         r"""
         Creates a realtime summary plot.
         """
         
         #Set default properties
-        default_two_prop={'plot':True,'days':5}
-        default_invest_prop={'plot':True,'linewidth':0.8,'linecolor':'k','linestyle':'dotted'}
-        default_storm_prop={'plot':True,'linewidth':0.8,'linecolor':'k','linestyle':'dotted'}
-        default_cone_prop={'plot':True,'linewidth':1.5,'linecolor':'k','linestyle':'solid'}
+        default_two_prop={'plot':True,'fontsize':12,'days':5}
+        default_invest_prop={'plot':True,'fontsize':12,'linewidth':0.8,'linecolor':'k','linestyle':'dotted','ms':14}
+        default_storm_prop={'plot':True,'fontsize':12,'linewidth':0.8,'linecolor':'k','linestyle':'dotted','fillcolor':'category','label_category':True,'ms':14}
+        default_cone_prop={'plot':True,'linewidth':1.5,'linecolor':'k','alpha':0.6,'days':5,'fillcolor':'category','label_category':True,'ms':12}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         if domain == 'all': default_map_prop['res'] = 'l'
         
@@ -1609,7 +1609,7 @@ None,prop={},map_prop={}):
                 else:
                     color = color_base.get(risk_5day,'yellow')
                     text = prob_5day
-                self.ax.plot(lon,lat,'X',ms=15,color=color,mec='k',mew=1.5,transform=ccrs.PlateCarree(),zorder=6)
+                self.ax.plot(lon,lat,'X',ms=15,color=color,mec='k',mew=1.5,transform=ccrs.PlateCarree(),zorder=20)
 
                 #Transform coordinates for label
                 x1, y1 = self.ax.projection.transform_point(lon, lat, ccrs.PlateCarree())
@@ -1617,18 +1617,15 @@ None,prop={},map_prop={}):
                 x, y = self.ax.transAxes.inverted().transform((x2, y2))
 
                 # plot same point but using axes coordinates
-                a = self.ax.text(x,y-0.03,text,ha='center',va='top',transform=self.ax.transAxes,zorder=7,fontweight='bold',fontsize=12,clip_on=True,bbox=bbox_prop)
+                a = self.ax.text(x,y-0.03,text,ha='center',va='top',transform=self.ax.transAxes,zorder=30,fontweight='bold',fontsize=two_prop['fontsize'],clip_on=True,bbox=bbox_prop)
                 a.set_path_effects([path_effects.Stroke(linewidth=0.5,foreground='w'),path_effects.Normal()])
         
         #--------------------------------------------------------------------------------------
         
         if invest_prop['plot'] == True or storm_prop['plot'] == True:
             
-            #Iterate over all realtime storms
-            for key in realtime_obj.storms:
-                
-                #Get storm object
-                storm = realtime_obj.get_storm(key)
+            #Iterate over all storms
+            for storm_idx,storm in enumerate(storms):
                 
                 #Skip if it's already associated with a risk area, if TWO is being plotted
                 if storm.prob_2day != 'N/A' and two_prop['plot'] == True: continue
@@ -1637,7 +1634,7 @@ None,prop={},map_prop={}):
                 if storm.invest and invest_prop['plot'] == True:
                     
                     #Test
-                    self.ax.plot(storm.lon[-1],storm.lat[-1],'X',ms=14,color='k',transform=ccrs.PlateCarree(),zorder=6)
+                    self.ax.plot(storm.lon[-1],storm.lat[-1],'X',ms=invest_prop['ms'],color='k',transform=ccrs.PlateCarree(),zorder=20)
                     
                     #Transform coordinates for label
                     x1, y1 = self.ax.projection.transform_point(storm.lon[-1], storm.lat[-1], ccrs.PlateCarree())
@@ -1645,7 +1642,7 @@ None,prop={},map_prop={}):
                     x, y = self.ax.transAxes.inverted().transform((x2, y2))
 
                     # plot same point but using axes coordinates
-                    a = self.ax.text(x,y-0.03,f"{storm.name.title()}",ha='center',va='top',transform=self.ax.transAxes,zorder=7,fontweight='bold',fontsize=12,clip_on=True,bbox=bbox_prop)
+                    a = self.ax.text(x,y-0.03,f"{storm.name.title()}",ha='center',va='top',transform=self.ax.transAxes,zorder=30,fontweight='bold',fontsize=invest_prop['fontsize'],clip_on=True,bbox=bbox_prop)
                     a.set_path_effects([path_effects.Stroke(linewidth=0.5,foreground='w'),path_effects.Normal()])
                     
                     #Plot archive track
@@ -1656,7 +1653,29 @@ None,prop={},map_prop={}):
                 elif storm.invest == False and storm_prop['plot'] == True:
                     
                     #Label dot
-                    self.ax.plot(storm.lon[-1],storm.lat[-1],'O',ms=14,color='none',transform=ccrs.PlateCarree(),zorder=6)
+                    #self.ax.plot(storm.lon[-1],storm.lat[-1],'o',ms=14,color='none',mec='k',mew=3.0,transform=ccrs.PlateCarree(),zorder=5)
+                    #self.ax.plot(storm.lon[-1],storm.lat[-1],'o',ms=14,color='none',mec='r',mew=2.0,transform=ccrs.PlateCarree(),zorder=6)
+                    category = str(wind_to_category(storm.vmax[-1]))
+                    color = get_colors_sshws(storm.vmax[-1])
+                    if category == "0": category = 'S'
+                    if category == "-1": category = 'D'
+                    
+                    if storm_prop['fillcolor'] == 'none':
+                        self.ax.plot(storm.lon[-1],storm.lat[-1],'o',ms=storm_prop['ms'],color='none',mec='k',mew=3.0,transform=ccrs.PlateCarree(),zorder=20)
+                        self.ax.plot(storm.lon[-1],storm.lat[-1],'o',ms=storm_prop['ms'],color='none',mec='r',mew=2.0,transform=ccrs.PlateCarree(),zorder=21)
+                    
+                    else:
+                        if storm_prop['fillcolor'] != 'category': color = storm_prop['fillcolor']
+                        self.ax.plot(storm.lon[-1],storm.lat[-1],'o',ms=storm_prop['ms']*1.14,color='k',transform=ccrs.PlateCarree(),zorder=20)
+                        self.ax.plot(storm.lon[-1],storm.lat[-1],'o',ms=storm_prop['ms'],color=color,transform=ccrs.PlateCarree(),zorder=21)
+                        
+                        if storm_prop['label_category'] == True:
+                            color = mcolors.to_rgb(color)
+                            red,green,blue = color
+                            textcolor = 'w'
+                            if (red*0.299 + green*0.587 + blue*0.114) > (160.0/255.0): textcolor = 'k'
+                            self.ax.text(storm.lon[-1],storm.lat[-1],category,fontsize=storm_prop['ms']*0.83,ha='center',va='center',color=textcolor,
+                                         zorder=30,transform=ccrs.PlateCarree(),clip_on=True)
                     
                     #Transform coordinates for label
                     x1, y1 = self.ax.projection.transform_point(storm.lon[-1], storm.lat[-1], ccrs.PlateCarree())
@@ -1664,12 +1683,56 @@ None,prop={},map_prop={}):
                     x, y = self.ax.transAxes.inverted().transform((x2, y2))
 
                     # plot same point but using axes coordinates
-                    a = self.ax.text(x,y-0.03,f"{storm.name.title()}",ha='center',va='top',transform=self.ax.transAxes,zorder=7,fontweight='bold',fontsize=12,clip_on=True,bbox=bbox_prop)
+                    a = self.ax.text(x,y-0.03,f"{storm.name.title()}",ha='center',va='top',transform=self.ax.transAxes,zorder=30,fontweight='bold',fontsize=storm_prop['fontsize'],clip_on=True,bbox=bbox_prop)
                     a.set_path_effects([path_effects.Stroke(linewidth=0.5,foreground='w'),path_effects.Normal()])
                     
                     #Plot archive track
                     if storm_prop['linewidth'] > 0:
                         self.ax.plot(storm.lon,storm.lat,color=storm_prop['linecolor'],linestyle=storm_prop['linestyle'],zorder=5,transform=ccrs.PlateCarree())
+                        
+                    #Plot cone
+                    if cone_prop['plot'] == True:
+                        
+                        #Retrieve cone
+                        forecast_dict = forecasts[storm_idx]
+                        
+                        try:
+                            cone = generate_nhc_cone(forecast_dict,storm.basin,cone_days=cone_prop['days'])
+
+                            #Plot cone
+                            if cone_prop['alpha'] > 0 and storm.basin in constants.NHC_BASINS:
+                                cone_2d = cone['cone']
+                                cone_2d = ndimage.gaussian_filter(cone_2d,sigma=0.5,order=0)
+                                self.ax.contourf(cone['lon2d'],cone['lat2d'],cone_2d,[0.9,1.1],colors=['#ffffff','#ffffff'],alpha=cone_prop['alpha'],zorder=4,transform=ccrs.PlateCarree())
+                                self.ax.contour(cone['lon2d'],cone['lat2d'],cone_2d,[0.9],linewidths=1.5,colors=['k'],zorder=4,transform=ccrs.PlateCarree())
+
+                            #Plot center line & account for dateline crossing
+                            if cone_prop['linewidth'] > 0:
+                                self.ax.plot(cone['center_lon'],cone['center_lat'],color='w',linewidth=2.5,zorder=5,transform=ccrs.PlateCarree())
+                                self.ax.plot(cone['center_lon'],cone['center_lat'],color='k',linewidth=2.0,zorder=6,transform=ccrs.PlateCarree()) 
+
+                            #Plot forecast dots
+                            for idx in range(len(forecast_dict['lat'])):
+                                if cone_prop['ms'] == 0: continue
+                                color = get_colors_sshws(forecast_dict['vmax'][idx])
+                                if cone_prop['fillcolor'] != 'category': color = cone_prop['fillcolor']
+
+                                self.ax.plot(forecast_dict['lon'][idx],forecast_dict['lat'][idx],'o',ms=cone_prop['ms'],mfc=color,mec='k',zorder=7,transform=ccrs.PlateCarree(),clip_on=True)
+
+                                if cone_prop['label_category'] == True:
+                                    category = str(wind_to_category(forecast_dict['vmax'][idx]))
+                                    if category == "0": category = 'S'
+                                    if category == "-1": category = 'D'
+
+                                    color = mcolors.to_rgb(color)
+                                    red,green,blue = color
+                                    textcolor = 'w'
+                                    if (red*0.299 + green*0.587 + blue*0.114) > (160.0/255.0): textcolor = 'k'
+
+                                    self.ax.text(forecast_dict['lon'][idx],forecast_dict['lat'][idx],category,fontsize=cone_prop['ms']*0.81,ha='center',va='center',color=textcolor,
+                                                zorder=19,transform=ccrs.PlateCarree(),clip_on=True)
+                        except:
+                            pass
         
         #--------------------------------------------------------------------------------------
         
@@ -1686,8 +1749,8 @@ None,prop={},map_prop={}):
         #--------------------------------------------------------------------------------------
         
         #Add title
-        self.ax.set_title(f"Current Summary{add_title}",loc='left',fontsize=17,fontweight='bold')
-        self.ax.set_title(f"Valid: {dt.utcnow().strftime('%H UTC %d %b %Y')}",loc='right',fontsize=13)
+        self.ax.set_title(f"Summary{add_title}",loc='left',fontsize=17,fontweight='bold')
+        self.ax.set_title(f"Valid: {valid_date.strftime('%H UTC %d %b %Y')}",loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
         

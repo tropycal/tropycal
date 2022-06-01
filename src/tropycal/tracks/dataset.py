@@ -3720,7 +3720,7 @@ class TrackDataset:
     def plot_summary(self,time,domain='all',ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
-        Plot a summary map of tropical cyclone and NHC potential development activity.
+        Plot a summary map of past tropical cyclone and NHC potential development activity. Only valid for areas in NHC's area of responsibility at this time.
         
         Parameters
         ----------
@@ -3817,6 +3817,10 @@ class TrackDataset:
            * - ms
              - Marker size for forecast dots. Default is 12.
         """
+        
+        #Error check
+        if self.source != 'hurdat':
+            raise RuntimeError("This function is only available for NHC's area of responsibility at this time.")
         
         #Find closest NHC shapefile
         shapefiles = get_two_archive(time)

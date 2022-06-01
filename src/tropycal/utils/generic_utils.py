@@ -500,6 +500,8 @@ def get_two_archive(time):
     Notes
     -----
     The shapefiles returned are modified versions of Cartopy's BasicReader, allowing to read in shapefiles directly from URL without having to download the shapefile locally first.
+    
+    TWO shapefiles are available courtesy of the National Hurricane Center beginning 28 July 2010.
     """
     
     #Find closest NHC shapefile if within 24 hours

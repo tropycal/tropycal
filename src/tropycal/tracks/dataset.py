@@ -3716,3 +3716,257 @@ class TrackDataset:
             ax.set_title(f"Number of storms: {len(storms)}\n{start_day} {endash} {end_day} {dot} {start_year} {endash} {end_year}",loc='right',fontsize=13)
         
         return ax
+
+    def plot_summary(self,time,domain='all',ax=None,cartopy_proj=None,save_path=None,**kwargs):
+        
+        r"""
+        Plot a summary map of tropical cyclone and NHC potential development activity.
+        
+        Parameters
+        ----------
+        time : datetime
+            Valid time for the summary plot.
+        domain : str
+            Domain for the plot. Default is "all". Please refer to :ref:`options-domain` for available domain options.
+        ax : axes, optional
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs, optional
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str, optional
+            Relative or full path of directory to save the image in. If none, image will not be saved.
+        
+        Other Parameters
+        ----------------
+        two_prop : dict
+            Customization properties of NHC Tropical Weather Outlook (TWO). Please refer to :ref:`options-summary` for available options.
+        storm_prop : dict
+            Customization properties of active storms. Please refer to :ref:`options-summary` for available options.
+        cone_prop : dict
+            Customization properties of cone of uncertainty. Please refer to :ref:`options-summary` for available options.
+        map_prop : dict
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
+        
+        Notes
+        -----
+
+        The following properties are available for plotting NHC Tropical Weather Outlook (TWO), via ``two_prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot NHC TWO. Default is True.
+           * - days
+             - Number of days for TWO. Can be either 2 or 5. Default is 5.
+           * - fontsize
+             - Font size for text label. Default is 12.
+
+        The following properties are available for plotting storms, via ``storm_prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot active storms. Default is True.
+           * - linewidth
+             - Line width for past track. Default is 0.8. Set to zero to not plot line.
+           * - linecolor
+             - Line color for past track. Default is black.
+           * - linestyle
+             - Line style for past track. Default is dotted.
+           * - fontsize
+             - Font size for storm name label. Default is 12.
+           * - fillcolor
+             - Fill color for storm location marker. Default is color by SSHWS category ("category").
+           * - label_category
+             - Boolean for whether to plot SSHWS category on top of storm location marker. Default is True.
+           * - ms
+             - Marker size for storm location. Default is 14.
+
+        The following properties are available for plotting realtime cone of uncertainty, via ``cone_prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot cone of uncertainty & forecast track for active storms. Default is True.
+           * - linewidth
+             - Line width for forecast track. Default is 1.5. Set to zero to not plot line.
+           * - alpha
+             - Opacity for cone of uncertainty. Default is 0.6.
+           * - days
+             - Number of days for cone of uncertainty, from 2 through 5. Default is 5.
+           * - fillcolor
+             - Fill color for forecast dots. Default is color by SSHWS category ("category").
+           * - label_category
+             - Boolean for whether to plot SSHWS category on top of forecast dots. Default is True.
+           * - ms
+             - Marker size for forecast dots. Default is 12.
+        """
+        
+        #Find closest NHC shapefile
+        shapefiles = get_two_archive(time)
+        if shapefiles['areas'] == None:
+            two_prop = {'plot':False}
+        else:
+            two_prop = kwargs.pop('two_prop',{})
+        
+        #Search all valid storms at the time
+        print("--> Reading storm data")
+        storms = []
+        forecasts = []
+        for key in self.keys:
+            
+            #First filter
+            if time < self.data[key]['date'][0]: continue
+            if self.data[key]['date'][-1] < time: continue
+           
+            #Second filter
+            diff = [(time-i).total_seconds()/3600 for i in self.data[key]['date']]
+            diff_maxes = [i for i in diff if i >= 0]
+            idx = diff.index(np.nanmin(diff_maxes))
+            if self.data[key]['type'][idx] not in constants.TROPICAL_STORM_TYPES: continue
+            
+            #Get forecast
+            storm = self.get_storm(key)
+            storm.get_operational_forecasts()
+
+            #Get all NHC forecast entries
+            nhc_forecasts = storm.forecast_dict['OFCL']
+            carq_forecasts = storm.forecast_dict['CARQ']
+
+            #Get list of all NHC forecast initializations
+            nhc_forecast_init = [k for k in nhc_forecasts.keys()]
+            carq_forecast_init = [k for k in carq_forecasts.keys()]
+
+            #Find closest matching time to the provided forecast date, or time
+            nhc_forecast_init_dt = [dt.strptime(k,'%Y%m%d%H') for k in nhc_forecast_init]
+            time_diff = np.array([(i-time).days + (i-time).seconds/86400 for i in nhc_forecast_init_dt])
+            closest_idx = np.abs(time_diff).argmin()
+            forecast_dict = nhc_forecasts[nhc_forecast_init[closest_idx]]
+            advisory_num = closest_idx+1
+
+            #Get observed track as per NHC analyses
+            track_dict = {'lat':[],'lon':[],'vmax':[],'type':[],'mslp':[],'date':[],'extra_obs':[],'special':[],'ace':0.0}
+            use_carq = True
+            for k in nhc_forecast_init:
+                if carq_forecasts[k]['init'] > time: continue
+                hrs = nhc_forecasts[k]['fhr']
+                hrs_carq = carq_forecasts[k]['fhr'] if k in carq_forecast_init else []
+
+                #Account for old years when hour 0 wasn't included directly
+                #if 0 not in hrs and k in carq_forecast_init and 0 in hrs_carq:
+                if storm.dict['year'] < 2000 and k in carq_forecast_init and 0 in hrs_carq:
+
+                    use_carq = True
+                    hr_idx = hrs_carq.index(0)
+                    track_dict['lat'].append(carq_forecasts[k]['lat'][hr_idx])
+                    track_dict['lon'].append(carq_forecasts[k]['lon'][hr_idx])
+                    track_dict['vmax'].append(carq_forecasts[k]['vmax'][hr_idx])
+                    track_dict['mslp'].append(np.nan)
+                    track_dict['date'].append(carq_forecasts[k]['init'])
+
+                    itype = carq_forecasts[k]['type'][hr_idx]
+                    if itype == "": itype = get_storm_type(carq_forecasts[k]['vmax'][0],False)
+                    track_dict['type'].append(itype)
+
+                    hr = carq_forecasts[k]['init'].strftime("%H%M")
+                    track_dict['extra_obs'].append(0) if hr in ['0300','0900','1500','2100'] else track_dict['extra_obs'].append(1)
+                    track_dict['special'].append("")
+
+                else:
+                    use_carq = False
+                    if 3 in hrs:
+                        hr_idx = hrs.index(3)
+                        hr_add = 3
+                    else:
+                        hr_idx = 0
+                        hr_add = 0
+                    track_dict['lat'].append(nhc_forecasts[k]['lat'][hr_idx])
+                    track_dict['lon'].append(nhc_forecasts[k]['lon'][hr_idx])
+                    track_dict['vmax'].append(nhc_forecasts[k]['vmax'][hr_idx])
+                    track_dict['mslp'].append(np.nan)
+                    track_dict['date'].append(nhc_forecasts[k]['init']+timedelta(hours=hr_add))
+
+                    itype = nhc_forecasts[k]['type'][hr_idx]
+                    if itype == "": itype = get_storm_type(nhc_forecasts[k]['vmax'][0],False)
+                    track_dict['type'].append(itype)
+
+                    hr = nhc_forecasts[k]['init'].strftime("%H%M")
+                    track_dict['extra_obs'].append(0) if hr in ['0300','0900','1500','2100'] else track_dict['extra_obs'].append(1)
+                    track_dict['special'].append("")
+
+            #Add main elements from storm dict
+            for key in ['id','operational_id','name','year']:
+                track_dict[key] = storm.dict[key]
+
+            #Add carq to forecast dict as hour 0, if available
+            if use_carq == True and forecast_dict['init'] in track_dict['date']:
+                insert_idx = track_dict['date'].index(forecast_dict['init'])
+                if 0 in forecast_dict['fhr']:
+                    forecast_dict['lat'][0] = track_dict['lat'][insert_idx]
+                    forecast_dict['lon'][0] = track_dict['lon'][insert_idx]
+                    forecast_dict['vmax'][0] = track_dict['vmax'][insert_idx]
+                    forecast_dict['mslp'][0] = track_dict['mslp'][insert_idx]
+                    forecast_dict['type'][0] = track_dict['type'][insert_idx]
+                else:
+                    forecast_dict['fhr'].insert(0,0)
+                    forecast_dict['lat'].insert(0,track_dict['lat'][insert_idx])
+                    forecast_dict['lon'].insert(0,track_dict['lon'][insert_idx])
+                    forecast_dict['vmax'].insert(0,track_dict['vmax'][insert_idx])
+                    forecast_dict['mslp'].insert(0,track_dict['mslp'][insert_idx])
+                    forecast_dict['type'].insert(0,track_dict['type'][insert_idx])
+
+            #Add other info to forecast dict
+            forecast_dict['advisory_num'] = advisory_num
+            forecast_dict['basin'] = storm.basin
+            
+            #Append to storms
+            track_dict['prob_2day'] = 'N/A'
+            track_dict['risk_2day'] = 'N/A'
+            track_dict['prob_5day'] = 'N/A'
+            track_dict['risk_5day'] = 'N/A'
+            
+            track_dict['basin'] = storm.basin
+            storms.append(Storm(track_dict))
+            forecasts.append(forecast_dict)
+        
+        #Retrieve kwargs
+        invest_prop = {'plot':False}
+        storm_prop = kwargs.pop('storm_prop',{})
+        cone_prop = kwargs.pop('cone_prop',{})
+        map_prop = kwargs.pop('map_prop',{})
+        
+        #Create instance of plot object
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
+        
+        #Create cartopy projection
+        if cartopy_proj is not None:
+            self.plot_obj.proj = cartopy_proj
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0) #0.0
+        
+        #Plot
+        print("--> Generating plot")
+        ax = self.plot_obj.plot_summary(storms,forecasts,shapefiles,time,domain,
+                                        ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
+        
+        return ax
+        

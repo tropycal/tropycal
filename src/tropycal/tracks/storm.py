@@ -195,6 +195,9 @@ class Storm:
                 self.get_archer()
             except:
                 pass
+                
+            #Initialize recon dataset instance
+            self.recon = ReconDataset(storm=self)
 
             #Determine if storm object was retrieved via realtime object
             if 'realtime' in keys and self.dict['realtime']:

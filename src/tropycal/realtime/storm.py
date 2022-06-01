@@ -186,9 +186,15 @@ class RealtimeStorm(Storm):
             self.tornado_dist_thresh = stormTors['dist_thresh']
             self.attrs['Tornado Count'] = len(stormTors['data'])
         
-        #Get Archer track data for this storm, if it exists
-        self.get_archer()
-        
+		#Get Archer track data for this storm, if it exists
+		try:
+			self.get_archer()
+		except:
+			pass
+			
+		#Initialize recon dataset instance
+		self.recon = ReconDataset(storm=self)
+
         #Determine if storm object was retrieved via realtime object
         if 'realtime' in keys and self.dict['realtime']:
             self.realtime = True

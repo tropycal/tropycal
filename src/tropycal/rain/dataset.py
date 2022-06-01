@@ -209,7 +209,7 @@ class RainDataset():
         #Return axis
         return plot_ax
 
-    def plot_rain(self,storm,ms=7.5,mec=None,mew=0.5,minimum_threshold=1.0,levels=None,cmap=None,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
+    def plot_rain(self,storm,ms=7.5,mec=None,mew=0.5,minimum_threshold=1.0,levels=None,cmap=None,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of a storm track and its associated rainfall (individual dots).
@@ -253,6 +253,9 @@ class RainDataset():
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        prop = kwargs.pop('prop',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Check if Storm object contains rainfall data
         try:

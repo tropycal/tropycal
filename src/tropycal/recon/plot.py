@@ -7,6 +7,7 @@ import urllib
 import warnings
 from datetime import datetime as dt,timedelta
 from scipy.ndimage import gaussian_filter as gfilt
+import copy
 
 from ..plot import Plot
 
@@ -39,7 +40,7 @@ class ReconPlot(Plot):
         self.use_credit = True
                  
     def plot_points(self,storm,recon_data,domain="dynamic",varname='wspd',barbs=False,scatter=False,\
-                    ax=None,return_ax=False,prop={},map_prop={}):
+                    ax=None,return_domain=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of recon data points
@@ -56,8 +57,6 @@ class ReconPlot(Plot):
             "lonW/lonE/latS/latN" - Custom plot domain
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
         prop : dict
             Property of storm track lines.
         map_prop : dict
@@ -67,9 +66,15 @@ class ReconPlot(Plot):
         if not barbs and not scatter:
             scatter = True
         
+        if isinstance(varname,tuple):
+            titleinput = copy.copy(varname)
+            varname = varname[0]
+        else:
+            titleinput = (varname,None)
+        
         #Set default properties
-        default_prop={'cmap':'category','levels':(np.min(recon_data[varname]),np.max(recon_data[varname])),\
-                      'sortby':varname,'ascending':(varname!='p_sfc'),'linewidth':1.5,'ms':7.5}
+        default_prop={'cmap':'category','levels':(np.nanmin(recon_data[varname]),np.nanmax(recon_data[varname])),\
+                      'sortby':varname,'ascending':(varname!='p_sfc'),'linewidth':1.5,'ms':7.5,'marker':'o','zorder':None}
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF',\
                           'linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
         
@@ -152,7 +157,7 @@ class ReconPlot(Plot):
             dataSort = recon_data.sort_values(by=prop['sortby'],ascending=prop['ascending']).reset_index(drop=True)
           
             cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],\
-                                cmap=cmap,vmin=vmin,vmax=vmax, s=prop['ms'])
+                                cmap=cmap,vmin=vmin,vmax=vmax, s=prop['ms'], marker=prop['marker'],zorder=prop['zorder'])
 
         #--------------------------------------------------------------------------------------
         
@@ -182,10 +187,10 @@ class ReconPlot(Plot):
         storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
         
         dot = u"\u2022"
-        if barbs:
-            vartitle = get_recon_title('wspd')
-        if scatter:
-            vartitle = get_recon_title(varname)
+        try:
+            vartitle = get_recon_title(*titleinput)
+        except:
+            vartitle = [varname]
         self.ax.set_title(f"{storm_type} {storm_data['name']}\n" + 'Recon: '+' '.join(vartitle),loc='left',fontsize=17,fontweight='bold')
 
         #Add right title
@@ -242,24 +247,20 @@ class ReconPlot(Plot):
                                        fc = 'w',edgecolor = '0.8',alpha = 0.8,\
                                        transform=self.fig.transFigure, zorder=2)
         self.ax.add_patch(rectangle)
-
-        
-        
         
         #Add plot credit
         text = self.plot_credit()
         self.add_credit(text)
         
-        #Return axis if specified, otherwise display figure
-        if ax is not None or return_ax == True:
+        #Return axis and domain
+        if return_domain:
             return self.ax,'/'.join([str(b) for b in [bound_w,bound_e,bound_s,bound_n]])
         else:
-            plt.show()
-            plt.close()
-        
+            return self.ax
 
+    
     def plot_swath(self,storm,Maps,varname,swathfunc,track_dict,radlim=200,\
-                   domain="dynamic",ax=None,return_ax=False,prop={},map_prop={}):
+                   domain="dynamic",ax=None,prop={},map_prop={}):
 
         #Set default properties
         default_prop={'cmap':'category','levels':None,'left_title':'','right_title':'All storms','pcolor':True}
@@ -436,7 +437,7 @@ class ReconPlot(Plot):
 
 
     
-    def plot_polar(self,dfRecon,track_dict,time=None,reconInterp=None,radlim=150,ax=None,return_ax=False,prop={}):
+    def plot_polar(self,dfRecon,track_dict,time=None,reconInterp=None,radlim=150,ax=None,prop={}):
 
         r"""
         Creates a plot of storm-centered recon data interpolated to a grid
@@ -449,8 +450,6 @@ class ReconPlot(Plot):
             and field plotted ... axis limits will be [-radlim,radlim,-radlim,radlim]
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
         prop : dict
             Properties of plot
         """
@@ -500,15 +499,13 @@ class ReconPlot(Plot):
 
         #--------------------------------------------------------------------------------------
            
-        #Return axis if specified, otherwise display figure
-        if ax is not None or return_ax == True:
-            return self.ax
-        else:
-            plt.show()
-            plt.close()
+        #Display figure, return axis
+        plt.show()
+        return self.ax
+        plt.close()
      
     def plot_maps(self,storm,Maps_dict,varname,recon_stats=None,\
-                  domain='dynamic',ax=None,return_ax=False,return_domain=False,prop={},map_prop={}):
+                  domain='dynamic',ax=None,return_domain=False,prop={},map_prop={}):
         
         r"""
         Creates a plot of storm-centered recon data interpolated to a grid
@@ -521,8 +518,6 @@ class ReconPlot(Plot):
             and field plotted ... axis limits will be [-radlim,radlim,-radlim,radlim]
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        return_ax : bool
-            Whether to return axis at the end of the function. If false, plot will be displayed on the screen. Default is false.
         prop : dict
             Properties of plot
         """
@@ -627,8 +622,7 @@ class ReconPlot(Plot):
         text = self.plot_credit()
         self.add_credit(text)
 
-        if return_ax:
-            if return_domain:
-                return self.ax,{'n':bound_n,'e':bound_e,'s':bound_s,'w':bound_w}
-            else:
-                return self.ax
+        if return_domain:
+            return self.ax,{'n':bound_n,'e':bound_e,'s':bound_s,'w':bound_w}
+        else:
+            return self.ax

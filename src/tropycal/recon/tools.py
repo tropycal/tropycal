@@ -72,12 +72,13 @@ class interpRecon:
         #Interpolates storm-centered point data in polar coordinates onto a gridded polar coordinate field
         grid_z_pol = griddata(pol_path_wrap,data_wrap,(grid_rho,grid_phi),method='linear')
         
-        #Calculate radius of maximum wind (RMW)
-        rmw = grid_rho[0,np.nanargmax(np.mean(grid_z_pol,axis=0))]
-        
-        #Within the RMW, replace NaNs with minimum value within the RMW
-        filleye = np.where((grid_rho<rmw) & (np.isnan(grid_z_pol)))
         try:
+            #Calculate radius of maximum wind (RMW)
+            rmw = grid_rho[0,np.nanargmax(np.mean(grid_z_pol,axis=0))]
+
+            #Within the RMW, replace NaNs with minimum value within the RMW
+            filleye = np.where((grid_rho<rmw) & (np.isnan(grid_z_pol)))
+
             grid_z_pol[filleye]=np.nanmin(grid_z_pol[np.where(grid_rho<rmw)])
         except:
             pass
@@ -283,31 +284,176 @@ class interpRecon:
 # TOOLS FOR PLOTTING
 #------------------------------------------------------------------------------
 
-def get_recon_title(varname):
+def find_var(request,thresh):
     
     r"""
-    Generate plot title descriptor for plots.
+    Given a variable and threshold, returns the variable for plotting. Referenced from ``TrackDataset.gridded_stats()`` and ``TrackPlot.plot_gridded()``. Internal function.
+    
+    Parameters
+    ----------
+    request : str
+        Descriptor of the requested plot. Detailed more in the ``TrackDataset.gridded_dataset()`` function.
+    thresh : dict
+        Dictionary containing thresholds for the plot. Detailed more in the ``TrackDataset.gridded_dataset()`` function.
+    
+    Returns
+    -------
+    thresh : dict
+        Returns the thresh dictionary, modified depending on the request.
+    varname : str
+        String denoting the variable for plotting.
     """
     
-    if varname.lower() == 'wspd':
-        titlename = '30s FL wind'
-        unitname = r'(kt)'
-    if varname.lower() == 'pkwnd':
-        titlename = '10s FL wind'
-        unitname = r'(kt)'
-    if varname.lower() == 'sfmr':
-        titlename = 'SFMR 10s sfc wind'
-        unitname = r'(kt)'
-    if varname.lower() == 'p_sfc':
-        titlename = 'Sfc pressure'
-        unitname = r'(hPa)'
-    if varname.lower() == 'plane_p':
-        titlename = 'Flight level pressure'
-        unitname = r'(hPa)'
-    if varname.lower() == 'plane_z':
-        titlename = 'Flight level height'
-        unitname = r'(m)'
+    #Convert command to lowercase
+    request = request.lower()
     
+    #Count of number of storms
+    if request.find('count') >= 0 or request.find('num') >= 0:
+        return thresh, 'time'
+
+    if request.find('time') >= 0 or request.find('day') >= 0:
+        return thresh, 'time'
+    
+    #Sustained wind, or change in wind speed
+    if request.find('wind') >= 0 or request.find('vmax') >= 0:
+        return thresh,'wspd'
+    if request.find('30s wind') >= 0 or request.find('vmax') >= 0:
+        return thresh,'wspd'
+    if request.find('10s wind') >= 0 or request.find('vmax') >= 0:
+        return thresh,'pkwnd'
+    
+    #Minimum MSLP
+    elif request.find('pressure') >= 0 or request.find('slp') >= 0:
+        return thresh,'p_sfc'
+
+    #Otherwise, error
+    else:
+        msg = "Error: Could not decipher variable. Please refer to documentation for examples on how to phrase the \"request\" string."
+        raise RuntimeError(msg)
+        
+def find_func(request,thresh):
+    
+    r"""
+    Given a request and threshold, returns the requested function. Referenced from ``TrackDataset.gridded_stats()``. Internal function.
+    
+    Parameters
+    ----------
+    request : str
+        Descriptor of the requested plot. Detailed more in the ``TrackDataset.gridded_dataset()`` function.
+    thresh : dict
+        Dictionary containing thresholds for the plot. Detailed more in the ``TrackDataset.gridded_dataset()`` function.
+    
+    Returns
+    -------
+    thresh : dict
+        Returns the thresh dictionary, modified depending on the request.
+    func : lambda
+        Returns a function to apply to the data.
+    """
+    
+    print(request)
+    
+    #Convert command to lowercase
+    request = request.lower()
+    
+    #Numpy maximum function
+    if request.find('max') == 0 or request.find('latest') == 0:
+        return thresh, lambda x: np.nanmax(x)
+    
+    #Numpy minimum function
+    if request.find('min') == 0 or request.find('earliest') == 0:
+        return thresh, lambda x: np.nanmin(x)
+    
+    #Numpy average function
+    elif request.find('mean') >= 0 or request.find('average') >= 0 or request.find('avg') >= 0:
+        thresh['sample_min'] = max([5,thresh['sample_min']]) #Ensure sample minimum is at least 5 per gridpoint
+        return thresh, lambda x: np.nanmean(x)
+    
+    #Numpy percentile function
+    elif request.find('percentile') >= 0:
+        ptile = int(''.join([c for i,c in enumerate(request) if c.isdigit() and i < request.find('percentile')]))
+        thresh['sample_min'] = max([5,thresh['sample_min']]) #Ensure sample minimum is at least 5 per gridpoint
+        return thresh, lambda x: np.nanpercentile(x,ptile)
+    
+    #Count function
+    elif request.find('count') >= 0 or request.find('num') >= 0:
+        return thresh, lambda x: len(x)
+    
+    #ACE - cumulative function
+    elif request.find('ace') >=0:
+        return thresh, lambda x: np.nansum(x)
+    elif request.find('acie') >=0:
+        return thresh, lambda x: np.nansum(x)
+    
+    #Otherwise, function cannot be identified
+    else:
+        msg = "Cannot decipher the function. Please refer to documentation for examples on how to phrase the \"request\" string."
+        raise RuntimeError(msg)
+
+
+def get_recon_title(varname,level=None):
+    
+    r"""
+    Generate title descriptor for plots.
+    """
+    
+    if level is None:
+        if varname.lower() == 'top':
+            titlename = 'Top mandatory level'
+            unitname = r'(hPa)'
+        if varname.lower() == 'slp':
+            titlename = 'Sea level pressure'
+            unitname = r'(hPa)'
+        if varname.lower() == 'mbldir':
+            titlename = '500m mean wind direction'
+            unitname = r'(deg)'
+        if varname.lower() == 'wl150dir':
+            titlename = '150m mean wind direction'
+            unitname = r'(dir)'
+        if varname.lower() == 'mblspd':
+            titlename = '500m mean wind speed'
+            unitname = r'(kt)'
+        if varname.lower() == 'wl150spd':
+            titlename = '150m mean wind speed'
+            unitname = r'(kt)'
+        if varname.lower() == 'wspd':
+            titlename = '30s FL wind speed'
+            unitname = r'(kt)'
+        if varname.lower() == 'pkwnd':
+            titlename = '10s FL wind speed'
+            unitname = r'(kt)'
+        if varname.lower() == 'sfmr':
+            titlename = 'SFMR 10s sfc wind speed'
+            unitname = r'(kt)'
+        if varname.lower() == 'p_sfc':
+            titlename = 'Sfc pressure'
+            unitname = r'(hPa)'
+        if varname.lower() == 'plane_p':
+            titlename = 'Flight level pressure'
+            unitname = r'(hPa)'
+        if varname.lower() == 'plane_z':
+            titlename = 'Flight level height'
+            unitname = r'(m)'
+    else:
+        if varname.lower() == 'pres':
+            titlename = f'{level}hPa pressure'
+            unitname = r'(hPa)'
+        if varname.lower() == 'hgt':
+            titlename = f'{level}hPa height'
+            unitname = r'(m)'
+        if varname.lower() == 'temp':
+            titlename = f'{level}hPa temperature'
+            unitname = r'(deg C)'
+        if varname.lower() == 'dwpt':
+            titlename = f'{level}hPa dew point'
+            unitname = r'(deg C)'
+        if varname.lower() == 'wdir':
+            titlename = f'{level}hPa wind direction'
+            unitname = r'(deg)'
+        if varname.lower() == 'wspd':
+            titlename = f'{level}hPa wind speed'
+            unitname = r'(kt)'
+
     return titlename,unitname
 
 def hovmoller_plot_title(storm_obj,Hov,varname):
@@ -348,3 +494,13 @@ def hovmoller_plot_title(storm_obj,Hov,varname):
     
     #Return both titles
     return title_left,title_right
+
+
+def get_bounds(data,bounds):
+    try:
+        datalims = (np.nanmin(data),np.nanmax(data))
+    except:
+        datalims = bounds
+    bounds = [l if b is None else b for b,l in zip(bounds,datalims)]
+    bounds = [b for b in bounds if b is not None]
+    return (min(bounds),max(bounds))

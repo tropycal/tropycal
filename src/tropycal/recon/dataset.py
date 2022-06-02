@@ -129,12 +129,14 @@ class ReconDataset:
             track = track.sort_values(by='time').reset_index(drop=True)
 
             #Interpolate center position to time of each ob
-            f1 = interp1d(mdates.date2num(track['time']),track['lon'],fill_value='extrapolate',kind='quadratic')
-            f2 = interp1d(mdates.date2num(track['time']),track['lat'],fill_value='extrapolate',kind='quadratic')
+            datenum = [mdates.date2num(t) for t in track['time']]
+            f1 = interp1d(datenum,track['lon'],fill_value='extrapolate',kind='quadratic')
+            f2 = interp1d(datenum,track['lat'],fill_value='extrapolate',kind='quadratic')
             self.trackfunc = (f1,f2)
 
-        if time is not None:   
-            track = tuple([f(mdates.date2num(time)) for f in self.trackfunc])
+        if time is not None:  
+            datenum = [mdates.date2num(t) for t in time]
+            track = tuple([f(datenum) for f in self.trackfunc])
             return track
         
     def center_relative(self):
@@ -211,12 +213,11 @@ class ReconDataset:
         dropsondes = self.dropsondes.sel(mission=mission)
         vdms = self.vdms.sel(mission=mission)
         
-        ax,domain = hdobs.plot_points('pkwnd',\
+        ax = hdobs.plot_points('pkwnd',\
                             prop={'cmap':{1:'firebrick',2:'tomato',4:'gold',6:'lemonchiffon'},'levels':(0,200),'ms':2})
         ax.scatter(*zip(*[(d['TOPlon'],d['TOPlat']) \
                         for d in dropsondes.data]),s=50,marker='v',edgecolor='w',linewidth=0.5,color='darkblue')
-        ax.scatter(*zip(*[(d['lon'],d['lat']) for d in vdms.data]),s=80,marker='H',edgecolor='w',linewidth=1,\
-              c=[d['Minimum Sea Level Pressure (hPa)'] for d in vdms.data],vmin=850,vmax=1020,cmap='Blues')
+        ax.scatter(*zip(*[(d['lon'],d['lat']) for d in vdms.data]),s=80,marker='H',edgecolor='w',linewidth=1,color='k')
         
         title_left = ax.get_title(loc='left').split('\n')
         newtitle = title_left[0]+'\nRecon summary'+['',f' for mission {mission}'][mission is not None]
@@ -607,7 +608,7 @@ class hdobs:
         Parameters
         ----------
         varname : str
-            Variable to plot. Can be one of the following:
+            Variable to plot. Can be one of the following keys in dataframe:
             
             * **"sfmr"** = SFMR surface wind
             * **"wspd"** = 30-second flight level wind (default)
@@ -676,8 +677,8 @@ class hdobs:
         for key in default_prop.keys():
             if key not in prop.keys():
                 prop[key]=default_prop[key]
-            
-        #Get internal HDOB data
+
+        #Get recon data
         dfRecon = self.data
 
         #Retrieve track dictionary if none is specified
@@ -752,7 +753,7 @@ class hdobs:
         #Return axis
         return ax
 
-    def plot_maps(self,varname='wspd',track_dict=None,recon_stats=None,domain="dynamic",\
+    def plot_maps(self,time=None,varname='wspd',track_dict=None,recon_stats=None,domain="dynamic",\
                   window=6,align='center',radlim=None,ax=None,savetopath=None,cartopy_proj=None,**kwargs):
     
         #plot_time, plot_mission (only for dots)
@@ -763,7 +764,7 @@ class hdobs:
         Parameters
         ----------
         varname : str
-            Variable to plot. Can be one of the following keys in recon_select dataframe:
+            Variable to plot. Can be one of the following keys in dataframe:
             
             * **"sfmr"** = SFMR surface wind
             * **"wspd"** = 30-second flight level wind (default)
@@ -790,7 +791,13 @@ class hdobs:
         
         #Get plot data
         ONE_MAP = False
-        dfRecon = self.data        
+        if time is None:
+            dfRecon = self.data        
+        elif isinstance(time,(tuple,list)):
+            dfRecon = self.sel(time = time).data
+        elif isinstance(time,dt):
+            dfRecon = self.sel(time = (time-timedelta(hours=6),time+timedelta(hours=6))).data
+            ONE_MAP = True
         
         MULTIVAR=False
         if isinstance(varname,(tuple,list)):
@@ -805,13 +812,13 @@ class hdobs:
                 
         if ONE_MAP:
             f = interp1d(mdates.date2num(track_dict['time']),track_dict['lon'], fill_value='extrapolate')
-            clon = f(mdates.date2num(recon_select))
+            clon = f(mdates.date2num(time))
             f = interp1d(mdates.date2num(track_dict['time']),track_dict['lat'], fill_value='extrapolate')
-            clat = f(mdates.date2num(recon_select))
+            clat = f(mdates.date2num(time))
             
             #clon = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lon'])
             #clat = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lat'])
-            track_dict = {'time':recon_select,'lon':clon,'lat':clat}
+            track_dict = {'time':time,'lon':clon,'lat':clat}
         
         if MULTIVAR:
             Maps=[]
@@ -919,7 +926,7 @@ class hdobs:
         Parameters
         ----------
         varname : str
-            Variable to plot. Can be one of the following keys in recon_select dataframe:
+            Variable to plot. Can be one of the following keys in dataframe:
             
             * **"sfmr"** = SFMR surface wind
             * **"wspd"** = 30-second flight level wind (default)
@@ -1231,6 +1238,7 @@ class dropsondes:
             
             timer_start = dt.now()
             print(f'Searching through recon dropsonde files between {timeboundstrs[0]} and {timeboundstrs[-1]} ...')
+            filecount = 0
             for link in linksub:
                 #print(link)
                 content = requests.get(link).text
@@ -1238,14 +1246,15 @@ class dropsondes:
                 missionname,tmp = self._decode_dropsonde(content,date=datestamp)
                 testkeys = ('TOPtime','lat','lon')
                 if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
+                    filecount += 1
                     if self.data is None:
                         self.data = [copy.copy(tmp)]
                     elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
                         self.data.append(tmp)
                     else:
                         pass
-            print('--> Completed reading in recon missions (%.1f seconds)' % (dt.now()-timer_start).total_seconds())
-            self.data = self._recenter()
+            print(f'--> Completed reading in recon dropsonde files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
+                  f'\nRead {filecount} files')
 
         self.keys = sorted(list(set([k for d in self.data for k in d.keys()])))
 
@@ -1460,17 +1469,11 @@ class dropsondes:
 
     def _recenter(self,get_track):
         data = self.data
-
-        #Interpolate center position to time of each ob
-        interp_clat,interp_clon = get_track(data['time'])
-
+        
         #Get x,y distance of each ob from coinciding interped center position
         for stage in ('TOP','BOTTOM'):
             #Interpolate center position to time of each ob
-            f1 = interp1d(mdates.date2num(centers['time']),centers['lon'],fill_value='extrapolate',kind='quadratic')
-            interp_clon = f1([mdates.date2num(d[f'{stage}time']) for d in data])
-            f2 = interp1d(mdates.date2num(centers['time']),centers['lat'],fill_value='extrapolate',kind='quadratic')
-            interp_clat = f2([mdates.date2num(d[f'{stage}time']) for d in data])
+            interp_clon,interp_clat = get_track([d[f'{stage}time'] for d in data])
 
             #Get x,y distance of each ob from coinciding interped center position
             for i,d in enumerate(data):
@@ -1483,7 +1486,7 @@ class dropsondes:
                 d.update({f'{stage}distance':(d[f'{stage}xdist']**2+d[f'{stage}ydist']**2)**.5})
 
         print('Completed dropsonde center-relative coordinates')
-        return data
+        self.data = data
     
     def isel(self,i):
         r"""
@@ -1512,8 +1515,12 @@ class dropsondes:
 
         #Apply time filter
         if time is not None:
-            bounds = get_bounds(NEW_DATA['TOPtime'],time)
-            NEW_DATA = NEW_DATA.loc[(NEW_DATA['TOPtime']>=bounds[0]) & (NEW_DATA['TOPtime']<=bounds[1])]
+            if isinstance(time,(tuple,list)):
+                bounds = get_bounds(NEW_DATA['TOPtime'],time)
+                NEW_DATA = NEW_DATA.loc[(NEW_DATA['TOPtime']>=bounds[0]) & (NEW_DATA['TOPtime']<=bounds[1])]
+            else:
+                i = np.argmin(abs(time-NEW_DATA['TOPtime']))
+                return self.isel(i)
         
         #Apply domain filter
         if domain is not None:
@@ -1628,12 +1635,18 @@ class dropsondes:
         #Return axis
         return plot_info
 
-    def plot_skewt(self):
+    def plot_skewt(self,time=None):
         r"""
         Plot skew-t for selected dropsondes
         
         returns a list of figures.
         """
+        storm_data = self.storm.dict
+
+        if time is None:
+            dict_list = self.data
+        else:
+            dict_list = self.sel(time=time).data
 
         def time2text(time):
             try:
@@ -1646,7 +1659,8 @@ class dropsondes:
             except:
                 return ''
             if loc == 'eyewall':
-                return r"$\bf{"+indict['octant']+'}$ '+r"$\bf{"+loc.capitalize()+'}$, '
+                return r"$\bf{"+loc.capitalize()+'}$, '
+                #return r"$\bf{"+indict['octant']+'}$ '+r"$\bf{"+loc.capitalize()+'}$, '
             else:
                 return r"$\bf{"+loc.capitalize()+'}$, '
         degsym = u"\u00B0"
@@ -1696,11 +1710,9 @@ class dropsondes:
         def skew_t(t,p):
             t0 = np.log(p/1050)*80/np.log(100/1050)
             return t0+t,p
-
-        storm_data = self.storm.dict
         
         figs = []
-        for data in self.data:
+        for data in dict_list:
             # Loop through dropsondes
             df = data['levels'].sort_values('pres',ascending=True)
             Pres = df['pres']
@@ -1726,7 +1738,7 @@ class dropsondes:
             dfwind = df.loc[df['pres']>=700]
 
             # Start figure
-            fig = plt.figure(figsize=(17,11))
+            fig = plt.figure(figsize=(17,11),facecolor='w')
             gs = gridspec.GridSpec(2,3,width_ratios=(2,.2,1.1),height_ratios=(len(dfmand)+3,len(dfwind)+3), wspace=0.0)
 
             ax1 = fig.add_subplot(gs[:,0])
@@ -1750,7 +1762,7 @@ class dropsondes:
                 if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
 
             ax1.set_title(f'{storm_type} {storm_data["name"]}'+\
-                          f'\nDropsonde {data["obsnum"]}, Mission {mission2text(data["missionname"])}',\
+                          f'\nDropsonde {data["obsnum"]}, Mission {mission2text(data["mission"])}',\
                           loc='left',fontsize=17,fontweight='bold')
             ax1.set_title(f'Drop time: {time2text(data["TOPtime"])}'+\
                           f'\nDrop location: {location_text(data)}{latlon2text(data["lat"],data["lon"])}',loc='right',fontsize=13)
@@ -1920,12 +1932,12 @@ class vdms:
             print(f'Searching through recon VDM files between {timestr[0]} and {timestr[-1]} ...')
             for link in linksub:
                 content = requests.get(link).text
-                #print(link)
                 date = link.split('.')[-2]
                 year = int(date[:4])
                 month = int(date[4:6])
                 day = int(date[6:8])
                 missionname,tmp = self._decode_vdm(content,date=dt(year,month,day))
+                #print(link,missionname)
                 testkeys = ('time','lat','lon')
                 if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
                     if self.data is None:
@@ -1936,8 +1948,9 @@ class vdms:
                         filecount+=1
                     else:
                         pass
-            print('--> Completed reading in recon missions (%.1f seconds)' % (dt.now()-timer_start).total_seconds()+\
+            print(f'--> Completed reading in recon VDM files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files')
+            
         elif isinstance(data,str):
             with open(data, 'rb') as f:
                 self.data = pickle.load(f)
@@ -1955,6 +1968,7 @@ class vdms:
         RemarksNext = False
         LonNext = False
         FORMAT = 1 if date.year<2018 else 2
+        missionname = ''
         
         def isNA(x):
             if x == 'NA':
@@ -2113,7 +2127,8 @@ class vdms:
                 info = line[3:]
                 if FORMAT==1:
                     data['Aircraft'] = info.split()[0]
-                    data['mission'] = info.split()[1]
+                    missionname = info.split()[1]
+                    data['mission'] = missionname[:2]
                     data['Remarks'] = ''
                     RemarksNext = True
                 if FORMAT==2:

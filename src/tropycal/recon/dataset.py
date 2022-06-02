@@ -106,13 +106,15 @@ class ReconDataset:
         tuple
             (lon,lat) coordinates.
         """
-        
-        #Get track best fit model
-        
+                
         if time is None or 'trackfunc' not in self.__dict__.keys():
             btk = self.storm.to_dataframe()[['date','lon','lat']].rename(columns={'date':'time'})
+                      
             try:
-                rec = pd.DataFrame([{k:d[k] for k in ('time','lon','lat')} for d in self.storm.recon.vdms.data])
+                if 'vdms' not in self.__dict__.keys():
+                    print('Getting VDMs for track')
+                    self.get_vdms()  
+                rec = pd.DataFrame([{k:d[k] for k in ('time','lon','lat')} for d in self.vdms.data])
             except:
                 try:
                     rec = storm.recon.hdobs.sel(iscenter=1).data
@@ -299,15 +301,9 @@ class hdobs:
                         [f'{t:%Y%m%d}' for t in self.storm.dict['date'] if t>start_time]+\
                         [f'{end_time:%Y%m%d}']
 
-            #Retrieve list of files in URL and filter by storm dates
-            page = requests.get(self.archiveURL).text
-            content = page.split("\n")
-            files = []
-            for line in content:
-                if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
-            del content
-            files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
-            linksub = [self.archiveURL+'.'.join(l) for l in files]
+            archive = pd.read_html(self.archiveURL)[0]
+            linktimes = sorted([l.split('.') for l in archive['Name'] if isinstance(l,str) and 'txt' in l],key=lambda x: x[1])
+            linksub = [self.archiveURL+'.'.join(l) for l in linktimes if l[1][:8] in timestr]
             
             timer_start = dt.now()
             print(f'Searching through recon HDOB files between {timestr[0]} and {timestr[-1]} ...')
@@ -330,8 +326,7 @@ class hdobs:
             print(f'--> Completed reading in recon HDOB files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files'+\
                   f'\nUnable to decode {unreadable} files')
-            #self.data = self._find_centers()
-            #self.data = self._recenter()
+        self._recenter()
 
         self.keys = list(self.data.keys())
 
@@ -457,10 +452,10 @@ class hdobs:
         print(f'Found {numcenters} center passes')
         return data
         
-    def _recenter(self,get_track): 
-        data = self.data
+    def _recenter(self): 
+        data = copy.copy(self.data)
         #Interpolate center position to time of each ob
-        interp_clon,interp_clat = get_track(data['time'])
+        interp_clon,interp_clat = self.storm.recon.get_track(data['time'])
 
         #Get x,y distance of each ob from coinciding interped center position
         data['xdist'] = [great_circle( (interp_clat[i],interp_clon[i]), \
@@ -474,7 +469,7 @@ class hdobs:
         imin = np.nonzero(data['distance'].values == minimum_filter(data['distance'].values,40))[0]
         data['iscenter'] = np.array([1 if i in imin and data['distance'].values[i]<10 else 0 for i in range(len(data))])        
 
-        print('Completed hdob center-relative coordinates')
+        #print('Completed hdob center-relative coordinates')
         self.data = data
     
     def sel(self,mission=None,time=None,domain=None,plane_p=None,plane_z=None,p_sfc=None,\
@@ -1227,7 +1222,7 @@ class dropsondes:
             end_time = max(self.storm.dict['date'])+timedelta(days=1)
 
             timeboundstrs = [f'{t:%Y%m%d%H%M}' for t in (start_time,end_time)]
-
+            
             #Retrieve list of files in URL and filter by storm dates
             page = requests.get(self.archiveURL).text
             content = page.split("\n")
@@ -1257,7 +1252,8 @@ class dropsondes:
                         pass
             print(f'--> Completed reading in recon dropsonde files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files')
-
+        self._recenter()
+        
         self.keys = sorted(list(set([k for d in self.data for k in d.keys()])))
 
     def update(self):
@@ -1469,13 +1465,13 @@ class dropsondes:
             
         return missionname,data
 
-    def _recenter(self,get_track):
-        data = self.data
+    def _recenter(self):
+        data = copy.copy(self.data)
         
         #Get x,y distance of each ob from coinciding interped center position
         for stage in ('TOP','BOTTOM'):
             #Interpolate center position to time of each ob
-            interp_clon,interp_clat = get_track([d[f'{stage}time'] for d in data])
+            interp_clon,interp_clat = self.storm.recon.get_track([d[f'{stage}time'] for d in data])
 
             #Get x,y distance of each ob from coinciding interped center position
             for i,d in enumerate(data):
@@ -1487,7 +1483,7 @@ class dropsondes:
                     [1,-1][int(d[f'{stage}lat'] < interp_clat[i])]})
                 d.update({f'{stage}distance':(d[f'{stage}xdist']**2+d[f'{stage}ydist']**2)**.5})
 
-        print('Completed dropsonde center-relative coordinates')
+        #print('Completed dropsonde center-relative coordinates')
         self.data = data
     
     def isel(self,i):

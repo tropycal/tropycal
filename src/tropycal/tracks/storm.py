@@ -155,10 +155,10 @@ class Storm:
         
         #Add additional information
         summary.append("\nMore Information:")
-        add_space = np.max([len(key) for key in self.coords.keys()])+3
-        for key in self.coords.keys():
+        add_space = np.max([len(key) for key in self.attrs.keys()])+3
+        for key in self.attrs.keys():
             key_name = key+":"
-            val = '%0.1f'%(self.coords[key]) if key == 'ace' else self.coords[key]
+            val = '%0.1f'%(self.attrs[key]) if key == 'ace' else self.attrs[key]
             summary.append(f'{" "*4}{key_name:<{add_space}}{val}')
 
         return "\n".join(summary)

@@ -163,6 +163,23 @@ class Realtime():
             if hours_diff <= -48.0:
                 del self.data[key]
         
+        #Remove invests that have been classified as TCs
+        all_keys = [k for k in self.data.keys()]
+        for key in all_keys:
+            
+            #Only keep invests
+            if self.data[key]['invest'] == False: continue
+            
+            #Iterate through all storms
+            match = False
+            for key_storm in all_keys:
+                if self.data[key_storm]['invest'] == True: continue
+                
+                #Check for overlap in lons
+                if self.data[key_storm]['lon'][0] == self.data[key]['lon'][0] and self.data[key_storm]['date'][0] == self.data[key]['date'][0]: match = True
+            
+            if match == True: del self.data[key]
+        
         #For each storm remaining, create a Storm object
         if len(self.data) > 0:
             self.__read_nhc_shapefile()

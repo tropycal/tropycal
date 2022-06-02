@@ -1205,9 +1205,16 @@ class dropsondes:
             end_time = max(self.storm.dict['date'])+timedelta(days=1)
 
             timeboundstrs = [f'{t:%Y%m%d%H%M}' for t in (start_time,end_time)]
-            archive = pd.read_html(self.archiveURL)[0]
-            linktimes = sorted([l.split('.') for l in archive['Name'] if isinstance(l,str) and 'txt' in l],key=lambda x: x[1])
-            linksub = [self.archiveURL+'.'.join(l) for l in linktimes if l[1]>=min(timeboundstrs) and l[1]<=max(timeboundstrs)]
+
+            #Retrieve list of files in URL and filter by storm dates
+            page = requests.get(self.archiveURL).text
+            content = page.split("\n")
+            files = []
+            for line in content:
+                if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
+            del content
+            linksub = [self.archiveURL+'.'.join(l) for l in files if l[1]>=min(timeboundstrs) and l[1]<=max(timeboundstrs)]
+            
             timer_start = dt.now()
             print(f'Searching through recon dropsonde files between {timeboundstrs[0]} and {timeboundstrs[-1]} ...')
             for link in linksub:

@@ -970,7 +970,7 @@ class hdobs:
         #Pop kwargs
         prop = kwargs.pop('prop',{})
         map_prop = kwargs.pop('map_prop',{})
-        track_dict = kwargs.pop('track_dict',{})
+        track_dict = kwargs.pop('track_dict',None)
         
         #Get plot data
         ONE_MAP = False
@@ -992,7 +992,7 @@ class hdobs:
             #Error check for time dimension name
             if 'time' not in track_dict.keys():
                 track_dict['time'] = track_dict['date']
-                
+         
         if ONE_MAP:
             f = interp1d(mdates.date2num(track_dict['time']),track_dict['lon'], fill_value='extrapolate')
             clon = f(mdates.date2num(time))
@@ -1136,7 +1136,6 @@ class hdobs:
         #Pop kwargs
         prop = kwargs.pop('prop',{})
         map_prop = kwargs.pop('map_prop',{})
-        track_dict = kwargs.pop('track_dict',None)
         track_dict = kwargs.pop('track_dict',None)
         
         #Get plot data

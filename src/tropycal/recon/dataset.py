@@ -376,9 +376,6 @@ class hdobs:
         orig_lon = np.copy(data['lon'])
         for key in data.keys():
             data[key] = [data[key][i] for i in range(len(orig_lat)) if orig_lat[i] != 0 and orig_lon[i] != 0]
-            
-        data['lat'] = [np.nan if i == 0 else i for i in data['lat']]
-        data['lon'] = [np.nan if i == 0 else i for i in data['lon']]
         
         data['flag']=[]
         for i in items[3:]:

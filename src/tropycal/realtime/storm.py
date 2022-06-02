@@ -15,6 +15,7 @@ from ..tracks import *
 from ..tracks.tools import *
 from ..utils import *
 from .. import constants
+from ..recon import ReconDataset
 
 try:
     import zipfile
@@ -186,14 +187,14 @@ class RealtimeStorm(Storm):
             self.tornado_dist_thresh = stormTors['dist_thresh']
             self.attrs['Tornado Count'] = len(stormTors['data'])
         
-		#Get Archer track data for this storm, if it exists
-		try:
-			self.get_archer()
-		except:
-			pass
-			
-		#Initialize recon dataset instance
-		self.recon = ReconDataset(storm=self)
+        #Get Archer track data for this storm, if it exists
+        try:
+            self.get_archer()
+        except:
+            pass
+    
+        #Initialize recon dataset instance
+        self.recon = ReconDataset(storm=self)
 
         #Determine if storm object was retrieved via realtime object
         if 'realtime' in keys and self.dict['realtime']:

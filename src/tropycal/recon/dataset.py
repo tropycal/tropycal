@@ -606,12 +606,8 @@ class hdobs:
         
         Parameters
         ----------
-        recon_select : Requested recon data
-            pandas.DataFrame or dict,
-            or string referencing the mission name (e.g. '12_NOAA'), 
-            or datetime or list of start/end datetimes.
         varname : str
-            Variable to plot. Can be one of the following keys in recon_select dataframe:
+            Variable to plot. Can be one of the following:
             
             * **"sfmr"** = SFMR surface wind
             * **"wspd"** = 30-second flight level wind (default)
@@ -681,7 +677,7 @@ class hdobs:
             if key not in prop.keys():
                 prop[key]=default_prop[key]
             
-        #Get recon data based on recon_select
+        #Get internal HDOB data
         dfRecon = self.data
 
         #Retrieve track dictionary if none is specified

@@ -13,6 +13,7 @@ from ftplib import FTP
 
 from ..tracks import *
 from ..tracks.tools import *
+from ..tracks.plot import TrackPlot
 from ..utils import *
 from .. import constants
 from ..recon import ReconDataset

@@ -58,29 +58,29 @@ class Season:
         dict_new = new.dict.copy()
         
         #Retrieve copy of coordinates
-        new_coords = self.coords.copy()
+        new_attrs = self.attrs.copy()
         
         #Add year to list of years
-        if isinstance(self.coords['year'],int):
-            new_coords['year'] = [self.year,new.year]
+        if isinstance(self.attrs['year'],int):
+            new_attrs['year'] = [self.year,new.year]
         else:
-            new_coords['year'].append(new.year)
+            new_attrs['year'].append(new.year)
         
         #Sort list of years
-        new_coords['year'] = (np.sort(new_coords['year'])).tolist()
+        new_attrs['year'] = (np.sort(new_attrs['year'])).tolist()
         
         #Update dict
         dict_original.update(dict_new)
         
         #Iterate over every year to create a new dict
         new_dict = {}
-        for year in new_coords['year']:
+        for year in new_attrs['year']:
             for key in dict_original.keys():
                 if int(key[-4:]) == year:
                     new_dict[key] = dict_original[key]
         
         #Return new Season object
-        return Season(new_dict,new_coords)
+        return Season(new_dict,new_attrs)
     
     def __repr__(self):
          
@@ -106,12 +106,12 @@ class Season:
         
         #Add additional information
         summary.append("\nMore Information:")
-        add_space = np.max([len(key) for key in self.coords.keys()])+3
-        for key in self.coords.keys():
+        add_space = np.max([len(key) for key in self.attrs.keys()])+3
+        for key in self.attrs.keys():
             key_name = key+":"
             #val = '%0.1f'%(self.coords[key]) if key == 'ace' else self.coords[key]
             #summary.append(f'{" "*4}{key_name:<{add_space}}{val}')
-            summary.append(f'{" "*4}{key_name:<{add_space}}{self.coords[key]}')
+            summary.append(f'{" "*4}{key_name:<{add_space}}{self.attrs[key]}')
 
         return "\n".join(summary)
     
@@ -122,14 +122,14 @@ class Season:
         
         #Add other attributes about the storm
         keys = info.keys()
-        self.coords = {}
+        self.attrs = {}
         for key in keys:
             if isinstance(info[key], list) == False and isinstance(info[key], dict) == False:
                 self[key] = info[key]
-                self.coords[key] = info[key]
+                self.attrs[key] = info[key]
             if isinstance(info[key], list) == True and key == 'year':
                 self[key] = info[key]
-                self.coords[key] = info[key]
+                self.attrs[key] = info[key]
     
     def to_dataframe(self):
         

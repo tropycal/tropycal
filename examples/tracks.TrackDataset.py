@@ -2,7 +2,7 @@
 ===================
 TC Dataset Analysis
 ===================
-This sample script illustrates how to create climatological analyses using HURDAT2 and IBTrACS.
+This sample script illustrates how to read in, visualize and analyze HURDAT2 and IBTrACS tropical cyclone databases.
 """
 
 import tropycal.tracks as tracks
@@ -17,61 +17,94 @@ import datetime as dt
 # 
 # Let's create an instance of a TrackDataset object, which will store the North Atlantic HURDAT2 dataset in memory. Once we have this we can use its methods for various types of analyses.
 
-hurdat_atl = tracks.TrackDataset(basin='north_atlantic',source='hurdat',include_btk=False)
+basin = tracks.TrackDataset(basin='north_atlantic',source='hurdat',include_btk=False)
+
+###########################################
+# We can quickly check to see what the dataset contains by printing the object:
+
+print(basin)
+
+###########################################
+# Alternatively, converting the basin to a Pandas DataFrame provides more information about each season contained in this basin.
+
+basin.to_dataframe()
 
 ###########################################
 # Retrieving storms and seasons
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# A TrackDataset object can be used to retrieve individual storms and seasons, using the following functionality:
+# A TrackDataset object can be used to retrieve individual storms and seasons. To retrieve a Storm object, provide either a tuple of the storm name and year (e.g., ``('michael',2018)``), or a string containing the ID of the storm (e.g., ``'AL012020'``):
 
 #Retrieve Hurricane Michael from 2018
-storm = hurdat_atl.get_storm(('michael',2018))
-    
-#Retrieve the 2017 Atlantic hurricane season
-season = hurdat_atl.get_season(2017)
+storm = basin.get_storm(('michael',2018))
 
 #Printing the Storm object lists relevant data:
 print(storm)
-    
+
+###########################################
+# To retrieve a season, simply provide the year of the season:
+
+#Retrieve the 2017 Atlantic hurricane season
+season = basin.get_season(2017)
+
+#Printing the Season object lists relevant data:
+print(season)
+
 ###########################################
 # If you remember the name of a storm but not the year, there is functionality to search for a list of years containing a storm of the requested name:
 
-print(hurdat_atl.search_name('Michael'))
+print(basin.search_name('Michael'))
 
 ###########################################
 # The previous example for a Storm object illustrated how to retrieve a single storm and make a plot of its observed track. This can also be done from a TrackDataset object, using the ``plot_storm()`` method.
 # 
-# Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The only cartopy projection currently offered is PlateCarree. Read through the documentation for more customization options.
+# Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. Read through the documentation for more customization options.
 
-hurdat_atl.plot_storm(('michael',2018))
+basin.plot_storm(('michael',2018))
+
+###########################################
+# A new function added with Tropyal v0.4 is the ability to plot a summary of all ongoing tropical cyclone and NHC Tropical Weather Outlook (TWO) activity across the North Atlantic and East Pacific basins.
+#
+# Simply plug in a valid date and domain to plot over, and this plot will display all activity at the valid time. There are many customization options for this function detailed more thoroughly in the documentation.
+
+basin.plot_summary(dt.datetime(2020,9,17,0),domain='north_atlantic')
 
 ###########################################
 # Climatological analyses
 # ~~~~~~~~~~~~~~~~~~~~~~~
 # 
-# A TrackDataset object can also be used to perform various climatological analyses. We'll start off with doing simple Accumulated Cyclone Energy (ACE) analyses.
-# 
-# Let's look at the cumulative year-to-date accumulated cyclone energy, with 2018 highlighted and compared against 2017:
+# A TrackDataset object can also be used to perform various climatological analyses. We'll start off with basic data analysis, then shift gears to plotting functionality.
+#
+# First, let's take a look at the climatology for the basin. The default period is 1991-2020, but this can be customized to any range.
 
-hurdat_atl.ace_climo(plot_year=2018,compare_years=2017)
+basin.climatology(year_range=(1991,2020))
+
+###########################################
+# Another useful functionality for research or seasonal forecast purposes is to quickly composite multiple hurricane seasons. Simply plug in a list of years, and a year range for the climatology:
+
+basin.season_composite([2004,2005,2008,2010,2017,2020])
+
+###########################################
+# Next we'll take a look at plotting functionality, starting off with doing simple Accumulated Cyclone Energy (ACE) analyses. Let's look at the cumulative year-to-date accumulated cyclone energy, with 2018 highlighted and compared against 2017:
+
+basin.ace_climo(plot_year=2018,compare_years=2017)
 
 ###########################################
 # We can use the same function to perform a rolling sum, rather than a year-to-date sum. This highlights particularly active periods of tropical cyclone activity. We'll use the same function as before, but with a ``rolling_sum=30`` argument provided:
 
-hurdat_atl.ace_climo(rolling_sum=30,plot_year=2018,compare_years=2017)
+basin.ace_climo(rolling_sum=30,plot_year=2018,compare_years=2017)
 
 ###########################################
 # Plot cumulative hurricane days for all categories, with 2018 highlighted:
 
-hurdat_atl.hurricane_days_climo(plot_year=2018)
+basin.hurricane_days_climo(plot_year=2018)
 
 ###########################################
 # Another climatological analysis available is a climatological correlation between maximum sustained wind and minimum mean sea level pressure (MSLP). While both variables are generally well correlated, factors such as background MSLP and MSLP gradient can affect this relationship.
 # 
 # This function plots the climatological correlation and distribution of wind-MSLP relationship, and can also plot individual storms for comparison against the climatology. We'll look at Hurricane Sandy (2012), which started out with a fairly typical wind-MSLP relationship, but towards the end of its life cycle ended up with an anomalously low MSLP given its sustained wind speed as it substantially grew in size.
 
-hurdat_atl.wind_pres_relationship(storm=('sandy',2012))
+basin.wind_pres_relationship(storm=('sandy',2012))
 
 ###########################################
 # Gridded Analyses
@@ -81,11 +114,11 @@ hurdat_atl.wind_pres_relationship(storm=('sandy',2012))
 # 
 # Let's construct a 1 degree grid and plot the maximum sustained wind recorded at each gridpoint:
 
-hurdat_atl.gridded_stats(request="maximum wind")
+basin.gridded_stats(request="maximum wind")
 
 # Let's look at the average change in sustained wind speed over a 24-hour period. By default, the value plotted is for the midpoint of the 24-hour period (so 12 hours preceding and following). We'll use the "prop" keyword argument to set the colormap to "bwr" and set the contour level range:
 
-hurdat_atl.gridded_stats(request="average wind change in 24 hours",prop={'cmap':'bwr','clevs':[-80,80]})
+basin.gridded_stats(request="average wind change in 24 hours",prop={'cmap':'bwr','clevs':[-80,80]})
 
 ###########################################
 # IBTrACS Dataset

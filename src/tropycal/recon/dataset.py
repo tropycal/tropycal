@@ -655,8 +655,13 @@ class hdobs:
         
         Parameters
         ----------
-        varname : Variable to average and plot (e.g. 'wspd').
-            String
+        varname : str
+            Variable to average and plot. Available variable names are:
+            
+            * **"sfmr"** = SFMR surface wind
+            * **"wspd"** = 30-second flight level wind (default)
+            * **"pkwnd"** = 10-second flight level wind
+            * **"p_sfc"** = extrapolated surface pressure
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
@@ -914,8 +919,7 @@ class hdobs:
             #Return axis
             return plot_info
 
-    def plot_swath(self,varname='wspd',swathfunc=None,track_dict=None,radlim=None,\
-                   domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
+    def plot_swath(self,varname='wspd',domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a map plot of a swath of interpolated recon data.
@@ -929,9 +933,7 @@ class hdobs:
             * **"wspd"** = 30-second flight level wind (default)
             * **"pkwnd"** = 10-second flight level wind
             * **"p_sfc"** = extrapolated surface pressure
-        swathfunc : function
-            Function to operate on interpolated recon data.
-            e.g., np.max, np.min, or percentile function
+        
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
@@ -945,11 +947,17 @@ class hdobs:
             Customization properties of recon plot. Please refer to :ref:`options-prop-recon-swath` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        track_dict : dict, optional
+            Storm track dictionary. If None (default), internal storm center track is used.
+        swathfunc : function
+            Function to operate on interpolated recon data (e.g., np.max, np.min, or percentile function). Default is np.min for pressure, otherwise np.max.
         """
         
         #Pop kwargs
         prop = kwargs.pop('prop',{})
         map_prop = kwargs.pop('map_prop',{})
+        track_dict = kwargs.pop('track_dict',None)
+        track_dict = kwargs.pop('track_dict',None)
         
         #Get plot data
         dfRecon = self.data
@@ -975,7 +983,7 @@ class hdobs:
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        plot_info = self.plot_obj.plot_swath(self.storm,Maps,varname,swathfunc,track_dict,radlim,\
+        plot_info = self.plot_obj.plot_swath(self.storm,Maps,varname,swathfunc,track_dict,\
                                              domain,ax,prop=prop,map_prop=map_prop)
         
         #Return axis
@@ -1111,17 +1119,14 @@ class hdobs:
         #---------------------------------------------------------------------------------------------------
 
         #Create instance of plot object
-        try:
-            self.plot_obj
-        except:
-            self.plot_obj = TrackPlot()
+        plot_obj = TrackPlot()
         
         #Create cartopy projection using basin
         if cartopy_proj is None:
             if max(points['lon']) > 150 or min(points['lon']) < -150:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+                plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
             else:
-                self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+                plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
 
         prop['title_L'],prop['title_R'] = self.storm.name,'things'
         
@@ -1129,7 +1134,7 @@ class hdobs:
             domain = {'W':min(self.data['lon']),'E':max(self.data['lon']),'S':min(self.data['lat']),'N':max(self.data['lat'])}
         
         #Plot gridded field
-        plot_ax = self.plot_obj.plot_gridded(grid_x,grid_y,grid_z,varname,domain=domain,ax=ax,prop=prop,map_prop=map_prop)
+        plot_ax = plot_obj.plot_gridded(grid_x,grid_y,grid_z,varname,domain=domain,ax=ax,prop=prop,map_prop=map_prop)
         
         #Format grid into xarray if specified
         if return_array:

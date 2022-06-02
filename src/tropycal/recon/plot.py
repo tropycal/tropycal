@@ -259,7 +259,7 @@ class ReconPlot(Plot):
             return self.ax
 
     
-    def plot_swath(self,storm,Maps,varname,swathfunc,track_dict,radlim=200,\
+    def plot_swath(self,storm,Maps,varname,swathfunc,track_dict,\
                    domain="dynamic",ax=None,prop={},map_prop={}):
 
         #Set default properties

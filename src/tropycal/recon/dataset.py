@@ -47,6 +47,8 @@ class ReconDataset:
     
     Notes
     -----
+    As of Tropycal v0.4, Recon data can only be retrieved for tropical cyclones, not for invests.
+    
     ReconDataset will contain nothing the first time it's initialized, but contains methods to retrieve the three sub-classes of recon:
     
     .. list-table:: 
@@ -109,15 +111,106 @@ class ReconDataset:
         self.storm = storm
 
     def get_hdobs(self,data=None):
+        
+        r"""
+        Retrieve High Density Observations (HDOBs) for this storm.
+        
+        Parameters
+        ----------
+        data : str, optional
+            String representing the path of a pickle file containing HDOBs data, saved via ``hdobs.get_pickle()``. If none, data is read from NHC.
+        
+        Notes
+        -----
+        This function has no return value, but stores the resulting HDOBs object within this ReconDataset instance. All of its methods can then be accessed as follows, for the following example storm:
+        
+        .. code-block:: python
+    
+            from tropycal import tracks
+            
+            #Read basin dataset
+            basin = tracks.TrackDataset()
+            
+            #Read storm object
+            storm = basin.get_storm(('michael',2018))
+            
+            #Read hdobs data
+            storm.recon.get_hdobs()
+            
+            #Plot all HDOB points
+            storm.recon.hdobs.plot_points()
+        """
+        
         self.hdobs = hdobs(self.storm,data)
     
     def get_dropsondes(self,data=None):
+        
+        r"""
+        Retrieve dropsondes for this storm.
+        
+        Parameters
+        ----------
+        data : str, optional
+            String representing the path of a pickle file containing dropsonde data, saved via ``dropsondes.get_pickle()``. If none, data is read from NHC.
+        
+        Notes
+        -----
+        This function has no return value, but stores the resulting dropsondes object within this ReconDataset instance. All of its methods can then be accessed as follows, for the following example storm:
+        
+        .. code-block:: python
+    
+            from tropycal import tracks
+            
+            #Read basin dataset
+            basin = tracks.TrackDataset()
+            
+            #Read storm object
+            storm = basin.get_storm(('michael',2018))
+            
+            #Read dropsondes data
+            storm.recon.get_dropsondes()
+            
+            #Plot all dropsonde points
+            storm.recon.dropsondes.plot_points()
+        """
+        
         self.dropsondes = dropsondes(self.storm,data)
         
     def get_vdms(self,data=None):
+        
+        r"""
+        Retrieve Vortex Data Messages (VDMs) for this storm.
+        
+        Parameters
+        ----------
+        data : str, optional
+            String representing the path of a pickle file containing VDM data, saved via ``vdms.get_pickle()``. If none, data is read from NHC.
+        
+        Notes
+        -----
+        This function has no return value, but stores the resulting VDMs object within this ReconDataset instance. All of its methods can then be accessed as follows, for the following example storm:
+        
+        .. code-block:: python
+    
+            from tropycal import tracks
+            
+            #Read basin dataset
+            basin = tracks.TrackDataset()
+            
+            #Read storm object
+            storm = basin.get_storm(('michael',2018))
+            
+            #Read VDM data
+            storm.recon.get_vdms()
+            
+            #Plot all VDM points
+            storm.recon.vdms.plot_points()
+        """
+        
         self.vdms = vdms(self.storm,data)
         
     def update(self):
+        
         r"""
         Update with the latest data for an ongoing storm.
         
@@ -181,8 +274,13 @@ class ReconDataset:
             f2 = interp1d(datenum,track['lat'],fill_value='extrapolate',kind='quadratic')
             self.trackfunc = (f1,f2)
 
-        if time is not None:  
-            datenum = [mdates.date2num(t) for t in time]
+        if time is not None:
+            datenum = []
+            for t in time:
+                try:
+                    datenum.append(mdates.date2num(t))
+                except:
+                    datenum.append(np.nan)
             track = tuple([f(datenum) for f in self.trackfunc])
             return track
                 

@@ -297,9 +297,17 @@ class hdobs:
             timestr = [f'{start_time:%Y%m%d}']+\
                         [f'{t:%Y%m%d}' for t in self.storm.dict['date'] if t>start_time]+\
                         [f'{end_time:%Y%m%d}']
-            archive = pd.read_html(self.archiveURL)[0]
-            linktimes = sorted([l.split('.') for l in archive['Name'] if isinstance(l,str) and 'txt' in l],key=lambda x: x[1])
-            linksub = [self.archiveURL+'.'.join(l) for l in linktimes if l[1][:8] in timestr]
+
+            #Retrieve list of files in URL and filter by storm dates
+            page = requests.get(self.archiveURL).text
+            content = page.split("\n")
+            files = []
+            for line in content:
+                if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
+            del content
+            files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
+            linksub = [self.archiveURL+'.'.join(l) for l in files]
+            
             timer_start = dt.now()
             print(f'Searching through recon HDOB files between {timestr[0]} and {timestr[-1]} ...')
             filecount,unreadable = 0,0
@@ -1213,7 +1221,8 @@ class dropsondes:
             for line in content:
                 if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
             del content
-            linksub = [self.archiveURL+'.'.join(l) for l in files if l[1]>=min(timeboundstrs) and l[1]<=max(timeboundstrs)]
+            files = sorted([i for i in files if i[1]>=min(timeboundstrs) and i[1]<=max(timeboundstrs)],key=lambda x: x[1])
+            linksub = [self.archiveURL+'.'.join(l) for l in files]
             
             timer_start = dt.now()
             print(f'Searching through recon dropsonde files between {timeboundstrs[0]} and {timeboundstrs[-1]} ...')
@@ -1887,9 +1896,17 @@ class vdms:
         self.storm = storm
         archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT2/'
         timestr = [f'{t:%Y%m%d}' for t in self.storm.dict['date']]
-        archive = pd.read_html(archiveURL)[0]
-        linktimes = sorted([l.split('.') for l in archive['Name'] if isinstance(l,str) and 'txt' in l],key=lambda x: x[1])
-        linksub = [archiveURL+'.'.join(l) for l in linktimes if l[1][:8] in timestr]
+
+        #Retrieve list of files in URL and filter by storm dates
+        page = requests.get(archiveURL).text
+        content = page.split("\n")
+        files = []
+        for line in content:
+            if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
+        del content
+        files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
+        linksub = [archiveURL+'.'.join(l) for l in files]
+        
         self.data = []
 
         if data is None:

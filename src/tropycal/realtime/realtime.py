@@ -168,11 +168,14 @@ class Realtime():
         for key in all_keys:
             
             #Only keep invests
-            if self.data[key]['invest'] == False: continue
+            try:
+                if self.data[key]['invest'] == False: continue
+            except:
+                continue
             
             #Iterate through all storms
             match = False
-            for key_storm in all_keys:
+            for key_storm in self.data.keys():
                 if self.data[key_storm]['invest'] == True: continue
                 
                 #Check for overlap in lons

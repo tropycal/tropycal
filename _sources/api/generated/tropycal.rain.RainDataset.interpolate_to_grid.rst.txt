@@ -5,7 +5,7 @@ RainDataset.interpolate_to_grid
 
 .. automethod:: RainDataset.interpolate_to_grid
 
-.. include:: tropycal.rain.RainDataset.interpolate_to_grid.examples
+.. include:: tropycal.rain.RainDataset.interpolate_to_grid
 
 .. raw:: html
 

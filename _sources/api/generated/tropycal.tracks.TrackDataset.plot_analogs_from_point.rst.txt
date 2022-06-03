@@ -1,0 +1,12 @@
+TrackDataset.plot_analogs_from_point
+====================================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.plot_analogs_from_point
+
+.. include:: tropycal.tracks.TrackDataset.plot_analogs_from_point
+
+.. raw:: html
+
+      <div style='clear:both'></div>

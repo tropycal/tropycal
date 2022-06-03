@@ -5,7 +5,7 @@ TrackDataset.plot_TCtors_rotated
 
 .. automethod:: TrackDataset.plot_TCtors_rotated
 
-.. include:: tropycal.tracks.TrackDataset.plot_TCtors_rotated.examples
+.. include:: tropycal.tracks.TrackDataset.plot_TCtors_rotated
 
 .. raw:: html
 

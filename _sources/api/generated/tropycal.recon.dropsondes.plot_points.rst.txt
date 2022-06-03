@@ -1,0 +1,12 @@
+dropsondes.plot_points
+=====================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: dropsondes.plot_points
+
+.. include:: tropycal.recon.dropsondes.plot_points
+
+.. raw:: html
+
+      <div style='clear:both'></div>

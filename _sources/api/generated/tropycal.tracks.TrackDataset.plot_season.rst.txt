@@ -5,7 +5,7 @@ TrackDataset.plot_season
 
 .. automethod:: TrackDataset.plot_season
 
-.. include:: tropycal.tracks.TrackDataset.plot_season.examples
+.. include:: tropycal.tracks.TrackDataset.plot_season
 
 .. raw:: html
 

@@ -1,0 +1,12 @@
+hdobs.plot_swath
+===============================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: hdobs.plot_swath
+
+.. include:: tropycal.recon.hdobs.plot_swath
+
+.. raw:: html
+
+      <div style='clear:both'></div>

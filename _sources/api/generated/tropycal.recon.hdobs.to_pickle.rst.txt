@@ -1,0 +1,12 @@
+hdobs.to_pickle
+==============================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: hdobs.to_pickle
+
+.. include:: tropycal.recon.hdobs.to_pickle
+
+.. raw:: html
+
+      <div style='clear:both'></div>

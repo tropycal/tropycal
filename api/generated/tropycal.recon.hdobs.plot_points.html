@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hdobs.plot_points &mdash; tropycal </title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="hdobs.plot_swath" href="tropycal.recon.hdobs.plot_swath.html" />
+    <link rel="prev" title="hdobs.plot_maps" href="tropycal.recon.hdobs.plot_maps.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> tropycal
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">Tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">Recon</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.ReconDataset.html">tropycal.recon.ReconDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.dropsondes.html">tropycal.recon.dropsondes</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="tropycal.recon.hdobs.html">tropycal.recon.hdobs</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.gridded_stats.html">hdobs.gridded_stats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.plot_hovmoller.html">hdobs.plot_hovmoller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.plot_maps.html">hdobs.plot_maps</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">hdobs.plot_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.plot_swath.html">hdobs.plot_swath</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.sel.html">hdobs.sel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.to_pickle.html">hdobs.to_pickle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.update.html">hdobs.update</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.vdms.html">tropycal.recon.vdms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tropycal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+          <li><a href="tropycal.recon.html">Recon</a> &raquo;</li>
+          <li><a href="tropycal.recon.hdobs.html">tropycal.recon.hdobs</a> &raquo;</li>
+      <li>hdobs.plot_points</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/generated/tropycal.recon.hdobs.plot_points.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="hdobs-plot-points">
+<h1>hdobs.plot_points<a class="headerlink" href="#hdobs-plot-points" title="Permalink to this headline">¶</a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="tropycal.recon.hdobs.plot_points">
+<span class="sig-prename descclassname"><span class="pre">hdobs.</span></span><span class="sig-name descname"><span class="pre">plot_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">varname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'wspd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dynamic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cartopy_proj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#hdobs.plot_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.recon.hdobs.plot_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of recon data points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>varname</strong> (<em>str</em>) – <p>Variable to plot. Can be one of the following keys in dataframe:</p>
+<ul>
+<li><p><strong>”sfmr”</strong> = SFMR surface wind</p></li>
+<li><p><strong>”wspd”</strong> = 30-second flight level wind (default)</p></li>
+<li><p><strong>”pkwnd”</strong> = 10-second flight level wind</p></li>
+<li><p><strong>”p_sfc”</strong> = extrapolated surface pressure</p></li>
+</ul>
+</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-plot"><span class="std std-ref">Recon Properties</span></a> for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div style='clear:both'></div></div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tropycal.recon.hdobs.plot_maps.html" class="btn btn-neutral float-left" title="hdobs.plot_maps" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.recon.hdobs.plot_swath.html" class="btn btn-neutral float-right" title="hdobs.plot_swath" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

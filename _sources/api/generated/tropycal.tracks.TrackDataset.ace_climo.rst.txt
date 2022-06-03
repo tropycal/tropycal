@@ -5,7 +5,7 @@ TrackDataset.ace_climo
 
 .. automethod:: TrackDataset.ace_climo
 
-.. include:: tropycal.tracks.TrackDataset.ace_climo.examples
+.. include:: tropycal.tracks.TrackDataset.ace_climo
 
 .. raw:: html
 

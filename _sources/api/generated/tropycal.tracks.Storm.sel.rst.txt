@@ -5,7 +5,7 @@ Storm.sel
 
 .. automethod:: Storm.sel
 
-.. include:: tropycal.tracks.Storm.sel.examples
+.. include:: tropycal.tracks.Storm.sel
 
 .. raw:: html
 

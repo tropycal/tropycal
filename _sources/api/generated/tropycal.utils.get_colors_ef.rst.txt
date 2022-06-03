@@ -5,7 +5,7 @@ get_colors_ef
 
 .. autofunction:: get_colors_ef
 
-.. include:: tropycal.utils.get_colors_ef.examples
+.. include:: tropycal.utils.get_colors_ef
 
 .. raw:: html
 

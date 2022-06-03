@@ -5,7 +5,7 @@ Storm.get_operational_forecasts
 
 .. automethod:: Storm.get_operational_forecasts
 
-.. include:: tropycal.tracks.Storm.get_operational_forecasts.examples
+.. include:: tropycal.tracks.Storm.get_operational_forecasts
 
 .. raw:: html
 

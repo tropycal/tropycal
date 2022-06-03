@@ -5,7 +5,7 @@ classify_subtropical
 
 .. autofunction:: classify_subtropical
 
-.. include:: tropycal.utils.classify_subtropical.examples
+.. include:: tropycal.utils.classify_subtropical
 
 .. raw:: html
 

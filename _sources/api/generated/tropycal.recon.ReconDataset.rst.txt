@@ -16,14 +16,12 @@ tropycal.recon.ReconDataset
       .. autosummary::
          :toctree:
       
-         ReconDataset.allMissions
-         ReconDataset.findMission
-         ReconDataset.find_centers
-         ReconDataset.getMission
-         ReconDataset.plot_hovmoller
-         ReconDataset.plot_maps
-         ReconDataset.plot_points
-         ReconDataset.plot_swath
-         ReconDataset.recenter
+         ReconDataset.find_mission
+         ReconDataset.get_dropsondes
+         ReconDataset.get_hdobs
+         ReconDataset.get_track
+         ReconDataset.get_vdms
+         ReconDataset.plot_summary
+         ReconDataset.update
    
    

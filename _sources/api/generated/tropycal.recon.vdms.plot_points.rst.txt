@@ -1,0 +1,12 @@
+vdms.plot_points
+===============================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: vdms.plot_points
+
+.. include:: tropycal.recon.vdms.plot_points
+
+.. raw:: html
+
+      <div style='clear:both'></div>

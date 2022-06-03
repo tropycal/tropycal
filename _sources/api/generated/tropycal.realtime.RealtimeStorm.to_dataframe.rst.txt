@@ -5,7 +5,7 @@ RealtimeStorm.to_dataframe
 
 .. automethod:: RealtimeStorm.to_dataframe
 
-.. include:: tropycal.realtime.RealtimeStorm.to_dataframe.examples
+.. include:: tropycal.realtime.RealtimeStorm.to_dataframe
 
 .. raw:: html
 

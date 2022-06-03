@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tropical Cyclone Rainfall &mdash; tropycal </title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Historical TC Track Analogs" href="analogs.html" />
+    <link rel="prev" title="Individual Storm Analysis" href="tracks.storm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> tropycal
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Example Scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">Realtime Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.season.html">Individual Season Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.tornado.html">Tornado Analyses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.storm.html">Individual Storm Analysis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tropical Cyclone Rainfall</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reading-in-hurtdat2-dataset">Reading In HURTDAT2 Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wpc-rainfall-dataset">WPC Rainfall Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-tc-rainfall">Plotting TC Rainfall</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="analogs.html">Historical TC Track Analogs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customize_storm.html">Customizing Storm Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.TrackDataset.html">TC Dataset Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recon.html">Aircraft Recon Data Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data.html">Data Sources</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">tropycal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Examples</a> &raquo;</li>
+      <li>Tropical Cyclone Rainfall</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/tc_rainfall.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-tc-rainfall-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="tropical-cyclone-rainfall">
+<span id="sphx-glr-examples-tc-rainfall-py"></span><h1>Tropical Cyclone Rainfall<a class="headerlink" href="#tropical-cyclone-rainfall" title="Permalink to this headline">¶</a></h1>
+<p>This sample script shows how to use Tropycal to retrieve and plot rainfall associated with U.S. tropical cyclones, from the Weather Prediction Center (WPC)’s database.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">tracks</span><span class="p">,</span> <span class="n">rain</span>
+</pre></div>
+</div>
+<div class="section" id="reading-in-hurtdat2-dataset">
+<h2>Reading In HURTDAT2 Dataset<a class="headerlink" href="#reading-in-hurtdat2-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Let’s start with the HURDAT2 dataset by loading it into memory. By default, this reads in the HURDAT dataset from the National Hurricane Center (NHC) website, unless you specify a local file path using either <code class="docutils literal notranslate"><span class="pre">atlantic_url</span></code> for the North Atlantic basin on <code class="docutils literal notranslate"><span class="pre">pacific_url</span></code> for the East &amp; Central Pacific basin.</p>
+<p>HURDAT data is not available for the current year. To include the latest data up through today, the “include_btk” flag needs to be set to True, which reads in preliminary best track data from the NHC website. For this example, we’ll set this to False.</p>
+<p>Let’s create an instance of a TrackDataset object, which will store the North Atlantic HURDAT2 dataset in memory. Once we have this we can use its methods for various types of analyses.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
+--&gt; Completed reading in HURDAT2 data (4.72 seconds)
+</pre></div>
+</div>
+</div>
+<div class="section" id="wpc-rainfall-dataset">
+<h2>WPC Rainfall Dataset<a class="headerlink" href="#wpc-rainfall-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Next, we’ll read in rainfall associated with tropical cyclones. Tropical cyclones are known to produce heavy rainfall, with at times catastrophic flooding. The Weather Prediction Center (WPC) routinely issues advisories on tropical cyclones or their remnants inland, and maintains a database of rainfall associated with tropical cyclones in the US.</p>
+<p>This dataset is now available in CSV format, and can be easily read into Tropycal using the new Rain module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.rain.RainDataset.html#tropycal.rain.RainDataset" title="tropycal.rain.RainDataset" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rain_obj</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.rain.RainDataset.html#tropycal.rain.RainDataset" title="tropycal.rain.RainDataset" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-class"><span class="n">rain</span><span class="o">.</span><span class="n">RainDataset</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in rainfall data
+--&gt; Completed reading in rainfall data (3.96 seconds)
+</pre></div>
+</div>
+<p>Hurricane Harvey (2017) produced catastrophic flooding over Texas. Let’s pull its rain observations to take a deeper look.</p>
+<p>To do so, we’ll first need to retrieve a Storm object for Harvey, then provide it as an input argument to <code class="docutils literal notranslate"><span class="pre">get_storm_rainfall()</span></code>. This will return a Pandas DataFrame containing all rainfall observations associated with Harvey.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve storm object</span>
+<a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_storm.html#tropycal.tracks.TrackDataset.get_storm" title="tropycal.tracks.TrackDataset.get_storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">((</span><span class="s1">&#39;harvey&#39;</span><span class="p">,</span><span class="mi">2017</span><span class="p">))</span>
+
+<span class="c1">#Retrieve storm rainfall</span>
+<span class="n">harvey_rain</span> <span class="o">=</span> <a href="../api/generated/tropycal.rain.RainDataset.get_storm_rainfall.html#tropycal.rain.RainDataset.get_storm_rainfall" title="tropycal.rain.RainDataset.get_storm_rainfall" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-method"><span class="n">rain_obj</span><span class="o">.</span><span class="n">get_storm_rainfall</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now let’s look through the pandas DataFrame containing Harvey’s rainfall:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">harvey_rain</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Station</th>
+      <th>Total</th>
+      <th>Lat</th>
+      <th>Lon</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>261570</th>
+      <td>ABEL                     5 SW</td>
+      <td>1.79</td>
+      <td>33.60</td>
+      <td>-85.65</td>
+    </tr>
+    <tr>
+      <th>261571</th>
+      <td>ADDISON</td>
+      <td>2.17</td>
+      <td>34.20</td>
+      <td>-87.18</td>
+    </tr>
+    <tr>
+      <th>261572</th>
+      <td>ALABASTER</td>
+      <td>1.42</td>
+      <td>33.18</td>
+      <td>-86.78</td>
+    </tr>
+    <tr>
+      <th>261573</th>
+      <td>ALBERTVILLE</td>
+      <td>1.63</td>
+      <td>34.24</td>
+      <td>-86.19</td>
+    </tr>
+    <tr>
+      <th>261574</th>
+      <td>ALEXANDER CITY</td>
+      <td>2.46</td>
+      <td>32.95</td>
+      <td>-85.95</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>268375</th>
+      <td>WHITE SULPHUR SPRINGS</td>
+      <td>1.14</td>
+      <td>37.80</td>
+      <td>-80.48</td>
+    </tr>
+    <tr>
+      <th>268376</th>
+      <td>WHITE SULPHUR SPRINGS</td>
+      <td>0.96</td>
+      <td>37.80</td>
+      <td>-80.30</td>
+    </tr>
+    <tr>
+      <th>268377</th>
+      <td>WHITMER                  3 W</td>
+      <td>0.20</td>
+      <td>38.82</td>
+      <td>-79.60</td>
+    </tr>
+    <tr>
+      <th>268378</th>
+      <td>WILLIAMSON</td>
+      <td>0.61</td>
+      <td>37.67</td>
+      <td>-82.28</td>
+    </tr>
+    <tr>
+      <th>268379</th>
+      <td>WOLF PEN</td>
+      <td>0.40</td>
+      <td>37.53</td>
+      <td>-81.58</td>
+    </tr>
+  </tbody>
+</table>
+<p>6797 rows × 4 columns</p>
+</div>
+</div>
+<br />
+<br /><p>We can use Pandas’ DataFrame utility to rearrange this by the “Total” column (representing rainfall in inches) to see the highest rain total associated with Harvey - which gives us 60.58 inches near Nederland.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">harvey_rain</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Total&#39;</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Station</th>
+      <th>Total</th>
+      <th>Lat</th>
+      <th>Lon</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>267161</th>
+      <td>Nederland 1.5 SW</td>
+      <td>60.58</td>
+      <td>29.950000</td>
+      <td>-94.010000</td>
+    </tr>
+    <tr>
+      <th>266354</th>
+      <td>Groves 1.3 N</td>
+      <td>60.54</td>
+      <td>29.960000</td>
+      <td>-93.920000</td>
+    </tr>
+    <tr>
+      <th>266199</th>
+      <td>Friendswood</td>
+      <td>56.00</td>
+      <td>29.500000</td>
+      <td>-95.200000</td>
+    </tr>
+    <tr>
+      <th>267575</th>
+      <td>Santa Fe 3 ENE</td>
+      <td>54.77</td>
+      <td>29.390000</td>
+      <td>-95.050000</td>
+    </tr>
+    <tr>
+      <th>265621</th>
+      <td>Friendswood</td>
+      <td>54.00</td>
+      <td>29.745100</td>
+      <td>-95.566600</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>263372</th>
+      <td>MADISON</td>
+      <td>0.00</td>
+      <td>39.430000</td>
+      <td>-92.170000</td>
+    </tr>
+    <tr>
+      <th>266215</th>
+      <td>Fulshear 2.7 WNW</td>
+      <td>0.00</td>
+      <td>29.707364</td>
+      <td>-95.939681</td>
+    </tr>
+    <tr>
+      <th>263375</th>
+      <td>MARSHALL</td>
+      <td>0.00</td>
+      <td>39.130000</td>
+      <td>-93.220000</td>
+    </tr>
+    <tr>
+      <th>263376</th>
+      <td>MARSHFIELD</td>
+      <td>0.00</td>
+      <td>37.340000</td>
+      <td>-92.900000</td>
+    </tr>
+    <tr>
+      <th>263374</th>
+      <td>MANSFIELD</td>
+      <td>0.00</td>
+      <td>37.120000</td>
+      <td>-92.580000</td>
+    </tr>
+  </tbody>
+</table>
+<p>6797 rows × 4 columns</p>
+</div>
+</div>
+<br />
+<br /><p>More generically speaking, we can write the code below to retrieve the row with the maximum rainfall for the storm, then retrieve its rain total in inches, station name, and coordinates.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">row</span> <span class="o">=</span> <span class="n">harvey_rain</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">harvey_rain</span><span class="p">[</span><span class="s1">&#39;Total&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">harvey_rain</span><span class="p">[</span><span class="s1">&#39;Total&#39;</span><span class="p">])]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max Rainfall = </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Total&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> Inches&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Location = </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Station&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latitude = </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Longitude = </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Max Rainfall = 60.58 Inches
+Location = Nederland 1.5 SW
+Latitude = 29.95
+Longitude = -94.01
+</pre></div>
+</div>
+</div>
+<div class="section" id="plotting-tc-rainfall">
+<h2>Plotting TC Rainfall<a class="headerlink" href="#plotting-tc-rainfall" title="Permalink to this headline">¶</a></h2>
+<p>Tropycal provides two methods to plot tropical cyclone rainfall: by grid, or by individual observations.</p>
+<p>We’ll start off with plotting gridded rainfall. First we’ll need to interpolate to a cartesian grid using the <code class="docutils literal notranslate"><span class="pre">interpolate_to_grid()</span></code> method, and retrieve an xarray DataArray of the grid and its associated coordinates. Note that the default is to interpolate to a 0.1 degree grid - you can use the <code class="docutils literal notranslate"><span class="pre">grid_res</span></code> argument to provide a different resolution.</p>
+<p>Next we’ll use the <code class="docutils literal notranslate"><span class="pre">plot_rain_grid()</span></code> method to plot the output, and provide contour levels for plotting. As Hurricane Harvey was most damaging in Texas, we’ll provide a custom domain zoomed in over Texas.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Interpolate to grid</span>
+<span class="n">grid</span> <span class="o">=</span> <a href="../api/generated/tropycal.rain.RainDataset.interpolate_to_grid.html#tropycal.rain.RainDataset.interpolate_to_grid" title="tropycal.rain.RainDataset.interpolate_to_grid" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-method"><span class="n">rain_obj</span><span class="o">.</span><span class="n">interpolate_to_grid</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">,</span><span class="n">return_xarray</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">60</span><span class="p">]</span>
+<a href="../api/generated/tropycal.rain.RainDataset.plot_rain_grid.html#tropycal.rain.RainDataset.plot_rain_grid" title="tropycal.rain.RainDataset.plot_rain_grid" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-method"><span class="n">rain_obj</span><span class="o">.</span><span class="n">plot_rain_grid</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">,</span><span class="n">grid</span><span class="p">,</span><span class="n">levels</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span><span class="mi">26</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span><span class="mi">39</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">103</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">82</span><span class="p">})</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_tc_rainfall_001.png" srcset="../_images/sphx_glr_tc_rainfall_001.png" alt="Hurricane HARVEY Interpolated WPC Storm Rainfall (in), 17 Aug 2017 – 01 Sep 2017 115 kt • 937 hPa • 11.4 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane HARVEY\nInterpolated WPC Storm Rainfall (in)&#39;,&#39;right&#39;:&#39;17 Aug 2017 – 01 Sep 2017\n115 kt • 937 hPa • 11.4 ACE&#39;}&gt;
+</pre></div>
+</div>
+<p>Linear interpolation isn’t perfect of course, especially considering that some observations in this dataset aren’t perfectly quality controlled.</p>
+<p>To compensate, we can also plot the individual rain observation dots using the <code class="docutils literal notranslate"><span class="pre">plot_rain()</span></code> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">60</span><span class="p">]</span>
+<a href="../api/generated/tropycal.rain.RainDataset.plot_rain.html#tropycal.rain.RainDataset.plot_rain" title="tropycal.rain.RainDataset.plot_rain" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-method"><span class="n">rain_obj</span><span class="o">.</span><span class="n">plot_rain</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span><span class="mi">26</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span><span class="mi">39</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">103</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">82</span><span class="p">})</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_tc_rainfall_002.png" srcset="../_images/sphx_glr_tc_rainfall_002.png" alt="Hurricane HARVEY WPC Storm Rainfall (inch), 17 Aug 2017 – 01 Sep 2017 115 kt • 937 hPa • 11.4 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane HARVEY\nWPC Storm Rainfall (inch)&#39;,&#39;right&#39;:&#39;17 Aug 2017 – 01 Sep 2017\n115 kt • 937 hPa • 11.4 ACE&#39;}&gt;
+</pre></div>
+</div>
+<p>The Houston, Texas metro was particularly hard-hit by Hurricane Harvey, with rain totals over 30 inches in many locations.</p>
+<p>Let’s filter the plot to only rain observations over 30 inches to highlight this, while zooming in closer over Houston:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">60</span><span class="p">]</span>
+<a href="../api/generated/tropycal.rain.RainDataset.plot_rain.html#tropycal.rain.RainDataset.plot_rain" title="tropycal.rain.RainDataset.plot_rain" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-method"><span class="n">rain_obj</span><span class="o">.</span><span class="n">plot_rain</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span><span class="n">minimum_threshold</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span><span class="mi">27</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">99</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">92</span><span class="p">})</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_tc_rainfall_003.png" srcset="../_images/sphx_glr_tc_rainfall_003.png" alt="Hurricane HARVEY WPC Storm Rainfall (>30 inch), 17 Aug 2017 – 01 Sep 2017 115 kt • 937 hPa • 11.4 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane HARVEY\nWPC Storm Rainfall (&gt;30 inch)&#39;,&#39;right&#39;:&#39;17 Aug 2017 – 01 Sep 2017\n115 kt • 937 hPa • 11.4 ACE&#39;}&gt;
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  28.124 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tc-rainfall-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/2cdbea61d51b59b7dea97c3b41a78666/tc_rainfall.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tc_rainfall.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/154fd4dac49563355840aa94830549c8/tc_rainfall.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tc_rainfall.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tracks.storm.html" class="btn btn-neutral float-left" title="Individual Storm Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="analogs.html" class="btn btn-neutral float-right" title="Historical TC Track Analogs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

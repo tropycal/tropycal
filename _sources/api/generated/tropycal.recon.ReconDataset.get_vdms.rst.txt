@@ -1,0 +1,12 @@
+ReconDataset.get_vdms
+====================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: ReconDataset.get_vdms
+
+.. include:: tropycal.recon.ReconDataset.get_vdms
+
+.. raw:: html
+
+      <div style='clear:both'></div>

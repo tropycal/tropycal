@@ -5,7 +5,7 @@ Storm.download_tcr
 
 .. automethod:: Storm.download_tcr
 
-.. include:: tropycal.tracks.Storm.download_tcr.examples
+.. include:: tropycal.tracks.Storm.download_tcr
 
 .. raw:: html
 

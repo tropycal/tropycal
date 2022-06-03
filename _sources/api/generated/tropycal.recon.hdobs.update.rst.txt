@@ -1,0 +1,12 @@
+hdobs.update
+===========================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: hdobs.update
+
+.. include:: tropycal.recon.hdobs.update
+
+.. raw:: html
+
+      <div style='clear:both'></div>

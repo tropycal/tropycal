@@ -5,7 +5,7 @@ get_colors_sshws
 
 .. autofunction:: get_colors_sshws
 
-.. include:: tropycal.utils.get_colors_sshws.examples
+.. include:: tropycal.utils.get_colors_sshws
 
 .. raw:: html
 

@@ -5,7 +5,7 @@ TornadoDataset.plot_tors
 
 .. automethod:: TornadoDataset.plot_tors
 
-.. include:: tropycal.tornado.TornadoDataset.plot_tors.examples
+.. include:: tropycal.tornado.TornadoDataset.plot_tors
 
 .. raw:: html
 

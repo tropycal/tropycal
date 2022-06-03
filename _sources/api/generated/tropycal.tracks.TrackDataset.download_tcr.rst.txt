@@ -5,7 +5,7 @@ TrackDataset.download_tcr
 
 .. automethod:: TrackDataset.download_tcr
 
-.. include:: tropycal.tracks.TrackDataset.download_tcr.examples
+.. include:: tropycal.tracks.TrackDataset.download_tcr
 
 .. raw:: html
 

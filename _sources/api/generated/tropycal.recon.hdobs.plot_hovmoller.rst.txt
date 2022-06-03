@@ -1,0 +1,12 @@
+hdobs.plot_hovmoller
+===================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: hdobs.plot_hovmoller
+
+.. include:: tropycal.recon.hdobs.plot_hovmoller
+
+.. raw:: html
+
+      <div style='clear:both'></div>

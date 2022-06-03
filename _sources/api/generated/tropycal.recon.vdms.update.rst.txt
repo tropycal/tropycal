@@ -1,0 +1,12 @@
+vdms.update
+==========================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: vdms.update
+
+.. include:: tropycal.recon.vdms.update
+
+.. raw:: html
+
+      <div style='clear:both'></div>

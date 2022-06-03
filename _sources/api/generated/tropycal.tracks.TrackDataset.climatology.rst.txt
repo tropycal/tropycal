@@ -5,7 +5,7 @@ TrackDataset.climatology
 
 .. automethod:: TrackDataset.climatology
 
-.. include:: tropycal.tracks.TrackDataset.climatology.examples
+.. include:: tropycal.tracks.TrackDataset.climatology
 
 .. raw:: html
 

@@ -1,0 +1,12 @@
+vdms.sel
+=======================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: vdms.sel
+
+.. include:: tropycal.recon.vdms.sel
+
+.. raw:: html
+
+      <div style='clear:both'></div>

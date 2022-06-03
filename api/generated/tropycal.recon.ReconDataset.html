@@ -1,83 +1,41 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tropycal.recon.ReconDataset &mdash; tropycal </title>
-  
-
-  
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../',
-              VERSION:'0.3.1',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="ReconDataset.allMissions" href="tropycal.recon.ReconDataset.allMissions.html" />
-    <link rel="prev" title="recon" href="tropycal.recon.html" /> 
+    <link rel="next" title="ReconDataset.find_mission" href="tropycal.recon.ReconDataset.find_mission.html" />
+    <link rel="prev" title="Recon" href="tropycal.recon.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../index.html" class="icon icon-home"> tropycal
-          
-
-          
-            
             <img src="../../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -85,41 +43,32 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">tracks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">recon</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">Tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">Recon</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">tropycal.recon.ReconDataset</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.allMissions.html">ReconDataset.allMissions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.findMission.html">ReconDataset.findMission</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.find_centers.html">ReconDataset.find_centers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.getMission.html">ReconDataset.getMission</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.plot_hovmoller.html">ReconDataset.plot_hovmoller</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.plot_maps.html">ReconDataset.plot_maps</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.plot_points.html">ReconDataset.plot_points</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.plot_swath.html">ReconDataset.plot_swath</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.recenter.html">ReconDataset.recenter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.find_mission.html">ReconDataset.find_mission</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_dropsondes.html">ReconDataset.get_dropsondes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_hdobs.html">ReconDataset.get_hdobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_track.html">ReconDataset.get_track</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_vdms.html">ReconDataset.get_vdms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.plot_summary.html">ReconDataset.plot_summary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.update.html">ReconDataset.update</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.dropsondes.html">tropycal.recon.dropsondes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.hdobs.html">tropycal.recon.hdobs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.vdms.html">tropycal.recon.vdms</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
@@ -128,144 +77,125 @@
 <li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">tropycal</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">API Reference</a> &raquo;</li>
-        
-          <li><a href="tropycal.recon.html">recon</a> &raquo;</li>
-        
+          <li><a href="tropycal.recon.html">Recon</a> &raquo;</li>
       <li>tropycal.recon.ReconDataset</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../../_sources/api/generated/tropycal.recon.ReconDataset.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <div class="section" id="tropycal-recon-recondataset">
 <h1>tropycal.recon.ReconDataset<a class="headerlink" href="#tropycal-recon-recondataset" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="tropycal.recon.ReconDataset">
-<em class="property">class </em><code class="descclassname">tropycal.recon.</code><code class="descname">ReconDataset</code><span class="sig-paren">(</span><em>storm</em>, <em>deltap_thresh=8</em>, <em>mission_url_list=None</em>, <em>save_path=''</em>, <em>read_path=''</em>, <em>update=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.recon.ReconDataset" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="tropycal.recon.ReconDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropycal.recon.</span></span><span class="sig-name descname"><span class="pre">ReconDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.recon.ReconDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of a ReconDataset object containing all recon data for a single storm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>stormtuple</strong> (<em>tuple</em><em> or </em><em>list</em>) – Requested storm. Can be either tuple or list containing storm name and year (e.g., (“Matthew”,2016)).</li>
-<li><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.</li>
-<li><strong>read_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to read saved recon data from. If specified, “save_path” cannot be passed as an argument.</li>
-</ul>
-</td>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Requested Storm object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>ReconDataset</em> – An instance of ReconDataset.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>As of Tropycal v0.4, Recon data can only be retrieved for tropical cyclones, not for invests.</p>
+<p>ReconDataset will contain nothing the first time it’s initialized, but contains methods to retrieve the three sub-classes of recon:</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Class</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p><em>Dataset</em> – An instance of ReconDataset, initialized with the following:</p>
-<ul class="simple">
-<li><dl class="first docutils">
-<dt><strong>missiondata</strong> - A dictionary of missions.</dt>
-<dd>Each entry is a dateframe from a single mission.
-Dictionary keys are given by mission number and agency (e.g. ‘15_NOAA’).</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><strong>recentered</strong> - A dataframe with all missions concatenated together, and columns ‘xdist’ and ‘ydist’</dt>
-<dd>indicating the distance (km) of the ob from the interpolated center of the storm.</dd>
-</dl>
-</li>
-</ul>
-</p>
-</td>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>hdobs</p></td>
+<td><p>Class containing all High Density Observations (HDOBs) for this Storm.</p></td>
+</tr>
+<tr class="row-odd"><td><p>dropsondes</p></td>
+<td><p>Class containing all dropsondes for this Storm.</p></td>
+</tr>
+<tr class="row-even"><td><p>vdms</p></td>
+<td><p>Class containing all Vortex Data Messages (VDMs) for this Storm.</p></td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Notes</p>
-<p>Recon data is currently read in via Tropical Atlantic. Future releases of Tropycal will incorporate NHC recon archives.</p>
+<p>Each of these sub-classes can be initialized as a sub-class of ReconDataset as follows. Note that this may take some time, especially for storms with many recon missions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve Hurricane Michael (2018) from TrackDataset</span>
+<span class="n">basin</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">()</span>
+<span class="n">storm</span> <span class="o">=</span> <span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+
+<span class="c1">#Retrieve all HDOBs for this storm</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">get_hdobs</span><span class="p">()</span>
+
+<span class="c1">#Retrieve all dropsondes for this storm</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">get_dropsondes</span><span class="p">()</span>
+
+<span class="c1">#Retrieve all VDMs for this storm</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">get_vdms</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Once this data has been read in, these subclasses and their associated methods and attributes can be accessed from within the <cite>recon</cite> object as follows, using HDOBs for example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve Pandas DataFrame of all HDOB observations</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">hdobs</span><span class="o">.</span><span class="n">data</span>
+
+<span class="c1">#Plot all HDOB points</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">hdobs</span><span class="o">.</span><span class="n">plot_points</span><span class="p">()</span>
+
+<span class="c1">#Plot derived hovmoller from HDOB points</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">hdobs</span><span class="o">.</span><span class="n">plot_hovmoller</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>Methods Summary</p>
 <blockquote>
-<div><table border="1" class="longtable docutils">
+<div><table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.recon.ReconDataset.allMissions.html#tropycal.recon.ReconDataset.allMissions" title="tropycal.recon.ReconDataset.allMissions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.allMissions</span></code></a>()</td>
-<td></td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.find_mission.html#tropycal.recon.ReconDataset.find_mission" title="tropycal.recon.ReconDataset.find_mission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.find_mission</span></code></a>(time[, distance])</p></td>
+<td><p>Returns the name of a mission or list of recon missions given a specified time.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.recon.ReconDataset.findMission.html#tropycal.recon.ReconDataset.findMission" title="tropycal.recon.ReconDataset.findMission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.findMission</span></code></a>(time)</td>
-<td>Returns the name of a mission or list of missions given a specified time.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.get_dropsondes.html#tropycal.recon.ReconDataset.get_dropsondes" title="tropycal.recon.ReconDataset.get_dropsondes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.get_dropsondes</span></code></a>([data])</p></td>
+<td><p>Retrieve dropsondes for this storm.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.recon.ReconDataset.find_centers.html#tropycal.recon.ReconDataset.find_centers" title="tropycal.recon.ReconDataset.find_centers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.find_centers</span></code></a>(data)</td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.get_hdobs.html#tropycal.recon.ReconDataset.get_hdobs" title="tropycal.recon.ReconDataset.get_hdobs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.get_hdobs</span></code></a>([data])</p></td>
+<td><p>Retrieve High Density Observations (HDOBs) for this storm.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.recon.ReconDataset.getMission.html#tropycal.recon.ReconDataset.getMission" title="tropycal.recon.ReconDataset.getMission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.getMission</span></code></a>(agency,&nbsp;mission_num)</td>
-<td></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.get_track.html#tropycal.recon.ReconDataset.get_track" title="tropycal.recon.ReconDataset.get_track"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.get_track</span></code></a>([time])</p></td>
+<td><p>Retrieve coordinates of recon track for one or more times.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.recon.ReconDataset.plot_hovmoller.html#tropycal.recon.ReconDataset.plot_hovmoller" title="tropycal.recon.ReconDataset.plot_hovmoller"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_hovmoller</span></code></a>([recon_select,&nbsp;…])</td>
-<td>Creates a hovmoller plot of azimuthally-averaged recon data.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.get_vdms.html#tropycal.recon.ReconDataset.get_vdms" title="tropycal.recon.ReconDataset.get_vdms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.get_vdms</span></code></a>([data])</p></td>
+<td><p>Retrieve Vortex Data Messages (VDMs) for this storm.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.recon.ReconDataset.plot_maps.html#tropycal.recon.ReconDataset.plot_maps" title="tropycal.recon.ReconDataset.plot_maps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_maps</span></code></a>([recon_select,&nbsp;…])</td>
-<td>Creates maps of interpolated recon data.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.plot_summary.html#tropycal.recon.ReconDataset.plot_summary" title="tropycal.recon.ReconDataset.plot_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_summary</span></code></a>([mission, save_path])</p></td>
+<td><p>Plot summary map of all recon data.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.recon.ReconDataset.plot_points.html#tropycal.recon.ReconDataset.plot_points" title="tropycal.recon.ReconDataset.plot_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_points</span></code></a>([recon_select,&nbsp;…])</td>
-<td>Creates a plot of recon data points.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.recon.ReconDataset.plot_swath.html#tropycal.recon.ReconDataset.plot_swath" title="tropycal.recon.ReconDataset.plot_swath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.plot_swath</span></code></a>([recon_select,&nbsp;…])</td>
-<td>Creates a map plot of a swath of interpolated recon data.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.recon.ReconDataset.recenter.html#tropycal.recon.ReconDataset.recenter" title="tropycal.recon.ReconDataset.recenter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.recenter</span></code></a>([use])</td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.ReconDataset.update.html#tropycal.recon.ReconDataset.update" title="tropycal.recon.ReconDataset.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReconDataset.update</span></code></a>()</p></td>
+<td><p>Update with the latest data for an ongoing storm.</p></td>
 </tr>
 </tbody>
 </table>
@@ -276,51 +206,33 @@ Dictionary keys are given by mission number and agency (e.g. ‘15_NOAA’).</dd
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tropycal.recon.ReconDataset.allMissions.html" class="btn btn-neutral float-right" title="ReconDataset.allMissions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tropycal.recon.html" class="btn btn-neutral float-left" title="recon" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tropycal.recon.html" class="btn btn-neutral float-left" title="Recon" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.recon.ReconDataset.find_mission.html" class="btn btn-neutral float-right" title="ReconDataset.find_mission" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2021, Tropycal Developers
-
-    </p>
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

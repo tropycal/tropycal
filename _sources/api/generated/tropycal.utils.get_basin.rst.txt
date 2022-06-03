@@ -5,7 +5,7 @@ get_basin
 
 .. autofunction:: get_basin
 
-.. include:: tropycal.utils.get_basin.examples
+.. include:: tropycal.utils.get_basin
 
 .. raw:: html
 

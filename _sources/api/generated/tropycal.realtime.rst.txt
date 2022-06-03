@@ -1,9 +1,16 @@
 
+   
+      
+   
 
-realtime
-=================
+Realtime
+========
 
 .. automodule:: tropycal.realtime
+
+   
+   
+   
 
    
    
@@ -15,11 +22,9 @@ realtime
 
    .. autosummary::
       :toctree: ./
-
    
       Realtime
       RealtimeStorm
-
    
    
 

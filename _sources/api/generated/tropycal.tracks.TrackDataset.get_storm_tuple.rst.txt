@@ -5,7 +5,7 @@ TrackDataset.get_storm_tuple
 
 .. automethod:: TrackDataset.get_storm_tuple
 
-.. include:: tropycal.tracks.TrackDataset.get_storm_tuple.examples
+.. include:: tropycal.tracks.TrackDataset.get_storm_tuple
 
 .. raw:: html
 

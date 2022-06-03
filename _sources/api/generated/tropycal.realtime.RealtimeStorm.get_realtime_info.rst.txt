@@ -5,7 +5,7 @@ RealtimeStorm.get_realtime_info
 
 .. automethod:: RealtimeStorm.get_realtime_info
 
-.. include:: tropycal.realtime.RealtimeStorm.get_realtime_info.examples
+.. include:: tropycal.realtime.RealtimeStorm.get_realtime_info
 
 .. raw:: html
 

@@ -1,83 +1,41 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tropycal.tracks.Storm &mdash; tropycal </title>
-  
-
-  
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../',
-              VERSION:'0.3.1',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Storm.download_tcr" href="tropycal.tracks.Storm.download_tcr.html" />
     <link rel="prev" title="Season.to_dataframe" href="tropycal.tracks.Season.to_dataframe.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../index.html" class="icon icon-home"> tropycal
-          
-
-          
-            
             <img src="../../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -85,28 +43,19 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="tropycal.tracks.html">tracks</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.tracks.html">Tracks</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Season.html">tropycal.tracks.Season</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">tropycal.tracks.Storm</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.download_tcr.html">Storm.download_tcr</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_archer.html">Storm.get_archer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_nhc_discussion.html">Storm.get_nhc_discussion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_nhc_forecast_dict.html">Storm.get_nhc_forecast_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_operational_forecasts.html">Storm.get_operational_forecasts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_recon.html">Storm.get_recon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.interp.html">Storm.interp</a></li>
@@ -126,10 +75,10 @@
 <li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
@@ -138,149 +87,149 @@
 <li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">tropycal</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">API Reference</a> &raquo;</li>
-        
-          <li><a href="tropycal.tracks.html">tracks</a> &raquo;</li>
-        
+          <li><a href="tropycal.tracks.html">Tracks</a> &raquo;</li>
       <li>tropycal.tracks.Storm</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../../_sources/api/generated/tropycal.tracks.Storm.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <div class="section" id="tropycal-tracks-storm">
 <h1>tropycal.tracks.Storm<a class="headerlink" href="#tropycal-tracks-storm" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="tropycal.tracks.Storm">
-<em class="property">class </em><code class="descclassname">tropycal.tracks.</code><code class="descname">Storm</code><span class="sig-paren">(</span><em>storm</em>, <em>stormTors=None</em>, <em>read_path=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tracks.Storm" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="tropycal.tracks.Storm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropycal.tracks.</span></span><span class="sig-name descname"><span class="pre">Storm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stormTors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.tracks.Storm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes an instance of Storm, retrieved via <code class="docutils literal notranslate"><span class="pre">TrackDataset.get_storm()</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>storm</strong> (<em>dict</em>) – Dict entry of the requested storm.</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><strong>stormTors</strong> (<em>dict, optional</em>) – Dict entry containing tornado data assicated with the storm. Populated directly from tropycal.tracks.TrackDataset.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>Storm</em> – Instance of a Storm object.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>storm</strong> (<em>dict</em>) – Dict entry of the requested storm.</p>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><p><strong>stormTors</strong> (<em>dict, optional</em>) – Dict entry containing tornado data assicated with the storm. Populated directly from tropycal.tracks.TrackDataset.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>Storm</em> – Instance of a Storm object.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>A Storm object is retrieved from TrackDataset’s <code class="docutils literal notranslate"><span class="pre">get_storm()</span></code> method. For example, if the dataset read in is the default North Atlantic and the desired storm is Hurricane Michael (2018), it would be retrieved as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">tracks</span>
+<span class="n">basin</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">()</span>
+<span class="n">storm</span> <span class="o">=</span> <span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Now Hurricane Michael’s data is stored in the variable <code class="docutils literal notranslate"><span class="pre">storm</span></code>, which is an instance of Storm and can access all of the methods and attributes of a Storm object.</p>
+<p>All the variables associated with a Storm object (e.g., lat, lon, date, vmax) can be accessed in two ways. The first is directly from the Storm object:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">storm</span><span class="o">.</span><span class="n">lat</span>
+<span class="go">array([17.8, 18.1, 18.4, 18.8, 19.1, 19.7, 20.2, 20.9, 21.7, 22.7, 23.7,</span>
+<span class="go">       24.6, 25.6, 26.6, 27.7, 29. , 30. , 30.2, 31.5, 32.8, 34.1, 35.6,</span>
+<span class="go">       36.5, 37.3, 39.1, 41.1, 43.1, 44.8, 46.4, 47.6, 48.4, 48.8, 48.6,</span>
+<span class="go">       47.5, 45.9, 44.4, 42.8, 41.2])</span>
+</pre></div>
+</div>
+<p>The second is via <code class="docutils literal notranslate"><span class="pre">storm.vars</span></code>, which returns a dictionary of the variables associated with the Storm object. This is also a quick way to access all of the variables associated with a Storm object:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">variable_dict</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">vars</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span> <span class="o">=</span> <span class="n">variable_dict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="n">variable_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">variable_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="go">dict_keys([&#39;date&#39;, &#39;extra_obs&#39;, &#39;special&#39;, &#39;type&#39;, &#39;lat&#39;, &#39;lon&#39;, &#39;vmax&#39;, &#39;mslp&#39;, &#39;wmo_basin&#39;])</span>
+</pre></div>
+</div>
+<p>Storm objects also have numerous attributes with information about the storm. <code class="docutils literal notranslate"><span class="pre">storm.attrs</span></code> returns a dictionary of the attributes for this Storm object.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">storm</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+<span class="go">{&#39;id&#39;: &#39;AL142018&#39;,</span>
+<span class="go"> &#39;operational_id&#39;: &#39;AL142018&#39;,</span>
+<span class="go"> &#39;name&#39;: &#39;MICHAEL&#39;,</span>
+<span class="go"> &#39;year&#39;: 2018,</span>
+<span class="go"> &#39;season&#39;: 2018,</span>
+<span class="go"> &#39;basin&#39;: &#39;north_atlantic&#39;,</span>
+<span class="go"> &#39;source_info&#39;: &#39;NHC Hurricane Database&#39;,</span>
+<span class="go"> &#39;source&#39;: &#39;hurdat&#39;,</span>
+<span class="go"> &#39;ace&#39;: 12.5,</span>
+<span class="go"> &#39;realtime&#39;: False,</span>
+<span class="go"> &#39;invest&#39;: False}</span>
+</pre></div>
+</div>
 <p>Methods Summary</p>
 <blockquote>
-<div><table border="1" class="longtable docutils">
+<div><table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Storm.download_tcr.html#tropycal.tracks.Storm.download_tcr" title="tropycal.tracks.Storm.download_tcr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.download_tcr</span></code></a>([save_path])</td>
-<td>Downloads the NHC offical Tropical Cyclone Report (TCR) for the requested storm to the requested directory.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.download_tcr.html#tropycal.tracks.Storm.download_tcr" title="tropycal.tracks.Storm.download_tcr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.download_tcr</span></code></a>([save_path])</p></td>
+<td><p>Downloads the NHC offical Tropical Cyclone Report (TCR) for the requested storm to the requested directory.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.tracks.Storm.get_archer.html#tropycal.tracks.Storm.get_archer" title="tropycal.tracks.Storm.get_archer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.get_archer</span></code></a>()</td>
-<td>Retrieves satellite-derived Archer track data for this storm, if available.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.get_archer.html#tropycal.tracks.Storm.get_archer" title="tropycal.tracks.Storm.get_archer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.get_archer</span></code></a>()</p></td>
+<td><p>Retrieves satellite-derived Archer track data for this storm, if available.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Storm.get_nhc_discussion.html#tropycal.tracks.Storm.get_nhc_discussion" title="tropycal.tracks.Storm.get_nhc_discussion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.get_nhc_discussion</span></code></a>(forecast[,&nbsp;save_path])</td>
-<td>Retrieves a single NHC forecast discussion.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.get_nhc_discussion.html#tropycal.tracks.Storm.get_nhc_discussion" title="tropycal.tracks.Storm.get_nhc_discussion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.get_nhc_discussion</span></code></a>(forecast[, save_path])</p></td>
+<td><p>Retrieves a single NHC forecast discussion.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.tracks.Storm.get_operational_forecasts.html#tropycal.tracks.Storm.get_operational_forecasts" title="tropycal.tracks.Storm.get_operational_forecasts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.get_operational_forecasts</span></code></a>()</td>
-<td>Retrieves operational model and NHC forecasts throughout the entire life duration of the storm.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.get_nhc_forecast_dict.html#tropycal.tracks.Storm.get_nhc_forecast_dict" title="tropycal.tracks.Storm.get_nhc_forecast_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.get_nhc_forecast_dict</span></code></a>(time)</p></td>
+<td><p>Retreive a dictionary of official NHC forecasts for a valid time.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Storm.get_recon.html#tropycal.tracks.Storm.get_recon" title="tropycal.tracks.Storm.get_recon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.get_recon</span></code></a>([deltap_thresh,&nbsp;save_path,&nbsp;…])</td>
-<td>Creates an instance of ReconDataset for this storm’s data.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.get_operational_forecasts.html#tropycal.tracks.Storm.get_operational_forecasts" title="tropycal.tracks.Storm.get_operational_forecasts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.get_operational_forecasts</span></code></a>()</p></td>
+<td><p>Retrieves operational model and NHC forecasts throughout the entire life duration of the storm.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.tracks.Storm.interp.html#tropycal.tracks.Storm.interp" title="tropycal.tracks.Storm.interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.interp</span></code></a>([timeres,&nbsp;dt_window,&nbsp;dt_align])</td>
-<td>Interpolate a storm temporally to a specified time resolution.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.get_recon.html#tropycal.tracks.Storm.get_recon" title="tropycal.tracks.Storm.get_recon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.get_recon</span></code></a>([deltap_thresh, save_path, ...])</p></td>
+<td><p>Creates an instance of ReconDataset for this storm's data.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Storm.list_nhc_discussions.html#tropycal.tracks.Storm.list_nhc_discussions" title="tropycal.tracks.Storm.list_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.list_nhc_discussions</span></code></a>()</td>
-<td>Retrieves a list of NHC forecast discussions for this storm, archived on <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/archive/">https://ftp.nhc.noaa.gov/atcf/archive/</a>.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.interp.html#tropycal.tracks.Storm.interp" title="tropycal.tracks.Storm.interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.interp</span></code></a>([timeres, dt_window, dt_align])</p></td>
+<td><p>Interpolate a storm temporally to a specified time resolution.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.tracks.Storm.plot.html#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot</span></code></a>([domain,&nbsp;plot_all_dots,&nbsp;ax,&nbsp;…])</td>
-<td>Creates a plot of the observed track of the storm.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.list_nhc_discussions.html#tropycal.tracks.Storm.list_nhc_discussions" title="tropycal.tracks.Storm.list_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.list_nhc_discussions</span></code></a>()</p></td>
+<td><p>Retrieves a list of NHC forecast discussions for this storm, archived on <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/archive/">https://ftp.nhc.noaa.gov/atcf/archive/</a>.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Storm.plot_TCtors_rotated.html#tropycal.tracks.Storm.plot_TCtors_rotated" title="tropycal.tracks.Storm.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_TCtors_rotated</span></code></a>([dist_thresh,&nbsp;…])</td>
-<td>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot.html#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot</span></code></a>([domain, plot_all_dots, ax, ...])</p></td>
+<td><p>Creates a plot of the observed track of the storm.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.tracks.Storm.plot_gefs_ensembles.html#tropycal.tracks.Storm.plot_gefs_ensembles" title="tropycal.tracks.Storm.plot_gefs_ensembles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_gefs_ensembles</span></code></a>(forecast[,&nbsp;fhr,&nbsp;…])</td>
-<td>(Add track history like we do for NHC forecasts) (Add verification for archived events)</td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_TCtors_rotated.html#tropycal.tracks.Storm.plot_TCtors_rotated" title="tropycal.tracks.Storm.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_TCtors_rotated</span></code></a>([dist_thresh, ...])</p></td>
+<td><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Storm.plot_nhc_forecast.html#tropycal.tracks.Storm.plot_nhc_forecast" title="tropycal.tracks.Storm.plot_nhc_forecast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_nhc_forecast</span></code></a>(forecast[,&nbsp;…])</td>
-<td>Creates a plot of the operational NHC forecast track along with observed track data.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_gefs_ensembles.html#tropycal.tracks.Storm.plot_gefs_ensembles" title="tropycal.tracks.Storm.plot_gefs_ensembles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_gefs_ensembles</span></code></a>(forecast[, fhr, ...])</p></td>
+<td><p>Creates a plot of individual GEFS ensemble tracks.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.tracks.Storm.plot_tors.html#tropycal.tracks.Storm.plot_tors" title="tropycal.tracks.Storm.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_tors</span></code></a>([dist_thresh,&nbsp;Tors,&nbsp;domain,&nbsp;…])</td>
-<td>Creates a plot of the storm and associated tornado tracks.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_nhc_forecast.html#tropycal.tracks.Storm.plot_nhc_forecast" title="tropycal.tracks.Storm.plot_nhc_forecast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_nhc_forecast</span></code></a>(forecast[, ...])</p></td>
+<td><p>Creates a plot of the operational NHC forecast track along with observed track data.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Storm.query_nhc_discussions.html#tropycal.tracks.Storm.query_nhc_discussions" title="tropycal.tracks.Storm.query_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.query_nhc_discussions</span></code></a>(query)</td>
-<td>Searches for the given word or phrase through all NHC forecast discussions for this storm.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_tors.html#tropycal.tracks.Storm.plot_tors" title="tropycal.tracks.Storm.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_tors</span></code></a>([dist_thresh, Tors, domain, ...])</p></td>
+<td><p>Creates a plot of the storm and associated tornado tracks.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.tracks.Storm.sel.html#tropycal.tracks.Storm.sel" title="tropycal.tracks.Storm.sel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.sel</span></code></a>([time,&nbsp;lat,&nbsp;lon,&nbsp;vmax,&nbsp;mslp,&nbsp;…])</td>
-<td>Subset this storm by any of its parameters and return a new storm object.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.query_nhc_discussions.html#tropycal.tracks.Storm.query_nhc_discussions" title="tropycal.tracks.Storm.query_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.query_nhc_discussions</span></code></a>(query)</p></td>
+<td><p>Searches for the given word or phrase through all NHC forecast discussions for this storm.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Storm.to_dataframe.html#tropycal.tracks.Storm.to_dataframe" title="tropycal.tracks.Storm.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.to_dataframe</span></code></a>([attrs_as_columns])</td>
-<td>Converts the storm dict into a pandas DataFrame object.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.sel.html#tropycal.tracks.Storm.sel" title="tropycal.tracks.Storm.sel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.sel</span></code></a>([time, lat, lon, vmax, mslp, ...])</p></td>
+<td><p>Subset this storm by any of its parameters and return a new storm object.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.tracks.Storm.to_dict.html#tropycal.tracks.Storm.to_dict" title="tropycal.tracks.Storm.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.to_dict</span></code></a>()</td>
-<td>Returns the dict entry for the storm.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.to_dataframe.html#tropycal.tracks.Storm.to_dataframe" title="tropycal.tracks.Storm.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.to_dataframe</span></code></a>([attrs_as_columns])</p></td>
+<td><p>Converts the storm dict into a pandas DataFrame object.</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.tracks.Storm.to_xarray.html#tropycal.tracks.Storm.to_xarray" title="tropycal.tracks.Storm.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.to_xarray</span></code></a>()</td>
-<td>Converts the storm dict into an xarray Dataset object.</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.to_dict.html#tropycal.tracks.Storm.to_dict" title="tropycal.tracks.Storm.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.to_dict</span></code></a>()</p></td>
+<td><p>Returns the dict entry for the storm.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.to_xarray.html#tropycal.tracks.Storm.to_xarray" title="tropycal.tracks.Storm.to_xarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.to_xarray</span></code></a>()</p></td>
+<td><p>Converts the storm dict into an xarray Dataset object.</p></td>
 </tr>
 </tbody>
 </table>
@@ -291,51 +240,33 @@
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tropycal.tracks.Storm.download_tcr.html" class="btn btn-neutral float-right" title="Storm.download_tcr" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tropycal.tracks.Season.to_dataframe.html" class="btn btn-neutral float-left" title="Season.to_dataframe" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tropycal.tracks.Season.to_dataframe.html" class="btn btn-neutral float-left" title="Season.to_dataframe" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.tracks.Storm.download_tcr.html" class="btn btn-neutral float-right" title="Storm.download_tcr" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2021, Tropycal Developers
-
-    </p>
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

@@ -1,83 +1,41 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TC Dataset Analysis &mdash; tropycal </title>
-  
-
-  
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../',
-              VERSION:'0.3.1',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data Sources" href="../data.html" />
     <link rel="prev" title="Tornado Analyses" href="tracks.tornado.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> tropycal
-          
-
-          
-            
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -85,17 +43,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
@@ -119,75 +67,36 @@
 <li class="toctree-l1"><a class="reference internal" href="../data.html">Data Sources</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">tropycal</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html">Docs</a> &raquo;</li>
-        
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../sample_usage.html">Example Gallery</a> &raquo;</li>
-        
       <li>TC Dataset Analysis</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../_sources/samples/tracks.TrackDataset.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <div class="section" id="tc-dataset-analysis">
 <h1>TC Dataset Analysis<a class="headerlink" href="#tc-dataset-analysis" title="Permalink to this headline">¶</a></h1>
 <p>This sample script illustrates how to create climatological analyses using HURDAT2 and IBTrACS.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="kn">as</span> <span class="nn">tracks</span>
-<span class="kn">import</span> <span class="nn">datetime</span> <span class="kn">as</span> <span class="nn">dt</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="k">as</span> <span class="nn">tracks</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 </pre></div>
 </div>
 <div class="section" id="hurtdat2-dataset">
@@ -195,7 +104,7 @@
 <p>Let’s start with the HURDAT2 dataset by loading it into memory. By default, this reads in the HURDAT dataset from the National Hurricane Center (NHC) website, unless you specify a local file path using either <code class="docutils literal notranslate"><span class="pre">atlantic_url</span></code> for the North Atlantic basin on <code class="docutils literal notranslate"><span class="pre">pacific_url</span></code> for the East &amp; Central Pacific basin.</p>
 <p>HURDAT data is not available for the most recent hurricane seasons. To include the latest data up through today, the “include_btk” flag would need to be set to True, which reads in preliminary best track data from the NHC website.</p>
 <p>Let’s create an instance of a TrackDataset object, which will store the North Atlantic HURDAT2 dataset in memory. Once we have this we can use its methods for various types of analyses.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="retrieving-storms-and-seasons">
@@ -209,7 +118,7 @@
 </pre></div>
 </div>
 <p>If you remember the name of a storm but not the year, there is functionality to search for a list of years containing a storm of the requested name:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">search_name</span><span class="p">(</span><span class="s1">&#39;Michael&#39;</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">search_name</span><span class="p">(</span><span class="s1">&#39;Michael&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">2012</span><span class="p">,</span> <span class="mi">2018</span><span class="p">]</span>
@@ -261,10 +170,10 @@
 <h2>IBTrACS Dataset<a class="headerlink" href="#ibtracs-dataset" title="Permalink to this headline">¶</a></h2>
 <p>We can also read in IBTrACS data and use it the same way as we would use HURDAT2 data. There are caveats to using IBTrACS data, however, which are described more in depth in the <a class="reference internal" href="../data.html"><span class="doc">Data Sources</span></a> page. We’ll retrieve the global IBTrACS dataset, using the Joint Typhoon Warning Center (JTWC) data, modified with the Neumann reanalysis for southern hemisphere storms, and including a special reanalysis for Cyclone Catarina (2004) in Brazil.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">By default, IBTrACS data is read in from an online source. If you’re reading in the global IBTrACS dataset, this could be quite slow. For global IBTrACS, it is recommended to have the CSV file saved locally (<a class="reference external" href="https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ALL.list.v04r00.csv">link to data</a>), then set the flag <code class="docutils literal notranslate"><span class="pre">ibtracs_url=&quot;local_path&quot;</span></code>.</p>
+<p class="admonition-title">Warning</p>
+<p>By default, IBTrACS data is read in from an online source. If you’re reading in the global IBTrACS dataset, this could be quite slow. For global IBTrACS, it is recommended to have the CSV file saved locally (<a class="reference external" href="https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ALL.list.v04r00.csv">link to data</a>), then set the flag <code class="docutils literal notranslate"><span class="pre">ibtracs_url=&quot;local_path&quot;</span></code>.</p>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ibtracs</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;ibtracs&#39;</span><span class="p">,</span><span class="n">ibtracs_mode</span><span class="o">=</span><span class="s1">&#39;jtwc_neumann&#39;</span><span class="p">,</span><span class="n">catarina</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ibtracs</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;ibtracs&#39;</span><span class="p">,</span><span class="n">ibtracs_mode</span><span class="o">=</span><span class="s1">&#39;jtwc_neumann&#39;</span><span class="p">,</span><span class="n">catarina</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In its current form, tropycal is not configured to support all types of analyses for global IBTrACS, particularly near the dateline. Future updates will work to improve this functionality.</p>
@@ -273,51 +182,33 @@
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../data.html" class="btn btn-neutral float-right" title="Data Sources" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tracks.tornado.html" class="btn btn-neutral float-left" title="Tornado Analyses" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tracks.tornado.html" class="btn btn-neutral float-left" title="Tornado Analyses" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../data.html" class="btn btn-neutral float-right" title="Data Sources" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2021, Tropycal Developers
-
-    </p>
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

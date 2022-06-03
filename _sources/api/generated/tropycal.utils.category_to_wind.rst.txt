@@ -5,7 +5,7 @@ category_to_wind
 
 .. autofunction:: category_to_wind
 
-.. include:: tropycal.utils.category_to_wind.examples
+.. include:: tropycal.utils.category_to_wind
 
 .. raw:: html
 

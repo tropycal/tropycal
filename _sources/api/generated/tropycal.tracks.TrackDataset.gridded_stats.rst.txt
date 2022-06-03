@@ -5,7 +5,7 @@ TrackDataset.gridded_stats
 
 .. automethod:: TrackDataset.gridded_stats
 
-.. include:: tropycal.tracks.TrackDataset.gridded_stats.examples
+.. include:: tropycal.tracks.TrackDataset.gridded_stats
 
 .. raw:: html
 

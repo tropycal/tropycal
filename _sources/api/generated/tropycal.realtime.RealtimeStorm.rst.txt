@@ -23,7 +23,9 @@ tropycal.realtime.RealtimeStorm
          RealtimeStorm.get_forecast_realtime
          RealtimeStorm.get_nhc_discussion
          RealtimeStorm.get_nhc_discussion_realtime
+         RealtimeStorm.get_nhc_forecast_dict
          RealtimeStorm.get_operational_forecasts
+         RealtimeStorm.get_realtime_formation_prob
          RealtimeStorm.get_realtime_info
          RealtimeStorm.get_recon
          RealtimeStorm.interp

@@ -5,7 +5,7 @@ get_colors_pph
 
 .. autofunction:: get_colors_pph
 
-.. include:: tropycal.utils.get_colors_pph.examples
+.. include:: tropycal.utils.get_colors_pph
 
 .. raw:: html
 

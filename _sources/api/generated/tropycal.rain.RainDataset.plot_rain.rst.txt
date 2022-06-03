@@ -5,7 +5,7 @@ RainDataset.plot_rain
 
 .. automethod:: RainDataset.plot_rain
 
-.. include:: tropycal.rain.RainDataset.plot_rain.examples
+.. include:: tropycal.rain.RainDataset.plot_rain
 
 .. raw:: html
 

@@ -1,83 +1,41 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TornadoDataset.plot_tors &mdash; tropycal </title>
-  
-
-  
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../',
-              VERSION:'0.3.1',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="TornadoDataset.rotateToHeading" href="tropycal.tornado.TornadoDataset.rotateToHeading.html" />
     <link rel="prev" title="TornadoDataset.plot_TCtors_rotated" href="tropycal.tornado.TornadoDataset.plot_TCtors_rotated.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../index.html" class="icon icon-home"> tropycal
-          
-
-          
-            
             <img src="../../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -85,24 +43,14 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">tracks</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="tropycal.tornado.html">tornado</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">Tracks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.tornado.html">Tornado</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.tornado.TornadoDataset.html">tropycal.tornado.TornadoDataset</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tornado.TornadoDataset.get_storm_tornadoes.html">TornadoDataset.get_storm_tornadoes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tornado.TornadoDataset.plot_TCtors_rotated.html">TornadoDataset.plot_TCtors_rotated</a></li>
@@ -112,9 +60,9 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
@@ -123,162 +71,99 @@
 <li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">tropycal</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">API Reference</a> &raquo;</li>
-        
-          <li><a href="tropycal.tornado.html">tornado</a> &raquo;</li>
-        
+          <li><a href="tropycal.tornado.html">Tornado</a> &raquo;</li>
           <li><a href="tropycal.tornado.TornadoDataset.html">tropycal.tornado.TornadoDataset</a> &raquo;</li>
-        
       <li>TornadoDataset.plot_tors</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../../_sources/api/generated/tropycal.tornado.TornadoDataset.plot_tors.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <div class="section" id="tornadodataset-plot-tors">
 <h1>TornadoDataset.plot_tors<a class="headerlink" href="#tornadodataset-plot-tors" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
-<dt id="tropycal.tornado.TornadoDataset.plot_tors">
-<code class="descclassname">TornadoDataset.</code><code class="descname">plot_tors</code><span class="sig-paren">(</span><em>tor_info</em>, <em>domain='conus'</em>, <em>plotPPH=False</em>, <em>ax=None</em>, <em>return_ax=False</em>, <em>return_domain=True</em>, <em>cartopy_proj=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_tors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_tors" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="tropycal.tornado.TornadoDataset.plot_tors">
+<span class="sig-prename descclassname"><span class="pre">TornadoDataset.</span></span><span class="sig-name descname"><span class="pre">plot_tors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tor_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'conus'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotPPH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cartopy_proj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tornado/dataset.html#TornadoDataset.plot_tors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.tornado.TornadoDataset.plot_tors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a plot of tornado tracks and Practically Perfect Forecast (PPH).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>tor_info</strong> (<em>pandas.DataFrame / dict / datetime.datetime / list</em>) – <p>Requested tornadoes to plot. Can be one of the following:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tor_info</strong> (<em>pandas.DataFrame / dict / datetime.datetime / list</em>) – <p>Requested tornadoes to plot. Can be one of the following:</p>
 <ul>
-<li><strong>Pandas DataFrame</strong> containing the requested tornadoes to plot.</li>
-<li><strong>dict</strong> entry containing the requested tornadoes to plot.</li>
-<li><strong>datetime.datetime</strong> object for a single day to plot tornadoes.</li>
-<li><strong>list</strong> with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.</li>
+<li><p><strong>Pandas DataFrame</strong> containing the requested tornadoes to plot.</p></li>
+<li><p><strong>dict</strong> entry containing the requested tornadoes to plot.</p></li>
+<li><p><strong>datetime.datetime</strong> object for a single day to plot tornadoes.</p></li>
+<li><p><strong>list</strong> with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.</p></li>
 </ul>
-</li>
-<li><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “conus”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</li>
-<li><strong>plotPPH</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPH). True defaults to “daily”. Default is False.</p>
+</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “conus”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>plotPPH</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPH). True defaults to “daily”. Default is False.</p>
 <ul>
-<li><strong>False</strong> - no PPH plot.</li>
-<li><strong>True</strong> - defaults to “daily”.</li>
-<li><strong>”total”</strong> - probability of a tornado within 25mi of a point during the period of time selected.</li>
-<li><strong>”daily”</strong> - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.</li>
+<li><p><strong>False</strong> - no PPH plot.</p></li>
+<li><p><strong>True</strong> - defaults to “daily”.</p></li>
+<li><p><strong>”total”</strong> - probability of a tornado within 25mi of a point during the period of time selected.</p></li>
+<li><p><strong>”daily”</strong> - average probability of a tornado within 25mi of a point during a day starting at 12 UTC.</p></li>
 </ul>
-</li>
-<li><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</li>
-<li><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</li>
-<li><strong>prop</strong> (<em>dict</em>) – Property of tornado tracks.</li>
-<li><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</li>
+</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Property of tornado tracks.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Property of cartopy map.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <div style='clear:both'></div></div>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tropycal.tornado.TornadoDataset.rotateToHeading.html" class="btn btn-neutral float-right" title="TornadoDataset.rotateToHeading" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tropycal.tornado.TornadoDataset.plot_TCtors_rotated.html" class="btn btn-neutral float-left" title="TornadoDataset.plot_TCtors_rotated" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tropycal.tornado.TornadoDataset.plot_TCtors_rotated.html" class="btn btn-neutral float-left" title="TornadoDataset.plot_TCtors_rotated" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.tornado.TornadoDataset.rotateToHeading.html" class="btn btn-neutral float-right" title="TornadoDataset.rotateToHeading" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2021, Tropycal Developers
-
-    </p>
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

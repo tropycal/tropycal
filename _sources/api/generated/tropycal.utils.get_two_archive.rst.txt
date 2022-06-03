@@ -1,0 +1,12 @@
+get_two_archive
+==============================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: get_two_archive
+
+.. include:: tropycal.utils.get_two_archive
+
+.. raw:: html
+
+      <div style='clear:both'></div>

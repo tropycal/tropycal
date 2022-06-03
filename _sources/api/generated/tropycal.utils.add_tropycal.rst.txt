@@ -5,7 +5,7 @@ add_tropycal
 
 .. autofunction:: add_tropycal
 
-.. include:: tropycal.utils.add_tropycal.examples
+.. include:: tropycal.utils.add_tropycal
 
 .. raw:: html
 

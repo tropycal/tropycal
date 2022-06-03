@@ -5,7 +5,7 @@ RealtimeStorm.plot
 
 .. automethod:: RealtimeStorm.plot
 
-.. include:: tropycal.realtime.RealtimeStorm.plot.examples
+.. include:: tropycal.realtime.RealtimeStorm.plot
 
 .. raw:: html
 

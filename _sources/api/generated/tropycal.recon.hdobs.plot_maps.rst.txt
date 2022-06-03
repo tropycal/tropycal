@@ -1,0 +1,12 @@
+hdobs.plot_maps
+==============================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: hdobs.plot_maps
+
+.. include:: tropycal.recon.hdobs.plot_maps
+
+.. raw:: html
+
+      <div style='clear:both'></div>

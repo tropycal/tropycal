@@ -1,0 +1,12 @@
+dropsondes.isel
+==============================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: dropsondes.isel
+
+.. include:: tropycal.recon.dropsondes.isel
+
+.. raw:: html
+
+      <div style='clear:both'></div>

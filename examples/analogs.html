@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Historical TC Track Analogs &mdash; tropycal </title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Customizing Storm Plots" href="customize_storm.html" />
+    <link rel="prev" title="Tropical Cyclone Rainfall" href="tc_rainfall.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> tropycal
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Example Scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">Realtime Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.season.html">Individual Season Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.tornado.html">Tornado Analyses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.storm.html">Individual Storm Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tc_rainfall.html">Tropical Cyclone Rainfall</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Historical TC Track Analogs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reading-in-hurtdat2-dataset">Reading In HURTDAT2 Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#historical-tropical-cyclone-analogs">Historical Tropical Cyclone Analogs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customize_storm.html">Customizing Storm Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.TrackDataset.html">TC Dataset Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recon.html">Aircraft Recon Data Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data.html">Data Sources</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">tropycal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Examples</a> &raquo;</li>
+      <li>Historical TC Track Analogs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/analogs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-analogs-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="historical-tc-track-analogs">
+<span id="sphx-glr-examples-analogs-py"></span><h1>Historical TC Track Analogs<a class="headerlink" href="#historical-tc-track-analogs" title="Permalink to this headline">¶</a></h1>
+<p>This sample script shows how to use Tropycal to retrieve and plot historical tropical cyclone track analogs.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">tracks</span>
+</pre></div>
+</div>
+<div class="section" id="reading-in-hurtdat2-dataset">
+<h2>Reading In HURTDAT2 Dataset<a class="headerlink" href="#reading-in-hurtdat2-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Let’s start with the HURDAT2 dataset by loading it into memory. By default, this reads in the HURDAT dataset from the National Hurricane Center (NHC) website, unless you specify a local file path using either <code class="docutils literal notranslate"><span class="pre">atlantic_url</span></code> for the North Atlantic basin on <code class="docutils literal notranslate"><span class="pre">pacific_url</span></code> for the East &amp; Central Pacific basin.</p>
+<p>HURDAT data is not available for the current year. To include the latest data up through today, the “include_btk” flag needs to be set to True, which reads in preliminary best track data from the NHC website. For this example, we’ll set this to False.</p>
+<p>Let’s create an instance of a TrackDataset object, which will store the North Atlantic HURDAT2 dataset in memory. Once we have this we can use its methods for various types of analyses.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
+--&gt; Completed reading in HURDAT2 data (4.57 seconds)
+</pre></div>
+</div>
+</div>
+<div class="section" id="historical-tropical-cyclone-analogs">
+<h2>Historical Tropical Cyclone Analogs<a class="headerlink" href="#historical-tropical-cyclone-analogs" title="Permalink to this headline">¶</a></h2>
+<p>One popular tool for finding historical tropical cyclone track analogs is via NOAA: <a class="reference external" href="https://coast.noaa.gov/hurricanes/#map=4/32/-80">https://coast.noaa.gov/hurricanes/#map=4/32/-80</a></p>
+<p>Tropycal now has similar functionality, with 4 new analog functions added to <cite>TrackDataset</cite>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">basin.analogs_from_point()</span></code> - Retrieve storms within a radius of a point and their closest approach to the point</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">basin.analogs_from_shape()</span></code> - Retrieve storms within a bounded shape provided by a list of lat/lon coordinates</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">basin.plot_analogs_from_point()</span></code> - Plot output from analog_from_point()</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">basin.plot_analogs_from_shape()</span></code> - Plot output from analog_from_shape()</p></li>
+</ul>
+<p>Let’s start out with <cite>analogs_from_point</cite> by looking at all tropical cyclone tracks within 50 kilometers of NYC. For this sample script we’ll use kilometers, but if you want to use miles, add a <code class="docutils literal notranslate"><span class="pre">units='miles'</span></code> argument.</p>
+<p>Note that the first time you run an analog function, if storms in <cite>basin</cite> haven’t been interpolated to hourly yet, this will automatically perform that interpolation on the back end, and future calls within the same kernel won’t need to re-interpolate making them much faster.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">.</span><span class="n">analogs_from_point</span><span class="p">((</span><span class="mf">40.7</span><span class="p">,</span><span class="o">-</span><span class="mf">74.0</span><span class="p">),</span><span class="n">radius</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to interpolate storms
+--&gt; Completed interpolating storms (16.81 seconds)
+
+{&#39;AL051861&#39;: 25.6, &#39;AL061863&#39;: 22.4, &#39;AL051872&#39;: 20.2, &#39;AL061874&#39;: 16.4, &#39;AL041893&#39;: 8.4, &#39;AL031955&#39;: 14.8, &#39;AL031960&#39;: 27.9, &#39;AL091971&#39;: 6.2, &#39;AL021972&#39;: 19.7, &#39;AL021996&#39;: 21.1, &#39;AL081999&#39;: 43.6, &#39;AL082008&#39;: 37.3, &#39;AL092011&#39;: 11.1, &#39;AL062020&#39;: 23.7}
+</pre></div>
+</div>
+<p>The output from this function is a dictionary, with the <strong>key</strong> the storm ID and <strong>value</strong> the distance from the point in kilometers.</p>
+<p>The default ordering of the dict is by chronological order. We can resort it to be ordered by distance from the point as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">analogs</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">.</span><span class="n">analogs_from_point</span><span class="p">((</span><span class="mf">40.7</span><span class="p">,</span><span class="o">-</span><span class="mf">74.0</span><span class="p">),</span><span class="n">radius</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">analogs</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;AL091971&#39;: 6.2, &#39;AL041893&#39;: 8.4, &#39;AL092011&#39;: 11.1, &#39;AL031955&#39;: 14.8, &#39;AL061874&#39;: 16.4, &#39;AL021972&#39;: 19.7, &#39;AL051872&#39;: 20.2, &#39;AL021996&#39;: 21.1, &#39;AL061863&#39;: 22.4, &#39;AL062020&#39;: 23.7, &#39;AL051861&#39;: 25.6, &#39;AL031960&#39;: 27.9, &#39;AL082008&#39;: 37.3, &#39;AL081999&#39;: 43.6}
+</pre></div>
+</div>
+<p>We can then plot these storms relative to the point using <cite>plot_analogs_from_point</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">.</span><span class="n">plot_analogs_from_point</span><span class="p">((</span><span class="mf">40.7</span><span class="p">,</span><span class="o">-</span><span class="mf">74.0</span><span class="p">),</span><span class="n">radius</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_analogs_001.png" srcset="../_images/sphx_glr_analogs_001.png" alt="TCs Within 50 km of 40.7°N, 74.0°W, Number of storms: 14 Jan 01 – Dec 31 • 1851 – 2021" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;TCs Within 50 km of 40.7°N, 74.0°W&#39;,&#39;right&#39;:&#39;Number of storms: 14\nJan 01 – Dec 31 • 1851 – 2021&#39;}&gt;
+</pre></div>
+</div>
+<p>We can further customize the analogs by adding thresholds by year range, time of year, sustained wind and MSLP.</p>
+<p>Let’s test this out by expanding the radius to 100 km, adding a minimum sustained wind of 65 kt (i.e., Category 1 hurricane), and from May to October:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Print storms</span>
+<span class="n">storms</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">.</span><span class="n">analogs_from_point</span><span class="p">((</span><span class="mf">40.7</span><span class="p">,</span><span class="o">-</span><span class="mf">74.0</span><span class="p">),</span><span class="n">radius</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;5/1&#39;</span><span class="p">,</span><span class="s1">&#39;10/1&#39;</span><span class="p">),</span><span class="n">thresh</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;v_min&#39;</span><span class="p">:</span><span class="mi">65</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">storms</span><span class="p">)</span>
+
+<span class="c1">#Plot storms</span>
+<a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">.</span><span class="n">plot_analogs_from_point</span><span class="p">((</span><span class="mf">40.7</span><span class="p">,</span><span class="o">-</span><span class="mf">74.0</span><span class="p">),</span><span class="n">radius</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;5/1&#39;</span><span class="p">,</span><span class="s1">&#39;10/1&#39;</span><span class="p">),</span><span class="n">thresh</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;v_min&#39;</span><span class="p">:</span><span class="mi">65</span><span class="p">})</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_analogs_002.png" srcset="../_images/sphx_glr_analogs_002.png" alt="TCs Within 100 km of 40.7°N, 74.0°W, Number of storms: 6 May 01 – Oct 01 • 1851 – 2021" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;AL041893&#39;: 8.4, &#39;AL071934&#39;: 79.2, &#39;AL061938&#39;: 92.7, &#39;AL051960&#39;: 89.2, &#39;AL071976&#39;: 70.0, &#39;AL091985&#39;: 60.1}
+
+&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;TCs Within 100 km of 40.7°N, 74.0°W&#39;,&#39;right&#39;:&#39;Number of storms: 6\nMay 01 – Oct 01 • 1851 – 2021&#39;}&gt;
+</pre></div>
+</div>
+<p>Let’s say we want to automatically plot the closest storm to a point that meets our threshold. The below code automates this for any lat/lon coordinate.</p>
+<p>This example is for NYC - feel free to play around with any lat/lon coordinate of your choice!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">point</span> <span class="o">=</span> <span class="p">(</span><span class="mf">40.7</span><span class="p">,</span><span class="o">-</span><span class="mf">74.0</span><span class="p">)</span> <span class="c1">#NYC lat/lon</span>
+
+<span class="c1">#Retrieve dict of analogs</span>
+<span class="n">analogs</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">.</span><span class="n">analogs_from_point</span><span class="p">(</span><span class="n">point</span><span class="p">,</span><span class="n">radius</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">date_range</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;5/1&#39;</span><span class="p">,</span><span class="s1">&#39;10/1&#39;</span><span class="p">),</span><span class="n">thresh</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;v_min&#39;</span><span class="p">:</span><span class="mi">65</span><span class="p">})</span>
+
+<span class="c1">#Sort by ascending value, meaning the first entry is the smallest distance from the point</span>
+<span class="n">analogs_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">analogs</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="c1">#Get ID of closest storm, which will be the first item of the first entry of analogs_sorted</span>
+<span class="n">closest_storm</span> <span class="o">=</span> <span class="n">analogs_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1">#Plot storm</span>
+<a href="../api/generated/tropycal.tracks.TrackDataset.plot_storm.html#tropycal.tracks.TrackDataset.plot_storm" title="tropycal.tracks.TrackDataset.plot_storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">plot_storm</span></a><span class="p">(</span><span class="n">closest_storm</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_analogs_003.png" srcset="../_images/sphx_glr_analogs_003.png" alt="Hurricane UNNAMED, 15 Aug 1893 – 24 Aug 1893 100 kt • 952 hPa • 24.6 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane UNNAMED&#39;,&#39;right&#39;:&#39;15 Aug 1893 – 24 Aug 1893\n100 kt • 952 hPa • 24.6 ACE&#39;}&gt;
+</pre></div>
+</div>
+<p>Lastly, we can also use a custom domain created by a list of lat/lon coordinate pairs.</p>
+<p>The example below plots all* tropical cyclones that passed through the New Jersey to Long Island coastline between 1950 and 2022, with additional plotting properties of (1) not plotting dots and (2) coloring lines by SSHWS category.</p>
+<p><em>Note: Tropical cyclone tracks are interpolated to hourly; therefore, a point only counts if its hourly track passed through the specified domain. Note the 1938 “Long Island Express” Hurricane doesn’t appear below, as it moved at an anomalously fast forward speed.</em></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">points</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mf">38.9</span><span class="p">,</span> <span class="o">-</span><span class="mf">74.7</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">39.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">74.2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">40.4</span><span class="p">,</span> <span class="o">-</span><span class="mf">73.8</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">41.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">71.8</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">41.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">72.2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">40.8</span><span class="p">,</span> <span class="o">-</span><span class="mf">73.7</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">40.6</span><span class="p">,</span> <span class="o">-</span><span class="mf">74.3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">39.7</span><span class="p">,</span> <span class="o">-</span><span class="mf">74.4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">39.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">74.9</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="c1">#Retrieve list of storms that meet this criteria</span>
+<span class="n">storms</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">.</span><span class="n">analogs_from_shape</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="n">year_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1950</span><span class="p">,</span><span class="mi">2022</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">storms</span><span class="p">)</span>
+
+<span class="c1">#Plot storms</span>
+<a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">.</span><span class="n">plot_analogs_from_shape</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="n">year_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1950</span><span class="p">,</span><span class="mi">2022</span><span class="p">),</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dots&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;linecolor&#39;</span><span class="p">:</span><span class="s1">&#39;category&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_analogs_004.png" srcset="../_images/sphx_glr_analogs_004.png" alt="TC Tracks Within Bounded Region, Number of storms: 17 Jan 01 – Dec 31 • 1950 – 2021" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;AL061954&#39;, &#39;AL031955&#39;, &#39;AL031960&#39;, &#39;AL051960&#39;, &#39;AL061961&#39;, &#39;AL161968&#39;, &#39;AL091971&#39;, &#39;AL021972&#39;, &#39;AL071976&#39;, &#39;AL091985&#39;, &#39;AL101985&#39;, &#39;AL021996&#39;, &#39;AL081999&#39;, &#39;AL082008&#39;, &#39;AL092011&#39;, &#39;AL062020&#39;, &#39;AL052021&#39;]
+
+&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;TC Tracks Within Bounded Region&#39;,&#39;right&#39;:&#39;Number of storms: 17\nJan 01 – Dec 31 • 1950 – 2021&#39;}&gt;
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  49.603 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-analogs-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/9cbcf2c6df887b71cd61e9e840e19fb2/analogs.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">analogs.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/eea263a08e6d1c58ad5afde02204d88b/analogs.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">analogs.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tc_rainfall.html" class="btn btn-neutral float-left" title="Tropical Cyclone Rainfall" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="customize_storm.html" class="btn btn-neutral float-right" title="Customizing Storm Plots" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

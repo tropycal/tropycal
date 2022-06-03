@@ -15,13 +15,56 @@ Examples of using tropycal to generate images and text.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Realtime Functionality">
+
+.. only:: html
+
+ .. figure:: /examples/images/thumb/sphx_glr_realtime_thumb.png
+     :alt: Realtime Functionality
+
+     :ref:`sphx_glr_examples_realtime.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/realtime
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Individual Season Analysis">
+
+.. only:: html
+
+ .. figure:: /examples/images/thumb/sphx_glr_tracks.season_thumb.png
+     :alt: Individual Season Analysis
+
+     :ref:`sphx_glr_examples_tracks.season.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/tracks.season
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="For documentation generation purposes, return_ax must be set True for plotting functions. You d...">
 
 .. only:: html
 
-    .. figure:: /examples/images/thumb/sphx_glr_tracks.tornado_thumb.png
+ .. figure:: /examples/images/thumb/sphx_glr_tracks.tornado_thumb.png
+     :alt: Tornado Analyses
 
-        :ref:`sphx_glr_examples_tracks.tornado.py`
+     :ref:`sphx_glr_examples_tracks.tornado.py`
 
 .. raw:: html
 
@@ -39,9 +82,10 @@ Examples of using tropycal to generate images and text.
 
 .. only:: html
 
-    .. figure:: /examples/images/thumb/sphx_glr_tracks.storm_thumb.png
+ .. figure:: /examples/images/thumb/sphx_glr_tracks.storm_thumb.png
+     :alt: Individual Storm Analysis
 
-        :ref:`sphx_glr_examples_tracks.storm.py`
+     :ref:`sphx_glr_examples_tracks.storm.py`
 
 .. raw:: html
 
@@ -55,13 +99,77 @@ Examples of using tropycal to generate images and text.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Tropical Cyclone Rainfall">
+
+.. only:: html
+
+ .. figure:: /examples/images/thumb/sphx_glr_tc_rainfall_thumb.png
+     :alt: Tropical Cyclone Rainfall
+
+     :ref:`sphx_glr_examples_tc_rainfall.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/tc_rainfall
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Historical TC Track Analogs">
+
+.. only:: html
+
+ .. figure:: /examples/images/thumb/sphx_glr_analogs_thumb.png
+     :alt: Historical TC Track Analogs
+
+     :ref:`sphx_glr_examples_analogs.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/analogs
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Customizing Storm Plots">
+
+.. only:: html
+
+ .. figure:: /examples/images/thumb/sphx_glr_customize_storm_thumb.png
+     :alt: Customizing Storm Plots
+
+     :ref:`sphx_glr_examples_customize_storm.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/customize_storm
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="TC Dataset Analysis">
 
 .. only:: html
 
-    .. figure:: /examples/images/thumb/sphx_glr_tracks.TrackDataset_thumb.png
+ .. figure:: /examples/images/thumb/sphx_glr_tracks.TrackDataset_thumb.png
+     :alt: TC Dataset Analysis
 
-        :ref:`sphx_glr_examples_tracks.TrackDataset.py`
+     :ref:`sphx_glr_examples_tracks.TrackDataset.py`
 
 .. raw:: html
 
@@ -72,9 +180,30 @@ Examples of using tropycal to generate images and text.
    :hidden:
 
    /examples/tracks.TrackDataset
+
 .. raw:: html
 
-    <div style='clear:both'></div>
+    <div class="sphx-glr-thumbcontainer" tooltip="Aircraft Recon Data Analysis">
+
+.. only:: html
+
+ .. figure:: /examples/images/thumb/sphx_glr_recon_thumb.png
+     :alt: Aircraft Recon Data Analysis
+
+     :ref:`sphx_glr_examples_recon.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/recon
+.. raw:: html
+
+    <div class="sphx-glr-clear"></div>
 
 
 
@@ -84,15 +213,15 @@ Examples of using tropycal to generate images and text.
     :class: sphx-glr-footer-gallery
 
 
-  .. container:: sphx-glr-download
+  .. container:: sphx-glr-download sphx-glr-download-python
 
-    :download:`Download all examples in Python source code: examples_python.zip </C:/Users/Tomer/Documents/python/github/tomerburg_account/tropycal/docs/examples/examples_python.zip>`
+    :download:`Download all examples in Python source code: examples_python.zip </examples/examples_python.zip>`
 
 
 
-  .. container:: sphx-glr-download
+  .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-    :download:`Download all examples in Jupyter notebooks: examples_jupyter.zip </C:/Users/Tomer/Documents/python/github/tomerburg_account/tropycal/docs/examples/examples_jupyter.zip>`
+    :download:`Download all examples in Jupyter notebooks: examples_jupyter.zip </examples/examples_jupyter.zip>`
 
 
 .. only:: html

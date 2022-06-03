@@ -1,81 +1,39 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tropycal.utils.generic_utils &mdash; tropycal </title>
-  
-
-  
-  
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../../',
-              VERSION:'0.3.1',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../../index.html" class="icon icon-home"> tropycal
-          
-
-          
-            
             <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -83,17 +41,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../support.html">Support</a></li>
@@ -103,66 +51,30 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../data.html">Data Sources</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../index.html">tropycal</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
-        
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../index.html">Module code</a> &raquo;</li>
-        
       <li>tropycal.utils.generic_utils</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for tropycal.utils.generic_utils</h1><div class="highlight"><pre>
 <span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Utility functions that are used across modules.</span>
 
@@ -175,13 +87,20 @@
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">urllib</span>
 <span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
 <span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mlib</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">interp</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shapefile</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span><span class="p">,</span> <span class="n">BytesIO</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span>
 
 <span class="c1">#===========================================================================================================</span>
 <span class="c1"># Public utilities</span>
@@ -484,13 +403,13 @@
         <span class="k">elif</span> <span class="n">lon</span> <span class="o">&lt;</span> <span class="mf">180.0</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;west_pacific&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">storm_id</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">9</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">storm_id</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">8</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot determine whether storm is in North Atlantic or East Pacific basins.&quot;</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">storm_id</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;AL&quot;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="s2">&quot;north_atlantic&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">&quot;north_pacific&quot;</span>
+                <span class="k">return</span> <span class="s2">&quot;east_pacific&quot;</span>
     
     <span class="c1">#Southern hemisphere check</span>
     <span class="k">else</span><span class="p">:</span>
@@ -506,7 +425,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;south_atlantic&quot;</span></div>
 
-<span class="k">def</span> <span class="nf">knots_to_mph</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">):</span>
+<div class="viewcode-block" id="knots_to_mph"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.knots_to_mph.html#tropycal.utils.knots_to_mph">[docs]</a><span class="k">def</span> <span class="nf">knots_to_mph</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">):</span>
     
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert wind from knots to miles per hour, in increments of 5 as used by NHC.</span>
@@ -534,7 +453,7 @@
         <span class="k">return</span> <span class="n">mphs</span><span class="p">[</span><span class="n">kts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">)]</span>
     
     <span class="c1">#Otherwise, return original value</span>
-    <span class="k">return</span> <span class="n">wind_speed</span>
+    <span class="k">return</span> <span class="n">wind_speed</span></div>
 
 <div class="viewcode-block" id="accumulated_cyclone_energy"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.accumulated_cyclone_energy.html#tropycal.utils.accumulated_cyclone_energy">[docs]</a><span class="k">def</span> <span class="nf">accumulated_cyclone_energy</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">,</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
     
@@ -562,6 +481,492 @@
     
     <span class="c1">#Return ACE</span>
     <span class="k">return</span> <span class="n">ace</span></div>
+
+<div class="viewcode-block" id="dropsonde_mslp_estimate"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.dropsonde_mslp_estimate.html#tropycal.utils.dropsonde_mslp_estimate">[docs]</a><span class="k">def</span> <span class="nf">dropsonde_mslp_estimate</span><span class="p">(</span><span class="n">mslp</span><span class="p">,</span><span class="n">surface_wind</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply a NHC rule of thumb for estimating a TC&#39;s minimum central MSLP. This is intended for a dropsonde released in the eye, accounting for drifting by factoring in the surface wind in knots.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mslp : int or float</span>
+<span class="sd">        Dropsonde surface MSLP, in hPa.</span>
+<span class="sd">    surface_wind : int or float</span>
+<span class="sd">        Surface wind as measured by the dropsonde. This **must** be surface wind; this cannot be substituted by a level just above the surface.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Estimated TC minimum central MSLP using the NHC estimation method.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Source is from NHC presentation:</span>
+<span class="sd">    https://www.nhc.noaa.gov/outreach/presentations/nhc2013_aircraftData.pdf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">return</span> <span class="n">mslp</span> <span class="o">-</span> <span class="p">(</span><span class="n">surface_wind</span> <span class="o">/</span> <span class="mf">10.0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_two_current"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.get_two_current.html#tropycal.utils.get_two_current">[docs]</a><span class="k">def</span> <span class="nf">get_two_current</span><span class="p">():</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve the latest NHC Tropical Weather Outlook (TWO).</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        A dictionary of shapefiles for points, areas and lines.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The shapefiles returned are modified versions of Cartopy&#39;s BasicReader, allowing to read in shapefiles directly from URL without having to download the shapefile locally first.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Retrieve NHC shapefiles for development areas</span>
+    <span class="n">shapefiles</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;areas&#39;</span><span class="p">,</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span><span class="s1">&#39;points&#39;</span><span class="p">]:</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1">#Read in shapefile zip from NHC</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://www.nhc.noaa.gov/xgtwo/gtwo_shapefiles.zip&#39;</span>
+            <span class="n">request</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+            <span class="n">file_like_object</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="n">tar</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">file_like_object</span><span class="p">)</span>
+
+            <span class="c1">#Get file list (points, areas)</span>
+            <span class="n">members</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tar</span><span class="o">.</span><span class="n">namelist</span><span class="p">()])</span>
+            <span class="n">nums</span> <span class="o">=</span> <span class="s2">&quot;[0123456789]&quot;</span>
+            <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;gtwo_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">_20</span><span class="si">{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}</span><span class="s1">.shp&#39;</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">search_pattern</span><span class="p">)</span>
+            <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">members</span><span class="p">)</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#remove duplicates</span>
+
+            <span class="c1">#Retrieve necessary components for shapefile</span>
+            <span class="n">members</span> <span class="o">=</span> <span class="n">tar</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
+            <span class="n">members_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">members</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;shp&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;dbf&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;prj&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;shx&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">members_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.&quot;</span><span class="o">+</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">tar</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">members</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
+
+            <span class="c1">#Read in shapefile</span>
+            <span class="n">orig_reader</span> <span class="o">=</span> <span class="n">shapefile</span><span class="o">.</span><span class="n">Reader</span><span class="p">(</span><span class="n">shp</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;shp&#39;</span><span class="p">],</span> <span class="n">dbf</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;dbf&#39;</span><span class="p">],</span> <span class="n">prj</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;prj&#39;</span><span class="p">],</span> <span class="n">shx</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;shx&#39;</span><span class="p">])</span>
+            <span class="n">shapefiles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">BasicReader</span><span class="p">(</span><span class="n">orig_reader</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">shapefiles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="k">return</span> <span class="n">shapefiles</span></div>
+    
+<div class="viewcode-block" id="get_two_archive"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.get_two_archive.html#tropycal.utils.get_two_archive">[docs]</a><span class="k">def</span> <span class="nf">get_two_archive</span><span class="p">(</span><span class="n">time</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve an archived NHC Tropical Weather Outlook (TWO). If none available within 30 hours of the specified date, an empty dict is returned.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time : datetime</span>
+<span class="sd">        Valid time for archived shapefile.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        A dictionary of shapefiles for points, areas and lines.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The shapefiles returned are modified versions of Cartopy&#39;s BasicReader, allowing to read in shapefiles directly from URL without having to download the shapefile locally first.</span>
+<span class="sd">    </span>
+<span class="sd">    TWO shapefiles are available courtesy of the National Hurricane Center beginning 28 July 2010.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Find closest NHC shapefile if within 24 hours</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://www.nhc.noaa.gov/gis/archive_gtwo.php&#39;</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;&lt;a href=&quot;gtwo/archive/2&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;zip&quot;&gt;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&lt;/a&gt;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">content</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="p">[(</span><span class="n">time</span><span class="o">-</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="o">/</span><span class="mi">3600</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">]</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">diff</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1">#Continue if less than 24 hours difference</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">30</span><span class="p">:</span>
+        <span class="n">two_date</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="n">diff</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">diff</span><span class="p">))]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M&#39;</span><span class="p">)</span>
+
+        <span class="c1">#Retrieve NHC shapefiles for development areas</span>
+        <span class="n">shapefiles</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;areas&#39;</span><span class="p">,</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span><span class="s1">&#39;points&#39;</span><span class="p">]:</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1">#Read in shapefile zip from NHC</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.nhc.noaa.gov/gis/gtwo/archive/</span><span class="si">{</span><span class="n">two_date</span><span class="si">}</span><span class="s1">_gtwo.zip&#39;</span>
+                <span class="n">request</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+                <span class="n">file_like_object</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+                <span class="n">tar</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">file_like_object</span><span class="p">)</span>
+
+                <span class="c1">#Get file list (points, areas)</span>
+                <span class="n">members</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tar</span><span class="o">.</span><span class="n">namelist</span><span class="p">()])</span>
+                <span class="n">nums</span> <span class="o">=</span> <span class="s2">&quot;[0123456789]&quot;</span>
+                <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;gtwo_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">_20</span><span class="si">{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}</span><span class="s1">.shp&#39;</span>
+                <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">search_pattern</span><span class="p">)</span>
+                <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">members</span><span class="p">)</span>
+                <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#remove duplicates</span>
+
+                <span class="c1">#Retrieve necessary components for shapefile</span>
+                <span class="n">members</span> <span class="o">=</span> <span class="n">tar</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
+                <span class="n">members_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">members</span><span class="p">]</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;shp&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;dbf&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;prj&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;shx&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">}</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">members_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.&quot;</span><span class="o">+</span><span class="n">key</span><span class="p">)</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">tar</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">members</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
+
+                <span class="c1">#Read in shapefile</span>
+                <span class="n">orig_reader</span> <span class="o">=</span> <span class="n">shapefile</span><span class="o">.</span><span class="n">Reader</span><span class="p">(</span><span class="n">shp</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;shp&#39;</span><span class="p">],</span> <span class="n">dbf</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;dbf&#39;</span><span class="p">],</span> <span class="n">prj</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;prj&#39;</span><span class="p">],</span> <span class="n">shx</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;shx&#39;</span><span class="p">])</span>
+                <span class="n">shapefiles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">BasicReader</span><span class="p">(</span><span class="n">orig_reader</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">shapefiles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">shapefiles</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;areas&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;lines&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;points&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">}</span>
+    
+    <span class="k">return</span> <span class="n">shapefiles</span></div>
+
+<div class="viewcode-block" id="nhc_cone_radii"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.nhc_cone_radii.html#tropycal.utils.nhc_cone_radii">[docs]</a><span class="k">def</span> <span class="nf">nhc_cone_radii</span><span class="p">(</span><span class="n">year</span><span class="p">,</span><span class="n">basin</span><span class="p">,</span><span class="n">forecast_hour</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve the official NHC Cone of Uncertainty radii by basin, year and forecast hour(s). Units are in nautical miles.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    year : int</span>
+<span class="sd">        Valid year for cone of uncertainty radii.</span>
+<span class="sd">    basin : str</span>
+<span class="sd">        Basin for cone of uncertainty radii. If basin is invalid, return value will be an empty dict. Please refer to :ref:`options-domain` for available basin options.</span>
+<span class="sd">    forecast_hour : int or list, optional</span>
+<span class="sd">        Forecast hour(s) to retrieve the cone of uncertainty for. If empty, all available forecast hours will be retrieved.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary with forecast hour(s) as the keys, and the cone radius in nautical miles for each respective forecast hour as the values.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    1. NHC cone radii are available beginning 2008 onward. Radii for years before 2008 will be defaulted to 2008, and if the current year&#39;s radii are not available yet, the radii for the most recent year will be returned.</span>
+<span class="sd">    </span>
+<span class="sd">    2. NHC began producing cone radii for forecast hour 60 in 2020. Years before 2020 do not have a forecast hour 60.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Source: https://www.nhc.noaa.gov/verification/verify3.shtml</span>
+    <span class="c1">#Source 2: https://www.nhc.noaa.gov/aboutcone.shtml</span>
+    <span class="c1">#Radii are in nautical miles</span>
+    <span class="n">cone_climo_hr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">36</span><span class="p">,</span><span class="mi">48</span><span class="p">,</span><span class="mi">72</span><span class="p">,</span><span class="mi">96</span><span class="p">,</span><span class="mi">120</span><span class="p">]</span>
+    
+    <span class="c1">#Basin check</span>
+    <span class="k">if</span> <span class="n">basin</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="s1">&#39;east_pacific&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+    
+    <span class="c1">#Fix for 2020 and later that incorporates 60 hour forecasts</span>
+    <span class="k">if</span> <span class="n">year</span> <span class="o">&gt;=</span> <span class="mi">2020</span><span class="p">:</span>
+        <span class="n">cone_climo_hr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">36</span><span class="p">,</span><span class="mi">48</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">72</span><span class="p">,</span><span class="mi">96</span><span class="p">,</span><span class="mi">120</span><span class="p">]</span>
+    
+    <span class="c1">#Forecast hour check</span>
+    <span class="k">if</span> <span class="n">forecast_hour</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">forecast_hour</span> <span class="o">=</span> <span class="n">cone_climo_hr</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">forecast_hour</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">forecast_hour</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cone_climo_hr</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Forecast hour </span><span class="si">{</span><span class="n">forecast_hour</span><span class="si">}</span><span class="s2"> is invalid. Available forecast hours for </span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2"> are: </span><span class="si">{</span><span class="n">cone_climo_hr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">forecast_hour</span> <span class="o">=</span> <span class="p">[</span><span class="n">forecast_hour</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">forecast_hour</span><span class="p">,</span><span class="nb">list</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">forecast_hour</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_hour</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cone_climo_hr</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">forecast_hour</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Requested forecast hours are invalid. Available forecast hours for </span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2"> are: </span><span class="si">{</span><span class="n">cone_climo_hr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;forecast_hour must be of type int or list&quot;</span><span class="p">)</span>
+    
+    <span class="c1">#Year check</span>
+    <span class="k">if</span> <span class="n">year</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">CONE_SIZE_ATL</span><span class="o">.</span><span class="n">keys</span><span class="p">()]):</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">CONE_SIZE_ATL</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No cone information is available for the requested year. Defaulting to </span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2"> cone.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">year</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">CONE_SIZE_ATL</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="mi">2008</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No cone information is available for the requested year. Defaulting to 2008 cone.&quot;</span><span class="p">)</span>
+    
+    <span class="c1">#Retrieve data</span>
+    <span class="n">cone_radii</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">hour</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">forecast_hour</span><span class="p">)):</span>
+        <span class="n">hour_index</span> <span class="o">=</span> <span class="n">cone_climo_hr</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">hour</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;north_atlantic&#39;</span><span class="p">:</span>
+            <span class="n">cone_radii</span><span class="p">[</span><span class="n">hour</span><span class="p">]</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">CONE_SIZE_ATL</span><span class="p">[</span><span class="n">year</span><span class="p">][</span><span class="n">hour_index</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;east_pacific&#39;</span><span class="p">:</span>
+            <span class="n">cone_radii</span><span class="p">[</span><span class="n">hour</span><span class="p">]</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">CONE_SIZE_PAC</span><span class="p">[</span><span class="n">year</span><span class="p">][</span><span class="n">hour_index</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">cone_radii</span></div>
+
+<div class="viewcode-block" id="generate_nhc_cone"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.generate_nhc_cone.html#tropycal.utils.generate_nhc_cone">[docs]</a><span class="k">def</span> <span class="nf">generate_nhc_cone</span><span class="p">(</span><span class="n">forecast</span><span class="p">,</span><span class="n">basin</span><span class="p">,</span><span class="n">shift_lons</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cone_days</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">cone_year</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">return_xarray</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a gridded cone of uncertainty using forecast data from NHC.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    forecast : dict</span>
+<span class="sd">        Dictionary containing forecast data</span>
+<span class="sd">    basin : str</span>
+<span class="sd">        Basin for cone of uncertainty radii. Please refer to :ref:`options-domain` for available basin options.</span>
+<span class="sd">    shift_lons : bool, optional</span>
+<span class="sd">        If true, grid will be shifted to +0 to +360 degrees longitude. Default is False (-180 to +180 degrees).</span>
+<span class="sd">    cone_days : int, optional</span>
+<span class="sd">        Number of forecast days to generate the cone through. Default is 5 days.</span>
+<span class="sd">    cone_year : int, optional</span>
+<span class="sd">        Year valid for cone radii. If None, this fuction will attempt to retrieve the year from the forecast dict.</span>
+<span class="sd">    return_xarray : bool, optional</span>
+<span class="sd">        If True, returns output as an xarray Dataset. Default is False, returning output as a dictionary.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict or xarray.Dataset</span>
+<span class="sd">        Depending on `return_xarray`, returns either a dictionary or an xarray Dataset containing the gridded cone of uncertainty and its accompanying attributes.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Forecast dicts can be retrieved for realtime storm objects using ``RealtimeStorm.get_forecast_realtime()``, and for archived storms using ``Storm.get_nhc_forecast_dict()``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#Check forecast dict has all required keys</span>
+    <span class="n">check_dict</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span><span class="s1">&#39;init&#39;</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="kc">False</span> <span class="ow">in</span> <span class="n">check_dict</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;forecast dict must contain keys &#39;fhr&#39;, &#39;lat&#39;, &#39;lon&#39; and &#39;init&#39;. You may retrieve a forecast dict for a Storm object through &#39;storm.get_operational_forecasts()&#39;.&quot;</span><span class="p">)</span>
+    
+    <span class="c1">#Check forecast basin</span>
+    <span class="k">if</span> <span class="n">basin</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">ALL_BASINS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;basin cannot be identified.&quot;</span><span class="p">)</span>
+
+    <span class="c1">#Retrieve cone of uncertainty year</span>
+    <span class="k">if</span> <span class="n">cone_year</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cone_year</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;init&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">year</span>
+    <span class="k">if</span> <span class="n">cone_year</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">CONE_SIZE_ATL</span><span class="o">.</span><span class="n">keys</span><span class="p">()]):</span>
+        <span class="n">cone_year</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">CONE_SIZE_ATL</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No cone information is available for the requested year. Defaulting to </span><span class="si">{</span><span class="n">cone_year</span><span class="si">}</span><span class="s2"> cone.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cone_year</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">CONE_SIZE_ATL</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">cone_year</span> <span class="o">=</span> <span class="mi">2008</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No cone information is available for the requested year. Defaulting to 2008 cone.&quot;</span><span class="p">)</span>
+
+    <span class="c1">#Retrieve cone size and hours for given year</span>
+    <span class="k">if</span> <span class="n">basin</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="s1">&#39;east_pacific&#39;</span><span class="p">]:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">nhc_cone_radii</span><span class="p">(</span><span class="n">cone_year</span><span class="p">,</span><span class="n">basin</span><span class="p">)</span>
+        <span class="n">cone_climo_hr</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="n">cone_size</span> <span class="o">=</span> <span class="p">[</span><span class="n">output</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cone_climo_hr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">36</span><span class="p">,</span><span class="mi">48</span><span class="p">,</span><span class="mi">72</span><span class="p">,</span><span class="mi">96</span><span class="p">,</span><span class="mi">120</span><span class="p">]</span>
+        <span class="n">cone_size</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1">#Function for interpolating between 2 times</span>
+    <span class="k">def</span> <span class="nf">temporal_interpolation</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">orig_times</span><span class="p">,</span> <span class="n">target_times</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">orig_times</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">ynew</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">target_times</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ynew</span>
+
+    <span class="c1">#Function for plugging small array into larger array</span>
+    <span class="k">def</span> <span class="nf">plug_array</span><span class="p">(</span><span class="n">small</span><span class="p">,</span><span class="n">large</span><span class="p">,</span><span class="n">small_coords</span><span class="p">,</span><span class="n">large_coords</span><span class="p">):</span>
+
+        <span class="n">small_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">small_coords</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">small_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">small_coords</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">large_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">large_coords</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">large_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">large_coords</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">small_minlat</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">small_lat</span><span class="p">)</span>
+        <span class="n">small_maxlat</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">small_lat</span><span class="p">)</span>
+        <span class="n">small_minlon</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">small_lon</span><span class="p">)</span>
+        <span class="n">small_maxlon</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">small_lon</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">small_minlat</span> <span class="ow">in</span> <span class="n">large_lat</span><span class="p">:</span>
+            <span class="n">minlat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">large_lat</span><span class="o">==</span><span class="n">small_minlat</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">minlat</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">large_lat</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">small_maxlat</span> <span class="ow">in</span> <span class="n">large_lat</span><span class="p">:</span>
+            <span class="n">maxlat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">large_lat</span><span class="o">==</span><span class="n">small_maxlat</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">maxlat</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">large_lat</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">small_minlon</span> <span class="ow">in</span> <span class="n">large_lon</span><span class="p">:</span>
+            <span class="n">minlon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">large_lon</span><span class="o">==</span><span class="n">small_minlon</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">minlon</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">large_lon</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">small_maxlon</span> <span class="ow">in</span> <span class="n">large_lon</span><span class="p">:</span>
+            <span class="n">maxlon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">large_lon</span><span class="o">==</span><span class="n">small_maxlon</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">maxlon</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">large_lon</span><span class="p">)</span>
+
+        <span class="n">large</span><span class="p">[</span><span class="n">minlat</span><span class="p">:</span><span class="n">maxlat</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">minlon</span><span class="p">:</span><span class="n">maxlon</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">small</span>
+
+        <span class="k">return</span> <span class="n">large</span>
+
+    <span class="c1">#Function for finding nearest value in an array</span>
+    <span class="k">def</span> <span class="nf">findNearest</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">array</span> <span class="o">-</span> <span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span>
+
+    <span class="c1">#Function for adding a radius surrounding a point</span>
+    <span class="k">def</span> <span class="nf">add_radius</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span><span class="n">lons</span><span class="p">,</span><span class="n">vlat</span><span class="p">,</span><span class="n">vlon</span><span class="p">,</span><span class="n">rad</span><span class="p">):</span>
+
+        <span class="c1">#construct new array expanding slightly over rad from lat/lon center</span>
+        <span class="n">grid_res</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1">#1 degree is approx 111 km</span>
+        <span class="n">grid_fac</span> <span class="o">=</span> <span class="p">(</span><span class="n">rad</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="mf">111.0</span>
+
+        <span class="c1">#Make grid surrounding position coordinate &amp; radius of circle</span>
+        <span class="n">nlon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">findNearest</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span><span class="n">vlon</span><span class="o">-</span><span class="n">grid_fac</span><span class="p">),</span><span class="n">findNearest</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span><span class="n">vlon</span><span class="o">+</span><span class="n">grid_fac</span><span class="o">+</span><span class="n">grid_res</span><span class="p">),</span><span class="n">grid_res</span><span class="p">)</span>
+        <span class="n">nlat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">findNearest</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span><span class="n">vlat</span><span class="o">-</span><span class="n">grid_fac</span><span class="p">),</span><span class="n">findNearest</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span><span class="n">vlat</span><span class="o">+</span><span class="n">grid_fac</span><span class="o">+</span><span class="n">grid_res</span><span class="p">),</span><span class="n">grid_res</span><span class="p">)</span>
+        <span class="n">lons</span><span class="p">,</span><span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">nlon</span><span class="p">,</span><span class="n">nlat</span><span class="p">)</span>
+        <span class="n">return_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">lons</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="c1">#Calculate distance from vlat/vlon at each gridpoint</span>
+        <span class="n">r_earth</span> <span class="o">=</span> <span class="mf">6.371</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span>
+        <span class="n">dlat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">vlat</span><span class="p">))</span>
+        <span class="n">dlon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lons</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">vlon</span><span class="p">))</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dlat</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dlat</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lats</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">vlat</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dlon</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dlon</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">a</span><span class="p">));</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="p">(</span><span class="n">r_earth</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="mf">1000.0</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">*</span> <span class="mf">0.621371</span> <span class="c1">#to miles</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">*</span> <span class="mf">0.868976</span> <span class="c1">#to nautical miles</span>
+
+        <span class="c1">#Mask out values less than radius</span>
+        <span class="n">return_arr</span><span class="p">[</span><span class="n">dist</span> <span class="o">&lt;=</span> <span class="n">rad</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1">#Attach small array into larger subset array</span>
+        <span class="n">small_coords</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span><span class="n">nlat</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">:</span><span class="n">nlon</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">return_arr</span><span class="p">,</span> <span class="n">small_coords</span>
+
+    <span class="c1">#--------------------------------------------------------------------</span>
+
+    <span class="c1">#Check if fhr3 is available, then get forecast data</span>
+    <span class="n">flag_12</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+        <span class="n">flag_12</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">cone_climo_hr</span> <span class="o">=</span> <span class="n">cone_climo_hr</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">fcst_lon</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+        <span class="n">fcst_lat</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+        <span class="n">fhr</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">])</span><span class="o">/</span><span class="mf">6.0</span>
+        <span class="n">subtract_by</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">interp_fhr_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="mi">0</span> <span class="ow">in</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span>
+        <span class="n">fcst_lon</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">fcst_lat</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">fhr</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span><span class="o">/</span><span class="mf">6.0</span>
+        <span class="n">interp_fhr_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="mi">0</span> <span class="ow">in</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">cone_climo_hr</span><span class="p">])</span>
+        <span class="n">fcst_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">fcst_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">fhr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span><span class="o">/</span><span class="mf">6.0</span>
+        <span class="n">interp_fhr_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">12</span><span class="p">:</span>
+        <span class="n">cone_climo_hr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">fcst_lon</span> <span class="o">=</span> <span class="p">[</span><span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">fcst_lat</span> <span class="o">=</span> <span class="p">[</span><span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">fhr</span> <span class="o">=</span> <span class="p">[</span><span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span><span class="o">+</span><span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span><span class="o">/</span><span class="mf">6.0</span>
+        <span class="n">interp_fhr_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">6.0</span><span class="p">,</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cone_climo_hr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">fcst_lon</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+        <span class="n">fcst_lat</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+        <span class="n">fhr</span> <span class="o">=</span> <span class="n">forecast</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span><span class="o">/</span><span class="mf">6.0</span>
+        <span class="n">interp_fhr_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="c1">#Determine index of forecast day cap</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">cone_days</span><span class="o">*</span><span class="mi">24</span><span class="p">)</span> <span class="ow">in</span> <span class="n">fhr</span><span class="p">:</span>
+        <span class="n">cone_day_cap</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">cone_days</span><span class="o">*</span><span class="mi">24</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">fcst_lon</span> <span class="o">=</span> <span class="n">fcst_lon</span><span class="p">[:</span><span class="n">cone_day_cap</span><span class="p">]</span>
+        <span class="n">fcst_lat</span> <span class="o">=</span> <span class="n">fcst_lat</span><span class="p">[:</span><span class="n">cone_day_cap</span><span class="p">]</span>
+        <span class="n">fhr</span> <span class="o">=</span> <span class="n">fhr</span><span class="p">[:</span><span class="n">cone_day_cap</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span><span class="o">/</span><span class="mf">6.0</span>
+        <span class="n">interp_fhr_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">interp_fhr_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cone_day_cap</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span>
+
+    <span class="c1">#Account for dateline</span>
+    <span class="k">if</span> <span class="n">shift_lons</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">temp_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fcst_lon</span><span class="p">)</span>
+        <span class="n">temp_lon</span><span class="p">[</span><span class="n">temp_lon</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_lon</span><span class="p">[</span><span class="n">temp_lon</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mf">360.0</span>
+        <span class="n">fcst_lon</span> <span class="o">=</span> <span class="n">temp_lon</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="c1">#Interpolate forecast data temporally and spatially</span>
+    <span class="n">interp_kind</span> <span class="o">=</span> <span class="s1">&#39;quadratic&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="n">interp_kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span> <span class="c1">#Interpolate linearly if only 2 forecast points</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">fcst_lon</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="n">interp_kind</span><span class="p">)</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">fcst_lat</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="n">interp_kind</span><span class="p">)</span>
+    <span class="n">interp_fhr</span> <span class="o">=</span> <span class="n">interp_fhr_idx</span> <span class="o">*</span> <span class="mi">6</span>
+    <span class="n">interp_lon</span> <span class="o">=</span> <span class="n">x1</span><span class="p">(</span><span class="n">interp_fhr_idx</span><span class="p">)</span>
+    <span class="n">interp_lat</span> <span class="o">=</span> <span class="n">y1</span><span class="p">(</span><span class="n">interp_fhr_idx</span><span class="p">)</span>
+
+    <span class="c1">#Return if no cone specified</span>
+    <span class="k">if</span> <span class="n">cone_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">return_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;center_lon&#39;</span><span class="p">:</span><span class="n">interp_lon</span><span class="p">,</span><span class="s1">&#39;center_lat&#39;</span><span class="p">:</span><span class="n">interp_lat</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">return_xarray</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+            <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">return_dict</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">return_dict</span>
+
+    <span class="c1">#Interpolate cone radius temporally</span>
+    <span class="n">cone_climo_hr</span> <span class="o">=</span> <span class="n">cone_climo_hr</span><span class="p">[:</span><span class="n">cone_day_cap</span><span class="p">]</span>
+    <span class="n">cone_size</span> <span class="o">=</span> <span class="n">cone_size</span><span class="p">[:</span><span class="n">cone_day_cap</span><span class="p">]</span>
+
+    <span class="n">cone_climo_fhrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cone_climo_hr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">flag_12</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">interp_fhr</span> <span class="o">+=</span> <span class="p">(</span><span class="n">subtract_by</span><span class="o">*</span><span class="mf">6.0</span><span class="p">)</span>
+        <span class="n">cone_climo_fhrs</span> <span class="o">=</span> <span class="n">cone_climo_fhrs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fhr</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cone_climo_hr</span><span class="p">)))</span>
+    <span class="n">temp_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cone_size</span><span class="p">)[</span><span class="n">idxs</span><span class="p">]</span>
+    <span class="n">interp_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">temporal_interpolation</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">interp_fhr</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">arr</span><span class="o">=</span><span class="n">temp_arr</span><span class="p">)</span>
+
+    <span class="c1">#Initialize 0.05 degree grid</span>
+    <span class="n">gridlats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">interp_lat</span><span class="p">)</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="n">interp_lat</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">,</span><span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">gridlons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">interp_lon</span><span class="p">)</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="n">interp_lon</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">,</span><span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">gridlons2d</span><span class="p">,</span><span class="n">gridlats2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">gridlons</span><span class="p">,</span><span class="n">gridlats</span><span class="p">)</span>
+
+    <span class="c1">#Iterate through fhr, calculate cone &amp; add into grid</span>
+    <span class="n">large_coords</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span><span class="n">gridlats</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">:</span><span class="n">gridlons</span><span class="p">}</span>
+    <span class="n">griddata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">gridlats2d</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">ilat</span><span class="p">,</span><span class="n">ilon</span><span class="p">,</span><span class="n">irad</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">interp_lat</span><span class="p">,</span><span class="n">interp_lon</span><span class="p">,</span><span class="n">interp_rad</span><span class="p">)):</span>
+        <span class="n">temp_grid</span><span class="p">,</span> <span class="n">small_coords</span> <span class="o">=</span> <span class="n">add_radius</span><span class="p">(</span><span class="n">gridlats</span><span class="p">,</span><span class="n">gridlons</span><span class="p">,</span><span class="n">ilat</span><span class="p">,</span><span class="n">ilon</span><span class="p">,</span><span class="n">irad</span><span class="p">)</span>
+        <span class="n">plug_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">griddata</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="n">plug_grid</span> <span class="o">=</span> <span class="n">plug_array</span><span class="p">(</span><span class="n">temp_grid</span><span class="p">,</span><span class="n">plug_grid</span><span class="p">,</span><span class="n">small_coords</span><span class="p">,</span><span class="n">large_coords</span><span class="p">)</span>
+        <span class="n">griddata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">griddata</span><span class="p">,</span><span class="n">plug_grid</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">return_xarray</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+        <span class="n">cone</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">griddata</span><span class="p">,</span><span class="n">coords</span><span class="o">=</span><span class="p">[</span><span class="n">gridlats</span><span class="p">,</span><span class="n">gridlons</span><span class="p">],</span><span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;grid_lat&#39;</span><span class="p">,</span><span class="s1">&#39;grid_lon&#39;</span><span class="p">])</span>
+        <span class="n">return_ds</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;cone&#39;</span><span class="p">:</span><span class="n">cone</span><span class="p">,</span>
+            <span class="s1">&#39;center_lon&#39;</span><span class="p">:</span><span class="n">interp_lon</span><span class="p">,</span>
+            <span class="s1">&#39;center_lat&#39;</span><span class="p">:</span><span class="n">interp_lat</span>
+        <span class="p">}</span>
+        <span class="n">return_ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">return_ds</span><span class="p">)</span>
+        <span class="n">return_ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cone_year</span>
+        <span class="k">return</span> <span class="n">return_ds</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">return_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span><span class="n">gridlats</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">:</span><span class="n">gridlons</span><span class="p">,</span><span class="s1">&#39;lat2d&#39;</span><span class="p">:</span><span class="n">gridlats2d</span><span class="p">,</span><span class="s1">&#39;lon2d&#39;</span><span class="p">:</span><span class="n">gridlons2d</span><span class="p">,</span><span class="s1">&#39;cone&#39;</span><span class="p">:</span><span class="n">griddata</span><span class="p">,</span>
+                   <span class="s1">&#39;center_lon&#39;</span><span class="p">:</span><span class="n">interp_lon</span><span class="p">,</span><span class="s1">&#39;center_lat&#39;</span><span class="p">:</span><span class="n">interp_lat</span><span class="p">,</span><span class="s1">&#39;year&#39;</span><span class="p">:</span><span class="n">cone_year</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">return_dict</span></div>
 
 <span class="c1">#===========================================================================================================</span>
 <span class="c1"># Private utilities</span>
@@ -628,9 +1033,101 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
+<span class="k">def</span> <span class="nf">dynamic_map_extent</span><span class="p">(</span><span class="n">min_lon</span><span class="p">,</span><span class="n">max_lon</span><span class="p">,</span><span class="n">min_lat</span><span class="p">,</span><span class="n">max_lat</span><span class="p">):</span>
+
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets up a dynamic map extent with an aspect ratio of 3:2 given latitude and longitude bounds.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    min_lon : float</span>
+<span class="sd">        Minimum longitude bound.</span>
+<span class="sd">    max_lon : float</span>
+<span class="sd">        Maximum longitude bound.</span>
+<span class="sd">    min_lat : float</span>
+<span class="sd">        Minimum latitude bound.</span>
+<span class="sd">    max_lat : float</span>
+<span class="sd">        Maximum latitude bound.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    list</span>
+<span class="sd">        List containing new west, east, north, south map bounds, respectively.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#Get lat/lon bounds</span>
+    <span class="n">bound_w</span> <span class="o">=</span> <span class="n">min_lon</span><span class="o">+</span><span class="mf">0.0</span>
+    <span class="n">bound_e</span> <span class="o">=</span> <span class="n">max_lon</span><span class="o">+</span><span class="mf">0.0</span>
+    <span class="n">bound_s</span> <span class="o">=</span> <span class="n">min_lat</span><span class="o">+</span><span class="mf">0.0</span>
+    <span class="n">bound_n</span> <span class="o">=</span> <span class="n">max_lat</span><span class="o">+</span><span class="mf">0.0</span>
+
+    <span class="c1">#If only one coordinate point, artificially induce a spread</span>
+    <span class="k">if</span> <span class="n">bound_w</span> <span class="o">==</span> <span class="n">bound_e</span><span class="p">:</span>
+        <span class="n">bound_w</span> <span class="o">=</span> <span class="n">bound_w</span> <span class="o">-</span> <span class="mf">0.6</span>
+        <span class="n">bound_e</span> <span class="o">=</span> <span class="n">bound_e</span> <span class="o">+</span> <span class="mf">0.6</span>
+    <span class="k">if</span> <span class="n">bound_s</span> <span class="o">==</span> <span class="n">bound_n</span><span class="p">:</span>
+        <span class="n">bound_n</span> <span class="o">=</span> <span class="n">bound_n</span> <span class="o">+</span> <span class="mf">0.6</span>
+        <span class="n">bound_s</span> <span class="o">=</span> <span class="n">bound_s</span> <span class="o">-</span> <span class="mf">0.6</span>
+
+    <span class="c1">#Function for fixing map ratio</span>
+    <span class="k">def</span> <span class="nf">fix_map_ratio</span><span class="p">(</span><span class="n">bound_w</span><span class="p">,</span><span class="n">bound_e</span><span class="p">,</span><span class="n">bound_n</span><span class="p">,</span><span class="n">bound_s</span><span class="p">,</span><span class="n">nthres</span><span class="o">=</span><span class="mf">1.45</span><span class="p">):</span>
+        <span class="n">xrng</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bound_w</span><span class="o">-</span><span class="n">bound_e</span><span class="p">)</span>
+        <span class="n">yrng</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bound_n</span><span class="o">-</span><span class="n">bound_s</span><span class="p">)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">xrng</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">yrng</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">diff</span> <span class="o">&lt;</span> <span class="n">nthres</span><span class="p">:</span> <span class="c1">#plot too tall, need to make it wider</span>
+            <span class="n">goal_diff</span> <span class="o">=</span> <span class="n">nthres</span> <span class="o">*</span> <span class="p">(</span><span class="n">yrng</span><span class="p">)</span>
+            <span class="n">factor</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">xrng</span> <span class="o">-</span> <span class="n">goal_diff</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">bound_w</span> <span class="o">=</span> <span class="n">bound_w</span> <span class="o">-</span> <span class="n">factor</span>
+            <span class="n">bound_e</span> <span class="o">=</span> <span class="n">bound_e</span> <span class="o">+</span> <span class="n">factor</span>
+        <span class="k">elif</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">nthres</span><span class="p">:</span> <span class="c1">#plot too wide, need to make it taller</span>
+            <span class="n">goal_diff</span> <span class="o">=</span> <span class="n">xrng</span> <span class="o">/</span> <span class="n">nthres</span>
+            <span class="n">factor</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">yrng</span> <span class="o">-</span> <span class="n">goal_diff</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">bound_s</span> <span class="o">=</span> <span class="n">bound_s</span> <span class="o">-</span> <span class="n">factor</span>
+            <span class="n">bound_n</span> <span class="o">=</span> <span class="n">bound_n</span> <span class="o">+</span> <span class="n">factor</span>
+        <span class="k">return</span> <span class="n">bound_w</span><span class="p">,</span><span class="n">bound_e</span><span class="p">,</span><span class="n">bound_n</span><span class="p">,</span><span class="n">bound_s</span>
+
+    <span class="c1">#First round of fixing ratio</span>
+    <span class="n">bound_w</span><span class="p">,</span><span class="n">bound_e</span><span class="p">,</span><span class="n">bound_n</span><span class="p">,</span><span class="n">bound_s</span> <span class="o">=</span> <span class="n">fix_map_ratio</span><span class="p">(</span><span class="n">bound_w</span><span class="p">,</span><span class="n">bound_e</span><span class="p">,</span><span class="n">bound_n</span><span class="p">,</span><span class="n">bound_s</span><span class="p">,</span><span class="mf">1.45</span><span class="p">)</span>
+
+    <span class="c1">#Adjust map width depending on extent of storm</span>
+    <span class="n">xrng</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bound_e</span><span class="o">-</span><span class="n">bound_w</span><span class="p">)</span>
+    <span class="n">yrng</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bound_n</span><span class="o">-</span><span class="n">bound_s</span><span class="p">)</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">xrng</span><span class="p">,</span><span class="n">yrng</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">15.0</span><span class="p">:</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">xrng</span><span class="p">,</span><span class="n">yrng</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">12.0</span><span class="p">:</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="mf">0.4</span>
+    <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">xrng</span><span class="p">,</span><span class="n">yrng</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">10.0</span><span class="p">:</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="mf">0.6</span>
+    <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">xrng</span><span class="p">,</span><span class="n">yrng</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">8.0</span><span class="p">:</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="mf">0.75</span>
+    <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">xrng</span><span class="p">,</span><span class="n">yrng</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">6.0</span><span class="p">:</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="mf">0.9</span>
+    <span class="n">bound_w</span> <span class="o">=</span> <span class="n">bound_w</span><span class="o">-</span><span class="p">(</span><span class="n">xrng</span><span class="o">*</span><span class="n">factor</span><span class="p">)</span>
+    <span class="n">bound_e</span> <span class="o">=</span> <span class="n">bound_e</span><span class="o">+</span><span class="p">(</span><span class="n">xrng</span><span class="o">*</span><span class="n">factor</span><span class="p">)</span>
+    <span class="n">bound_s</span> <span class="o">=</span> <span class="n">bound_s</span><span class="o">-</span><span class="p">(</span><span class="n">yrng</span><span class="o">*</span><span class="n">factor</span><span class="p">)</span>
+    <span class="n">bound_n</span> <span class="o">=</span> <span class="n">bound_n</span><span class="o">+</span><span class="p">(</span><span class="n">yrng</span><span class="o">*</span><span class="n">factor</span><span class="p">)</span>
+
+    <span class="c1">#Second round of fixing ratio</span>
+    <span class="n">bound_w</span><span class="p">,</span><span class="n">bound_e</span><span class="p">,</span><span class="n">bound_n</span><span class="p">,</span><span class="n">bound_s</span> <span class="o">=</span> <span class="n">fix_map_ratio</span><span class="p">(</span><span class="n">bound_w</span><span class="p">,</span><span class="n">bound_e</span><span class="p">,</span><span class="n">bound_n</span><span class="p">,</span><span class="n">bound_s</span><span class="p">,</span><span class="mf">1.45</span><span class="p">)</span>
+
+    <span class="c1">#Return map bounds</span>
+    <span class="k">return</span> <span class="n">bound_w</span><span class="p">,</span><span class="n">bound_e</span><span class="p">,</span><span class="n">bound_s</span><span class="p">,</span><span class="n">bound_n</span>
+
+<span class="k">def</span> <span class="nf">read_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">split</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">subsplit</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    
+    <span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">split</span><span class="p">:</span> <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">subsplit</span><span class="p">:</span> <span class="n">content</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span><span class="p">]</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">content</span>
+
 <span class="k">class</span> <span class="nc">Distance</span><span class="p">:</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dist</span><span class="p">,</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;kilometers&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dist</span><span class="p">,</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;kilometers&#39;</span><span class="p">):</span>
         
         <span class="c1"># Conversion fractions (numerator_denominator)</span>
         <span class="n">mi_km</span> <span class="o">=</span> <span class="mf">0.621371</span>
@@ -656,7 +1153,7 @@
 
 <span class="k">class</span> <span class="nc">great_circle</span><span class="p">(</span><span class="n">Distance</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_point</span><span class="p">,</span> <span class="n">end_point</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_point</span><span class="p">,</span> <span class="n">end_point</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -707,45 +1204,148 @@
 
         <span class="c1">#Return great circle distance</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">RADIUS</span> <span class="o">*</span> <span class="n">d</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This is a modified version of Cartopy&#39;s shapereader functionality, specified to directly read in an already-existing</span>
+<span class="sd">Shapely object as opposed to expecting a local shapefile to be read in.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">shapely.geometry</span> <span class="k">as</span> <span class="nn">sgeom</span>
+<span class="kn">import</span> <span class="nn">shapefile</span>
+
+<span class="k">class</span> <span class="nc">Record</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A single logical entry from a shapefile, combining the attributes with</span>
+<span class="sd">    their associated geometry.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="o">=</span> <span class="n">shape</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># if the record defines a bbox, then use that for the shape&#39;s bounds,</span>
+        <span class="c1"># rather than using the full geometry in the bounds property</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;bbox&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="sd">&quot;&quot;&quot;The cached geometry instance for this Record.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="n">attributes</span>
+        <span class="sd">&quot;&quot;&quot;A dictionary mapping attribute names to attribute values.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="n">fields</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;Record: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="si">!r}</span><span class="s1">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="si">!r}</span><span class="s1">, &lt;fields&gt;&gt;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Record(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="si">}</span><span class="s1">, &lt;fields&gt;)&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The bounds of this Record&#39;s :meth:`~Record.geometry`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">bounds</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A shapely.geometry instance for this Record.</span>
+
+<span class="sd">        The geometry may be ``None`` if a null shape is defined in the</span>
+<span class="sd">        shapefile.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="o">.</span><span class="n">shapeType</span> <span class="o">!=</span> <span class="n">shapefile</span><span class="o">.</span><span class="n">NULL</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span> <span class="o">=</span> <span class="n">sgeom</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span>
+
+<span class="k">class</span> <span class="nc">BasicReader</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provide an interface for accessing the contents of a shapefile.</span>
+
+<span class="sd">    The primary methods used on a Reader instance are</span>
+<span class="sd">    :meth:`~Reader.records` and :meth:`~Reader.geometries`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">):</span>
+        <span class="c1"># Validate the filename/shapefile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">reader</span>
+        <span class="k">if</span> <span class="n">reader</span><span class="o">.</span><span class="n">shp</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">reader</span><span class="o">.</span><span class="n">shx</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">reader</span><span class="o">.</span><span class="n">dbf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incomplete shapefile definition &quot;</span>
+                             <span class="s2">&quot;in &#39;</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">fields</span>
+
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">geometries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an iterator of shapely geometries from the shapefile.</span>
+
+<span class="sd">        This interface is useful for accessing the geometries of the</span>
+<span class="sd">        shapefile where knowledge of the associated metadata is not necessary.</span>
+<span class="sd">        In the case where further metadata is needed use the</span>
+<span class="sd">        :meth:`~Reader.records`</span>
+<span class="sd">        interface instead, extracting the geometry from the record with the</span>
+<span class="sd">        :meth:`~Record.geometry` method.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">to_return</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">iterShapes</span><span class="p">():</span>
+            <span class="c1"># Skip the shape that can not be represented as geometry.</span>
+            <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">shapeType</span> <span class="o">!=</span> <span class="n">shapefile</span><span class="o">.</span><span class="n">NULL</span><span class="p">:</span>
+                <span class="n">to_return</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sgeom</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">to_return</span>
+
+    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return an iterator of :class:`~Record` instances.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ignore the &quot;DeletionFlag&quot; field which always comes first</span>
+        <span class="n">to_return</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">for</span> <span class="n">shape_record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">iterShapeRecords</span><span class="p">():</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="n">shape_record</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
+            <span class="n">to_return</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Record</span><span class="p">(</span><span class="n">shape_record</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">fields</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">to_return</span>
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2021, Tropycal Developers
-
-    </p>
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

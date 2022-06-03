@@ -5,7 +5,7 @@ plot_storm
 
 .. autofunction:: plot_storm
 
-.. include:: tropycal.utils.plot_storm.examples
+.. include:: tropycal.utils.plot_storm
 
 .. raw:: html
 

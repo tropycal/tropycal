@@ -1,83 +1,41 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tropycal.realtime.Realtime &mdash; tropycal </title>
-  
-
-  
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../',
-              VERSION:'0.3.1',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Realtime.get_storm" href="tropycal.realtime.Realtime.get_storm.html" />
-    <link rel="prev" title="realtime" href="tropycal.realtime.html" /> 
+    <link rel="prev" title="Realtime" href="tropycal.realtime.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../index.html" class="icon icon-home"> tropycal
-          
-
-          
-            
             <img src="../../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -85,30 +43,21 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">tracks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="tropycal.realtime.html">realtime</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">Tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.realtime.html">Realtime</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">tropycal.realtime.Realtime</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.Realtime.get_storm.html">Realtime.get_storm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.Realtime.list_active_storms.html">Realtime.list_active_storms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.Realtime.plot_summary.html">Realtime.plot_summary</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.html">tropycal.realtime.RealtimeStorm</a></li>
@@ -122,103 +71,60 @@
 <li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">tropycal</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">API Reference</a> &raquo;</li>
-        
-          <li><a href="tropycal.realtime.html">realtime</a> &raquo;</li>
-        
+          <li><a href="tropycal.realtime.html">Realtime</a> &raquo;</li>
       <li>tropycal.realtime.Realtime</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../../_sources/api/generated/tropycal.realtime.Realtime.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <div class="section" id="tropycal-realtime-realtime">
 <h1>tropycal.realtime.Realtime<a class="headerlink" href="#tropycal-realtime-realtime" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="tropycal.realtime.Realtime">
-<em class="property">class </em><code class="descclassname">tropycal.realtime.</code><code class="descname">Realtime</code><span class="sig-paren">(</span><em>jtwc=False</em>, <em>jtwc_source='ucar'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.Realtime" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="tropycal.realtime.Realtime">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropycal.realtime.</span></span><span class="sig-name descname"><span class="pre">Realtime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jtwc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jtwc_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ucar'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssl_certificate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.realtime.Realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an instance of a Realtime object containing currently active tropical cyclones and invests.</p>
 <p>Realtime objects are used to retrieve RealtimeStorm objects, which are created for every active tropical cyclone globally upon creating an instance of Realtime.</p>
 <p>Data sources are as follows:
 National Hurricane Center (NHC): <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/btk/">https://ftp.nhc.noaa.gov/atcf/btk/</a>
 Joint Typhoon Warning Center (JTWC): (read notes for more details)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>jtwc</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag determining whether to read JTWC data in. If True, specify the JTWC data source using “jtwc_source”. Default is False.</li>
-<li><strong>jtwc_source</strong> (<em>str</em><em>, </em><em>optional</em>) – If jtwc is set to True, this specifies the JTWC data source to read from. Available options are “noaa”, “ucar” or “jtwc”. Default is “jtwc”. Read the notes for more details.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jtwc</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag determining whether to read JTWC data in. If True, specify the JTWC data source using “jtwc_source”. Default is False.</p></li>
+<li><p><strong>jtwc_source</strong> (<em>str</em><em>, </em><em>optional</em>) – If jtwc is set to True, this specifies the JTWC data source to read from. Available options are “noaa”, “ucar” or “jtwc”. Default is “jtwc”. Read the notes for more details.</p></li>
+<li><p><strong>ssl_certificate</strong> (<em>boolean</em><em>, </em><em>optional</em>) – If jtwc is set to True, this determines whether to disable SSL certificate when retrieving data from the default JTWC source (“jtwc”). Default is True. Use False <em>ONLY</em> if True causes an SSL certification error.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>tropycal.realtime.Realtime</em> – An instance of Realtime.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>tropycal.realtime.Realtime</em> – An instance of Realtime.</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>As of 2021, the multiple sources offering a Best Track archive of raw JTWC tropical cyclone data experienced frequent outages and/or severe slowdowns, hampering the ability to easily retrieve this data. As such, JTWC data has been optional in Realtime objects since v0.2.7. There are three JTWC sources available:</p>
 <ul class="simple">
-<li><strong>jtwc</strong> - This is currently the default JTWC source if JTWC data is read in. As of September 2021, this source is working, but reading data is exceptionally slow (can take from 3 to as much as 10 minutes).</li>
-<li><strong>ucar</strong> - As of September 2021, this source is available and fairly quick to read in, but offers a less compherensive storm history than the “jtwc” source. Between July and September 2021, this source did not update any active tropical cyclones outside of NHC’s domain. If using this source, check to make sure it is in fact retrieving current global tropical cyclones.</li>
-<li><strong>noaa</strong> - This source was active until about July 2021, and since then no longer appears to be online and accessible. The code retains the ability to read in data from this source should it return online.</li>
+<li><p><strong>jtwc</strong> - This is currently the default JTWC source if JTWC data is read in. As of September 2021, this source is working, but reading data is exceptionally slow (can take from 3 to as much as 10 minutes).</p></li>
+<li><p><strong>ucar</strong> - As of September 2021, this source is available and fairly quick to read in, but offers a less compherensive storm history than the “jtwc” source. Between July and September 2021, this source did not update any active tropical cyclones outside of NHC’s domain. If using this source, check to make sure it is in fact retrieving current global tropical cyclones.</p></li>
+<li><p><strong>noaa</strong> - This source was active until about July 2021, and since then no longer appears to be online and accessible. The code retains the ability to read in data from this source should it return online.</p></li>
 </ul>
 <p>The following block of code creates an instance of a Realtime() object and stores it in a variable called “realtime_obj”:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">realtime</span>
@@ -235,25 +141,28 @@ Joint Typhoon Warning Center (JTWC): (read notes for more details)</p>
 </div>
 <p>RealtimeStorm objects contain all the methods of Storm objects, in addition to special methods available only for storms retrieved via a Realtime object. As of Tropycal v0.3, this now includes invests, though Storm and RealtimeStorm objects retrieved for invests are blocked from performing functionality that does not apply to invests operationally (e.g., forecast discussions, official NHC/JTWC track forecasts).</p>
 <p>To check whether a RealtimeStorm object contains an invest, check the “invest” boolean stored in it:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">storm</span><span class="o">.</span><span class="n">invest</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is an invest!&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">storm</span><span class="o">.</span><span class="n">invest</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This is an invest!&quot;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;This is not an invest!&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This is not an invest!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Methods Summary</p>
 <blockquote>
-<div><table border="1" class="longtable docutils">
+<div><table class="longtable docutils align-default">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="tropycal.realtime.Realtime.get_storm.html#tropycal.realtime.Realtime.get_storm" title="tropycal.realtime.Realtime.get_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Realtime.get_storm</span></code></a>(storm)</td>
-<td>Returns a RealtimeStorm object for the requested storm ID.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.Realtime.get_storm.html#tropycal.realtime.Realtime.get_storm" title="tropycal.realtime.Realtime.get_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Realtime.get_storm</span></code></a>(storm)</p></td>
+<td><p>Returns a RealtimeStorm object for the requested storm ID.</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="tropycal.realtime.Realtime.list_active_storms.html#tropycal.realtime.Realtime.list_active_storms" title="tropycal.realtime.Realtime.list_active_storms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Realtime.list_active_storms</span></code></a>()</td>
-<td>Produces a list of storms currently stored in Realtime.</td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.Realtime.list_active_storms.html#tropycal.realtime.Realtime.list_active_storms" title="tropycal.realtime.Realtime.list_active_storms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Realtime.list_active_storms</span></code></a>([basin])</p></td>
+<td><p>Produces a list of storms currently stored in Realtime.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.Realtime.plot_summary.html#tropycal.realtime.Realtime.plot_summary" title="tropycal.realtime.Realtime.plot_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Realtime.plot_summary</span></code></a>([domain, ax, ...])</p></td>
+<td><p>Plot a summary map of ongoing tropical cyclone and potential development activity.</p></td>
 </tr>
 </tbody>
 </table>
@@ -264,51 +173,33 @@ Joint Typhoon Warning Center (JTWC): (read notes for more details)</p>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tropycal.realtime.Realtime.get_storm.html" class="btn btn-neutral float-right" title="Realtime.get_storm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tropycal.realtime.html" class="btn btn-neutral float-left" title="realtime" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tropycal.realtime.html" class="btn btn-neutral float-left" title="Realtime" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.realtime.Realtime.get_storm.html" class="btn btn-neutral float-right" title="Realtime.get_storm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2021, Tropycal Developers
-
-    </p>
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

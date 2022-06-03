@@ -1,0 +1,12 @@
+hdobs.plot_points
+================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: hdobs.plot_points
+
+.. include:: tropycal.recon.hdobs.plot_points
+
+.. raw:: html
+
+      <div style='clear:both'></div>

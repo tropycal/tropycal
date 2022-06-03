@@ -1,0 +1,12 @@
+Storm.get_nhc_forecast_dict
+===========================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Storm.get_nhc_forecast_dict
+
+.. include:: tropycal.tracks.Storm.get_nhc_forecast_dict
+
+.. raw:: html
+
+      <div style='clear:both'></div>

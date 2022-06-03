@@ -1,0 +1,12 @@
+RealtimeStorm.get_realtime_formation_prob
+===========================================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.get_realtime_formation_prob
+
+.. include:: tropycal.realtime.RealtimeStorm.get_realtime_formation_prob
+
+.. raw:: html
+
+      <div style='clear:both'></div>

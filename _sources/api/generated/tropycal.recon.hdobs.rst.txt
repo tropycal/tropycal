@@ -1,0 +1,28 @@
+tropycal.recon.hdobs
+====================
+
+.. currentmodule:: tropycal.recon
+
+.. autoclass:: hdobs
+
+   
+   
+   
+   
+   
+   Methods Summary
+
+   
+      .. autosummary::
+         :toctree:
+      
+         hdobs.gridded_stats
+         hdobs.plot_hovmoller
+         hdobs.plot_maps
+         hdobs.plot_points
+         hdobs.plot_swath
+         hdobs.sel
+         hdobs.to_pickle
+         hdobs.update
+   
+   

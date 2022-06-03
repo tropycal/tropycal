@@ -1,0 +1,12 @@
+nhc_cone_radii
+=============================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: nhc_cone_radii
+
+.. include:: tropycal.utils.nhc_cone_radii
+
+.. raw:: html
+
+      <div style='clear:both'></div>

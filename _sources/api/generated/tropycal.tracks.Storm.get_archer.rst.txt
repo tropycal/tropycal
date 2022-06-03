@@ -5,7 +5,7 @@ Storm.get_archer
 
 .. automethod:: Storm.get_archer
 
-.. include:: tropycal.tracks.Storm.get_archer.examples
+.. include:: tropycal.tracks.Storm.get_archer
 
 .. raw:: html
 

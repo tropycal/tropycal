@@ -5,7 +5,7 @@ RealtimeStorm.get_operational_forecasts
 
 .. automethod:: RealtimeStorm.get_operational_forecasts
 
-.. include:: tropycal.realtime.RealtimeStorm.get_operational_forecasts.examples
+.. include:: tropycal.realtime.RealtimeStorm.get_operational_forecasts
 
 .. raw:: html
 

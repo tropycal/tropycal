@@ -5,7 +5,7 @@ RealtimeStorm.sel
 
 .. automethod:: RealtimeStorm.sel
 
-.. include:: tropycal.realtime.RealtimeStorm.sel.examples
+.. include:: tropycal.realtime.RealtimeStorm.sel
 
 .. raw:: html
 

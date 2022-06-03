@@ -5,7 +5,7 @@ TrackDataset.plot_storms
 
 .. automethod:: TrackDataset.plot_storms
 
-.. include:: tropycal.tracks.TrackDataset.plot_storms.examples
+.. include:: tropycal.tracks.TrackDataset.plot_storms
 
 .. raw:: html
 

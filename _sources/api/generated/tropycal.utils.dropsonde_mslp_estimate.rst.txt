@@ -1,0 +1,12 @@
+dropsonde_mslp_estimate
+======================================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: dropsonde_mslp_estimate
+
+.. include:: tropycal.utils.dropsonde_mslp_estimate
+
+.. raw:: html
+
+      <div style='clear:both'></div>

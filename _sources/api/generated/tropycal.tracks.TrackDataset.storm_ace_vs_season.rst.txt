@@ -5,7 +5,7 @@ TrackDataset.storm_ace_vs_season
 
 .. automethod:: TrackDataset.storm_ace_vs_season
 
-.. include:: tropycal.tracks.TrackDataset.storm_ace_vs_season.examples
+.. include:: tropycal.tracks.TrackDataset.storm_ace_vs_season
 
 .. raw:: html
 

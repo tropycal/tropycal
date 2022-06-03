@@ -1,9 +1,16 @@
 
+   
+      
+   
 
-tornado
-================
+Tornado
+=======
 
 .. automodule:: tropycal.tornado
+
+   
+   
+   
 
    
    
@@ -15,10 +22,8 @@ tornado
 
    .. autosummary::
       :toctree: ./
-
    
       TornadoDataset
-
    
    
 

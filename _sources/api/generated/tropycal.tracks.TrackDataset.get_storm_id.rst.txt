@@ -5,7 +5,7 @@ TrackDataset.get_storm_id
 
 .. automethod:: TrackDataset.get_storm_id
 
-.. include:: tropycal.tracks.TrackDataset.get_storm_id.examples
+.. include:: tropycal.tracks.TrackDataset.get_storm_id
 
 .. raw:: html
 

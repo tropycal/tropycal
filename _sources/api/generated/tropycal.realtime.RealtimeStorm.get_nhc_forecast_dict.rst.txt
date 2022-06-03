@@ -1,0 +1,12 @@
+RealtimeStorm.get_nhc_forecast_dict
+=====================================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.get_nhc_forecast_dict
+
+.. include:: tropycal.realtime.RealtimeStorm.get_nhc_forecast_dict
+
+.. raw:: html
+
+      <div style='clear:both'></div>

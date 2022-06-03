@@ -5,7 +5,7 @@ RealtimeStorm.plot_nhc_forecast
 
 .. automethod:: RealtimeStorm.plot_nhc_forecast
 
-.. include:: tropycal.realtime.RealtimeStorm.plot_nhc_forecast.examples
+.. include:: tropycal.realtime.RealtimeStorm.plot_nhc_forecast
 
 .. raw:: html
 

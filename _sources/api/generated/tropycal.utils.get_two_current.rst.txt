@@ -1,0 +1,12 @@
+get_two_current
+==============================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: get_two_current
+
+.. include:: tropycal.utils.get_two_current
+
+.. raw:: html
+
+      <div style='clear:both'></div>

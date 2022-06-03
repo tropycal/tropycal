@@ -1,0 +1,12 @@
+vdms.to_pickle
+=============================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: vdms.to_pickle
+
+.. include:: tropycal.recon.vdms.to_pickle
+
+.. raw:: html
+
+      <div style='clear:both'></div>

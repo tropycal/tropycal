@@ -5,7 +5,7 @@ RealtimeStorm.get_recon
 
 .. automethod:: RealtimeStorm.get_recon
 
-.. include:: tropycal.realtime.RealtimeStorm.get_recon.examples
+.. include:: tropycal.realtime.RealtimeStorm.get_recon
 
 .. raw:: html
 

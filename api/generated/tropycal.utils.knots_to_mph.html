@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>knots_to_mph &mdash; tropycal </title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="nhc_cone_radii" href="tropycal.utils.nhc_cone_radii.html" />
+    <link rel="prev" title="get_two_archive" href="tropycal.utils.get_two_archive.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> tropycal
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">Tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.utils.html">utils</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="tropycal.utils.html#generic-utilities">Generic Utilities</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.accumulated_cyclone_energy.html">accumulated_cyclone_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.wind_to_category.html">wind_to_category</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.category_to_wind.html">category_to_wind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.classify_subtropical.html">classify_subtropical</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.dropsonde_mslp_estimate.html">dropsonde_mslp_estimate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.generate_nhc_cone.html">generate_nhc_cone</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.get_basin.html">get_basin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.get_storm_classification.html">get_storm_classification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.get_storm_type.html">get_storm_type</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.get_two_current.html">get_two_current</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.get_two_archive.html">get_two_archive</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">knots_to_mph</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.nhc_cone_radii.html">nhc_cone_radii</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.utils.html#cartopy-utilities">Cartopy Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.utils.html#colors">Colors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tropycal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+          <li><a href="tropycal.utils.html">utils</a> &raquo;</li>
+      <li>knots_to_mph</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/generated/tropycal.utils.knots_to_mph.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="knots-to-mph">
+<h1>knots_to_mph<a class="headerlink" href="#knots-to-mph" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tropycal.utils.knots_to_mph">
+<span class="sig-prename descclassname"><span class="pre">tropycal.utils.</span></span><span class="sig-name descname"><span class="pre">knots_to_mph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/generic_utils.html#knots_to_mph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.utils.knots_to_mph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert wind from knots to miles per hour, in increments of 5 as used by NHC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wind_speed</strong> (<em>int</em>) – Sustained wind in knots.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>int</em> – Sustained wind in miles per hour.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div style='clear:both'></div></div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tropycal.utils.get_two_archive.html" class="btn btn-neutral float-left" title="get_two_archive" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.utils.nhc_cone_radii.html" class="btn btn-neutral float-right" title="nhc_cone_radii" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

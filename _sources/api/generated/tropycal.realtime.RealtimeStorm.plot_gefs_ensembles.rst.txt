@@ -5,7 +5,7 @@ RealtimeStorm.plot_gefs_ensembles
 
 .. automethod:: RealtimeStorm.plot_gefs_ensembles
 
-.. include:: tropycal.realtime.RealtimeStorm.plot_gefs_ensembles.examples
+.. include:: tropycal.realtime.RealtimeStorm.plot_gefs_ensembles
 
 .. raw:: html
 

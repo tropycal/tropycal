@@ -1,0 +1,12 @@
+ReconDataset.get_track
+=====================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: ReconDataset.get_track
+
+.. include:: tropycal.recon.ReconDataset.get_track
+
+.. raw:: html
+
+      <div style='clear:both'></div>

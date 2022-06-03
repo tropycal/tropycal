@@ -19,6 +19,7 @@ tropycal.tracks.Storm
          Storm.download_tcr
          Storm.get_archer
          Storm.get_nhc_discussion
+         Storm.get_nhc_forecast_dict
          Storm.get_operational_forecasts
          Storm.get_recon
          Storm.interp

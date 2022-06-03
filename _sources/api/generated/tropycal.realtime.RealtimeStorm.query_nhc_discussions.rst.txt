@@ -5,7 +5,7 @@ RealtimeStorm.query_nhc_discussions
 
 .. automethod:: RealtimeStorm.query_nhc_discussions
 
-.. include:: tropycal.realtime.RealtimeStorm.query_nhc_discussions.examples
+.. include:: tropycal.realtime.RealtimeStorm.query_nhc_discussions
 
 .. raw:: html
 

@@ -5,7 +5,7 @@ Season.plot
 
 .. automethod:: Season.plot
 
-.. include:: tropycal.tracks.Season.plot.examples
+.. include:: tropycal.tracks.Season.plot
 
 .. raw:: html
 

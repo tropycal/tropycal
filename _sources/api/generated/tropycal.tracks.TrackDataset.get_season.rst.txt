@@ -5,7 +5,7 @@ TrackDataset.get_season
 
 .. automethod:: TrackDataset.get_season
 
-.. include:: tropycal.tracks.TrackDataset.get_season.examples
+.. include:: tropycal.tracks.TrackDataset.get_season
 
 .. raw:: html
 

@@ -1,83 +1,41 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TC Dataset Analysis &mdash; tropycal </title>
-  
-
-  
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../',
-              VERSION:'0.3.1',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="API Reference" href="../api/index.html" />
-    <link rel="prev" title="Individual Storm Analysis" href="tracks.storm.html" /> 
+    <link rel="next" title="Aircraft Recon Data Analysis" href="recon.html" />
+    <link rel="prev" title="Customizing Storm Plots" href="customize_storm.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> tropycal
-          
-
-          
-            
             <img src="../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -85,23 +43,18 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Example Scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">Realtime Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.season.html">Individual Season Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tracks.tornado.html">Tornado Analyses</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tracks.storm.html">Individual Storm Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tc_rainfall.html">Tropical Cyclone Rainfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analogs.html">Historical TC Track Analogs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customize_storm.html">Customizing Storm Plots</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">TC Dataset Analysis</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#hurtdat2-dataset">HURTDAT2 Dataset</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#retrieving-storms-and-seasons">Retrieving storms and seasons</a></li>
@@ -112,6 +65,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#ibtracs-dataset">IBTrACS Dataset</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="recon.html">Aircraft Recon Data Analysis</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
@@ -119,77 +73,39 @@
 <li class="toctree-l1"><a class="reference internal" href="../data.html">Data Sources</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">tropycal</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html">Docs</a> &raquo;</li>
-        
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="index.html">Examples</a> &raquo;</li>
-        
       <li>TC Dataset Analysis</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../_sources/examples/tracks.TrackDataset.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <div class="sphx-glr-download-link-note admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Click <a class="reference internal" href="#sphx-glr-download-examples-tracks-trackdataset-py"><span class="std std-ref">here</span></a> to download the full example code</p>
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-tracks-trackdataset-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
 </div>
 <div class="sphx-glr-example-title section" id="tc-dataset-analysis">
 <span id="sphx-glr-examples-tracks-trackdataset-py"></span><h1>TC Dataset Analysis<a class="headerlink" href="#tc-dataset-analysis" title="Permalink to this headline">¶</a></h1>
-<p>This sample script illustrates how to create climatological analyses using HURDAT2 and IBTrACS.</p>
+<p>This sample script illustrates how to read in, visualize and analyze HURDAT2 and IBTrACS tropical cyclone databases.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="k">as</span> <span class="nn">tracks</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 </pre></div>
@@ -199,25 +115,196 @@
 <p>Let’s start with the HURDAT2 dataset by loading it into memory. By default, this reads in the HURDAT dataset from the National Hurricane Center (NHC) website, unless you specify a local file path using either <code class="docutils literal notranslate"><span class="pre">atlantic_url</span></code> for the North Atlantic basin on <code class="docutils literal notranslate"><span class="pre">pacific_url</span></code> for the East &amp; Central Pacific basin.</p>
 <p>HURDAT data is not available for the most recent hurricane seasons. To include the latest data up through today, the “include_btk” flag would need to be set to True, which reads in preliminary best track data from the NHC website.</p>
 <p>Let’s create an instance of a TrackDataset object, which will store the North Atlantic HURDAT2 dataset in memory. Once we have this we can use its methods for various types of analyses.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="View documentation for tropycal.tracks.TrackDataset"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (4.93 seconds)
+--&gt; Completed reading in HURDAT2 data (4.67 seconds)
 </pre></div>
 </div>
-<div class="section" id="retrieving-storms-and-seasons">
-<h3>Retrieving storms and seasons<a class="headerlink" href="#retrieving-storms-and-seasons" title="Permalink to this headline">¶</a></h3>
-<p>A TrackDataset object can be used to retrieve individual storms and seasons, using the following functionality:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve Hurricane Michael from 2018</span>
-<span class="n">storm</span> <span class="o">=</span> <span class="n">hurdat_atl</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+<p>We can quickly check to see what the dataset contains by printing the object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.tracks.Dataset&gt;
+Dataset Summary:
+    Basin:             north_atlantic
+    Source:            hurdat
+    Number of storms:  1936
+    Maximum wind:      165 knots (Allen 1980)
+    Minimum pressure:  882 hPa (Wilma 2005)
+    Year range:        1851 — 2021
+</pre></div>
+</div>
+<p>Alternatively, converting the basin to a Pandas DataFrame provides more information about each season contained in this basin.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.to_dataframe.html#tropycal.tracks.TrackDataset.to_dataframe" title="tropycal.tracks.TrackDataset.to_dataframe" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">to_dataframe</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="c1">#Retrieve the 2017 Atlantic hurricane season</span>
-<span class="n">season</span> <span class="o">=</span> <span class="n">hurdat_atl</span><span class="o">.</span><span class="n">get_season</span><span class="p">(</span><span class="mi">2017</span><span class="p">)</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>all_storms</th>
+      <th>named_storms</th>
+      <th>hurricanes</th>
+      <th>major_hurricanes</th>
+      <th>ace</th>
+      <th>start_time</th>
+      <th>end_time</th>
+    </tr>
+    <tr>
+      <th>season</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1851</th>
+      <td>6</td>
+      <td>6</td>
+      <td>3</td>
+      <td>1</td>
+      <td>36.1</td>
+      <td>1851-06-25 00:00:00</td>
+      <td>1851-10-19 18:00:00</td>
+    </tr>
+    <tr>
+      <th>1852</th>
+      <td>5</td>
+      <td>5</td>
+      <td>5</td>
+      <td>1</td>
+      <td>73.4</td>
+      <td>1852-08-19 00:00:00</td>
+      <td>1852-10-11 18:00:00</td>
+    </tr>
+    <tr>
+      <th>1853</th>
+      <td>8</td>
+      <td>8</td>
+      <td>4</td>
+      <td>2</td>
+      <td>76.4</td>
+      <td>1853-08-05 12:00:00</td>
+      <td>1853-10-22 06:00:00</td>
+    </tr>
+    <tr>
+      <th>1854</th>
+      <td>5</td>
+      <td>5</td>
+      <td>3</td>
+      <td>1</td>
+      <td>31.1</td>
+      <td>1854-06-25 00:00:00</td>
+      <td>1854-10-22 18:00:00</td>
+    </tr>
+    <tr>
+      <th>1855</th>
+      <td>5</td>
+      <td>5</td>
+      <td>4</td>
+      <td>1</td>
+      <td>18.2</td>
+      <td>1855-08-06 12:00:00</td>
+      <td>1855-09-17 06:00:00</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2017</th>
+      <td>18</td>
+      <td>17</td>
+      <td>10</td>
+      <td>6</td>
+      <td>224.8</td>
+      <td>2017-04-19 00:00:00</td>
+      <td>2017-11-09 00:00:00</td>
+    </tr>
+    <tr>
+      <th>2018</th>
+      <td>16</td>
+      <td>15</td>
+      <td>8</td>
+      <td>2</td>
+      <td>132.5</td>
+      <td>2018-05-25 12:00:00</td>
+      <td>2018-10-31 12:00:00</td>
+    </tr>
+    <tr>
+      <th>2019</th>
+      <td>20</td>
+      <td>18</td>
+      <td>6</td>
+      <td>3</td>
+      <td>132.3</td>
+      <td>2019-05-20 18:00:00</td>
+      <td>2019-11-24 18:00:00</td>
+    </tr>
+    <tr>
+      <th>2020</th>
+      <td>31</td>
+      <td>30</td>
+      <td>14</td>
+      <td>7</td>
+      <td>180.3</td>
+      <td>2020-05-16 18:00:00</td>
+      <td>2020-11-18 12:00:00</td>
+    </tr>
+    <tr>
+      <th>2021</th>
+      <td>21</td>
+      <td>21</td>
+      <td>7</td>
+      <td>4</td>
+      <td>145.3</td>
+      <td>2021-05-22 06:00:00</td>
+      <td>2021-11-07 06:00:00</td>
+    </tr>
+  </tbody>
+</table>
+<p>171 rows × 7 columns</p>
+</div>
+</div>
+<br />
+<br /><div class="section" id="retrieving-storms-and-seasons">
+<h3>Retrieving storms and seasons<a class="headerlink" href="#retrieving-storms-and-seasons" title="Permalink to this headline">¶</a></h3>
+<p>A TrackDataset object can be used to retrieve individual storms and seasons. To retrieve a Storm object, provide either a tuple of the storm name and year (e.g., <code class="docutils literal notranslate"><span class="pre">('michael',2018)</span></code>), or a string containing the ID of the storm (e.g., <code class="docutils literal notranslate"><span class="pre">'AL012020'</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve Hurricane Michael from 2018</span>
+<a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_storm.html#tropycal.tracks.TrackDataset.get_storm" title="tropycal.tracks.TrackDataset.get_storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
 
 <span class="c1">#Printing the Storm object lists relevant data:</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">storm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">)</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
@@ -253,8 +340,33 @@ More Information:
     invest:          False
 </pre></div>
 </div>
+<p>To retrieve a season, simply provide the year of the season:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve the 2017 Atlantic hurricane season</span>
+<a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_season.html#tropycal.tracks.TrackDataset.get_season" title="tropycal.tracks.TrackDataset.get_season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">get_season</span></a><span class="p">(</span><span class="mi">2017</span><span class="p">)</span>
+
+<span class="c1">#Printing the Season object lists relevant data:</span>
+<span class="nb">print</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.tracks.Season&gt;
+Season Summary:
+    Total Storms:      18
+    Named Storms:      17
+    Hurricanes:        10
+    Major Hurricanes:  6
+    Season ACE:        224.8
+
+More Information:
+    year:          2017
+    basin:         north_atlantic
+    source_basin:  north_atlantic
+    source:        hurdat
+    source_info:   NHC Hurricane Database
+</pre></div>
+</div>
 <p>If you remember the name of a storm but not the year, there is functionality to search for a list of years containing a storm of the requested name:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">search_name</span><span class="p">(</span><span class="s1">&#39;Michael&#39;</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.TrackDataset.search_name.html#tropycal.tracks.TrackDataset.search_name" title="tropycal.tracks.TrackDataset.search_name" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">search_name</span></a><span class="p">(</span><span class="s1">&#39;Michael&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
@@ -262,70 +374,107 @@ More Information:
 </pre></div>
 </div>
 <p>The previous example for a Storm object illustrated how to retrieve a single storm and make a plot of its observed track. This can also be done from a TrackDataset object, using the <code class="docutils literal notranslate"><span class="pre">plot_storm()</span></code> method.</p>
-<p>Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The only cartopy projection currently offered is PlateCarree. Read through the documentation for more customization options.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+<p>Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. Read through the documentation for more customization options.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.plot_storm.html#tropycal.tracks.TrackDataset.plot_storm" title="tropycal.tracks.TrackDataset.plot_storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">plot_storm</span></a><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_001.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_001.png" />
+<img src="../_images/sphx_glr_tracks.TrackDataset_001.png" srcset="../_images/sphx_glr_tracks.TrackDataset_001.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane MICHAEL&#39;,&#39;right&#39;:&#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
+</pre></div>
+</div>
+<p>A new function added with Tropyal v0.4 is the ability to plot a summary of all ongoing tropical cyclone and NHC Tropical Weather Outlook (TWO) activity across the North Atlantic and East Pacific basins.</p>
+<p>Simply plug in a valid date and domain to plot over, and this plot will display all activity at the valid time. There are many customization options for this function detailed more thoroughly in the documentation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">.</span><span class="n">plot_summary</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">domain</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_tracks.TrackDataset_002.png" srcset="../_images/sphx_glr_tracks.TrackDataset_002.png" alt="Summary & NHC 5-Day Formation Outlook, Valid: 00 UTC 17 Sep 2020" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Reading storm data
+--&gt; Generating plot
+
+&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Summary &amp; NHC 5-Day Formation Outlook&#39;,&#39;right&#39;:&#39;Valid: 00 UTC 17 Sep 2020&#39;}&gt;
+</pre></div>
+</div>
 </div>
 <div class="section" id="climatological-analyses">
 <h3>Climatological analyses<a class="headerlink" href="#climatological-analyses" title="Permalink to this headline">¶</a></h3>
-<p>A TrackDataset object can also be used to perform various climatological analyses. We’ll start off with doing simple Accumulated Cyclone Energy (ACE) analyses.</p>
-<p>Let’s look at the cumulative year-to-date accumulated cyclone energy, with 2018 highlighted and compared against 2017:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">ace_climo</span><span class="p">(</span><span class="n">plot_year</span><span class="o">=</span><span class="mi">2018</span><span class="p">,</span><span class="n">compare_years</span><span class="o">=</span><span class="mi">2017</span><span class="p">)</span>
+<p>A TrackDataset object can also be used to perform various climatological analyses. We’ll start off with basic data analysis, then shift gears to plotting functionality.</p>
+<p>First, let’s take a look at the climatology for the basin. The default period is 1991-2020, but this can be customized to any range.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.climatology.html#tropycal.tracks.TrackDataset.climatology" title="tropycal.tracks.TrackDataset.climatology" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">climatology</span></a><span class="p">(</span><span class="n">year_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1991</span><span class="p">,</span><span class="mi">2020</span><span class="p">))</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_002.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_002.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;all_storms&#39;: 16.4, &#39;named_storms&#39;: 14.6, &#39;hurricanes&#39;: 7.2, &#39;major_hurricanes&#39;: 3.3, &#39;ace&#39;: 123.3, &#39;start_time&#39;: datetime.datetime(2022, 6, 1, 2, 24), &#39;end_time&#39;: datetime.datetime(2022, 11, 13, 7, 12)}
+</pre></div>
+</div>
+<p>Another useful functionality for research or seasonal forecast purposes is to quickly composite multiple hurricane seasons. Simply plug in a list of years, and a year range for the climatology:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.season_composite.html#tropycal.tracks.TrackDataset.season_composite" title="tropycal.tracks.TrackDataset.season_composite" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">season_composite</span></a><span class="p">([</span><span class="mi">2004</span><span class="p">,</span><span class="mi">2005</span><span class="p">,</span><span class="mi">2008</span><span class="p">,</span><span class="mi">2010</span><span class="p">,</span><span class="mi">2017</span><span class="p">,</span><span class="mi">2020</span><span class="p">])</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;all_storms&#39;: {&#39;list&#39;: [16, 31, 17, 21, 18, 31], &#39;average&#39;: 22.3, &#39;composite_anomaly&#39;: 5.9, &#39;percentile_ranks&#39;: [50.0, 98.4, 61.3, 88.7, 67.7, 98.4]}, &#39;named_storms&#39;: {&#39;list&#39;: [15, 28, 16, 19, 17, 30], &#39;average&#39;: 20.8, &#39;composite_anomaly&#39;: 6.2, &#39;percentile_ranks&#39;: [56.5, 96.8, 69.4, 85.5, 74.2, 100.0]}, &#39;hurricanes&#39;: {&#39;list&#39;: [9, 15, 8, 12, 10, 14], &#39;average&#39;: 11.3, &#39;composite_anomaly&#39;: 4.1, &#39;percentile_ranks&#39;: [74.2, 100.0, 62.9, 93.5, 83.9, 96.8]}, &#39;major_hurricanes&#39;: {&#39;list&#39;: [6, 7, 5, 5, 6, 7], &#39;average&#39;: 6.0, &#39;composite_anomaly&#39;: 2.7, &#39;percentile_ranks&#39;: [90.3, 98.4, 79.0, 79.0, 90.3, 98.4]}, &#39;ace&#39;: {&#39;list&#39;: [226.7, 250.3, 145.8, 165.5, 224.8, 180.3], &#39;average&#39;: 198.9, &#39;composite_anomaly&#39;: 75.6, &#39;percentile_ranks&#39;: [93.5, 100.0, 67.7, 71.0, 90.3, 83.9]}}
+</pre></div>
+</div>
+<p>Next we’ll take a look at plotting functionality, starting off with doing simple Accumulated Cyclone Energy (ACE) analyses. Let’s look at the cumulative year-to-date accumulated cyclone energy, with 2018 highlighted and compared against 2017:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.ace_climo.html#tropycal.tracks.TrackDataset.ace_climo" title="tropycal.tracks.TrackDataset.ace_climo" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">ace_climo</span></a><span class="p">(</span><span class="n">plot_year</span><span class="o">=</span><span class="mi">2018</span><span class="p">,</span><span class="n">compare_years</span><span class="o">=</span><span class="mi">2017</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_tracks.TrackDataset_003.png" srcset="../_images/sphx_glr_tracks.TrackDataset_003.png" alt="2018 North Atlantic Accumulated Cyclone Energy" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:title={&#39;left&#39;:&#39;2018 North Atlantic Accumulated Cyclone Energy &#39;}&gt;
+</pre></div>
+</div>
 <p>We can use the same function to perform a rolling sum, rather than a year-to-date sum. This highlights particularly active periods of tropical cyclone activity. We’ll use the same function as before, but with a <code class="docutils literal notranslate"><span class="pre">rolling_sum=30</span></code> argument provided:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">ace_climo</span><span class="p">(</span><span class="n">rolling_sum</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">plot_year</span><span class="o">=</span><span class="mi">2018</span><span class="p">,</span><span class="n">compare_years</span><span class="o">=</span><span class="mi">2017</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.ace_climo.html#tropycal.tracks.TrackDataset.ace_climo" title="tropycal.tracks.TrackDataset.ace_climo" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">ace_climo</span></a><span class="p">(</span><span class="n">rolling_sum</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">plot_year</span><span class="o">=</span><span class="mi">2018</span><span class="p">,</span><span class="n">compare_years</span><span class="o">=</span><span class="mi">2017</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_003.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_003.png" />
+<img src="../_images/sphx_glr_tracks.TrackDataset_004.png" srcset="../_images/sphx_glr_tracks.TrackDataset_004.png" alt="2018 North Atlantic Accumulated Cyclone Energy  30-Day Running Sum" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:title={&#39;left&#39;:&#39;2018 North Atlantic Accumulated Cyclone Energy \n30-Day Running Sum&#39;}&gt;
+</pre></div>
+</div>
 <p>Plot cumulative hurricane days for all categories, with 2018 highlighted:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">hurricane_days_climo</span><span class="p">(</span><span class="n">plot_year</span><span class="o">=</span><span class="mi">2018</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.hurricane_days_climo.html#tropycal.tracks.TrackDataset.hurricane_days_climo" title="tropycal.tracks.TrackDataset.hurricane_days_climo" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">hurricane_days_climo</span></a><span class="p">(</span><span class="n">plot_year</span><span class="o">=</span><span class="mi">2018</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_004.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_004.png" />
+<img src="../_images/sphx_glr_tracks.TrackDataset_005.png" srcset="../_images/sphx_glr_tracks.TrackDataset_005.png" alt="2018 North Atlantic Accumulated Tropical Cyclone Days" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:title={&#39;left&#39;:&#39;2018 North Atlantic Accumulated Tropical Cyclone Days&#39;}&gt;
+</pre></div>
+</div>
 <p>Another climatological analysis available is a climatological correlation between maximum sustained wind and minimum mean sea level pressure (MSLP). While both variables are generally well correlated, factors such as background MSLP and MSLP gradient can affect this relationship.</p>
 <p>This function plots the climatological correlation and distribution of wind-MSLP relationship, and can also plot individual storms for comparison against the climatology. We’ll look at Hurricane Sandy (2012), which started out with a fairly typical wind-MSLP relationship, but towards the end of its life cycle ended up with an anomalously low MSLP given its sustained wind speed as it substantially grew in size.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">wind_pres_relationship</span><span class="p">(</span><span class="n">storm</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;sandy&#39;</span><span class="p">,</span><span class="mi">2012</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.wind_pres_relationship.html#tropycal.tracks.TrackDataset.wind_pres_relationship" title="tropycal.tracks.TrackDataset.wind_pres_relationship" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">wind_pres_relationship</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">=</span><span class="p">(</span><span class="s1">&#39;sandy&#39;</span><span class="p">,</span><span class="mi">2012</span><span class="p">))</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_005.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_005.png" />
+<img src="../_images/sphx_glr_tracks.TrackDataset_006.png" srcset="../_images/sphx_glr_tracks.TrackDataset_006.png" alt="TC Pressure vs. Wind   North Atlantic | 1851-2021" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:title={&#39;center&#39;:&#39;TC Pressure vs. Wind \n North Atlantic | 1851-2021&#39;}, xlabel=&#39;Maximum sustained winds (kt)&#39;, ylabel=&#39;Minimum central pressure (hPa)&#39;&gt;
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="gridded-analyses">
 <h2>Gridded Analyses<a class="headerlink" href="#gridded-analyses" title="Permalink to this headline">¶</a></h2>
 <p>Tropycal also offers the capability of gridding tropical cyclone data into a structured latitude / longitude grid. This is done via the <code class="docutils literal notranslate"><span class="pre">TrackDataset.gridded_stats()</span></code> method. This method accepts multiple input arguments for various types of analyses. This example will show some of these capabilities.</p>
 <p>Let’s construct a 1 degree grid and plot the maximum sustained wind recorded at each gridpoint:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">gridded_stats</span><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;maximum wind&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.gridded_stats.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;maximum wind&quot;</span><span class="p">)</span>
 
 <span class="c1"># Let&#39;s look at the average change in sustained wind speed over a 24-hour period. By default, the value plotted is for the midpoint of the 24-hour period (so 12 hours preceding and following). We&#39;ll use the &quot;prop&quot; keyword argument to set the colormap to &quot;bwr&quot; and set the contour level range:</span>
 
-<span class="n">hurdat_atl</span><span class="o">.</span><span class="n">gridded_stats</span><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;average wind change in 24 hours&quot;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;bwr&#39;</span><span class="p">,</span><span class="s1">&#39;clevs&#39;</span><span class="p">:[</span><span class="o">-</span><span class="mi">80</span><span class="p">,</span><span class="mi">80</span><span class="p">]})</span>
+<a href="../api/generated/tropycal.tracks.TrackDataset.gridded_stats.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;average wind change in 24 hours&quot;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;bwr&#39;</span><span class="p">,</span><span class="s1">&#39;clevs&#39;</span><span class="p">:[</span><span class="o">-</span><span class="mi">80</span><span class="p">,</span><span class="mi">80</span><span class="p">]})</span>
 </pre></div>
 </div>
 <ul class="sphx-glr-horizontal">
-<li><img alt="../_images/sphx_glr_tracks.TrackDataset_006.png" class="sphx-glr-multi-img first" src="../_images/sphx_glr_tracks.TrackDataset_006.png" />
-</li>
-<li><img alt="../_images/sphx_glr_tracks.TrackDataset_007.png" class="sphx-glr-multi-img first" src="../_images/sphx_glr_tracks.TrackDataset_007.png" />
-</li>
+<li><img src="../_images/sphx_glr_tracks.TrackDataset_007.png" srcset="../_images/sphx_glr_tracks.TrackDataset_007.png" alt="Maximum wind (kt), Jan 01 – Dec 31 • 1851 – 2021" class = "sphx-glr-multi-img"/></li>
+<li><img src="../_images/sphx_glr_tracks.TrackDataset_008.png" srcset="../_images/sphx_glr_tracks.TrackDataset_008.png" alt="Average wind (kt) change in 24 hours, middle ≥ 5 storms/bin, Jan 01 – Dec 31 • 1851 – 2021" class = "sphx-glr-multi-img"/></li>
 </ul>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>maximum wind
 --&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
-c:\users\tomer\documents\python\github\tomerburg_account\tropycal\src\tropycal\tracks\tools.py:118: RuntimeWarning: All-NaN slice encountered
-  return thresh, lambda x: np.nanmax(x)
-c:\users\tomer\documents\python\github\tomerburg_account\tropycal\src\tropycal\tracks\tools.py:118: RuntimeWarning: All-NaN axis encountered
-  return thresh, lambda x: np.nanmax(x)
 --&gt; Generating plot
 average wind change in 24 hours
 --&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
-c:\users\tomer\documents\python\github\tomerburg_account\tropycal\src\tropycal\tracks\tools.py:127: RuntimeWarning: Mean of empty slice
-  return thresh, lambda x: np.nanmean(x)
 --&gt; Generating plot
+
+&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Average wind (kt) change in 24 hours, middle\n≥ 5 storms/bin&#39;,&#39;right&#39;:&#39;Jan 01 – Dec 31 • 1851 – 2021&#39;}&gt;
 </pre></div>
 </div>
 </div>
@@ -333,60 +482,65 @@ c:\users\tomer\documents\python\github\tomerburg_account\tropycal\src\tropycal\t
 <h2>IBTrACS Dataset<a class="headerlink" href="#ibtracs-dataset" title="Permalink to this headline">¶</a></h2>
 <p>We can also read in IBTrACS data and use it the same way as we would use HURDAT2 data. There are caveats to using IBTrACS data, however, which are described more in depth in the <a class="reference internal" href="../data.html"><span class="doc">Data Sources</span></a> page. We’ll retrieve the global IBTrACS dataset, using the Joint Typhoon Warning Center (JTWC) data, modified with the Neumann reanalysis for southern hemisphere storms, and including a special reanalysis for Cyclone Catarina (2004) in Brazil.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">By default, IBTrACS data is read in from an online source. If you’re reading in the global IBTrACS dataset, this could be quite slow. For global IBTrACS, it is recommended to have the CSV file saved locally (<a class="reference external" href="https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ALL.list.v04r00.csv">link to data</a>), then set the flag <code class="docutils literal notranslate"><span class="pre">ibtracs_url=&quot;local_path&quot;</span></code>.</p>
+<p class="admonition-title">Warning</p>
+<p>By default, IBTrACS data is read in from an online source. If you’re reading in the global IBTrACS dataset, this could be quite slow. For global IBTrACS, it is recommended to have the CSV file saved locally (<a class="reference external" href="https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ALL.list.v04r00.csv">link to data</a>), then set the flag <code class="docutils literal notranslate"><span class="pre">ibtracs_url=&quot;local_path&quot;</span></code>.</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ibtracs</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="View documentation for tropycal.tracks.TrackDataset"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;ibtracs&#39;</span><span class="p">,</span><span class="n">ibtracs_mode</span><span class="o">=</span><span class="s1">&#39;jtwc_neumann&#39;</span><span class="p">,</span><span class="n">catarina</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ibtracs</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;ibtracs&#39;</span><span class="p">,</span><span class="n">ibtracs_mode</span><span class="o">=</span><span class="s1">&#39;jtwc_neumann&#39;</span><span class="p">,</span><span class="n">catarina</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in ibtracs data
---&gt; Completed reading in ibtracs data (96.69 seconds)
+--&gt; Completed reading in ibtracs data (107.07 seconds)
 </pre></div>
 </div>
 <p>In its current form, tropycal is not configured to support all types of analyses for global IBTrACS, particularly near the dateline. Future updates will work to improve this functionality.</p>
 <p>Let’s make a plot of the maximum sustained wind of TCs globally:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;maximum wind&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.gridded_stats.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;maximum wind&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_008.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_008.png" />
-<p class="sphx-glr-script-out">Out:</p>
+<img src="../_images/sphx_glr_tracks.TrackDataset_009.png" srcset="../_images/sphx_glr_tracks.TrackDataset_009.png" alt="Maximum wind (kt), Jan 01 – Dec 31 • 1851 – 2022" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>maximum wind
 --&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
 --&gt; Generating plot
+
+&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Maximum wind (kt)&#39;,&#39;right&#39;:&#39;Jan 01 – Dec 31 • 1851 – 2022&#39;}&gt;
 </pre></div>
 </div>
 <p>Make a plot of the total number of storms per 1 degree gridbox worldwide:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;number of storms&quot;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;plasma_r&#39;</span><span class="p">})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.gridded_stats.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;number of storms&quot;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;plasma_r&#39;</span><span class="p">})</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_009.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_009.png" />
-<p class="sphx-glr-script-out">Out:</p>
+<img src="../_images/sphx_glr_tracks.TrackDataset_010.png" srcset="../_images/sphx_glr_tracks.TrackDataset_010.png" alt="Number of storms, Jan 01 – Dec 31 • 1851 – 2022" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>number of storms
 --&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
 --&gt; Generating plot
+
+&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Number of storms&#39;,&#39;right&#39;:&#39;Jan 01 – Dec 31 • 1851 – 2022&#39;}&gt;
 </pre></div>
 </div>
 <p>Make a plot of the total number of rapidly intensifying storms (&gt;=30 kt over 24 hours) per 1 degree gridbox:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;number of storms&quot;</span><span class="p">,</span><span class="n">thresh</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dv_min&#39;</span><span class="p">:</span><span class="mi">30</span><span class="p">},</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;plasma_r&#39;</span><span class="p">})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.gridded_stats.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">ibtracs</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;number of storms&quot;</span><span class="p">,</span><span class="n">thresh</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dv_min&#39;</span><span class="p">:</span><span class="mi">30</span><span class="p">},</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="s1">&#39;plasma_r&#39;</span><span class="p">})</span>
 </pre></div>
 </div>
-<img alt="../_images/sphx_glr_tracks.TrackDataset_010.png" class="sphx-glr-single-img" src="../_images/sphx_glr_tracks.TrackDataset_010.png" />
-<p class="sphx-glr-script-out">Out:</p>
+<img src="../_images/sphx_glr_tracks.TrackDataset_011.png" srcset="../_images/sphx_glr_tracks.TrackDataset_011.png" alt="Number of storms ≥ 30kt / 24hr, Jan 01 – Dec 31 • 1851 – 2022" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>number of storms
 --&gt; Getting filtered storm tracks
 --&gt; Grouping by lat/lon/storm
 --&gt; Generating plot
+
+&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Number of storms\n≥ 30kt / 24hr&#39;,&#39;right&#39;:&#39;Jan 01 – Dec 31 • 1851 – 2022&#39;}&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 7 minutes  30.886 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 7 minutes  58.847 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-trackdataset-py">
-<div class="sphx-glr-download docutils container">
-<a class="reference download internal" href="../_downloads/tracks.TrackDataset.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.TrackDataset.py</span></code></a></div>
-<div class="sphx-glr-download docutils container">
-<a class="reference download internal" href="../_downloads/tracks.TrackDataset.ipynb" download=""><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tracks.TrackDataset.ipynb</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/8e0af267200996c0b90c20030c99ca74/tracks.TrackDataset.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.TrackDataset.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/c7ba0aa8db7481f2564528abc9d1cedb/tracks.TrackDataset.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tracks.TrackDataset.ipynb</span></code></a></p>
+</div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
 </div>
@@ -394,51 +548,33 @@ c:\users\tomer\documents\python\github\tomerburg_account\tropycal\src\tropycal\t
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../api/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tracks.storm.html" class="btn btn-neutral float-left" title="Individual Storm Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="customize_storm.html" class="btn btn-neutral float-left" title="Customizing Storm Plots" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="recon.html" class="btn btn-neutral float-right" title="Aircraft Recon Data Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2021, Tropycal Developers
-
-    </p>
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

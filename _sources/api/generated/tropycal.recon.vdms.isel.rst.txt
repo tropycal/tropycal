@@ -1,0 +1,12 @@
+vdms.isel
+========================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: vdms.isel
+
+.. include:: tropycal.recon.vdms.isel
+
+.. raw:: html
+
+      <div style='clear:both'></div>

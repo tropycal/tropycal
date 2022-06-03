@@ -1,83 +1,41 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RealtimeStorm.get_nhc_discussion_realtime &mdash; tropycal </title>
-  
-
-  
-  
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../',
-              VERSION:'0.3.1',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="RealtimeStorm.get_operational_forecasts" href="tropycal.realtime.RealtimeStorm.get_operational_forecasts.html" />
+    <link rel="next" title="RealtimeStorm.get_nhc_forecast_dict" href="tropycal.realtime.RealtimeStorm.get_nhc_forecast_dict.html" />
     <link rel="prev" title="RealtimeStorm.get_nhc_discussion" href="tropycal.realtime.RealtimeStorm.get_nhc_discussion.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../index.html" class="icon icon-home"> tropycal
-          
-
-          
-            
             <img src="../../_static/logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -85,27 +43,17 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">tracks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">tornado</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">rain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">recon</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="tropycal.realtime.html">realtime</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">Tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.realtime.html">Realtime</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tropycal.realtime.Realtime.html">tropycal.realtime.Realtime</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.html">tropycal.realtime.RealtimeStorm</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.download_graphic_realtime.html">RealtimeStorm.download_graphic_realtime</a></li>
@@ -115,7 +63,9 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_forecast_realtime.html">RealtimeStorm.get_forecast_realtime</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_nhc_discussion.html">RealtimeStorm.get_nhc_discussion</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">RealtimeStorm.get_nhc_discussion_realtime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_nhc_forecast_dict.html">RealtimeStorm.get_nhc_forecast_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_operational_forecasts.html">RealtimeStorm.get_operational_forecasts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_realtime_formation_prob.html">RealtimeStorm.get_realtime_formation_prob</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_realtime_info.html">RealtimeStorm.get_realtime_info</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_recon.html">RealtimeStorm.get_recon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.interp.html">RealtimeStorm.interp</a></li>
@@ -143,139 +93,77 @@
 <li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">tropycal</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">API Reference</a> &raquo;</li>
-        
-          <li><a href="tropycal.realtime.html">realtime</a> &raquo;</li>
-        
+          <li><a href="tropycal.realtime.html">Realtime</a> &raquo;</li>
           <li><a href="tropycal.realtime.RealtimeStorm.html">tropycal.realtime.RealtimeStorm</a> &raquo;</li>
-        
       <li>RealtimeStorm.get_nhc_discussion_realtime</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../../_sources/api/generated/tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <div class="section" id="realtimestorm-get-nhc-discussion-realtime">
 <h1>RealtimeStorm.get_nhc_discussion_realtime<a class="headerlink" href="#realtimestorm-get-nhc-discussion-realtime" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
-<dt id="tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime">
-<code class="descclassname">RealtimeStorm.</code><code class="descname">get_nhc_discussion_realtime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.get_nhc_discussion_realtime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime">
+<span class="sig-prename descclassname"><span class="pre">RealtimeStorm.</span></span><span class="sig-name descname"><span class="pre">get_nhc_discussion_realtime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.get_nhc_discussion_realtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve the latest available forecast discussion. For JTWC storms, the Prognostic Reasoning product is retrieved.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>dict</em> – Dict entry containing the latest official forecast discussion.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>dict</em> – Dict entry containing the latest official forecast discussion.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <div style='clear:both'></div></div>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tropycal.realtime.RealtimeStorm.get_operational_forecasts.html" class="btn btn-neutral float-right" title="RealtimeStorm.get_operational_forecasts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="tropycal.realtime.RealtimeStorm.get_nhc_discussion.html" class="btn btn-neutral float-left" title="RealtimeStorm.get_nhc_discussion" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tropycal.realtime.RealtimeStorm.get_nhc_discussion.html" class="btn btn-neutral float-left" title="RealtimeStorm.get_nhc_discussion" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.realtime.RealtimeStorm.get_nhc_forecast_dict.html" class="btn btn-neutral float-right" title="RealtimeStorm.get_nhc_forecast_dict" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2021, Tropycal Developers
-
-    </p>
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

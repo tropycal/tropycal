@@ -5,7 +5,7 @@ RealtimeStorm.get_archer
 
 .. automethod:: RealtimeStorm.get_archer
 
-.. include:: tropycal.realtime.RealtimeStorm.get_archer.examples
+.. include:: tropycal.realtime.RealtimeStorm.get_archer
 
 .. raw:: html
 

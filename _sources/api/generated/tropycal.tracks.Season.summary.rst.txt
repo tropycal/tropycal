@@ -5,7 +5,7 @@ Season.summary
 
 .. automethod:: Season.summary
 
-.. include:: tropycal.tracks.Season.summary.examples
+.. include:: tropycal.tracks.Season.summary
 
 .. raw:: html
 

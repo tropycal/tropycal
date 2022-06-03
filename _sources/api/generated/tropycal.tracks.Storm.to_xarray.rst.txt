@@ -5,7 +5,7 @@ Storm.to_xarray
 
 .. automethod:: Storm.to_xarray
 
-.. include:: tropycal.tracks.Storm.to_xarray.examples
+.. include:: tropycal.tracks.Storm.to_xarray
 
 .. raw:: html
 

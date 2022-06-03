@@ -5,7 +5,7 @@ Season.get_storm
 
 .. automethod:: Season.get_storm
 
-.. include:: tropycal.tracks.Season.get_storm.examples
+.. include:: tropycal.tracks.Season.get_storm
 
 .. raw:: html
 

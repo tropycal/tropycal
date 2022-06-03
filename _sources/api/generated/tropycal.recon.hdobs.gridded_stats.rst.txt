@@ -1,0 +1,12 @@
+hdobs.gridded_stats
+==================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: hdobs.gridded_stats
+
+.. include:: tropycal.recon.hdobs.gridded_stats
+
+.. raw:: html
+
+      <div style='clear:both'></div>

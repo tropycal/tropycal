@@ -5,7 +5,7 @@ Storm.plot_TCtors_rotated
 
 .. automethod:: Storm.plot_TCtors_rotated
 
-.. include:: tropycal.tracks.Storm.plot_TCtors_rotated.examples
+.. include:: tropycal.tracks.Storm.plot_TCtors_rotated
 
 .. raw:: html
 

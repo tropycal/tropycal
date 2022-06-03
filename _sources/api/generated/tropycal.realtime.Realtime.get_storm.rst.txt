@@ -5,7 +5,7 @@ Realtime.get_storm
 
 .. automethod:: Realtime.get_storm
 
-.. include:: tropycal.realtime.Realtime.get_storm.examples
+.. include:: tropycal.realtime.Realtime.get_storm
 
 .. raw:: html
 

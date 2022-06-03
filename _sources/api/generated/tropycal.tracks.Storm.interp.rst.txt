@@ -5,7 +5,7 @@ Storm.interp
 
 .. automethod:: Storm.interp
 
-.. include:: tropycal.tracks.Storm.interp.examples
+.. include:: tropycal.tracks.Storm.interp
 
 .. raw:: html
 

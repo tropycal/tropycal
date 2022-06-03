@@ -5,7 +5,7 @@ Storm.plot
 
 .. automethod:: Storm.plot
 
-.. include:: tropycal.tracks.Storm.plot.examples
+.. include:: tropycal.tracks.Storm.plot
 
 .. raw:: html
 

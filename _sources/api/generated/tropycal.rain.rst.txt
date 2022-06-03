@@ -1,9 +1,16 @@
+﻿
+   
+      
+   
 
-
-rain
-=============
+Rain
+====
 
 .. automodule:: tropycal.rain
+
+   
+   
+   
 
    
    
@@ -15,10 +22,8 @@ rain
 
    .. autosummary::
       :toctree: ./
-
    
       RainDataset
-
    
    
 

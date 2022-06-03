@@ -17,6 +17,8 @@ tropycal.tracks.TrackDataset
          :toctree:
       
          TrackDataset.ace_climo
+         TrackDataset.analogs_from_point
+         TrackDataset.analogs_from_shape
          TrackDataset.assign_storm_tornadoes
          TrackDataset.climatology
          TrackDataset.download_tcr
@@ -28,9 +30,12 @@ tropycal.tracks.TrackDataset
          TrackDataset.gridded_stats
          TrackDataset.hurricane_days_climo
          TrackDataset.plot_TCtors_rotated
+         TrackDataset.plot_analogs_from_point
+         TrackDataset.plot_analogs_from_shape
          TrackDataset.plot_season
          TrackDataset.plot_storm
          TrackDataset.plot_storms
+         TrackDataset.plot_summary
          TrackDataset.rank_storm
          TrackDataset.search_name
          TrackDataset.season_composite

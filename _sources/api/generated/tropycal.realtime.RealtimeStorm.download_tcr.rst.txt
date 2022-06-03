@@ -5,7 +5,7 @@ RealtimeStorm.download_tcr
 
 .. automethod:: RealtimeStorm.download_tcr
 
-.. include:: tropycal.realtime.RealtimeStorm.download_tcr.examples
+.. include:: tropycal.realtime.RealtimeStorm.download_tcr
 
 .. raw:: html
 

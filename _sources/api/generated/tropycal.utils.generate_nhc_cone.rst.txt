@@ -1,0 +1,12 @@
+generate_nhc_cone
+================================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: generate_nhc_cone
+
+.. include:: tropycal.utils.generate_nhc_cone
+
+.. raw:: html
+
+      <div style='clear:both'></div>

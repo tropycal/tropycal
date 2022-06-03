@@ -1,9 +1,16 @@
 
+   
+      
+   
 
-tracks
-===============
+Tracks
+======
 
 .. automodule:: tropycal.tracks
+
+   
+   
+   
 
    
    
@@ -15,12 +22,10 @@ tracks
 
    .. autosummary::
       :toctree: ./
-
    
       Season
       Storm
       TrackDataset
-
    
    
 

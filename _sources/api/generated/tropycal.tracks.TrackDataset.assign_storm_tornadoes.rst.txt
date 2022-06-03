@@ -5,7 +5,7 @@ TrackDataset.assign_storm_tornadoes
 
 .. automethod:: TrackDataset.assign_storm_tornadoes
 
-.. include:: tropycal.tracks.TrackDataset.assign_storm_tornadoes.examples
+.. include:: tropycal.tracks.TrackDataset.assign_storm_tornadoes
 
 .. raw:: html
 

@@ -5,7 +5,7 @@ TornadoDataset.rotateToHeading
 
 .. automethod:: TornadoDataset.rotateToHeading
 
-.. include:: tropycal.tornado.TornadoDataset.rotateToHeading.examples
+.. include:: tropycal.tornado.TornadoDataset.rotateToHeading
 
 .. raw:: html
 

@@ -5,7 +5,7 @@ Storm.plot_nhc_forecast
 
 .. automethod:: Storm.plot_nhc_forecast
 
-.. include:: tropycal.tracks.Storm.plot_nhc_forecast.examples
+.. include:: tropycal.tracks.Storm.plot_nhc_forecast
 
 .. raw:: html
 

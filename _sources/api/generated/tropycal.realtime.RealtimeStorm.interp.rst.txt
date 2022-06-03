@@ -5,7 +5,7 @@ RealtimeStorm.interp
 
 .. automethod:: RealtimeStorm.interp
 
-.. include:: tropycal.realtime.RealtimeStorm.interp.examples
+.. include:: tropycal.realtime.RealtimeStorm.interp
 
 .. raw:: html
 

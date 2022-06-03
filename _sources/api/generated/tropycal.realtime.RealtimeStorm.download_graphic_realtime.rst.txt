@@ -5,7 +5,7 @@ RealtimeStorm.download_graphic_realtime
 
 .. automethod:: RealtimeStorm.download_graphic_realtime
 
-.. include:: tropycal.realtime.RealtimeStorm.download_graphic_realtime.examples
+.. include:: tropycal.realtime.RealtimeStorm.download_graphic_realtime
 
 .. raw:: html
 

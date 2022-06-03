@@ -5,7 +5,7 @@ TrackDataset.season_composite
 
 .. automethod:: TrackDataset.season_composite
 
-.. include:: tropycal.tracks.TrackDataset.season_composite.examples
+.. include:: tropycal.tracks.TrackDataset.season_composite
 
 .. raw:: html
 

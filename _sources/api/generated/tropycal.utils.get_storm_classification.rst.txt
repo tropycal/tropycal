@@ -5,7 +5,7 @@ get_storm_classification
 
 .. autofunction:: get_storm_classification
 
-.. include:: tropycal.utils.get_storm_classification.examples
+.. include:: tropycal.utils.get_storm_classification
 
 .. raw:: html
 

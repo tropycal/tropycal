@@ -1,0 +1,25 @@
+tropycal.recon.vdms
+===================
+
+.. currentmodule:: tropycal.recon
+
+.. autoclass:: vdms
+
+   
+   
+   
+   
+   
+   Methods Summary
+
+   
+      .. autosummary::
+         :toctree:
+      
+         vdms.isel
+         vdms.plot_points
+         vdms.sel
+         vdms.to_pickle
+         vdms.update
+   
+   

@@ -1,0 +1,12 @@
+dropsondes.to_pickle
+===================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: dropsondes.to_pickle
+
+.. include:: tropycal.recon.dropsondes.to_pickle
+
+.. raw:: html
+
+      <div style='clear:both'></div>

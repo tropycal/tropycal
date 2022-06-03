@@ -5,7 +5,7 @@ TrackDataset.wind_pres_relationship
 
 .. automethod:: TrackDataset.wind_pres_relationship
 
-.. include:: tropycal.tracks.TrackDataset.wind_pres_relationship.examples
+.. include:: tropycal.tracks.TrackDataset.wind_pres_relationship
 
 .. raw:: html
 

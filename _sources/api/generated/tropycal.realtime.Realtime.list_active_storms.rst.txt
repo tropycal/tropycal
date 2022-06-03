@@ -5,7 +5,7 @@ Realtime.list_active_storms
 
 .. automethod:: Realtime.list_active_storms
 
-.. include:: tropycal.realtime.Realtime.list_active_storms.examples
+.. include:: tropycal.realtime.Realtime.list_active_storms
 
 .. raw:: html
 

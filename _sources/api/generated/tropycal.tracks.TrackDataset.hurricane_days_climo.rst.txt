@@ -5,7 +5,7 @@ TrackDataset.hurricane_days_climo
 
 .. automethod:: TrackDataset.hurricane_days_climo
 
-.. include:: tropycal.tracks.TrackDataset.hurricane_days_climo.examples
+.. include:: tropycal.tracks.TrackDataset.hurricane_days_climo
 
 .. raw:: html
 

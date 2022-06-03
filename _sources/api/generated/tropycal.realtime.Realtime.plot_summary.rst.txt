@@ -1,0 +1,12 @@
+Realtime.plot_summary
+=======================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: Realtime.plot_summary
+
+.. include:: tropycal.realtime.Realtime.plot_summary
+
+.. raw:: html
+
+      <div style='clear:both'></div>

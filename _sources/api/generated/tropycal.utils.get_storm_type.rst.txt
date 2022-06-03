@@ -5,7 +5,7 @@ get_storm_type
 
 .. autofunction:: get_storm_type
 
-.. include:: tropycal.utils.get_storm_type.examples
+.. include:: tropycal.utils.get_storm_type
 
 .. raw:: html
 

@@ -1,0 +1,12 @@
+hdobs.sel
+========================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: hdobs.sel
+
+.. include:: tropycal.recon.hdobs.sel
+
+.. raw:: html
+
+      <div style='clear:both'></div>

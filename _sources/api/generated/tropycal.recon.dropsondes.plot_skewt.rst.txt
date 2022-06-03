@@ -1,0 +1,12 @@
+dropsondes.plot_skewt
+====================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: dropsondes.plot_skewt
+
+.. include:: tropycal.recon.dropsondes.plot_skewt
+
+.. raw:: html
+
+      <div style='clear:both'></div>

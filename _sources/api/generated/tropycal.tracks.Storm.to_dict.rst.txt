@@ -5,7 +5,7 @@ Storm.to_dict
 
 .. automethod:: Storm.to_dict
 
-.. include:: tropycal.tracks.Storm.to_dict.examples
+.. include:: tropycal.tracks.Storm.to_dict
 
 .. raw:: html
 

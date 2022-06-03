@@ -5,7 +5,7 @@ RealtimeStorm.to_xarray
 
 .. automethod:: RealtimeStorm.to_xarray
 
-.. include:: tropycal.realtime.RealtimeStorm.to_xarray.examples
+.. include:: tropycal.realtime.RealtimeStorm.to_xarray
 
 .. raw:: html
 

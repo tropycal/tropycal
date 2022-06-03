@@ -18,5 +18,6 @@ tropycal.realtime.Realtime
       
          Realtime.get_storm
          Realtime.list_active_storms
+         Realtime.plot_summary
    
    

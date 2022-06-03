@@ -5,7 +5,7 @@ RainDataset.get_storm_rainfall
 
 .. automethod:: RainDataset.get_storm_rainfall
 
-.. include:: tropycal.rain.RainDataset.get_storm_rainfall.examples
+.. include:: tropycal.rain.RainDataset.get_storm_rainfall
 
 .. raw:: html
 

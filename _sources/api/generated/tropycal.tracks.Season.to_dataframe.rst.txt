@@ -5,7 +5,7 @@ Season.to_dataframe
 
 .. automethod:: Season.to_dataframe
 
-.. include:: tropycal.tracks.Season.to_dataframe.examples
+.. include:: tropycal.tracks.Season.to_dataframe
 
 .. raw:: html
 

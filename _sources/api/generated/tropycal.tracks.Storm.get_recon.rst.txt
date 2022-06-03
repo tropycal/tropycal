@@ -5,7 +5,7 @@ Storm.get_recon
 
 .. automethod:: Storm.get_recon
 
-.. include:: tropycal.tracks.Storm.get_recon.examples
+.. include:: tropycal.tracks.Storm.get_recon
 
 .. raw:: html
 

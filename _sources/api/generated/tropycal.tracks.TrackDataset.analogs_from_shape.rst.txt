@@ -1,0 +1,12 @@
+TrackDataset.analogs_from_shape
+===============================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.analogs_from_shape
+
+.. include:: tropycal.tracks.TrackDataset.analogs_from_shape
+
+.. raw:: html
+
+      <div style='clear:both'></div>

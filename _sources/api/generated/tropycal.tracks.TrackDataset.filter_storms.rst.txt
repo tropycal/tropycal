@@ -5,7 +5,7 @@ TrackDataset.filter_storms
 
 .. automethod:: TrackDataset.filter_storms
 
-.. include:: tropycal.tracks.TrackDataset.filter_storms.examples
+.. include:: tropycal.tracks.TrackDataset.filter_storms
 
 .. raw:: html
 

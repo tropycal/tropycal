@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Individual Season Analysis &mdash; tropycal </title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tornado Analyses" href="tracks.tornado.html" />
+    <link rel="prev" title="Realtime Functionality" href="realtime.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> tropycal
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Example Scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">Realtime Functionality</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Individual Season Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hurtdat2-dataset">HURTDAT2 Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Individual season analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plot-season">Plot Season</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multiple-season-analysis">Multiple Season Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.tornado.html">Tornado Analyses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.storm.html">Individual Storm Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tc_rainfall.html">Tropical Cyclone Rainfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analogs.html">Historical TC Track Analogs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customize_storm.html">Customizing Storm Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.TrackDataset.html">TC Dataset Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recon.html">Aircraft Recon Data Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data.html">Data Sources</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">tropycal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Examples</a> &raquo;</li>
+      <li>Individual Season Analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/tracks.season.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-tracks-season-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="individual-season-analysis">
+<span id="sphx-glr-examples-tracks-season-py"></span><h1>Individual Season Analysis<a class="headerlink" href="#individual-season-analysis" title="Permalink to this headline">¶</a></h1>
+<p>This sample script illustrates how to retrieve, visualize and analyze seasons from the HURDAT2 dataset.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="k">as</span> <span class="nn">tracks</span>
+</pre></div>
+</div>
+<div class="section" id="hurtdat2-dataset">
+<h2>HURTDAT2 Dataset<a class="headerlink" href="#hurtdat2-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Let’s start by creating an instance of a TrackDataset object. By default, this reads in the HURDAT2 dataset from the National Hurricane  Center (NHC) website. For this example we’ll be using the HURDAT2 dataset over the North Atlantic basin.</p>
+<p>HURDAT data is not available for the most recent hurricane seasons. To include the latest data up through today, the “include_btk” flag  would need to be set to True, which reads in preliminary best track data from the NHC website.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
+--&gt; Completed reading in HURDAT2 data (4.66 seconds)
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>Individual season analysis<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Individual seasons can be retrieved from the dataset by calling the <code class="docutils literal notranslate"><span class="pre">get_season()</span></code> function, which returns an instance of a Season object.</p>
+<p>Let’s retrieve an instance of the 2017 Atlantic Hurricane Season:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_season.html#tropycal.tracks.TrackDataset.get_season" title="tropycal.tracks.TrackDataset.get_season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">get_season</span></a><span class="p">(</span><span class="mi">2017</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can quickly visualize what the Season object contains by printing it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.tracks.Season&gt;
+Season Summary:
+    Total Storms:      18
+    Named Storms:      17
+    Hurricanes:        10
+    Major Hurricanes:  6
+    Season ACE:        224.8
+
+More Information:
+    year:          2017
+    basin:         north_atlantic
+    source_basin:  north_atlantic
+    source:        hurdat
+    source_info:   NHC Hurricane Database
+</pre></div>
+</div>
+<p>The Season object can be converted to a Pandas DataFrame, which lists a summary of storms during the season:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Season.to_dataframe.html#tropycal.tracks.Season.to_dataframe" title="tropycal.tracks.Season.to_dataframe" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">season</span><span class="o">.</span><span class="n">to_dataframe</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>name</th>
+      <th>vmax</th>
+      <th>mslp</th>
+      <th>category</th>
+      <th>ace</th>
+      <th>start_time</th>
+      <th>end_time</th>
+      <th>start_lat</th>
+      <th>start_lon</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>AL012017</td>
+      <td>ARLENE</td>
+      <td>45</td>
+      <td>990</td>
+      <td>0</td>
+      <td>0.8</td>
+      <td>2017-04-19 00:00:00</td>
+      <td>2017-04-21 06:00:00</td>
+      <td>31.1</td>
+      <td>-42.6</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>AL022017</td>
+      <td>BRET</td>
+      <td>45</td>
+      <td>1007</td>
+      <td>0</td>
+      <td>0.5</td>
+      <td>2017-06-19 18:00:00</td>
+      <td>2017-06-20 09:00:00</td>
+      <td>9.2</td>
+      <td>-58.9</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>AL032017</td>
+      <td>CINDY</td>
+      <td>50</td>
+      <td>991</td>
+      <td>0</td>
+      <td>1.8</td>
+      <td>2017-06-20 18:00:00</td>
+      <td>2017-06-23 12:00:00</td>
+      <td>25.6</td>
+      <td>-90.6</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>AL042017</td>
+      <td>FOUR</td>
+      <td>25</td>
+      <td>1009</td>
+      <td>-1</td>
+      <td>0.0</td>
+      <td>2017-07-05 18:00:00</td>
+      <td>2017-07-07 12:00:00</td>
+      <td>12.0</td>
+      <td>-37.1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>AL052017</td>
+      <td>DON</td>
+      <td>45</td>
+      <td>1005</td>
+      <td>0</td>
+      <td>0.8</td>
+      <td>2017-07-17 06:00:00</td>
+      <td>2017-07-18 12:00:00</td>
+      <td>10.4</td>
+      <td>-49.1</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>AL062017</td>
+      <td>EMILY</td>
+      <td>50</td>
+      <td>1001</td>
+      <td>0</td>
+      <td>0.6</td>
+      <td>2017-07-30 18:00:00</td>
+      <td>2017-08-01 18:00:00</td>
+      <td>28.4</td>
+      <td>-85.4</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>AL072017</td>
+      <td>FRANKLIN</td>
+      <td>75</td>
+      <td>981</td>
+      <td>1</td>
+      <td>3.7</td>
+      <td>2017-08-07 00:00:00</td>
+      <td>2017-08-10 12:00:00</td>
+      <td>16.1</td>
+      <td>-82.7</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>AL082017</td>
+      <td>GERT</td>
+      <td>95</td>
+      <td>962</td>
+      <td>2</td>
+      <td>7.8</td>
+      <td>2017-08-12 18:00:00</td>
+      <td>2017-08-17 12:00:00</td>
+      <td>24.0</td>
+      <td>-69.4</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>AL092017</td>
+      <td>HARVEY</td>
+      <td>115</td>
+      <td>937</td>
+      <td>4</td>
+      <td>11.4</td>
+      <td>2017-08-17 06:00:00</td>
+      <td>2017-09-01 00:00:00</td>
+      <td>13.4</td>
+      <td>-52.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>AL112017</td>
+      <td>IRMA</td>
+      <td>155</td>
+      <td>914</td>
+      <td>5</td>
+      <td>64.9</td>
+      <td>2017-08-30 00:00:00</td>
+      <td>2017-09-12 00:00:00</td>
+      <td>16.1</td>
+      <td>-26.9</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>AL122017</td>
+      <td>JOSE</td>
+      <td>135</td>
+      <td>938</td>
+      <td>4</td>
+      <td>43.3</td>
+      <td>2017-09-05 06:00:00</td>
+      <td>2017-09-22 12:00:00</td>
+      <td>11.6</td>
+      <td>-37.9</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>AL132017</td>
+      <td>KATIA</td>
+      <td>90</td>
+      <td>972</td>
+      <td>2</td>
+      <td>6.1</td>
+      <td>2017-09-05 12:00:00</td>
+      <td>2017-09-09 12:00:00</td>
+      <td>22.2</td>
+      <td>-97.2</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>AL142017</td>
+      <td>LEE</td>
+      <td>100</td>
+      <td>962</td>
+      <td>3</td>
+      <td>17.9</td>
+      <td>2017-09-14 18:00:00</td>
+      <td>2017-09-30 00:00:00</td>
+      <td>10.4</td>
+      <td>-23.1</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>AL152017</td>
+      <td>MARIA</td>
+      <td>150</td>
+      <td>908</td>
+      <td>5</td>
+      <td>44.8</td>
+      <td>2017-09-16 12:00:00</td>
+      <td>2017-09-30 12:00:00</td>
+      <td>12.2</td>
+      <td>-49.7</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>AL162017</td>
+      <td>NATE</td>
+      <td>80</td>
+      <td>981</td>
+      <td>1</td>
+      <td>4.1</td>
+      <td>2017-10-04 12:00:00</td>
+      <td>2017-10-08 18:00:00</td>
+      <td>12.0</td>
+      <td>-81.8</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>AL172017</td>
+      <td>OPHELIA</td>
+      <td>100</td>
+      <td>959</td>
+      <td>3</td>
+      <td>14.5</td>
+      <td>2017-10-09 06:00:00</td>
+      <td>2017-10-15 18:00:00</td>
+      <td>30.9</td>
+      <td>-40.0</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>AL182017</td>
+      <td>PHILIPPE</td>
+      <td>35</td>
+      <td>1000</td>
+      <td>0</td>
+      <td>0.1</td>
+      <td>2017-10-28 12:00:00</td>
+      <td>2017-10-29 00:00:00</td>
+      <td>20.1</td>
+      <td>-83.5</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>AL192017</td>
+      <td>RINA</td>
+      <td>50</td>
+      <td>991</td>
+      <td>0</td>
+      <td>1.7</td>
+      <td>2017-11-05 18:00:00</td>
+      <td>2017-11-09 00:00:00</td>
+      <td>29.2</td>
+      <td>-51.7</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><p>A more detailed summary of the season can be retrieved using the <cite>summary()</cite> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Season.summary.html#tropycal.tracks.Season.summary" title="tropycal.tracks.Season.summary" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">season</span><span class="o">.</span><span class="n">summary</span></a><span class="p">())</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;id&#39;: [&#39;AL012017&#39;, &#39;AL022017&#39;, &#39;AL032017&#39;, &#39;AL042017&#39;, &#39;AL052017&#39;, &#39;AL062017&#39;, &#39;AL072017&#39;, &#39;AL082017&#39;, &#39;AL092017&#39;, &#39;AL112017&#39;, &#39;AL122017&#39;, &#39;AL132017&#39;, &#39;AL142017&#39;, &#39;AL152017&#39;, &#39;AL162017&#39;, &#39;AL172017&#39;, &#39;AL182017&#39;, &#39;AL192017&#39;], &#39;operational_id&#39;: [&#39;AL012017&#39;, &#39;AL022017&#39;, &#39;AL032017&#39;, &#39;AL042017&#39;, &#39;AL052017&#39;, &#39;AL062017&#39;, &#39;AL072017&#39;, &#39;AL082017&#39;, &#39;AL092017&#39;, &#39;AL112017&#39;, &#39;AL122017&#39;, &#39;AL132017&#39;, &#39;AL142017&#39;, &#39;AL152017&#39;, &#39;AL162017&#39;, &#39;AL172017&#39;, &#39;AL182017&#39;, &#39;AL192017&#39;], &#39;name&#39;: [&#39;ARLENE&#39;, &#39;BRET&#39;, &#39;CINDY&#39;, &#39;FOUR&#39;, &#39;DON&#39;, &#39;EMILY&#39;, &#39;FRANKLIN&#39;, &#39;GERT&#39;, &#39;HARVEY&#39;, &#39;IRMA&#39;, &#39;JOSE&#39;, &#39;KATIA&#39;, &#39;LEE&#39;, &#39;MARIA&#39;, &#39;NATE&#39;, &#39;OPHELIA&#39;, &#39;PHILIPPE&#39;, &#39;RINA&#39;], &#39;max_wspd&#39;: [45, 45, 50, 25, 45, 50, 75, 95, 115, 155, 135, 90, 100, 150, 80, 100, 35, 50], &#39;min_mslp&#39;: [990, 1007, 991, 1009, 1005, 1001, 981, 962, 937, 914, 938, 972, 962, 908, 981, 959, 1000, 991], &#39;category&#39;: [0, 0, 0, -1, 0, 0, 1, 2, 4, 5, 4, 2, 3, 5, 1, 3, 0, 0], &#39;ace&#39;: [0.8, 0.5, 1.8, 0.0, 0.8, 0.6, 3.7, 7.8, 11.4, 64.9, 43.3, 6.1, 17.9, 44.8, 4.1, 14.5, 0.1, 1.7], &#39;season_start&#39;: datetime.datetime(2017, 4, 19, 0, 0), &#39;season_end&#39;: datetime.datetime(2017, 11, 9, 0, 0), &#39;season_storms&#39;: 18, &#39;season_named&#39;: 17, &#39;season_hurricane&#39;: 10, &#39;season_major&#39;: 6, &#39;season_ace&#39;: 224.8, &#39;season_subtrop_pure&#39;: 0, &#39;season_subtrop_partial&#39;: 0}
+</pre></div>
+</div>
+</div>
+<div class="section" id="plot-season">
+<h2>Plot Season<a class="headerlink" href="#plot-season" title="Permalink to this headline">¶</a></h2>
+<p>Plotting a Season object can be quickly done using the <code class="docutils literal notranslate"><span class="pre">plot()</span></code> method.</p>
+<p>Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The “Customizing Storm Plots” example script has more examples on how to customize such plots. Read through the documentation for more customization options.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Season.plot.html#tropycal.tracks.Season.plot" title="tropycal.tracks.Season.plot" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">season</span><span class="o">.</span><span class="n">plot</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_tracks.season_001.png" srcset="../_images/sphx_glr_tracks.season_001.png" alt="2017 Atlantic Hurricane Season, 17 named • 10 hurricanes • 6 major 224.8 Cumulative ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;2017 Atlantic Hurricane Season&#39;,&#39;right&#39;:&#39;17 named • 10 hurricanes • 6 major\n224.8 Cumulative ACE&#39;}&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="multiple-season-analysis">
+<h2>Multiple Season Analysis<a class="headerlink" href="#multiple-season-analysis" title="Permalink to this headline">¶</a></h2>
+<p>Seasons can also be combined for multi-season analyses by simply adding multiple season objects together.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season1</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_season.html#tropycal.tracks.TrackDataset.get_season" title="tropycal.tracks.TrackDataset.get_season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">get_season</span></a><span class="p">(</span><span class="mi">2017</span><span class="p">)</span>
+<a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season2</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_season.html#tropycal.tracks.TrackDataset.get_season" title="tropycal.tracks.TrackDataset.get_season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">get_season</span></a><span class="p">(</span><span class="mi">2018</span><span class="p">)</span>
+<a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season3</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_season.html#tropycal.tracks.TrackDataset.get_season" title="tropycal.tracks.TrackDataset.get_season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">get_season</span></a><span class="p">(</span><span class="mi">2021</span><span class="p">)</span>
+
+<a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">combined</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season1</span></a> <span class="o">+</span> <a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season2</span></a> <span class="o">+</span> <a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">season3</span></a>
+
+<span class="nb">print</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Season.html#tropycal.tracks.Season" title="tropycal.tracks.Season" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">combined</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.tracks.Season&gt;
+Season Summary:
+    Total Storms:      [18, 16, 21]
+    Named Storms:      [17, 15, 21]
+    Hurricanes:        [10, 8, 7]
+    Major Hurricanes:  [6, 2, 4]
+    Season ACE:        [224.8, 132.5, 145.3]
+
+More Information:
+    year:          [2017, 2018, 2021]
+    basin:         north_atlantic
+    source_basin:  north_atlantic
+    source:        hurdat
+    source_info:   NHC Hurricane Database
+</pre></div>
+</div>
+<p>The combined seasons can then be plotted on the same map:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Season.plot.html#tropycal.tracks.Season.plot" title="tropycal.tracks.Season.plot" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">combined</span><span class="o">.</span><span class="n">plot</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_tracks.season_002.png" srcset="../_images/sphx_glr_tracks.season_002.png" alt="[2017, 2018, 2021] Atlantic Hurricane Season, 53 named • 25 hurricanes • 12 major 502.6 Cumulative ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;[2017, 2018, 2021] Atlantic Hurricane Season&#39;,&#39;right&#39;:&#39;53 named • 25 hurricanes • 12 major\n502.6 Cumulative ACE&#39;}&gt;
+</pre></div>
+</div>
+<p>The summary method also generates summaries for all seasons in this object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Season.summary.html#tropycal.tracks.Season.summary" title="tropycal.tracks.Season.summary" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">combined</span><span class="o">.</span><span class="n">summary</span></a><span class="p">())</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;id&#39;: [[&#39;AL012017&#39;, &#39;AL022017&#39;, &#39;AL032017&#39;, &#39;AL042017&#39;, &#39;AL052017&#39;, &#39;AL062017&#39;, &#39;AL072017&#39;, &#39;AL082017&#39;, &#39;AL092017&#39;, &#39;AL112017&#39;, &#39;AL122017&#39;, &#39;AL132017&#39;, &#39;AL142017&#39;, &#39;AL152017&#39;, &#39;AL162017&#39;, &#39;AL172017&#39;, &#39;AL182017&#39;, &#39;AL192017&#39;], [&#39;AL012018&#39;, &#39;AL022018&#39;, &#39;AL032018&#39;, &#39;AL042018&#39;, &#39;AL052018&#39;, &#39;AL062018&#39;, &#39;AL072018&#39;, &#39;AL082018&#39;, &#39;AL092018&#39;, &#39;AL102018&#39;, &#39;AL112018&#39;, &#39;AL122018&#39;, &#39;AL132018&#39;, &#39;AL142018&#39;, &#39;AL152018&#39;, &#39;AL162018&#39;], [&#39;AL012021&#39;, &#39;AL022021&#39;, &#39;AL032021&#39;, &#39;AL042021&#39;, &#39;AL052021&#39;, &#39;AL062021&#39;, &#39;AL072021&#39;, &#39;AL082021&#39;, &#39;AL092021&#39;, &#39;AL102021&#39;, &#39;AL112021&#39;, &#39;AL122021&#39;, &#39;AL132021&#39;, &#39;AL142021&#39;, &#39;AL152021&#39;, &#39;AL162021&#39;, &#39;AL172021&#39;, &#39;AL182021&#39;, &#39;AL192021&#39;, &#39;AL202021&#39;, &#39;AL212021&#39;]], &#39;operational_id&#39;: [[&#39;AL012017&#39;, &#39;AL022017&#39;, &#39;AL032017&#39;, &#39;AL042017&#39;, &#39;AL052017&#39;, &#39;AL062017&#39;, &#39;AL072017&#39;, &#39;AL082017&#39;, &#39;AL092017&#39;, &#39;AL112017&#39;, &#39;AL122017&#39;, &#39;AL132017&#39;, &#39;AL142017&#39;, &#39;AL152017&#39;, &#39;AL162017&#39;, &#39;AL172017&#39;, &#39;AL182017&#39;, &#39;AL192017&#39;], [&#39;AL012018&#39;, &#39;AL022018&#39;, &#39;AL032018&#39;, &#39;AL042018&#39;, &#39;AL052018&#39;, &#39;AL062018&#39;, &#39;AL072018&#39;, &#39;AL082018&#39;, &#39;AL092018&#39;, &#39;AL102018&#39;, &#39;AL112018&#39;, &#39;AL122018&#39;, &#39;AL132018&#39;, &#39;AL142018&#39;, &#39;AL152018&#39;, &#39;AL162018&#39;], [&#39;AL012021&#39;, &#39;AL022021&#39;, &#39;AL032021&#39;, &#39;AL042021&#39;, &#39;AL052021&#39;, &#39;AL062021&#39;, &#39;AL072021&#39;, &#39;AL082021&#39;, &#39;AL092021&#39;, &#39;AL102021&#39;, &#39;AL112021&#39;, &#39;AL122021&#39;, &#39;AL132021&#39;, &#39;AL142021&#39;, &#39;AL152021&#39;, &#39;AL162021&#39;, &#39;AL172021&#39;, &#39;AL182021&#39;, &#39;AL192021&#39;, &#39;AL202021&#39;, &#39;AL212021&#39;]], &#39;name&#39;: [[&#39;ARLENE&#39;, &#39;BRET&#39;, &#39;CINDY&#39;, &#39;FOUR&#39;, &#39;DON&#39;, &#39;EMILY&#39;, &#39;FRANKLIN&#39;, &#39;GERT&#39;, &#39;HARVEY&#39;, &#39;IRMA&#39;, &#39;JOSE&#39;, &#39;KATIA&#39;, &#39;LEE&#39;, &#39;MARIA&#39;, &#39;NATE&#39;, &#39;OPHELIA&#39;, &#39;PHILIPPE&#39;, &#39;RINA&#39;], [&#39;ALBERTO&#39;, &#39;BERYL&#39;, &#39;CHRIS&#39;, &#39;DEBBY&#39;, &#39;ERNESTO&#39;, &#39;FLORENCE&#39;, &#39;GORDON&#39;, &#39;HELENE&#39;, &#39;ISAAC&#39;, &#39;JOYCE&#39;, &#39;ELEVEN&#39;, &#39;KIRK&#39;, &#39;LESLIE&#39;, &#39;MICHAEL&#39;, &#39;NADINE&#39;, &#39;OSCAR&#39;], [&#39;ANA&#39;, &#39;BILL&#39;, &#39;CLAUDETTE&#39;, &#39;DANNY&#39;, &#39;ELSA&#39;, &#39;FRED&#39;, &#39;GRACE&#39;, &#39;HENRI&#39;, &#39;IDA&#39;, &#39;KATE&#39;, &#39;JULIAN&#39;, &#39;LARRY&#39;, &#39;MINDY&#39;, &#39;NICHOLAS&#39;, &#39;ODETTE&#39;, &#39;PETER&#39;, &#39;ROSE&#39;, &#39;SAM&#39;, &#39;TERESA&#39;, &#39;VICTOR&#39;, &#39;WANDA&#39;]], &#39;max_wspd&#39;: [[45, 45, 50, 25, 45, 50, 75, 95, 115, 155, 135, 90, 100, 150, 80, 100, 35, 50], [55, 70, 90, 45, 40, 130, 60, 95, 65, 45, 30, 55, 80, 140, 55, 95], [40, 55, 40, 40, 75, 55, 105, 65, 130, 40, 50, 110, 50, 65, 40, 45, 50, 135, 40, 55, 50]], &#39;min_mslp&#39;: [[990, 1007, 991, 1009, 1005, 1001, 981, 962, 937, 914, 938, 972, 962, 908, 981, 959, 1000, 991], [990, 991, 969, 998, 1003, 937, 996, 967, 995, 995, 1007, 998, 968, 919, 995, 966], [1004, 992, 1003, 1009, 991, 991, 967, 986, 929, 1004, 993, 953, 1000, 988, 1005, 1005, 1004, 927, 1008, 997, 983]], &#39;category&#39;: [[0, 0, 0, -1, 0, 0, 1, 2, 4, 5, 4, 2, 3, 5, 1, 3, 0, 0], [0, 1, 2, 0, 0, 4, 0, 2, 1, 0, -1, 0, 1, 5, 0, 2], [0, 0, 0, 0, 1, 0, 3, 1, 4, 0, 0, 3, 0, 1, 0, 0, 0, 4, 0, 0, 0]], &#39;ace&#39;: [[0.8, 0.5, 1.8, 0.0, 0.8, 0.6, 3.7, 7.8, 11.4, 64.9, 43.3, 6.1, 17.9, 44.8, 4.1, 14.5, 0.1, 1.7], [1.8, 4.8, 7.4, 1.5, 1.4, 39.7, 2.3, 15.7, 6.8, 2.4, 0.0, 3.2, 21.3, 12.5, 2.7, 9.0], [0.8, 1.0, 1.1, 0.4, 9.9, 2.4, 8.6, 7.8, 10.6, 0.6, 1.1, 31.9, 0.4, 2.4, 0.4, 1.8, 1.4, 54.0, 0.6, 2.4, 5.7]], &#39;seasons&#39;: [2017, 2018, 2021], &#39;season_start&#39;: [datetime.datetime(2017, 4, 19, 0, 0), datetime.datetime(2018, 5, 25, 12, 0), datetime.datetime(2021, 5, 22, 6, 0)], &#39;season_end&#39;: [datetime.datetime(2017, 11, 9, 0, 0), datetime.datetime(2018, 10, 31, 12, 0), datetime.datetime(2021, 11, 7, 6, 0)], &#39;season_storms&#39;: [18, 16, 21], &#39;season_named&#39;: [17, 15, 21], &#39;season_hurricane&#39;: [10, 8, 7], &#39;season_major&#39;: [6, 2, 4], &#39;season_ace&#39;: [224.8, 132.5, 145.3], &#39;season_subtrop_pure&#39;: [0, 7, 3], &#39;season_subtrop_partial&#39;: [0, 7, 3]}
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  13.410 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-season-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/9a7aa52f3c6e541797f72cf2f560a403/tracks.season.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.season.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/11497ce272b175bd1a3ad8c719674ab4/tracks.season.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tracks.season.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="realtime.html" class="btn btn-neutral float-left" title="Realtime Functionality" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tracks.tornado.html" class="btn btn-neutral float-right" title="Tornado Analyses" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

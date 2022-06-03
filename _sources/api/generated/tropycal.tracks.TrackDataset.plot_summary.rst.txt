@@ -1,0 +1,12 @@
+TrackDataset.plot_summary
+=========================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.plot_summary
+
+.. include:: tropycal.tracks.TrackDataset.plot_summary
+
+.. raw:: html
+
+      <div style='clear:both'></div>

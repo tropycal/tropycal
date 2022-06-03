@@ -5,7 +5,7 @@ Storm.list_nhc_discussions
 
 .. automethod:: Storm.list_nhc_discussions
 
-.. include:: tropycal.tracks.Storm.list_nhc_discussions.examples
+.. include:: tropycal.tracks.Storm.list_nhc_discussions
 
 .. raw:: html
 

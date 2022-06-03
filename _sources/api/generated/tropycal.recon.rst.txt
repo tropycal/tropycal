@@ -1,9 +1,16 @@
 
+   
+      
+   
 
-recon
-==============
+Recon
+=====
 
 .. automodule:: tropycal.recon
+
+   
+   
+   
 
    
    
@@ -15,10 +22,11 @@ recon
 
    .. autosummary::
       :toctree: ./
-
    
       ReconDataset
-
+      dropsondes
+      hdobs
+      vdms
    
    
 

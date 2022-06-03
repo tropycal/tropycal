@@ -1,0 +1,12 @@
+knots_to_mph
+===========================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: knots_to_mph
+
+.. include:: tropycal.utils.knots_to_mph
+
+.. raw:: html
+
+      <div style='clear:both'></div>

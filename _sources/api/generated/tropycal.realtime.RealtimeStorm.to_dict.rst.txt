@@ -5,7 +5,7 @@ RealtimeStorm.to_dict
 
 .. automethod:: RealtimeStorm.to_dict
 
-.. include:: tropycal.realtime.RealtimeStorm.to_dict.examples
+.. include:: tropycal.realtime.RealtimeStorm.to_dict
 
 .. raw:: html
 

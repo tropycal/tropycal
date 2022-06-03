@@ -5,7 +5,7 @@ TornadoDataset.get_storm_tornadoes
 
 .. automethod:: TornadoDataset.get_storm_tornadoes
 
-.. include:: tropycal.tornado.TornadoDataset.get_storm_tornadoes.examples
+.. include:: tropycal.tornado.TornadoDataset.get_storm_tornadoes
 
 .. raw:: html
 

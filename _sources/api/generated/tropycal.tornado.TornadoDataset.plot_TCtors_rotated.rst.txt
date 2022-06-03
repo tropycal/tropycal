@@ -5,7 +5,7 @@ TornadoDataset.plot_TCtors_rotated
 
 .. automethod:: TornadoDataset.plot_TCtors_rotated
 
-.. include:: tropycal.tornado.TornadoDataset.plot_TCtors_rotated.examples
+.. include:: tropycal.tornado.TornadoDataset.plot_TCtors_rotated
 
 .. raw:: html
 

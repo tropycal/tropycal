@@ -5,7 +5,7 @@ RealtimeStorm.plot_tors
 
 .. automethod:: RealtimeStorm.plot_tors
 
-.. include:: tropycal.realtime.RealtimeStorm.plot_tors.examples
+.. include:: tropycal.realtime.RealtimeStorm.plot_tors
 
 .. raw:: html
 

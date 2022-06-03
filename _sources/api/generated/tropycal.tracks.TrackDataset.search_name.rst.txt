@@ -5,7 +5,7 @@ TrackDataset.search_name
 
 .. automethod:: TrackDataset.search_name
 
-.. include:: tropycal.tracks.TrackDataset.search_name.examples
+.. include:: tropycal.tracks.TrackDataset.search_name
 
 .. raw:: html
 

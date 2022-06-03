@@ -5,7 +5,7 @@ accumulated_cyclone_energy
 
 .. autofunction:: accumulated_cyclone_energy
 
-.. include:: tropycal.utils.accumulated_cyclone_energy.examples
+.. include:: tropycal.utils.accumulated_cyclone_energy
 
 .. raw:: html
 

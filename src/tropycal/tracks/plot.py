@@ -1716,10 +1716,12 @@ None,prop={},map_prop={}):
                                 if cone_prop['ms'] == 0: continue
                                 color = get_colors_sshws(forecast_dict['vmax'][idx])
                                 if cone_prop['fillcolor'] != 'category': color = cone_prop['fillcolor']
+                                
+                                marker = 'o'
+                                if forecast_dict['type'][idx] not in constants.TROPICAL_STORM_TYPES: marker = '^'
+                                self.ax.plot(forecast_dict['lon'][idx],forecast_dict['lat'][idx],marker,ms=cone_prop['ms'],mfc=color,mec='k',zorder=7,transform=ccrs.PlateCarree(),clip_on=True)
 
-                                self.ax.plot(forecast_dict['lon'][idx],forecast_dict['lat'][idx],'o',ms=cone_prop['ms'],mfc=color,mec='k',zorder=7,transform=ccrs.PlateCarree(),clip_on=True)
-
-                                if cone_prop['label_category'] == True:
+                                if cone_prop['label_category'] == True and marker == 'o':
                                     category = str(wind_to_category(forecast_dict['vmax'][idx]))
                                     if category == "0": category = 'S'
                                     if category == "-1": category = 'D'

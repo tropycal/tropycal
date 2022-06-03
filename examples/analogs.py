@@ -32,7 +32,9 @@ basin = tracks.TrackDataset(basin='north_atlantic',include_btk=False)
 # - ``basin.plot_analogs_from_point()`` - Plot output from analog_from_point()
 # - ``basin.plot_analogs_from_shape()`` - Plot output from analog_from_shape()
 # 
-# Let's start out with `analogs_from_point` by looking at all tropical cyclone tracks within 50 kilometers of NYC. Note that the first time you run an analog function, if storms in `basin` haven't been interpolated to hourly yet, this will automatically perform that interpolation on the back end, and future calls won't need to re-interpolate making them much faster.
+# Let's start out with `analogs_from_point` by looking at all tropical cyclone tracks within 50 kilometers of NYC. For this sample script we'll use kilometers, but if you want to use miles, add a ``units='miles'`` argument.
+#
+# Note that the first time you run an analog function, if storms in `basin` haven't been interpolated to hourly yet, this will automatically perform that interpolation on the back end, and future calls within the same kernel won't need to re-interpolate making them much faster.
 
 basin.analogs_from_point((40.7,-74.0),radius=50)
 
@@ -85,7 +87,7 @@ basin.plot_storm(closest_storm)
 # 
 # The example below plots all* tropical cyclones that passed through the New Jersey to Long Island coastline between 1950 and 2022, with additional plotting properties of (1) not plotting dots and (2) coloring lines by SSHWS category.
 # 
-# *Tropical cyclone tracks are interpolated to hourly; therefore, a point only counts if its hourly track passed through the specified domain. Note the 1938 "Long Island Express" Hurricane doesn't appear below, as it moved at an anomalously fast forward speed.*
+# *Note: Tropical cyclone tracks are interpolated to hourly; therefore, a point only counts if its hourly track passed through the specified domain. Note the 1938 "Long Island Express" Hurricane doesn't appear below, as it moved at an anomalously fast forward speed.*
 
 points = [
     (38.9, -74.7),

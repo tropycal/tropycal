@@ -15,7 +15,7 @@ import datetime as dt
 # 
 # HURDAT data is not available for the most recent hurricane seasons. To include the latest data up through today, the "include_btk" flag  would need to be set to True, which reads in preliminary best track data from the NHC website.
 
-hurdat_atl = tracks.TrackDataset(basin='north_atlantic',source='hurdat',include_btk=False)
+basin = tracks.TrackDataset(basin='north_atlantic',source='hurdat',include_btk=False)
 
 ###########################################
 # Individual storm analysis
@@ -24,7 +24,12 @@ hurdat_atl = tracks.TrackDataset(basin='north_atlantic',source='hurdat',include_
 # 
 # Let's retrieve an instance of Hurricane Michael from 2018:
 
-storm = hurdat_atl.get_storm(('michael',2018))
+storm = basin.get_storm(('michael',2018))
+
+###########################################
+# We can quickly visualize what the Storm object contains by printing it:
+
+print(storm)
 
 ###########################################
 # This instance of Storm contains several methods that return the storm data back in different data types. The following examples will show # how to retrieve 3 different data types.
@@ -46,14 +51,12 @@ print(storm.to_dataframe())
 ###########################################
 # Visualize Michael's observed track with the "plot" function:
 # 
-# Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The only cartopy projection # currently offered is PlateCarree. Read through the documentation for more customization options.
+# Note that you can pass various arguments to the plot function, such as customizing the map and track aspects. The "Customizing Storm Plots" example script has more examples on how to customize this plot. Read through the documentation for more customization options.
 
 storm.plot()
 
 ###########################################
 # Plot the tornado tracks associated with Michael, along with the accompanying daily practically perfect forecast (PPH):
-# 
-# Note: There is currently a bug with this function that outputs 2 axes, a filled one and a blank one. This will be fixed in future updates.
 
 storm.plot_tors(plotPPH=True)
 
@@ -83,6 +86,13 @@ storm.plot_nhc_forecast(forecast=2)
 # Note that the observed track here differs from the HURDAT2 track plotted previously! This is because this plot displays the operationally analyzed location and intensity, rather than the post-storm analysis data. This is done to account for differences between HURDAT2 and operational data.
 
 storm.plot_nhc_forecast(forecast=12)
+
+###########################################
+# To get the raw NHC forecast data, we can use the ``get_nhc_forecast_dict()`` method, and provide a date for the requested forecast.
+#
+# This is a subset of the ``get_operational_forecasts()`` method, which pulls in all available forecasts whether NHC, deterministic model or ensemble members.
+
+storm.get_nhc_forecast_dict(dt.datetime(2018,10,9,18))
 
 ###########################################
 # IBTrACS Dataset

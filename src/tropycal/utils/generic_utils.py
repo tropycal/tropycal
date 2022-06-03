@@ -573,7 +573,7 @@ def nhc_cone_radii(year,basin,forecast_hour=None):
     year : int
         Valid year for cone of uncertainty radii.
     basin : str
-        Basin for cone of uncertainty radii. If basin is invalid, return value will be an empty dict.
+        Basin for cone of uncertainty radii. If basin is invalid, return value will be an empty dict. Please refer to :ref:`options-domain` for available basin options.
     forecast_hour : int or list, optional
         Forecast hour(s) to retrieve the cone of uncertainty for. If empty, all available forecast hours will be retrieved.
     
@@ -646,7 +646,7 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
     forecast : dict
         Dictionary containing forecast data
     basin : str
-        Basin for cone of uncertainty radii.
+        Basin for cone of uncertainty radii. Please refer to :ref:`options-domain` for available basin options.
     shift_lons : bool, optional
         If true, grid will be shifted to +0 to +360 degrees longitude. Default is False (-180 to +180 degrees).
     cone_days : int, optional
@@ -660,6 +660,10 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
     -------
     dict or xarray.Dataset
         Depending on `return_xarray`, returns either a dictionary or an xarray Dataset containing the gridded cone of uncertainty and its accompanying attributes.
+    
+    Notes
+    -----
+    Forecast dicts can be retrieved for realtime storm objects using ``RealtimeStorm.get_forecast_realtime()``, and for archived storms using ``Storm.get_nhc_forecast_dict()``.
     """
     
     #Check forecast dict has all required keys

@@ -1137,6 +1137,7 @@ class hdobs:
         prop = kwargs.pop('prop',{})
         map_prop = kwargs.pop('map_prop',{})
         track_dict = kwargs.pop('track_dict',None)
+        swathfunc = kwargs.pop('swathfunc',None)
         
         #Get plot data
         dfRecon = self.data

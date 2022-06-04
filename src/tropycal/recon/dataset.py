@@ -756,7 +756,7 @@ class hdobs:
         with open(filename,'wb') as f:
             pickle.dump(self.data,f)
     
-    def plot_points(self,varname='wspd',domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
+    def plot_points(self,varname='wspd',domain="dynamic",radlim=None,ax=None,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of recon data points.
@@ -772,6 +772,8 @@ class hdobs:
             * **"p_sfc"** = extrapolated surface pressure
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
+        radlim : int
+            Radius (in km) away from storm center to include points. If none (default), all points are plotted.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
@@ -801,10 +803,10 @@ class hdobs:
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        plot_info = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=varname,\
-                                              ax=ax,prop=prop,map_prop=map_prop)
+        ax = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=varname,radlim=radlim,ax=ax,prop=prop,map_prop=map_prop)
+        
         #Return axis
-        return plot_info
+        return ax
         
     def plot_hovmoller(self,varname='wspd',radlim=None,\
                        window=6,align='center',ax=None,**kwargs):

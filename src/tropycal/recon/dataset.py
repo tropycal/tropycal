@@ -470,6 +470,7 @@ class hdobs:
                 missionname = [i.split() for i in content.split('\n')][3][1]
                 if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
                     filecount+=1
+                    print(filecount)
                     try:
                         tmp = self._decode_hdob(content)
                     except:
@@ -755,6 +756,189 @@ class hdobs:
         
         with open(filename,'wb') as f:
             pickle.dump(self.data,f)
+    
+    def plot_time_series(self,varname=('p_sfc','wspd'),mission=None,time=None,realtime=False,**kwargs):
+        
+        r"""
+        Plots a time series of one or two variables on an axis.
+        
+        Parameters
+        ----------
+        varname : str or tuple
+            If one variable to plot, varname is a string of the variable name. If two variables to plot, varname is a tuple of the left and right variable names, respectively. Available varnames are:
+            
+            * **p_sfc** - Mean Sea Level Pressure (hPa)
+            * **temp** - Flight Level Temperature (C)
+            * **dwpt** - Flight Level Dewpoint (C)
+            * **wspd** - Flight Level Wind (kt)
+            * **sfmr** - Surface Wind (kt)
+            * **pkwnd** - Peak Wind Gust (kt)
+            * **rain** - Rain Rate (mm/hr)
+            * **plane_z** - Geopotential Height (m)
+            * **plane_p** - Pressure (hPa)
+        mission : int
+            Mission number to plot. If None, all missions for this storm are plotted.
+        time : tuple
+            Tuple of start and end times (datetime.datetime) to plot. If None, all times available are plotted.
+        realtime : bool
+            If True, the most recent 2 hours of the mission will plot, overriding the time argument. Default is False.
+        
+        Other Parameters
+        ----------------
+        left_prop : dict
+            Dictionary of properties for the left line. Scroll down for more information.
+        right_prop : dict
+            Dictionary of properties for the right line. Scroll down for more information.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
+        
+        Notes
+        -----
+        The following properties are available for customizing the plot, via ``left_prop`` and ``right_prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - ms
+             - Marker size. If zero, none will be plotted. Default is zero.
+           * - color
+             - Color of lines (and markers if used). Default varies per varname.
+           * - linewidth
+             - Line width. Default is 1.0.
+        """
+        
+        #Pop kwargs
+        left_prop = kwargs.pop('left_prop',{})
+        right_prop = kwargs.pop('right_prop',{})
+        
+        #Retrieve variables
+        twin_ax = False
+        if isinstance(varname,tuple):
+            varname_right = varname[1]
+            varname = varname[0]
+            twin_ax = True
+            varname_right_info = time_series_plot(varname_right)
+        varname_info = time_series_plot(varname)
+        
+        #Filter by mission
+        def str2(number):
+            if number < 10: return f'0{number}'
+            return str(number)
+        if mission is not None:
+            df = self.data.loc[self.data['mission'] == str2(mission)]
+            if len(df) == 0: raise ValueError("Mission number provided is invalid.")
+        else:
+            df = self.data
+        
+        #Filter by time or realtime flag
+        if realtime:
+            end_time = pd.to_datetime(df['time'].values[-1])
+            df = df.loc[(df['time'] >= end_time-timedelta(hours=2)) & (df['time'] <= end_time)]
+        elif time is not None:
+            df = df.loc[(df['time'] >= time[0]) & (df['time'] <= time[1])]
+        if len(df) == 0: raise ValueError("Time range provided is invalid.")
+        
+        #Filter by default kwargs
+        left_prop_default = {'ms':0,'color':varname_info['color'],'linewidth':1}
+        for key in left_prop.keys(): left_prop_default[key] = left_prop[key]
+        left_prop = left_prop_default
+        if twin_ax:
+            right_prop_default = {'ms':0,'color':varname_right_info['color'],'linewidth':1}
+            for key in right_prop.keys(): right_prop_default[key] = right_prop[key]
+            right_prop = right_prop_default
+        
+        #----------------------------------------------------------------------------------
+        
+        #Create figure
+        fig,ax = plt.subplots(figsize=(9,6),dpi=200)
+        if twin_ax:
+            ax.grid(axis='x')
+        else:
+            ax.grid()
+        
+        #Plot line
+        line1 = ax.plot(df['time'],df[varname],color=left_prop['color'],linewidth=left_prop['linewidth'],label=varname_info['name'])
+        ax.set_ylabel(varname_info['full_name'])
+        
+        #Plot dots
+        if left_prop['ms'] >= 1:
+            plot_times = df['time'].values
+            plot_var = df[varname].values
+            plot_times = [plot_times[i] for i in range(len(plot_times)) if varname not in df['flag'].values[i]]
+            plot_var = [plot_var[i] for i in range(len(plot_var)) if varname not in df['flag'].values[i]]
+            ax.plot(plot_times,plot_var,'o',color=left_prop['color'],ms=left_prop['ms'])
+        
+        #Format x-axis dates
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%Mz\n%m/%d'))
+        
+        #Add twin axis
+        if twin_ax:
+            ax2 = ax.twinx()
+            
+            #Plot line
+            line2 = ax2.plot(df['time'],df[varname_right],color=right_prop['color'],linewidth=right_prop['linewidth'],label=varname_right_info['name'])
+            ax2.set_ylabel(varname_right_info['full_name'])
+            
+            #Plot dots
+            if right_prop['ms'] >= 1:
+                plot_times = df['time'].values
+                plot_var = df[varname_right].values
+                plot_times = [plot_times[i] for i in range(len(plot_times)) if varname_right not in df['flag'].values[i]]
+                plot_var = [plot_var[i] for i in range(len(plot_var)) if varname_right not in df['flag'].values[i]]
+                ax2.plot(plot_times,plot_var,'o',color=right_prop['color'],ms=right_prop['ms'])
+
+            #Add legend
+            lines = line1 + line2
+            labels = [l.get_label() for l in lines]
+            ax.legend(lines,labels)
+        
+            #Special handling if both are in units of Celsius
+            same_unit = False
+            if varname in ['temp','dwpt'] and varname_right in ['temp','dwpt']: same_unit = True
+            if varname in ['sfmr','wspd','pkwnd'] and varname_right in ['sfmr','wspd','pkwnd']: same_unit = True
+            if same_unit:
+                min_val = min(np.nanmin(df[varname]),np.nanmin(df[varname_right]))
+                max_val = max(np.nanmax(df[varname]),np.nanmax(df[varname_right]))*1.05
+                min_val = min_val * 1.05 if min_val < 0 else min_val * 0.95
+                ax.set_ylim(min_val,max_val)
+                ax2.set_ylim(min_val,max_val)
+        
+        #Add titles
+        storm_data = self.storm.dict
+        type_array = np.array(storm_data['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            add_ptc_flag = False
+            if len(tropical_vmax) == 0:
+                add_ptc_flag = True
+                idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            subtrop = classify_subtropical(np.array(storm_data['type']))
+            peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+            peak_basin = storm_data['wmo_basin'][peak_idx]
+            storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
+            if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
+        
+        #Plot title
+        title_string = f"{storm_type} {storm_data['name']}"
+        if mission is None:
+            title_string += f"\nRecon Aircraft HDOBs | All Missions"
+        else:
+            title_string += f"\nRecon Aircraft HDOBs | Mission #{mission}"
+        ax.set_title(title_string,loc='left',fontweight='bold')
+        ax.set_title("Plot generated using Tropycal",fontsize=8,loc='right')
+        
+        #Return plot
+        return ax
     
     def plot_points(self,varname='wspd',domain="dynamic",radlim=None,ax=None,cartopy_proj=None,**kwargs):
         

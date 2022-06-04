@@ -512,3 +512,61 @@ def get_bounds(data,bounds):
     bounds = [l if b is None else b for b,l in zip(bounds,datalims)]
     bounds = [b for b in bounds if b is not None]
     return (min(bounds),max(bounds))
+
+def time_series_plot(varname):
+    
+    r"""
+    Returns a default color and name associated with each varname for hdob time series.
+    
+    Parameters
+    ----------
+    varname : str
+        Requested variable name.
+    
+    Returns
+    -------
+    dict
+        Dictionary with color, name and full name for variable to plot.
+    """
+
+    colors = {
+        'p_sfc':'red',
+        'temp':'red',
+        'dwpt':'green',
+        'wspd':'blue',
+        'sfmr':'#282893',
+        'pkwnd':'#5A9AF0',
+        'rain':'#C551DC',
+        'plane_z':'#909090',
+        'plane_p':'#4D4D4D',
+    }
+    
+    names = {
+        'p_sfc':'MSLP',
+        'temp':'Temperature',
+        'dwpt':'Dewpoint',
+        'wspd':'Flight Level Wind',
+        'sfmr':'Surface Wind',
+        'pkwnd':'Peak Wind Gust',
+        'rain':'Rain Rate',
+        'plane_z':'Altitude',
+        'plane_p':'Pressure',
+    }
+    
+    full_names = {
+        'p_sfc':'Mean Sea Level Pressure (hPa)',
+        'temp':'Temperature (C)',
+        'dwpt':'Dewpoint (C)',
+        'wspd':'Flight Level Wind (kt)',
+        'sfmr':'Surface Wind (kt)',
+        'pkwnd':'Peak Wind Gust (kt)',
+        'rain':'Rain Rate (mm/hr)',
+        'plane_z':'Geopotential Height (m)',
+        'plane_p':'Pressure (hPa)',
+    }
+    
+    color = colors.get(varname,'')
+    name = names.get(varname,'')
+    full_name = full_names.get(varname,'')
+    
+    return {'color':color,'name':name,'full_name':full_name}

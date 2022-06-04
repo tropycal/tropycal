@@ -2532,7 +2532,7 @@ class vdms:
         with open(filename,'wb') as f:
             pickle.dump(self.data,f)
      
-    def plot_time_series(self,time=None,best_track=False):
+    def plot_time_series(self,time=None,best_track=False,dots=True):
         
         r"""
         Creates a time series of VDM data.
@@ -2543,6 +2543,8 @@ class vdms:
             Tuple of start and end datetime.datetime objects for plot. If None, all times will be plotted.
         best_track : bool, optional
             If True, Best Track MSLP will be plotted alongside VDM MSLP. Default is False.
+        dots : bool, optional
+            If True, dots will be plotted for each VDM point. Default is True.
         
         Returns
         -------
@@ -2568,7 +2570,7 @@ class vdms:
 
         #Plot VDM MSLP
         ax.plot(times,mslp,color='b',alpha=0.5,label='VDM MSLP (hPa)')
-        ax.plot(times,mslp,'o',color='b')
+        if dots: ax.plot(times,mslp,'o',color='b')
         
         #Retrieve & plot Best Track data
         if best_track:
@@ -2579,7 +2581,7 @@ class vdms:
                 times_btk = [i for i in storm_data['date']]
                 mslp_btk = [i for i in storm_data['mslp']]
             ax.plot(times_btk,mslp_btk,color='r',alpha=0.25,label='Best Track MSLP (hPa)')
-            ax.plot(times_btk,mslp_btk,'o',color='r',alpha=0.5)
+            if dots: ax.plot(times_btk,mslp_btk,'o',color='r',alpha=0.5)
 
         #Add labels
         ax.set_ylabel("MSLP (hPa)")

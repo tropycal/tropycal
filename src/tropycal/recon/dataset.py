@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 import pickle
 import copy
+import urllib3
 
 from scipy.interpolate import interp1d
 from scipy.ndimage import gaussian_filter as gfilt,gaussian_filter1d as gfilt1d
@@ -445,8 +446,8 @@ class hdobs:
             try:
                 start_time = max(self.data['time'])
             except:
-                start_time = min(self.storm.dict['date'])-timedelta(days=1)
-            end_time = max(self.storm.dict['date'])+timedelta(days=1)
+                start_time = min(self.storm.dict['date'])-timedelta(hours=12)
+            end_time = max(self.storm.dict['date'])+timedelta(hours=12)
 
             timestr = [f'{start_time:%Y%m%d}']+\
                         [f'{t:%Y%m%d}' for t in self.storm.dict['date'] if t>start_time]+\
@@ -462,15 +463,18 @@ class hdobs:
             files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
             linksub = [self.archiveURL+'.'.join(l) for l in files]
             
+            urllib3.disable_warnings()
+            http = urllib3.PoolManager()
+            
             timer_start = dt.now()
             print(f'Searching through recon HDOB files between {timestr[0]} and {timestr[-1]} ...')
             filecount,unreadable = 0,0
             for link in linksub:
-                content = requests.get(link).text
+                response = http.request('GET',link)
+                content = response.data.decode('utf-8')
                 missionname = [i.split() for i in content.split('\n')][3][1]
                 if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
                     filecount+=1
-                    print(filecount)
                     try:
                         tmp = self._decode_hdob(content)
                     except:
@@ -1606,12 +1610,16 @@ class dropsondes:
             files = sorted([i for i in files if i[1]>=min(timeboundstrs) and i[1]<=max(timeboundstrs)],key=lambda x: x[1])
             linksub = [self.archiveURL+'.'.join(l) for l in files]
             
+            urllib3.disable_warnings()
+            http = urllib3.PoolManager()
+            
             timer_start = dt.now()
             print(f'Searching through recon dropsonde files between {timeboundstrs[0]} and {timeboundstrs[-1]} ...')
             filecount = 0
             for link in linksub:
                 #print(link)
-                content = requests.get(link).text
+                response = http.request('GET',link)
+                content = response.data.decode('utf-8')
                 datestamp = dt.strptime(link.split('.')[-2],'%Y%m%d%H%M')
                 missionname,tmp = self._decode_dropsonde(content,date=datestamp)
                 testkeys = ('TOPtime','lat','lon')
@@ -2388,11 +2396,16 @@ class vdms:
         self.data = []
 
         if data is None:
+            
+            urllib3.disable_warnings()
+            http = urllib3.PoolManager()
+            
             filecount = 0
             timer_start = dt.now()
             print(f'Searching through recon VDM files between {timestr[0]} and {timestr[-1]} ...')
             for link in linksub:
-                content = requests.get(link).text
+                response = http.request('GET',link)
+                content = response.data.decode('utf-8')
                 date = link.split('.')[-2]
                 year = int(date[:4])
                 month = int(date[4:6])

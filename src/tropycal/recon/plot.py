@@ -180,11 +180,19 @@ class ReconPlot(Plot):
         type_array = np.array(storm_data['type'])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
         tropical_vmax = np.array(storm_data['vmax'])[idx]
+        
+        #Coerce to include non-TC points if storm hasn't been designated yet
+        add_ptc_flag = False
+        if len(tropical_vmax) == 0:
+            add_ptc_flag = True
+            idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+        tropical_vmax = np.array(storm_data['vmax'])[idx]
             
         subtrop = classify_subtropical(np.array(storm_data['type']))
         peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
         peak_basin = storm_data['wmo_basin'][peak_idx]
         storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
+        if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
         
         dot = u"\u2022"
         try:

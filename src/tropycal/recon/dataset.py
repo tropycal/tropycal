@@ -785,6 +785,11 @@ class hdobs:
             Customization properties of recon plot. Please refer to :ref:`options-prop-recon-plot` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Pop kwargs
@@ -1723,7 +1728,7 @@ class dropsondes:
         Returns
         -------
         dropsondes
-            A new dropnsodes object that satisfies the intersection of all subsetting.
+            A new dropsondes object that satisfies the intersection of all subsetting.
         """
 
         NEW_DATA = copy.copy(pd.DataFrame(self.data))
@@ -1822,6 +1827,11 @@ class dropsondes:
             Customization properties of recon plot. Please refer to :ref:`options-prop-recon-plot` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         
         Notes
         -----
@@ -2544,6 +2554,11 @@ class vdms:
             Customization properties of recon plot. Please refer to :ref:`options-prop-recon-plot` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Pop kwargs

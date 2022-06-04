@@ -803,13 +803,12 @@ class hdobs:
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        ax = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=varname,radlim=radlim,ax=ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=varname,radlim=radlim,ax=ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        return ax
+        return plot_ax
         
-    def plot_hovmoller(self,varname='wspd',radlim=None,\
-                       window=6,align='center',ax=None,**kwargs):
+    def plot_hovmoller(self,varname='wspd',radlim=None,window=6,align='center',ax=None,**kwargs):
         
         r"""
         Creates a hovmoller plot of azimuthally-averaged recon data.
@@ -947,7 +946,7 @@ class hdobs:
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         radlim : int, optional
-            Radius from storm center, in kilometers, to plot in hovmoller. Default is 200 km.
+            Radius from storm center, in kilometers, to plot. Default is 200 km.
         window : int, optional
             Window of hours to interpolate between observations. Default is 6 hours.
         align : str, optional
@@ -1095,11 +1094,10 @@ class hdobs:
                 cartopy_proj = self.plot_obj.proj
             
             #Plot recon
-            plot_info = self.plot_obj.plot_maps(self.storm,Maps,varname,recon_stats,\
-                                                domain,ax,prop=prop,map_prop=map_prop)
+            plot_ax = self.plot_obj.plot_maps(self.storm,Maps,varname,recon_stats,domain,ax,prop=prop,map_prop=map_prop)
             
             #Return axis
-            return plot_info
+            return plot_ax
 
     def plot_swath(self,varname='wspd',domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
         
@@ -1164,11 +1162,10 @@ class hdobs:
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        plot_info = self.plot_obj.plot_swath(self.storm,Maps,varname,swathfunc,track_dict,\
-                                             domain,ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_swath(self.storm,Maps,varname,swathfunc,track_dict,domain,ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        return plot_info
+        return plot_ax
     
     
     def gridded_stats(self,request,thresh={},binsize=1,domain="dynamic",ax=None,
@@ -1804,7 +1801,7 @@ class dropsondes:
     def plot_points(self,varname='slp',level=None,domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
         
         r"""
-        Creates a plot of recon data points.
+        Creates a plot of dropsonde data points.
         
         Parameters
         ----------
@@ -1873,11 +1870,10 @@ class dropsondes:
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        plot_info = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=(varname,level),\
-                                              ax=ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=(varname,level),ax=ax,prop=prop,map_prop=map_prop)
         
         #Return axis
-        return plot_info
+        return plot_ax
 
     def plot_skewt(self,time=None):
         r"""
@@ -2444,6 +2440,7 @@ class vdms:
         return missionname,data
 
     def isel(self,index):
+        
         r"""
         Select a single VDM by index of the list.
         
@@ -2465,6 +2462,7 @@ class vdms:
         return NEW_OBJ
 
     def sel(self,mission=None,time=None,domain=None):
+        
         r"""
         Select a subset of VDMs by any of its parameters and return a new vdms object.
         
@@ -2511,6 +2509,7 @@ class vdms:
         return NEW_OBJ
     
     def to_pickle(self,filename):
+        
         r"""
         Save VDM data (list of dictionaries) to a pickle file
         
@@ -2568,8 +2567,8 @@ class vdms:
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        plot_info = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=varname,\
-                                              ax=ax,prop=prop,map_prop=map_prop)        
+        plot_ax = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=varname,ax=ax,prop=prop,map_prop=map_prop)        
+        
         #Return axis
-        return plot_info
+        return plot_ax
         

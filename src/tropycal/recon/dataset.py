@@ -2531,7 +2531,97 @@ class vdms:
         
         with open(filename,'wb') as f:
             pickle.dump(self.data,f)
-            
+     
+    def plot_time_series(self,time=None,best_track=False):
+        
+        r"""
+        Creates a time series of VDM data.
+        
+        Parameters
+        ----------
+        time : tuple, optional
+            Tuple of start and end datetime.datetime objects for plot. If None, all times will be plotted.
+        best_track : bool, optional
+            If True, Best Track MSLP will be plotted alongside VDM MSLP. Default is False.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
+        """
+        
+        #Retrieve data
+        storm_data = self.storm.dict
+        data = self.data
+        
+        #Retrive data and subset by time
+        if time is not None:
+            times = [i['time'] for i in data if i['time'] >= time[0] and i['time'] <= time[1]]
+            mslp = [i['Minimum Sea Level Pressure (hPa)'] for i in data if i['time'] >= time[0] and i['time'] <= time[1]]
+        else:
+            times = [i['time'] for i in data]
+            mslp = [i['Minimum Sea Level Pressure (hPa)'] for i in data]
+
+        #Create figure
+        fig,ax = plt.subplots(figsize=(9,6),dpi=200)
+        ax.grid()
+
+        #Plot VDM MSLP
+        ax.plot(times,mslp,color='b',alpha=0.5,label='VDM MSLP (hPa)')
+        ax.plot(times,mslp,'o',color='b')
+        
+        #Retrieve & plot Best Track data
+        if best_track:
+            if time is not None:
+                times_btk = [i for i in storm_data['date'] if i >= time[0] and i <= time[1]]
+                mslp_btk = [storm_data['mslp'][i] for i in range(len(storm_data['mslp'])) if storm_data['date'][i] >= time[0] and storm_data['date'][i] <= time[1]]
+            else:
+                times_btk = [i for i in storm_data['date']]
+                mslp_btk = [i for i in storm_data['mslp']]
+            ax.plot(times_btk,mslp_btk,color='r',alpha=0.25,label='Best Track MSLP (hPa)')
+            ax.plot(times_btk,mslp_btk,'o',color='r',alpha=0.5)
+
+        #Add labels
+        ax.set_ylabel("MSLP (hPa)")
+        ax.set_xlabel("Vortex Data Message time (UTC)")
+
+        #Add time labels
+        times_use = []
+        start_date = times[0].replace(hour=0)
+        total_days = (times[-1] - start_date).total_seconds() / 86400
+        increment_hour = 6
+        if total_days > 3: increment_hour = 12
+        if total_days > 6: increment_hour = 24
+        while start_date <= (times[-1] + timedelta(hours=increment_hour)):
+            times_use.append(start_date)
+            start_date += timedelta(hours=increment_hour)
+        ax.set_xticks(times_use)
+        ax.set_xlim(times[0]-timedelta(hours=6),times[-1]+timedelta(hours=6))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H UTC\n%b %d'))
+
+        #Add titles
+        type_array = np.array(storm_data['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            add_ptc_flag = False
+            if len(tropical_vmax) == 0:
+                add_ptc_flag = True
+                idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            subtrop = classify_subtropical(np.array(storm_data['type']))
+            peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+            peak_basin = storm_data['wmo_basin'][peak_idx]
+            storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
+            if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
+
+        if best_track: ax.legend()
+        ax.set_title(f'{storm_type} {storm_data["name"]}\nVDM Minimum Sea Level Pressure (hPa)',loc='left',fontweight='bold')
+
+        return ax
+    
     def plot_points(self,varname='Minimum Sea Level Pressure (hPa)',domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
         
         r"""

@@ -2733,7 +2733,7 @@ class vdms:
     def plot_time_series(self,time=None,best_track=False,dots=True):
         
         r"""
-        Creates a time series of VDM data.
+        Creates a time series of MSLP VDM data.
         
         Parameters
         ----------

@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime as dt,timedelta
 import matplotlib.pyplot as plt
 
-from .plot import ReconPlot
+from .plot import *
 from .tools import *
 
 class RealtimeRecon():
@@ -309,11 +309,34 @@ class Mission():
         #Return axis
         return plot_ax
         
-    def plot_skewt(self):
+    def plot_skewt(self,number=None):
         
         r"""
+        Plot a single dropsonde Skew-T for a given dropsonde number.
         
+        Parameters
+        ----------
+        number : int
+            Number of dropsonde during mission. If None (default), plots the latest available dropsonde.
+        
+        Returns
+        -------
+        fig
+            Figure instance containing the plot.
         """
+        
+        #Retrieve data for dropsonde number
+        try:
+            if number == -1: number = len(self.dropsondes)
+            if number is None: number = len(self.dropsondes)
+            data = [self.dropsondes[number-1]]
+        except:
+            raise ValueError("Requested dropsonde number not available.")
+        
+        #Format title string
+        title_string = f'Mission ID: {self.mission_id}\nDropsonde #{number}'
+        
+        return plot_skewt(data,title_string)
     
     def plot_time_series(self,varname=('p_sfc','wspd'),time=None,realtime=False,**kwargs):
         

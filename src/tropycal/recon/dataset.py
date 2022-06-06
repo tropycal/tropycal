@@ -20,11 +20,10 @@ try:
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
-    import matplotlib.gridspec as gridspec
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
-from .plot import ReconPlot
+from .plot import *
 from ..tracks.plot import TrackPlot
 
 #Import tools
@@ -1832,238 +1831,29 @@ class dropsondes:
             dict_list = self.data
         else:
             dict_list = self.sel(time=time).data
-
-        def time2text(time):
-            try:
-                return f'{data["TOPtime"]:%H:%M UTC %d %b %Y}'
-            except:
-                return 'N/A'
-        def location_text(indict):
-            try:
-                loc = indict['location'].lower()
-            except:
-                return ''
-            if loc == 'eyewall':
-                return r"$\bf{"+loc.capitalize()+'}$, '
-                #return r"$\bf{"+indict['octant']+'}$ '+r"$\bf{"+loc.capitalize()+'}$, '
-            else:
-                return r"$\bf{"+loc.capitalize()+'}$, '
-        degsym = u"\u00B0"
-        def latlon2text(lat,lon):
-            NA = False
-            if lat<0:
-                lattx = f'{abs(lat)}{degsym}S'
-            elif lat>=0:
-                lattx = f'{lat}{degsym}N'
-            else:
-                NA = True
-            if lon<0:
-                lontx = f'{abs(lon)}{degsym}W'
-            elif lon>=0:
-                lontx = f'{lon}{degsym}E'
-            else:
-                NA = True
-            if NA:
-                return 'N/A'
-            else:
-                return lattx+' '+lontx
-                
-        def mission2text(x):
-            try:
-                return int(x[:2])
-            except:
-                return x[:2]
-        def wind_components(speed,direction):
-            u = -speed * np.sin(direction*np.pi/180)
-            v = -speed * np.cos(direction*np.pi/180)
-            return u,v
-        def deg2dir(x):
-            dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW']
-            try:
-                idx = int(round(x*16/360,0)%16)
-                return dirs[idx]
-            except:
-                return 'N/A'
-        def rh_from_dp(t,td):
-            rh = np.exp(17.67 * (td) / (td+273.15 - 29.65)) / np.exp(17.67 * (t) / (t+273.15 - 29.65))
-            return rh*100
-        def cellcolor(color,value):
-            if np.isnan(value):
-                return 'w'
-            else:
-                return list(color[:3])+[.5]
-        def skew_t(t,p):
-            t0 = np.log(p/1050)*80/np.log(100/1050)
-            return t0+t,p
-        
-        figs = []
-        for data in dict_list:
-            # Loop through dropsondes
-            df = data['levels'].sort_values('pres',ascending=True)
-            Pres = df['pres']
-            Temp = df['temp']
-            Dwpt = df['dwpt']
-            wind_speed = df['wspd']
-            wind_dir = df['wdir']
-            U,V = wind_components(wind_speed, wind_dir)
-
-            ytop = int(np.nanmin(Pres)-50)
-            yticks = np.arange(1000,ytop,-100)
-            xticks = np.arange(-30,51,10)
-
-            # Get mandatory and significant wind sub-dataframes
-            dfmand = df.loc[df['pres'].isin((1000,925,850,700,500,400,300,250,200,150,100))]
-            sfc = df.loc[df['hgt']==0]
-            if len(sfc)>0:
-                SLP = sfc['pres'].values[0]
-                dfmand = pd.concat([dfmand,sfc])
-                dfmand = dfmand.loc[dfmand['pres']<=SLP]
-            else:
-                SLP = None
-            dfwind = df.loc[df['pres']>=700]
-
-            # Start figure
-            fig = plt.figure(figsize=(17,11),facecolor='w')
-            gs = gridspec.GridSpec(2,3,width_ratios=(2,.2,1.1),height_ratios=(len(dfmand)+3,len(dfwind)+3), wspace=0.0)
-
-            ax1 = fig.add_subplot(gs[:,0])
-
-            #Add titles
-            type_array = np.array(storm_data['type'])
-            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
-            if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
-                tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-                add_ptc_flag = False
-                if len(tropical_vmax) == 0:
-                    add_ptc_flag = True
-                    idx = np.where((type_array == 'LO') | (type_array == 'DB'))
-                tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-                subtrop = classify_subtropical(np.array(storm_data['type']))
-                peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
-                peak_basin = storm_data['wmo_basin'][peak_idx]
-                storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
-                if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
-
-            ax1.set_title(f'{storm_type} {storm_data["name"]}'+\
-                          f'\nDropsonde {data["obsnum"]}, Mission {mission2text(data["mission"])}',\
-                          loc='left',fontsize=17,fontweight='bold')
-            ax1.set_title(f'Drop time: {time2text(data["TOPtime"])}'+\
-                          f'\nDrop location: {location_text(data)}{latlon2text(data["lat"],data["lon"])}',loc='right',fontsize=13)
-            plt.yscale('log')
-            plt.yticks(yticks,[f'{i:d}' for i in yticks],fontsize=12)
-            plt.xticks(xticks,[f'{i:d}' for i in xticks],fontsize=12)
-            for y in range(1000,ytop,-50):plt.plot([-30,50],[y]*2,color='0.5',lw=0.5)
-            for x in range(-30-80,50,10):plt.plot([x,x+80],[1050,100],color='0.5',linestyle='--',lw=0.5)
-
-            plt.plot(*skew_t(Temp.loc[~np.isnan(Temp)],Pres.loc[~np.isnan(Temp)]),'o-',color='r')
-            plt.plot(*skew_t(Dwpt.loc[~np.isnan(Dwpt)],Pres.loc[~np.isnan(Dwpt)]),'o-',color='g')
-            plt.xlabel(f'Temperature ({degsym}C)',fontsize=13)
-            plt.ylabel('Pressure (hPa)',fontsize=13)
-            plt.axis([-30,50,1050,ytop])
-
-            lim = max([i for stage in ('TOP','BOTTOM') for i in [1.5*abs(data[f'{stage}xdist'])+.1,1.5*abs(data[f'{stage}ydist'])+.1]])
-            iscoords = np.isnan(lim)
-            if iscoords:
-                lim = 1
-            for stage,ycoord in zip(('TOP','BOTTOM'),(.8,.05)):
-                ax1in1 = ax1.inset_axes([0.05, ycoord, 0.15, 0.15])
-                if iscoords:
-                    ax1in1.set_title('distance N/A')
-                else:
-                    ax1in1.scatter(0,0,c='k')
-                    ax1in1.scatter(data[f'{stage}xdist'],data[f'{stage}ydist'],c='w',marker='v',edgecolor='k')
-                    ax1in1.set_title(f'{data[f"{stage}distance"]:0.0f} km {deg2dir(90-math.atan2(data[f"{stage}ydist"],data[f"{stage}xdist"])*180/np.pi)}')                    
-                ax1in1.axis([-lim,lim,-lim,lim])
-                ax1in1.xaxis.set_major_locator(plt.NullLocator())
-                ax1in1.yaxis.set_major_locator(plt.NullLocator())
-                
-            ax4 = fig.add_subplot(gs[:,1],sharey=ax1)
-            barbs = {k:[v.values[-1]] for k,v in zip(('p','u','v'),(Pres,U,V))}
-            for p,u,v in zip(Pres.values[::-1],U.values[::-1],V.values[::-1]):
-                if abs(p-barbs['p'][-1])>10 and not np.isnan(u):
-                    for k,v in zip(('p','u','v'),(p,u,v)):
-                        barbs[k].append(v)
-            plt.barbs([.4]*len(barbs['p']),barbs['p'],barbs['u'],barbs['v'], pivot='middle')
-            ax4.set_xlim(0,1)
-            ax4.axis('off')
-
-            RH = [rh_from_dp(i,j) for i,j in zip(dfmand['temp'],dfmand['dwpt'])]
-            cellText = np.array([['' if np.isnan(i) else f'{int(i)} hPa' for i in dfmand['pres']],\
-                        ['' if np.isnan(i) else f'{int(i)} m' for i in dfmand['hgt']],\
-                        ['' if np.isnan(i) else f'{i:.1f} {degsym}C' for i in dfmand['temp']],\
-                        ['' if np.isnan(i) else f'{int(i)} %' for i in RH],\
-                        ['' if np.isnan(i) else f'{deg2dir(j)} at {int(i)} kt' for i,j in zip(dfmand['wspd'],dfmand['wdir'])]]).T
-            colLabels = ['Pressure','Height','Temp','RH','Wind']
-
-            cmap_rh = mlib.cm.get_cmap('BrBG')
-            cmap_temp = mlib.cm.get_cmap('RdBu_r')
-            cmap_wind = mlib.cm.get_cmap('Purples')
-
-            colors = [['w','w',cellcolor(cmap_temp(t/120+.5),t),\
-                                cellcolor(cmap_rh(r/100),r),\
-                                cellcolor(cmap_wind(w/200),w)] for t,r,w in zip(dfmand['temp'],RH,dfmand['wspd'])]
-            
-            ax2 = fig.add_subplot(gs[0,2])
-            ax2.xaxis.set_visible(False)  # hide the x axis
-            ax2.yaxis.set_visible(False)  # hide the y axis
-            TB = ax2.table(cellText=cellText,colLabels=colLabels,cellColours=colors,cellLoc='center',bbox = [0, .05, 1, .95])
-            if SLP is not None:
-                TB[(len(cellText), 0)].get_text().set_weight('bold')
-            ax2.axis('off')
-            TB.auto_set_font_size(False)
-            TB.set_fontsize(9)
-            #TB.scale(3,1.2)
-            try:
-                ax2.text(0,.05,f'\nDeep Layer Mean Wind: {deg2dir(data["DLMdir"])} at {int(data["DLMspd"])} kt',va='top',fontsize=12)
-            except:
-                ax2.text(0,.05,f'\nDeep Layer Mean Wind: N/A',va='top',fontsize=12)
-
-            ax2.set_title('Generated using Tropycal \n',fontsize=12,fontweight='bold',color='0.7',loc='right')
-
-            cellText = np.array([[f'{int(i)} hPa' for i,j in zip(dfwind['pres'],dfwind['wspd']) if not np.isnan(j)],\
-                        [f'{deg2dir(j)} at {int(i)} kt' for i,j in zip(dfwind['wspd'],dfwind['wdir']) if not np.isnan(i)]]).T
-            colLabels = ['Pressure','Wind']
-            colors = [['w',cellcolor(cmap_wind(i/200),i)] for i in dfwind['wspd'] if not np.isnan(i)]
-
-            ax3 = fig.add_subplot(gs[1,2])
-
-            try:
-                TB = ax3.table(cellText=cellText,colLabels=colLabels,cellColours=colors,cellLoc='center',bbox = [0, .1, 1, .9])
-                TB.auto_set_font_size(False)
-                TB.set_fontsize(9)
-                meanwindoffset = 0
-            except:
-                meanwindoffset = 0.9
-            #TB.scale(2,1.2)
-            ax3.xaxis.set_visible(False)  # hide the x axis
-            ax3.yaxis.set_visible(False)  # hide the y axis
-            ax3.axis('off')
-            
-            try:
-                ax3.text(0,.1+meanwindoffset,\
-                         f'\nMean Wind in Lowest 500 m: {deg2dir(data["MBLdir"])} at {int(data["MBLspd"])} kt',va='top',fontsize=12)
-            except:
-                ax3.text(0,.1+meanwindoffset,\
-                         f'\nMean Wind in Lowest 500 m: N/A',va='top',fontsize=12)
-            try:
-                ax3.text(0,.1+meanwindoffset,\
-                         f'\n\nMean Wind in Lowest 150 m: {deg2dir(data["WL150dir"])} at {int(data["WL150spd"])} kt',va='top',fontsize=12)
-            except:
-                ax3.text(0,.1+meanwindoffset,\
-                         f'\n\nMean Wind in Lowest 150 m: N/A',va='top',fontsize=12)
-
-            figs.append(fig)
-            plt.close()
-            
-        if len(figs)>1:
-            return figs
-        elif len(figs)==1:
-            return fig
-        else:
-            print("No dropsondes in selection")
     
+        #Format storm name
+        storm_data = self.storm.dict
+        type_array = np.array(storm_data['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            add_ptc_flag = False
+            if len(tropical_vmax) == 0:
+                add_ptc_flag = True
+                idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            subtrop = classify_subtropical(np.array(storm_data['type']))
+            peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+            peak_basin = storm_data['wmo_basin'][peak_idx]
+            storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
+            if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
+        title_string = f'{storm_type} {storm_data["name"]}\nDropsonde DDD, Mission MMM'
+        
+        #Plot Skew-T
+        return plot_skewt(dict_list,title_string)
     
 class vdms:
     

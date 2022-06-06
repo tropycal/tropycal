@@ -97,9 +97,6 @@ class ReconPlot(Plot):
 
         #Retrieve storm data
         storm_data = storm.dict
-        vmax = storm_data['vmax']
-        styp = storm_data['type']
-        sdate = storm_data['date']
 
         #Check recon_data type
         if isinstance(recon_data,pd.core.frame.DataFrame):
@@ -296,9 +293,6 @@ class ReconPlot(Plot):
         
         #Retrieve storm data
         storm_data = storm.dict
-        vmax = storm_data['vmax']
-        styp = storm_data['type']
-        sdate = storm_data['date']
 
         #Add to coordinate extrema
         if max_lat is None:

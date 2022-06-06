@@ -68,7 +68,7 @@ class RealtimeRecon():
         timer_start = dt.now()
 
         #Set URLs for reading data
-        urls = {
+        self.urls = {
             'hdobs':f'https://www.nhc.noaa.gov/archive/recon/{dt.utcnow().year}/AHONT1/',
             'dropsondes':f'https://www.nhc.noaa.gov/archive/recon/{dt.utcnow().year}/REPNT3/',
             'vdms':f'https://www.nhc.noaa.gov/archive/recon/{dt.utcnow().year}/REPNT2/'
@@ -81,14 +81,15 @@ class RealtimeRecon():
         #Retrieve list of files in URL and filter by storm dates
         files = {'hdobs':[],'dropsondes':[],'vdms':[]}
         for key in files.keys():
-            page = requests.get(urls[key]).text
+            page = requests.get(self.urls[key]).text
             content = page.split("\n")
             file_list = []
             for line in content:
                 if ".txt" in line: file_list.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
             del content
             file_list = sorted([i for i in file_list if dt.strptime(i[1][:10],'%Y%m%d%H') >= start_time],key=lambda x: x[1])
-            files[key] = [urls[key]+'.'.join(l) for l in file_list]
+            files[key] = [self.urls[key]+'.'.join(l) for l in file_list]
+        self.files = files
 
         #Retrieve all active missions & read HDOBs
         urllib3.disable_warnings()
@@ -125,7 +126,7 @@ class RealtimeRecon():
             mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
             date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
             blank, data = decode_vdm(content,date)
-            self.missions[mission_id]['vdms'].append(data)
+            if mission_id in self.missions.keys(): self.missions[mission_id]['vdms'].append(data)
 
         #Retrieve dropsondes
         for file in files['dropsondes']:
@@ -139,17 +140,97 @@ class RealtimeRecon():
             mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
             date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
             blank, data = decode_dropsonde(content,date)
-            self.missions[mission_id]['dropsondes'].append(data)
+            if mission_id in self.missions.keys(): self.missions[mission_id]['dropsondes'].append(data)
 
         #Temporally filter missions
         keys = [k for k in self.missions.keys()]
         for key in keys:
             end_date = pd.to_datetime(self.missions[key]['hdobs']['time'].values[-1])
             if end_date < start_time_request: del self.missions[key]
-
         
         print(f"--> Completed retrieving active missions ({(dt.now()-timer_start).total_seconds():.1f} seconds)")
         
+    def update(self):
+        
+        r"""
+        Updates RealtimeRecon with the latest available data.
+        
+        Notes
+        -----
+        This function has no return value, but simply updates RealtimeRecon with the latest available recon data.
+        """
+        
+        #Start timing
+        timer_start = dt.now()
+        
+        #Start time set by hour window
+        start_time = dt.utcnow() - timedelta(hours=12)
+
+        #Retrieve list of files in URL and filter by storm dates
+        files = {'hdobs':[],'dropsondes':[],'vdms':[]}
+        for key in files.keys():
+            page = requests.get(self.urls[key]).text
+            content = page.split("\n")
+            file_list = []
+            for line in content:
+                if ".txt" in line: file_list.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
+            del content
+            file_list = sorted([i for i in file_list if dt.strptime(i[1][:10],'%Y%m%d%H') >= start_time],key=lambda x: x[1])
+            files[key] = [self.urls[key]+'.'.join(l) for l in file_list if self.urls[key]+'.'.join(l) not in self.files[key]]
+            self.files[key] += files[key]
+        
+        #Retrieve all active missions & read HDOBs
+        urllib3.disable_warnings()
+        http = urllib3.PoolManager()
+        for file in files['hdobs']:
+
+            #Retrieve content
+            response = http.request('GET',file)
+            content = response.data.decode('utf-8')
+            content_split = content.split("\n")
+
+            #Construct mission ID
+            mission_id = '-'.join((content_split[3].replace("  "," ")).split(" ")[:3])
+            if mission_id not in self.missions:
+                self.missions[mission_id] = {'hdobs':decode_hdob(content),
+                                        'vdms':[],
+                                        'dropsondes':[],
+                                        'aircraft':mission_id.split("-")[0],
+                                        'storm_name':mission_id.split("-")[2]
+                                       }
+            else:
+                self.missions[mission_id]['hdobs'] = pd.concat([self.missions[mission_id]['hdobs'],decode_hdob(content)])
+
+        #Retrieve VDMs
+        for file in files['vdms']:
+
+            #Retrieve content
+            response = http.request('GET',file)
+            content = response.data.decode('utf-8')
+            content_split = content.split("\n")
+
+            #Construct mission ID
+            mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
+            date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
+            blank, data = decode_vdm(content,date)
+            if mission_id in self.missions.keys(): self.missions[mission_id]['vdms'].append(data)
+
+        #Retrieve dropsondes
+        for file in files['dropsondes']:
+
+            #Retrieve content
+            response = http.request('GET',file)
+            content = response.data.decode('utf-8')
+            content_split = content.split("\n")
+
+            #Construct mission ID
+            mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
+            date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
+            blank, data = decode_dropsonde(content,date)
+            if mission_id in self.missions.keys(): self.missions[mission_id]['dropsondes'].append(data)
+        
+        print(f"--> Completed updating mission data ({(dt.now()-timer_start).total_seconds():.1f} seconds)")
+    
     def get_mission(self,mission_id):
         
         r"""

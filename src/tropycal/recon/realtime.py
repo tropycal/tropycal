@@ -21,6 +21,31 @@ class RealtimeRecon():
     -------
     RealtimeRecon
         Instance of a RealtimeRecon object.
+    
+    Notes
+    -----
+    The ``RealtimeRecon`` Class and accompanying ``Mission`` class make up the realtime part of the recon module. Unlike the ``ReconDataset`` Class and its accompanying ``hdobs``, ``dropsondes`` and ``vdms`` classes which are **storm-centric**, the realtime recon functionality is **mission-centric**.
+    
+    This mission-centric functionality means realtime recon missions lack the storm-centering functionality that the more comprehensive full recon functionality has, but is also much faster at reading recon data for realtime purposes and includes non-tropical cyclone recon missions.
+    
+    The following example shows how to use realtime recon functionality. First, create an instance of ``RealtimeRecon``, which retrieves all active missions within the specified hour window (default is the most recent 12 hours)
+    
+    .. code-block:: python
+    
+        from tropycal import recon
+        realtime_obj = recon.RealtimeRecon()
+        
+    We can now quickly retrieve a list of all active mission IDs:
+    
+    >>> realtime_obj.get_mission_ids()
+    ['AF306-0801A-ALEX', 'AF303-0901A-ALEX']
+    
+    Now use the ``get_mission()`` method to retrieve a Mission object containing all available data (HDOBs, VDMs & dropsondes) for this mission. The resulting object can access all of the methods and attributes of the ``Mission`` class.
+    
+    .. code-block:: python
+        
+        mission = realtime_obj.get_mission('AF303-0901A-ALEX')
+    
     """
     
     def __repr__(self):
@@ -192,7 +217,21 @@ class Mission():
     
     Notes
     -----
-    test.
+    Mission objects are retrieved directly from ``RealtimeRecon`` objects, provided a mission ID string. For this example below, we'll retrieve the latest mission available:
+    
+    .. code-block:: python
+    
+        #Read in all recent mission data
+        from tropycal import recon
+        realtime_obj = recon.RealtimeRecon()
+        
+        #Get latest mission ID
+        latest_mission_id = realtime_obj.get_mission_ids()[-1]
+        
+        #Retrieve an instance of Mission
+        mission = realtime_obj.get_mission(latest_mission_id)
+        
+    This instance of Mission can now access all of the attributes and methods of the Mission class. Note that since the realtime recon functionality is mission-centric, not storm-centric, much of the functionality available in the storm-centric recon classes is not available here, though some of the plotting functionality (e.g., plotting HDOB points or dropsondes) is available.
     """
     
     def __repr__(self):
@@ -215,7 +254,7 @@ class Mission():
     def get_hdobs(self):
         
         r"""
-        Returns High Density Observations (HDOBs) for this mission. (Add start/end times too)
+        Returns High Density Observations (HDOBs) for this mission.
         
         Returns
         -------
@@ -228,7 +267,7 @@ class Mission():
     def get_dropsondes(self):
         
         r"""
-        Returns dropsondes for this mission. (Add start/end times too)
+        Returns dropsondes for this mission.
         
         Returns
         -------
@@ -241,7 +280,7 @@ class Mission():
     def get_vdms(self):
         
         r"""
-        Returns Vortex Data Messages (VDMs) for this mission. (Add start/end times too)
+        Returns Vortex Data Messages (VDMs) for this mission.
         
         Returns
         -------
@@ -254,7 +293,7 @@ class Mission():
     def plot_points(self,varname='wspd',domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
         
         r"""
-        Creates a plot of recon data points.
+        Creates a plot of High Density Observations (HDOBs) data points.
         
         Parameters
         ----------

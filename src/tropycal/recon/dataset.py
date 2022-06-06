@@ -841,9 +841,14 @@ class hdobs:
             if varname in ['temp','dwpt'] and varname_right in ['temp','dwpt']: same_unit = True
             if varname in ['sfmr','wspd','pkwnd'] and varname_right in ['sfmr','wspd','pkwnd']: same_unit = True
             if same_unit:
-                min_val = min(np.nanmin(df[varname]),np.nanmin(df[varname_right]))
-                max_val = max(np.nanmax(df[varname]),np.nanmax(df[varname_right]))*1.05
+                min_val = np.nanmin([np.nanmin(df[varname]),np.nanmin(df[varname_right])])
+                max_val = np.nanmax([np.nanmax(df[varname]),np.nanmax(df[varname_right])])*1.05
                 min_val = min_val * 1.05 if min_val < 0 else min_val * 0.95
+                if np.isnan(min_val): min_val = 0
+                if np.isnan(max_val): max_val = 0
+                if min_val == max_val:
+                    min_val = 0
+                    max_val = 10
                 ax.set_ylim(min_val,max_val)
                 ax2.set_ylim(min_val,max_val)
         

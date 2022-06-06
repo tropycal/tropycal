@@ -60,6 +60,7 @@ class RealtimeRecon():
     def __init__(self,hours=12):
 
         #Error check
+        self.hours = hours
         if hours > 48 or hours <= 0:
             raise ValueError("Maximum allowed search is 48 hours back.")
         
@@ -77,6 +78,7 @@ class RealtimeRecon():
         #Start time set by hour window
         start_time_request = dt.utcnow() - timedelta(hours=hours)
         start_time = dt.utcnow() - timedelta(hours=hours+12)
+        self.start_time_request = start_time_request
 
         #Retrieve list of files in URL and filter by storm dates
         files = {'hdobs':[],'dropsondes':[],'vdms':[]}
@@ -164,7 +166,8 @@ class RealtimeRecon():
         timer_start = dt.now()
         
         #Start time set by hour window
-        start_time = dt.utcnow() - timedelta(hours=12)
+        start_time = dt.utcnow() - timedelta(hours=24)
+        if start_time < self.start_time_request: start_time = self.start_time_request
 
         #Retrieve list of files in URL and filter by storm dates
         files = {'hdobs':[],'dropsondes':[],'vdms':[]}
@@ -229,6 +232,13 @@ class RealtimeRecon():
             blank, data = decode_dropsonde(content,date)
             if mission_id in self.missions.keys(): self.missions[mission_id]['dropsondes'].append(data)
         
+        #Temporally filter missions
+        keys = [k for k in self.missions.keys()]
+        for key in keys:
+            end_date = pd.to_datetime(self.missions[key]['hdobs']['time'].values[-1])
+            start_time_request = dt.utcnow() - timedelta(hours=self.hours)
+            if end_date < start_time_request: del self.missions[key]
+        
         print(f"--> Completed updating mission data ({(dt.now()-timer_start).total_seconds():.1f} seconds)")
     
     def get_mission(self,mission_id):
@@ -257,7 +267,7 @@ class RealtimeRecon():
         Parameters
         ----------
         storm_name : str, optional
-            Storm name to filter the search by. If None, all active missions are searched.
+            Storm name (case-insensitive) to filter the search by. If None, all active missions are searched.
         
         Returns
         -------
@@ -317,6 +327,30 @@ class Mission():
     
     def __repr__(self):
         summary = ["<tropycal.recon.Mission>"]
+        
+        #Find maximum wind and minimum pressure
+        max_wspd = np.nanmax(self.hdobs['wspd'])
+        max_pkwnd = np.nanmax(self.hdobs['pkwnd'])
+        max_sfmr = np.nanmax(self.hdobs['sfmr'])
+        min_psfc = np.nanmin(self.hdobs['p_sfc'])
+        time_range = [pd.to_datetime(t) for t in (np.nanmin(self.hdobs['time']),np.nanmax(self.hdobs['time']))]
+
+        #Add summary text
+        emdash = '\u2014'
+        summary_keys = {'Dropsondes':len(self.dropsondes),
+                        'VDMs':len(self.vdms),
+                        'Time range':f"{time_range[0]:%b-%d %H:%M} {emdash} {time_range[1]:%b-%d %H:%M}",
+                        'Max 30sec flight level wind':f"{max_wspd} knots",
+                        'Max 10sec flight level wind':f"{max_pkwnd} knots",
+                        'Max SFMR wind':f"{max_sfmr} knots",
+                        'Min surface pressure':f"{min_psfc} hPa"}
+        
+        #Add text to output
+        summary.append("Mission Summary:")
+        add_space = np.max([len(key) for key in summary_keys.keys()])+3
+        for key in summary_keys.keys():
+            key_name = key+":"
+            summary.append(f'{" "*4}{key_name:<{add_space}}{summary_keys[key]}')
 
         return "\n".join(summary)
     

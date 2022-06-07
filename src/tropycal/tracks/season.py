@@ -412,7 +412,7 @@ class Season:
                 #Handle operational vs. non-operational storms
 
                 #Check for purely subtropical storms
-                if 'SS' in temp_type and True not in np.isin(temp_type,constants.TROPICAL_ONLY_STORM_TYPES):
+                if 'SS' in temp_type and True not in np.isin(temp_type,list(constants.TROPICAL_ONLY_STORM_TYPES)):
                     count_ss_pure += 1
 
                 #Check for partially subtropical storms

@@ -190,16 +190,10 @@ class Realtime():
             #Add probability attributes for storms where it's unavailable
             for key in self.data.keys():
                 if key[0:2] in ['AL','EP'] and 'prob_2day' not in self.data[key].keys():
-                    if int(key[2]) == 9:
-                        self.data[key]['prob_2day'] = '0%'
-                        self.data[key]['prob_5day'] = '0%'
-                        self.data[key]['risk_2day'] = 'Low'
-                        self.data[key]['risk_5day'] = 'Low'
-                    else:
-                        self.data[key]['prob_2day'] = 'N/A'
-                        self.data[key]['prob_5day'] = 'N/A'
-                        self.data[key]['risk_2day'] = 'N/A'
-                        self.data[key]['risk_5day'] = 'N/A'
+                    self.data[key]['prob_2day'] = 'N/A'
+                    self.data[key]['prob_5day'] = 'N/A'
+                    self.data[key]['risk_2day'] = 'N/A'
+                    self.data[key]['risk_5day'] = 'N/A'
                 if key[0:2] not in ['AL','EP']:
                     self.data[key]['prob_2day'] = 'N/A'
                     self.data[key]['prob_5day'] = 'N/A'

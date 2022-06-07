@@ -3232,6 +3232,7 @@ class TrackDataset:
 
             #Get season summary
             season_summary = self.get_season(season).summary()
+            if len(season_summary['id']) == 0: continue
 
             #Add information to dict
             ds['season'].append(season)

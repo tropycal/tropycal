@@ -39,7 +39,7 @@ class ReconPlot(Plot):
         
         self.use_credit = True
                  
-    def plot_points(self,storm,recon_data,domain="dynamic",varname='wspd',barbs=False,scatter=False,\
+    def plot_points(self,storm,recon_data,domain="dynamic",varname='wspd',radlim=None,barbs=False,scatter=False,\
                     ax=None,return_domain=False,prop={},map_prop={}):
         
         r"""
@@ -101,7 +101,6 @@ class ReconPlot(Plot):
         styp = storm_data['type']
         sdate = storm_data['date']
 
-
         #Check recon_data type
         if isinstance(recon_data,pd.core.frame.DataFrame):
             pass
@@ -109,8 +108,13 @@ class ReconPlot(Plot):
             raise RuntimeError("Error: recon_data must be dataframe")
 
         #Retrieve storm data
-        lats = recon_data['lat']
-        lons = recon_data['lon']
+        if radlim == None:
+            lats = recon_data['lat']
+            lons = recon_data['lon']
+        else:
+            temp_df = recon_data.loc[recon_data['distance']<=radlim]
+            lats = temp_df['lat']
+            lons = temp_df['lon']
 
         #Add to coordinate extrema
         if max_lat is None:
@@ -142,6 +146,7 @@ class ReconPlot(Plot):
         if barbs:
             
             dataSort = recon_data.sort_values(by='wspd').reset_index(drop=True)
+            if radlim is not None: dataSort = dataSort.loc[dataSort['distance']<=radlim]
             norm = mlib.colors.Normalize(vmin=min(prop['levels']), vmax=max(prop['levels']))
             cmap = mlib.cm.get_cmap(prop['cmap'])
             colors = cmap(norm(dataSort['wspd'].values))
@@ -155,7 +160,7 @@ class ReconPlot(Plot):
         if scatter:
                         
             dataSort = recon_data.sort_values(by=prop['sortby'],ascending=prop['ascending']).reset_index(drop=True)
-          
+            if radlim is not None: dataSort = dataSort.loc[dataSort['distance']<=radlim]
             cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],\
                                 cmap=cmap,vmin=vmin,vmax=vmax, s=prop['ms'], marker=prop['marker'],zorder=prop['zorder'])
 
@@ -180,11 +185,19 @@ class ReconPlot(Plot):
         type_array = np.array(storm_data['type'])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
         tropical_vmax = np.array(storm_data['vmax'])[idx]
+        
+        #Coerce to include non-TC points if storm hasn't been designated yet
+        add_ptc_flag = False
+        if len(tropical_vmax) == 0:
+            add_ptc_flag = True
+            idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+        tropical_vmax = np.array(storm_data['vmax'])[idx]
             
         subtrop = classify_subtropical(np.array(storm_data['type']))
         peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
         peak_basin = storm_data['wmo_basin'][peak_idx]
         storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
+        if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
         
         dot = u"\u2022"
         try:

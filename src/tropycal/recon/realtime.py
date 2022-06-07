@@ -15,7 +15,7 @@ class RealtimeRecon():
     Parameters
     ----------
     hours : int
-        Number of hours to search back for recon missions. Default is 12 hours. Max allowed is 48 hours.
+        Number of hours to search back for recon missions. Default is 6 hours. Max allowed is 48 hours.
     
     Returns
     -------
@@ -28,7 +28,7 @@ class RealtimeRecon():
     
     This mission-centric functionality means realtime recon missions lack the storm-centering functionality that the more comprehensive full recon functionality has, but is also much faster at reading recon data for realtime purposes and includes non-tropical cyclone recon missions.
     
-    The following example shows how to use realtime recon functionality. First, create an instance of ``RealtimeRecon``, which retrieves all active missions within the specified hour window (default is the most recent 12 hours)
+    The following example shows how to use realtime recon functionality. First, create an instance of ``RealtimeRecon``, which retrieves all active missions within the specified hour window (default is the most recent 6 hours):
     
     .. code-block:: python
     
@@ -57,7 +57,7 @@ class RealtimeRecon():
         
         return "\n".join(summary)
     
-    def __init__(self,hours=12):
+    def __init__(self,hours=6):
 
         #Error check
         self.hours = hours

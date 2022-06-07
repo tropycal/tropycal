@@ -47,7 +47,9 @@ class ReconDataset:
     
     Notes
     -----
-    As of Tropycal v0.4, Recon data can only be retrieved for tropical cyclones, not for invests.
+    ReconDataset and its subclasses (hdobs, dropsondes and vdms) consist the **storm-centric** part of the recon module, meaning that recon data is retrieved specifically for tropical cyclones, and all recon missions for the requested storm are additionally transformed to storm-centric coordinates. This differs from realtime recon functionality, which is **mission-centric**.
+    
+    This storm-centric functionality allows for additional recon analysis and visualization functions, such as derived hovmollers and spatial maps for example. As of Tropycal v0.4, Recon data can only be retrieved for tropical cyclones, not for invests.
     
     ReconDataset will contain nothing the first time it's initialized, but contains methods to retrieve the three sub-classes of recon:
     
@@ -397,6 +399,44 @@ class hdobs:
     -------
     Dataset
         An instance of HDOBs, initialized with a dataframe of HDOB
+    
+    Notes
+    -----
+    There are two recommended ways of retrieving an hdob object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
+    
+    .. code-block:: python
+    
+        #Retrieve Hurricane Michael (2018) from TrackDataset
+        basin = tracks.TrackDataset()
+        storm = basin.get_storm(('michael',2018))
+    
+    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_hdobs()`` method thus allowing all of the hdobs attributes and methods to be accessed from the Storm object:
+    
+    .. code-block:: python
+    
+        #Retrieve all HDOBs for this storm
+        storm.recon.get_hdobs()
+        
+        #Retrieve the raw HDOBs data
+        storm.recon.hdobs.data
+        
+        #Use the plot_points() method of hdobs
+        storm.recon.hdobs.plot_points()
+    
+    The second method is to use the hdobs class independently of the other recon classes:
+    
+    .. code-block:: python
+    
+        from tropycal.recon import hdobs
+        
+        #Retrieve all HDOBs for this storm, passing the Storm object as an argument
+        hdobs_obj = hdobs(storm)
+        
+        #Retrieve the raw HDOBs data
+        hdobs_obj.data
+        
+        #Use the plot_points() method of hdobs
+        hdobs_obj.plot_points()
     """
 
     def __repr__(self):
@@ -1481,6 +1521,44 @@ class dropsondes:
     -------
     Dataset
         An instance of dropsondes.
+    
+    Notes
+    -----
+    There are two recommended ways of retrieving a dropsondes object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
+    
+    .. code-block:: python
+    
+        #Retrieve Hurricane Michael (2018) from TrackDataset
+        basin = tracks.TrackDataset()
+        storm = basin.get_storm(('michael',2018))
+    
+    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_dropsondes()`` method thus allowing all of the dropsondes attributes and methods to be accessed from the Storm object:
+    
+    .. code-block:: python
+    
+        #Retrieve all dropsondes for this storm
+        storm.recon.get_dropsondes()
+        
+        #Retrieve the raw dropsondes data
+        storm.recon.dropsondes.data
+        
+        #Use the plot_points() method of dropsondes
+        storm.recon.dropsondes.plot_points()
+    
+    The second method is to use the dropsondes class independently of the other recon classes:
+    
+    .. code-block:: python
+    
+        from tropycal.recon import dropsondes
+        
+        #Retrieve all dropsondes for this storm, passing the Storm object as an argument
+        dropsondes_obj = dropsondes(storm)
+        
+        #Retrieve the raw dropsondes data
+        dropsondes_obj.data
+        
+        #Use the plot_points() method of dropsondes
+        dropsondes_obj.plot_points()
     """
 
     def __repr__(self):
@@ -1873,6 +1951,44 @@ class vdms:
     -------
     Dataset
         An instance of VDMs.
+    
+    Notes
+    -----
+    There are two recommended ways of retrieving a vdms object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
+    
+    .. code-block:: python
+    
+        #Retrieve Hurricane Michael (2018) from TrackDataset
+        basin = tracks.TrackDataset()
+        storm = basin.get_storm(('michael',2018))
+    
+    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_vdms()`` method thus allowing all of the vdms attributes and methods to be accessed from the Storm object:
+    
+    .. code-block:: python
+    
+        #Retrieve all VDMs for this storm
+        storm.recon.get_vdms()
+        
+        #Retrieve the raw VDM data
+        storm.recon.vdms.data
+        
+        #Use the plot_points() method of hdobs
+        storm.recon.vdms.plot_points()
+    
+    The second method is to use the vdms class independently of the other recon classes:
+    
+    .. code-block:: python
+    
+        from tropycal.recon import vdms
+        
+        #Retrieve all VDMs for this storm, passing the Storm object as an argument
+        vdms_obj = vdms(storm)
+        
+        #Retrieve the raw VDM data
+        vdms_obj.data
+        
+        #Use the plot_points() method of vdms
+        vdms_obj.plot_points()
     """
     
     def __repr__(self):

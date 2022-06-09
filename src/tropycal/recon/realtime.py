@@ -351,6 +351,13 @@ class Mission():
         for key in summary_keys.keys():
             key_name = key+":"
             summary.append(f'{" "*4}{key_name:<{add_space}}{summary_keys[key]}')
+        
+        #Add attributes
+        summary.append("\nAttributes:")
+        add_space = np.max([len(key) for key in self.attrs.keys()])+3
+        for key in self.attrs.keys():
+            key_name = key+":"
+            summary.append(f'{" "*4}{key_name:<{add_space}}{self.attrs[key]}')
 
         return "\n".join(summary)
     
@@ -362,9 +369,11 @@ class Mission():
         self.dropsondes = data['dropsondes']
         
         #Retrieve attributes
-        self.aircraft = data['aircraft']
-        self.storm_name = data['storm_name']
-        self.mission_id = mission_id
+        self.attrs = {
+            'aircraft':data['aircraft'],
+            'storm_name':data['storm_name'],
+            'mission_id':mission_id,
+        }
     
     def get_hdobs(self):
         

@@ -634,7 +634,10 @@ def decode_hdob(content):
         data['p_sfc']=[np.nan]*len(data['p_sfc'])
         data['flag'] = [d.append('p_sfc') for d in data['flag']]
 
+    content_split = content.split("\n")
+    mission_id = '-'.join((content_split[3].replace("  "," ")).split(" ")[:3])
     data['mission'] = [missionname[:2]]*len(data['time'])
+    data['mission_id'] = [mission_id]*len(data['time'])
 
     return_data = pd.DataFrame.from_dict(data).reset_index()
     #remove nan's for lat/lon coordinates
@@ -843,6 +846,10 @@ def decode_vdm(content,date):
                 data['Remarks'] = ''
                 RemarksNext = True
 
+    content_split = content.split("\n")
+    mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
+    data['mission_id'] = mission_id
+    
     return missionname, data
 
 def decode_dropsonde(content,date):
@@ -1048,4 +1055,8 @@ def decode_dropsonde(content,date):
 
         data['top'] = np.nanmin(data['levels']['pres'])
 
-    return missionname,data
+    content_split = content.split("\n")
+    mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
+    data['mission_id'] = mission_id
+    
+    return missionname, data

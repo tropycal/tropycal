@@ -25,6 +25,7 @@ except:
 
 from .plot import *
 from ..tracks.plot import TrackPlot
+from .realtime import Mission
 
 #Import tools
 from .tools import *
@@ -210,6 +211,67 @@ class ReconDataset:
         """
         
         self.vdms = vdms(self.storm,data)
+    
+    def get_mission(self,number):
+        
+        r"""
+        Retrieve a Mission object for a given mission number for this storm.
+        
+        Parameters
+        ----------
+        number : int
+            Requested mission number.
+        
+        Returns
+        -------
+        Mission
+            Instance of a Mission object for the requested mission.
+        """
+        
+        def str2(number):
+            if number < 10: return f"0{number}"
+            return str(number)
+       
+        #Automatically retrieve data if not already available
+        try:
+            self.vdms
+        except:
+            self.get_vdms()
+        try:
+            self.hdobs
+        except:
+            self.get_hdobs()
+        try:
+            self.dropsondes
+        except:
+            self.get_dropsondes()
+        
+        #Search through all missions to find the full mission ID
+        missions = []
+        for mission in np.unique(self.hdobs.data['mission']):
+            try:
+                missions.append(int(mission))
+            except:
+                pass
+        missions = list(np.sort(missions))
+        if number not in missions:
+            raise ValueError("Requested mission ID is not available.")
+        
+        #Retrieve data for mission
+        hdobs_mission = self.hdobs.data.loc[self.hdobs.data['mission']==str2(number)]
+        mission_id = hdobs_mission['mission_id'].values[0]
+        vdms_mission = [i for i in self.vdms.data if i['mission_id'] == mission_id]
+        dropsondes_mission = [i for i in self.dropsondes.data if i['mission_id'] == mission_id]
+        
+        mission_dict = {
+            'hdobs':hdobs_mission,
+            'vdms':vdms_mission,
+            'dropsondes':dropsondes_mission,
+            'aircraft':mission_id.split("-")[0],
+            'storm_name':mission_id.split("-")[2]
+        }
+        
+        return Mission(mission_dict,mission_id)
         
     def update(self):
         

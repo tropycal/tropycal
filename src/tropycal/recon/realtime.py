@@ -299,7 +299,9 @@ class Mission():
     Parameters
     ----------
     data : dict
-        Dictionary containing mission data. This is passed automatically from ``RealtimeRecon.get_mission()``.
+        Dictionary containing mission data. This is passed automatically from ``RealtimeRecon.get_mission()`` or ``ReconDataset.get_mission()``.
+    mission_id : str
+        String representing the full Mission ID. This is passed automatically from ``RealtimeRecon.get_mission()`` or ``ReconDataset.get_mission()``.
     
     Returns
     -------
@@ -308,7 +310,7 @@ class Mission():
     
     Notes
     -----
-    Mission objects are retrieved directly from ``RealtimeRecon`` objects, provided a mission ID string. For this example below, we'll retrieve the latest mission available:
+    Mission objects can be retrieved via two methods. The first method is for realtime Recon missions, retrieved directly from ``RealtimeRecon`` objects provided a mission ID string. For this example below, we'll retrieve the latest mission available:
     
     .. code-block:: python
     
@@ -316,13 +318,27 @@ class Mission():
         from tropycal import recon
         realtime_obj = recon.RealtimeRecon()
         
-        #Get latest mission ID
+        #Get latest mission ID string (or set this to any of the available mission IDs)
         latest_mission_id = realtime_obj.get_mission_ids()[-1]
         
         #Retrieve an instance of Mission
         mission = realtime_obj.get_mission(latest_mission_id)
+    
+    The second method to retrieve a Mission object is for archived recon missions, via ReconDataset:
+    
+    .. code-block:: python
+    
+        #Read in HURDATv2 dataset
+        from tropycal import tracks
+        basin = tracks.TrackDataset()
+        storm = basin.get_storm(('michael',2018))
         
-    This instance of Mission can now access all of the attributes and methods of the Mission class. Note that since the realtime recon functionality is mission-centric, not storm-centric, much of the functionality available in the storm-centric recon classes is not available here, though some of the plotting functionality (e.g., plotting HDOB points or dropsondes) is available.
+        #Get mission #11
+        mission = storm.recon.get_mission(11)
+        
+    This instance of Mission can now access all of the attributes and methods of the Mission class.
+    
+    Note that since the Mission object is mission-centric, not storm-centric, much of the functionality available in the storm-centric recon classes is not available here, though some of the plotting functionality (plotting HDOB points, time series, or dropsonde Skew-T) is available.
     """
     
     def __repr__(self):

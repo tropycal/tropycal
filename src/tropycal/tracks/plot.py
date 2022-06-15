@@ -1913,6 +1913,7 @@ None,prop={},map_prop={}):
 
                             #Plot forecast dots
                             for idx in range(len(forecast_dict['lat'])):
+                                if forecast_dict['fhr'][idx]/24.0 > cone_prop['days']: continue
                                 if cone_prop['ms'] == 0: continue
                                 color = get_colors_sshws(forecast_dict['vmax'][idx])
                                 if cone_prop['fillcolor'] != 'category': color = cone_prop['fillcolor']

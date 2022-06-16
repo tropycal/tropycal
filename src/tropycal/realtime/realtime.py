@@ -102,6 +102,7 @@ class Realtime():
         #Add dataset summary
         summary.append("Dataset Summary:")
         summary.append(f'{" "*4}Numbers of active storms: {len(self.storms)}')
+        summary.append(f'{" "*4}Time Updated: {self.time.strftime("%H%M UTC %d %B %Y")}')
         
         if len(self.storms) > 0:
             summary.append("\nActive Storms:")
@@ -126,6 +127,9 @@ class Realtime():
         
         #Define empty dict to store track data in
         self.data = {}
+        self.jtwc = jtwc
+        self.jtwc_source = jtwc_source
+        self.ssl_certificate = ssl_certificate
         
         #Time data reading
         start_time = dt.now()
@@ -209,6 +213,16 @@ class Realtime():
             #Create an empty list signaling no active storms
             self.storms = []
             del self.data
+        
+        #Save current time
+        self.time = dt.now()
+        
+        #Set attributes
+        self.attrs = {
+            'jtwc':jtwc,
+            'jtwc_source':jtwc_source,
+            'time':self.time
+        }
     
     def __read_btk(self):
         
@@ -633,6 +647,18 @@ class Realtime():
             
             msg = "Error in retrieving NHC invest data."
             warnings.warn(msg)
+    
+    def update(self):
+        
+        r"""
+        Update with the latest realtime data.
+        
+        Notes
+        -----
+        This function has no return value, but simply updates the Realtime object with the latest data.
+        """
+        
+        self.__init__(self.jtwc,self.jtwc_source,self.ssl_certificate)
     
     def list_active_storms(self,basin='all'):
         

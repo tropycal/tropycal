@@ -91,6 +91,10 @@ class Realtime():
             print("This is an invest!")
         else:
             print("This is not an invest!")
+    
+    Realtime objects have several attributes, including the time the object was last updated, which can be accessed in dictionary format as follows:
+    
+    >>> realtime_obj.attrs
     """
     
     def __repr__(self):

@@ -383,6 +383,9 @@ class Mission():
         self.vdms = data['vdms']
         self.hdobs = data['hdobs']
         self.dropsondes = data['dropsondes']
+        self.mission_id = mission_id
+        self.aircraft = data['aircraft']
+        self.storm_name = data['storm_name']
         
         #Retrieve attributes
         self.attrs = {

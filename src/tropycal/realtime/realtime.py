@@ -207,6 +207,11 @@ class Realtime():
                     self.data[key]['prob_5day'] = 'N/A'
                     self.data[key]['risk_2day'] = 'N/A'
                     self.data[key]['risk_5day'] = 'N/A'
+                if self.data[key]['type'][-1] in constants.TROPICAL_STORM_TYPES:
+                    self.data[key]['prob_2day'] = 'N/A'
+                    self.data[key]['prob_5day'] = 'N/A'
+                    self.data[key]['risk_2day'] = 'N/A'
+                    self.data[key]['risk_5day'] = 'N/A'
                 self[key] = RealtimeStorm(self.data[key])
 
             #Delete data dict while retaining active storm keys

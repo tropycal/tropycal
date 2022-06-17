@@ -150,6 +150,15 @@ class RealtimeRecon():
             end_date = pd.to_datetime(self.missions[key]['hdobs']['time'].values[-1])
             if end_date < start_time_request: del self.missions[key]
         
+        #Save current time
+        self.time = dt.now()
+        
+        #Add attributes
+        self.attrs = {
+            'hours':self.hours,
+            'time':self.time,
+        }
+        
         print(f"--> Completed retrieving active missions ({(dt.now()-timer_start).total_seconds():.1f} seconds)")
         
     def update(self):

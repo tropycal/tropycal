@@ -42,6 +42,7 @@ python setup.py install
 - xarray >= 0.10.7
 - networkx >= 2.0.0
 - requests >= 2.22.0
+- pyshp >= 2.1
 
 To fully leverage tropycal's plotting capabilities, it is strongly recommended to have cartopy >= 0.17.0 installed.
 

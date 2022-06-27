@@ -589,9 +589,12 @@ class hdobs:
             print(f'--> Completed reading in recon HDOB files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files'+\
                   f'\nUnable to decode {unreadable} files')
-        self._recenter()
-
-        self.keys = list(self.data.keys())
+        
+        try:
+            self._recenter()
+            self.keys = list(self.data.keys())
+        except:
+            self.keys = []
 
     def update(self):
         r"""
@@ -1711,9 +1714,12 @@ class dropsondes:
                         pass
             print(f'--> Completed reading in recon dropsonde files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files')
-        self._recenter()
         
-        self.keys = sorted(list(set([k for d in self.data for k in d.keys()])))
+        try:
+            self._recenter()
+            self.keys = sorted(list(set([k for d in self.data for k in d.keys()])))
+        except:
+            self.keys = []
 
     def update(self):
         r"""

@@ -150,6 +150,10 @@ class RealtimeRecon():
             end_date = pd.to_datetime(self.missions[key]['hdobs']['time'].values[-1])
             if end_date < start_time_request: del self.missions[key]
         
+        #Sort each mission by date
+        for key in self.missions.keys():
+            self.missions[key]['hdobs'].sort_values(['time'],inplace=True)
+        
         #Save current time
         self.time = dt.now()
         
@@ -247,6 +251,10 @@ class RealtimeRecon():
             end_date = pd.to_datetime(self.missions[key]['hdobs']['time'].values[-1])
             start_time_request = dt.utcnow() - timedelta(hours=self.hours)
             if end_date < start_time_request: del self.missions[key]
+        
+        #Sort each mission by date
+        for key in self.missions.keys():
+            self.missions[key]['hdobs'].sort_values(['time'],inplace=True)
         
         print(f"--> Completed updating mission data ({(dt.now()-timer_start).total_seconds():.1f} seconds)")
     

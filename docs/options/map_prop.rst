@@ -37,6 +37,8 @@ The following table lists options that can be passed to the "map_prop" argument 
      - Color used to fill land. Default is '#FBF5EA'.
    * - ocean_color
      - Color used to fill oceans and lakes. Default is '#EDFBFF'.
+   * - plot_gridlines
+     - Boolean for whether to plot lat/lon gridlines. Default is True.
 
 .. _options-prop:
 

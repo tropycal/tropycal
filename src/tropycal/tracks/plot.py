@@ -1814,7 +1814,7 @@ None,prop={},map_prop={}):
                 else:
                     color = color_base.get(risk_5day,'yellow')
                     text = prob_5day
-                self.ax.plot(lon,lat,'X',ms=two_prop['ms'],color=color,mec='k',mew=1.5,transform=ccrs.PlateCarree(),zorder=20)
+                self.ax.plot(lon,lat,'X',ms=two_prop['ms'],color=color,mec='k',mew=1.5*(two_prop['ms']/15.0),transform=ccrs.PlateCarree(),zorder=20)
 
                 #Transform coordinates for label
                 x1, y1 = self.ax.projection.transform_point(lon, lat, ccrs.PlateCarree())

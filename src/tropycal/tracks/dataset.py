@@ -3773,6 +3773,8 @@ class TrackDataset:
              - Number of days for TWO. Can be either 2 or 5. Default is 5.
            * - fontsize
              - Font size for text label. Default is 12.
+           * - ms
+             - Marker size for area location, if applicable. Default is 15.
 
         The following properties are available for plotting storms, via ``storm_prop``.
 

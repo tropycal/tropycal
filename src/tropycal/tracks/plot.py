@@ -1742,7 +1742,7 @@ None,prop={},map_prop={}):
         """
         
         #Set default properties
-        default_two_prop={'plot':True,'fontsize':12,'days':5}
+        default_two_prop={'plot':True,'fontsize':12,'days':5,'ms':15}
         default_invest_prop={'plot':True,'fontsize':12,'linewidth':0.8,'linecolor':'k','linestyle':'dotted','ms':14}
         default_storm_prop={'plot':True,'fontsize':12,'linewidth':0.8,'linecolor':'k','linestyle':'dotted','fillcolor':'category','label_category':True,'ms':14}
         default_cone_prop={'plot':True,'linewidth':1.5,'linecolor':'k','alpha':0.6,'days':5,'fillcolor':'category','label_category':True,'ms':12}
@@ -1814,7 +1814,7 @@ None,prop={},map_prop={}):
                 else:
                     color = color_base.get(risk_5day,'yellow')
                     text = prob_5day
-                self.ax.plot(lon,lat,'X',ms=15,color=color,mec='k',mew=1.5,transform=ccrs.PlateCarree(),zorder=20)
+                self.ax.plot(lon,lat,'X',ms=two_prop['ms'],color=color,mec='k',mew=1.5,transform=ccrs.PlateCarree(),zorder=20)
 
                 #Transform coordinates for label
                 x1, y1 = self.ax.projection.transform_point(lon, lat, ccrs.PlateCarree())

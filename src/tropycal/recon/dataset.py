@@ -987,7 +987,7 @@ class hdobs:
         #Return plot
         return ax
     
-    def plot_points(self,varname='wspd',domain="dynamic",radlim=None,ax=None,cartopy_proj=None,**kwargs):
+    def plot_points(self,varname='wspd',domain="dynamic",radlim=None,barbs=False,ax=None,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of recon data points.
@@ -1005,6 +1005,8 @@ class hdobs:
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         radlim : int
             Radius (in km) away from storm center to include points. If none (default), all points are plotted.
+        barbs : bool
+            If True, plots wind barbs. If False (default), plots dots.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
@@ -1024,8 +1026,13 @@ class hdobs:
         
         Notes
         -----
-        The special colormap **category_recon** can be used in the prop dict (``prop={'cmap':'category_recon'}``). This uses the standard SSHWS colormap, but with a new color for wind between 50 and 64 knots.
+        1. Plotting wind barbs only works for wind related variables. ``barbs`` will be automatically set to False for non-wind variables.
+        
+        2. The special colormap **category_recon** can be used in the prop dict (``prop={'cmap':'category_recon'}``). This uses the standard SSHWS colormap, but with a new color for wind between 50 and 64 knots.
         """
+        
+        #Change barbs
+        if varname == 'p_sfc': barbs = False
         
         #Pop kwargs
         prop = kwargs.pop('prop',{})
@@ -1043,7 +1050,7 @@ class hdobs:
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        plot_ax = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=varname,radlim=radlim,ax=ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=varname,radlim=radlim,barbs=barbs,ax=ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         return plot_ax

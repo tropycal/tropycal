@@ -24,6 +24,10 @@ class RealtimeRecon():
     
     Notes
     -----
+    .. warning::
+
+        RealtimeRecon data is retrieved directly through NHC's archive, though this source can lag by up to 40 minutes compared to the very latest recon data available directly on their website.
+    
     The ``RealtimeRecon`` Class and accompanying ``Mission`` class make up the realtime part of the recon module. Unlike the ``ReconDataset`` Class and its accompanying ``hdobs``, ``dropsondes`` and ``vdms`` classes which are **storm-centric**, the realtime recon functionality is **mission-centric**.
     
     This mission-centric functionality means realtime recon missions lack the storm-centering functionality that the more comprehensive full recon functionality has, but is also much faster at reading recon data for realtime purposes and includes non-tropical cyclone recon missions.
@@ -297,6 +301,33 @@ class RealtimeRecon():
             mission_ids = [i for i in mission_ids if i.split("-")[2].lower() == storm_name.lower()]
         
         return mission_ids
+    
+    def get_latest_hdobs(self):
+        
+        r"""
+        Retrieve the latest 10-minute HDOBs for all missions. Only valid for missions that were active within the last hour.
+        
+        Returns
+        -------
+        dict
+            Dictionary with the parsed HDOB data highlights.
+        """
+        
+        data = {}
+        for mission_id in self.missions.keys():
+            sub_df = self.missions[mission_id]['hdobs'].tail(20)
+            if pd.to_datetime(sub_df['time'].values[-1]) < dt.utcnow()-timedelta(hours=1): continue
+            data[mission_id] = {
+                'min_mslp': np.nanmin(sub_df['p_sfc']),
+                'max_sfmr': np.nanmax([val for i,val in enumerate(sub_df['sfmr']) if 'sfmr' not in sub_df['flag'].values[i]]),
+                'max_wspd': np.nanmax(sub_df['wspd']),
+                'max_temp': np.nanmax(sub_df['temp']),
+                'max_dwpt': np.nanmax(sub_df['dwpt']),
+                'start_time': pd.to_datetime(sub_df['time'].values[0]),
+                'end_time': pd.to_datetime(sub_df['time'].values[-1]),
+            }
+        
+        return data
     
 class PseudoStorm():
     

@@ -450,7 +450,45 @@ class Mission():
         
         return self.vdms
     
-    def plot_points(self,varname='wspd',domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
+    def status(self):
+        
+        r"""
+        Returns the current mission status.
+        
+        Returns
+        -------
+        str
+            String corresponding to the current mission status.
+        
+        Notes
+        -----
+        This function returns four possible values:
+        
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Value
+             - Description
+           * - "En Route"
+             - Mission has not flown higher than 650 hPa yet
+           * - "In Progress"
+             - Mission has previously flown above 650 hPa and has currently descended below 650 hPa
+           * - "Finished"
+             - Mission has re-ascended above 650 hPa
+           * - "Upper Air"
+             - Mission is a NOAA9 aircraft, suggesting it is an upper-level mission.
+        """
+        
+        if self.aircraft == 'NOAA9':
+            return "Upper Air"
+        if np.nanmin(self.hdobs['plane_p']) >= 650:
+            return "En Route"
+        if self.hdobs['plane_p'].values[-1] > 650:
+            return "In Progress"
+        return "Finished"
+    
+    def plot_points(self,varname='wspd',barbs=False,domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of High Density Observations (HDOBs) data points.
@@ -464,6 +502,8 @@ class Mission():
             * **"wspd"** = 30-second flight level wind (default)
             * **"pkwnd"** = 10-second flight level wind
             * **"p_sfc"** = extrapolated surface pressure
+        barbs : bool
+            If True, plots wind barbs. If False (default), plots dots.
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
@@ -482,7 +522,14 @@ class Mission():
         -------
         ax
             Instance of axes containing the plot is returned.
+        
+        Notes
+        -----
+        Plotting wind barbs only works for wind related variables. ``barbs`` will be automatically set to False for non-wind variables.
         """
+        
+        #Change barbs
+        if varname == 'p_sfc': barbs = False
         
         #Pop kwargs
         prop = kwargs.pop('prop',{})
@@ -500,7 +547,7 @@ class Mission():
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        plot_ax = self.plot_obj.plot_points(PseudoStorm(),dfRecon,domain,varname=varname,radlim=None,ax=ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_points(PseudoStorm(),dfRecon,domain,barbs=barbs,varname=varname,radlim=None,ax=ax,prop=prop,map_prop=map_prop)
         
         #Edit title
         plot_ax.set_title(f"Mission ID: {self.mission_id}",loc='left',fontsize=17,fontweight='bold')

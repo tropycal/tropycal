@@ -131,34 +131,29 @@ class ReconPlot(Plot):
         else:
             if min(lons) < min_lon: min_lon = min(lons)
 
-        #Plot recon data as specified
-        
+        #Get colormap and level extrema
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
-        
         if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] == 'category':
             vmin = min(clevs); vmax = max(clevs)
         else:
             vmin = min(prop['levels']); vmax = max(prop['levels'])
         
+        #Plot recon data as specified
         if barbs:
-            
             dataSort = recon_data.sort_values(by='wspd').reset_index(drop=True)
             if radlim is not None: dataSort = dataSort.loc[dataSort['distance']<=radlim]
-            norm = mlib.colors.Normalize(vmin=min(prop['levels']), vmax=max(prop['levels']))
-            cmap = mlib.cm.get_cmap(prop['cmap'])
+            norm = mlib.colors.Normalize(vmin=vmin, vmax=vmax)
             colors = cmap(norm(dataSort['wspd'].values))
             colors = [tuple(i) for i in colors]
-            qv = plt.barbs(dataSort['lon'],dataSort['lat'],\
-                       *uv_from_wdir(dataSort['wspd'],dataSort['wdir']),color=colors,length=5,linewidth=0.5)
-            
-#            qv.set_path_effects([patheffects.Stroke(linewidth=2, foreground='white'),
-#                       patheffects.Normal()])
-#    
+            qv = plt.barbs(dataSort['lon'],dataSort['lat'],
+                              *uv_from_wdir(dataSort['wspd'],dataSort['wdir']),color=colors,length=5,linewidth=0.5)
+            cbmap = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+            cbmap.set_array([])
+
         if scatter:
-                        
             dataSort = recon_data.sort_values(by=prop['sortby'],ascending=prop['ascending']).reset_index(drop=True)
             if radlim is not None: dataSort = dataSort.loc[dataSort['distance']<=radlim]
-            cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],\
+            cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],
                                 cmap=cmap,vmin=vmin,vmax=vmax, s=prop['ms'], marker=prop['marker'],zorder=prop['zorder'])
 
         #--------------------------------------------------------------------------------------
@@ -166,7 +161,7 @@ class ReconPlot(Plot):
         #Storm-centered plot domain
         if domain == "dynamic":
             
-            bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
+            bound_w,bound_e,bound_s,bound_n = dynamic_map_extent(min_lon,max_lon,min_lat,max_lat,recon=True)
             self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
             
         #Pre-generated or custom domain

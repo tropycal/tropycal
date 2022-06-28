@@ -955,7 +955,7 @@ def category_label_to_wind(category):
     else:
         return category_to_wind(5)
 
-def dynamic_map_extent(min_lon,max_lon,min_lat,max_lat):
+def dynamic_map_extent(min_lon,max_lon,min_lat,max_lat,recon=False):
 
     r"""
     Sets up a dynamic map extent with an aspect ratio of 3:2 given latitude and longitude bounds.
@@ -970,6 +970,8 @@ def dynamic_map_extent(min_lon,max_lon,min_lat,max_lat):
         Minimum latitude bound.
     max_lat : float
         Maximum latitude bound.
+    recon : bool
+        Zoom in plots closer for recon plots.
 
     Returns:
     --------
@@ -1025,6 +1027,7 @@ def dynamic_map_extent(min_lon,max_lon,min_lat,max_lat):
         factor = 0.75
     if min(xrng,yrng) < 6.0:
         factor = 0.9
+    if recon: factor = factor * 0.3
     bound_w = bound_w-(xrng*factor)
     bound_e = bound_e+(xrng*factor)
     bound_s = bound_s-(yrng*factor)

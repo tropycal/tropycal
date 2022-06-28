@@ -57,6 +57,50 @@ def get_colors_sshws(wind_speed):
         return '#FF00FC'
     else:
         return '#8B0088'
+    
+def get_colors_sshws_recon(wind_speed):
+    
+    r"""
+    Retrieve modified colors for the Saffir-Simpson Hurricane Wind Scale (SSHWS).
+    
+    Parameters
+    ----------
+    wind_speed : int or list
+        Sustained wind speed in knots.
+    
+    Returns
+    -------
+    str
+        Hex string for the corresponding color.
+    
+    Notes
+    -----
+    These are the same colors as the default SSHWS colors, but include a special 50-64 knot category.
+    """
+    
+    #If category string passed, convert to wind
+    if isinstance(wind_speed,str) == True:
+        wind_speed = category_label_to_wind(wind_speed)
+    
+    #Return default SSHWS category color scale
+    if wind_speed < 5:
+        return '#FFFFFF'
+    elif wind_speed < 34:
+        return '#8FC2F2'
+    elif wind_speed < 50:
+        return '#3185D3'
+    elif wind_speed < 64:
+        return '#05539b'
+    elif wind_speed < 83:
+        return '#FFFF00'
+    elif wind_speed < 96:
+        return '#FF9E00'
+    elif wind_speed < 113:
+        return '#DD0000'
+    elif wind_speed < 137:
+        return '#FF00FC'
+    else:
+        return '#8B0088'
 
 def make_colormap(colors,whiten=0):
     
@@ -218,7 +262,7 @@ def get_cmap_levels(varname,colormap,levels,linear=False):
     """
     
     #Default SSHWS colormap
-    if colormap == 'category':
+    if colormap in ['category','category_recon']:
         
         #Ensure variable contains some element of surface wind
         if varname in ['vmax','sfmr','fl_to_sfc']:
@@ -233,8 +277,12 @@ def get_cmap_levels(varname,colormap,levels,linear=False):
             
             #Linear wind increments
             else:
-                levels = [category_to_wind(c) for c in range(-1,6)]+[200]
-                colors = [get_colors_sshws(lev) for lev in levels[:-1]]
+                if colormap == 'category':
+                    levels = [category_to_wind(c) for c in range(-1,6)]+[200]
+                    colors = [get_colors_sshws(lev) for lev in levels[:-1]]
+                else:
+                    levels = [category_to_wind(c) for c in range(-1,1)]+[50]+[category_to_wind(c) for c in range(1,6)]+[200]
+                    colors = [get_colors_sshws_recon(lev) for lev in levels[:-1]]
                 cmap = mcolors.ListedColormap(colors)
         
         #Otherwise, default to plasma colormap
@@ -243,7 +291,7 @@ def get_cmap_levels(varname,colormap,levels,linear=False):
             colormap = 'plasma'
     
     #Other colormap options
-    if colormap != 'category':
+    if colormap not in ['category','category_recon']:
         
         #Matplotlib colormap name
         if isinstance(colormap,str):

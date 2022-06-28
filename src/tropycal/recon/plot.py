@@ -133,7 +133,7 @@ class ReconPlot(Plot):
 
         #Get colormap and level extrema
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
-        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] == 'category':
+        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] in ['category','category_recon']:
             vmin = min(clevs); vmax = max(clevs)
         else:
             vmin = min(prop['levels']); vmax = max(prop['levels'])
@@ -236,13 +236,16 @@ class ReconPlot(Plot):
         cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
-        if prop['cmap']=='category' and varname=='sfmr':
+        if prop['cmap'] in ['category','category_recon'] and varname=='sfmr':
             cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
             cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
             cax2.yaxis.set_ticks_position('right')
             cax2.yaxis.set_ticks((np.linspace(0,1,len(clevs))[:-1]+np.linspace(0,1,len(clevs))[1:])*.5)
-            cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+            if prop['cmap'] == 'category':
+                cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+            else:
+                cax2.set_yticklabels(['TD','TS','>50 kt','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
             cax2.tick_params('both', length=0, width=0, which='major')
             cax.yaxis.set_ticks_position('left')
             

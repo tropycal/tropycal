@@ -1021,6 +1021,10 @@ class hdobs:
         -------
         ax
             Instance of axes containing the plot is returned.
+        
+        Notes
+        -----
+        The special colormap **category_recon** can be used in the prop dict (``prop={'cmap':'category_recon'}``). This uses the standard SSHWS colormap, but with a new color for wind between 50 and 64 knots.
         """
         
         #Pop kwargs
@@ -1078,6 +1082,10 @@ class hdobs:
         -------
         ax
             Axes instance containing the plot.
+        
+        Notes
+        -----
+        The special colormap **category_recon** can be used in the prop dict (``prop={'cmap':'category_recon'}``). This uses the standard SSHWS colormap, but with a new color for wind between 50 and 64 knots.
         """
         
         #Pop kwargs
@@ -1117,13 +1125,14 @@ class hdobs:
         
         #------------------------------------------------------------------------------
         
-        #Create plot        
-        #plt.figure(figsize=(9,11),dpi=150)
-        plt.figure(figsize=(9,9),dpi=150) #CHANGE THIS OR ELSE
+        #Create plot
+        plt.figure(figsize=(9,9),dpi=150)
         ax = plt.subplot()
         
         #Plot surface category colors individually, necessitating normalizing colormap
-        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] == 'category':
+        print(clevs)
+        
+        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] in ['category','category_recon']:
             norm = mcolors.BoundaryNorm(clevs,cmap.N)
             cf = ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),
                              levels=clevs,cmap=cmap,norm=norm)

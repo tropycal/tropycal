@@ -556,7 +556,9 @@ class Mission():
         
         Notes
         -----
-        Plotting wind barbs only works for wind related variables. ``barbs`` will be automatically set to False for non-wind variables.
+        1. Plotting wind barbs only works for wind related variables. ``barbs`` will be automatically set to False for non-wind variables.
+        
+        2. The special colormap **category_recon** can be used in the prop dict (``prop={'cmap':'category_recon'}``). This uses the standard SSHWS colormap, but with a new color for wind between 50 and 64 knots.
         """
         
         #Change barbs

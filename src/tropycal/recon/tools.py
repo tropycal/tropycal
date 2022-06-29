@@ -847,7 +847,10 @@ def decode_vdm(content,date):
                 RemarksNext = True
 
     content_split = content.split("\n")
-    mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
+    if FORMAT == 1:
+        mission_id = ['-'.join(i.split("P. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "P."][0]
+    elif FORMAT == 2:
+        mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
     data['mission_id'] = mission_id
     
     return missionname, data

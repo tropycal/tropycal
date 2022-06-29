@@ -121,7 +121,7 @@ class ReconDataset:
         Parameters
         ----------
         data : str, optional
-            String representing the path of a pickle file containing HDOBs data, saved via ``hdobs.get_pickle()``. If none, data is read from NHC.
+            String representing the path of a pickle file containing HDOBs data, saved via ``hdobs.to_pickle()``. If none, data is read from NHC.
         
         Notes
         -----
@@ -154,7 +154,7 @@ class ReconDataset:
         Parameters
         ----------
         data : str, optional
-            String representing the path of a pickle file containing dropsonde data, saved via ``dropsondes.get_pickle()``. If none, data is read from NHC.
+            String representing the path of a pickle file containing dropsonde data, saved via ``dropsondes.to_pickle()``. If none, data is read from NHC.
         
         Notes
         -----
@@ -187,7 +187,7 @@ class ReconDataset:
         Parameters
         ----------
         data : str, optional
-            String representing the path of a pickle file containing VDM data, saved via ``vdms.get_pickle()``. If none, data is read from NHC.
+            String representing the path of a pickle file containing VDM data, saved via ``vdms.to_pickle()``. If none, data is read from NHC.
         
         Notes
         -----
@@ -452,8 +452,8 @@ class hdobs:
     ----------
     storm : tropycal.tracks.Storm
         Requested storm.
-    data : str, or list of dictionaries, optional
-        String with filepath to pickle file with list of dictionaries, or the list, containing dropsonde data.
+    data : str, optional
+        Filepath of pickle file containing HDOBs data retrieved from ``hdobs.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
     update : bool
         True = search for new data, following existing data in the dropsonde object, and concatenate.
         
@@ -472,7 +472,7 @@ class hdobs:
         basin = tracks.TrackDataset()
         storm = basin.get_storm(('michael',2018))
     
-    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_hdobs()`` method thus allowing all of the hdobs attributes and methods to be accessed from the Storm object:
+    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_hdobs()`` method thus allowing all of the hdobs attributes and methods to be accessed from the Storm object. As a result, a Storm object does not need to be provided as an argument.
     
     .. code-block:: python
     
@@ -797,6 +797,19 @@ class hdobs:
         ----------
         filename : str
             name of file to save pickle file to.
+        
+        Notes
+        -----
+        This method saves the HDOBs data as a pickle within the current working directory, given a filename as an argument.
+        
+        For example, assume ``hdobs`` was retrieved from a Storm object (using the first method described in the ``hdobs`` class documentation). The HDOBs data would be saved to a pickle file as follows:
+        
+        >>> storm.recon.hdobs.to_pickle("mystorm_hdobs.pickle")
+        
+        Now the HDOBs data is saved locally, and next time recon data for this storm needs to be analyzed, this allows to bypass re-reading the HDOBs data from the NHC server by providing the pickle file as an argument:
+        
+        >>> storm.recon.get_hdobs("mystorm_hdobs.pickle")
+        
         """
         
         with open(filename,'wb') as f:
@@ -1594,8 +1607,8 @@ class dropsondes:
     ----------
     storm : tropycal.tracks.Storm
         Requested storm.
-    data : str, or list of dictionaries, optional
-        String with filepath to pickle file with list of dictionaries, or the list, containing dropsonde data.
+    data : str, optional
+        Filepath of pickle file containing dropsondes data retrieved from ``dropsondes.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
     update : bool
         True = search for new data, following existing data in the dropsonde object, and concatenate.
 
@@ -1614,7 +1627,7 @@ class dropsondes:
         basin = tracks.TrackDataset()
         storm = basin.get_storm(('michael',2018))
     
-    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_dropsondes()`` method thus allowing all of the dropsondes attributes and methods to be accessed from the Storm object:
+    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_dropsondes()`` method thus allowing all of the dropsondes attributes and methods to be accessed from the Storm object. As a result, a Storm object does not need to be provided as an argument.
     
     .. code-block:: python
     
@@ -1890,6 +1903,19 @@ class dropsondes:
         ----------
         filename : str
             name of file to save pickle file to.
+        
+        Notes
+        -----
+        This method saves the dropsondes data as a pickle within the current working directory, given a filename as an argument.
+        
+        For example, assume ``dropsondes`` was retrieved from a Storm object (using the first method described in the ``dropsondes`` class documentation). The dropsondes data would be saved to a pickle file as follows:
+        
+        >>> storm.recon.dropsondes.to_pickle(data="mystorm_dropsondes.pickle")
+        
+        Now the dropsondes data is saved locally, and next time recon data for this storm needs to be analyzed, this allows to bypass re-reading the dropsondes data from the NHC server by providing the pickle file as an argument:
+        
+        >>> storm.recon.get_dropsondes(data="mystorm_dropsondes.pickle")
+        
         """
         
         with open(filename,'wb') as f:
@@ -2030,8 +2056,8 @@ class vdms:
     ----------
     storm : tropycal.tracks.Storm
         Requested storm.
-    data : str, or list of dictionaries, optional
-        String with filepath to pickle file with list of dictionaries, or the list, containing dropsonde data.
+    data : str, optional
+        Filepath of pickle file containing VDM data retrieved from ``vdms.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
     update : bool
         True = search for new data, following existing data in the dropsonde object, and concatenate.
 
@@ -2050,7 +2076,7 @@ class vdms:
         basin = tracks.TrackDataset()
         storm = basin.get_storm(('michael',2018))
     
-    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_vdms()`` method thus allowing all of the vdms attributes and methods to be accessed from the Storm object:
+    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_vdms()`` method thus allowing all of the vdms attributes and methods to be accessed from the Storm object. As a result, a Storm object does not need to be provided as an argument.
     
     .. code-block:: python
     
@@ -2253,6 +2279,19 @@ class vdms:
         ----------
         filename : str
             name of file to save pickle file to.
+        
+        Notes
+        -----
+        This method saves the VDMs data as a pickle within the current working directory, given a filename as an argument.
+        
+        For example, assume ``vdms`` was retrieved from a Storm object (using the first method described in the ``vdms`` class documentation). The VDMs data would be saved to a pickle file as follows:
+        
+        >>> storm.recon.vdms.to_pickle(data="mystorm_vdms.pickle")
+        
+        Now the VDMs data is saved locally, and next time recon data for this storm needs to be analyzed, this allows to bypass re-reading the VDMs data from the NHC server by providing the pickle file as an argument:
+        
+        >>> storm.recon.get_vdms("mystorm_vdms.pickle")
+        
         """
         
         with open(filename,'wb') as f:

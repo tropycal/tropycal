@@ -337,7 +337,7 @@ class RealtimeStorm(Storm):
         Parameters
         ----------
         ssl_certificate : boolean, optional
-            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from the default JTWC source ("jtwc"). Default is True. Use False *ONLY* if True causes an SSL certification error.
+            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
         
         Returns
         -------
@@ -431,7 +431,7 @@ class RealtimeStorm(Storm):
             
             #Get forecast for this storm
             url = f"https://www.nrlmry.navy.mil/atcf_web/docs/current_storms/{self.id.lower()}.sum"
-            if ssl_certificate == False and self.source == 'jtwc':
+            if ssl_certificate == False and self.source in ['jtwc','noaa']:
                 import ssl
                 if requests.get(url,verify=False).status_code != 200:
                     raise RuntimeError("JTWC forecast data is unavailable for this storm.")
@@ -439,7 +439,7 @@ class RealtimeStorm(Storm):
                 if requests.get(url).status_code != 200: raise RuntimeError("JTWC forecast data is unavailable for this storm.")
 
             #Read file content
-            if ssl_certificate == False and self.source == 'jtwc':
+            if ssl_certificate == False and self.source in ['jtwc','noaa']:
                 import ssl
                 f = urllib.request.urlopen(url,context=ssl._create_unverified_context())
             else:
@@ -584,7 +584,7 @@ class RealtimeStorm(Storm):
         Other Parameters
         ----------------
         ssl_certificate : boolean, optional
-            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from the default JTWC source ("jtwc"). Default is True. Use False *ONLY* if True causes an SSL certification error.
+            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
         prop : dict
             Property of storm track lines.
         map_prop : dict

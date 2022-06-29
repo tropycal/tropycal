@@ -49,7 +49,7 @@ class Realtime():
     jtwc_source : str, optional
         If jtwc is set to True, this specifies the JTWC data source to read from. Available options are "noaa", "ucar" or "jtwc". Default is "jtwc". Read the notes for more details.
     ssl_certificate : boolean, optional
-        If jtwc is set to True, this determines whether to disable SSL certificate when retrieving data from the default JTWC source ("jtwc"). Default is True. Use False *ONLY* if True causes an SSL certification error.
+        If jtwc is set to True, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
     
     Returns
     -------
@@ -415,7 +415,7 @@ class Realtime():
         url = f'https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/'
         if source == 'noaa': url = f'https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/'
         if source == 'ucar': url = f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/'
-        if ssl_certificate == False and source == 'jtwc':
+        if ssl_certificate == False and source in ['jtwc','noaa']:
             import ssl
             urlpath = urllib.request.urlopen(url,context=ssl._create_unverified_context())
         else:
@@ -441,7 +441,7 @@ class Realtime():
         
         if source in ['jtwc','ucar']:
             try:
-                if ssl_certificate == False and source == 'jtwc':
+                if ssl_certificate == False and source in ['jtwc','noaa']:
                     urlpath_nextyear = urllib.request.urlopen(url.replace(str(current_year),str(current_year+1)),context=ssl._create_unverified_context())
                     string_nextyear = urlpath_nextyear.read().decode('utf-8')
                 else:
@@ -498,7 +498,7 @@ class Realtime():
             if source == 'ucar': url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/{file}"
             if f"{current_year+1}.dat" in url: url = url.replace(str(current_year),str(current_year+1))
             
-            if ssl_certificate == False and source == 'jtwc':
+            if ssl_certificate == False and source in ['jtwc','noaa']:
                 f = urllib.request.urlopen(url,context=ssl._create_unverified_context())
                 content = f.read()
                 content = content.decode("utf-8")
@@ -721,7 +721,7 @@ class Realtime():
         #Return RealtimeStorm object
         return self[storm]
 
-    def plot_summary(self,domain='all',ax=None,cartopy_proj=None,save_path=None,**kwargs):
+    def plot_summary(self,domain='all',ax=None,cartopy_proj=None,save_path=None,ssl_certificate=True,**kwargs):
         
         r"""
         Plot a summary map of ongoing tropical cyclone and potential development activity.
@@ -736,6 +736,8 @@ class Realtime():
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str, optional
             Relative or full path of directory to save the image in. If none, image will not be saved.
+        ssl_certificate : boolean, optional
+            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
         
         Other Parameters
         ----------------
@@ -869,7 +871,7 @@ class Realtime():
         
         #Plot
         ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms],
-                                        [self.get_storm(key).get_forecast_realtime() if self[key].invest == False else {} for key in self.storms],
+                                        [self.get_storm(key).get_forecast_realtime(ssl_certificate) if self[key].invest == False else {} for key in self.storms],
                                         shapefiles,dt.utcnow(),domain,ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
         
         return ax

@@ -115,6 +115,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'plot.py',
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
+mathjax3_config = {'chtml': {'displayAlign': 'left'}}
 
 # -- Options for HTML output -------------------------------------------------
 

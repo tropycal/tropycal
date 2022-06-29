@@ -583,7 +583,11 @@ class Mission():
                 
         #Get plot data
         if in_storm and self.aircraft.upper() != 'NOAA9':
-            dfRecon = self.hdobs.loc[self.hdobs['status'] == 'In Storm']
+            try:
+                dfRecon = self.hdobs.loc[self.hdobs['status'] == 'In Storm']
+                if len(dfRecon) == 0: dfRecon = self.hdobs
+            except:
+                dfRecon = self.hdobs
         else:
             dfRecon = self.hdobs
         

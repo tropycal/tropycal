@@ -1719,7 +1719,10 @@ class dropsondes:
                 response = http.request('GET',link)
                 content = response.data.decode('utf-8')
                 datestamp = dt.strptime(link.split('.')[-2],'%Y%m%d%H%M')
-                missionname,tmp = decode_dropsonde(content,date=datestamp)
+                try:
+                    missionname,tmp = decode_dropsonde(content,date=datestamp)
+                except:
+                    continue
                 testkeys = ('TOPtime','lat','lon')
                 if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
                     filecount += 1

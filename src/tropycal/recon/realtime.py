@@ -131,7 +131,10 @@ class RealtimeRecon():
             #Construct mission ID
             mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
             date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
-            blank, data = decode_vdm(content,date)
+            try:
+                blank, data = decode_vdm(content,date)
+            except:
+                continue
             if mission_id in self.missions.keys(): self.missions[mission_id]['vdms'].append(data)
 
         #Retrieve dropsondes

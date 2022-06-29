@@ -678,7 +678,7 @@ def decode_vdm(content,date):
             day = int(info[0])
             month = (date.month-int(day-date.day>15)-1)%12+1
             year = date.year-int(date.month-int(day-date.day>15)==0)
-            hour,minute,second = [int(i) for i in info[1][:-1].split(':')]
+            hour,minute,second = [int(i) for i in (info[1].split("Z")[0]).split(':')]
             data['time'] = dt(year,month,day,hour,minute,second)
 
         if line[:2] == 'B.':

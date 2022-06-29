@@ -590,6 +590,9 @@ class hdobs:
                   f'\nRead {filecount} files'+\
                   f'\nUnable to decode {unreadable} files')
         
+        #Sort data by time
+        self.data.sort_values(['time'],inplace=True)
+        
         try:
             self._recenter()
             self.keys = list(self.data.keys())
@@ -1137,8 +1140,6 @@ class hdobs:
         ax = plt.subplot()
         
         #Plot surface category colors individually, necessitating normalizing colormap
-        print(clevs)
-        
         if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] in ['category','category_recon']:
             norm = mcolors.BoundaryNorm(clevs,cmap.N)
             cf = ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),
@@ -2134,7 +2135,10 @@ class vdms:
                 year = int(date[:4])
                 month = int(date[4:6])
                 day = int(date[6:8])
-                missionname,tmp = decode_vdm(content,date=dt(year,month,day))
+                try:
+                    missionname,tmp = decode_vdm(content,date=dt(year,month,day))
+                except:
+                    continue
                 #print(link,missionname)
                 testkeys = ('time','lat','lon')
                 if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:

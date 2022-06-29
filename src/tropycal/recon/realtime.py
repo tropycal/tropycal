@@ -572,6 +572,11 @@ class Mission():
         1. Plotting wind barbs only works for wind related variables. ``barbs`` will be automatically set to False for non-wind variables.
         
         2. The special colormap **category_recon** can be used in the prop dict (``prop={'cmap':'category_recon'}``). This uses the standard SSHWS colormap, but with a new color for wind between 50 and 64 knots.
+        
+        .. warning::
+
+            The ``in_storm`` flag uses an internal algorithm to determine if the recon mission is near the storm, without knowledge of the actual coordinates of the storm. This algorithm works well for most standard recon missions, but can return unexpected results for the occasional outlier missions or incomplete/aborted missions.
+        
         """
         
         #Change barbs

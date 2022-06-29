@@ -447,6 +447,15 @@ class Mission():
             'storm_name':data['storm_name'],
             'mission_id':mission_id,
         }
+        
+        #Add status for mission
+        if self.aircraft.upper() == 'NOAA9':
+            values = ['Upper Air' for i in self.hdobs['plane_p'].values]
+        else:
+            values = get_status(self.hdobs['plane_p'].values)
+        self.hdobs.insert(loc=len(self.hdobs.columns),
+                          column='status',
+                          value=values)
     
     def get_hdobs(self):
         
@@ -508,24 +517,18 @@ class Mission():
            * - Value
              - Description
            * - "En Route"
-             - Mission has not flown higher than 650 hPa yet
+             - Mission has not flown higher than 650 hPa or initial peak altitude yet
            * - "In Progress"
-             - Mission has previously flown above 650 hPa and has currently descended below 650 hPa
+             - Mission has descended below 650 hPa, or is constant below 650 hPa
            * - "Finished"
-             - Mission has re-ascended above 650 hPa
+             - Mission has re-ascended above 650 hPa for a sufficient duration
            * - "Upper Air"
              - Mission is a NOAA9 aircraft, suggesting it is an upper-level mission.
         """
         
-        if self.aircraft == 'NOAA9':
-            return "Upper Air"
-        if np.nanmin(self.hdobs['plane_p']) >= 650:
-            return "En Route"
-        if self.hdobs['plane_p'].values[-1] > 650:
-            return "In Progress"
-        return "Finished"
+        return self.hdobs['status'].values[-1]
     
-    def plot_points(self,varname='wspd',barbs=False,domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
+    def plot_points(self,varname='wspd',in_storm=False,barbs=False,domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of High Density Observations (HDOBs) data points.
@@ -539,6 +542,8 @@ class Mission():
             * **"wspd"** = 30-second flight level wind (default)
             * **"pkwnd"** = 10-second flight level wind
             * **"p_sfc"** = extrapolated surface pressure
+        in_storm : bool
+            If True, only plots points considered within the storm, or all points if en route. Default is False (plot all points).
         barbs : bool
             If True, plots wind barbs. If False (default), plots dots.
         domain : str
@@ -575,7 +580,10 @@ class Mission():
         map_prop = kwargs.pop('map_prop',{})
                 
         #Get plot data
-        dfRecon = self.hdobs
+        if in_storm and self.aircraft.upper() != 'NOAA9':
+            dfRecon = self.hdobs.loc[self.hdobs['status'] == 'In Storm']
+        else:
+            dfRecon = self.hdobs
         
         #Create instance of plot object
         self.plot_obj = ReconPlot()

@@ -146,7 +146,7 @@ class ReconPlot(Plot):
             colors = cmap(norm(dataSort['wspd'].values))
             colors = [tuple(i) for i in colors]
             qv = plt.barbs(dataSort['lon'],dataSort['lat'],
-                              *uv_from_wdir(dataSort['wspd'],dataSort['wdir']),color=colors,length=5,linewidth=0.5)
+                           *uv_from_wdir(dataSort['wspd'],dataSort['wdir']),color=colors,length=5,linewidth=0.5)
             cbmap = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
             cbmap.set_array([])
 
@@ -155,6 +155,9 @@ class ReconPlot(Plot):
             if radlim is not None: dataSort = dataSort.loc[dataSort['distance']<=radlim]
             cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],
                                 cmap=cmap,vmin=vmin,vmax=vmax, s=prop['ms'], marker=prop['marker'],zorder=prop['zorder'])
+        
+        #Plot latest point if an ongoing mission
+        plt.plot(recon_data['lon'].values[-1],recon_data['lat'].values[-1],'o',mfc='none',mec='k',mew=1.5,ms=10)
 
         #--------------------------------------------------------------------------------------
         

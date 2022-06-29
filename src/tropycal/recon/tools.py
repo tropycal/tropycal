@@ -1063,3 +1063,43 @@ def decode_dropsonde(content,date):
     data['mission_id'] = mission_id
     
     return missionname, data
+
+def get_status(plane_p):
+    
+    status = []
+    in_storm = False
+    finished = False
+    for idx,pres in enumerate(plane_p):
+        if idx < 4:
+            status.append('En Route')
+            continue
+        if np.nanmin(plane_p[:idx+1]) >= 850:
+            status.append('En Route')
+            continue
+        if np.abs(plane_p[idx] - plane_p[idx-4]) < 10:
+            if finished:
+                if idx > 40 and pres < 800 and pres > 650 and np.nanmax(np.abs(plane_p[idx-40:idx] - plane_p[idx-39:idx+1])) < 20:
+                    if idx > 100 and 'In Storm' in status[-100:]:
+                        finished = False
+                    else:
+                        status.append('Finished')
+                else:
+                    status.append('Finished')
+            if finished == False:
+                if pres < 650:
+                    status.append('En Route')
+                else:
+                    in_storm = True
+                    status.append('In Storm')
+        else:
+            if in_storm == False:
+                status.append('En Route')
+            else:
+                if pres < 650:
+                    finished = True
+                if finished == True:
+                    status.append('Finished')
+                else:
+                    status.append('In Storm')
+        
+    return status

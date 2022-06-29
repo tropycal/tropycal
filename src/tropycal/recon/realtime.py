@@ -453,9 +453,11 @@ class Mission():
             values = ['Upper Air' for i in self.hdobs['plane_p'].values]
         else:
             values = get_status(self.hdobs['plane_p'].values)
-        self.hdobs.insert(loc=len(self.hdobs.columns),
-                          column='status',
-                          value=values)
+        try:
+            del self.hdobs['status']
+        except:
+            pass
+        self.hdobs.insert(loc=len(self.hdobs.columns),column='status',value=values)
     
     def get_hdobs(self):
         

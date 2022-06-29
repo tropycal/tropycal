@@ -1070,13 +1070,13 @@ def get_status(plane_p):
     in_storm = False
     finished = False
     for idx,pres in enumerate(plane_p):
-        if idx < 4:
+        if idx < 8:
             status.append('En Route')
             continue
         if np.nanmin(plane_p[:idx+1]) >= 850:
             status.append('En Route')
             continue
-        if np.abs(plane_p[idx] - plane_p[idx-4]) < 10:
+        if np.abs(plane_p[idx] - plane_p[idx-8]) < 10:
             if finished:
                 if idx > 40 and pres < 800 and pres > 650 and np.nanmax(np.abs(plane_p[idx-40:idx] - plane_p[idx-39:idx+1])) < 20:
                     if idx > 100 and 'In Storm' in status[-100:]:

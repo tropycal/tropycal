@@ -58,11 +58,17 @@ class Realtime():
     
     Notes
     -----
-    As of 2021, the multiple sources offering a Best Track archive of raw JTWC tropical cyclone data experienced frequent outages and/or severe slowdowns, hampering the ability to easily retrieve this data. As such, JTWC data has been optional in Realtime objects since v0.2.7. There are three JTWC sources available:
+    During 2021, the multiple sources offering a Best Track archive of raw JTWC tropical cyclone data experienced frequent outages and/or severe slowdowns, hampering the ability to easily retrieve this data. As such, JTWC data has been optional in Realtime objects since v0.2.7. There are three JTWC sources available:
     
-    * **jtwc** - This is currently the default JTWC source if JTWC data is read in. As of September 2021, this source is working, but reading data is exceptionally slow (can take from 3 to as much as 10 minutes).
+    * **jtwc** - This is currently the default JTWC source if JTWC data is read in. As of June 2022, this source is working, but reading data is somewhat slow (can take up to 2 minutes).
     * **ucar** - As of September 2021, this source is available and fairly quick to read in, but offers a less compherensive storm history than the "jtwc" source. Between July and September 2021, this source did not update any active tropical cyclones outside of NHC's domain. If using this source, check to make sure it is in fact retrieving current global tropical cyclones.
-    * **noaa** - This source was active until about July 2021, and since then no longer appears to be online and accessible. The code retains the ability to read in data from this source should it return online.
+    * **noaa** - This source was inactive from July 2021 through early 2022, and appears to be back online again. The code retains the ability to read in data from this source should it go back offline then return online again.
+    
+    .. warning::
+
+        JTWC's SSL certificate appears to have expired sometime in early 2022. If using JTWC data with the ``jtwc=True`` argument, this will result in Realtime functionality crashing by default. To avoid this, add a ``ssl_certificate=False`` argument to both creating an instance of Realtime and to any method that retrieves JTWC forecast.
+        
+        Affected functions include ``Realtime.plot_summary()``, ``RealtimeStorm.get_forecast_realtime()``, and ``RealtimeStorm.plot_forecast_realtime()``.
     
     The following block of code creates an instance of a Realtime() object and stores it in a variable called "realtime_obj":
     

@@ -609,7 +609,7 @@ class Mission():
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        plot_ax = self.plot_obj.plot_points(PseudoStorm(),dfRecon,domain,barbs=barbs,varname=varname,radlim=None,ax=ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_points(PseudoStorm(),dfRecon,domain,barbs=barbs,varname=varname,radlim=None,ax=ax,prop=prop,map_prop=map_prop,mission=True)
         
         #Edit title
         plot_ax.set_title(f"Mission ID: {self.mission_id}",loc='left',fontsize=17,fontweight='bold')

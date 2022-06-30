@@ -40,7 +40,7 @@ class ReconPlot(Plot):
         self.use_credit = True
                  
     def plot_points(self,storm,recon_data,domain="dynamic",varname='wspd',radlim=None,barbs=False,scatter=False,\
-                    ax=None,return_domain=False,prop={},map_prop={}):
+                    ax=None,return_domain=False,prop={},map_prop={},mission=False):
         
         r"""
         Creates a plot of recon data points
@@ -156,8 +156,8 @@ class ReconPlot(Plot):
             cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],
                                 cmap=cmap,vmin=vmin,vmax=vmax, s=prop['ms'], marker=prop['marker'],zorder=prop['zorder'])
         
-        #Plot latest point if an ongoing mission
-        plt.plot(recon_data['lon'].values[-1],recon_data['lat'].values[-1],'o',mfc='none',mec='k',mew=1.5,ms=10)
+        #Plot latest point if from a Mission object
+        if mission: plt.plot(recon_data['lon'].values[-1],recon_data['lat'].values[-1],'o',mfc='none',mec='k',mew=1.5,ms=10)
 
         #--------------------------------------------------------------------------------------
         

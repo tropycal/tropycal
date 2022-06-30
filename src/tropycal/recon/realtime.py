@@ -323,9 +323,13 @@ class RealtimeRecon():
         for mission_id in self.missions.keys():
             sub_df = self.missions[mission_id]['hdobs'].tail(20)
             if pd.to_datetime(sub_df['time'].values[-1]) < dt.utcnow()-timedelta(hours=1): continue
+            try:
+                max_sfmr = np.nanmax([val for i,val in enumerate(sub_df['sfmr']) if 'sfmr' not in sub_df['flag'].values[i]])
+            except:
+                max_sfmr = np.nan
             data[mission_id] = {
                 'min_mslp': np.nanmin(sub_df['p_sfc']),
-                'max_sfmr': np.nanmax([val for i,val in enumerate(sub_df['sfmr']) if 'sfmr' not in sub_df['flag'].values[i]]),
+                'max_sfmr': max_sfmr,
                 'max_wspd': np.nanmax(sub_df['wspd']),
                 'max_temp': np.nanmax(sub_df['temp']),
                 'max_dwpt': np.nanmax(sub_df['dwpt']),

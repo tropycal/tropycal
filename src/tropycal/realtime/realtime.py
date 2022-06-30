@@ -288,6 +288,7 @@ class Realtime():
             #add empty entry into dict
             self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'NHC Hurricane Database','realtime':True,'invest':invest_bool,'source_method':"NHC's Automated Tropical Cyclone Forecasting System (ATCF)",'source_url':"https://ftp.nhc.noaa.gov/atcf/btk/"}
             self.data[stormid]['source'] = 'hurdat'
+            self.data[stormid]['jtwc_source'] = 'N/A'
 
             #add empty lists
             for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
@@ -445,7 +446,7 @@ class Realtime():
         for filename in filelist:
             if filename not in files: files.append(filename)
         
-        if source in ['jtwc','ucar']:
+        if source in ['jtwc','ucar','noaa']:
             try:
                 if ssl_certificate == False and source in ['jtwc','noaa']:
                     urlpath_nextyear = urllib.request.urlopen(url.replace(str(current_year),str(current_year+1)),context=ssl._create_unverified_context())
@@ -482,6 +483,7 @@ class Realtime():
             #add empty entry into dict
             self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'invest':invest_bool}
             self.data[stormid]['source'] = 'jtwc'
+            self.data[stormid]['jtwc_source'] = source
             
             #Add source info
             self.data[stormid]['source_method'] = "JTWC ATCF"

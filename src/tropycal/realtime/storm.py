@@ -430,8 +430,11 @@ class RealtimeStorm(Storm):
         else:
             
             #Get forecast for this storm
-            url = f"https://www.nrlmry.navy.mil/atcf_web/docs/current_storms/{self.id.lower()}.sum"
-            if ssl_certificate == False and self.source in ['jtwc','noaa']:
+            if self.jtwc_source in ['jtwc','ucar']:
+                url = f"https://www.nrlmry.navy.mil/atcf_web/docs/current_storms/{self.id.lower()}.sum"
+            else:
+                url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{self.id.lower()}.fst"
+            if ssl_certificate == False and self.jtwc_source in ['jtwc','ucar']:
                 import ssl
                 if requests.get(url,verify=False).status_code != 200:
                     raise RuntimeError("JTWC forecast data is unavailable for this storm.")
@@ -439,7 +442,7 @@ class RealtimeStorm(Storm):
                 if requests.get(url).status_code != 200: raise RuntimeError("JTWC forecast data is unavailable for this storm.")
 
             #Read file content
-            if ssl_certificate == False and self.source in ['jtwc','noaa']:
+            if ssl_certificate == False and self.jtwc_source in ['jtwc','ucar']:
                 import ssl
                 f = urllib.request.urlopen(url,context=ssl._create_unverified_context())
             else:
@@ -449,63 +452,130 @@ class RealtimeStorm(Storm):
             content = content.split("\n")
             f.close()
 
-            #Iterate through every line in content:
-            run_init = content[2].split(" ")[0]
-            forecasts = {}
+            if self.jtwc_source in ['jtwc','ucar']:
+                #Iterate through every line in content:
+                run_init = content[2].split(" ")[0]
+                forecasts = {}
 
-            for line in content[3:]:
+                for line in content[3:]:
+
+                    #Exit once done retrieving forecast
+                    if line == "AMP": break
+
+                    #Get basic components
+                    lineArray = line.split(" ")
+                    if len(lineArray) < 4: continue
+
+                    #Exit once done retrieving forecast
+                    if lineArray[0] == "AMP": break
+
+                    if len(forecasts) == 0:
+                        forecasts = {
+                            'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
+                        }
+
+                    #Forecast hour
+                    fhr = int(lineArray[0].split("T")[1])
+
+                    #Format lat & lon
+                    lat = lineArray[1]
+                    lon = lineArray[2]
+                    if "N" in lat:
+                        lat_temp = lat.split("N")[0]
+                        lat = np.round(float(lat_temp) * 0.1,1)
+                    elif "S" in lat:
+                        lat_temp = lat.split("S")[0]
+                        lat = np.round(float(lat_temp) * -0.1,1)
+                    if "W" in lon:
+                        lon_temp = lon.split("W")[0]
+                        lon = np.round(float(lon_temp) * -0.1,1)
+                    elif "E" in lon:
+                        lon_temp = lon.split("E")[0]
+                        lon = np.round(float(lon_temp) * 0.1,1)
+
+                    #Format vmax & MSLP
+                    vmax = int(lineArray[3])
+                    if vmax < 10 or vmax > 300: vmax = np.nan
+                    mslp = np.nan
+
+                    #Add forecast data to dict if forecast hour isn't already there
+                    if fhr not in forecasts['fhr']:
+                        if lat == 0.0 and lon == 0.0: continue
+                        forecasts['fhr'].append(fhr)
+                        forecasts['lat'].append(lat)
+                        forecasts['lon'].append(lon)
+                        forecasts['vmax'].append(vmax)
+                        forecasts['mslp'].append(mslp)
+
+                        #Get storm type, if it can be determined
+                        stype = get_storm_type(vmax,False)
+                        forecasts['type'].append(stype)
+            
+            else:
                 
-                #Exit once done retrieving forecast
-                if line == "AMP": break
+                content = [(i.replace(" ","")).split(",") for i in content]
                 
-                #Get basic components
-                lineArray = line.split(" ")
-                if len(lineArray) < 4: continue
-                
-                #Exit once done retrieving forecast
-                if lineArray[0] == "AMP": break
-                    
-                if len(forecasts) == 0:
-                    forecasts = {
-                        'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
-                    }
+                #Iterate through every line in content:
+                forecasts = {}
 
-                #Forecast hour
-                fhr = int(lineArray[0].split("T")[1])
-                
-                #Format lat & lon
-                lat = lineArray[1]
-                lon = lineArray[2]
-                if "N" in lat:
-                    lat_temp = lat.split("N")[0]
-                    lat = np.round(float(lat_temp) * 0.1,1)
-                elif "S" in lat:
-                    lat_temp = lat.split("S")[0]
-                    lat = np.round(float(lat_temp) * -0.1,1)
-                if "W" in lon:
-                    lon_temp = lon.split("W")[0]
-                    lon = np.round(float(lon_temp) * -0.1,1)
-                elif "E" in lon:
-                    lon_temp = lon.split("E")[0]
-                    lon = np.round(float(lon_temp) * 0.1,1)
+                for line in content:
 
-                #Format vmax & MSLP
-                vmax = int(lineArray[3])
-                if vmax < 10 or vmax > 300: vmax = np.nan
-                mslp = np.nan
+                    #Get basic components
+                    lineArray = [i.replace(" ","") for i in line]
+                    if len(lineArray) < 11: continue
+                    basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
+                    if model not in ["JTWC"]: continue
 
-                #Add forecast data to dict if forecast hour isn't already there
-                if fhr not in forecasts['fhr']:
-                    if lat == 0.0 and lon == 0.0: continue
-                    forecasts['fhr'].append(fhr)
-                    forecasts['lat'].append(lat)
-                    forecasts['lon'].append(lon)
-                    forecasts['vmax'].append(vmax)
-                    forecasts['mslp'].append(mslp)
+                    if len(forecasts) == 0:
+                        forecasts = {
+                            'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
+                        }
 
-                    #Get storm type, if it can be determined
-                    stype = get_storm_type(vmax,False)
-                    forecasts['type'].append(stype)
+                    #Format lat & lon
+                    fhr = int(fhr)
+                    if "N" in lat:
+                        lat_temp = lat.split("N")[0]
+                        lat = np.round(float(lat_temp) * 0.1,1)
+                    elif "S" in lat:
+                        lat_temp = lat.split("S")[0]
+                        lat = np.round(float(lat_temp) * -0.1,1)
+                    if "W" in lon:
+                        lon_temp = lon.split("W")[0]
+                        lon = np.round(float(lon_temp) * -0.1,1)
+                    elif "E" in lon:
+                        lon_temp = lon.split("E")[0]
+                        lon = np.round(float(lon_temp) * 0.1,1)
+
+                    #Format vmax & MSLP
+                    if vmax == '':
+                        vmax = np.nan
+                    else:
+                        vmax = int(vmax)
+                        if vmax < 10 or vmax > 300: vmax = np.nan
+                    if mslp == '':
+                        mslp = np.nan
+                    else:
+                        mslp = int(mslp)
+                        if mslp < 1: mslp = np.nan
+
+                    #Add forecast data to dict if forecast hour isn't already there
+                    if fhr not in forecasts['fhr']:
+                        if model in ['OFCL','OFCI'] and fhr > 120:
+                            pass
+                        else:
+                            if lat == 0.0 and lon == 0.0:
+                                continue
+                            forecasts['fhr'].append(fhr)
+                            forecasts['lat'].append(lat)
+                            forecasts['lon'].append(lon)
+                            forecasts['vmax'].append(vmax)
+                            forecasts['mslp'].append(mslp)
+
+                            #Get storm type, if it can be determined
+                            if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
+                                stype = get_storm_type(vmax,False)
+                            if stype == 'TY': stype = 'HU'
+                            forecasts['type'].append(stype)
             
         #Determine ACE thus far (prior to initial forecast hour)
         ace = 0.0

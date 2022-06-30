@@ -303,7 +303,7 @@ class Plot:
             bound_w = 90.0
             bound_e = 180.0
             bound_s = 0.0
-            bound_n = 65.0
+            bound_n = 58.0
             
         #North Indian plot domain
         elif domain == "north_indian":

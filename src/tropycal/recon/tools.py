@@ -581,11 +581,12 @@ def decode_hdob(content):
     tmp = [i for j,i in enumerate(tmp) if len(i)>0]
     items = []
     for j,i in enumerate(tmp):
+        if j>3 and len(i[0]) >= 2 and i[0][:2] == "$$": break
         if j<=3:
             items.append(i)
         if j>3 and i[0][0].isdigit() and len(i) > 3:
             items.append(i)
-
+    
     missionname = items[2][1]
     data = {}
     data['time'] = [dt.strptime(items[2][-1]+i[0],'%Y%m%d%H%M%S') for i in items[3:]]

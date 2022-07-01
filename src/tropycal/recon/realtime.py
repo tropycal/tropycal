@@ -534,7 +534,7 @@ class Mission():
         
         return self.hdobs['status'].values[-1]
     
-    def plot_points(self,varname='wspd',in_storm=False,barbs=False,domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
+    def plot_points(self,varname='wspd',in_storm=False,barbs=False,plot_vdms=False,domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of High Density Observations (HDOBs) data points.
@@ -548,15 +548,17 @@ class Mission():
             * **"wspd"** = 30-second flight level wind (default)
             * **"pkwnd"** = 10-second flight level wind
             * **"p_sfc"** = extrapolated surface pressure
-        in_storm : bool
+        in_storm : bool, optional
             If True, only plots points considered within the storm, or all points if en route. Default is False (plot all points).
-        barbs : bool
+        barbs : bool, optional
             If True, plots wind barbs. If False (default), plots dots.
-        domain : str
+        plot_vdms : bool, optional
+            If True, plots a dot with the minimum MSLP (hPa) from all mission VDMs. Default is False.
+        domain : str, optional
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
-        ax : axes
+        ax : axes, optional
             Instance of axes to plot on. If none, one will be generated. Default is none.
-        cartopy_proj : ccrs
+        cartopy_proj : ccrs, optional
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
             
         Other Parameters
@@ -608,8 +610,14 @@ class Mission():
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
             cartopy_proj = self.plot_obj.proj
         
+        #Get VDMs
+        if plot_vdms:
+            vdms = self.vdms
+        else:
+            vdms = []
+        
         #Plot recon
-        plot_ax = self.plot_obj.plot_points(PseudoStorm(),dfRecon,domain,barbs=barbs,varname=varname,radlim=None,ax=ax,prop=prop,map_prop=map_prop,mission=True)
+        plot_ax = self.plot_obj.plot_points(PseudoStorm(),dfRecon,domain,barbs=barbs,varname=varname,radlim=None,ax=ax,prop=prop,map_prop=map_prop,mission=True,vdms=vdms)
         
         #Edit title
         plot_ax.set_title(f"Mission ID: {self.mission_id}",loc='left',fontsize=17,fontweight='bold')

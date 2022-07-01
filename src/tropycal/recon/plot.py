@@ -40,7 +40,7 @@ class ReconPlot(Plot):
         self.use_credit = True
                  
     def plot_points(self,storm,recon_data,domain="dynamic",varname='wspd',radlim=None,barbs=False,scatter=False,\
-                    ax=None,return_domain=False,prop={},map_prop={},mission=False):
+                    ax=None,return_domain=False,prop={},map_prop={},mission=False,vdms=[]):
         
         r"""
         Creates a plot of recon data points
@@ -159,6 +159,19 @@ class ReconPlot(Plot):
         #Plot latest point if from a Mission object
         if mission: plt.plot(recon_data['lon'].values[-1],recon_data['lat'].values[-1],'o',mfc='none',mec='k',mew=1.5,ms=10)
 
+        #Plot VDMs
+        if len(vdms) > 0:
+            for vdm_idx in range(len(vdms)):
+                vdm = vdms[vdm_idx]
+                
+                #Plot dot
+                #self.ax.plot(vdm['lon'],vdm['lat'],'o',ms=prop['vdm_ms'],mfc='orange',mec='k',mew=prop['vdm_ms']*0.1,
+                #             transform=ccrs.PlateCarree())
+                
+                #Transform coordinates for label
+                a = self.ax.text(vdm['lon'],vdm['lat'],str(int(np.round(vdm['Minimum Sea Level Pressure (hPa)']))),zorder=30,clip_on=True,fontsize=12,fontweight='bold',ha='center',va='center')
+                a.set_path_effects([patheffects.Stroke(linewidth=0.5,foreground='w'),patheffects.Normal()])
+        
         #--------------------------------------------------------------------------------------
         
         #Storm-centered plot domain

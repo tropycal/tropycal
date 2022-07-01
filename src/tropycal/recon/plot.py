@@ -40,7 +40,7 @@ class ReconPlot(Plot):
         self.use_credit = True
                  
     def plot_points(self,storm,recon_data,domain="dynamic",varname='wspd',radlim=None,barbs=False,scatter=False,\
-                    ax=None,return_domain=False,prop={},map_prop={},mission=False,vdms=[]):
+                    ax=None,return_domain=False,prop={},map_prop={},mission=False,vdms=[],mission_id=''):
         
         r"""
         Creates a plot of recon data points
@@ -213,6 +213,8 @@ class ReconPlot(Plot):
         except:
             vartitle = [varname]
         self.ax.set_title(f"{storm_type} {storm_data['name']}\n" + 'Recon: '+' '.join(vartitle),loc='left',fontsize=17,fontweight='bold')
+        if mission_id != '':
+            self.ax.set_title(f"Mission ID: {mission_id}\nRecon: " + ' '.join(vartitle),loc='left',fontsize=17,fontweight='bold')
 
         #Add right title
         start_date = dt.strftime(min(recon_data['time']),'%H:%M UTC %d %b %Y')

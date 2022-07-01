@@ -617,10 +617,7 @@ class Mission():
             vdms = []
         
         #Plot recon
-        plot_ax = self.plot_obj.plot_points(PseudoStorm(),dfRecon,domain,barbs=barbs,varname=varname,radlim=None,ax=ax,prop=prop,map_prop=map_prop,mission=True,vdms=vdms)
-        
-        #Edit title
-        plot_ax.set_title(f"Mission ID: {self.mission_id}",loc='left',fontsize=17,fontweight='bold')
+        plot_ax = self.plot_obj.plot_points(PseudoStorm(),dfRecon,domain,barbs=barbs,varname=varname,radlim=None,ax=ax,prop=prop,map_prop=map_prop,mission=True,vdms=vdms,mission_id=self.mission_id)
         
         #Return axis
         return plot_ax

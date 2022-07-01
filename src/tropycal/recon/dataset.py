@@ -591,7 +591,10 @@ class hdobs:
                   f'\nUnable to decode {unreadable} files')
         
         #Sort data by time
-        self.data.sort_values(['time'],inplace=True)
+        try:
+            self.data.sort_values(['time'],inplace=True)
+        except:
+            pass
         
         try:
             self._recenter()

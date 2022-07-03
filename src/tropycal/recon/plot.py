@@ -140,13 +140,13 @@ class ReconPlot(Plot):
         
         #Plot recon data as specified
         if barbs:
-            dataSort = recon_data.sort_values(by='wspd').reset_index(drop=True)
+            dataSort = recon_data.sort_values(by=prop['sortby']).reset_index(drop=True)
             if radlim is not None: dataSort = dataSort.loc[dataSort['distance']<=radlim]
             norm = mlib.colors.Normalize(vmin=vmin, vmax=vmax)
-            colors = cmap(norm(dataSort['wspd'].values))
+            colors = cmap(norm(dataSort[prop['sortby']].values))
             colors = [tuple(i) for i in colors]
             qv = plt.barbs(dataSort['lon'],dataSort['lat'],
-                           *uv_from_wdir(dataSort['wspd'],dataSort['wdir']),color=colors,length=5,linewidth=0.5)
+                           *uv_from_wdir(dataSort[prop['sortby']],dataSort['wdir']),color=colors,length=5,linewidth=0.5)
             cbmap = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
             cbmap.set_array([])
 
@@ -654,9 +654,10 @@ def plot_skewt(dict_list,storm_name_title):
 
     def time2text(time):
         try:
-            return f'{data["TOPtime"]:%H:%M UTC %d %b %Y}'
+            return f'{time:%H:%M UTC %d %b %Y}'
         except:
             return 'N/A'
+    
     def location_text(indict):
         try:
             loc = indict['location'].lower()
@@ -664,9 +665,9 @@ def plot_skewt(dict_list,storm_name_title):
             return ''
         if loc == 'eyewall':
             return r"$\bf{"+loc.capitalize()+'}$, '
-            #return r"$\bf{"+indict['octant']+'}$ '+r"$\bf{"+loc.capitalize()+'}$, '
         else:
             return r"$\bf{"+loc.capitalize()+'}$, '
+    
     degsym = u"\u00B0"
     def latlon2text(lat,lon):
         NA = False
@@ -692,10 +693,12 @@ def plot_skewt(dict_list,storm_name_title):
             return int(x[:2])
         except:
             return x[:2]
+    
     def wind_components(speed,direction):
         u = -speed * np.sin(direction*np.pi/180)
         v = -speed * np.cos(direction*np.pi/180)
         return u,v
+    
     def deg2dir(x):
         dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW']
         try:
@@ -703,21 +706,25 @@ def plot_skewt(dict_list,storm_name_title):
             return dirs[idx]
         except:
             return 'N/A'
+    
     def rh_from_dp(t,td):
         rh = np.exp(17.67 * (td) / (td+273.15 - 29.65)) / np.exp(17.67 * (t) / (t+273.15 - 29.65))
         return rh*100
+    
     def cellcolor(color,value):
         if np.isnan(value):
             return 'w'
         else:
             return list(color[:3])+[.5]
+    
     def skew_t(t,p):
         t0 = np.log(p/1050)*80/np.log(100/1050)
         return t0+t,p
 
     figs = []
     for data in dict_list:
-        # Loop through dropsondes
+        
+        #Retrieve dropsondes data
         df = data['levels'].sort_values('pres',ascending=True)
         Pres = df['pres']
         Temp = df['temp']
@@ -747,11 +754,17 @@ def plot_skewt(dict_list,storm_name_title):
 
         ax1 = fig.add_subplot(gs[:,0])
 
+        #Determine dropsonde time
+        if np.isnan(data["TOPtime"]):
+            use_time = data["BOTTOMtime"]
+        else:
+            use_time = data["TOPtime"]
+        
         #Add title for main axis
         storm_name_title = storm_name_title.replace("DDD",str(data["obsnum"]))
         storm_name_title = storm_name_title.replace("MMM",str(mission2text(data["mission"])))
         ax1.set_title(storm_name_title,loc='left',fontsize=17,fontweight='bold')
-        ax1.set_title(f'Drop time: {time2text(data["TOPtime"])}'+\
+        ax1.set_title(f'Drop time: {time2text(use_time)}'+\
                       f'\nDrop location: {location_text(data)}{latlon2text(data["lat"],data["lon"])}',loc='right',fontsize=13)
         plt.yscale('log')
         plt.yticks(yticks,[f'{i:d}' for i in yticks],fontsize=12)

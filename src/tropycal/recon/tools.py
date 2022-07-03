@@ -572,27 +572,121 @@ def time_series_plot(varname):
     
     return {'color':color,'name':name,'full_name':full_name}
 
-#============================================================================================
-# Decoding recon
-#============================================================================================
+#=======================================================================================================
+# Decoding HDOBs
+#=======================================================================================================
 
-def decode_hdob(content):
+def decode_hdob_2006(content,strdate,mission_row=3):
+    
+    r"""
+    Function for decoding HDOBs in the format between 2006 and early 2007.
+    """
+    
+    def check_error(string):
+        if '/' in string: return True
+        if ';' in string: return True
+        if 'off' in string: return True
+        return False
+    
+    #Split items by lines
+    temp = [i.split() for i in content.split('\n')]
+    temp = [i for j,i in enumerate(temp) if len(i)>0]
+    items = []
+    found_sxxx = False
+    for j,i in enumerate(temp):
+        if j>mission_row and len(i[0]) >= 2 and i[0][:2] == "$$": break
+        if j>mission_row+12 and len(i[0]) >= 3 and i[0][:3] == "000": break #avoid reading in extra set of HDOBs
+        if j<=mission_row:
+            if len(i[0]) >= 4 and i[0][:4] == "SXXX":
+                if found_sxxx == False:
+                    found_sxxx = True
+                    items.append(i)
+            else:
+                items.append(i)
+        if j>mission_row and i[0][0].isdigit() and len(i) > 8:
+            items.append(i)
+    
+    #Parse dates
+    missionname = items[2][1]
+    data = {}
+    data['time'] = [dt.strptime(strdate+(i[0].split('.')[0])+'30','%Y%m%d%H%M%S') if '.' in i[0] else dt.strptime(strdate+i[0]+'00','%Y%m%d%H%M%S') for i in items[3:]]
+    if data['time'][0].hour>12 and data['time'][-1].hour<12:
+        data['time'] = [t+timedelta(days=[0,1][t.hour<12]) for t in data['time']]
+
+    #Derive plane altitude using D-value
+    altitude = []
+    for i in items[3:]:
+        if '/' in i[3] or '/' in i[4]:
+            altitude.append(np.nan)
+        else:
+            pres_altitude = int(i[3])
+            d_value = int(i[4][1:])*-1 if i[4] == '5' else int(i[4][1:])
+            altitude.append(pres_altitude+d_value)
+    data['plane_z'] = altitude
+    
+    #Parse full data
+    data['lat'] = [np.nan if check_error(i[1]) else round((float(i[1][:-3])+float(i[1][-3:-1])/60)*[-1,1][i[1][-1]=='N'],2) \
+                   for i in items[3:]]
+    data['lon'] = [np.nan if check_error(i[2]) else round((float(i[2][:-3])+float(i[2][-3:-1])/60)*[-1,1][i[2][-1]=='E'],2) \
+                   for i in items[3:]]
+    data['temp'] = [np.nan if check_error(i[6]) else round(float(i[7])*0.1,1) for i in items[3:]]
+    data['dwpt'] = [np.nan if check_error(i[7]) else round(float(i[8])*0.1,1) for i in items[3:]]
+    data['wdir'] = [np.nan if check_error(i[5]) else round(float(i[5]),0) for i in items[3:]]
+    data['wspd'] = [np.nan if check_error(i[6]) else round(float(i[6]),0) for i in items[3:]]
+    data['pkwnd'] = [np.nan if check_error(i[9]) else round(float(i[9]),0) for i in items[3:]]
+    
+    #Data not available prior to 2007
+    data['plane_p'] = [np.nan for i in items[3:]]
+    data['p_sfc'] = [np.nan for i in items[3:]]
+    data['sfmr'] = [np.nan for i in items[3:]]
+    data['rain'] = [np.nan for i in items[3:]]
+    data['flag'] = [[] for i in items[3:]]
+
+    #Ignore entries with lat/lon of 0
+    orig_lat = np.copy(data['lat'])
+    orig_lon = np.copy(data['lon'])
+    for key in data.keys():
+        data[key] = [data[key][i] for i in range(len(orig_lat)) if orig_lat[i] != 0 and orig_lon[i] != 0 and np.isnan(orig_lat[i]) == False and np.isnan(orig_lat[i]) == False]
+
+    #Identify mission number and ID
+    content_split = content.split("\n")
+    mission_id = '-'.join((content_split[mission_row].replace("  "," ")).split(" ")[:3])
+    data['mission'] = [missionname[:2]]*len(data['time'])
+    data['mission_id'] = [mission_id]*len(data['time'])
+
+    #remove nan's for lat/lon coordinates
+    return_data = pd.DataFrame.from_dict(data).reset_index()
+    return_data = return_data.dropna(subset=['lat', 'lon'])
+
+    return return_data 
+    
+
+def decode_hdob(content,mission_row=3):
+    
+    r"""
+    Function for decoding HDOBs in the present format (2007-present).
+    """
+    
+    #Split items by lines
     tmp = [i.split() for i in content.split('\n')]
     tmp = [i for j,i in enumerate(tmp) if len(i)>0]
     items = []
     for j,i in enumerate(tmp):
-        if j>3 and len(i[0]) >= 2 and i[0][:2] == "$$": break
-        if j<=3:
+        if j>mission_row and len(i[0]) >= 2 and i[0][:2] == "$$": break
+        if j>mission_row+12 and len(i[0]) >= 3 and i[0][:3] == "000": break #avoid reading in extra set of HDOBs
+        if j<=mission_row:
             items.append(i)
-        if j>3 and i[0][0].isdigit() and len(i) > 3:
+        if j>mission_row and i[0][0].isdigit() and len(i) > 3:
             items.append(i)
     
+    #Parse dates
     missionname = items[2][1]
     data = {}
     data['time'] = [dt.strptime(items[2][-1]+i[0],'%Y%m%d%H%M%S') for i in items[3:]]
     if data['time'][0].hour>12 and data['time'][-1].hour<12:
         data['time'] = [t+timedelta(days=[0,1][t.hour<12]) for t in data['time']]
 
+    #Parse full data
     data['lat'] = [np.nan if '/' in i[1] else round((float(i[1][:-3])+float(i[1][-3:-1])/60)*[-1,1][i[1][-1]=='N'],2) \
                    for i in items[3:]]
     data['lon'] = [np.nan if '/' in i[2] else round((float(i[2][:-3])+float(i[2][-3:-1])/60)*[-1,1][i[2][-1]=='E'],2) \
@@ -608,6 +702,9 @@ def decode_hdob(content):
     data['pkwnd'] = [np.nan if '/' in i[9] else round(float(i[9]),0) for i in items[3:]]
     data['sfmr'] = [np.nan if '/' in i[10] else round(float(i[10]),0) for i in items[3:]]
     data['rain'] = [np.nan if '/' in i[11] else round(float(i[11]),0) for i in items[3:]]
+    
+    #Fix erroneous SFMR
+    data['sfmr'] = [np.nan if i > 300 else i for i in data['sfmr']]
 
     #Ignore entries with lat/lon of 0
     orig_lat = np.copy(data['lat'])
@@ -615,6 +712,7 @@ def decode_hdob(content):
     for key in data.keys():
         data[key] = [data[key][i] for i in range(len(orig_lat)) if orig_lat[i] != 0 and orig_lon[i] != 0]
 
+    #Add flag
     data['flag']=[]
     for i in items[3:]:
         flag = []
@@ -635,16 +733,21 @@ def decode_hdob(content):
         data['p_sfc']=[np.nan]*len(data['p_sfc'])
         data['flag'] = [d.append('p_sfc') for d in data['flag']]
 
+    #Identify mission number and ID
     content_split = content.split("\n")
-    mission_id = '-'.join((content_split[3].replace("  "," ")).split(" ")[:3])
+    mission_id = '-'.join((content_split[mission_row].replace("  "," ")).split(" ")[:3])
     data['mission'] = [missionname[:2]]*len(data['time'])
     data['mission_id'] = [mission_id]*len(data['time'])
 
-    return_data = pd.DataFrame.from_dict(data).reset_index()
     #remove nan's for lat/lon coordinates
+    return_data = pd.DataFrame.from_dict(data).reset_index()
     return_data = return_data.dropna(subset=['lat', 'lon'])
 
     return return_data 
+
+#=======================================================================================================
+# Decoding VDMs
+#=======================================================================================================
 
 def decode_vdm(content,date):
     data = {}
@@ -664,7 +767,7 @@ def decode_vdm(content,date):
                 return x.lower()
 
     for line in lines:
-
+        
         if RemarksNext:
             data['Remarks'] += (' '+line)
         if LonNext:
@@ -675,12 +778,21 @@ def decode_vdm(content,date):
         if 'VORTEX DATA MESSAGE' in line:
             stormid = line.split()[-1]
         if line[:2] == 'A.':
-            info = line[3:].split('/')
-            day = int(info[0])
-            month = (date.month-int(day-date.day>15)-1)%12+1
-            year = date.year-int(date.month-int(day-date.day>15)==0)
-            hour,minute,second = [int(i) for i in (info[1].split("Z")[0]).split(':')]
-            data['time'] = dt(year,month,day,hour,minute,second)
+            if ':' in line[3:]:
+                info = line[3:].split('/')
+                day = int(info[0])
+                month = (date.month-int(day-date.day>15)-1)%12+1
+                year = date.year-int(date.month-int(day-date.day>15)==0)
+                hour,minute,second = [int(i) for i in (info[1].split("Z")[0]).split(':')]
+                data['time'] = dt(year,month,day,hour,minute,second)
+            else:
+                info = line[3:].split('/')
+                day = int(info[0])
+                month = (date.month-int(day-date.day>15)-1)%12+1
+                year = date.year-int(date.month-int(day-date.day>15)==0)
+                hour = int(info[1].split("Z")[0][:2])
+                minute = int(info[1].split("Z")[0][2:4])
+                data['time'] = dt(year,month,day,hour,minute)
 
         if line[:2] == 'B.':
             info = line[3:].split()
@@ -729,10 +841,16 @@ def decode_vdm(content,date):
                     shape = ''.join([i for i in info[:2] if not i.isdigit()])
                     size = info[len(shape):]
                     if shape=='C':
-                        data.update({'Eye Shape':'circular','Eye Diameter (nmi)':float(size)})
+                        if '-' in size:
+                            data.update({'Eye Shape':'circular','Eye Diameter (nmi)':float(size.split('-')[0])})
+                        else:
+                            data.update({'Eye Shape':'circular','Eye Diameter (nmi)':float(size)})
                     elif shape=='CO':
                         data['Eye Shape']='concentric'
-                        data.update({f'Eye Diameter {i+1} (nmi)':float(s) for i,s in enumerate(size.split('-'))})
+                        if '-' in size:
+                            data.update({f'Eye Diameter {i+1} (nmi)':float(s) for i,s in enumerate(size.split('-'))})
+                        else:
+                            data.update({f'Eye Diameter {i+1} (nmi)':float(s) for i,s in enumerate(size.split(' ')[1:])})
                     elif shape=='E':
                         einfo = size.split('/')
                         data.update({'Eye Shape':'elliptical','Orientation':float(einfo[0])*10,\
@@ -784,10 +902,16 @@ def decode_vdm(content,date):
                     shape = ''.join([i for i in info[:2] if not i.isdigit()])
                     size = info[len(shape):]
                     if shape=='C':
-                        data.update({'Eye Shape':'circular','Eye Diameter (nmi)':float(size)})
+                        if '-' in size:
+                            data.update({'Eye Shape':'circular','Eye Diameter (nmi)':float(size.split('-')[0])})
+                        else:
+                            data.update({'Eye Shape':'circular','Eye Diameter (nmi)':float(size)})
                     elif shape=='CO':
                         data['Eye Shape']='concentric'
-                        data.update({f'Eye Diameter {i+1} (nmi)':float(s) for i,s in enumerate(size.split('-'))})
+                        if '-' in size:
+                            data.update({f'Eye Diameter {i+1} (nmi)':float(s) for i,s in enumerate(size.split('-'))})
+                        else:
+                            data.update({f'Eye Diameter {i+1} (nmi)':float(s) for i,s in enumerate(size.split(' ')[1:])})
                     elif shape=='E':
                         einfo = size.split('/')
                         data.update({'Eye Shape':'elliptical','Orientation':float(einfo[0])*10,\
@@ -856,6 +980,10 @@ def decode_vdm(content,date):
     
     return missionname, data
 
+#=======================================================================================================
+# Decoding dropsondes
+#=======================================================================================================
+
 def decode_dropsonde(content,date):
 
     NOLOCFLAG = False
@@ -901,8 +1029,12 @@ def decode_dropsonde(content,date):
         return temp,dwpt
 
     def _wdirwspd(item):
-        wdir = round(np.floor(float(item[:3])/5)*5,0) if '/' not in item else np.nan
-        wspd = round(float(item[3:])+100*(float(item[2])%5),0) if '/' not in item else np.nan
+        try:
+            wdir = round(np.floor(float(item[:3])/5)*5,0) if '/' not in item else np.nan
+            wspd = round(float(item[3:])+100*(float(item[2])%5),0) if '/' not in item else np.nan
+        except:
+            wdir = np.nan
+            wspd = np.nan
         return wdir,wspd
 
     def _standard(I3):
@@ -1022,6 +1154,7 @@ def decode_dropsonde(content,date):
                 data['WL150spd'] = wspd
             if 'LST' in items:
                 tmp = items[items.index('LST')+2]
+                tmp = tmp.replace('=','')
                 data['LSThgt'] = round(float(tmp),0)
             if 'AEV' in items:
                 tmp = items[items.index('AEV')+1]
@@ -1065,8 +1198,8 @@ def decode_dropsonde(content,date):
     
     return missionname, data
 
-def get_status(plane_p):
-    
+def get_status(plane_p,use_z=False):
+
     status = []
     in_storm = False
     finished = False
@@ -1074,33 +1207,70 @@ def get_status(plane_p):
         if idx < 8:
             status.append('En Route')
             continue
-        if np.nanmin(plane_p[:idx+1]) >= 850:
-            status.append('En Route')
+        if np.isnan(pres):
+            status.append(status[-1])
             continue
-        if np.abs(plane_p[idx] - plane_p[idx-8]) < 10:
-            if finished:
-                if idx > 40 and pres < 800 and pres > 650 and np.nanmax(np.abs(plane_p[idx-40:idx] - plane_p[idx-39:idx+1])) < 20:
-                    if idx > 100 and 'In Storm' in status[-100:]:
-                        finished = False
+        
+        #Use default pressure method
+        if use_z == False:
+            if np.nanmin(plane_p[:idx+1]) >= 850:
+                status.append('En Route')
+                continue
+            if np.abs(plane_p[idx] - plane_p[idx-8]) < 10:
+                if finished:
+                    if idx > 40 and pres < 800 and pres > 650 and np.nanmax(np.abs(plane_p[idx-40:idx] - plane_p[idx-39:idx+1])) < 20:
+                        if idx > 100 and 'In Storm' in status[-100:]:
+                            finished = False
+                        else:
+                            status.append('Finished')
                     else:
                         status.append('Finished')
-                else:
-                    status.append('Finished')
-            if finished == False:
-                if pres < 650:
+                if finished == False:
+                    if pres < 650:
+                        status.append('En Route')
+                    else:
+                        in_storm = True
+                        status.append('In Storm')
+            else:
+                if in_storm == False:
                     status.append('En Route')
                 else:
-                    in_storm = True
-                    status.append('In Storm')
+                    if pres < 650:
+                        finished = True
+                    if finished == True:
+                        status.append('Finished')
+                    else:
+                        status.append('In Storm')
+        
+        #Use height method
         else:
-            if in_storm == False:
+            if np.nanmax(plane_p[:idx+1]) <= 1515:
                 status.append('En Route')
+                continue
+            if np.abs(plane_p[idx] - plane_p[idx-8]) < 60:
+                if finished:
+                    if idx > 40 and pres > 2050 and pres < 3820 and np.nanmin(np.abs(plane_p[idx-40:idx] - plane_p[idx-39:idx+1])) < 120:
+                        if idx > 100 and 'In Storm' in status[-100:]:
+                            finished = False
+                        else:
+                            status.append('Finished')
+                    else:
+                        status.append('Finished')
+                if finished == False:
+                    if pres > 3820:
+                        status.append('En Route')
+                    else:
+                        in_storm = True
+                        status.append('In Storm')
             else:
-                if pres < 650:
-                    finished = True
-                if finished == True:
-                    status.append('Finished')
+                if in_storm == False:
+                    status.append('En Route')
                 else:
-                    status.append('In Storm')
+                    if pres > 3820:
+                        finished = True
+                    if finished == True:
+                        status.append('Finished')
+                    else:
+                        status.append('In Storm')
         
     return status

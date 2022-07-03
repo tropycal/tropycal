@@ -1,7 +1,7 @@
 import urllib3
 import requests
 import pandas as pd
-from datetime import datetime as dt,timedelta
+import datetime as dt
 import matplotlib.pyplot as plt
 
 from .plot import *
@@ -70,18 +70,18 @@ class RealtimeRecon():
         
         #Start timing
         print("--> Searching for active missions")
-        timer_start = dt.now()
+        timer_start = dt.datetime.now()
 
         #Set URLs for reading data
         self.urls = {
-            'hdobs':f'https://www.nhc.noaa.gov/archive/recon/{dt.utcnow().year}/AHONT1/',
-            'dropsondes':f'https://www.nhc.noaa.gov/archive/recon/{dt.utcnow().year}/REPNT3/',
-            'vdms':f'https://www.nhc.noaa.gov/archive/recon/{dt.utcnow().year}/REPNT2/'
+            'hdobs':f'https://www.nhc.noaa.gov/archive/recon/{dt.datetime.utcnow().year}/AHONT1/',
+            'dropsondes':f'https://www.nhc.noaa.gov/archive/recon/{dt.datetime.utcnow().year}/REPNT3/',
+            'vdms':f'https://www.nhc.noaa.gov/archive/recon/{dt.datetime.utcnow().year}/REPNT2/'
         }
 
         #Start time set by hour window
-        start_time_request = dt.utcnow() - timedelta(hours=hours)
-        start_time = dt.utcnow() - timedelta(hours=hours+12)
+        start_time_request = dt.datetime.utcnow() - dt.timedelta(hours=hours)
+        start_time = dt.datetime.utcnow() - dt.timedelta(hours=hours+12)
         self.start_time_request = start_time_request
 
         #Retrieve list of files in URL and filter by storm dates
@@ -93,7 +93,7 @@ class RealtimeRecon():
             for line in content:
                 if ".txt" in line: file_list.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
             del content
-            file_list = sorted([i for i in file_list if dt.strptime(i[1][:10],'%Y%m%d%H') >= start_time],key=lambda x: x[1])
+            file_list = sorted([i for i in file_list if dt.datetime.strptime(i[1][:10],'%Y%m%d%H') >= start_time],key=lambda x: x[1])
             files[key] = [self.urls[key]+'.'.join(l) for l in file_list]
         self.files = files
 
@@ -130,7 +130,7 @@ class RealtimeRecon():
 
             #Construct mission ID
             mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
-            date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
+            date = dt.datetime.strptime((file.split('.')[-2])[:8],'%Y%m%d')
             try:
                 blank, data = decode_vdm(content,date)
             except:
@@ -147,7 +147,7 @@ class RealtimeRecon():
 
             #Construct mission ID
             mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
-            date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
+            date = dt.datetime.strptime((file.split('.')[-2])[:8],'%Y%m%d')
             try:
                 blank, data = decode_dropsonde(content,date)
             except:
@@ -165,7 +165,7 @@ class RealtimeRecon():
             self.missions[key]['hdobs'].sort_values(['time'],inplace=True)
         
         #Save current time
-        self.time = dt.now()
+        self.time = dt.datetime.now()
         
         #Add attributes
         self.attrs = {
@@ -173,7 +173,7 @@ class RealtimeRecon():
             'time':self.time,
         }
         
-        print(f"--> Completed retrieving active missions ({(dt.now()-timer_start).total_seconds():.1f} seconds)")
+        print(f"--> Completed retrieving active missions ({(dt.datetime.now()-timer_start).total_seconds():.1f} seconds)")
         
     def update(self):
         
@@ -186,10 +186,10 @@ class RealtimeRecon():
         """
         
         #Start timing
-        timer_start = dt.now()
+        timer_start = dt.datetime.now()
         
         #Start time set by hour window
-        start_time = dt.utcnow() - timedelta(hours=24)
+        start_time = dt.datetime.utcnow() - dt.timedelta(hours=24)
         if start_time < self.start_time_request: start_time = self.start_time_request
 
         #Retrieve list of files in URL and filter by storm dates
@@ -201,7 +201,7 @@ class RealtimeRecon():
             for line in content:
                 if ".txt" in line: file_list.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
             del content
-            file_list = sorted([i for i in file_list if dt.strptime(i[1][:10],'%Y%m%d%H') >= start_time],key=lambda x: x[1])
+            file_list = sorted([i for i in file_list if dt.datetime.strptime(i[1][:10],'%Y%m%d%H') >= start_time],key=lambda x: x[1])
             files[key] = [self.urls[key]+'.'.join(l) for l in file_list if self.urls[key]+'.'.join(l) not in self.files[key]]
             self.files[key] += files[key]
         
@@ -237,7 +237,7 @@ class RealtimeRecon():
 
             #Construct mission ID
             mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
-            date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
+            date = dt.datetime.strptime((file.split('.')[-2])[:8],'%Y%m%d')
             blank, data = decode_vdm(content,date)
             if mission_id in self.missions.keys(): self.missions[mission_id]['vdms'].append(data)
 
@@ -251,7 +251,7 @@ class RealtimeRecon():
 
             #Construct mission ID
             mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
-            date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
+            date = dt.datetime.strptime((file.split('.')[-2])[:8],'%Y%m%d')
             blank, data = decode_dropsonde(content,date)
             if mission_id in self.missions.keys(): self.missions[mission_id]['dropsondes'].append(data)
         
@@ -259,14 +259,14 @@ class RealtimeRecon():
         keys = [k for k in self.missions.keys()]
         for key in keys:
             end_date = pd.to_datetime(self.missions[key]['hdobs']['time'].values[-1])
-            start_time_request = dt.utcnow() - timedelta(hours=self.hours)
+            start_time_request = dt.datetime.utcnow() - dt.timedelta(hours=self.hours)
             if end_date < start_time_request: del self.missions[key]
         
         #Sort each mission by date
         for key in self.missions.keys():
             self.missions[key]['hdobs'].sort_values(['time'],inplace=True)
         
-        print(f"--> Completed updating mission data ({(dt.now()-timer_start).total_seconds():.1f} seconds)")
+        print(f"--> Completed updating mission data ({(dt.datetime.now()-timer_start).total_seconds():.1f} seconds)")
     
     def get_mission(self,mission_id):
         
@@ -322,7 +322,7 @@ class RealtimeRecon():
         data = {}
         for mission_id in self.missions.keys():
             sub_df = self.missions[mission_id]['hdobs'].tail(20)
-            if pd.to_datetime(sub_df['time'].values[-1]) < dt.utcnow()-timedelta(hours=1): continue
+            if pd.to_datetime(sub_df['time'].values[-1]) < dt.datetime.utcnow()-dt.timedelta(hours=1): continue
             try:
                 max_sfmr = np.nanmax([val for i,val in enumerate(sub_df['sfmr']) if 'sfmr' not in sub_df['flag'].values[i]])
             except:
@@ -413,7 +413,6 @@ class Mission():
         emdash = '\u2014'
         summary_keys = {'Dropsondes':len(self.dropsondes),
                         'VDMs':len(self.vdms),
-                        'Time range':f"{time_range[0]:%b-%d %H:%M} {emdash} {time_range[1]:%b-%d %H:%M}",
                         'Max 30sec flight level wind':f"{max_wspd} knots",
                         'Max 10sec flight level wind':f"{max_pkwnd} knots",
                         'Max SFMR wind':f"{max_sfmr} knots",
@@ -441,22 +440,32 @@ class Mission():
         self.vdms = data['vdms']
         self.hdobs = data['hdobs']
         self.dropsondes = data['dropsondes']
+        
+        #Retrieve attributes
         self.mission_id = mission_id
         self.aircraft = data['aircraft']
         self.storm_name = data['storm_name']
+        self.mission_id = mission_id
+        self.start_time = pd.to_datetime(np.nanmin(self.hdobs['time']))
+        self.end_time = pd.to_datetime(np.nanmax(self.hdobs['time']))
         
         #Retrieve attributes
         self.attrs = {
             'aircraft':data['aircraft'],
             'storm_name':data['storm_name'],
             'mission_id':mission_id,
+            'start_time': pd.to_datetime(np.nanmin(self.hdobs['time'])),
+            'end_time': pd.to_datetime(np.nanmax(self.hdobs['time'])),
         }
         
         #Add status for mission
         if self.aircraft.upper() == 'NOAA9':
             values = ['Upper Air' for i in self.hdobs['plane_p'].values]
         else:
-            values = get_status(self.hdobs['plane_p'].values)
+            if self.attrs['start_time'].year >= 2007:
+                values = get_status(self.hdobs['plane_p'].values)
+            else:
+                values = get_status(self.hdobs['plane_z'].values,use_z=True)
         try:
             del self.hdobs['status']
         except:
@@ -724,7 +733,7 @@ class Mission():
         #Filter by time or realtime flag
         if realtime:
             end_time = pd.to_datetime(df['time'].values[-1])
-            df = df.loc[(df['time'] >= end_time-timedelta(hours=2)) & (df['time'] <= end_time)]
+            df = df.loc[(df['time'] >= end_time-dt.timedelta(hours=2)) & (df['time'] <= end_time)]
         elif time is not None:
             df = df.loc[(df['time'] >= time[0]) & (df['time'] <= time[1])]
         if len(df) == 0: raise ValueError("Time range provided is invalid.")

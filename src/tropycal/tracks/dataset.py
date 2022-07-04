@@ -211,9 +211,50 @@ class TrackDataset:
                 self.basin = 'all'
         
         #Read in best track data
-        if include_btk == True and basin in ['north_atlantic','east_pacific']:
+        if include_btk == True and basin in ['north_atlantic','east_pacific','both']:
             self.__read_btk()
-            
+        
+        #Delete duplicate entries
+        check = []
+        check_ids = []
+        keys = [k for k in self.data.keys()]
+        for key in keys:
+            if self.data[key]['name'].lower() == 'unnamed': continue
+            check_id = f"{self.data[key]['name']},{self.data[key]['year']},{self.data[key]['date'][0].month}"
+            if check_id not in check:
+                check.append(check_id)
+                check_ids.append(key)
+            else:
+                existing_id = check_ids[check.index(check_id)]
+                if len(self.data[key]['vmax']) > len(self.data[existing_id]['vmax']):
+                    del self.data[existing_id]
+                    check_ids.pop(check_ids.index(existing_id))
+                    check_ids.append(key)
+                else:
+                    del self.data[key]
+        
+        #Join storms for atlantic-pacific crossovers
+        if self.basin == 'both':
+            join_keys = [['AL081993','EP141993'],['AL181971','EP151971'],['AL141974','EP151974'],['AL161978','EP151978'],['AL111988','EP131988'],['AL031996','EP071996']]
+            for key in join_keys:
+
+                #Append East Pacific data to Atlantic data
+                for idx,i_time in enumerate(self.data[key[1]]['date']):
+                    if i_time in self.data[key[0]]['date']: continue
+                    for var in [i for i in self.data[key[1]].keys() if isinstance(self.data[key[1]][i],list)]:
+                        self.data[key[0]][var].append(self.data[key[1]][var][idx])
+                    if i_time.strftime('%H%M') in constants.STANDARD_HOURS and self.data[key[1]]['type'][idx] in constants.NAMED_TROPICAL_STORM_TYPES:
+                        self.data[key[0]]['ace'] += accumulated_cyclone_energy(self.data[key[1]]['vmax'][idx])
+
+                #Rename storm if needed
+                if self.data[key[1]]['name'].lower() == 'unnamed' or np.nanmax(self.data[key[1]]['vmax']) < 35:
+                    pass
+                else:
+                    self.data[key[0]]['name'] = f"{self.data[key[0]]['name']}-{self.data[key[1]]['name']}"
+
+                #Remove Pacific storm from data
+                del self.data[key[1]]
+        
         #Add keys of all storms to object
         keys = self.data.keys()
         self.keys = [k for k in keys]
@@ -573,7 +614,10 @@ class TrackDataset:
                 self.data[stormid]['mslp'].append(btk_mslp)
                 
                 #Add basin
-                origin_basin = self.basin + ''
+                if self.basin == 'both':
+                    origin_basin = 'north_atlantic' if stormid[0:2] == 'AL' else 'east_pacific'
+                else:
+                    origin_basin = self.basin + ''
                 if self.basin == 'east_pacific':
                     check_basin = get_basin(self.data[stormid]['lat'][0],self.data[stormid]['lon'][0],self.basin)
                     if check_basin != self.basin: origin_basin = 'north_atlantic'

@@ -42,17 +42,33 @@ class TrackDataset:
     Parameters
     ----------
     basin : str
-        Ocean basin to load data for. Can be any of the following:
+        Ocean basin(s) to load data for. Can be any of the following:
         
-        * **north_atlantic** - HURDAT2, ibtracs
-        * **east_pacific** - HURDAT2, ibtracs
-        * **west_pacific** - ibtracs
-        * **north_indian** - ibtracs
-        * **south_indian** - ibtracs
-        * **australia** - ibtracs
-        * **south_pacific** - ibtracs
-        * **south_america** - ibtracs
-        * **all** - ibtracs
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Name
+             - Source(s)
+           * - "north_atlantic"
+             - HURDAT2, IBTrACS
+           * - "east_pacific"
+             - HURDAT2, IBTrACS
+           * - "both"
+             - HURDAT2 ("north_atlantic" & "east_pacific" combined)
+           * - "west_pacific"
+             - IBTrACS
+           * - "north_indian"
+             - IBTrACS
+           * - "south_indian"
+             - IBTrACS
+           * - "australia"
+             - IBTrACS
+           * - "south_america"
+             - IBTrACS
+           * - "all"
+             - IBTrACS
+
     source : str
         Data source to read in. Default is HURDAT2.
         
@@ -1368,7 +1384,14 @@ class TrackDataset:
         #Search for corresponding entry in keys
         basin_list = []
         for key in self.keys:
-            temp_year = self.data[key]['season']
+            
+            #Get year for 'all' (global data), otherwise get season
+            if basin == 'all':
+                temp_year = int(year) if int(year) in [i.year for i in self.data[key]['date']] else 0
+            else:
+                temp_year = self.data[key]['season']
+            
+            #Proceed if year/season is a match
             if temp_year == int(year):
                 temp_basin = self.data[key]['basin']
                 temp_wmo_basin = self.data[key]['wmo_basin']
@@ -1391,11 +1414,11 @@ class TrackDataset:
         first_key = [k for k in season_dict.keys()][0]
         season_info = {}
         season_info['year'] = year
-        season_info['basin'] = max(set(basin_list), key=basin_list.count)
+        season_info['basin'] = max(set(basin_list), key=basin_list.count) if self.basin not in ['all','both'] else self.basin
         season_info['source_basin'] = season_dict[first_key]['basin']
         season_info['source'] = season_dict[first_key]['source']
         season_info['source_info'] = season_dict[first_key]['source_info']
-                
+        
         #Return object
         return Season(season_dict,season_info)
                    

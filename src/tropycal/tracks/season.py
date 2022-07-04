@@ -308,9 +308,9 @@ class Season:
         
         #Initialize dict with info about all of year's storms
         if multi_season == False:
-            hurdat_year = {'id':[],'operational_id':[],'name':[],'max_wspd':[],'min_mslp':[],'category':[],'ace':[]}
+            summary_dict = {'id':[],'operational_id':[],'name':[],'max_wspd':[],'min_mslp':[],'category':[],'ace':[]}
         else:
-            hurdat_year = {'id':[[] for i in range(len(self.year))],
+            summary_dict = {'id':[[] for i in range(len(self.year))],
                            'operational_id':[[] for i in range(len(self.year))],
                            'name':[[] for i in range(len(self.year))],
                            'max_wspd':[[] for i in range(len(self.year))],
@@ -350,37 +350,44 @@ class Season:
                 temp_type = np.array(self.dict[key]['type'])
                 temp_time = np.array(self.dict[key]['date'])
                 temp_basin = np.array(self.dict[key]['wmo_basin'])
+                temp_year = np.array([i.year for i in self.dict[key]['date']])
                 
                 #Calculate ACE within basin
                 temp_ace = 0.0
                 for ace_i,(i_time,i_vmax,i_basin,i_type) in enumerate(zip(temp_time,temp_vmax,temp_basin,temp_type)):
-                    if i_basin != self.basin: continue
+                    if self.basin not in ['all','both'] and i_basin != self.basin: continue
                     if i_time.strftime('%H%M') not in constants.STANDARD_HOURS: continue
                     if i_type not in constants.NAMED_TROPICAL_STORM_TYPES: continue
+                    if self.basin == 'all' and i_time.year != self.year: continue
                     temp_ace += accumulated_cyclone_energy(i_vmax)
                 temp_ace = np.round(temp_ace,1)
 
                 #Get indices of all tropical/subtropical time steps
-                idx = np.where(((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU')) & (temp_basin == self.basin))
+                if self.basin == 'all':
+                    idx = np.where(((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU')) & (temp_year == self.year))
+                elif self.basin == 'both':
+                    idx = np.where(((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU')))
+                else:
+                    idx = np.where(((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU')) & (temp_basin == self.basin))
                 
                 #Get times during existence of trop/subtrop storms
                 if len(idx[0]) == 0: continue
                 trop_time = temp_time[idx]
                 
                 if multi_season == False:
-                    if 'season_start' not in hurdat_year.keys():
-                        hurdat_year['season_start'] = trop_time[0]
-                    if 'season_end' not in hurdat_year.keys():
-                        hurdat_year['season_end'] = trop_time[-1]
+                    if 'season_start' not in summary_dict.keys():
+                        summary_dict['season_start'] = trop_time[0]
+                    if 'season_end' not in summary_dict.keys():
+                        summary_dict['season_end'] = trop_time[-1]
                     else:
-                        if trop_time[-1] > hurdat_year['season_end']: hurdat_year['season_end'] = trop_time[-1]
+                        if trop_time[-1] > summary_dict['season_end']: summary_dict['season_end'] = trop_time[-1]
                 else:
-                    if hurdat_year['season_start'][season_idx] == 0:
-                        hurdat_year['season_start'][season_idx] = trop_time[0]
-                    if hurdat_year['season_end'][season_idx] == 0:
-                        hurdat_year['season_end'][season_idx] = trop_time[-1]
+                    if summary_dict['season_start'][season_idx] == 0:
+                        summary_dict['season_start'][season_idx] = trop_time[0]
+                    if summary_dict['season_end'][season_idx] == 0:
+                        summary_dict['season_end'][season_idx] = trop_time[-1]
                     else:
-                        if trop_time[-1] > hurdat_year['season_end'][season_idx]: hurdat_year['season_end'][season_idx] = trop_time[-1]
+                        if trop_time[-1] > summary_dict['season_end'][season_idx]: summary_dict['season_end'][season_idx] = trop_time[-1]
 
                 #Get max/min values and check for nan's
                 np_wnd = np.array(temp_vmax[idx])
@@ -398,21 +405,21 @@ class Season:
 
                 #Append to dict
                 if multi_season == False:
-                    hurdat_year['id'].append(key)
-                    hurdat_year['name'].append(temp_name)
-                    hurdat_year['max_wspd'].append(max_wnd)
-                    hurdat_year['min_mslp'].append(min_slp)
-                    hurdat_year['category'].append(max_cat)
-                    hurdat_year['ace'].append(temp_ace)
-                    hurdat_year['operational_id'].append(self.dict[key]['operational_id'])
+                    summary_dict['id'].append(key)
+                    summary_dict['name'].append(temp_name)
+                    summary_dict['max_wspd'].append(max_wnd)
+                    summary_dict['min_mslp'].append(min_slp)
+                    summary_dict['category'].append(max_cat)
+                    summary_dict['ace'].append(temp_ace)
+                    summary_dict['operational_id'].append(self.dict[key]['operational_id'])
                 else:
-                    hurdat_year['id'][season_idx].append(key)
-                    hurdat_year['name'][season_idx].append(temp_name)
-                    hurdat_year['max_wspd'][season_idx].append(max_wnd)
-                    hurdat_year['min_mslp'][season_idx].append(min_slp)
-                    hurdat_year['category'][season_idx].append(max_cat)
-                    hurdat_year['ace'][season_idx].append(temp_ace)
-                    hurdat_year['operational_id'][season_idx].append(self.dict[key]['operational_id'])
+                    summary_dict['id'][season_idx].append(key)
+                    summary_dict['name'][season_idx].append(temp_name)
+                    summary_dict['max_wspd'][season_idx].append(max_wnd)
+                    summary_dict['min_mslp'][season_idx].append(min_slp)
+                    summary_dict['category'][season_idx].append(max_cat)
+                    summary_dict['ace'][season_idx].append(temp_ace)
+                    summary_dict['operational_id'][season_idx].append(self.dict[key]['operational_id'])
 
                 #Handle operational vs. non-operational storms
 
@@ -426,27 +433,25 @@ class Season:
 
             #Add generic season info
             if multi_season == False:
-                narray = np.array(hurdat_year['max_wspd'])
+                narray = np.array(summary_dict['max_wspd'])
                 narray = narray[~np.isnan(narray)]
-                #hurdat_year['season_storms'] = len(hurdat_year['name'])
-                hurdat_year['season_storms'] = len(narray)
-                hurdat_year['season_named'] = len(narray[narray>=34])
-                hurdat_year['season_hurricane'] = len(narray[narray>=65])
-                hurdat_year['season_major'] = len(narray[narray>=100])
-                hurdat_year['season_ace'] = np.round(np.sum(hurdat_year['ace']),1)
-                hurdat_year['season_subtrop_pure'] = count_ss_pure
-                hurdat_year['season_subtrop_partial'] = count_ss_partial
+                summary_dict['season_storms'] = len(narray)
+                summary_dict['season_named'] = len(narray[narray>=34])
+                summary_dict['season_hurricane'] = len(narray[narray>=65])
+                summary_dict['season_major'] = len(narray[narray>=100])
+                summary_dict['season_ace'] = np.round(np.sum(summary_dict['ace']),1)
+                summary_dict['season_subtrop_pure'] = count_ss_pure
+                summary_dict['season_subtrop_partial'] = count_ss_partial
             else:
-                narray = np.array(hurdat_year['max_wspd'][season_idx])
+                narray = np.array(summary_dict['max_wspd'][season_idx])
                 narray = narray[~np.isnan(narray)]
-                #hurdat_year['season_storms'][season_idx] = len(hurdat_year['name'])
-                hurdat_year['season_storms'][season_idx] = len(narray)
-                hurdat_year['season_named'][season_idx] = len(narray[narray>=34])
-                hurdat_year['season_hurricane'][season_idx] = len(narray[narray>=65])
-                hurdat_year['season_major'][season_idx] = len(narray[narray>=100])
-                hurdat_year['season_ace'][season_idx] = np.round(np.sum(hurdat_year['ace'][season_idx]),1)
-                hurdat_year['season_subtrop_pure'][season_idx] = count_ss_pure
-                hurdat_year['season_subtrop_partial'][season_idx] = count_ss_partial
+                summary_dict['season_storms'][season_idx] = len(narray)
+                summary_dict['season_named'][season_idx] = len(narray[narray>=34])
+                summary_dict['season_hurricane'][season_idx] = len(narray[narray>=65])
+                summary_dict['season_major'][season_idx] = len(narray[narray>=100])
+                summary_dict['season_ace'][season_idx] = np.round(np.sum(summary_dict['ace'][season_idx]),1)
+                summary_dict['season_subtrop_pure'][season_idx] = count_ss_pure
+                summary_dict['season_subtrop_partial'][season_idx] = count_ss_partial
                 
         #Return object
-        return hurdat_year
+        return summary_dict

@@ -1383,6 +1383,8 @@ None,prop={},map_prop={}):
         basin_name = ((season.basin).replace("_"," ")).title()
         if season.basin == 'all':
             season_title = f"{season.year} Global Tropical Cyclone Season"
+        elif season.basin == 'both':
+            season_title = f"{season.year} Atlantic-Pacific Hurricane Season"
         elif season.basin in ['south_indian','south_atlantic','australia','south_pacific']:
             season_title = f"{season.year-1}{emdash}{season.year} {basin_name} Tropical Cyclone Season"
         elif season.basin in ['west_pacific']:

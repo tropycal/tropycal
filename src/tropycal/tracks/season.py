@@ -361,8 +361,8 @@ class Season:
                 temp_ace = np.round(temp_ace,1)
 
                 #Get indices of all tropical/subtropical time steps
-                idx = np.where((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU'))
-
+                idx = np.where(((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU')) & (temp_basin == self.basin))
+                
                 #Get times during existence of trop/subtrop storms
                 if len(idx[0]) == 0: continue
                 trop_time = temp_time[idx]

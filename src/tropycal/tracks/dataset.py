@@ -311,13 +311,13 @@ class TrackDataset:
                 
                 #Parse into format to be entered into dict
                 if "N" in lat:
-                    lat = float(lat.split("N")[0])
+                    lat = round(float(lat.split("N")[0]),1)
                 elif "S" in lat:
-                    lat = float(lat.split("N")[0]) * -1.0
+                    lat = round(float(lat.split("N")[0]),1) * -1.0
                 if "W" in lon:
-                    lon = float(lon.split("W")[0]) * -1.0
+                    lon = round(float(lon.split("W")[0]),1) * -1.0
                 elif "E" in lon:
-                    lon = float(lon.split("E")[0])
+                    lon = round(float(lon.split("E")[0]),1)
                 vmax = int(vmax)
                 mslp = int(mslp)
                 
@@ -551,8 +551,8 @@ class TrackDataset:
                 self.data[stormid]['date'].append(date)
                 self.data[stormid]['special'].append('')
                 self.data[stormid]['type'].append(btk_type)
-                self.data[stormid]['lat'].append(btk_lat)
-                self.data[stormid]['lon'].append(btk_lon)
+                self.data[stormid]['lat'].append(round(btk_lat,1))
+                self.data[stormid]['lon'].append(round(btk_lon,1))
                 self.data[stormid]['vmax'].append(btk_wind)
                 self.data[stormid]['mslp'].append(btk_mslp)
                 

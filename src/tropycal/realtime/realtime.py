@@ -357,8 +357,8 @@ class Realtime():
                 self.data[stormid]['date'].append(date)
                 self.data[stormid]['special'].append('')
                 self.data[stormid]['type'].append(btk_type)
-                self.data[stormid]['lat'].append(btk_lat)
-                self.data[stormid]['lon'].append(btk_lon)
+                self.data[stormid]['lat'].append(round(btk_lat,1))
+                self.data[stormid]['lon'].append(round(btk_lon,1))
                 self.data[stormid]['vmax'].append(btk_wind)
                 self.data[stormid]['mslp'].append(btk_mslp)
                 

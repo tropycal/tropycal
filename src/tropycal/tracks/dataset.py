@@ -349,16 +349,11 @@ class TrackDataset:
                 self.data[current_id]['mslp'].append(mslp)
                 
                 #Add basin
-                if add_basin == 'north_atlantic':
-                    wmo_agency = 'north_atlantic'
-                elif add_basin == 'east_pacific':
-                    if lon > 0.0:
-                        wmo_agency = 'west_pacific'
-                    else:
-                        wmo_agency = 'east_pacific'
-                else:
-                    wmo_agency = 'west_pacific'
-                self.data[current_id]['wmo_basin'].append(wmo_agency)
+                origin_basin = add_basin + ''
+                if add_basin == 'east_pacific':
+                    check_basin = get_basin(self.data[current_id]['lat'][0],self.data[current_id]['lon'][0],add_basin)
+                    if check_basin != add_basin: origin_basin = 'north_atlantic'
+                self.data[current_id]['wmo_basin'].append(get_basin(lat,lon,origin_basin))
                 
                 #Calculate ACE & append to storm total
                 if np.isnan(vmax) == False:
@@ -562,16 +557,11 @@ class TrackDataset:
                 self.data[stormid]['mslp'].append(btk_mslp)
                 
                 #Add basin
-                if self.basin == 'north_atlantic':
-                    wmo_agency = 'north_atlantic'
-                elif self.basin == 'east_pacific':
-                    if btk_lon > 0.0:
-                        wmo_agency = 'west_pacific'
-                    else:
-                        wmo_agency = 'east_pacific'
-                else:
-                    wmo_agency = 'west_pacific'
-                self.data[stormid]['wmo_basin'].append(wmo_agency)
+                origin_basin = self.basin + ''
+                if self.basin == 'east_pacific':
+                    check_basin = get_basin(self.data[stormid]['lat'][0],self.data[stormid]['lon'][0],self.basin)
+                    if check_basin != self.basin: origin_basin = 'north_atlantic'
+                self.data[stormid]['wmo_basin'].append(get_basin(btk_lat,btk_lon,origin_basin))
 
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:
@@ -1392,7 +1382,6 @@ class TrackDataset:
                 else:
                     season_dict[key] = self.data[key]
                     basin_list.append(self.data[key]['wmo_basin'][0])
-                    #basin_list.append(max(set(self.data[key]['wmo_basin']), key=self.data[key]['wmo_basin'].count))
                 
         #Error check
         if len(season_dict) == 0:

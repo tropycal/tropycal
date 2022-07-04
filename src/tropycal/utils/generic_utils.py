@@ -451,7 +451,7 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
     if wind_speed < 34: ace = 0.0
     
     #Return ACE
-    return ace
+    return round(ace,4)
 
 def dropsonde_mslp_estimate(mslp,surface_wind):
     

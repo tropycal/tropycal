@@ -286,8 +286,8 @@ class Plot:
         
         #North Atlantic plot domain
         if domain == "both":
-            bound_w = -180.0+360.0
-            bound_e = -15.0
+            bound_w = -179.0+360.0
+            bound_e = -15.0+360.0
             bound_s = 0.0
             bound_n = 70.0
         

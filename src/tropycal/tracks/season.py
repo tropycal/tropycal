@@ -100,8 +100,6 @@ class Season:
         add_space = np.max([len(key) for key in summary_keys.keys()])+3
         for key in summary_keys.keys():
             key_name = key+":"
-            #val = '%0.1f'%(summary_keys[key]) if key == 'Season ACE' else summary_keys[key]
-            #summary.append(f'{" "*4}{key_name:<{add_space}}{val}')
             summary.append(f'{" "*4}{key_name:<{add_space}}{summary_keys[key]}')
         
         #Add additional information
@@ -109,8 +107,6 @@ class Season:
         add_space = np.max([len(key) for key in self.attrs.keys()])+3
         for key in self.attrs.keys():
             key_name = key+":"
-            #val = '%0.1f'%(self.coords[key]) if key == 'ace' else self.coords[key]
-            #summary.append(f'{" "*4}{key_name:<{add_space}}{val}')
             summary.append(f'{" "*4}{key_name:<{add_space}}{self.attrs[key]}')
 
         return "\n".join(summary)
@@ -347,13 +343,23 @@ class Season:
                 #Skip if using multi-season object and storm is outside of this season
                 if multi_season == True and int(key[-4:]) != iter_season: continue
 
-                #Retrieve info about storm
+                #Retrieve info about storm, only in this basin
                 temp_name = self.dict[key]['name']
                 temp_vmax = np.array(self.dict[key]['vmax'])
                 temp_mslp = np.array(self.dict[key]['mslp'])
                 temp_type = np.array(self.dict[key]['type'])
                 temp_time = np.array(self.dict[key]['date'])
-                temp_ace = np.round(self.dict[key]['ace'],1)
+                temp_basin = np.array(self.dict[key]['wmo_basin'])
+                
+                #Calculate ACE within basin
+                temp_ace = 0.0
+                for ace_i,(i_time,i_vmax,i_basin,i_type) in enumerate(zip(temp_time,temp_vmax,temp_basin,temp_type)):
+                    if i_basin != self.basin: continue
+                    if i_time.strftime('%H%M') not in constants.STANDARD_HOURS: continue
+                    if i_type not in constants.NAMED_TROPICAL_STORM_TYPES: continue
+                    print(f"{key} ---- {i_time} ---- {i_vmax} ---- {i_basin} ---- {accumulated_cyclone_energy(i_vmax)}")
+                    temp_ace += accumulated_cyclone_energy(i_vmax)
+                temp_ace = np.round(temp_ace,1)
 
                 #Get indices of all tropical/subtropical time steps
                 idx = np.where((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU'))

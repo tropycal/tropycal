@@ -1513,7 +1513,7 @@ class TrackDataset:
                 return_season = return_season + self.__retrieve_season(i_year,basin)
             return return_season
     
-    def ace_climo(self,plot_year=None,compare_years=None,climo_year_range=None,date_range=None,rolling_sum=0,return_dict=False,plot=True,save_path=None):
+    def ace_climo(self,plot_year=None,compare_years=None,climo_year_range=None,month_range=None,rolling_sum=0,return_dict=False,plot=True,save_path=None):
         
         r"""
         Creates and plots a climatology of accumulated cyclone energy (ACE).
@@ -1526,8 +1526,8 @@ class TrackDataset:
             Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).
         climo_year_range : tuple
             Start and end years to compute the climatology over. Default is from 1950 to last year.
-        date_range : tuple
-            Start and end dates to plot, both strings formatted as "month/day". Default is entire calendar year.
+        month_range : tuple
+            Start and end months to plot (e.g., ``(5,10)``). Default is peak hurricane season by basin.
         rolling_sum : int
             Days to calculate a rolling sum over. Default is 0 (annual running sum).
         return_dict : bool
@@ -1549,8 +1549,8 @@ class TrackDataset:
         if climo_year_range is None:
             climo_year_range = (1950,dt.now().year-1)
         
-        if self.source == 'ibtracs':
-            warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
+        if self.basin in ['south_indian','australia','south_pacific']:
+            warnings.warn("This function is not currently configured to work in the Southern Hemisphere.")
         
         #Create empty dict
         ace = {}
@@ -1570,9 +1570,13 @@ class TrackDataset:
             #Remove 2/29 from dates
             if calendar.isleap(year):
                 year_dates = year_dates[year_dates != dt(year,2,29,0)]
+                year_dates = year_dates[year_dates != dt(year,2,29,3)]
                 year_dates = year_dates[year_dates != dt(year,2,29,6)]
+                year_dates = year_dates[year_dates != dt(year,2,29,9)]
                 year_dates = year_dates[year_dates != dt(year,2,29,12)]
+                year_dates = year_dates[year_dates != dt(year,2,29,15)]
                 year_dates = year_dates[year_dates != dt(year,2,29,18)]
+                year_dates = year_dates[year_dates != dt(year,2,29,21)]
             
             #Additional empty arrays
             year_cumace = np.zeros((year_dates.shape))
@@ -1675,8 +1679,13 @@ class TrackDataset:
         for i,(istart,iend) in enumerate(zip(julian_start[:-1][::2],julian_start[1:][::2])):
             ax.axvspan(istart,iend,color='#e4e4e4',alpha=0.5,zorder=0)
         
-        #Limit plot from May onward
-        ax.set_xlim(julian_start[4],julian[-1])
+        #Set x-axis bounds
+        if month_range is None:
+            ax.set_xlim(julian_start[4],julian[-1])
+        else:
+            end_month = month_range[1]-1
+            end_julian = julian[-1] if end_month == 11 else julian_start[end_month]-1
+            ax.set_xlim(julian_start[month_range[0]-1],end_julian)
 
         #Add plot title
         if plot_year is None:

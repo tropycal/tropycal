@@ -254,45 +254,7 @@ class RealtimeStorm(Storm):
         full_path = os.path.join(save_path,f"Forecast_{self.id}.{url_ext}")
         with open(full_path, 'wb') as f:
             f.write(response.content)
-        
-    
-    def get_nhc_discussion_realtime(self):
-        
-        r"""
-        Retrieve the latest available forecast discussion. For JTWC storms, the Prognostic Reasoning product is retrieved.
-        
-        Returns
-        -------
-        dict
-            Dict entry containing the latest official forecast discussion.
-        """
-        
-        #Warn about pending deprecation
-        warnings.warn("'get_nhc_discussion_realtime' will be deprecated in future Tropycal versions, use 'get_discussion_realtime' instead",DeprecationWarning)
-        
-        #Check to ensure storm is not an invest
-        if self.invest:
-            raise RuntimeError("Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.")
-        
-        #Get latest forecast discussion for HURDAT source storm objects
-        if self.source == "hurdat":
-            return self.get_nhc_discussion(forecast=-1)
-        
-        #Get latest forecast discussion for JTWC source storm objects
-        elif self.source == 'jtwc':
-            
-            #Read in discussion file
-            url = f"https://www.metoc.navy.mil/jtwc/products/{self.id[0:2].lower()}{self.id[2:4]}{self.id[6:8]}prog.txt"
-            f = urllib.request.urlopen(url)
-            content = f.read()
-            content = content.decode("utf-8")
-            f.close()
-            return content
-        
-        #Otherwise, return error message
-        else:
-            msg = "No realtime forecast discussion is available for this storm."
-            raise RuntimeError(msg)
+
     
     def get_discussion_realtime(self):
         

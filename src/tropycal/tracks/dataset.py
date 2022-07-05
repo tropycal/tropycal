@@ -1434,7 +1434,7 @@ class TrackDataset:
         for key in self.keys:
             
             #Get year for 'all' (global data), otherwise get season
-            if basin == 'all':
+            if self.basin == 'all' and basin == 'all':
                 temp_year = int(year) if int(year) in [i.year for i in self.data[key]['date']] else 0
             else:
                 temp_year = self.data[key]['season']
@@ -1462,10 +1462,16 @@ class TrackDataset:
         first_key = [k for k in season_dict.keys()][0]
         season_info = {}
         season_info['year'] = year
-        season_info['basin'] = max(set(basin_list), key=basin_list.count) if self.basin not in ['all','both'] else self.basin
+        season_info['basin'] = max(set(basin_list), key=basin_list.count)
         season_info['source_basin'] = season_dict[first_key]['basin']
         season_info['source'] = season_dict[first_key]['source']
         season_info['source_info'] = season_dict[first_key]['source_info']
+        
+        #Fix basin
+        if self.basin == 'all' and basin == 'all':
+            season_info['basin'] = 'all'
+        if self.basin == 'both':
+            season_info['basin'] = 'both'
         
         #Return object
         return Season(season_dict,season_info)

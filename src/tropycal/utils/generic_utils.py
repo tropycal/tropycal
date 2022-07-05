@@ -325,7 +325,7 @@ def get_basin(lat,lon,source_basin=""):
     
     Other Parameters
     ----------------
-    source_basin : str
+    source_basin : str, optional
         String representing the origin storm basin (e.g., "north_atlantic", "east_pacific").
     
     Returns

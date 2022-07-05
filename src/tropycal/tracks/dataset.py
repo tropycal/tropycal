@@ -121,6 +121,10 @@ class TrackDataset:
         storm = basin.get_storm(("katrina",2005))
     
     For IBTrACS datasets, please refer to :ref:`ibtracs-caveats` for pros and cons of each mode of IBTrACS data available.
+    
+    .. note::
+    
+        If using ``basin="both"``, this combines the North Atlantic and East/Central Pacific HURDATv2 data into a single TrackDataset object. As of Tropycal v0.5, this now merges cross-basin storms (i.e., North Atlantic to East Pacific) which were reclassified with a new East Pacific ID into single Storm objects.
     """
  
     def __repr__(self):

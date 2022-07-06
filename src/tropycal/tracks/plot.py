@@ -119,7 +119,8 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
         c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=get_colors_sshws(96))
         c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=get_colors_sshws(113))
         c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
-        ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5}, loc=1)
+        l = ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5}, loc=1)
+        l.set_zorder(1001)
 
     #Linecolor category without dots
     elif prop['linecolor'] == 'category' and prop['dots'] == False:
@@ -131,7 +132,8 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
         c3 = mlines.Line2D([], [], linestyle='solid', label='Category 3', color=get_colors_sshws(96))
         c4 = mlines.Line2D([], [], linestyle='solid', label='Category 4', color=get_colors_sshws(113))
         c5 = mlines.Line2D([], [], linestyle='solid', label='Category 5', color=get_colors_sshws(137))
-        ax.legend(handles=[ex,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5}, loc=1)
+        l = ax.legend(handles=[ex,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5}, loc=1)
+        l.set_zorder(1001)
 
     #Non-segmented custom colormap with dots
     elif prop['dots'] == True and segmented_colors == False:
@@ -139,14 +141,16 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
         sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color=prop['fillcolor'])
         td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical', marker='o', color=prop['fillcolor'])
         handles=[ex,sb,td]
-        ax.legend(handles=handles,fontsize=11.5, prop={'size':11.5}, loc=1)
+        l = ax.legend(handles=handles,fontsize=11.5, prop={'size':11.5}, loc=1)
+        l.set_zorder(1001)
 
     #Non-segmented custom colormap without dots
     elif prop['dots'] == False and segmented_colors == False:
         ex = mlines.Line2D([], [], linestyle='dotted',label='Non-Tropical', color=prop['linecolor'])
         td = mlines.Line2D([], [], linestyle='solid',label='Tropical', color=prop['linecolor'])
         handles=[ex,td]
-        ax.legend(handles=handles,fontsize=11.5, prop={'size':11.5}, loc=1)
+        l = ax.legend(handles=handles,fontsize=11.5, prop={'size':11.5}, loc=1)
+        l.set_zorder(1001)
 
     #Custom colormap with dots
     elif prop['dots'] == True and segmented_colors == True:
@@ -157,6 +161,7 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
         for _ in range(7):
             handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
         l = ax.legend(handles=handles,fontsize=11.5)
+        l.set_zorder(1001)
         plt.draw()
 
         #Get the bbox
@@ -197,7 +202,8 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
         handles=[ex,td]
         for _ in range(7):
             handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
-        l=ax.legend(handles=handles,fontsize=11.5)
+        l = ax.legend(handles=handles,fontsize=11.5)
+        l.set_zorder(1001)
         plt.draw()
 
         #Get the bbox
@@ -1320,7 +1326,7 @@ None,prop={},map_prop={}):
         if hr != None and prop_ellipse['plot']: handles_list.append(p5)
         if len(handles_list) > 0:
             l = self.ax.legend(handles=handles_list,loc=1,prop={'size':12})
-            l.set_zorder(200)
+            l.set_zorder(1001)
 
         #Plot title
         plot_title = f"GEFS Forecast Tracks for {storm_dict['name'].title()}"

@@ -1061,14 +1061,6 @@ class Storm:
         except:
             self.plot_obj = TrackPlot()
         
-        #Create cartopy projection
-        if cartopy_proj is not None:
-            self.plot_obj.proj = cartopy_proj
-        elif max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
-            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
-        else:
-            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-        
         #-------------------------------------------------------------------------
         
         #Get forecasts dict saved into storm object, if it hasn't been already
@@ -1185,6 +1177,19 @@ class Storm:
             self.ds = ds
             
             print("--> Done calculating GEFS data")
+        
+        #Determine lon bounds for cartopy projection
+        proj_lons = []
+        for key in self.ds.keys():
+            proj_lons += self.ds[key]['lon']
+        
+        #Create cartopy projection
+        if cartopy_proj is not None:
+            self.plot_obj.proj = cartopy_proj
+        elif np.nanmax(proj_lons) > 150 or np.nanmin(proj_lons) < -150:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
         
         #Plot storm
         plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_members,prop_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,domain,self.ds,ax=ax,map_prop=map_prop,save_path=save_path)

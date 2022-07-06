@@ -942,6 +942,8 @@ class Storm:
             * **2005 & back** - 5 members
             
             As the density plot and ensemble ellipse require a minimum of 10 ensemble members, they will not be generated for storms from 2005 and earlier.
+            
+            Additionally, ellipses are not generated if using the default ``fhr=None``, meaning a cumulative track density plot is generated instead.
         
         The ensemble ellipse used in this function follows the methodology of `Hamill et al. (2011)`_, denoting the spread in ensemble member cyclone positions. The size of the ellipse is calculated to contain 90% of ensemble members at any given time. This ellipse can be used to determine the primary type of ensemble variability:
         
@@ -1077,6 +1079,9 @@ class Storm:
         
         #Determine max GEFS members by year
         nens = 31 if self.year >= 2019 else 21
+        
+        #Enforce fhr type
+        if isinstance(fhr,list): fhr = fhr[0]
         
         #If this forecast init was recently used, don't re-calculate
         init_used = False
@@ -1821,10 +1826,10 @@ class Storm:
             
             #Get storm ID & corresponding data URL
             storm_year = self.dict['year']
-            if storm_year < 2016:
-                msg = "Forecast data is unavailable for JTWC storms prior to 2016."
+            if storm_year < 2019:
+                msg = "Forecast data is unavailable for JTWC storms prior to 2019."
                 raise RuntimeError(msg)
-            url_models = f"http://hurricanes.ral.ucar.edu/repository/data/adecks_open/a{self.id.lower()}.dat"
+            url_models = f"http://hurricanes.ral.ucar.edu/repository/data/adecks_open/{self.year}/a{self.id.lower()}.dat"
             
             #Retrieve model data text
             try:

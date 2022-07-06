@@ -1038,7 +1038,7 @@ class Storm:
            * - radius
              - Radius (in km) for which to calculate track density. Default is 200 km.
            * - cmap
-             - Color map for track density plot. Default is matplotlib's "YlOrRd" colormap.
+             - Matplotlib colormap for track density plot. Default is "plasma_r".
            * - levels
              - List of levels for contour filling track density.
         
@@ -1074,10 +1074,6 @@ class Storm:
             self.forecast_dict
         except:
             self.get_operational_forecasts()
-        
-        #Convert fhr to list
-        if fhr != None and isinstance(fhr,list) == False:
-            fhr = [fhr]
         
         #Determine max GEFS members by year
         nens = 31 if self.year >= 2019 else 21

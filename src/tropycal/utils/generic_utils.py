@@ -143,8 +143,6 @@ def get_storm_classification(wind_speed,subtropical_flag,basin):
     
     These strings take the format of "Tropical Storm", "Hurricane", "Typhoon", etc.
     
-    Warning: This function currently does not differentiate between 1-minute, 3-minute and 10-minute sustained wind speeds.
-    
     Parameters
     ----------
     wind_speed : int
@@ -158,6 +156,14 @@ def get_storm_classification(wind_speed,subtropical_flag,basin):
     -------
     str
         String denoting the classification of the tropical cyclone.
+    
+    Notes
+    -----
+    
+    .. warning::
+
+        This function currently does not differentiate between 1-minute, 3-minute and 10-minute sustained wind speeds.
+    
     """
     
     #North Atlantic and East Pacific basins
@@ -263,6 +269,27 @@ def get_storm_type(wind_speed,subtropical_flag):
     -------
     str
         String denoting the tropical cyclone type.
+    
+    Notes
+    -----
+    The available types and their descriptions are as follows:
+    
+    .. list-table:: 
+       :widths: 25 75
+       :header-rows: 1
+
+       * - Property
+         - Description
+       * - TD
+         - Tropical Depression
+       * - TS
+         - Tropical Storm
+       * - HU
+         - Hurricane
+       * - SD
+         - Subtropical Depression
+       * - SS
+         - Subtropical Storm
     """
     
     #Tropical depression
@@ -304,13 +331,21 @@ def get_basin(lat,lon,storm_id=""):
     -------
     str
         String representing the current basin (e.g., "north_atlantic", "east_pacific").
+    
+    Notes
+    -----
+    
+    .. warning::
+
+        This function currently does not automatically distinguish between the North Atlantic and East Pacific basins. This is due to how storms over Mexico and Central America can technically be from either basin depending on which coast it made landfall in.
+    
     """
     
     #Error check
-    if isinstance(lat,float) == False and isinstance(lat,int) == False:
+    if isinstance(lat,(int,np.int,np.integer,float,np.floating)) == False:
         msg = "\"lat\" must be of type int or float."
         raise TypeError(msg)
-    if isinstance(lon,float) == False and isinstance(lon,int) == False:
+    if isinstance(lon,(int,np.int,np.integer,float,np.floating)) == False:
         msg = "\"lon\" must be of type int or float."
         raise TypeError(msg)
     
@@ -393,6 +428,17 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
     -------
     float
         Accumulated cyclone energy.
+    
+    Notes
+    -----
+    
+    As defined in `Bell et al. (2000)`_, Accumulated Cyclone Energy (ACE) is calculated as follows:
+    
+    .. math:: ACE = 10^{-4} \sum v^{2}_{max}
+    
+    As shown above, ACE is the sum of the squares of the estimated maximum sustained wind speed (in knots). By default, this assumes data is provided every 6 hours, as is the standard in HURDATv2 and NHC's Best Track, though this function provides an option to use a different hour duration.
+    
+    .. _Bell et al. (2000): https://journals.ametsoc.org/view/journals/bams/81/6/1520-0477_2000_81_s1_caf_2_0_co_2.xml
     """
     
     #Calculate ACE
@@ -955,7 +1001,7 @@ def category_label_to_wind(category):
     else:
         return category_to_wind(5)
 
-def dynamic_map_extent(min_lon,max_lon,min_lat,max_lat):
+def dynamic_map_extent(min_lon,max_lon,min_lat,max_lat,recon=False):
 
     r"""
     Sets up a dynamic map extent with an aspect ratio of 3:2 given latitude and longitude bounds.
@@ -970,6 +1016,8 @@ def dynamic_map_extent(min_lon,max_lon,min_lat,max_lat):
         Minimum latitude bound.
     max_lat : float
         Maximum latitude bound.
+    recon : bool
+        Zoom in plots closer for recon plots.
 
     Returns:
     --------
@@ -1025,6 +1073,7 @@ def dynamic_map_extent(min_lon,max_lon,min_lat,max_lat):
         factor = 0.75
     if min(xrng,yrng) < 6.0:
         factor = 0.9
+    if recon: factor = factor * 0.3
     bound_w = bound_w-(xrng*factor)
     bound_e = bound_e+(xrng*factor)
     bound_s = bound_s-(yrng*factor)

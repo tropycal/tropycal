@@ -49,7 +49,7 @@ class Realtime():
     jtwc_source : str, optional
         If jtwc is set to True, this specifies the JTWC data source to read from. Available options are "noaa", "ucar" or "jtwc". Default is "jtwc". Read the notes for more details.
     ssl_certificate : boolean, optional
-        If jtwc is set to True, this determines whether to disable SSL certificate when retrieving data from the default JTWC source ("jtwc"). Default is True. Use False *ONLY* if True causes an SSL certification error.
+        If jtwc is set to True, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
     
     Returns
     -------
@@ -58,11 +58,17 @@ class Realtime():
     
     Notes
     -----
-    As of 2021, the multiple sources offering a Best Track archive of raw JTWC tropical cyclone data experienced frequent outages and/or severe slowdowns, hampering the ability to easily retrieve this data. As such, JTWC data has been optional in Realtime objects since v0.2.7. There are three JTWC sources available:
+    During 2021, the multiple sources offering a Best Track archive of raw JTWC tropical cyclone data experienced frequent outages and/or severe slowdowns, hampering the ability to easily retrieve this data. As such, JTWC data has been optional in Realtime objects since v0.2.7. There are three JTWC sources available:
     
-    * **jtwc** - This is currently the default JTWC source if JTWC data is read in. As of September 2021, this source is working, but reading data is exceptionally slow (can take from 3 to as much as 10 minutes).
+    * **jtwc** - This is currently the default JTWC source if JTWC data is read in. As of June 2022, this source is working, but reading data is somewhat slow (can take up to 2 minutes).
     * **ucar** - As of September 2021, this source is available and fairly quick to read in, but offers a less compherensive storm history than the "jtwc" source. Between July and September 2021, this source did not update any active tropical cyclones outside of NHC's domain. If using this source, check to make sure it is in fact retrieving current global tropical cyclones.
-    * **noaa** - This source was active until about July 2021, and since then no longer appears to be online and accessible. The code retains the ability to read in data from this source should it return online.
+    * **noaa** - This source was inactive from July 2021 through early 2022, and appears to be back online again. The code retains the ability to read in data from this source should it go back offline then return online again.
+    
+    .. warning::
+
+        JTWC's SSL certificate appears to have expired sometime in early 2022. If using JTWC data with the ``jtwc=True`` argument, this will result in Realtime functionality crashing by default. To avoid this, add a ``ssl_certificate=False`` argument to both creating an instance of Realtime and to any method that retrieves JTWC forecast.
+        
+        Affected functions include ``Realtime.plot_summary()``, ``RealtimeStorm.get_forecast_realtime()``, and ``RealtimeStorm.plot_forecast_realtime()``.
     
     The following block of code creates an instance of a Realtime() object and stores it in a variable called "realtime_obj":
     
@@ -91,6 +97,10 @@ class Realtime():
             print("This is an invest!")
         else:
             print("This is not an invest!")
+    
+    Realtime objects have several attributes, including the time the object was last updated, which can be accessed in dictionary format as follows:
+    
+    >>> realtime_obj.attrs
     """
     
     def __repr__(self):
@@ -102,6 +112,7 @@ class Realtime():
         #Add dataset summary
         summary.append("Dataset Summary:")
         summary.append(f'{" "*4}Numbers of active storms: {len(self.storms)}')
+        summary.append(f'{" "*4}Time Updated: {self.time.strftime("%H%M UTC %d %B %Y")}')
         
         if len(self.storms) > 0:
             summary.append("\nActive Storms:")
@@ -126,6 +137,9 @@ class Realtime():
         
         #Define empty dict to store track data in
         self.data = {}
+        self.jtwc = jtwc
+        self.jtwc_source = jtwc_source
+        self.ssl_certificate = ssl_certificate
         
         #Time data reading
         start_time = dt.now()
@@ -199,6 +213,11 @@ class Realtime():
                     self.data[key]['prob_5day'] = 'N/A'
                     self.data[key]['risk_2day'] = 'N/A'
                     self.data[key]['risk_5day'] = 'N/A'
+                if self.data[key]['type'][-1] in constants.TROPICAL_STORM_TYPES:
+                    self.data[key]['prob_2day'] = 'N/A'
+                    self.data[key]['prob_5day'] = 'N/A'
+                    self.data[key]['risk_2day'] = 'N/A'
+                    self.data[key]['risk_5day'] = 'N/A'
                 self[key] = RealtimeStorm(self.data[key])
 
             #Delete data dict while retaining active storm keys
@@ -209,6 +228,16 @@ class Realtime():
             #Create an empty list signaling no active storms
             self.storms = []
             del self.data
+        
+        #Save current time
+        self.time = dt.now()
+        
+        #Set attributes
+        self.attrs = {
+            'jtwc':jtwc,
+            'jtwc_source':jtwc_source,
+            'time':self.time
+        }
     
     def __read_btk(self):
         
@@ -259,6 +288,7 @@ class Realtime():
             #add empty entry into dict
             self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'NHC Hurricane Database','realtime':True,'invest':invest_bool,'source_method':"NHC's Automated Tropical Cyclone Forecasting System (ATCF)",'source_url':"https://ftp.nhc.noaa.gov/atcf/btk/"}
             self.data[stormid]['source'] = 'hurdat'
+            self.data[stormid]['jtwc_source'] = 'N/A'
 
             #add empty lists
             for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
@@ -392,7 +422,7 @@ class Realtime():
         url = f'https://www.nrlmry.navy.mil/atcf_web/docs/tracks/{current_year}/'
         if source == 'noaa': url = f'https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/'
         if source == 'ucar': url = f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/'
-        if ssl_certificate == False and source == 'jtwc':
+        if ssl_certificate == False and source in ['jtwc','noaa']:
             import ssl
             urlpath = urllib.request.urlopen(url,context=ssl._create_unverified_context())
         else:
@@ -416,9 +446,9 @@ class Realtime():
         for filename in filelist:
             if filename not in files: files.append(filename)
         
-        if source in ['jtwc','ucar']:
+        if source in ['jtwc','ucar','noaa']:
             try:
-                if ssl_certificate == False and source == 'jtwc':
+                if ssl_certificate == False and source in ['jtwc','noaa']:
                     urlpath_nextyear = urllib.request.urlopen(url.replace(str(current_year),str(current_year+1)),context=ssl._create_unverified_context())
                     string_nextyear = urlpath_nextyear.read().decode('utf-8')
                 else:
@@ -453,6 +483,7 @@ class Realtime():
             #add empty entry into dict
             self.data[stormid] = {'id':stormid,'operational_id':stormid,'name':'','year':int(stormid[4:8]),'season':int(stormid[4:8]),'basin':add_basin,'source_info':'Joint Typhoon Warning Center','realtime':True,'invest':invest_bool}
             self.data[stormid]['source'] = 'jtwc'
+            self.data[stormid]['jtwc_source'] = source
             
             #Add source info
             self.data[stormid]['source_method'] = "JTWC ATCF"
@@ -475,7 +506,7 @@ class Realtime():
             if source == 'ucar': url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/{file}"
             if f"{current_year+1}.dat" in url: url = url.replace(str(current_year),str(current_year+1))
             
-            if ssl_certificate == False and source == 'jtwc':
+            if ssl_certificate == False and source in ['jtwc','noaa']:
                 f = urllib.request.urlopen(url,context=ssl._create_unverified_context())
                 content = f.read()
                 content = content.decode("utf-8")
@@ -634,6 +665,18 @@ class Realtime():
             msg = "Error in retrieving NHC invest data."
             warnings.warn(msg)
     
+    def update(self):
+        
+        r"""
+        Update with the latest realtime data.
+        
+        Notes
+        -----
+        This function has no return value, but simply updates the Realtime object with the latest data.
+        """
+        
+        self.__init__(self.jtwc,self.jtwc_source,self.ssl_certificate)
+    
     def list_active_storms(self,basin='all'):
         
         r"""
@@ -686,7 +729,7 @@ class Realtime():
         #Return RealtimeStorm object
         return self[storm]
 
-    def plot_summary(self,domain='all',ax=None,cartopy_proj=None,save_path=None,**kwargs):
+    def plot_summary(self,domain='all',ax=None,cartopy_proj=None,save_path=None,ssl_certificate=True,**kwargs):
         
         r"""
         Plot a summary map of ongoing tropical cyclone and potential development activity.
@@ -701,6 +744,8 @@ class Realtime():
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str, optional
             Relative or full path of directory to save the image in. If none, image will not be saved.
+        ssl_certificate : boolean, optional
+            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
         
         Other Parameters
         ----------------
@@ -737,6 +782,8 @@ class Realtime():
              - Number of days for TWO. Can be either 2 or 5. Default is 5.
            * - fontsize
              - Font size for text label. Default is 12.
+           * - ms
+             - Marker size for area location, if applicable. Default is 15.
 
         The following properties are available for plotting invests, via ``invest_prop``.
 
@@ -832,7 +879,7 @@ class Realtime():
         
         #Plot
         ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms],
-                                        [self.get_storm(key).get_forecast_realtime() if self[key].invest == False else {} for key in self.storms],
+                                        [self.get_storm(key).get_forecast_realtime(ssl_certificate) if self[key].invest == False else {} for key in self.storms],
                                         shapefiles,dt.utcnow(),domain,ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
         
         return ax

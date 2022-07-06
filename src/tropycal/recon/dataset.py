@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 import pickle
 import copy
+import urllib3
 
 from scipy.interpolate import interp1d
 from scipy.ndimage import gaussian_filter as gfilt,gaussian_filter1d as gfilt1d
@@ -19,12 +20,12 @@ try:
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
-    import matplotlib.gridspec as gridspec
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
-from .plot import ReconPlot
+from .plot import *
 from ..tracks.plot import TrackPlot
+from .realtime import Mission
 
 #Import tools
 from .tools import *
@@ -47,7 +48,9 @@ class ReconDataset:
     
     Notes
     -----
-    As of Tropycal v0.4, Recon data can only be retrieved for tropical cyclones, not for invests.
+    ReconDataset and its subclasses (hdobs, dropsondes and vdms) consist the **storm-centric** part of the recon module, meaning that recon data is retrieved specifically for tropical cyclones, and all recon missions for the requested storm are additionally transformed to storm-centric coordinates. This differs from realtime recon functionality, which is **mission-centric**.
+    
+    This storm-centric functionality allows for additional recon analysis and visualization functions, such as derived hovmollers and spatial maps for example. As of Tropycal v0.4, Recon data can only be retrieved for tropical cyclones, not for invests.
     
     ReconDataset will contain nothing the first time it's initialized, but contains methods to retrieve the three sub-classes of recon:
     
@@ -118,7 +121,7 @@ class ReconDataset:
         Parameters
         ----------
         data : str, optional
-            String representing the path of a pickle file containing HDOBs data, saved via ``hdobs.get_pickle()``. If none, data is read from NHC.
+            String representing the path of a pickle file containing HDOBs data, saved via ``hdobs.to_pickle()``. If none, data is read from NHC.
         
         Notes
         -----
@@ -151,7 +154,7 @@ class ReconDataset:
         Parameters
         ----------
         data : str, optional
-            String representing the path of a pickle file containing dropsonde data, saved via ``dropsondes.get_pickle()``. If none, data is read from NHC.
+            String representing the path of a pickle file containing dropsonde data, saved via ``dropsondes.to_pickle()``. If none, data is read from NHC.
         
         Notes
         -----
@@ -184,7 +187,7 @@ class ReconDataset:
         Parameters
         ----------
         data : str, optional
-            String representing the path of a pickle file containing VDM data, saved via ``vdms.get_pickle()``. If none, data is read from NHC.
+            String representing the path of a pickle file containing VDM data, saved via ``vdms.to_pickle()``. If none, data is read from NHC.
         
         Notes
         -----
@@ -208,6 +211,67 @@ class ReconDataset:
         """
         
         self.vdms = vdms(self.storm,data)
+    
+    def get_mission(self,number):
+        
+        r"""
+        Retrieve a Mission object for a given mission number for this storm.
+        
+        Parameters
+        ----------
+        number : int
+            Requested mission number.
+        
+        Returns
+        -------
+        Mission
+            Instance of a Mission object for the requested mission.
+        """
+        
+        def str2(number):
+            if number < 10: return f"0{number}"
+            return str(number)
+       
+        #Automatically retrieve data if not already available
+        try:
+            self.vdms
+        except:
+            self.get_vdms()
+        try:
+            self.hdobs
+        except:
+            self.get_hdobs()
+        try:
+            self.dropsondes
+        except:
+            self.get_dropsondes()
+        
+        #Search through all missions to find the full mission ID
+        missions = []
+        for mission in np.unique(self.hdobs.data['mission']):
+            try:
+                missions.append(int(mission))
+            except:
+                pass
+        missions = list(np.sort(missions))
+        if number not in missions:
+            raise ValueError("Requested mission ID is not available.")
+        
+        #Retrieve data for mission
+        hdobs_mission = self.hdobs.data.loc[self.hdobs.data['mission']==str2(number)]
+        mission_id = hdobs_mission['mission_id'].values[0]
+        vdms_mission = [i for i in self.vdms.data if i['mission_id'] == mission_id]
+        dropsondes_mission = [i for i in self.dropsondes.data if i['mission_id'] == mission_id]
+        
+        mission_dict = {
+            'hdobs':hdobs_mission,
+            'vdms':vdms_mission,
+            'dropsondes':dropsondes_mission,
+            'aircraft':mission_id.split("-")[0],
+            'storm_name':mission_id.split("-")[2]
+        }
+        
+        return Mission(mission_dict,mission_id)
         
     def update(self):
         
@@ -388,8 +452,8 @@ class hdobs:
     ----------
     storm : tropycal.tracks.Storm
         Requested storm.
-    data : str, or list of dictionaries, optional
-        String with filepath to pickle file with list of dictionaries, or the list, containing dropsonde data.
+    data : str, optional
+        Filepath of pickle file containing HDOBs data retrieved from ``hdobs.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
     update : bool
         True = search for new data, following existing data in the dropsonde object, and concatenate.
         
@@ -397,6 +461,44 @@ class hdobs:
     -------
     Dataset
         An instance of HDOBs, initialized with a dataframe of HDOB
+    
+    Notes
+    -----
+    There are two recommended ways of retrieving an hdob object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
+    
+    .. code-block:: python
+    
+        #Retrieve Hurricane Michael (2018) from TrackDataset
+        basin = tracks.TrackDataset()
+        storm = basin.get_storm(('michael',2018))
+    
+    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_hdobs()`` method thus allowing all of the hdobs attributes and methods to be accessed from the Storm object. As a result, a Storm object does not need to be provided as an argument.
+    
+    .. code-block:: python
+    
+        #Retrieve all HDOBs for this storm
+        storm.recon.get_hdobs()
+        
+        #Retrieve the raw HDOBs data
+        storm.recon.hdobs.data
+        
+        #Use the plot_points() method of hdobs
+        storm.recon.hdobs.plot_points()
+    
+    The second method is to use the hdobs class independently of the other recon classes:
+    
+    .. code-block:: python
+    
+        from tropycal.recon import hdobs
+        
+        #Retrieve all HDOBs for this storm, passing the Storm object as an argument
+        hdobs_obj = hdobs(storm)
+        
+        #Retrieve the raw HDOBs data
+        hdobs_obj.data
+        
+        #Use the plot_points() method of hdobs
+        hdobs_obj.plot_points()
     """
 
     def __repr__(self):
@@ -445,8 +547,8 @@ class hdobs:
             try:
                 start_time = max(self.data['time'])
             except:
-                start_time = min(self.storm.dict['date'])-timedelta(days=1)
-            end_time = max(self.storm.dict['date'])+timedelta(days=1)
+                start_time = min(self.storm.dict['date'])-timedelta(hours=12)
+            end_time = max(self.storm.dict['date'])+timedelta(hours=12)
 
             timestr = [f'{start_time:%Y%m%d}']+\
                         [f'{t:%Y%m%d}' for t in self.storm.dict['date'] if t>start_time]+\
@@ -462,16 +564,20 @@ class hdobs:
             files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
             linksub = [self.archiveURL+'.'.join(l) for l in files]
             
+            urllib3.disable_warnings()
+            http = urllib3.PoolManager()
+            
             timer_start = dt.now()
             print(f'Searching through recon HDOB files between {timestr[0]} and {timestr[-1]} ...')
             filecount,unreadable = 0,0
             for link in linksub:
-                content = requests.get(link).text
+                response = http.request('GET',link)
+                content = response.data.decode('utf-8')
                 missionname = [i.split() for i in content.split('\n')][3][1]
                 if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
                     filecount+=1
                     try:
-                        tmp = self._decode_hdob(content)
+                        tmp = decode_hdob(content)
                     except:
                         unreadable+=1
                     if self.data is None:
@@ -483,9 +589,15 @@ class hdobs:
             print(f'--> Completed reading in recon HDOB files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files'+\
                   f'\nUnable to decode {unreadable} files')
-        self._recenter()
-
-        self.keys = list(self.data.keys())
+        
+        #Sort data by time
+        self.data.sort_values(['time'],inplace=True)
+        
+        try:
+            self._recenter()
+            self.keys = list(self.data.keys())
+        except:
+            self.keys = []
 
     def update(self):
         r"""
@@ -497,72 +609,6 @@ class hdobs:
         """
         
         self = self.__init__(storm=self.storm,data=self.data,update=True)
-    
-    def _decode_hdob(self,content):
-        tmp = [i.split() for i in content.split('\n')]
-        tmp = [i for j,i in enumerate(tmp) if len(i)>0]
-        items = []
-        for j,i in enumerate(tmp):
-            if j<=3:
-                items.append(i)
-            if j>3 and i[0][0].isdigit():
-                items.append(i)
-            
-        missionname = items[2][1]
-        data = {}
-        data['time'] = [dt.strptime(items[2][-1]+i[0],'%Y%m%d%H%M%S') for i in items[3:]]
-        if data['time'][0].hour>12 and data['time'][-1].hour<12:
-            data['time'] = [t+timedelta(days=[0,1][t.hour<12]) for t in data['time']]
-
-        data['lat'] = [np.nan if '/' in i[1] else round((float(i[1][:-3])+float(i[1][-3:-1])/60)*[-1,1][i[1][-1]=='N'],2) \
-                       for i in items[3:]]
-        data['lon'] = [np.nan if '/' in i[2] else round((float(i[2][:-3])+float(i[2][-3:-1])/60)*[-1,1][i[2][-1]=='E'],2) \
-                       for i in items[3:]]
-        data['plane_p'] = [np.nan if '/' in i[3] else round(float(i[3])*0.1+[0,1000][float(i[3])<1000],1) for i in items[3:]]
-        data['plane_z'] = [np.nan if '/' in i[4] else round(float(i[4]),0) for i in items[3:]]
-        data['p_sfc'] = [np.nan if (('/' in i[5]) | (p<550)) \
-                         else round(float(i[5])*0.1+[0,1000][float(i[5])<1000],1) for i,p in zip(items[3:],data['plane_p'])]
-        data['temp'] = [np.nan if '/' in i[6] else round(float(i[6])*0.1,1) for i in items[3:]]
-        data['dwpt'] = [np.nan if '/' in i[7] else round(float(i[7])*0.1,1) for i in items[3:]]
-        data['wdir'] = [np.nan if '/' in i[8][:3] else round(float(i[8][:3]),0) for i in items[3:]]
-        data['wspd'] = [np.nan if '/' in i[8][3:] else round(float(i[8][3:]),0) for i in items[3:]]
-        data['pkwnd'] = [np.nan if '/' in i[9] else round(float(i[9]),0) for i in items[3:]]
-        data['sfmr'] = [np.nan if '/' in i[10] else round(float(i[10]),0) for i in items[3:]]
-        data['rain'] = [np.nan if '/' in i[11] else round(float(i[11]),0) for i in items[3:]]
-        
-        #Ignore entries with lat/lon of 0
-        orig_lat = np.copy(data['lat'])
-        orig_lon = np.copy(data['lon'])
-        for key in data.keys():
-            data[key] = [data[key][i] for i in range(len(orig_lat)) if orig_lat[i] != 0 and orig_lon[i] != 0]
-        
-        data['flag']=[]
-        for i in items[3:]:
-            flag = []
-            if int(i[12][0]) in [1,3]:
-                flag.extend(['lat','lon'])
-            if int(i[12][0]) in [2,3]:
-                flag.extend(['plane_p','plane_z'])
-            if int(i[12][1]) in [1,4,5,9]:
-                flag.extend(['temp','dwpt'])
-            if int(i[12][1]) in [2,4,6,9]:
-                flag.extend(['wdir','wspd','pkwnd'])
-            if int(i[12][1]) in [3,5,6,9]:
-                flag.extend(['sfmr','rain'])
-            data['flag'].append(flag)
-        
-        #QC p_sfc
-        if any(abs(np.gradient(data['p_sfc'],np.array(data['time']).astype('datetime64[s]').astype(float)))>1):
-            data['p_sfc']=[np.nan]*len(data['p_sfc'])
-            data['flag'] = [d.append('p_sfc') for d in data['flag']]
-
-        data['mission'] = [missionname[:2]]*len(data['time'])
-
-        return_data = pd.DataFrame.from_dict(data).reset_index()
-        #remove nan's for lat/lon coordinates
-        return_data = return_data.dropna(subset=['lat', 'lon'])
-
-        return return_data 
         
     def _find_centers(self,data=None):
         
@@ -751,12 +797,213 @@ class hdobs:
         ----------
         filename : str
             name of file to save pickle file to.
+        
+        Notes
+        -----
+        This method saves the HDOBs data as a pickle within the current working directory, given a filename as an argument.
+        
+        For example, assume ``hdobs`` was retrieved from a Storm object (using the first method described in the ``hdobs`` class documentation). The HDOBs data would be saved to a pickle file as follows:
+        
+        >>> storm.recon.hdobs.to_pickle("mystorm_hdobs.pickle")
+        
+        Now the HDOBs data is saved locally, and next time recon data for this storm needs to be analyzed, this allows to bypass re-reading the HDOBs data from the NHC server by providing the pickle file as an argument:
+        
+        >>> storm.recon.get_hdobs("mystorm_hdobs.pickle")
+        
         """
         
         with open(filename,'wb') as f:
             pickle.dump(self.data,f)
     
-    def plot_points(self,varname='wspd',domain="dynamic",radlim=None,ax=None,cartopy_proj=None,**kwargs):
+    def plot_time_series(self,varname=('p_sfc','wspd'),mission=None,time=None,realtime=False,**kwargs):
+        
+        r"""
+        Plots a time series of one or two variables on an axis.
+        
+        Parameters
+        ----------
+        varname : str or tuple
+            If one variable to plot, varname is a string of the variable name. If two variables to plot, varname is a tuple of the left and right variable names, respectively. Available varnames are:
+            
+            * **p_sfc** - Mean Sea Level Pressure (hPa)
+            * **temp** - Flight Level Temperature (C)
+            * **dwpt** - Flight Level Dewpoint (C)
+            * **wspd** - Flight Level Wind (kt)
+            * **sfmr** - Surface Wind (kt)
+            * **pkwnd** - Peak Wind Gust (kt)
+            * **rain** - Rain Rate (mm/hr)
+            * **plane_z** - Geopotential Height (m)
+            * **plane_p** - Pressure (hPa)
+        mission : int
+            Mission number to plot. If None, all missions for this storm are plotted.
+        time : tuple
+            Tuple of start and end times (datetime.datetime) to plot. If None, all times available are plotted.
+        realtime : bool
+            If True, the most recent 2 hours of the mission will plot, overriding the time argument. Default is False.
+        
+        Other Parameters
+        ----------------
+        left_prop : dict
+            Dictionary of properties for the left line. Scroll down for more information.
+        right_prop : dict
+            Dictionary of properties for the right line. Scroll down for more information.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
+        
+        Notes
+        -----
+        The following properties are available for customizing the plot, via ``left_prop`` and ``right_prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - ms
+             - Marker size. If zero, none will be plotted. Default is zero.
+           * - color
+             - Color of lines (and markers if used). Default varies per varname.
+           * - linewidth
+             - Line width. Default is 1.0.
+        """
+        
+        #Pop kwargs
+        left_prop = kwargs.pop('left_prop',{})
+        right_prop = kwargs.pop('right_prop',{})
+        
+        #Retrieve variables
+        twin_ax = False
+        if isinstance(varname,tuple):
+            varname_right = varname[1]
+            varname = varname[0]
+            twin_ax = True
+            varname_right_info = time_series_plot(varname_right)
+        varname_info = time_series_plot(varname)
+        
+        #Filter by mission
+        def str2(number):
+            if number < 10: return f'0{number}'
+            return str(number)
+        if mission is not None:
+            df = self.data.loc[self.data['mission'] == str2(mission)]
+            if len(df) == 0: raise ValueError("Mission number provided is invalid.")
+        else:
+            df = self.data
+        
+        #Filter by time or realtime flag
+        if realtime:
+            end_time = pd.to_datetime(df['time'].values[-1])
+            df = df.loc[(df['time'] >= end_time-timedelta(hours=2)) & (df['time'] <= end_time)]
+        elif time is not None:
+            df = df.loc[(df['time'] >= time[0]) & (df['time'] <= time[1])]
+        if len(df) == 0: raise ValueError("Time range provided is invalid.")
+        
+        #Filter by default kwargs
+        left_prop_default = {'ms':0,'color':varname_info['color'],'linewidth':1}
+        for key in left_prop.keys(): left_prop_default[key] = left_prop[key]
+        left_prop = left_prop_default
+        if twin_ax:
+            right_prop_default = {'ms':0,'color':varname_right_info['color'],'linewidth':1}
+            for key in right_prop.keys(): right_prop_default[key] = right_prop[key]
+            right_prop = right_prop_default
+        
+        #----------------------------------------------------------------------------------
+        
+        #Create figure
+        fig,ax = plt.subplots(figsize=(9,6),dpi=200)
+        if twin_ax:
+            ax.grid(axis='x')
+        else:
+            ax.grid()
+        
+        #Plot line
+        line1 = ax.plot(df['time'],df[varname],color=left_prop['color'],linewidth=left_prop['linewidth'],label=varname_info['name'])
+        ax.set_ylabel(varname_info['full_name'])
+        
+        #Plot dots
+        if left_prop['ms'] >= 1:
+            plot_times = df['time'].values
+            plot_var = df[varname].values
+            plot_times = [plot_times[i] for i in range(len(plot_times)) if varname not in df['flag'].values[i]]
+            plot_var = [plot_var[i] for i in range(len(plot_var)) if varname not in df['flag'].values[i]]
+            ax.plot(plot_times,plot_var,'o',color=left_prop['color'],ms=left_prop['ms'])
+        
+        #Format x-axis dates
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%Mz\n%m/%d'))
+        
+        #Add twin axis
+        if twin_ax:
+            ax2 = ax.twinx()
+            
+            #Plot line
+            line2 = ax2.plot(df['time'],df[varname_right],color=right_prop['color'],linewidth=right_prop['linewidth'],label=varname_right_info['name'])
+            ax2.set_ylabel(varname_right_info['full_name'])
+            
+            #Plot dots
+            if right_prop['ms'] >= 1:
+                plot_times = df['time'].values
+                plot_var = df[varname_right].values
+                plot_times = [plot_times[i] for i in range(len(plot_times)) if varname_right not in df['flag'].values[i]]
+                plot_var = [plot_var[i] for i in range(len(plot_var)) if varname_right not in df['flag'].values[i]]
+                ax2.plot(plot_times,plot_var,'o',color=right_prop['color'],ms=right_prop['ms'])
+
+            #Add legend
+            lines = line1 + line2
+            labels = [l.get_label() for l in lines]
+            ax.legend(lines,labels)
+        
+            #Special handling if both are in units of Celsius
+            same_unit = False
+            if varname in ['temp','dwpt'] and varname_right in ['temp','dwpt']: same_unit = True
+            if varname in ['sfmr','wspd','pkwnd'] and varname_right in ['sfmr','wspd','pkwnd']: same_unit = True
+            if same_unit:
+                min_val = np.nanmin([np.nanmin(df[varname]),np.nanmin(df[varname_right])])
+                max_val = np.nanmax([np.nanmax(df[varname]),np.nanmax(df[varname_right])])*1.05
+                min_val = min_val * 1.05 if min_val < 0 else min_val * 0.95
+                if np.isnan(min_val): min_val = 0
+                if np.isnan(max_val): max_val = 0
+                if min_val == max_val:
+                    min_val = 0
+                    max_val = 10
+                ax.set_ylim(min_val,max_val)
+                ax2.set_ylim(min_val,max_val)
+        
+        #Add titles
+        storm_data = self.storm.dict
+        type_array = np.array(storm_data['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            add_ptc_flag = False
+            if len(tropical_vmax) == 0:
+                add_ptc_flag = True
+                idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            subtrop = classify_subtropical(np.array(storm_data['type']))
+            peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+            peak_basin = storm_data['wmo_basin'][peak_idx]
+            storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
+            if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
+        
+        #Plot title
+        title_string = f"{storm_type} {storm_data['name']}"
+        if mission is None:
+            title_string += f"\nRecon Aircraft HDOBs | All Missions"
+        else:
+            title_string += f"\nRecon Aircraft HDOBs | Mission #{mission}"
+        ax.set_title(title_string,loc='left',fontweight='bold')
+        ax.set_title("Plot generated using Tropycal",fontsize=8,loc='right')
+        
+        #Return plot
+        return ax
+    
+    def plot_points(self,varname='wspd',domain="dynamic",radlim=None,barbs=False,ax=None,cartopy_proj=None,**kwargs):
         
         r"""
         Creates a plot of recon data points.
@@ -774,6 +1021,8 @@ class hdobs:
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         radlim : int
             Radius (in km) away from storm center to include points. If none (default), all points are plotted.
+        barbs : bool
+            If True, plots wind barbs. If False (default), plots dots.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
@@ -785,7 +1034,21 @@ class hdobs:
             Customization properties of recon plot. Please refer to :ref:`options-prop-recon-plot` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
+        
+        Notes
+        -----
+        1. Plotting wind barbs only works for wind related variables. ``barbs`` will be automatically set to False for non-wind variables.
+        
+        2. The special colormap **category_recon** can be used in the prop dict (``prop={'cmap':'category_recon'}``). This uses the standard SSHWS colormap, but with a new color for wind between 50 and 64 knots.
         """
+        
+        #Change barbs
+        if varname == 'p_sfc': barbs = False
         
         #Pop kwargs
         prop = kwargs.pop('prop',{})
@@ -803,7 +1066,7 @@ class hdobs:
             cartopy_proj = self.plot_obj.proj
         
         #Plot recon
-        plot_ax = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=varname,radlim=radlim,ax=ax,prop=prop,map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_points(self.storm,dfRecon,domain,varname=varname,radlim=radlim,barbs=barbs,ax=ax,prop=prop,map_prop=map_prop)
         
         #Return axis
         return plot_ax
@@ -842,6 +1105,10 @@ class hdobs:
         -------
         ax
             Axes instance containing the plot.
+        
+        Notes
+        -----
+        The special colormap **category_recon** can be used in the prop dict (``prop={'cmap':'category_recon'}``). This uses the standard SSHWS colormap, but with a new color for wind between 50 and 64 knots.
         """
         
         #Pop kwargs
@@ -881,13 +1148,12 @@ class hdobs:
         
         #------------------------------------------------------------------------------
         
-        #Create plot        
-        #plt.figure(figsize=(9,11),dpi=150)
-        plt.figure(figsize=(9,9),dpi=150) #CHANGE THIS OR ELSE
+        #Create plot
+        plt.figure(figsize=(9,9),dpi=150)
         ax = plt.subplot()
         
         #Plot surface category colors individually, necessitating normalizing colormap
-        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] == 'category':
+        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] in ['category','category_recon']:
             norm = mcolors.BoundaryNorm(clevs,cmap.N)
             cf = ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),
                              levels=clevs,cmap=cmap,norm=norm)
@@ -1341,8 +1607,8 @@ class dropsondes:
     ----------
     storm : tropycal.tracks.Storm
         Requested storm.
-    data : str, or list of dictionaries, optional
-        String with filepath to pickle file with list of dictionaries, or the list, containing dropsonde data.
+    data : str, optional
+        Filepath of pickle file containing dropsondes data retrieved from ``dropsondes.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
     update : bool
         True = search for new data, following existing data in the dropsonde object, and concatenate.
 
@@ -1350,6 +1616,44 @@ class dropsondes:
     -------
     Dataset
         An instance of dropsondes.
+    
+    Notes
+    -----
+    There are two recommended ways of retrieving a dropsondes object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
+    
+    .. code-block:: python
+    
+        #Retrieve Hurricane Michael (2018) from TrackDataset
+        basin = tracks.TrackDataset()
+        storm = basin.get_storm(('michael',2018))
+    
+    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_dropsondes()`` method thus allowing all of the dropsondes attributes and methods to be accessed from the Storm object. As a result, a Storm object does not need to be provided as an argument.
+    
+    .. code-block:: python
+    
+        #Retrieve all dropsondes for this storm
+        storm.recon.get_dropsondes()
+        
+        #Retrieve the raw dropsondes data
+        storm.recon.dropsondes.data
+        
+        #Use the plot_points() method of dropsondes
+        storm.recon.dropsondes.plot_points()
+    
+    The second method is to use the dropsondes class independently of the other recon classes:
+    
+    .. code-block:: python
+    
+        from tropycal.recon import dropsondes
+        
+        #Retrieve all dropsondes for this storm, passing the Storm object as an argument
+        dropsondes_obj = dropsondes(storm)
+        
+        #Retrieve the raw dropsondes data
+        dropsondes_obj.data
+        
+        #Use the plot_points() method of dropsondes
+        dropsondes_obj.plot_points()
     """
 
     def __repr__(self):
@@ -1417,14 +1721,21 @@ class dropsondes:
             files = sorted([i for i in files if i[1]>=min(timeboundstrs) and i[1]<=max(timeboundstrs)],key=lambda x: x[1])
             linksub = [self.archiveURL+'.'.join(l) for l in files]
             
+            urllib3.disable_warnings()
+            http = urllib3.PoolManager()
+            
             timer_start = dt.now()
             print(f'Searching through recon dropsonde files between {timeboundstrs[0]} and {timeboundstrs[-1]} ...')
             filecount = 0
             for link in linksub:
                 #print(link)
-                content = requests.get(link).text
+                response = http.request('GET',link)
+                content = response.data.decode('utf-8')
                 datestamp = dt.strptime(link.split('.')[-2],'%Y%m%d%H%M')
-                missionname,tmp = self._decode_dropsonde(content,date=datestamp)
+                try:
+                    missionname,tmp = decode_dropsonde(content,date=datestamp)
+                except:
+                    continue
                 testkeys = ('TOPtime','lat','lon')
                 if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
                     filecount += 1
@@ -1436,9 +1747,12 @@ class dropsondes:
                         pass
             print(f'--> Completed reading in recon dropsonde files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files')
-        self._recenter()
         
-        self.keys = sorted(list(set([k for d in self.data for k in d.keys()])))
+        try:
+            self._recenter()
+            self.keys = sorted(list(set([k for d in self.data for k in d.keys()])))
+        except:
+            self.keys = []
 
     def update(self):
         r"""
@@ -1451,211 +1765,6 @@ class dropsondes:
         
         newobj = dropsondes(storm=self.storm,data=self.data,update=True)
         return newobj
-    
-    def _decode_dropsonde(self,content,date):
-        
-        NOLOCFLAG = False
-        missionname = '_____'
-        
-        delimiters = ['XXAA','31313','51515','61616','62626','XXBB','21212','_____']
-        sections = {}
-        for i,d in enumerate(delimiters[:-1]):
-            a = content.split('\n'+d)
-            if len(a)>1:
-                a = ('\n'+d).join(a[1:]) if len(a)>2 else a[1] 
-                b = a.split('\n'+delimiters[i+1])[0]
-                sections[d] = b
-
-        for k,v in sections.items():
-            tmp = copy.copy(v)
-            for d in delimiters:
-                tmp=tmp.split('\n'+d)[0]
-            tmp = [i for i in tmp.split(' ') if len(i)>0]
-            tmp = [j.replace('\n','') if '\n' in j and (len(j)<(7+j.count('\n')) or len(j)==(11+j.count('\n'))) else j for j in tmp]
-            tmp = [i for j in tmp for i in j.split('\n') if len(i)>0]
-            sections[k] = tmp
-        
-        def _time(timestr):
-            if timestr < f'{date:%H%M}':
-                return date.replace(hour=int(timestr[:2]),minute=int(timestr[2:4]))
-            else:
-                return date.replace(hour=int(timestr[:2]),minute=int(timestr[2:4]))-timedelta(days=1)
-        
-        def _tempdwpt(item):
-            if '/' in item[:3]:
-                temp = np.nan
-                dwpt = np.nan
-            elif '/' in item[4:]:
-                z = round(float(item[:3]),0)
-                temp = round(z*0.1,1) if z%2==0 else round(z*-0.1,1)
-                dwpt = np.nan
-            else:
-                z = round(float(item[:3]),0)
-                temp = round(z*0.1,1) if z%2==0 else round(z*-0.1,1)
-                z = round(float(item[3:]),0)
-                dwpt = temp-(round(z*0.1,1) if z<=50 else z-50)
-            return temp,dwpt
-
-        def _wdirwspd(item):
-            wdir = round(np.floor(float(item[:3])/5)*5,0) if '/' not in item else np.nan
-            wspd = round(float(item[3:])+100*(float(item[2])%5),0) if '/' not in item else np.nan
-            return wdir,wspd
-
-        def _standard(I3):
-            levkey = I3[0][:2]
-            levdict = {'99':-1,'00':1000,'92':925,'85':850,'70':700,'50':500,'40':400,'30':300,'25':250,'20':200,'15':150,'10':100,'__':None}
-            pres = float(levdict[levkey])
-            output = {}
-            output['pres'] = pres
-            if pres==-1:
-                output['pres'] = np.nan if '/' in I3[0][2:] else round(float(I3[0][2:])+[0,1000][float(I3[0][2:])<100],1)
-                output['hgt'] = 0.0
-            elif pres==1000:
-                z = np.nan if '/' in I3[0][2:] else round(float(I3[0][2:]),0)
-                output['hgt'] = round(500-z,0) if z>=500 else z
-            elif pres==925:
-                output['hgt'] = np.nan if '/' in I3[0][2:] else round(float(I3[0][2:]),0)
-            elif pres==850:
-                output['hgt'] = np.nan if '/' in I3[0][2:] else round(float(I3[0][2:])+1000,0)
-            elif pres==700:
-                z = np.nan if '/' in I3[0][2:] else round(float(I3[0][2:]),0)
-                output['hgt'] = round(z+3000,0) if z<500 else round(z+2000,0)       
-            elif pres in (500,400,300):
-                output['hgt'] = np.nan if '/' in I3[0][2:] else round(float(I3[0][2:])*10,0)
-            else:
-                output['hgt'] = np.nan if '/' in I3[0][2:] else round(1e4+float(I3[0][2:])*10,0)
-            output['temp'],output['dwpt'] = _tempdwpt(I3[1])
-            if I3[2][:2]=='88':
-                output['wdir'],output['wspd'] = np.nan,np.nan
-                skipflag = 0
-            elif I3[2][:2]==list(levdict.keys())[list(levdict.keys()).index(levkey)+1] and \
-            I3[3][:2]!=list(levdict.keys())[list(levdict.keys()).index(levkey)+1]:
-                output['wdir'],output['wspd'] = np.nan,np.nan
-                skipflag = 1
-            else:
-                output['wdir'],output['wspd'] = _wdirwspd(I3[2])  
-                skipflag = 0 
-            endflag = True if '88' in [i[:2] for i in I3] else False
-            return output,skipflag,endflag
-
-        data = {k:np.nan for k in ('lat','lon','slp',\
-                                   'TOPlat','TOPlon','TOPtime',\
-                                   'BOTTOMlat','BOTTOMlon','BOTTOMtime',\
-                                   'MBLdir','MBLspd','DLMdir','DLMspd',\
-                                   'WL150dir','WL150spd','top','LSThgt','software','levels')}
-        
-        for sec,items in sections.items():
-
-            if sec == '61616' and len(items)>0:
-                missionname = items[1]
-                data['mission'] = items[1][:2]
-                data['stormname'] = items[2]
-                try:
-                    data['obsnum'] = int(items[-1])
-                except:
-                    data['obsnum'] = items[-1]
-
-            if sec == 'XXAA' and len(items)>0 and not NOLOCFLAG:
-                if '/' in items[1]+items[2]:
-                    NOLOCFLAG = True
-                else:
-                    octant = int(items[2][0])
-                    data['lat'] = round(float(items[1][2:])*0.1*[-1,1][octant in (2,3,7,8)],1)
-                    data['lon'] = round(float(items[2][1:])*0.1*[-1,1][octant in (0,1,2,3)],1)
-                    data['slp'] = np.nan if '/' in items[4][2:] else round(float(items[4][2:])+[0,1000][float(items[4][2:])<100],1)
-
-                    standard = {k:[] for k in ['pres','hgt','temp','dwpt','wdir','wspd']}
-                    skips = 0
-                    for jj,item in enumerate(items[4::3]):
-                        if items[4+jj*3-skips][:2]=='88':
-                            break
-                        output,skipflag,endflag = _standard(items[4+jj*3-skips:8+jj*3-skips])
-                        skips += skipflag
-                        for k in standard.keys():
-                            standard[k].append(output[k])
-                        if endflag:
-                            break
-                    standard = pd.DataFrame.from_dict(standard).sort_values('pres',ascending=False)
-
-            if sec == '62626' and len(items)>0 and not NOLOCFLAG:
-                if items[0] in ['CENTER','MXWNDBND','RAINBAND','EYEWALL']:
-                    data['location'] = items[0]
-                    if items[0]=='EYEWALL':
-                        data['octant'] = {'000':'N','045':'NE','090':'E','135':'SE',\
-                                  '180':'S','225':'SW','270':'W','315':'NW'}[items[1]]
-                if 'REL' in items:
-                    tmp = items[items.index('REL')+1]
-                    data['TOPlat'] = round(float(tmp[:4])*.01*[-1,1][tmp[4]=='N'],2)
-                    data['TOPlon'] = round(float(tmp[5:10])*.01*[-1,1][tmp[10]=='E'],2)
-                    tmp = items[items.index('REL')+2]
-                    data['TOPtime'] = _time(tmp) #date + timedelta(hours=int(tmp[:2]),minutes=int(tmp[2:4]),seconds=int(tmp[4:6]))                    
-                if 'SPG' in items:
-                    tmp = items[items.index('SPG')+1]
-                    data['BOTTOMlat'] = round(float(tmp[:4])*.01*[-1,1][tmp[4]=='N'],2)
-                    data['BOTTOMlon'] = round(float(tmp[5:10])*.01*[-1,1][tmp[10]=='E'],2)
-                    tmp = items[items.index('SPG')+2]
-                    data['BOTTOMtime'] = _time(tmp) #date + timedelta(hours=int(tmp[:2]),minutes=int(tmp[2:4]),seconds=int(tmp[4:6]))                
-                elif 'SPL' in items:
-                    tmp = items[items.index('SPL')+1]
-                    data['BOTTOMlat'] = round(float(tmp[:4])*.01*[-1,1][tmp[4]=='N'],2)
-                    data['BOTTOMlon'] = round(float(tmp[5:10])*.01*[-1,1][tmp[10]=='E'],2)
-                    tmp = items[items.index('SPL')+2]
-                    data['BOTTOMtime'] = _time(tmp) #date + timedelta(hours=int(tmp[:2]),minutes=int(tmp[2:4]))                  
-                if 'MBL' in items:
-                    tmp = items[items.index('MBL')+2]
-                    wdir,wspd = _wdirwspd(tmp)
-                    data['MBLdir'] = wdir
-                    data['MBLspd'] = wspd
-                if 'DLM' in items:
-                    tmp = items[items.index('DLM')+2]
-                    wdir,wspd = _wdirwspd(tmp)
-                    data['DLMdir'] = wdir
-                    data['DLMspd'] = wspd                   
-                if 'WL150' in items:
-                    tmp = items[items.index('WL150')+1]
-                    wdir,wspd = _wdirwspd(tmp)
-                    data['WL150dir'] = wdir
-                    data['WL150spd'] = wspd
-                if 'LST' in items:
-                    tmp = items[items.index('LST')+2]
-                    data['LSThgt'] = round(float(tmp),0)
-                if 'AEV' in items:
-                    tmp = items[items.index('AEV')+1]
-                    data['software'] = 'AEV '+tmp
-
-            if sec == 'XXBB' and len(items)>0 and not NOLOCFLAG:
-                sigtemp = {k:[] for k in ['pres','temp','dwpt']}
-                for jj,item in enumerate(items[6::2]):
-                    z = np.nan if '/' in items[6+jj*2][2:] else round(float(items[6+jj*2][2:]),0)
-                    sigtemp['pres'].append(round(z+1000,0) if z<100 else z)
-                    temp,dwpt = _tempdwpt(items[7+jj*2])
-                    sigtemp['temp'].append(temp)
-                    sigtemp['dwpt'].append(dwpt)
-                sigtemp = pd.DataFrame.from_dict(sigtemp).sort_values('pres',ascending=False)
-
-            if sec == '21212' and len(items)>0 and not NOLOCFLAG:
-                sigwind = {k:[] for k in ['pres','wdir','wspd']}
-                for jj,item in enumerate(items[2::2]):
-                    z = np.nan if '/' in items[2+jj*2][2:] else round(float(items[2+jj*2][2:]),0)
-                    sigwind['pres'].append(round(z+1000,0) if z<100 else z)
-                    wdir,wspd = _wdirwspd(items[3+jj*2])
-                    sigwind['wdir'].append(wdir)
-                    sigwind['wspd'].append(wspd)
-                sigwind = pd.DataFrame.from_dict(sigwind).sort_values('pres',ascending=False)
-
-        if not NOLOCFLAG:
-            def _justify(a, axis=0):    
-                mask = pd.notnull(a)
-                arg_justified = np.argsort(mask,axis=0)[-1]
-                anew = [col[i] for i,col in zip(arg_justified,a.T)]
-                return anew
-            df = pd.concat([standard,sigtemp,sigwind],ignore_index=True, sort=False).sort_values('pres',ascending=False)
-            data['levels'] = pd.DataFrame(np.vstack(df.groupby('pres', sort=False)
-                              .apply(lambda gp: _justify(gp.to_numpy()))), columns=df.columns)
-
-            data['top'] = np.nanmin(data['levels']['pres'])
-            
-        return missionname,data
 
     def _recenter(self):
         data = copy.copy(self.data)
@@ -1724,7 +1833,7 @@ class dropsondes:
         Returns
         -------
         dropsondes
-            A new dropnsodes object that satisfies the intersection of all subsetting.
+            A new dropsondes object that satisfies the intersection of all subsetting.
         """
 
         NEW_DATA = copy.copy(pd.DataFrame(self.data))
@@ -1794,6 +1903,19 @@ class dropsondes:
         ----------
         filename : str
             name of file to save pickle file to.
+        
+        Notes
+        -----
+        This method saves the dropsondes data as a pickle within the current working directory, given a filename as an argument.
+        
+        For example, assume ``dropsondes`` was retrieved from a Storm object (using the first method described in the ``dropsondes`` class documentation). The dropsondes data would be saved to a pickle file as follows:
+        
+        >>> storm.recon.dropsondes.to_pickle(data="mystorm_dropsondes.pickle")
+        
+        Now the dropsondes data is saved locally, and next time recon data for this storm needs to be analyzed, this allows to bypass re-reading the dropsondes data from the NHC server by providing the pickle file as an argument:
+        
+        >>> storm.recon.get_dropsondes(data="mystorm_dropsondes.pickle")
+        
         """
         
         with open(filename,'wb') as f:
@@ -1823,6 +1945,11 @@ class dropsondes:
             Customization properties of recon plot. Please refer to :ref:`options-prop-recon-plot` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         
         Notes
         -----
@@ -1896,238 +2023,29 @@ class dropsondes:
             dict_list = self.data
         else:
             dict_list = self.sel(time=time).data
-
-        def time2text(time):
-            try:
-                return f'{data["TOPtime"]:%H:%M UTC %d %b %Y}'
-            except:
-                return 'N/A'
-        def location_text(indict):
-            try:
-                loc = indict['location'].lower()
-            except:
-                return ''
-            if loc == 'eyewall':
-                return r"$\bf{"+loc.capitalize()+'}$, '
-                #return r"$\bf{"+indict['octant']+'}$ '+r"$\bf{"+loc.capitalize()+'}$, '
-            else:
-                return r"$\bf{"+loc.capitalize()+'}$, '
-        degsym = u"\u00B0"
-        def latlon2text(lat,lon):
-            NA = False
-            if lat<0:
-                lattx = f'{abs(lat)}{degsym}S'
-            elif lat>=0:
-                lattx = f'{lat}{degsym}N'
-            else:
-                NA = True
-            if lon<0:
-                lontx = f'{abs(lon)}{degsym}W'
-            elif lon>=0:
-                lontx = f'{lon}{degsym}E'
-            else:
-                NA = True
-            if NA:
-                return 'N/A'
-            else:
-                return lattx+' '+lontx
-                
-        def mission2text(x):
-            try:
-                return int(x[:2])
-            except:
-                return x[:2]
-        def wind_components(speed,direction):
-            u = -speed * np.sin(direction*np.pi/180)
-            v = -speed * np.cos(direction*np.pi/180)
-            return u,v
-        def deg2dir(x):
-            dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW']
-            try:
-                idx = int(round(x*16/360,0)%16)
-                return dirs[idx]
-            except:
-                return 'N/A'
-        def rh_from_dp(t,td):
-            rh = np.exp(17.67 * (td) / (td+273.15 - 29.65)) / np.exp(17.67 * (t) / (t+273.15 - 29.65))
-            return rh*100
-        def cellcolor(color,value):
-            if np.isnan(value):
-                return 'w'
-            else:
-                return list(color[:3])+[.5]
-        def skew_t(t,p):
-            t0 = np.log(p/1050)*80/np.log(100/1050)
-            return t0+t,p
-        
-        figs = []
-        for data in dict_list:
-            # Loop through dropsondes
-            df = data['levels'].sort_values('pres',ascending=True)
-            Pres = df['pres']
-            Temp = df['temp']
-            Dwpt = df['dwpt']
-            wind_speed = df['wspd']
-            wind_dir = df['wdir']
-            U,V = wind_components(wind_speed, wind_dir)
-
-            ytop = int(np.nanmin(Pres)-50)
-            yticks = np.arange(1000,ytop,-100)
-            xticks = np.arange(-30,51,10)
-
-            # Get mandatory and significant wind sub-dataframes
-            dfmand = df.loc[df['pres'].isin((1000,925,850,700,500,400,300,250,200,150,100))]
-            sfc = df.loc[df['hgt']==0]
-            if len(sfc)>0:
-                SLP = sfc['pres'].values[0]
-                dfmand = pd.concat([dfmand,sfc])
-                dfmand = dfmand.loc[dfmand['pres']<=SLP]
-            else:
-                SLP = None
-            dfwind = df.loc[df['pres']>=700]
-
-            # Start figure
-            fig = plt.figure(figsize=(17,11),facecolor='w')
-            gs = gridspec.GridSpec(2,3,width_ratios=(2,.2,1.1),height_ratios=(len(dfmand)+3,len(dfwind)+3), wspace=0.0)
-
-            ax1 = fig.add_subplot(gs[:,0])
-
-            #Add titles
-            type_array = np.array(storm_data['type'])
-            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
-            if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
-                tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-                add_ptc_flag = False
-                if len(tropical_vmax) == 0:
-                    add_ptc_flag = True
-                    idx = np.where((type_array == 'LO') | (type_array == 'DB'))
-                tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-                subtrop = classify_subtropical(np.array(storm_data['type']))
-                peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
-                peak_basin = storm_data['wmo_basin'][peak_idx]
-                storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
-                if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
-
-            ax1.set_title(f'{storm_type} {storm_data["name"]}'+\
-                          f'\nDropsonde {data["obsnum"]}, Mission {mission2text(data["mission"])}',\
-                          loc='left',fontsize=17,fontweight='bold')
-            ax1.set_title(f'Drop time: {time2text(data["TOPtime"])}'+\
-                          f'\nDrop location: {location_text(data)}{latlon2text(data["lat"],data["lon"])}',loc='right',fontsize=13)
-            plt.yscale('log')
-            plt.yticks(yticks,[f'{i:d}' for i in yticks],fontsize=12)
-            plt.xticks(xticks,[f'{i:d}' for i in xticks],fontsize=12)
-            for y in range(1000,ytop,-50):plt.plot([-30,50],[y]*2,color='0.5',lw=0.5)
-            for x in range(-30-80,50,10):plt.plot([x,x+80],[1050,100],color='0.5',linestyle='--',lw=0.5)
-
-            plt.plot(*skew_t(Temp.loc[~np.isnan(Temp)],Pres.loc[~np.isnan(Temp)]),'o-',color='r')
-            plt.plot(*skew_t(Dwpt.loc[~np.isnan(Dwpt)],Pres.loc[~np.isnan(Dwpt)]),'o-',color='g')
-            plt.xlabel(f'Temperature ({degsym}C)',fontsize=13)
-            plt.ylabel('Pressure (hPa)',fontsize=13)
-            plt.axis([-30,50,1050,ytop])
-
-            lim = max([i for stage in ('TOP','BOTTOM') for i in [1.5*abs(data[f'{stage}xdist'])+.1,1.5*abs(data[f'{stage}ydist'])+.1]])
-            iscoords = np.isnan(lim)
-            if iscoords:
-                lim = 1
-            for stage,ycoord in zip(('TOP','BOTTOM'),(.8,.05)):
-                ax1in1 = ax1.inset_axes([0.05, ycoord, 0.15, 0.15])
-                if iscoords:
-                    ax1in1.set_title('distance N/A')
-                else:
-                    ax1in1.scatter(0,0,c='k')
-                    ax1in1.scatter(data[f'{stage}xdist'],data[f'{stage}ydist'],c='w',marker='v',edgecolor='k')
-                    ax1in1.set_title(f'{data[f"{stage}distance"]:0.0f} km {deg2dir(90-math.atan2(data[f"{stage}ydist"],data[f"{stage}xdist"])*180/np.pi)}')                    
-                ax1in1.axis([-lim,lim,-lim,lim])
-                ax1in1.xaxis.set_major_locator(plt.NullLocator())
-                ax1in1.yaxis.set_major_locator(plt.NullLocator())
-                
-            ax4 = fig.add_subplot(gs[:,1],sharey=ax1)
-            barbs = {k:[v.values[-1]] for k,v in zip(('p','u','v'),(Pres,U,V))}
-            for p,u,v in zip(Pres.values[::-1],U.values[::-1],V.values[::-1]):
-                if abs(p-barbs['p'][-1])>10 and not np.isnan(u):
-                    for k,v in zip(('p','u','v'),(p,u,v)):
-                        barbs[k].append(v)
-            plt.barbs([.4]*len(barbs['p']),barbs['p'],barbs['u'],barbs['v'], pivot='middle')
-            ax4.set_xlim(0,1)
-            ax4.axis('off')
-
-            RH = [rh_from_dp(i,j) for i,j in zip(dfmand['temp'],dfmand['dwpt'])]
-            cellText = np.array([['' if np.isnan(i) else f'{int(i)} hPa' for i in dfmand['pres']],\
-                        ['' if np.isnan(i) else f'{int(i)} m' for i in dfmand['hgt']],\
-                        ['' if np.isnan(i) else f'{i:.1f} {degsym}C' for i in dfmand['temp']],\
-                        ['' if np.isnan(i) else f'{int(i)} %' for i in RH],\
-                        ['' if np.isnan(i) else f'{deg2dir(j)} at {int(i)} kt' for i,j in zip(dfmand['wspd'],dfmand['wdir'])]]).T
-            colLabels = ['Pressure','Height','Temp','RH','Wind']
-
-            cmap_rh = mlib.cm.get_cmap('BrBG')
-            cmap_temp = mlib.cm.get_cmap('RdBu_r')
-            cmap_wind = mlib.cm.get_cmap('Purples')
-
-            colors = [['w','w',cellcolor(cmap_temp(t/120+.5),t),\
-                                cellcolor(cmap_rh(r/100),r),\
-                                cellcolor(cmap_wind(w/200),w)] for t,r,w in zip(dfmand['temp'],RH,dfmand['wspd'])]
-            
-            ax2 = fig.add_subplot(gs[0,2])
-            ax2.xaxis.set_visible(False)  # hide the x axis
-            ax2.yaxis.set_visible(False)  # hide the y axis
-            TB = ax2.table(cellText=cellText,colLabels=colLabels,cellColours=colors,cellLoc='center',bbox = [0, .05, 1, .95])
-            if SLP is not None:
-                TB[(len(cellText), 0)].get_text().set_weight('bold')
-            ax2.axis('off')
-            TB.auto_set_font_size(False)
-            TB.set_fontsize(9)
-            #TB.scale(3,1.2)
-            try:
-                ax2.text(0,.05,f'\nDeep Layer Mean Wind: {deg2dir(data["DLMdir"])} at {int(data["DLMspd"])} kt',va='top',fontsize=12)
-            except:
-                ax2.text(0,.05,f'\nDeep Layer Mean Wind: N/A',va='top',fontsize=12)
-
-            ax2.set_title('Generated using Tropycal \n',fontsize=12,fontweight='bold',color='0.7',loc='right')
-
-            cellText = np.array([[f'{int(i)} hPa' for i,j in zip(dfwind['pres'],dfwind['wspd']) if not np.isnan(j)],\
-                        [f'{deg2dir(j)} at {int(i)} kt' for i,j in zip(dfwind['wspd'],dfwind['wdir']) if not np.isnan(i)]]).T
-            colLabels = ['Pressure','Wind']
-            colors = [['w',cellcolor(cmap_wind(i/200),i)] for i in dfwind['wspd'] if not np.isnan(i)]
-
-            ax3 = fig.add_subplot(gs[1,2])
-
-            try:
-                TB = ax3.table(cellText=cellText,colLabels=colLabels,cellColours=colors,cellLoc='center',bbox = [0, .1, 1, .9])
-                TB.auto_set_font_size(False)
-                TB.set_fontsize(9)
-                meanwindoffset = 0
-            except:
-                meanwindoffset = 0.9
-            #TB.scale(2,1.2)
-            ax3.xaxis.set_visible(False)  # hide the x axis
-            ax3.yaxis.set_visible(False)  # hide the y axis
-            ax3.axis('off')
-            
-            try:
-                ax3.text(0,.1+meanwindoffset,\
-                         f'\nMean Wind in Lowest 500 m: {deg2dir(data["MBLdir"])} at {int(data["MBLspd"])} kt',va='top',fontsize=12)
-            except:
-                ax3.text(0,.1+meanwindoffset,\
-                         f'\nMean Wind in Lowest 500 m: N/A',va='top',fontsize=12)
-            try:
-                ax3.text(0,.1+meanwindoffset,\
-                         f'\n\nMean Wind in Lowest 150 m: {deg2dir(data["WL150dir"])} at {int(data["WL150spd"])} kt',va='top',fontsize=12)
-            except:
-                ax3.text(0,.1+meanwindoffset,\
-                         f'\n\nMean Wind in Lowest 150 m: N/A',va='top',fontsize=12)
-
-            figs.append(fig)
-            plt.close()
-            
-        if len(figs)>1:
-            return figs
-        elif len(figs)==1:
-            return fig
-        else:
-            print("No dropsondes in selection")
     
+        #Format storm name
+        storm_data = self.storm.dict
+        type_array = np.array(storm_data['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            add_ptc_flag = False
+            if len(tropical_vmax) == 0:
+                add_ptc_flag = True
+                idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            subtrop = classify_subtropical(np.array(storm_data['type']))
+            peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+            peak_basin = storm_data['wmo_basin'][peak_idx]
+            storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
+            if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
+        title_string = f'{storm_type} {storm_data["name"]}\nDropsonde DDD, Mission MMM'
+        
+        #Plot Skew-T
+        return plot_skewt(dict_list,title_string)
     
 class vdms:
     
@@ -2138,8 +2056,8 @@ class vdms:
     ----------
     storm : tropycal.tracks.Storm
         Requested storm.
-    data : str, or list of dictionaries, optional
-        String with filepath to pickle file with list of dictionaries, or the list, containing dropsonde data.
+    data : str, optional
+        Filepath of pickle file containing VDM data retrieved from ``vdms.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
     update : bool
         True = search for new data, following existing data in the dropsonde object, and concatenate.
 
@@ -2147,6 +2065,44 @@ class vdms:
     -------
     Dataset
         An instance of VDMs.
+    
+    Notes
+    -----
+    There are two recommended ways of retrieving a vdms object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
+    
+    .. code-block:: python
+    
+        #Retrieve Hurricane Michael (2018) from TrackDataset
+        basin = tracks.TrackDataset()
+        storm = basin.get_storm(('michael',2018))
+    
+    The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a ``get_vdms()`` method thus allowing all of the vdms attributes and methods to be accessed from the Storm object. As a result, a Storm object does not need to be provided as an argument.
+    
+    .. code-block:: python
+    
+        #Retrieve all VDMs for this storm
+        storm.recon.get_vdms()
+        
+        #Retrieve the raw VDM data
+        storm.recon.vdms.data
+        
+        #Use the plot_points() method of hdobs
+        storm.recon.vdms.plot_points()
+    
+    The second method is to use the vdms class independently of the other recon classes:
+    
+    .. code-block:: python
+    
+        from tropycal.recon import vdms
+        
+        #Retrieve all VDMs for this storm, passing the Storm object as an argument
+        vdms_obj = vdms(storm)
+        
+        #Retrieve the raw VDM data
+        vdms_obj.data
+        
+        #Use the plot_points() method of vdms
+        vdms_obj.plot_points()
     """
     
     def __repr__(self):
@@ -2194,16 +2150,24 @@ class vdms:
         self.data = []
 
         if data is None:
+            
+            urllib3.disable_warnings()
+            http = urllib3.PoolManager()
+            
             filecount = 0
             timer_start = dt.now()
             print(f'Searching through recon VDM files between {timestr[0]} and {timestr[-1]} ...')
             for link in linksub:
-                content = requests.get(link).text
+                response = http.request('GET',link)
+                content = response.data.decode('utf-8')
                 date = link.split('.')[-2]
                 year = int(date[:4])
                 month = int(date[4:6])
                 day = int(date[6:8])
-                missionname,tmp = self._decode_vdm(content,date=dt(year,month,day))
+                try:
+                    missionname,tmp = decode_vdm(content,date=dt(year,month,day))
+                except:
+                    continue
                 #print(link,missionname)
                 testkeys = ('time','lat','lon')
                 if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
@@ -2237,209 +2201,6 @@ class vdms:
         newobj = vdms(storm=self.storm,data=self.data,update=True)
         return newobj
         
-    def _decode_vdm(self,content,date):
-        data = {}
-        lines = content.split('\n')
-        RemarksNext = False
-        LonNext = False
-        FORMAT = 1 if date.year<2018 else 2
-        missionname = ''
-        
-        def isNA(x):
-            if x == 'NA':
-                return np.nan
-            else:
-                try:
-                    return float(x)
-                except:
-                    return x.lower()
-        
-        for line in lines:
-
-            if RemarksNext:
-                data['Remarks'] += (' '+line)
-            if LonNext:
-                info = line.split()
-                data['lon'] = np.round((float(info[0])+float(info[2])/60)*[-1,1][info[4]=='E'],2)
-                LonNext = False
-
-            if 'VORTEX DATA MESSAGE' in line:
-                stormid = line.split()[-1]
-            if line[:2] == 'A.':
-                info = line[3:].split('/')
-                day = int(info[0])
-                month = (date.month-int(day-date.day>15)-1)%12+1
-                year = date.year-int(date.month-int(day-date.day>15)==0)
-                hour,minute,second = [int(i) for i in info[1][:-1].split(':')]
-                data['time'] = dt(year,month,day,hour,minute,second)
-
-            if line[:2] == 'B.':
-                info = line[3:].split()
-                if FORMAT==1:
-                    data['lat'] = np.round((float(info[0])+float(info[2])/60)*[-1,1][info[4]=='N'],2)
-                    LonNext = True
-                if FORMAT==2:
-                    data['lat'] = float(info[0])*[-1,1][info[2]=='N']
-                    data['lon'] = float(info[3])*[-1,1][info[5]=='E']
-
-            if line[:2] == 'C.':
-                info = line[3:].split()*5
-                data[f'Standard Level (hPa)']=isNA(info[0])
-                data[f'Minimum Height at Standard Level (m)']=isNA(info[2])
-
-            if line[:2] == 'D.':
-                info = line[3:].split()*5
-                if FORMAT==1:
-                    data['Estimated Maximum Surface Wind Inbound (kt)'] = isNA(info[0])
-                if FORMAT==2:
-                    data['Minimum Sea Level Pressure (hPa)']=isNA(info[-2])                    
-
-            if line[:2] == 'E.':
-                info = line[3:].split()*5
-                if FORMAT==1:
-                    data['Dropsonde Surface Wind Speed at Center (kt)']=isNA(info[2])
-                    data['Dropsonde Surface Wind Direction at Center (deg)']=isNA(info[0])
-                if FORMAT==2:
-                    data['Location of Estimated Maximum Surface Wind Inbound']=isNA(line[3:])
-
-            if line[:2] == 'F.':
-                info = line[3:]
-                if FORMAT==1:
-                    data['Maximum Flight Level Wind Inbound']=isNA(info)
-                if FORMAT==2:
-                    data['Eye character']=isNA(info)
-
-            if line[:2] == 'G.':
-                info = line[3:]
-                if FORMAT==1:
-                    data['Location of the Maximum Flight Level Wind Inbound']=isNA(info)
-                if FORMAT==2:
-                    if isNA(info) == np.nan:
-                        data.update({'Eye Shape':np.nan,'Eye Diameter (nmi)':np.nan})
-                    else:
-                        shape = ''.join([i for i in info[:2] if not i.isdigit()])
-                        size = info[len(shape):]
-                        if shape=='C':
-                            data.update({'Eye Shape':'circular','Eye Diameter (nmi)':float(size)})
-                        elif shape=='CO':
-                            data['Eye Shape']='concentric'
-                            data.update({f'Eye Diameter {i+1} (nmi)':float(s) for i,s in enumerate(size.split('-'))})
-                        elif shape=='E':
-                            einfo = size.split('/')
-                            data.update({'Eye Shape':'elliptical','Orientation':float(einfo[0])*10,\
-                                         'Eye Major Axis (nmi)':float(einfo[1]),'Eye Minor Axis (nmi)':float(einfo[1])})
-                        else:
-                            data.update({'Eye Shape':np.nan,'Eye Diameter (nmi)':np.nan})
-
-            if line[:2] == 'H.':
-                info = line[3:].split()*5
-                if FORMAT==1:
-                    data['Minimum Sea Level Pressure (hPa)']=isNA(info[-2]) 
-                if FORMAT==2:
-                    data['Estimated Maximum Surface Wind Inbound (kt)']=isNA(info[0])
-
-            if line[:2] == 'I.':
-                info = line[3:]
-                if FORMAT==1:
-                    data['Maximum Flight Level Temp Outside Eye (C)']=isNA(info.split()[0])
-                if FORMAT==2:
-                    data['Location & Time of the Estimated Maximum Surface Wind Inbound']=isNA(info)
-
-            if line[:2] == 'J.':
-                info = line[3:]
-                if FORMAT==1:
-                    data['Maximum Flight Level Temp Inside Eye (C)']=isNA(info.split()[0])
-                if FORMAT==2:
-                    data['Maximum Flight Level Wind Inbound (kt)']=isNA(info)
-
-            if line[:2] == 'K.':
-                info = line[3:]
-                if FORMAT==1:
-                    data['Dew Point Inside Eye (C)']=isNA(info.split()[0])
-                if FORMAT==2:
-                    data['Location & Time of the Maximum Flight Level Wind Inbound']=isNA(info)
-
-            if line[:2] == 'L.':
-                info = line[3:]
-                if FORMAT==1:
-                    data['Eye character']=isNA(info)
-                if FORMAT==2:
-                    data['Estimated Maximum Surface Wind Outbound (kt)']=isNA(info)
-
-            if line[:2] == 'M.':
-                info = line[3:]
-                if FORMAT==1:
-                    if isNA(info) == np.nan:
-                        data.update({'Eye Shape':np.nan,'Eye Diameter (nmi)':np.nan})
-                    else:
-                        shape = ''.join([i for i in info[:2] if not i.isdigit()])
-                        size = info[len(shape):]
-                        if shape=='C':
-                            data.update({'Eye Shape':'circular','Eye Diameter (nmi)':float(size)})
-                        elif shape=='CO':
-                            data['Eye Shape']='concentric'
-                            data.update({f'Eye Diameter {i+1} (nmi)':float(s) for i,s in enumerate(size.split('-'))})
-                        elif shape=='E':
-                            einfo = size.split('/')
-                            data.update({'Eye Shape':'elliptical','Orientation':float(einfo[0])*10,\
-                                         'Eye Major Axis (nmi)':float(einfo[1]),'Eye Minor Axis (nmi)':float(einfo[1])})
-                        else:
-                            data.update({'Eye Shape':np.nan,'Eye Diameter (nmi)':np.nan})
-                if FORMAT==2:
-                    data['Location & Time of the Estimated Maximum Surface Wind Outbound']=isNA(info)
-
-            if line[:2] == 'N.':
-                info = line[3:]
-                if FORMAT==2:
-                    data['Maximum Flight Level Wind Outbound (kt)']=isNA(info)
-
-            if line[:2] == 'O.':
-                info = line[3:]
-                if FORMAT==2:
-                    data['Location & Time of the Maximum Flight Level Wind Outbound']=isNA(info)
-
-            if line[:2] == 'P.':
-                info = line[3:]
-                if FORMAT==1:
-                    data['Aircraft'] = info.split()[0]
-                    missionname = info.split()[1]
-                    data['mission'] = missionname[:2]
-                    data['Remarks'] = ''
-                    RemarksNext = True
-                if FORMAT==2:
-                    data['Maximum Flight Level Temp & Pressure Altitude Outside Eye']=isNA(info)
-
-            if line[:2] == 'Q.':
-                info = line[3:]
-                if FORMAT==2:
-                    data['Maximum Flight Level Temp & Pressure Altitude Inside Eye']=isNA(info)
-
-            if line[:2] == 'R.':
-                info = line[3:]
-                if FORMAT==2:
-                    data['Dewpoint Temp (collected at same location as temp inside eye)']=isNA(info)
-
-            if line[:2] == 'S.':
-                info = line[3:]
-                if FORMAT==2:
-                    data['Fix']=isNA(info)
-
-            if line[:2] == 'T.':
-                info = line[3:]
-                if FORMAT==2:
-                    data['Accuracy']=isNA(info)
-
-            if line[:2] == 'U.':
-                info = line[3:]
-                if FORMAT==2:
-                    data['Aircraft'] = info.split()[0]
-                    missionname = info.split()[1]
-                    data['mission'] = missionname[:2]
-                    data['Remarks'] = ''
-                    RemarksNext = True
-        
-        return missionname,data
-
     def isel(self,index):
         
         r"""
@@ -2518,11 +2279,116 @@ class vdms:
         ----------
         filename : str
             name of file to save pickle file to.
+        
+        Notes
+        -----
+        This method saves the VDMs data as a pickle within the current working directory, given a filename as an argument.
+        
+        For example, assume ``vdms`` was retrieved from a Storm object (using the first method described in the ``vdms`` class documentation). The VDMs data would be saved to a pickle file as follows:
+        
+        >>> storm.recon.vdms.to_pickle(data="mystorm_vdms.pickle")
+        
+        Now the VDMs data is saved locally, and next time recon data for this storm needs to be analyzed, this allows to bypass re-reading the VDMs data from the NHC server by providing the pickle file as an argument:
+        
+        >>> storm.recon.get_vdms("mystorm_vdms.pickle")
+        
         """
         
         with open(filename,'wb') as f:
             pickle.dump(self.data,f)
-            
+     
+    def plot_time_series(self,time=None,best_track=False,dots=True):
+        
+        r"""
+        Creates a time series of MSLP VDM data.
+        
+        Parameters
+        ----------
+        time : tuple, optional
+            Tuple of start and end datetime.datetime objects for plot. If None, all times will be plotted.
+        best_track : bool, optional
+            If True, Best Track MSLP will be plotted alongside VDM MSLP. Default is False.
+        dots : bool, optional
+            If True, dots will be plotted for each VDM point. Default is True.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
+        """
+        
+        #Retrieve data
+        storm_data = self.storm.dict
+        data = self.data
+        
+        #Retrive data and subset by time
+        if time is not None:
+            times = [i['time'] for i in data if i['time'] >= time[0] and i['time'] <= time[1]]
+            mslp = [i['Minimum Sea Level Pressure (hPa)'] for i in data if i['time'] >= time[0] and i['time'] <= time[1]]
+        else:
+            times = [i['time'] for i in data]
+            mslp = [i['Minimum Sea Level Pressure (hPa)'] for i in data]
+
+        #Create figure
+        fig,ax = plt.subplots(figsize=(9,6),dpi=200)
+        ax.grid()
+
+        #Plot VDM MSLP
+        ax.plot(times,mslp,color='b',alpha=0.5,label='VDM MSLP (hPa)')
+        if dots: ax.plot(times,mslp,'o',color='b')
+        
+        #Retrieve & plot Best Track data
+        if best_track:
+            if time is not None:
+                times_btk = [i for i in storm_data['date'] if i >= time[0] and i <= time[1]]
+                mslp_btk = [storm_data['mslp'][i] for i in range(len(storm_data['mslp'])) if storm_data['date'][i] >= time[0] and storm_data['date'][i] <= time[1]]
+            else:
+                times_btk = [i for i in storm_data['date']]
+                mslp_btk = [i for i in storm_data['mslp']]
+            ax.plot(times_btk,mslp_btk,color='r',alpha=0.25,label='Best Track MSLP (hPa)')
+            if dots: ax.plot(times_btk,mslp_btk,'o',color='r',alpha=0.5)
+
+        #Add labels
+        ax.set_ylabel("MSLP (hPa)")
+        ax.set_xlabel("Vortex Data Message time (UTC)")
+
+        #Add time labels
+        times_use = []
+        start_date = times[0].replace(hour=0)
+        total_days = (times[-1] - start_date).total_seconds() / 86400
+        increment_hour = 6
+        if total_days > 3: increment_hour = 12
+        if total_days > 6: increment_hour = 24
+        while start_date <= (times[-1] + timedelta(hours=increment_hour)):
+            times_use.append(start_date)
+            start_date += timedelta(hours=increment_hour)
+        ax.set_xticks(times_use)
+        ax.set_xlim(times[0]-timedelta(hours=6),times[-1]+timedelta(hours=6))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H UTC\n%b %d'))
+
+        #Add titles
+        type_array = np.array(storm_data['type'])
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            add_ptc_flag = False
+            if len(tropical_vmax) == 0:
+                add_ptc_flag = True
+                idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            subtrop = classify_subtropical(np.array(storm_data['type']))
+            peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+            peak_basin = storm_data['wmo_basin'][peak_idx]
+            storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
+            if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
+
+        if best_track: ax.legend()
+        ax.set_title(f'{storm_type} {storm_data["name"]}\nVDM Minimum Sea Level Pressure (hPa)',loc='left',fontweight='bold')
+
+        return ax
+    
     def plot_points(self,varname='Minimum Sea Level Pressure (hPa)',domain="dynamic",ax=None,cartopy_proj=None,**kwargs):
         
         r"""
@@ -2545,6 +2411,11 @@ class vdms:
             Customization properties of recon plot. Please refer to :ref:`options-prop-recon-plot` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
         """
         
         #Pop kwargs
@@ -2572,4 +2443,3 @@ class vdms:
         
         #Return axis
         return plot_ax
-        

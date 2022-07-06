@@ -29,7 +29,7 @@ try:
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
     import matplotlib.patches as mpatches
-
+    import matplotlib.gridspec as gridspec
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
@@ -40,7 +40,7 @@ class ReconPlot(Plot):
         self.use_credit = True
                  
     def plot_points(self,storm,recon_data,domain="dynamic",varname='wspd',radlim=None,barbs=False,scatter=False,\
-                    ax=None,return_domain=False,prop={},map_prop={}):
+                    ax=None,return_domain=False,prop={},map_prop={},mission=False,vdms=[],mission_id=''):
         
         r"""
         Creates a plot of recon data points
@@ -97,9 +97,6 @@ class ReconPlot(Plot):
 
         #Retrieve storm data
         storm_data = storm.dict
-        vmax = storm_data['vmax']
-        styp = storm_data['type']
-        sdate = storm_data['date']
 
         #Check recon_data type
         if isinstance(recon_data,pd.core.frame.DataFrame):
@@ -134,42 +131,53 @@ class ReconPlot(Plot):
         else:
             if min(lons) < min_lon: min_lon = min(lons)
 
-        #Plot recon data as specified
-        
+        #Get colormap and level extrema
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
-        
-        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] == 'category':
+        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] in ['category','category_recon']:
             vmin = min(clevs); vmax = max(clevs)
         else:
             vmin = min(prop['levels']); vmax = max(prop['levels'])
         
+        #Plot recon data as specified
         if barbs:
-            
             dataSort = recon_data.sort_values(by='wspd').reset_index(drop=True)
             if radlim is not None: dataSort = dataSort.loc[dataSort['distance']<=radlim]
-            norm = mlib.colors.Normalize(vmin=min(prop['levels']), vmax=max(prop['levels']))
-            cmap = mlib.cm.get_cmap(prop['cmap'])
+            norm = mlib.colors.Normalize(vmin=vmin, vmax=vmax)
             colors = cmap(norm(dataSort['wspd'].values))
             colors = [tuple(i) for i in colors]
-            qv = plt.barbs(dataSort['lon'],dataSort['lat'],\
-                       *uv_from_wdir(dataSort['wspd'],dataSort['wdir']),color=colors,length=5,linewidth=0.5)
-            
-#            qv.set_path_effects([patheffects.Stroke(linewidth=2, foreground='white'),
-#                       patheffects.Normal()])
-#    
+            qv = plt.barbs(dataSort['lon'],dataSort['lat'],
+                           *uv_from_wdir(dataSort['wspd'],dataSort['wdir']),color=colors,length=5,linewidth=0.5)
+            cbmap = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+            cbmap.set_array([])
+
         if scatter:
-                        
             dataSort = recon_data.sort_values(by=prop['sortby'],ascending=prop['ascending']).reset_index(drop=True)
             if radlim is not None: dataSort = dataSort.loc[dataSort['distance']<=radlim]
-            cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],\
+            cbmap = plt.scatter(dataSort['lon'],dataSort['lat'],c=dataSort[varname],
                                 cmap=cmap,vmin=vmin,vmax=vmax, s=prop['ms'], marker=prop['marker'],zorder=prop['zorder'])
+        
+        #Plot latest point if from a Mission object
+        if mission: plt.plot(recon_data['lon'].values[-1],recon_data['lat'].values[-1],'o',mfc='none',mec='k',mew=1.5,ms=10)
 
+        #Plot VDMs
+        if len(vdms) > 0:
+            for vdm_idx in range(len(vdms)):
+                vdm = vdms[vdm_idx]
+                
+                #Plot dot
+                #self.ax.plot(vdm['lon'],vdm['lat'],'o',ms=prop['vdm_ms'],mfc='orange',mec='k',mew=prop['vdm_ms']*0.1,
+                #             transform=ccrs.PlateCarree())
+                
+                #Transform coordinates for label
+                a = self.ax.text(vdm['lon'],vdm['lat'],str(int(np.round(vdm['Minimum Sea Level Pressure (hPa)']))),zorder=30,clip_on=True,fontsize=12,fontweight='bold',ha='center',va='center')
+                a.set_path_effects([patheffects.Stroke(linewidth=0.5,foreground='w'),patheffects.Normal()])
+        
         #--------------------------------------------------------------------------------------
         
         #Storm-centered plot domain
         if domain == "dynamic":
             
-            bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
+            bound_w,bound_e,bound_s,bound_n = dynamic_map_extent(min_lon,max_lon,min_lat,max_lat,recon=True)
             self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
             
         #Pre-generated or custom domain
@@ -205,6 +213,8 @@ class ReconPlot(Plot):
         except:
             vartitle = [varname]
         self.ax.set_title(f"{storm_type} {storm_data['name']}\n" + 'Recon: '+' '.join(vartitle),loc='left',fontsize=17,fontweight='bold')
+        if mission_id != '':
+            self.ax.set_title(f"Mission ID: {mission_id}\nRecon: " + ' '.join(vartitle),loc='left',fontsize=17,fontweight='bold')
 
         #Add right title
         start_date = dt.strftime(min(recon_data['time']),'%H:%M UTC %d %b %Y')
@@ -244,13 +254,16 @@ class ReconPlot(Plot):
         cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
-        if prop['cmap']=='category' and varname=='sfmr':
+        if prop['cmap'] in ['category','category_recon'] and varname=='sfmr':
             cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
             cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
             cax2.yaxis.set_ticks_position('right')
             cax2.yaxis.set_ticks((np.linspace(0,1,len(clevs))[:-1]+np.linspace(0,1,len(clevs))[1:])*.5)
-            cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+            if prop['cmap'] == 'category':
+                cax2.set_yticklabels(['TD','TS','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
+            else:
+                cax2.set_yticklabels(['TD','TS','>50 kt','Cat-1','Cat-2','Cat-3','Cat-4','Cat-5'],fontsize=11.5)
             cax2.tick_params('both', length=0, width=0, which='major')
             cax.yaxis.set_ticks_position('left')
             
@@ -296,9 +309,6 @@ class ReconPlot(Plot):
         
         #Retrieve storm data
         storm_data = storm.dict
-        vmax = storm_data['vmax']
-        styp = storm_data['type']
-        sdate = storm_data['date']
 
         #Add to coordinate extrema
         if max_lat is None:
@@ -639,3 +649,223 @@ class ReconPlot(Plot):
             return self.ax,{'n':bound_n,'e':bound_e,'s':bound_s,'w':bound_w}
         else:
             return self.ax
+
+def plot_skewt(dict_list,storm_name_title):
+
+    def time2text(time):
+        try:
+            return f'{data["TOPtime"]:%H:%M UTC %d %b %Y}'
+        except:
+            return 'N/A'
+    def location_text(indict):
+        try:
+            loc = indict['location'].lower()
+        except:
+            return ''
+        if loc == 'eyewall':
+            return r"$\bf{"+loc.capitalize()+'}$, '
+            #return r"$\bf{"+indict['octant']+'}$ '+r"$\bf{"+loc.capitalize()+'}$, '
+        else:
+            return r"$\bf{"+loc.capitalize()+'}$, '
+    degsym = u"\u00B0"
+    def latlon2text(lat,lon):
+        NA = False
+        if lat<0:
+            lattx = f'{abs(lat)}{degsym}S'
+        elif lat>=0:
+            lattx = f'{lat}{degsym}N'
+        else:
+            NA = True
+        if lon<0:
+            lontx = f'{abs(lon)}{degsym}W'
+        elif lon>=0:
+            lontx = f'{lon}{degsym}E'
+        else:
+            NA = True
+        if NA:
+            return 'N/A'
+        else:
+            return lattx+' '+lontx
+
+    def mission2text(x):
+        try:
+            return int(x[:2])
+        except:
+            return x[:2]
+    def wind_components(speed,direction):
+        u = -speed * np.sin(direction*np.pi/180)
+        v = -speed * np.cos(direction*np.pi/180)
+        return u,v
+    def deg2dir(x):
+        dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW']
+        try:
+            idx = int(round(x*16/360,0)%16)
+            return dirs[idx]
+        except:
+            return 'N/A'
+    def rh_from_dp(t,td):
+        rh = np.exp(17.67 * (td) / (td+273.15 - 29.65)) / np.exp(17.67 * (t) / (t+273.15 - 29.65))
+        return rh*100
+    def cellcolor(color,value):
+        if np.isnan(value):
+            return 'w'
+        else:
+            return list(color[:3])+[.5]
+    def skew_t(t,p):
+        t0 = np.log(p/1050)*80/np.log(100/1050)
+        return t0+t,p
+
+    figs = []
+    for data in dict_list:
+        # Loop through dropsondes
+        df = data['levels'].sort_values('pres',ascending=True)
+        Pres = df['pres']
+        Temp = df['temp']
+        Dwpt = df['dwpt']
+        wind_speed = df['wspd']
+        wind_dir = df['wdir']
+        U,V = wind_components(wind_speed, wind_dir)
+
+        ytop = int(np.nanmin(Pres)-50)
+        yticks = np.arange(1000,ytop,-100)
+        xticks = np.arange(-30,51,10)
+
+        # Get mandatory and significant wind sub-dataframes
+        dfmand = df.loc[df['pres'].isin((1000,925,850,700,500,400,300,250,200,150,100))]
+        sfc = df.loc[df['hgt']==0]
+        if len(sfc)>0:
+            SLP = sfc['pres'].values[0]
+            dfmand = pd.concat([dfmand,sfc])
+            dfmand = dfmand.loc[dfmand['pres']<=SLP]
+        else:
+            SLP = None
+        dfwind = df.loc[df['pres']>=700]
+
+        # Start figure
+        fig = plt.figure(figsize=(17,11),facecolor='w')
+        gs = gridspec.GridSpec(2,3,width_ratios=(2,.2,1.1),height_ratios=(len(dfmand)+3,len(dfwind)+3), wspace=0.0)
+
+        ax1 = fig.add_subplot(gs[:,0])
+
+        #Add title for main axis
+        storm_name_title = storm_name_title.replace("DDD",str(data["obsnum"]))
+        storm_name_title = storm_name_title.replace("MMM",str(mission2text(data["mission"])))
+        ax1.set_title(storm_name_title,loc='left',fontsize=17,fontweight='bold')
+        ax1.set_title(f'Drop time: {time2text(data["TOPtime"])}'+\
+                      f'\nDrop location: {location_text(data)}{latlon2text(data["lat"],data["lon"])}',loc='right',fontsize=13)
+        plt.yscale('log')
+        plt.yticks(yticks,[f'{i:d}' for i in yticks],fontsize=12)
+        plt.xticks(xticks,[f'{i:d}' for i in xticks],fontsize=12)
+        for y in range(1000,ytop,-50):plt.plot([-30,50],[y]*2,color='0.5',lw=0.5)
+        for x in range(-30-80,50,10):plt.plot([x,x+80],[1050,100],color='0.5',linestyle='--',lw=0.5)
+
+        plt.plot(*skew_t(Temp.loc[~np.isnan(Temp)],Pres.loc[~np.isnan(Temp)]),'o-',color='r')
+        plt.plot(*skew_t(Dwpt.loc[~np.isnan(Dwpt)],Pres.loc[~np.isnan(Dwpt)]),'o-',color='g')
+        plt.xlabel(f'Temperature ({degsym}C)',fontsize=13)
+        plt.ylabel('Pressure (hPa)',fontsize=13)
+        plt.axis([-30,50,1050,ytop])
+        
+        #Try plotting dropsonde location with respect to storm center (unavailable for realtime)
+        try:
+            lim = max([i for stage in ('TOP','BOTTOM') for i in [1.5*abs(data[f'{stage}xdist'])+.1,1.5*abs(data[f'{stage}ydist'])+.1]])
+            iscoords = np.isnan(lim)
+            if iscoords:
+                lim = 1
+            for stage,ycoord in zip(('TOP','BOTTOM'),(.8,.05)):
+                ax1in1 = ax1.inset_axes([0.05, ycoord, 0.15, 0.15])
+                if iscoords:
+                    ax1in1.set_title('distance N/A')
+                else:
+                    ax1in1.scatter(0,0,c='k')
+                    ax1in1.scatter(data[f'{stage}xdist'],data[f'{stage}ydist'],c='w',marker='v',edgecolor='k')
+                    ax1in1.set_title(f'{data[f"{stage}distance"]:0.0f} km {deg2dir(90-math.atan2(data[f"{stage}ydist"],data[f"{stage}xdist"])*180/np.pi)}')                    
+                ax1in1.axis([-lim,lim,-lim,lim])
+                ax1in1.xaxis.set_major_locator(plt.NullLocator())
+                ax1in1.yaxis.set_major_locator(plt.NullLocator())
+        except:
+            pass
+
+        ax4 = fig.add_subplot(gs[:,1],sharey=ax1)
+        barbs = {k:[v.values[-1]] for k,v in zip(('p','u','v'),(Pres,U,V))}
+        for p,u,v in zip(Pres.values[::-1],U.values[::-1],V.values[::-1]):
+            if abs(p-barbs['p'][-1])>10 and not np.isnan(u):
+                for k,v in zip(('p','u','v'),(p,u,v)):
+                    barbs[k].append(v)
+        plt.barbs([.4]*len(barbs['p']),barbs['p'],barbs['u'],barbs['v'], pivot='middle')
+        ax4.set_xlim(0,1)
+        ax4.axis('off')
+
+        RH = [rh_from_dp(i,j) for i,j in zip(dfmand['temp'],dfmand['dwpt'])]
+        cellText = np.array([['' if np.isnan(i) else f'{int(i)} hPa' for i in dfmand['pres']],\
+                    ['' if np.isnan(i) else f'{int(i)} m' for i in dfmand['hgt']],\
+                    ['' if np.isnan(i) else f'{i:.1f} {degsym}C' for i in dfmand['temp']],\
+                    ['' if np.isnan(i) else f'{int(i)} %' for i in RH],\
+                    ['' if np.isnan(i) else f'{deg2dir(j)} at {int(i)} kt' for i,j in zip(dfmand['wspd'],dfmand['wdir'])]]).T
+        colLabels = ['Pressure','Height','Temp','RH','Wind']
+
+        cmap_rh = mlib.cm.get_cmap('BrBG')
+        cmap_temp = mlib.cm.get_cmap('RdBu_r')
+        cmap_wind = mlib.cm.get_cmap('Purples')
+
+        colors = [['w','w',cellcolor(cmap_temp(t/120+.5),t),\
+                            cellcolor(cmap_rh(r/100),r),\
+                            cellcolor(cmap_wind(w/200),w)] for t,r,w in zip(dfmand['temp'],RH,dfmand['wspd'])]
+
+        ax2 = fig.add_subplot(gs[0,2])
+        ax2.xaxis.set_visible(False)  # hide the x axis
+        ax2.yaxis.set_visible(False)  # hide the y axis
+        TB = ax2.table(cellText=cellText,colLabels=colLabels,cellColours=colors,cellLoc='center',bbox = [0, .05, 1, .95])
+        if SLP is not None:
+            TB[(len(cellText), 0)].get_text().set_weight('bold')
+        ax2.axis('off')
+        TB.auto_set_font_size(False)
+        TB.set_fontsize(9)
+        #TB.scale(3,1.2)
+        try:
+            ax2.text(0,.05,f'\nDeep Layer Mean Wind: {deg2dir(data["DLMdir"])} at {int(data["DLMspd"])} kt',va='top',fontsize=12)
+        except:
+            ax2.text(0,.05,f'\nDeep Layer Mean Wind: N/A',va='top',fontsize=12)
+
+        ax2.set_title('Generated using Tropycal \n',fontsize=12,fontweight='bold',color='0.7',loc='right')
+
+        cellText = np.array([[f'{int(i)} hPa' for i,j in zip(dfwind['pres'],dfwind['wspd']) if not np.isnan(j)],\
+                    [f'{deg2dir(j)} at {int(i)} kt' for i,j in zip(dfwind['wspd'],dfwind['wdir']) if not np.isnan(i)]]).T
+        colLabels = ['Pressure','Wind']
+        colors = [['w',cellcolor(cmap_wind(i/200),i)] for i in dfwind['wspd'] if not np.isnan(i)]
+
+        ax3 = fig.add_subplot(gs[1,2])
+
+        try:
+            TB = ax3.table(cellText=cellText,colLabels=colLabels,cellColours=colors,cellLoc='center',bbox = [0, .1, 1, .9])
+            TB.auto_set_font_size(False)
+            TB.set_fontsize(9)
+            meanwindoffset = 0
+        except:
+            meanwindoffset = 0.9
+        #TB.scale(2,1.2)
+        ax3.xaxis.set_visible(False)  # hide the x axis
+        ax3.yaxis.set_visible(False)  # hide the y axis
+        ax3.axis('off')
+
+        try:
+            ax3.text(0,.1+meanwindoffset,\
+                     f'\nMean Wind in Lowest 500 m: {deg2dir(data["MBLdir"])} at {int(data["MBLspd"])} kt',va='top',fontsize=12)
+        except:
+            ax3.text(0,.1+meanwindoffset,\
+                     f'\nMean Wind in Lowest 500 m: N/A',va='top',fontsize=12)
+        try:
+            ax3.text(0,.1+meanwindoffset,\
+                     f'\n\nMean Wind in Lowest 150 m: {deg2dir(data["WL150dir"])} at {int(data["WL150spd"])} kt',va='top',fontsize=12)
+        except:
+            ax3.text(0,.1+meanwindoffset,\
+                     f'\n\nMean Wind in Lowest 150 m: N/A',va='top',fontsize=12)
+
+        figs.append(fig)
+        plt.close()
+
+    if len(figs)>1:
+        return figs
+    elif len(figs)==1:
+        return fig
+    else:
+        print("No dropsondes in selection")

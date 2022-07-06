@@ -267,7 +267,7 @@ class TrackPlot(Plot):
         
         #Set default properties
         default_prop={'dots':True,'fillcolor':'category','cmap':None,'levels':None,'linecolor':'k','linewidth':1.0,'ms':7.5,'plot_names':False}
-        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200,'plot_gridlines':True}
         
         #Initialize plot
         prop = self.add_prop(prop,default_prop)
@@ -431,10 +431,11 @@ class TrackPlot(Plot):
         
         #Plot parallels and meridians
         #This is currently not supported for all cartopy projections.
-        try:
-            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
-        except:
-            pass
+        if map_prop['plot_gridlines']:
+            try:
+                self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+            except:
+                pass
         
         #--------------------------------------------------------------------------------------
         
@@ -566,7 +567,7 @@ None,prop={},map_prop={}):
         
         #Set default properties
         default_prop={'dots':True,'fillcolor':'category','linecolor':'k','linewidth':1.0,'ms':7.5,'cone_lw':1.0,'cone_alpha':0.6}
-        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200,'plot_gridlines':True}
         
         #Initialize plot
         prop = self.add_prop(prop,default_prop)
@@ -825,10 +826,11 @@ None,prop={},map_prop={}):
         
         #Plot parallels and meridians
         #This is currently not supported for all cartopy projections.
-        try:
-            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
-        except:
-            pass
+        if map_prop['plot_gridlines']:
+            try:
+                self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+            except:
+                pass
         
         #--------------------------------------------------------------------------------------
         
@@ -958,7 +960,7 @@ None,prop={},map_prop={}):
         """
         
         #Set default properties
-        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200,'plot_gridlines':True}
         default_prop_ensemble_members = {'linewidth':0.5, 'linecolor':'k'}
         default_prop_ensemble_mean = {'linewidth':2.0, 'linecolor':'k'}
         default_prop_gfs = {'linewidth':2.0, 'linecolor':'b'}
@@ -1201,10 +1203,11 @@ None,prop={},map_prop={}):
 
             #Plot parallels and meridians
             #This is currently not supported for all cartopy projections.
-            try:
-                self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
-            except:
-                pass
+            if map_prop['plot_gridlines']:
+                try:
+                    self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+                except:
+                    pass
 
             #--------------------------------------------------------------------------------------
 
@@ -1238,7 +1241,7 @@ None,prop={},map_prop={}):
         #Set default properties
         default_prop={'dots':False,'fillcolor':'category','cmap':None,'levels':None,
                       'linecolor':'category','linewidth':1.0,'ms':7.5,'plot_names':True}
-        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200,'plot_gridlines':True}
         
         #Initialize plot
         prop = self.add_prop(prop,default_prop)
@@ -1367,10 +1370,11 @@ None,prop={},map_prop={}):
             
         #Plot parallels and meridians
         #This is currently not supported for all cartopy projections.
-        try:
-            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
-        except:
-            pass
+        if map_prop['plot_gridlines']:
+            try:
+                self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+            except:
+                pass
         
         #--------------------------------------------------------------------------------------
         
@@ -1545,7 +1549,7 @@ None,prop={},map_prop={}):
         default_prop={'cmap':'category','levels':None,\
                       'left_title':'','right_title':'All storms',
                       'plot_values':False,'values_size':None}
-        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200,'plot_gridlines':True}
         
         #Initialize plot
         prop = self.add_prop(prop,default_prop)
@@ -1560,10 +1564,11 @@ None,prop={},map_prop={}):
         
         #Plot parallels and meridians
         #This is currently not supported for all cartopy projections.
-        try:
-            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
-        except:
-            pass
+        if map_prop['plot_gridlines']:
+            try:
+                self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+            except:
+                pass
         
         #--------------------------------------------------------------------------------------
 
@@ -1737,11 +1742,11 @@ None,prop={},map_prop={}):
         """
         
         #Set default properties
-        default_two_prop={'plot':True,'fontsize':12,'days':5}
+        default_two_prop={'plot':True,'fontsize':12,'days':5,'ms':15}
         default_invest_prop={'plot':True,'fontsize':12,'linewidth':0.8,'linecolor':'k','linestyle':'dotted','ms':14}
         default_storm_prop={'plot':True,'fontsize':12,'linewidth':0.8,'linecolor':'k','linestyle':'dotted','fillcolor':'category','label_category':True,'ms':14}
         default_cone_prop={'plot':True,'linewidth':1.5,'linecolor':'k','alpha':0.6,'days':5,'fillcolor':'category','label_category':True,'ms':12}
-        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200,'plot_gridlines':True}
         if domain == 'all': default_map_prop['res'] = 'l'
         
         #Initialize plot
@@ -1809,7 +1814,7 @@ None,prop={},map_prop={}):
                 else:
                     color = color_base.get(risk_5day,'yellow')
                     text = prob_5day
-                self.ax.plot(lon,lat,'X',ms=15,color=color,mec='k',mew=1.5,transform=ccrs.PlateCarree(),zorder=20)
+                self.ax.plot(lon,lat,'X',ms=two_prop['ms'],color=color,mec='k',mew=1.5*(two_prop['ms']/15.0),transform=ccrs.PlateCarree(),zorder=20)
 
                 #Transform coordinates for label
                 x1, y1 = self.ax.projection.transform_point(lon, lat, ccrs.PlateCarree())
@@ -1913,6 +1918,7 @@ None,prop={},map_prop={}):
 
                             #Plot forecast dots
                             for idx in range(len(forecast_dict['lat'])):
+                                if forecast_dict['fhr'][idx]/24.0 > cone_prop['days']: continue
                                 if cone_prop['ms'] == 0: continue
                                 color = get_colors_sshws(forecast_dict['vmax'][idx])
                                 if cone_prop['fillcolor'] != 'category': color = cone_prop['fillcolor']
@@ -1943,10 +1949,11 @@ None,prop={},map_prop={}):
         
         #Plot parallels and meridians
         #This is currently not supported for all cartopy projections.
-        try:
-            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
-        except:
-            pass
+        if map_prop['plot_gridlines']:
+            try:
+                self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+            except:
+                pass
         
         #--------------------------------------------------------------------------------------
         

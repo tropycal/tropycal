@@ -15,6 +15,7 @@ import urllib
 import matplotlib.dates as mdates
 import matplotlib.colors as mcolors
 import matplotlib as mlib
+from matplotlib import path
 import warnings
 import scipy.interpolate as interp
 import re
@@ -310,7 +311,7 @@ def get_storm_type(wind_speed,subtropical_flag):
     else:
         return "HU"
 
-def get_basin(lat,lon,storm_id=""):
+def get_basin(lat,lon,source_basin=""):
     
     r"""
     Returns the current basin of the tropical cyclone.
@@ -324,8 +325,8 @@ def get_basin(lat,lon,storm_id=""):
     
     Other Parameters
     ----------------
-    storm_id : str
-        String representing storm ID. Used to distinguish between Atlantic and Pacific basins.
+    source_basin : str, optional
+        String representing the origin storm basin (e.g., "north_atlantic", "east_pacific").
     
     Returns
     -------
@@ -334,11 +335,7 @@ def get_basin(lat,lon,storm_id=""):
     
     Notes
     -----
-    
-    .. warning::
-
-        This function currently does not automatically distinguish between the North Atlantic and East Pacific basins. This is due to how storms over Mexico and Central America can technically be from either basin depending on which coast it made landfall in.
-    
+    For storms in the North Atlantic or East Pacific basin, ``source_basin`` must be provided. This is because storms located over Mexico or Central America could be in either basin depending on where they originated (e.g., storms originated in the Atlantic basin are considered to be within the Atlantic basin while over Mexico or Central America until emerging in the Pacific Ocean).
     """
     
     #Error check
@@ -357,16 +354,22 @@ def get_basin(lat,lon,storm_id=""):
         
         if lon < 100.0:
             return "north_indian"
-        elif lon < 180.0:
+        elif lon <= 180.0:
             return "west_pacific"
         else:
-            if len(storm_id) != 8:
+            if source_basin == "north_atlantic":
+                if constants.PATH_PACIFIC.contains_point((lat,lon)):
+                    return "east_pacific"
+                else:
+                    return "north_atlantic"
+            elif source_basin == "east_pacific":
+                if constants.PATH_ATLANTIC.contains_point((lat,lon)):
+                    return "north_atlantic"
+                else:
+                    return "east_pacific"
+            else:
                 msg = "Cannot determine whether storm is in North Atlantic or East Pacific basins."
                 raise RuntimeError(msg)
-            if storm_id[0:2] == "AL":
-                return "north_atlantic"
-            else:
-                return "east_pacific"
     
     #Southern hemisphere check
     else:
@@ -448,7 +451,7 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
     if wind_speed < 34: ace = 0.0
     
     #Return ACE
-    return ace
+    return round(ace,4)
 
 def dropsonde_mslp_estimate(mslp,surface_wind):
     

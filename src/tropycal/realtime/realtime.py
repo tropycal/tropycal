@@ -357,22 +357,17 @@ class Realtime():
                 self.data[stormid]['date'].append(date)
                 self.data[stormid]['special'].append('')
                 self.data[stormid]['type'].append(btk_type)
-                self.data[stormid]['lat'].append(btk_lat)
-                self.data[stormid]['lon'].append(btk_lon)
+                self.data[stormid]['lat'].append(round(btk_lat,1))
+                self.data[stormid]['lon'].append(round(btk_lon,1))
                 self.data[stormid]['vmax'].append(btk_wind)
                 self.data[stormid]['mslp'].append(btk_mslp)
                 
                 #Add basin
-                if add_basin == 'north_atlantic':
-                    wmo_agency = 'north_atlantic'
-                elif add_basin == 'east_pacific':
-                    if btk_lon > 0.0:
-                        wmo_agency = 'west_pacific'
-                    else:
-                        wmo_agency = 'east_pacific'
-                else:
-                    wmo_agency = 'west_pacific'
-                self.data[stormid]['wmo_basin'].append(wmo_agency)
+                origin_basin = add_basin + ''
+                if add_basin == 'east_pacific':
+                    check_basin = get_basin(self.data[stormid]['lat'][0],self.data[stormid]['lon'][0],add_basin)
+                    if check_basin != add_basin: origin_basin = 'north_atlantic'
+                self.data[stormid]['wmo_basin'].append(get_basin(btk_lat,btk_lon,origin_basin))
 
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:

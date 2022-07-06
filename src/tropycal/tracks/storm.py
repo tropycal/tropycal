@@ -125,8 +125,8 @@ class Storm:
             time_tropical = np.array(self.dict['date'])[idx]
             start_date = time_tropical[0].strftime("%H00 UTC %d %B %Y")
             end_date = time_tropical[-1].strftime("%H00 UTC %d %B %Y")
-            max_wind = 'N/A' if all_nan(np.array(self.dict['vmax'])[idx]) == True else np.nanmax(np.array(self.dict['vmax'])[idx])
-            min_mslp = 'N/A' if all_nan(np.array(self.dict['mslp'])[idx]) == True else np.nanmin(np.array(self.dict['mslp'])[idx])
+            max_wind = 'N/A' if all_nan(np.array(self.dict['vmax'])[idx]) == True else int(np.nanmax(np.array(self.dict['vmax'])[idx]))
+            min_mslp = 'N/A' if all_nan(np.array(self.dict['mslp'])[idx]) == True else int(np.nanmin(np.array(self.dict['mslp'])[idx]))
         summary_keys = {'Maximum Wind':f"{max_wind} knots",
                         'Minimum Pressure':f"{min_mslp} hPa",
                         'Start Date':start_date,

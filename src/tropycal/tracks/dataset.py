@@ -42,17 +42,33 @@ class TrackDataset:
     Parameters
     ----------
     basin : str
-        Ocean basin to load data for. Can be any of the following:
+        Ocean basin(s) to load data for. Can be any of the following:
         
-        * **north_atlantic** - HURDAT2, ibtracs
-        * **east_pacific** - HURDAT2, ibtracs
-        * **west_pacific** - ibtracs
-        * **north_indian** - ibtracs
-        * **south_indian** - ibtracs
-        * **australia** - ibtracs
-        * **south_pacific** - ibtracs
-        * **south_america** - ibtracs
-        * **all** - ibtracs
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Name
+             - Source(s)
+           * - "north_atlantic"
+             - HURDAT2, IBTrACS
+           * - "east_pacific"
+             - HURDAT2, IBTrACS
+           * - "both"
+             - HURDAT2 ("north_atlantic" & "east_pacific" combined)
+           * - "west_pacific"
+             - IBTrACS
+           * - "north_indian"
+             - IBTrACS
+           * - "south_indian"
+             - IBTrACS
+           * - "australia"
+             - IBTrACS
+           * - "south_america"
+             - IBTrACS
+           * - "all"
+             - IBTrACS
+
     source : str
         Data source to read in. Default is HURDAT2.
         
@@ -105,6 +121,10 @@ class TrackDataset:
         storm = basin.get_storm(("katrina",2005))
     
     For IBTrACS datasets, please refer to :ref:`ibtracs-caveats` for pros and cons of each mode of IBTrACS data available.
+    
+    .. note::
+    
+        If using ``basin="both"``, this combines the North Atlantic and East/Central Pacific HURDATv2 data into a single TrackDataset object. As of Tropycal v0.5, this now merges cross-basin storms (i.e., North Atlantic to East Pacific) which were reclassified with a new East Pacific ID into single Storm objects.
     """
  
     def __repr__(self):
@@ -195,9 +215,50 @@ class TrackDataset:
                 self.basin = 'all'
         
         #Read in best track data
-        if include_btk == True and basin in ['north_atlantic','east_pacific']:
+        if include_btk == True and basin in ['north_atlantic','east_pacific','both']:
             self.__read_btk()
-            
+        
+        #Delete duplicate entries
+        check = []
+        check_ids = []
+        keys = [k for k in self.data.keys()]
+        for key in keys:
+            if self.data[key]['name'].lower() == 'unnamed': continue
+            check_id = f"{self.data[key]['name']},{self.data[key]['year']},{self.data[key]['date'][0].month}"
+            if check_id not in check:
+                check.append(check_id)
+                check_ids.append(key)
+            else:
+                existing_id = check_ids[check.index(check_id)]
+                if len(self.data[key]['vmax']) > len(self.data[existing_id]['vmax']):
+                    del self.data[existing_id]
+                    check_ids.pop(check_ids.index(existing_id))
+                    check_ids.append(key)
+                else:
+                    del self.data[key]
+        
+        #Join storms for atlantic-pacific crossovers
+        if self.basin == 'both':
+            join_keys = [['AL081993','EP141993'],['AL181971','EP151971'],['AL141974','EP151974'],['AL161978','EP151978'],['AL111988','EP131988'],['AL031996','EP071996']]
+            for key in join_keys:
+
+                #Append East Pacific data to Atlantic data
+                for idx,i_time in enumerate(self.data[key[1]]['date']):
+                    if i_time in self.data[key[0]]['date']: continue
+                    for var in [i for i in self.data[key[1]].keys() if isinstance(self.data[key[1]][i],list)]:
+                        self.data[key[0]][var].append(self.data[key[1]][var][idx])
+                    if i_time.strftime('%H%M') in constants.STANDARD_HOURS and self.data[key[1]]['type'][idx] in constants.NAMED_TROPICAL_STORM_TYPES:
+                        self.data[key[0]]['ace'] += accumulated_cyclone_energy(self.data[key[1]]['vmax'][idx])
+
+                #Rename storm if needed
+                if self.data[key[1]]['name'].lower() == 'unnamed' or np.nanmax(self.data[key[1]]['vmax']) < 35:
+                    pass
+                else:
+                    self.data[key[0]]['name'] = f"{self.data[key[0]]['name']}-{self.data[key[1]]['name']}"
+
+                #Remove Pacific storm from data
+                del self.data[key[1]]
+        
         #Add keys of all storms to object
         keys = self.data.keys()
         self.keys = [k for k in keys]
@@ -311,13 +372,13 @@ class TrackDataset:
                 
                 #Parse into format to be entered into dict
                 if "N" in lat:
-                    lat = float(lat.split("N")[0])
+                    lat = round(float(lat.split("N")[0]),1)
                 elif "S" in lat:
-                    lat = float(lat.split("N")[0]) * -1.0
+                    lat = round(float(lat.split("N")[0]),1) * -1.0
                 if "W" in lon:
-                    lon = float(lon.split("W")[0]) * -1.0
+                    lon = round(float(lon.split("W")[0]),1) * -1.0
                 elif "E" in lon:
-                    lon = float(lon.split("E")[0])
+                    lon = round(float(lon.split("E")[0]),1)
                 vmax = int(vmax)
                 mslp = int(mslp)
                 
@@ -349,16 +410,11 @@ class TrackDataset:
                 self.data[current_id]['mslp'].append(mslp)
                 
                 #Add basin
-                if add_basin == 'north_atlantic':
-                    wmo_agency = 'north_atlantic'
-                elif add_basin == 'east_pacific':
-                    if lon > 0.0:
-                        wmo_agency = 'west_pacific'
-                    else:
-                        wmo_agency = 'east_pacific'
-                else:
-                    wmo_agency = 'west_pacific'
-                self.data[current_id]['wmo_basin'].append(wmo_agency)
+                origin_basin = add_basin + ''
+                if add_basin == 'east_pacific':
+                    check_basin = get_basin(self.data[current_id]['lat'][0],self.data[current_id]['lon'][0],add_basin)
+                    if check_basin != add_basin: origin_basin = 'north_atlantic'
+                self.data[current_id]['wmo_basin'].append(get_basin(lat,lon,origin_basin))
                 
                 #Calculate ACE & append to storm total
                 if np.isnan(vmax) == False:
@@ -405,7 +461,7 @@ class TrackDataset:
                 if storm_id in increment_but_pass: current_year_id += 1
                 pass
             elif storm_id[0:2] == 'CP':
-                self.data[key]['operational_id'] = f"{storm_id[0:2]}{num_to_str2(current_year_id)}{storm_year}"
+                self.data[key]['operational_id'] = storm_id + ''
             else:
                 #Skip potential TCs
                 if f"{storm_id[0:2]}{num_to_str2(current_year_id)}{storm_year}" in potential_tcs:
@@ -556,22 +612,20 @@ class TrackDataset:
                 self.data[stormid]['date'].append(date)
                 self.data[stormid]['special'].append('')
                 self.data[stormid]['type'].append(btk_type)
-                self.data[stormid]['lat'].append(btk_lat)
-                self.data[stormid]['lon'].append(btk_lon)
+                self.data[stormid]['lat'].append(round(btk_lat,1))
+                self.data[stormid]['lon'].append(round(btk_lon,1))
                 self.data[stormid]['vmax'].append(btk_wind)
                 self.data[stormid]['mslp'].append(btk_mslp)
                 
                 #Add basin
-                if self.basin == 'north_atlantic':
-                    wmo_agency = 'north_atlantic'
-                elif self.basin == 'east_pacific':
-                    if btk_lon > 0.0:
-                        wmo_agency = 'west_pacific'
-                    else:
-                        wmo_agency = 'east_pacific'
+                if self.basin == 'both':
+                    origin_basin = 'north_atlantic' if stormid[0:2] == 'AL' else 'east_pacific'
                 else:
-                    wmo_agency = 'west_pacific'
-                self.data[stormid]['wmo_basin'].append(wmo_agency)
+                    origin_basin = self.basin + ''
+                if self.basin == 'east_pacific':
+                    check_basin = get_basin(self.data[stormid]['lat'][0],self.data[stormid]['lon'][0],self.basin)
+                    if check_basin != self.basin: origin_basin = 'north_atlantic'
+                self.data[stormid]['wmo_basin'].append(get_basin(btk_lat,btk_lon,origin_basin))
 
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:
@@ -1378,7 +1432,14 @@ class TrackDataset:
         #Search for corresponding entry in keys
         basin_list = []
         for key in self.keys:
-            temp_year = self.data[key]['season']
+            
+            #Get year for 'all' (global data), otherwise get season
+            if self.basin == 'all' and basin == 'all':
+                temp_year = int(year) if int(year) in [i.year for i in self.data[key]['date']] else 0
+            else:
+                temp_year = self.data[key]['season']
+            
+            #Proceed if year/season is a match
             if temp_year == int(year):
                 temp_basin = self.data[key]['basin']
                 temp_wmo_basin = self.data[key]['wmo_basin']
@@ -1392,7 +1453,6 @@ class TrackDataset:
                 else:
                     season_dict[key] = self.data[key]
                     basin_list.append(self.data[key]['wmo_basin'][0])
-                    #basin_list.append(max(set(self.data[key]['wmo_basin']), key=self.data[key]['wmo_basin'].count))
                 
         #Error check
         if len(season_dict) == 0:
@@ -1406,7 +1466,13 @@ class TrackDataset:
         season_info['source_basin'] = season_dict[first_key]['basin']
         season_info['source'] = season_dict[first_key]['source']
         season_info['source_info'] = season_dict[first_key]['source_info']
-                
+        
+        #Fix basin
+        if self.basin == 'all' and basin == 'all':
+            season_info['basin'] = 'all'
+        if self.basin == 'both':
+            season_info['basin'] = 'both'
+        
         #Return object
         return Season(season_dict,season_info)
                    
@@ -1447,7 +1513,7 @@ class TrackDataset:
                 return_season = return_season + self.__retrieve_season(i_year,basin)
             return return_season
     
-    def ace_climo(self,plot_year=None,compare_years=None,climo_year_range=None,date_range=None,rolling_sum=0,return_dict=False,plot=True,save_path=None):
+    def ace_climo(self,plot_year=None,compare_years=None,climo_year_range=None,month_range=None,rolling_sum=0,return_dict=False,plot=True,save_path=None):
         
         r"""
         Creates and plots a climatology of accumulated cyclone energy (ACE).
@@ -1460,8 +1526,8 @@ class TrackDataset:
             Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).
         climo_year_range : tuple
             Start and end years to compute the climatology over. Default is from 1950 to last year.
-        date_range : tuple
-            Start and end dates to plot, both strings formatted as "month/day". Default is entire calendar year.
+        month_range : tuple
+            Start and end months to plot (e.g., ``(5,10)``). Default is peak hurricane season by basin.
         rolling_sum : int
             Days to calculate a rolling sum over. Default is 0 (annual running sum).
         return_dict : bool
@@ -1483,8 +1549,8 @@ class TrackDataset:
         if climo_year_range is None:
             climo_year_range = (1950,dt.now().year-1)
         
-        if self.source == 'ibtracs':
-            warnings.warn("This function is not currently configured to work for the ibtracs dataset.")
+        if self.basin in ['south_indian','australia','south_pacific']:
+            warnings.warn("This function is not currently configured to work in the Southern Hemisphere.")
         
         #Create empty dict
         ace = {}
@@ -1504,9 +1570,13 @@ class TrackDataset:
             #Remove 2/29 from dates
             if calendar.isleap(year):
                 year_dates = year_dates[year_dates != dt(year,2,29,0)]
+                year_dates = year_dates[year_dates != dt(year,2,29,3)]
                 year_dates = year_dates[year_dates != dt(year,2,29,6)]
+                year_dates = year_dates[year_dates != dt(year,2,29,9)]
                 year_dates = year_dates[year_dates != dt(year,2,29,12)]
+                year_dates = year_dates[year_dates != dt(year,2,29,15)]
                 year_dates = year_dates[year_dates != dt(year,2,29,18)]
+                year_dates = year_dates[year_dates != dt(year,2,29,21)]
             
             #Additional empty arrays
             year_cumace = np.zeros((year_dates.shape))
@@ -1609,8 +1679,13 @@ class TrackDataset:
         for i,(istart,iend) in enumerate(zip(julian_start[:-1][::2],julian_start[1:][::2])):
             ax.axvspan(istart,iend,color='#e4e4e4',alpha=0.5,zorder=0)
         
-        #Limit plot from May onward
-        ax.set_xlim(julian_start[4],julian[-1])
+        #Set x-axis bounds
+        if month_range is None:
+            ax.set_xlim(julian_start[4],julian[-1])
+        else:
+            end_month = month_range[1]-1
+            end_julian = julian[-1] if end_month == 11 else julian_start[end_month]-1
+            ax.set_xlim(julian_start[month_range[0]-1],end_julian)
 
         #Add plot title
         if plot_year is None:

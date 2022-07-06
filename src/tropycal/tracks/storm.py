@@ -890,13 +890,7 @@ class Storm:
         
     
     #PLOT FUNCTION FOR HURDAT
-    def plot_gefs_ensembles(self,forecast,fhr=None,
-                            prop_members = {'linewidth':0.5, 'linecolor':'k'},
-                            prop_mean = {'linewidth':2.0, 'linecolor':'k'},
-                            prop_gfs = {'linewidth':2.0, 'linecolor':'b'},
-                            prop_ellipse = {'linewidth':2.0, 'linecolor':'r'},
-                            prop_density = {'radius':200, 'cmap':plt.cm.YlOrRd, 'levels':[i for i in range(5,105,5)]},
-                            domain="dynamic",ax=None,cartopy_proj=None,save_path=None,map_prop={}):
+    def plot_gefs_ensembles(self,forecast,fhr=None,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of individual GEFS ensemble tracks.
@@ -905,10 +899,8 @@ class Storm:
         ----------
         forecast : datetime.datetime
             Datetime object representing the GEFS run initialization.
-        fhr : int or list, optional
-            Forecast hour(s) to plot. If None (default), a plot of all forecast hours will be produced. If a list, multiple plots will be produced. If an integer, a single plot will be produced.
-        plot_density : bool, optional
-            If True, track density will be computed and plotted in addition to individual ensemble tracks.
+        fhr : int, optional
+            Forecast hour to plot. If None (default), a cumulative plot of all forecast hours will be produced. If an integer, a single plot will be produced.
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
@@ -920,8 +912,18 @@ class Storm:
         
         Other Parameters
         ----------------
-        prop : dict
-            Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
+        prop_members : dict
+            Customization properties of GEFS ensemble member track lines. Scroll down below for available options.
+        prop_mean : dict
+            Customization properties of GEFS ensemble mean track. Scroll down below for available options.
+        prop_gfs : dict
+            Customization properties of GFS forecast track. Scroll down below for available options.
+        prop_btk : dict
+            Customization properties of Best Track line. Scroll down below for available options.
+        prop_ellipse : dict
+            Customization properties of GEFS ensemble ellipse. Scroll down below for available options.
+        prop_density : dict
+            Customization properties of GEFS ensemble track density. Scroll down below for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         
@@ -929,7 +931,127 @@ class Storm:
         -------
         ax
             Instance of axes containing the plot is returned.
+        
+        Notes
+        -----
+        .. note::
+            The total number of GEFS members available for analysis is as follows:
+            
+            * **2019 - present** - 31 members
+            * **2006 - 2018** - 21 members
+            * **2005 & back** - 5 members
+            
+            As the density plot and ensemble ellipse require a minimum of 10 ensemble members, they will not be generated for storms from 2005 and earlier.
+        
+        The ensemble ellipse used in this function follows the methodology of `Hamill et al. (2011)`_, denoting the spread in ensemble member cyclone positions. The size of the ellipse is calculated to contain 90% of ensemble members at any given time. This ellipse can be used to determine the primary type of ensemble variability:
+        
+        * **Along-track variability** - if the major axis of the ellipse is parallel to the ensemble mean motion vector.
+        * **Across-track variability** - if the major axis of the ellipse is normal to the ensemble mean motion vector.
+
+        .. _Hamill et al. (2011): https://doi.org/10.1175/2010MWR3456.1
+        
+        The following properties are available for customizing ensemble member tracks, via ``prop_members``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot ensemble member tracks. Default is True.
+           * - linewidth
+             - Forecast track linewidth. Default is 0.2.
+           * - linecolor
+             - Forecast track line color. Default is black.
+
+        The following properties are available for customizing ensemble mean track, via ``prop_mean``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot ensemble mean forecast track. Default is True.
+           * - linewidth
+             - Forecast track linewidth. Default is 3.0.
+           * - linecolor
+             - Forecast track line color. Default is black.
+        
+        The following properties are available for customizing GFS forecast track, via ``prop_gfs``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot GFS forecast track. Default is True.
+           * - linewidth
+             - Forecast track linewidth. Default is 3.0.
+           * - linecolor
+             - Forecast track line color. Default is red.
+        
+        The following properties are available for customizing Best Track line, via ``prop_btk``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot Best Track line. Default is True.
+           * - linewidth
+             - Best Track linewidth. Default is 2.0.
+           * - linecolor
+             - Best Track line color. Default is green.
+        
+        The following properties are available for customizing the ensemble ellipse plot, via ``prop_ellipse``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot ensemble member ellipse. Default is True.
+           * - linewidth
+             - Ellipse linewidth. Default is 3.0.
+           * - linecolor
+             - Ellipse line color. Default is blue.
+        
+        The following properties are available for customizing ensemble member track density, via ``prop_density``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot ensemble member track density. Default is True.
+           * - radius
+             - Radius (in km) for which to calculate track density. Default is 200 km.
+           * - cmap
+             - Color map for track density plot. Default is matplotlib's "YlOrRd" colormap.
+           * - levels
+             - List of levels for contour filling track density.
+        
         """
+        
+        #Pop kwargs
+        prop_members = kwargs.pop('prop_members',{})
+        prop_mean = kwargs.pop('prop_mean',{})
+        prop_gfs = kwargs.pop('prop_gfs',{})
+        prop_btk = kwargs.pop('prop_btk',{})
+        prop_ellipse = kwargs.pop('prop_ellipse',{})
+        prop_density = kwargs.pop('prop_density',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Create instance of plot object
         try:
@@ -953,99 +1075,118 @@ class Storm:
         except:
             self.get_operational_forecasts()
         
-        #Create dict to store all data in
-        ds = {'gfs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]},
-              'gefs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[],
-                      'members':[],'ellipse_lat':[],'ellipse_lon':[]}
-              }
+        #Convert fhr to list
+        if fhr != None and isinstance(fhr,list) == False:
+            fhr = [fhr]
         
-        #String formatting for ensembles
-        def str2(ens):
-            if ens == 0: return "AC00"
-            if ens < 10: return f"AP0{ens}"
-            return f"AP{ens}"
-
-        #Get GFS forecast entry (AVNX is valid for RAL a-deck source)
-        gfs_key = 'AVNO' if 'AVNO' in self.forecast_dict.keys() else 'AVNX'
+        #Determine max GEFS members by year
+        nens = 31 if self.year >= 2019 else 21
+        
+        #If this forecast init was recently used, don't re-calculate
+        init_used = False
         try:
-            forecast_gfs = self.forecast_dict[gfs_key][forecast.strftime("%Y%m%d%H")]
+            if self.gefs_init == forecast: init_used = True
         except:
-            raise RuntimeError("The requested GFS initialization isn't available for this storm.")
+            pass
         
-        #Enter into dict entry
-        ds['gfs']['fhr'] = [int(i) for i in forecast_gfs['fhr']]
-        ds['gfs']['lat'] = [np.round(i,1) for i in forecast_gfs['lat']]
-        ds['gfs']['lon'] = [np.round(i,1) for i in forecast_gfs['lon']]
-        ds['gfs']['vmax'] = [float(i) for i in forecast_gfs['vmax']]
-        ds['gfs']['mslp'] = forecast_gfs['mslp']
-        ds['gfs']['date'] = [forecast+timedelta(hours=i) for i in forecast_gfs['fhr']]
-        
-        #Retrieve GEFS ensemble data (30 members 2019-present, 20 members prior)
-        nens = 0
-        for ens in range(0,31):
+        #Only calculate if needed to
+        if init_used == False:
             
-            #Create dict entry
-            ds[f'gefs_{ens}'] = {'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]}
+            print("--> Starting to calculate GEFS data")
+            
+            #Create dict to store all data in
+            ds = {'gfs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]},
+                  'gefs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[],
+                          'members':[],'ellipse_lat':[],'ellipse_lon':[]}
+                  }
 
-            #Retrieve ensemble member data
-            ens_str = str2(ens)
-            if ens_str not in self.forecast_dict.keys(): continue
-            forecast_ens = self.forecast_dict[ens_str][forecast.strftime("%Y%m%d%H")]
+            #String formatting for ensembles
+            def str2(ens):
+                if ens == 0: return "AC00"
+                if ens < 10: return f"AP0{ens}"
+                return f"AP{ens}"
+
+            #Get GFS forecast entry (AVNX is valid for RAL a-deck source)
+            gfs_key = 'AVNO' if 'AVNO' in self.forecast_dict.keys() else 'AVNX'
+            try:
+                forecast_gfs = self.forecast_dict[gfs_key][forecast.strftime("%Y%m%d%H")]
+            except:
+                raise RuntimeError("The requested GFS initialization isn't available for this storm.")
 
             #Enter into dict entry
-            ds[f'gefs_{ens}']['fhr'] = [int(i) for i in forecast_ens['fhr']]
-            ds[f'gefs_{ens}']['lat'] = [np.round(i,1) for i in forecast_ens['lat']]
-            ds[f'gefs_{ens}']['lon'] = [np.round(i,1) for i in forecast_ens['lon']]
-            ds[f'gefs_{ens}']['vmax'] = [float(i) for i in forecast_ens['vmax']]
-            ds[f'gefs_{ens}']['mslp'] = forecast_ens['mslp']
-            ds[f'gefs_{ens}']['date'] = [forecast+timedelta(hours=i) for i in forecast_ens['fhr']]
-            nens += 1
+            ds['gfs']['fhr'] = [int(i) for i in forecast_gfs['fhr']]
+            ds['gfs']['lat'] = [np.round(i,1) for i in forecast_gfs['lat']]
+            ds['gfs']['lon'] = [np.round(i,1) for i in forecast_gfs['lon']]
+            ds['gfs']['vmax'] = [float(i) for i in forecast_gfs['vmax']]
+            ds['gfs']['mslp'] = forecast_gfs['mslp']
+            ds['gfs']['date'] = [forecast+timedelta(hours=i) for i in forecast_gfs['fhr']]
 
-        #Construct ensemble mean data
-        #Iterate through all forecast hours
-        for iter_fhr in range(0,246,6):
+            #Retrieve GEFS ensemble data (30 members 2019-present, 20 members prior)
+            for ens in range(0,nens):
 
-            #Temporary data arrays
-            temp_data = {}
-            for key in ds['gfs'].keys():
-                if key not in ['date','fhr']: temp_data[key] = []
+                #Create dict entry
+                ds[f'gefs_{ens}'] = {'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]}
 
-            #Iterate through ensemble member
-            for ens in range(nens):
+                #Retrieve ensemble member data
+                ens_str = str2(ens)
+                if ens_str not in self.forecast_dict.keys(): continue
+                forecast_ens = self.forecast_dict[ens_str][forecast.strftime("%Y%m%d%H")]
 
-                #Determine if member has data valid at this forecast hour
-                if iter_fhr in ds[f'gefs_{ens}']['fhr']:
+                #Enter into dict entry
+                ds[f'gefs_{ens}']['fhr'] = [int(i) for i in forecast_ens['fhr']]
+                ds[f'gefs_{ens}']['lat'] = [np.round(i,1) for i in forecast_ens['lat']]
+                ds[f'gefs_{ens}']['lon'] = [np.round(i,1) for i in forecast_ens['lon']]
+                ds[f'gefs_{ens}']['vmax'] = [float(i) for i in forecast_ens['vmax']]
+                ds[f'gefs_{ens}']['mslp'] = forecast_ens['mslp']
+                ds[f'gefs_{ens}']['date'] = [forecast+timedelta(hours=i) for i in forecast_ens['fhr']]
 
-                    #Retrieve index
-                    idx = ds[f'gefs_{ens}']['fhr'].index(iter_fhr)
+            #Construct ensemble mean data
+            #Iterate through all forecast hours
+            for iter_fhr in range(0,246,6):
+
+                #Temporary data arrays
+                temp_data = {}
+                for key in ds['gfs'].keys():
+                    if key not in ['date','fhr']: temp_data[key] = []
+
+                #Iterate through ensemble member
+                for ens in range(nens):
+
+                    #Determine if member has data valid at this forecast hour
+                    if iter_fhr in ds[f'gefs_{ens}']['fhr']:
+
+                        #Retrieve index
+                        idx = ds[f'gefs_{ens}']['fhr'].index(iter_fhr)
+
+                        #Append data
+                        for key in ds['gfs'].keys():
+                            if key not in ['date','fhr']: temp_data[key].append(ds[f'gefs_{ens}'][key][idx])
+
+                #Proceed if 20 or more ensemble members
+                if len(temp_data['lat']) >= 10:
 
                     #Append data
                     for key in ds['gfs'].keys():
-                        if key not in ['date','fhr']: temp_data[key].append(ds[f'gefs_{ens}'][key][idx])
+                        if key not in ['date','fhr']:
+                            ds['gefs'][key].append(np.nanmean(temp_data[key]))
+                    ds['gefs']['fhr'].append(iter_fhr)
+                    ds['gefs']['date'].append(forecast+timedelta(hours=iter_fhr))
+                    ds['gefs']['members'].append(len(temp_data['lat']))
 
-            #Proceed if 20 or more ensemble members
-            if len(temp_data['lat']) >= 10:
-
-                #Append data
-                for key in ds['gfs'].keys():
-                    if key not in ['date','fhr']:
-                        ds['gefs'][key].append(np.nanmean(temp_data[key]))
-                ds['gefs']['fhr'].append(iter_fhr)
-                ds['gefs']['date'].append(forecast+timedelta(hours=iter_fhr))
-                ds['gefs']['members'].append(len(temp_data['lat']))
-
-                #Calculate ellipse data
-                if prop_ellipse is not None:
-                    ellipse_data = plot_ellipse(temp_data['lat'],temp_data['lon'])
-                    ds['gefs']['ellipse_lon'].append(ellipse_data['xell'])
-                    ds['gefs']['ellipse_lat'].append(ellipse_data['yell'])
+                    #Calculate ellipse data
+                    if prop_ellipse is not None:
+                        ellipse_data = plot_ellipse(temp_data['lat'],temp_data['lon'])
+                        ds['gefs']['ellipse_lon'].append(ellipse_data['xell'])
+                        ds['gefs']['ellipse_lat'].append(ellipse_data['yell'])
         
-        #Convert fhr to list
-        if isinstance(fhr,int) == True or isinstance(fhr,float) == True:
-            fhr = [fhr]
+            #Save data for future use if needed
+            self.gefs_init = forecast
+            self.ds = ds
+            
+            print("--> Done calculating GEFS data")
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_members,prop_mean,prop_gfs,prop_ellipse,prop_density,nens,domain,ds,ax=ax,map_prop=map_prop,save_path=save_path)
+        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_members,prop_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,domain,self.ds,ax=ax,map_prop=map_prop,save_path=save_path)
         
         #Return axis
         return plot_ax

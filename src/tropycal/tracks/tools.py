@@ -703,38 +703,37 @@ def calculate_distance(lat1,lat2,lon1,lon2):
     
     return dist
 
-def plot_ellipse(slats,slons):
-
-    mlon = np.average(slons)
-    mlat = np.average(slats)
+def plot_ellipse(member_lats,member_lons):
+    r"""
+    Calculate the latitude and longitude bounds of the ellipse following methodology from Hamill et al. (2011).
+    
+    This code is adapted from NCL code courtesy of Ryan Torn and Rosimar Rios-Berrios.
+    """
+    
+    #Compute ensemble mean lon & lat
+    mean_lon = np.average(member_lons)
+    mean_lat = np.average(member_lats)
 
     Pb = [[0,0],[0,0]]
-    Pb[0][0] = 0
-    Pb[1][1] = 0
-    Pb[1][0] = 0
-
-    for i in np.arange(len(slats)):
-        Pb[0][0] = Pb[0][0] + (slons[i]-mlon) * (slons[i]-mlon)
-        Pb[1][1] = Pb[1][1] + (slats[i]-mlat) * (slats[i]-mlat)
-        Pb[1][0] = Pb[1][0] + (slats[i]-mlat) * (slons[i]-mlon)
-
+    for i in range(len(member_lats)):
+        Pb[0][0] = Pb[0][0] + (member_lons[i]-mean_lon) * (member_lons[i]-mean_lon)
+        Pb[1][1] = Pb[1][1] + (member_lats[i]-mean_lat) * (member_lats[i]-mean_lat)
+        Pb[1][0] = Pb[1][0] + (member_lats[i]-mean_lat) * (member_lons[i]-mean_lon)
     Pb[0][1] = Pb[1][0]
 
-    Pb[0][0] = Pb[0][0] / float(len(slats)-1)
-    Pb[0][1] = Pb[0][1] / float(len(slats)-1)
-    Pb[1][0] = Pb[1][0] / float(len(slats)-1)
-    Pb[1][1] = Pb[1][1] / float(len(slats)-1)
-
-    #Pb(:,:) = Pb(:,:) / int2flt(pcnt-1)
-    #print(Pb)
+    Pb[0][0] = Pb[0][0] / float(len(member_lats)-1)
+    Pb[0][1] = Pb[0][1] / float(len(member_lats)-1)
+    Pb[1][0] = Pb[1][0] / float(len(member_lats)-1)
+    Pb[1][1] = Pb[1][1] / float(len(member_lats)-1)
 
     rho = Pb[1][0] / (math.sqrt(Pb[0][0]) * math.sqrt(Pb[1][1]))
     sigmax = math.sqrt(Pb[0][0])
     sigmay = math.sqrt(Pb[1][1])
     fac = 1.0 / (2.0 * (1 - rho * rho))
 
-    xell = []
-    yell = []
+    #Calculate lon & lat coordinates of ellipse
+    ellipse_lon = []
+    ellipse_lat = []
     rdex = 0
     incr = math.pi/180.0
     for radians in np.arange(0,(2.0*math.pi)+incr,math.pi/180.0):
@@ -747,116 +746,13 @@ def plot_ellipse(slats,slons):
             dist = math.sqrt(xloc * xloc + yloc * yloc)
             prob = np.exp(-1.0 * fac * ((xloc/sigmax)**2 + (yloc/sigmay)**2 - 2.0 * rho * (xloc/sigmax)*(yloc/sigmay)))
             if prob < 0.256:
-                xell.append(xloc + mlon)
-                yell.append(yloc + mlat)
+                ellipse_lon.append(xloc + mean_lon)
+                ellipse_lat.append(yloc + mean_lat)
                 break
 
-    #Find edge of ellipses
-    #"""
-    edge_lon = 0
-    edge_lat = 0
-    maxdist = 0
-    for i in np.arange(len(xell)):
-        ix = xell[i]
-        iy = yell[i]
-        dist = calculate_distance(mlat,iy,mlon,ix)
-        if dist > maxdist:
-            maxdist = dist
-            edge_lon = ix
-            edge_lat = iy
-
-    near_lon = 0
-    near_lat = 0
-    mindist = 9999999
-    for i in np.arange(len(xell)):
-        ix = xell[i]
-        iy = yell[i]
-        dist = calculate_distance(mlat,iy,mlon,ix)
-        if dist < mindist:
-            mindist = dist
-            near_lon = ix
-            near_lat = iy
-    #"""
-
     #Return ellipse data
-    return {'xell':xell,'yell':yell,'maxdist':maxdist,'mindist':mindist}
+    return {'xell':ellipse_lon,'yell':ellipse_lat}
 
-def calc_ellipse(elavec,elovec):
-    nens = len(elavec)
-
-    deg2rad   = math.atan(1.0) / 45.0
-    deg2km    = 6370.0 * deg2rad
-    nmiles2km = 1.852
-    knots2ms  = 0.5144
-
-    #evitals is vitals (ensemble member, f
-
-    #elavec        = [38.0,39.0,38.1,39.5,40.2,39.3]
-    #elovec        = [80.0,75.3,76.8,76.4,74.9,78.3]
-
-    #Arbitrarily defining these as they will be filled later
-    fxdir         = [0.0 for x in range(0,nens)]
-    fydir         = [0.0 for x in range(0,nens)]
-
-    mlat          = 0.0
-    mlon          = 0.0
-    xmean         = 0.0
-    ymean         = 0.0
-    xvar          = 0.0
-    yvar          = 0.0
-    xycov         = 0.0
-    nused         = 0.0
-
-    for n in range(0,nens):
-        nused = nused + 1
-        mlat = mlat + elavec[n]
-        mlon = mlon + elovec[n]
-
-    if nused > 1:
-
-        mlat = mlat / float(nused)
-        mlon = mlon / float(nused)
-
-        for n in range(0,nens):
-            fxdir[n] = (elovec[n]-mlon) * deg2km * math.cos(0.5*(elavec[n]+mlat)*deg2rad)
-            fydir[n] = (elavec[n]-mlat) * deg2km
-            xmean    = xmean + fxdir[n]
-            ymean    = ymean + fydir[n]
-
-        xmean = xmean / float(nused)
-        ymean = ymean / float(nused)
-
-        for n in range(0,nens):
-            xvar  = xvar  + (fxdir[n]-xmean)**2
-            yvar  = yvar  + (fydir[n]-ymean)**2
-            xycov = xycov + (fxdir[n]-xmean)*(fydir[n]-ymean)
-
-        xvar   = xvar  / float(nused-1)
-        yvar   = yvar  / float(nused-1)
-        xycov  = xycov / float(nused-1)
-        mtrace = xvar + yvar
-        mdet   = xvar * yvar - xycov * xycov
-
-        eval   = max([0.5 * mtrace + math.sqrt((mtrace * mtrace) / 4.0 - mdet),
-                      0.5 * mtrace - math.sqrt((mtrace * mtrace) / 4.0 - mdet)])
-
-        if abs(xycov) > 0:
-            #print 'here'
-            imaj = eval-yvar
-            jmaj = xycov
-        else:
-            #print 'here'
-            imaj = 1.0
-            jmaj = 0.0
-
-        vlen = math.sqrt(imaj * imaj + jmaj * jmaj)
-        imaj = imaj / vlen
-        jmaj = jmaj / vlen
-
-        imin =  jmaj
-        jmin = -imaj
-
-    return imaj,imin,jmaj,jmin,mlat,mlon
 
 def add_radius(lats,lons,vlat,vlon,rad):
     

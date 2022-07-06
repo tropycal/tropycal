@@ -20,6 +20,7 @@ try:
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
+    import cartopy.crs as ccrs
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
@@ -48,6 +49,10 @@ class ReconDataset:
     
     Notes
     -----
+    .. warning::
+    
+        Recon data is currently only available from 2006 onwards.
+    
     ReconDataset and its subclasses (hdobs, dropsondes and vdms) consist the **storm-centric** part of the recon module, meaning that recon data is retrieved specifically for tropical cyclones, and all recon missions for the requested storm are additionally transformed to storm-centric coordinates. This differs from realtime recon functionality, which is **mission-centric**.
     
     This storm-centric functionality allows for additional recon analysis and visualization functions, such as derived hovmollers and spatial maps for example. As of Tropycal v0.4, Recon data can only be retrieved for tropical cyclones, not for invests.
@@ -96,6 +101,17 @@ class ReconDataset:
         
         #Plot derived hovmoller from HDOB points
         storm.recon.hdobs.plot_hovmoller()
+    
+    Individual missions can also be retrieved as ``Mission`` objects. For example, this code retrieves a ``Mission`` object for the second mission of this storm:
+    
+    .. code-block:: python
+    
+        #This line prints all available mission IDs from this storm
+        print(storm.recon.find_mission())
+        
+        #This line retrieves the 2nd mission from this storm
+        mission = storm.recon.get_mission(2)
+    
     """
 
     def __repr__(self):
@@ -219,8 +235,8 @@ class ReconDataset:
         
         Parameters
         ----------
-        number : int
-            Requested mission number.
+        number : int or str
+            Requested mission number. Can be an integer (1) or a string with two characters ("01").
         
         Returns
         -------
@@ -229,6 +245,7 @@ class ReconDataset:
         """
         
         def str2(number):
+            if isinstance(number,str): return number
             if number < 10: return f"0{number}"
             return str(number)
        
@@ -254,6 +271,7 @@ class ReconDataset:
             except:
                 pass
         missions = list(np.sort(missions))
+        if isinstance(number,str): missions = [str2(i) for i in missions]
         if number not in missions:
             raise ValueError("Requested mission ID is not available.")
         
@@ -348,47 +366,74 @@ class ReconDataset:
             track = tuple([f(datenum) for f in self.trackfunc])
             return track
                 
-    def find_mission(self,time,distance=None):
+    def find_mission(self,time=None,distance=None):
         
         r"""
-        Returns the name of a mission or list of recon missions given a specified time.
+        Returns the name of a mission or list of recon missions for this storm.
         
         Parameters
         ----------
-        time : datetime.datetime or list
-            Datetime object or list of datetime objects representing the time of the requested mission.
+        time : datetime.datetime or list, optional
+            Datetime object or list of datetime objects representing the time of the requested mission. If none, all missions will be returned.
         distance : int, optional
             Distance from storm center, in kilometers.
         
         Returns
         -------
         list
-            The names of any/all missions that had in-storm observations during the specified time.
+            The IDs of any/all missions that had in-storm observations during the specified time.
+        
+        Notes
+        -----
+        Especially in earlier years, missions are not always numbered sequentially (e.g., the first mission might not have an ID of "01").
+        
+        To get a ``Mission`` object for one or more mission IDs, use the mission ID as an argument in ``ReconDataset.get_mission()``. For example, to retrieve a Mission object for every mission valid at a requested time, assuming that ``ReconDataset`` is linked to a Storm object:
+        
+        .. code-block:: python
+    
+            #Enter a requested time here
+            import datetime as dt
+            requested_time = dt.datetime(2020,8,12,12) #enter your requested time here
+            
+            #Get all active mission ID(s), if any, for this time
+            mission_ids = storm.recon.find_mission(requested_time)
+            
+            #Get Mission object for each mission
+            for mission_id in mission_ids:
+                mission = storm.recon.get_mission(mission_id)
+                print(mission)
         """
         
+        #Return all missions if time is None
+        if time is None:
+            if distance is None:
+                data = self.hdobs.data
+            else:
+                data = self.hdobs.sel(distance=distance).data
+            missions = np.unique(data['mission'].values)
+            return list(missions)
+        
+        #Filter temporally
         if isinstance(time,list):
             t1=min(time)
             t2=max(time)
         else:
             t1 = t2 = time
-        selected=[]
+        
+        #Filter spatially
         if distance is None:
             data = self.hdobs.data
         else:
             data = self.hdobs.sel(distance=distance).data
 
+        #Find and return missions
+        selected = []
         mission_groups = data.groupby('mission')
         for g in mission_groups:
             t_start,t_end = (min(g[1]['time']),max(g[1]['time']))
             if t_start<=t1<=t_end or t_start<=t2<=t_end or t1<t_start<t2:
                 selected.append(g[0])
-        if len(selected)==0:
-            msg = 'There were no recon missions during this time'
-            if distance is not None:
-                msg += f' within {distance} km of the storm'
-            print(msg)
-        else:
-            return selected
+        return selected
 
     def plot_summary(self,mission=None,save_path=None):
         
@@ -409,29 +454,38 @@ class ReconDataset:
         
         Notes
         -----
-        HDOB data needs to be read into the recon object to use this function. To do so, use the ``recon.get_hdobs()`` function.
+        HDOB data needs to be read into the recon object to use this function. To do so, use the ``ReconDataset.get_hdobs()`` function.
         """
         
         #Error check
         if 'hdobs' not in self.__dict__.keys():
-            raise RuntimeError("hdobs needs to be read into the 'recon' object first. Use the 'recon.get_hdobs()' method to read in HDOBs data.")
+            raise RuntimeError("hdobs needs to be read into the 'recon' object first. Use the 'ReconDataset.get_hdobs()' method to read in HDOBs data.")
         
         prop = {'hdobs':{'ms':5,'marker':'o'},\
                 'dropsondes':{'ms':25,'marker':'v'},\
                 'vdms':{'ms':100,'marker':'s'}}
         
         hdobs = self.hdobs.sel(mission=mission)
-        ax = hdobs.plot_points('pkwnd',\
-                            prop={'cmap':{1:'firebrick',2:'tomato',4:'gold',6:'lemonchiffon'},'levels':(0,200),'ms':2})
+        ax = hdobs.plot_points('pkwnd',prop={'cmap':{1:'firebrick',2:'tomato',4:'gold',6:'lemonchiffon'},'levels':(0,200),'ms':2})
         
         if 'dropsondes' in self.__dict__.keys():
             dropsondes = self.dropsondes.sel(mission=mission)
-            ax.scatter(*zip(*[(d['TOPlon'],d['TOPlat']) \
-                            for d in dropsondes.data]),s=50,marker='v',edgecolor='w',linewidth=0.5,color='darkblue')
+            drop_lons = []
+            drop_lats = []
+            for drop in dropsondes.data:
+                if np.isnan(drop['TOPlon']):
+                    drop_lons.append(drop['lon'])
+                else:
+                    drop_lons.append(drop['TOPlon'])
+                if np.isnan(drop['TOPlat']):
+                    drop_lats.append(drop['lat'])
+                else:
+                    drop_lats.append(drop['TOPlat'])
+            ax.scatter(drop_lons,drop_lats,s=50,marker='v',edgecolor='w',linewidth=0.5,color='darkblue',transform=ccrs.PlateCarree())
         
         if 'vdms' in self.__dict__.keys():
             vdms = self.vdms.sel(mission=mission)
-            ax.scatter(*zip(*[(d['lon'],d['lat']) for d in vdms.data]),s=80,marker='H',edgecolor='w',linewidth=1,color='k')
+            ax.scatter(*zip(*[(d['lon'],d['lat']) for d in vdms.data]),s=80,marker='H',edgecolor='w',linewidth=1,color='k',transform=ccrs.PlateCarree())
         
         title_left = ax.get_title(loc='left').split('\n')
         newtitle = title_left[0]+'\nRecon summary'+['',f' for mission {mission}'][mission is not None]
@@ -446,7 +500,7 @@ class ReconDataset:
 class hdobs:
 
     r"""
-    Creates an instance of an HDOBs object containing all recon high density observations for a single storm.
+    Creates an instance of an HDOBs object containing all recon High Density Observations (HDOBs) for a single storm.
     
     Parameters
     ----------
@@ -455,15 +509,19 @@ class hdobs:
     data : str, optional
         Filepath of pickle file containing HDOBs data retrieved from ``hdobs.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
     update : bool
-        True = search for new data, following existing data in the dropsonde object, and concatenate.
+        If True, search for new data, following existing data in the dropsonde object, and concatenate. Default is False.
         
     Returns
     -------
     Dataset
-        An instance of HDOBs, initialized with a dataframe of HDOB
+        An instance of HDOBs, initialized with a dataframe of HDOB.
     
     Notes
     -----
+    .. warning::
+    
+        Recon data is currently only available from 2006 onwards.
+    
     There are two recommended ways of retrieving an hdob object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
     
     .. code-block:: python
@@ -534,8 +592,34 @@ class hdobs:
     def __init__(self, storm, data=None, update=False):
 
         self.storm = storm
-        self.archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/AHONT1/'
         self.data = None
+        self.format = 1
+        
+        #Get URL based on storm year
+        if storm.year >= 2012:
+            self.format = 1
+            if storm.basin == 'north_atlantic':
+                archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/AHONT1/']
+            else:
+                archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/AHOPN1/']
+        elif storm.year <= 2011 and storm.year >= 2008:
+            self.format = 2
+            if storm.basin == 'north_atlantic':
+                archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/HDOB/NOAA/URNT15/',
+                               f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/HDOB/USAF/URNT15/']
+            else:
+                archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/HDOB/NOAA/URPN15/',
+                               f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/HDOB/USAF/URPN15/']
+        elif storm.year == 2007:
+            self.format = 3
+            archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/HDOB/NOAA/',
+                           f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/HDOB/USAF/']
+        elif storm.year == 2006:
+            self.format = 4
+            archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/HDOB/']
+        else:
+            self.format = 5
+            raise RuntimeError("Recon data is currently only available from 2006 onwards.")
 
         if isinstance(data,str):
             with open(data, 'rb') as f:
@@ -551,51 +635,87 @@ class hdobs:
             end_time = max(self.storm.dict['date'])+timedelta(hours=12)
 
             timestr = [f'{start_time:%Y%m%d}']+\
-                        [f'{t:%Y%m%d}' for t in self.storm.dict['date'] if t>start_time]+\
-                        [f'{end_time:%Y%m%d}']
+                      [f'{t:%Y%m%d}' for t in self.storm.dict['date'] if t>start_time]+\
+                      [f'{end_time:%Y%m%d}']
 
-            #Retrieve list of files in URL and filter by storm dates
-            page = requests.get(self.archiveURL).text
-            content = page.split("\n")
-            files = []
-            for line in content:
-                if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
-            del content
-            files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
-            linksub = [self.archiveURL+'.'.join(l) for l in files]
-            
+            #Retrieve list of files in URL(s) and filter by storm dates
+            if len(archive_url) == 1:
+                page = requests.get(archive_url[0]).text
+                content = page.split("\n")
+                files = []
+                for line in content:
+                    if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
+                del content
+                files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
+                linksub = [archive_url[0]+'.'.join(l) for l in files]
+            else:
+                linksub = []
+                for url in archive_url:
+                    files = []
+                    page = requests.get(url).text
+                    content = page.split("\n")
+                    for line in content:
+                        if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
+                    del content
+                    linksub += sorted([url+'.'.join(i) for i in files if i[1][:8] in timestr],key=lambda x: x[1])
+                linksub = sorted(linksub)
+
+            #Initiate urllib3
             urllib3.disable_warnings()
             http = urllib3.PoolManager()
             
+            #Read through all files
             timer_start = dt.now()
             print(f'Searching through recon HDOB files between {timestr[0]} and {timestr[-1]} ...')
             filecount,unreadable = 0,0
+            found = False
             for link in linksub:
+                
+                #Read URL
                 response = http.request('GET',link)
                 content = response.data.decode('utf-8')
-                missionname = [i.split() for i in content.split('\n')][3][1]
-                if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
-                    filecount+=1
+                
+                #Find mission name line
+                row = 3
+                while len(content.split("\n")[row]) < 3 or content.split("\n")[row][:3] == "SXX": row += 1
+                missionname = [i.split() for i in content.split('\n')][row][1]
+                
+                #Read HDOBs if this file matches the requested storm
+                if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
+                    filecount += 1
+                    
                     try:
-                        tmp = decode_hdob(content)
+                        #Decode HDOBs by format
+                        if self.format <= 3:
+                            iter_hdob = decode_hdob(content,mission_row=row)
+                        elif self.format == 4:
+                            strdate = (link.split('.')[-2])[:8]
+                            iter_hdob = decode_hdob_2006(content,strdate,mission_row=row)
+
+                        #Append HDOBs to full data
+                        if self.data is None:
+                            self.data = copy.copy(iter_hdob)
+                        elif max(iter_hdob['time']) > start_time:
+                            self.data = pd.concat([self.data,iter_hdob])
+                        else:
+                            pass
                     except:
-                        unreadable+=1
-                    if self.data is None:
-                        self.data = copy.copy(tmp)
-                    elif max(tmp['time'])>start_time:
-                        self.data = pd.concat([self.data,tmp])
-                    else:
-                        pass
+                        unreadable += 1
+                    
             print(f'--> Completed reading in recon HDOB files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files'+\
                   f'\nUnable to decode {unreadable} files')
         
-        #Sort data by time
-        self.data.sort_values(['time'],inplace=True)
-        
+        #This code will crash if no HDOBs are available
         try:
+            
+            #Sort data by time
+            self.data.sort_values(['time'],inplace=True)
+            
+            #Recenter
             self._recenter()
             self.keys = list(self.data.keys())
+            
         except:
             self.keys = []
 
@@ -1619,6 +1739,10 @@ class dropsondes:
     
     Notes
     -----
+    .. warning::
+    
+        Recon data is currently only available from 2006 onwards.
+    
     There are two recommended ways of retrieving a dropsondes object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
     
     .. code-block:: python
@@ -1693,7 +1817,10 @@ class dropsondes:
     def __init__(self, storm, data=None, update=False):
 
         self.storm = storm
-        self.archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT3/'
+        if storm.basin == 'north_atlantic':
+            self.archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT3/'
+        else:
+            self.archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN3/'
         self.data = None
 
         if isinstance(data,str):
@@ -1728,7 +1855,6 @@ class dropsondes:
             print(f'Searching through recon dropsonde files between {timeboundstrs[0]} and {timeboundstrs[-1]} ...')
             filecount = 0
             for link in linksub:
-                #print(link)
                 response = http.request('GET',link)
                 content = response.data.decode('utf-8')
                 datestamp = dt.strptime(link.split('.')[-2],'%Y%m%d%H%M')
@@ -1737,7 +1863,7 @@ class dropsondes:
                 except:
                     continue
                 testkeys = ('TOPtime','lat','lon')
-                if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
+                if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
                     filecount += 1
                     if self.data is None:
                         self.data = [copy.copy(tmp)]
@@ -1845,12 +1971,20 @@ class dropsondes:
 
         #Apply time filter
         if time is not None:
-            if isinstance(time,(tuple,list)):
-                bounds = get_bounds(NEW_DATA['TOPtime'],time)
-                NEW_DATA = NEW_DATA.loc[(NEW_DATA['TOPtime']>=bounds[0]) & (NEW_DATA['TOPtime']<=bounds[1])]
-            else:
-                i = np.argmin(abs(time-NEW_DATA['TOPtime']))
-                return self.isel(i)
+            try:
+                if isinstance(time,(tuple,list)):
+                    bounds = get_bounds(NEW_DATA['TOPtime'],time)
+                    NEW_DATA = NEW_DATA.loc[(NEW_DATA['TOPtime']>=bounds[0]) & (NEW_DATA['TOPtime']<=bounds[1])]
+                else:
+                    i = np.argmin(abs(time-NEW_DATA['TOPtime']))
+                    return self.isel(i)
+            except:
+                if isinstance(time,(tuple,list)):
+                    bounds = get_bounds(NEW_DATA['BOTTOMtime'],time)
+                    NEW_DATA = NEW_DATA.loc[(NEW_DATA['BOTTOMtime']>=bounds[0]) & (NEW_DATA['BOTTOMtime']<=bounds[1])]
+                else:
+                    i = np.argmin(abs(time-NEW_DATA['BOTTOMtime']))
+                    return self.isel(i)
         
         #Apply domain filter
         if domain is not None:
@@ -2050,7 +2184,7 @@ class dropsondes:
 class vdms:
     
     r"""
-    Creates an instance of a VDMs object containing all VDM data for a single storm.
+    Creates an instance of a VDMs object containing all Vortex Data Message (VDM) data for a single storm.
     
     Parameters
     ----------
@@ -2068,6 +2202,10 @@ class vdms:
     
     Notes
     -----
+    .. warning::
+    
+        Recon data is currently only available from 2006 onwards.
+    
     There are two recommended ways of retrieving a vdms object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
     
     .. code-block:: python
@@ -2134,7 +2272,10 @@ class vdms:
     def __init__(self, storm, data=None, update=False):
 
         self.storm = storm
-        archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT2/'
+        if storm.basin == 'north_atlantic':
+            archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT2/'
+        else:
+            archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN2/'
         timestr = [f'{t:%Y%m%d}' for t in self.storm.dict['date']]
 
         #Retrieve list of files in URL and filter by storm dates
@@ -2168,9 +2309,8 @@ class vdms:
                     missionname,tmp = decode_vdm(content,date=dt(year,month,day))
                 except:
                     continue
-                #print(link,missionname)
                 testkeys = ('time','lat','lon')
-                if missionname[2:5] == self.storm.id[2:4]+self.storm.id[0]:
+                if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
                     if self.data is None:
                         self.data = [copy.copy(tmp)]
                         filecount+=1

@@ -938,8 +938,8 @@ class Storm:
         .. note::
             The total number of GEFS members available for analysis is as follows:
             
-            * **2019 - present** - 31 members
-            * **2006 - 2018** - 21 members
+            * **2020 - present** - 31 members
+            * **2006 - 2019** - 21 members
             * **2005 & back** - 5 members
             
             As the density plot and ensemble ellipse require a minimum of 10 ensemble members, they will not be generated for storms from 2005 and earlier.
@@ -1071,7 +1071,8 @@ class Storm:
             self.get_operational_forecasts()
         
         #Determine max members by year
-        nens = 31 if self.year >= 2019 else 21
+        nens = 21
+        if self.year >= 2020 and ('AP21' in self.forecast_dict.keys() or 'AP22' in self.forecast_dict.keys() or 'AP23' in self.forecast_dict.keys()): nens = 31
         
         #Enforce fhr type
         if isinstance(fhr,list): fhr = fhr[0]

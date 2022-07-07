@@ -990,10 +990,8 @@ None,prop={},map_prop={}):
         hr = fhr
         
         #Keep record of lat/lon coordinate extrema
-        max_lat = None
-        min_lat = None
-        max_lon = None
-        min_lon = None
+        lat_extrema = []
+        lon_extrema = []
 
         #================================================================================================
 
@@ -1086,22 +1084,8 @@ None,prop={},map_prop={}):
                 skip_bounds = True
 
             if skip_bounds == False:
-                if max_lat is None:
-                    max_lat = np.nanmax(use_lats)
-                else:
-                    if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
-                if min_lat is None:
-                    min_lat = np.nanmin(use_lats)
-                else:
-                    if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
-                if max_lon is None:
-                    max_lon = np.nanmax(use_lons)
-                else:
-                    if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
-                if min_lon is None:
-                    min_lon = np.nanmin(use_lons)
-                else:
-                    if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
+                lat_extrema += use_lats
+                lon_extrema += use_lons
 
             if hr in ds[f'gefs_{i}']['fhr']:
                 idx = ds[f'gefs_{i}']['fhr'].index(hr)
@@ -1152,22 +1136,8 @@ None,prop={},map_prop={}):
                 use_lons = storm_dict['lon'][idx_start:idx+1]
 
             if skip_bounds == False:
-                if max_lat is None:
-                    max_lat = np.nanmax(use_lats)
-                else:
-                    if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
-                if min_lat is None:
-                    min_lat = np.nanmin(use_lats)
-                else:
-                    if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
-                if max_lon is None:
-                    max_lon = np.nanmax(use_lons)
-                else:
-                    if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
-                if min_lon is None:
-                    min_lon = np.nanmin(use_lons)
-                else:
-                    if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
+                lat_extrema += use_lats
+                lon_extrema += use_lons
 
             #Plot observed track before now
             self.ax.plot(storm_dict['lon'][:idx_start+1], storm_dict['lat'][:idx_start+1],
@@ -1215,22 +1185,8 @@ None,prop={},map_prop={}):
                 skip_bounds = True
 
             if skip_bounds == False:
-                if max_lat is None:
-                    max_lat = np.nanmax(use_lats)
-                else:
-                    if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
-                if min_lat is None:
-                    min_lat = np.nanmin(use_lats)
-                else:
-                    if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
-                if max_lon is None:
-                    max_lon = np.nanmax(use_lons)
-                else:
-                    if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
-                if min_lon is None:
-                    min_lon = np.nanmin(use_lons)
-                else:
-                    if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
+                lat_extrema += use_lats
+                lon_extrema += use_lons
 
             #Plot GFS forecast line and latest dot
             if hr in ds['gfs']['fhr']:
@@ -1273,22 +1229,8 @@ None,prop={},map_prop={}):
                 skip_bounds = True
 
             if skip_bounds == False:
-                if max_lat is None:
-                    max_lat = np.nanmax(use_lats)
-                else:
-                    if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
-                if min_lat is None:
-                    min_lat = np.nanmin(use_lats)
-                else:
-                    if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
-                if max_lon is None:
-                    max_lon = np.nanmax(use_lons)
-                else:
-                    if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
-                if min_lon is None:
-                    min_lon = np.nanmin(use_lons)
-                else:
-                    if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
+                lat_extrema += use_lats
+                lon_extrema += use_lons
 
             if hr in ds['gefs']['fhr']:
                 idx = ds['gefs']['fhr'].index(hr)
@@ -1307,7 +1249,24 @@ None,prop={},map_prop={}):
                 self.ax.plot(ds['gefs']['lon'][:idx+1], ds['gefs']['lat'][:idx+1],
                              linewidth=prop_ensemble_mean['linewidth'],
                              color=prop_ensemble_mean['linecolor'], transform=ccrs.PlateCarree())
-
+        
+        #================================================================================================
+        
+        #Calcuate lat/lon extrema
+        lat_extrema = np.sort(lat_extrema)
+        lon_extrema = np.sort(lon_extrema)
+        
+        if hr == None:
+            max_lat = np.nanpercentile(lat_extrema,98)
+            min_lat = np.nanpercentile(lat_extrema,2)
+            max_lon = np.nanpercentile(lon_extrema,98)
+            min_lon = np.nanpercentile(lon_extrema,2)
+        else:
+            max_lat = np.nanmax(lat_extrema)
+            min_lat = np.nanmin(lat_extrema)
+            max_lon = np.nanmax(lon_extrema)
+            min_lon = np.nanmin(lon_extrema)
+        
         #================================================================================================
 
         #Add legend

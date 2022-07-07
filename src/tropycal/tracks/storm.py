@@ -889,8 +889,7 @@ class Storm:
         return plot_ax
         
     
-    #PLOT FUNCTION FOR HURDAT
-    def plot_gefs_ensembles(self,forecast,fhr=None,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
+    def plot_ensembles(self,forecast,fhr=None,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of individual GEFS ensemble tracks.
@@ -1069,7 +1068,7 @@ class Storm:
         except:
             self.get_operational_forecasts()
         
-        #Determine max GEFS members by year
+        #Determine max members by year
         nens = 31 if self.year >= 2019 else 21
         
         #Enforce fhr type
@@ -1123,6 +1122,7 @@ class Storm:
                 #Retrieve ensemble member data
                 ens_str = str2(ens)
                 if ens_str not in self.forecast_dict.keys(): continue
+                if forecast.strftime("%Y%m%d%H") not in self.forecast_dict[ens_str].keys(): continue
                 forecast_ens = self.forecast_dict[ens_str][forecast.strftime("%Y%m%d%H")]
 
                 #Enter into dict entry

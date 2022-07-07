@@ -889,7 +889,7 @@ class Storm:
         return plot_ax
         
     
-    def plot_ensembles(self,forecast,fhr=None,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
+    def plot_ensembles(self,forecast,fhr=None,interpolate=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of individual GEFS ensemble tracks.
@@ -900,6 +900,8 @@ class Storm:
             Datetime object representing the GEFS run initialization.
         fhr : int, optional
             Forecast hour to plot. If None (default), a cumulative plot of all forecast hours will be produced. If an integer, a single plot will be produced.
+        interpolate : bool, optional
+            If True, and fhr is None, track density data will be interpolated to hourly. Default is False (6-hourly track density data). Setting this to True greatly slows down the function.
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
@@ -1007,9 +1009,9 @@ class Storm:
            * - plot
              - Boolean to determine whether to plot Best Track line. Default is True.
            * - linewidth
-             - Best Track linewidth. Default is 2.0.
+             - Best Track linewidth. Default is 2.5.
            * - linecolor
-             - Best Track line color. Default is green.
+             - Best Track line color. Default is blue.
         
         The following properties are available for customizing the ensemble ellipse plot, via ``prop_ellipse``.
 
@@ -1192,7 +1194,7 @@ class Storm:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_members,prop_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,domain,self.ds,ax=ax,map_prop=map_prop,save_path=save_path)
+        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,interpolate,prop_members,prop_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,domain,self.ds,ax=ax,map_prop=map_prop,save_path=save_path)
         
         #Return axis
         return plot_ax

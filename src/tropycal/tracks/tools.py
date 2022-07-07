@@ -764,9 +764,9 @@ def add_radius(lats,lons,vlat,vlon,rad):
     dlat = np.subtract(np.radians(lats),np.radians(vlat))
     dlon = np.subtract(np.radians(lons),np.radians(vlon))
 
-    a = np.sin(dlat/2) * np.sin(dlat/2) + np.cos(np.radians(lats)) * np.cos(np.radians(vlat)) * np.sin(dlon/2) * np.sin(dlon/2)
+    a = np.sin(dlat*0.5) * np.sin(dlat*0.5) + np.cos(np.radians(lats)) * np.cos(np.radians(vlat)) * np.sin(dlon*0.5) * np.sin(dlon*0.5)
     c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a));
-    dist = (r_earth * c)/1000.0
+    dist = (r_earth * c) * 0.001
     
     #Mask out values less than radius
     return_arr[dist > rad] = 0

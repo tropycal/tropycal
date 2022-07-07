@@ -958,7 +958,7 @@ None,prop={},map_prop={}):
         #Return axis if specified, otherwise display figure
         return self.ax
 
-    def plot_ensembles(self,forecast,storm_dict,fhr,prop_ensemble_members,prop_ensemble_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,
+    def plot_ensembles(self,forecast,storm_dict,fhr,interpolate,prop_ensemble_members,prop_ensemble_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,
                domain,ds,ax,map_prop,save_path):
         
         r"""
@@ -970,7 +970,7 @@ None,prop={},map_prop={}):
         default_prop_ensemble_members = {'plot':True, 'linewidth':0.2, 'linecolor':'k'}
         default_prop_ensemble_mean = {'plot':True, 'linewidth':3.0, 'linecolor':'k'}
         default_prop_gfs = {'plot':True, 'linewidth':3.0, 'linecolor':'r'}
-        default_prop_btk = {'plot':True, 'linewidth':2.0, 'linecolor':'g'}
+        default_prop_btk = {'plot':True, 'linewidth':2.5, 'linecolor':'b'}
         default_prop_ellipse = {'plot':True, 'linewidth':3.0, 'linecolor':'b'}
         default_prop_density = {'plot':True, 'radius':200, 'cmap':plt.cm.plasma_r, 'levels':[1]+[i for i in range(10,101,10)]}
         
@@ -990,11 +990,20 @@ None,prop={},map_prop={}):
         hr = fhr
         
         #Keep record of lat/lon coordinate extrema
-        lat_extrema = []
-        lon_extrema = []
+        lat_max_extrema = []
+        lat_min_extrema = []
+        lon_max_extrema = []
+        lon_min_extrema = []
 
         #================================================================================================
 
+        #Function for temporal interpolation
+        import scipy.interpolate as interp
+        def temporal_interpolation(value, orig_times, target_times):
+            f = interp.interp1d(orig_times,value)
+            ynew = f(target_times)
+            return ynew
+        
         #Plot density
         if prop_density['plot']:
             if hr == None or (hr != None and hr in ds['gefs']['fhr']):
@@ -1006,6 +1015,9 @@ None,prop={},map_prop={}):
                 griddata = np.zeros((gridlons2d.shape))
 
                 #Iterate over all ensemble members
+                if hr == None:
+                    start_time = dt.now()
+                    print("--> Starting to calculate track density")
                 for ens in range(nens):
 
                     #Calculate for one hour
@@ -1023,12 +1035,28 @@ None,prop={},map_prop={}):
                         #Ensemble temporary gridded field
                         temp_grid = np.zeros((gridlons2d.shape))
 
-                        #Iterate over all forecast hours
-                        for iter_hr in ds['gefs']['fhr']:
+                        #Interpolate temporally to hourly if requested
+                        if interpolate:
+                            if len(ds[f'gefs_{ens}']['lat']) == 0:
+                                continue
+                            elif len(ds[f'gefs_{ens}']['lat']) == 1:
+                                new_lats = ds[f'gefs_{ens}']['lat']
+                                new_lons = ds[f'gefs_{ens}']['lon']
+                            else:
+                                new_hours = np.arange(min(ds[f'gefs_{ens}']['fhr']),max(ds[f'gefs_{ens}']['fhr']),1)
+                                new_lats = temporal_interpolation(ds[f'gefs_{ens}']['lat'],ds[f'gefs_{ens}']['fhr'],new_hours)
+                                new_lons = temporal_interpolation(ds[f'gefs_{ens}']['lon'],ds[f'gefs_{ens}']['fhr'],new_hours)
 
-                            #Proceed if hour is available
-                            if iter_hr in ds[f'gefs_{ens}']['fhr']:
-                                idx = ds[f'gefs_{ens}']['fhr'].index(iter_hr)
+                            #Iterate over all forecast hours
+                            for i,(i_lon,i_lat) in enumerate(zip(new_lons,new_lats)):
+                                radius_grid = add_radius(gridlats2d, gridlons2d, i_lat, i_lon, prop_density['radius'])
+                                temp_grid = np.maximum(temp_grid, radius_grid)
+                        
+                        #Otherwise don't interpolate
+                        else:
+                            
+                            #Iterate over all forecast hours
+                            for idx,iter_hr in enumerate(ds[f'gefs_{ens}']['fhr']):
                                 radius_grid = add_radius(gridlats2d, gridlons2d, ds[f'gefs_{ens}']['lat'][idx],
                                                          ds[f'gefs_{ens}']['lon'][idx], prop_density['radius'])
                                 temp_grid = np.maximum(temp_grid, radius_grid)
@@ -1037,6 +1065,10 @@ None,prop={},map_prop={}):
                         griddata += temp_grid
 
                 #Convert density to percent
+                if hr == None:
+                    time_elapsed = dt.now() - start_time
+                    tsec = str(round(time_elapsed.total_seconds(),2))
+                    print(f"--> Completed calculating track density ({tsec} seconds)")
                 density_percent = (griddata / nens) * 100.0
 
                 #Plot density
@@ -1084,8 +1116,10 @@ None,prop={},map_prop={}):
                 skip_bounds = True
 
             if skip_bounds == False:
-                lat_extrema += use_lats
-                lon_extrema += use_lons
+                lat_max_extrema.append(np.nanmax(use_lats))
+                lat_min_extrema.append(np.nanmin(use_lats))
+                lon_max_extrema.append(np.nanmax(use_lons))
+                lon_min_extrema.append(np.nanmin(use_lons))
 
             if hr in ds[f'gefs_{i}']['fhr']:
                 idx = ds[f'gefs_{i}']['fhr'].index(hr)
@@ -1136,8 +1170,10 @@ None,prop={},map_prop={}):
                 use_lons = storm_dict['lon'][idx_start:idx+1]
 
             if skip_bounds == False:
-                lat_extrema += use_lats
-                lon_extrema += use_lons
+                lat_max_extrema.append(np.nanmax(use_lats))
+                lat_min_extrema.append(np.nanmin(use_lats))
+                lon_max_extrema.append(np.nanmax(use_lons))
+                lon_min_extrema.append(np.nanmin(use_lons))
 
             #Plot observed track before now
             self.ax.plot(storm_dict['lon'][:idx_start+1], storm_dict['lat'][:idx_start+1],
@@ -1185,8 +1221,10 @@ None,prop={},map_prop={}):
                 skip_bounds = True
 
             if skip_bounds == False:
-                lat_extrema += use_lats
-                lon_extrema += use_lons
+                lat_max_extrema.append(np.nanmax(use_lats))
+                lat_min_extrema.append(np.nanmin(use_lats))
+                lon_max_extrema.append(np.nanmax(use_lons))
+                lon_min_extrema.append(np.nanmin(use_lons))
 
             #Plot GFS forecast line and latest dot
             if hr in ds['gfs']['fhr']:
@@ -1229,8 +1267,10 @@ None,prop={},map_prop={}):
                 skip_bounds = True
 
             if skip_bounds == False:
-                lat_extrema += use_lats
-                lon_extrema += use_lons
+                lat_max_extrema.append(np.nanmax(use_lats))
+                lat_min_extrema.append(np.nanmin(use_lats))
+                lon_max_extrema.append(np.nanmax(use_lons))
+                lon_min_extrema.append(np.nanmin(use_lons))
 
             if hr in ds['gefs']['fhr']:
                 idx = ds['gefs']['fhr'].index(hr)
@@ -1253,19 +1293,21 @@ None,prop={},map_prop={}):
         #================================================================================================
         
         #Calcuate lat/lon extrema
-        lat_extrema = np.sort(lat_extrema)
-        lon_extrema = np.sort(lon_extrema)
+        lat_max_extrema = np.sort(lat_max_extrema)
+        lat_min_extrema = np.sort(lat_min_extrema)
+        lon_max_extrema = np.sort(lon_max_extrema)
+        lon_min_extrema = np.sort(lon_min_extrema)
         
         if hr == None:
-            max_lat = np.nanpercentile(lat_extrema,98)
-            min_lat = np.nanpercentile(lat_extrema,2)
-            max_lon = np.nanpercentile(lon_extrema,98)
-            min_lon = np.nanpercentile(lon_extrema,2)
+            max_lat = np.nanpercentile(lat_max_extrema,95)
+            min_lat = np.nanpercentile(lat_min_extrema,5)
+            max_lon = np.nanpercentile(lon_max_extrema,95)
+            min_lon = np.nanpercentile(lon_min_extrema,5)
         else:
-            max_lat = np.nanmax(lat_extrema)
-            min_lat = np.nanmin(lat_extrema)
-            max_lon = np.nanmax(lon_extrema)
-            min_lon = np.nanmin(lon_extrema)
+            max_lat = np.nanmax(lat_max_extrema)
+            min_lat = np.nanmin(lat_min_extrema)
+            max_lon = np.nanmax(lon_max_extrema)
+            min_lon = np.nanmin(lon_min_extrema)
         
         #================================================================================================
 

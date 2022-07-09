@@ -2059,16 +2059,16 @@ class Storm:
             fhr = int(fhr)
             if "N" in lat:
                 lat_temp = lat.split("N")[0]
-                lat = float(lat_temp) * 0.1
+                lat = round(float(lat_temp) * 0.1,1)
             elif "S" in lat:
                 lat_temp = lat.split("S")[0]
-                lat = float(lat_temp) * -0.1
+                lat = round(float(lat_temp) * -0.1,1)
             if "W" in lon:
                 lon_temp = lon.split("W")[0]
-                lon = float(lon_temp) * -0.1
+                lon = round(float(lon_temp) * -0.1,1)
             elif "E" in lon:
                 lon_temp = lon.split("E")[0]
-                lon = float(lon_temp) * 0.1
+                lon = round(float(lon_temp) * 0.1,1)
             
             #Format vmax & MSLP
             if vmax == '':

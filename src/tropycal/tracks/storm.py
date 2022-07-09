@@ -711,7 +711,6 @@ class Storm:
         #Return axis
         return plot_ax
         
-    #PLOT FUNCTION FOR HURDAT
     def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
                           ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
@@ -2190,7 +2189,16 @@ class Storm:
         
         Notes
         -----
-        This dict can be provided to ``utils.generate_nhc_cone()`` to generate the cone of uncertainty.
+        This dict can be provided to ``utils.generate_nhc_cone()`` to generate the cone of uncertainty. Below is an example forecast dict for Hurricane Michael (2018):
+        
+        >>> storm.get_nhc_forecast_dict(dt.datetime(2018,10,8,0))
+        {'fhr': [0, 3, 12, 24, 36, 48, 72, 96, 120],
+         'lat': [19.8, 20.0, 21.1, 22.7, 24.4, 26.3, 30.4, 34.9, 40.7],
+         'lon': [-85.4, -85.4, -85.3, -85.6, -86.0, -86.1, -84.5, -78.4, -64.4],
+         'vmax': [50, 50, 60, 65, 75, 85, 75, 55, 55],
+         'mslp': [nan, 997, nan, nan, nan, nan, nan, nan, nan],
+         'type': ['TS', 'TS', 'TS', 'HU', 'HU', 'HU', 'HU', 'TS', 'TS'],
+         'init': datetime.datetime(2018, 10, 8, 0, 0)}
         """
         
         #Check to ensure the data source is HURDAT
@@ -2279,8 +2287,7 @@ class Storm:
         dist_thresh : int
             Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km.
         Tors : pandas.DataFrame
-            DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm
-                for future use.
+            DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm for future use.
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         plotPPH : bool or str
@@ -2461,6 +2468,65 @@ class Storm:
         #Return axis or show figure
         return ax
 
+    def get_recon(self,path_vdm=None,path_hdobs=None,path_dropsondes=None):
+        
+        r"""
+        Retrieves all aircraft reconnaissance data for this storm.
+        
+        Parameters
+        ----------
+        path_vdm : str, optional
+            Filepath of pickle file containing VDM data retrieved from ``vdms.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
+        path_hdobs : str, optional
+            Filepath of pickle file containing HDOBs data retrieved from ``hdobs.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
+        path_dropsondes : str, optional
+            Filepath of pickle file containing dropsonde data retrieved from ``dropsondes.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
+        
+        Returns
+        -------
+        ReconDataset
+            Instance of ReconDataset is returned.
+        
+        Notes
+        -----
+        In addition to returning an instance of ``ReconDataset``, this function additionally stores it as an attribute of this Storm object, such that all attributes and methods associated with the ``vdms``, ``hdobs`` and ``dropsondes`` classes can be directly accessed from this Storm object.
+        
+        One method of accessing the ``hdobs.plot_points()`` method is as follows:
+        
+        .. code-block:: python
+    
+            #Get data for Hurricane Michael (2018)
+            from tropycal import tracks
+            basin = tracks.TrackDataset()
+            storm = basin.get_storm(('michael',2018))
+            
+            #Get all recon data for this storm
+            storm.get_recon()
+            
+            #Plot HDOBs points
+            storm.recon.hdobs.plot_points()
+        
+        The other method is using the returned ReconDataset instance from this function:
+        
+        .. code-block:: python
+    
+            #Get data for Hurricane Michael (2018)
+            from tropycal import tracks
+            basin = tracks.TrackDataset()
+            storm = basin.get_storm(('michael',2018))
+            
+            #Get all recon data for this storm
+            recon = storm.get_recon()
+            
+            #Plot HDOBs points
+            recon.hdobs.plot_points()
+        """
+        
+        self.recon.get_vdms()
+        self.recon.get_hdobs()
+        self.recon.get_dropsondes()
+        return self.recon
+    
     def get_archer(self):
         
         r"""

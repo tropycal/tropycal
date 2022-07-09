@@ -887,7 +887,197 @@ class Storm:
         
         #Return axis
         return plot_ax
+    
+    
+    def plot_models(self,forecast,plot_btk=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
+        r"""
+        Creates a plot of operational model forecast tracks.
+        
+        Parameters
+        ----------
+        forecast : datetime.datetime
+            Datetime object representing the GEFS run initialization.
+        plot_btk : bool, optional
+            If True, Best Track will be plotted alongside operational forecast models. Default is False.
+        domain : str
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
+        
+        Other Parameters
+        ----------------
+        models : dict
+            Dictionary with **key** = model name (case-insensitive) and **value** = model color. Scroll below for available model names.
+        prop : dict
+            Customization properties of forecast lines. Scroll below for available options.
+        map_prop : dict
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
+        
+        Notes
+        -----
+        .. note::
+            For years before the HMON model was available, the HMON key instead defaults to the old GFDL model.
+        
+        The following model names are available as keys in the "model" dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {'gfs':None}`` or ``models = {'GFS':None}``).
+        
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Model Acronym
+             - Full Model Name
+           * - CMC
+             - Canadian Meteorological Centre (CMC)
+           * - GFS
+             - Global Forecast System (GFS)
+           * - UKM
+             - UK Met Office (UKMET)
+           * - ECM
+             - European Centre for Medium-range Weather Forecasts (ECMWF)
+           * - HMON
+             - Hurricanes in a Multi-scale Ocean-coupled Non-hydrostatic Model (HMON)
+           * - HWRF
+             - Hurricane Weather Research and Forecast (HWRF)
+           * - NHC
+             - National Hurricane Center (NHC)
+        
+        The following properties are available for customizing forecast model tracks, via ``prop_members``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - linewidth
+             - Line width of forecast model track. Default is 2.5.
+           * - marker
+             - Marker type for forecast hours. Options are 'label' (default), 'dot' or None.
+           * - marker_hours
+             - List of forecast hours to mark. Default is [24,48,72,96,120,144,168].
+        """
+        
+        #Dictionary mapping model names to the interpolated model key
+        dict_models = {
+            'cmc':'CMC2',
+            'gfs':'AVNI',
+            'ukm':'UKX2',
+            'ecm':'ECO2',
+            'hmon':'HMNI',
+            'hwrf':'HWFI',
+            'nhc':'OFCI',
+        }
+        backup_models = {
+            'gfs':['AVNO'],
+            'ukm':['UKM2'],
+            'cmc':['CMC'],
+            'hmon':['GFDI','GFDL'],
+            'nhc':['OFCL'],
+        }
+        
+        #Pop kwargs
+        prop = kwargs.pop('prop',{})
+        models = kwargs.pop('models',{})
+        map_prop = kwargs.pop('map_prop',{})
+        
+        #Create instance of plot object
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
+        
+        #-------------------------------------------------------------------------
+        
+        #Get forecasts dict saved into storm object, if it hasn't been already
+        try:
+            self.forecast_dict
+        except:
+            self.get_operational_forecasts()
+        
+        #Error check forecast date
+        if forecast < self.date[0] or forecast > self.date[-1]:
+            raise ValueError("Requested forecast is outside of the storm's duration.")
+        
+        #Construct forecast dict
+        ds = {}
+        proj_lons = []
+        forecast_str = forecast.strftime('%Y%m%d%H')
+        input_keys = [k for k in models.keys()]
+        input_keys_lower = [k.lower() for k in models.keys()]
+        for key in dict_models.keys():
+            
+            #Only proceed if model isn't not requested
+            if key in input_keys_lower:
+                idx = input_keys_lower.index(key)
+                if models[input_keys[idx]] == None: continue
+            
+            #Find official key
+            official_key = dict_models[key]
+            found = False
+            if official_key not in self.forecast_dict.keys():
+                if key in backup_models.keys():
+                    for backup_key in backup_models[key]:
+                        if backup_key in self.forecast_dict.keys():
+                            official_key = backup_key
+                            found = True
+                            break
+            else:
+                found = True
+            
+            #Check for 2 vs. I if needed
+            if found == False or forecast_str not in self.forecast_dict[official_key].keys():
+                if '2' in official_key:
+                    official_key = dict_models[key].replace('2','I')
+                    if official_key not in self.forecast_dict.keys():
+                        if key in backup_models.keys():
+                            found = False
+                            for backup_key_iter in backup_models[key]:
+                                backup_key = backup_key_iter.replace('2','I')
+                                if backup_key in self.forecast_dict.keys():
+                                    official_key = backup_key
+                                    found = True
+                                    break
+                            if found == False: continue
+                        else:
+                            continue
+                else:
+                    continue
+            
+            #Append forecast data if it exists for this initialization
+            if forecast_str not in self.forecast_dict[official_key].keys(): continue
+            enter_key = key + ''
+            if key.lower() == 'hmon' and 'gf' in official_key.lower(): enter_key = 'gfdl'
+            ds[enter_key] = self.forecast_dict[official_key][forecast_str]
+            proj_lons += ds[enter_key]['lon']
+        
+        #Proceed if data exists
+        if len(ds) == 0:
+            raise RuntimeError("No forecasts are available for the given parameters.")
+        
+        #Create cartopy projection
+        if cartopy_proj is not None:
+            self.plot_obj.proj = cartopy_proj
+        elif np.nanmax(proj_lons) > 150 or np.nanmin(proj_lons) < -150:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        
+        #Plot storm
+        plot_ax = self.plot_obj.plot_models(forecast,plot_btk,self.dict,ds,models,domain,ax=ax,prop=prop,map_prop=map_prop,save_path=save_path)
+        
+        #Return axis
+        return plot_ax
+    
     
     def plot_ensembles(self,forecast,fhr=None,interpolate=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
         

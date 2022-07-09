@@ -958,6 +958,177 @@ None,prop={},map_prop={}):
         #Return axis if specified, otherwise display figure
         return self.ax
 
+    def plot_models(self,forecast,plot_btk,storm_dict,forecast_dict,models,domain,ax,prop,map_prop,save_path):
+        
+        r"""
+        Plot multi-model forecast tracks.
+        """
+        
+         #Set default properties
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200,'plot_gridlines':True}
+        default_model = {'nhc':'k',
+                         'gfs':'#0000ff',
+                         'ecm':'#ff1493',
+                         'cmc':'#1e90ff',
+                         'ukm':'#00ff00',
+                         'hmon':'#ff8c00',
+                         'hwrf':'#66cdaa'}
+        default_prop = {'linewidth':2.5,'marker':'label','marker_hours':[24,48,72,96,120,144,168]}
+        
+        #Initialize plot
+        prop = self.add_prop(prop,default_prop)
+        map_prop = self.add_prop(map_prop,default_map_prop)
+        model_prop = self.add_prop(models,default_model)
+        self.plot_init(ax,map_prop)
+        
+        #Fix GFDL
+        if 'gfdl' in forecast_dict.keys():
+            model_prop['gfdl'] = model_prop['hmon']
+        
+        #================================================================================================
+        
+        #Keep record of lat/lon coordinate extrema
+        lat_max_extrema = []
+        lat_min_extrema = []
+        lon_max_extrema = []
+        lon_min_extrema = []
+        
+        #================================================================================================
+        
+        #Plot models
+        for model in forecast_dict.keys():
+            
+            #Plot forecast track
+            lons = forecast_dict[model]['lon']
+            lats = forecast_dict[model]['lat']
+            self.ax.plot(lons,lats,color=model_prop[model],linewidth=prop['linewidth'],label=model.upper(),transform=ccrs.PlateCarree())
+            
+            #Add labels if requested
+            if prop['marker'] != None and len(prop['marker_hours']) >= 1:
+                for hour in prop['marker_hours']:
+                    if hour not in forecast_dict[model]['fhr']: continue
+                    idx = forecast_dict[model]['fhr'].index(hour)
+                    if prop['marker'] == 'label':
+                        self.ax.text(lons[idx],lats[idx],str(hour),ha='center',va='center',zorder=100,transform=ccrs.PlateCarree())
+                    elif prop['marker'] == 'dot':
+                        self.ax.plot(lons[idx],lats[idx],'o',ms=prop['linewidth']*3,zorder=100,
+                                     mfc=model_prop[model],mec='k',transform=ccrs.PlateCarree())
+                    else:
+                        raise ValueError("Acceptable values for 'marker' prop are 'label' or 'dot'.")
+            
+            #Add to lat/lon extrema
+            lat_max_extrema.append(np.nanmax(lats))
+            lat_min_extrema.append(np.nanmin(lats))
+            lon_max_extrema.append(np.nanmax(lons))
+            lon_min_extrema.append(np.nanmin(lons))
+        
+        #Plot best track if requested
+        if plot_btk:
+            
+            #Determine maximum forecast hour
+            max_fhr = max([max(forecast_dict[model]['fhr']) for model in forecast_dict.keys()])
+            
+            #Determine range of forecast data in best track
+            idx_start = storm_dict['date'].index(forecast)
+            end_date = forecast + timedelta(hours=max_fhr)
+            if end_date in storm_dict['date']:
+                idx_end = storm_dict['date'].index(end_date)
+            else:
+                idx_end = len(storm_dict['date'])
+            
+            #Plot best track
+            lons = storm_dict['lon'][idx_start:idx_end+1]
+            lats = storm_dict['lat'][idx_start:idx_end+1]
+            storm_dates = storm_dict['date'][idx_start:idx_end+1]
+            self.ax.plot(lons,lats,':',color='k',linewidth=prop['linewidth']*0.8,label='Best Track',transform=ccrs.PlateCarree())
+            
+            #Add to lat/lon extrema
+            lat_max_extrema.append(np.nanmax(lats))
+            lat_min_extrema.append(np.nanmin(lats))
+            lon_max_extrema.append(np.nanmax(lons))
+            lon_min_extrema.append(np.nanmin(lons))
+            
+            #Add labels if requested
+            if prop['marker'] != None and len(prop['marker_hours']) >= 1:
+                for hour in prop['marker_hours']:
+                    valid_date = forecast + timedelta(hours=hour)
+                    if valid_date not in storm_dates: continue
+                    idx = storm_dict['date'].index(valid_date)
+                    if prop['marker'] == 'label':
+                        self.ax.text(storm_dict['lon'][idx],storm_dict['lat'][idx],
+                                     str(hour),ha='center',va='center',zorder=100,clip_on=True,transform=ccrs.PlateCarree())
+                    elif prop['marker'] == 'dot':
+                        self.ax.plot(storm_dict['lon'][idx],storm_dict['lat'][idx],'o',ms=prop['linewidth']*3,zorder=100,
+                                     mfc='k',mec='k',transform=ccrs.PlateCarree())
+                    else:
+                        raise ValueError("Acceptable values for 'marker' prop are 'label' or 'dot'.")
+        
+        #================================================================================================
+        
+        #Calcuate lat/lon extrema
+        lat_max_extrema = np.sort(lat_max_extrema)
+        lat_min_extrema = np.sort(lat_min_extrema)
+        lon_max_extrema = np.sort(lon_max_extrema)
+        lon_min_extrema = np.sort(lon_min_extrema)
+        
+        max_lat = np.nanpercentile(lat_max_extrema,95)
+        min_lat = np.nanpercentile(lat_min_extrema,5)
+        max_lon = np.nanpercentile(lon_max_extrema,95)
+        min_lon = np.nanpercentile(lon_min_extrema,5)
+        """
+        max_lat = np.nanmax(lat_max_extrema)
+        min_lat = np.nanmin(lat_min_extrema)
+        max_lon = np.nanmax(lon_max_extrema)
+        min_lon = np.nanmin(lon_min_extrema)
+        """
+        
+        #================================================================================================
+
+        #Add legend
+        import matplotlib.patches as mpatches
+        import matplotlib.lines as mlines
+        l = self.ax.legend(loc=1,prop={'size':12})
+        l.set_zorder(1001)
+
+        #Plot title
+        plot_title = f"Model Forecast Tracks for {storm_dict['name'].title()}"
+        self.ax.set_title(plot_title,fontsize=16,loc='left',fontweight='bold')
+
+        title_str = f"Initialized {forecast.strftime('%H%M UTC %d %B %Y')}"
+        self.ax.set_title(title_str,fontsize=12,loc='right')
+
+        #--------------------------------------------------------------------------------------
+
+        #Storm-centered plot domain
+        if domain == "dynamic":
+
+            bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
+            self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
+
+        #Pre-generated or custom domain
+        else:
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
+
+        #Plot parallels and meridians
+        #This is currently not supported for all cartopy projections.
+        if map_prop['plot_gridlines']:
+            try:
+                self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+            except:
+                pass
+
+        #--------------------------------------------------------------------------------------
+
+        credit_text = self.plot_credit()
+        self.add_credit(credit_text)
+
+        #Save image if specified
+        if save_path is not None and isinstance(save_path,str) == True:
+            plt.savefig(os.path.join(save_path),bbox_inches='tight')
+
+        #Return axis if specified, otherwise display figure
+        return self.ax
+    
     def plot_ensembles(self,forecast,storm_dict,fhr,interpolate,prop_ensemble_members,prop_ensemble_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,
                domain,ds,ax,map_prop,save_path):
         

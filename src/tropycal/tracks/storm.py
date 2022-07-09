@@ -953,7 +953,7 @@ class Storm:
            * - NHC
              - National Hurricane Center (NHC)
         
-        The following properties are available for customizing forecast model tracks, via ``prop_members``.
+        The following properties are available for customizing forecast model tracks, via ``prop``.
 
         .. list-table:: 
            :widths: 25 75
@@ -1984,6 +1984,60 @@ class Storm:
         -------
         dict
             Dictionary containing all forecast entries.
+        
+        Notes
+        -----
+        This function fetches all available forecasts, whether operational (e.g., NHC or JTWC), deterministic or ensemble model forecasts, from the Best Track a-deck as far back as data allows (1954 for NHC's area of responsibility, 2019 for JTWC).
+        
+        For example, this code retrieves all forecasts for Hurricane Michael (2018):
+        
+        .. code-block:: python
+    
+            #Get Storm object
+            from tropycal import tracks
+            basin = tracks.TrackDataset()
+            storm = basin.get_storm(('michael',2018))
+            
+            #Retrieve all forecasts
+            forecasts = storm.get_operational_forecasts()
+        
+        The resulting dict is structured as follows:
+        
+        >>> print(forecasts.keys())
+        dict_keys(['CARQ', 'NAM', 'AC00', 'AEMN', 'AP01', 'AP02', 'AP03', 'AP04', 'AP05', 'AP06', 'AP07', 'AP08', 'AP09',
+        'AP10', 'AP11', 'AP12', 'AP13', 'AP14', 'AP15', 'AP16', 'AP17', 'AP18', 'AP19', 'AP20', 'AVNO', 'AVNX', 'CLP5',
+        'CTCX', 'DSHP', 'GFSO', 'HCCA', 'IVCN', 'IVDR', 'LGEM', 'OCD5', 'PRFV', 'SHF5', 'SHIP', 'TABD', 'TABM', 'TABS',
+        'TCLP', 'XTRP', 'CMC', 'NGX', 'UKX', 'AEMI', 'AHNI', 'AVNI', 'CEMN', 'CHCI', 'CTCI', 'DSPE', 'EGRR', 'LGME',
+        'NAMI', 'NEMN', 'RVCN', 'RVCX', 'SHPE', 'TBDE', 'TBME', 'TBSE', 'TVCA', 'TVCE', 'TVCN', 'TVCX', 'TVDG', 'UE00',
+        'UE01', 'UE02', 'UE03', 'UE04', 'UE05', 'UE06', 'UE07', 'UE08', 'UE09', 'UE10', 'UE11', 'UE12', 'UE13', 'UE14',
+        'UE15', 'UE16', 'UE17', 'UE18', 'UE19', 'UE20', 'UE21', 'UE22', 'UE23', 'UE24', 'UE25', 'UE26', 'UE27', 'UE28',
+        'UE29', 'UE30', 'UE31', 'UE32', 'UE33', 'UE34', 'UE35', 'UEMN', 'CEMI', 'CMCI', 'COTC', 'EGRI', 'HMON', 'HWRF',
+        'NGXI', 'NVGM', 'PRV2', 'PRVI', 'UEMI', 'UKXI', 'CEM2', 'CMC2', 'COTI', 'EGR2', 'HHFI', 'HHNI', 'HMNI', 'HWFI',
+        'ICON', 'IVRI', 'NGX2', 'NVGI', 'OFCP', 'TCOA', 'TCOE', 'TCON', 'UEM2', 'UKX2', 'CHC2', 'CTC2', 'NAM2', 'OFCL',
+        'OFPI', 'AEM2', 'AHN2', 'AVN2', 'DRCL', 'HHF2', 'HHN2', 'HMN2', 'HWF2', 'NVG2', 'OFCI', 'OFP2', 'FSSE', 'RI25', 'RI30'])
+        
+        Each of these keys represents a forecast model/ensemble member/center. If we select the GFS (AVNO), we now get a dictionary containing all forecast initializations for this model:
+        
+        >>> print(forecasts['AVNO'].keys())
+        dict_keys(['2018100518', '2018100600', '2018100606', '2018100612', '2018100700', '2018100706', '2018100712',
+        '2018100718', '2018100800', '2018100806', '2018100812', '2018100818', '2018100900', '2018100906', '2018100912',
+        '2018100918', '2018101000', '2018101006', '2018101012', '2018101018', '2018101100', '2018101106', '2018101112',
+        '2018101118', '2018101200', '2018101206', '2018101212'])
+        
+        Providing a forecast initialization, for example 1200 UTC 8 October 2018 (2018100812), we now get a forecast dict containing the GFS initialized at this time:
+        
+        >>> print(forecasts['AVNO']['2018100812'])
+        {'fhr': [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 102, 108, 114, 120, 126, 132, 138, 144],
+         'lat': [20.8, 21.7, 22.7, 24.0, 25.1, 25.9, 26.9, 27.9, 29.0, 30.0, 31.1, 32.1, 33.1, 34.1, 35.4, 37.2, 38.9, 40.2,
+                 42.4, 44.9, 46.4, 48.2, 49.3, 50.5, 51.3],
+         'lon': [-85.1, -85.1, -85.2, -85.6, -86.4, -86.8, -86.9, -86.9, -86.6, -86.2, -85.3, -84.4, -83.0, -81.3, -78.9,
+                 -75.9, -72.2, -67.8, -62.5, -56.5, -50.5, -44.4, -38.8, -32.8, -27.9],
+         'vmax': [57, 62, 61, 67, 74, 69, 75, 78, 80, 76, 47, 38, 34, 36, 38, 41, 52, 58, 55, 51, 48, 44, 37, 36, 37],
+         'mslp': [984, 982, 979, 974, 972, 970, 966, 964, 957, 959, 969, 982, 988, 993, 994, 990, 984, 978, 978, 975, 979,
+                  984, 987, 989, 991],
+         'type': ['XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX',
+                  'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
+         'init': datetime.datetime(2018, 10, 8, 12, 0)}
         """
         
         #Real time ensemble data:

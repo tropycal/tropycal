@@ -720,30 +720,25 @@ def plot_ellipse(member_lats,member_lons):
         Pb[1][1] = Pb[1][1] + (member_lats[i]-mean_lat) * (member_lats[i]-mean_lat)
         Pb[1][0] = Pb[1][0] + (member_lats[i]-mean_lat) * (member_lons[i]-mean_lon)
     Pb[0][1] = Pb[1][0]
+    Pb = np.array(Pb) / float(len(member_lats)-1)
 
-    Pb[0][0] = Pb[0][0] / float(len(member_lats)-1)
-    Pb[0][1] = Pb[0][1] / float(len(member_lats)-1)
-    Pb[1][0] = Pb[1][0] / float(len(member_lats)-1)
-    Pb[1][1] = Pb[1][1] / float(len(member_lats)-1)
-
-    rho = Pb[1][0] / (math.sqrt(Pb[0][0]) * math.sqrt(Pb[1][1]))
-    sigmax = math.sqrt(Pb[0][0])
-    sigmay = math.sqrt(Pb[1][1])
-    fac = 1.0 / (2.0 * (1 - rho * rho))
+    rho = Pb[1][0] / (np.sqrt(Pb[0][0]) * np.sqrt(Pb[1][1]))
+    sigmax = np.sqrt(Pb[0][0])
+    sigmay = np.sqrt(Pb[1][1])
+    fac = 1.0 / (2.0 * (1 - rho**2))
 
     #Calculate lon & lat coordinates of ellipse
     ellipse_lon = []
     ellipse_lat = []
-    rdex = 0
-    incr = math.pi/180.0
-    for radians in np.arange(0,(2.0*math.pi)+incr,math.pi/180.0):
-        xstart = math.cos(radians)
-        ystart = math.sin(radians)
+    increment = np.pi/180.0
+    for radians in np.arange(0,(2.0*np.pi)+increment,increment):
+        xstart = np.cos(radians)
+        ystart = np.sin(radians)
 
         for rdistance in np.arange(0.,2400.):
             xloc = xstart * rdistance/80.0
             yloc = ystart * rdistance/80.0
-            dist = math.sqrt(xloc * xloc + yloc * yloc)
+            dist = np.sqrt(xloc * xloc + yloc * yloc)
             prob = np.exp(-1.0 * fac * ((xloc/sigmax)**2 + (yloc/sigmay)**2 - 2.0 * rho * (xloc/sigmax)*(yloc/sigmay)))
             if prob < 0.256:
                 ellipse_lon.append(xloc + mean_lon)
@@ -751,7 +746,7 @@ def plot_ellipse(member_lats,member_lons):
                 break
 
     #Return ellipse data
-    return {'xell':ellipse_lon,'yell':ellipse_lat}
+    return {'ellipse_lon':ellipse_lon,'ellipse_lat':ellipse_lat}
 
 
 def add_radius(lats,lons,vlat,vlon,rad):

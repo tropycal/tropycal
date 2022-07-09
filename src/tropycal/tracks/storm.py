@@ -1087,7 +1087,7 @@ class Storm:
         #Only calculate if needed to
         if init_used == False:
             
-            print("--> Starting to calculate GEFS data")
+            print("--> Starting to calculate ellipse data")
             
             #Create dict to store all data in
             ds = {'gfs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]},
@@ -1172,14 +1172,14 @@ class Storm:
                     #Calculate ellipse data
                     if prop_ellipse is not None:
                         ellipse_data = plot_ellipse(temp_data['lat'],temp_data['lon'])
-                        ds['gefs']['ellipse_lon'].append(ellipse_data['xell'])
-                        ds['gefs']['ellipse_lat'].append(ellipse_data['yell'])
+                        ds['gefs']['ellipse_lon'].append(ellipse_data['ellipse_lon'])
+                        ds['gefs']['ellipse_lat'].append(ellipse_data['ellipse_lat'])
         
             #Save data for future use if needed
             self.gefs_init = forecast
             self.ds = ds
             
-            print("--> Done calculating GEFS data")
+            print("--> Done calculating ellipse data")
         
         #Determine lon bounds for cartopy projection
         proj_lons = []

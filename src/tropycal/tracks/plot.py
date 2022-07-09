@@ -1331,7 +1331,7 @@ None,prop={},map_prop={}):
 
         #Plot title
         plot_title = f"GEFS Forecast Tracks for {storm_dict['name'].title()}"
-        if prop_density is not None: plot_title += f"\nTrack Density ({np.int(prop_density['radius'])}-km radius)"
+        if prop_density['plot']: plot_title += f"\nTrack Density ({np.int(prop_density['radius'])}-km radius)"
         self.ax.set_title(plot_title,fontsize=16,loc='left',fontweight='bold')
 
         if hr == None:

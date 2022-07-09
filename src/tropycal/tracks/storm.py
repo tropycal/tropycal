@@ -2460,28 +2460,24 @@ class Storm:
         
         #Return axis or show figure
         return ax
-            
-    def get_recon(self,deltap_thresh=8,save_path="",read_path="",mission_url_list=None,update=False):
-        
-        r"""
-        Creates an instance of ReconDataset for this storm's data. Saves it as an attribute of this object (storm.recon).
-        
-        Parameters
-        ----------
-        storm : tropycal.tracks.Storm
-            Requested storm as an instance of a Storm object.
-        save_path : str, optional
-            Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.
-        read_path : str, optional
-            Filepath to read saved recon data from. If specified, "save_path" cannot be passed as an argument.
-        """
-        
-        self.recon = ReconDataset(self,deltap_thresh,mission_url_list,save_path,read_path,update)
-                
+
     def get_archer(self):
         
         r"""
-        Retrieves satellite-derived Archer track data for this storm, if available. Saves it as an attribute of this object (storm.archer).
+        Retrieves satellite-derived ARCHER track data for this storm, if available.
+        
+        Returns
+        -------
+        dict
+            Dictionary containing ARCHER data for this storm.
+        
+        Notes
+        -----
+        The ARCHER (Automated Rotational Center Hurricane Eye Retrieval) data is provided courtesy of the `University of Wisconsin`_. This data is at a much higher temporal resolution than the Best Track data.
+
+        This function additionally saves the ARCHER data as an attribute of this object (storm.archer).
+        
+        .. _University of Wisconsin: http://tropic.ssec.wisc.edu/real-time/archerOnline/web/index.shtml
         """
         
         #Format URL
@@ -2504,4 +2500,7 @@ class Storm:
             except:
                 continue
         self.archer = archer
+        
+        return archer
+    
     

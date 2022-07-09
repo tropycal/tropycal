@@ -926,7 +926,9 @@ class Storm:
         Notes
         -----
         .. note::
-            For years before the HMON model was available, the HMON key instead defaults to the old GFDL model.
+            1. For years before the HMON model was available, the HMON key instead defaults to the old GFDL model.
+            
+            2. For storms in the JTWC area of responsibility, the NHC key defaults to JTWC.
         
         The following model names are available as keys in the "model" dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {'gfs':None}`` or ``models = {'GFS':None}``).
         
@@ -978,11 +980,12 @@ class Storm:
             'nhc':'OFCI',
         }
         backup_models = {
-            'gfs':['AVNO'],
-            'ukm':['UKM2'],
+            'gfs':['AVNO','AVNX'],
+            'ukm':['UKM2','UKM'],
             'cmc':['CMC'],
             'hmon':['GFDI','GFDL'],
-            'nhc':['OFCL'],
+            'nhc':['OFCL','JTWC'],
+            'hwrf':['HWRF'],
         }
         
         #Pop kwargs
@@ -1057,7 +1060,16 @@ class Storm:
             if forecast_str not in self.forecast_dict[official_key].keys(): continue
             enter_key = key + ''
             if key.lower() == 'hmon' and 'gf' in official_key.lower(): enter_key = 'gfdl'
+            if key.lower() == 'nhc' and 'jt' in official_key.lower(): enter_key = 'jtwc'
             ds[enter_key] = self.forecast_dict[official_key][forecast_str]
+            
+            #Filter out to hour 168
+            if ds[enter_key]['fhr'][-1] > 168:
+                idx = ds[enter_key]['fhr'].index(168)
+                for key in ds[enter_key].keys():
+                    if isinstance(ds[enter_key][key],list):
+                        ds[enter_key][key] = ds[enter_key][key][:idx+1]
+                    
             proj_lons += ds[enter_key]['lon']
         
         #Proceed if data exists

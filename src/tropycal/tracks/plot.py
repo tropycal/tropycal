@@ -984,6 +984,8 @@ None,prop={},map_prop={}):
         #Fix GFDL
         if 'gfdl' in forecast_dict.keys():
             model_prop['gfdl'] = model_prop['hmon']
+        if 'jtwc' in forecast_dict.keys():
+            model_prop['jtwc'] = model_prop['nhc']
         
         #================================================================================================
         

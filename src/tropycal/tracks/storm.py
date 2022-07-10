@@ -1372,7 +1372,7 @@ class Storm:
 
                     #Calculate ellipse data
                     if prop_ellipse is not None:
-                        ellipse_data = plot_ellipse(temp_data['lat'],temp_data['lon'])
+                        ellipse_data = calc_ensemble_ellipse(temp_data['lon'],temp_data['lat'])
                         ds['gefs']['ellipse_lon'].append(ellipse_data['ellipse_lon'])
                         ds['gefs']['ellipse_lat'].append(ellipse_data['ellipse_lat'])
         

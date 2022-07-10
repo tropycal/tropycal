@@ -1077,12 +1077,6 @@ None,prop={},map_prop={}):
         min_lat = np.nanpercentile(lat_min_extrema,5)
         max_lon = np.nanpercentile(lon_max_extrema,95)
         min_lon = np.nanpercentile(lon_min_extrema,5)
-        """
-        max_lat = np.nanmax(lat_max_extrema)
-        min_lat = np.nanmin(lat_min_extrema)
-        max_lon = np.nanmax(lon_max_extrema)
-        min_lon = np.nanmin(lon_min_extrema)
-        """
         
         #================================================================================================
 

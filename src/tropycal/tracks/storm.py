@@ -2522,9 +2522,9 @@ class Storm:
             recon.hdobs.plot_points()
         """
         
-        self.recon.get_vdms()
-        self.recon.get_hdobs()
-        self.recon.get_dropsondes()
+        self.recon.get_vdms(data=path_vdm)
+        self.recon.get_hdobs(data=path_hdobs)
+        self.recon.get_dropsondes(data=path_dropsondes)
         return self.recon
     
     def get_archer(self):

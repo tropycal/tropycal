@@ -422,7 +422,7 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
     
     Parameters
     ----------
-    wind_speed : int
+    wind_speed : int or list, numpy.ndarray
         Sustained wind in knots.
     hours : int, optional
         Duration in hours over which the sustained wind was observed. Default is 6 hours.
@@ -444,14 +444,20 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
     .. _Bell et al. (2000): https://journals.ametsoc.org/view/journals/bams/81/6/1520-0477_2000_81_s1_caf_2_0_co_2.xml
     """
     
+    #Determine types
+    if isinstance(wind_speed,(np.ndarray,list)):
+        wind_speed = np.copy(wind_speed)
+    
     #Calculate ACE
     ace = ((10**-4) * (wind_speed**2)) * (hours/6.0)
     
     #Coerce to zero if wind speed less than TS force
-    if wind_speed < 34: ace = 0.0
-    
-    #Return ACE
-    return round(ace,4)
+    if isinstance(ace,(np.ndarray,list)):
+        ace[wind_speed < 34] = 0.0
+        return np.round(ace,4)
+    else:
+        if wind_speed < 34: ace = 0.0
+        return round(ace,4)
 
 def dropsonde_mslp_estimate(mslp,surface_wind):
     

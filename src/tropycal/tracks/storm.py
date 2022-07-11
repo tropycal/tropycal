@@ -2229,7 +2229,18 @@ class Storm:
          'vmax': [50, 50, 60, 65, 75, 85, 75, 55, 55],
          'mslp': [nan, 997, nan, nan, nan, nan, nan, nan, nan],
          'type': ['TS', 'TS', 'TS', 'HU', 'HU', 'HU', 'HU', 'TS', 'TS'],
+         'windrad': [{34: [120, 150, 90, 90], 50: [40, 0, 0, 0]},
+          {34: [120, 150, 90, 90], 50: [40, 0, 0, 0]},
+          {34: [120, 150, 90, 90], 50: [40, 40, 0, 0]},
+          {34: [130, 140, 90, 90], 50: [50, 50, 0, 0], 64: [20, 20, 0, 0]},
+          {34: [130, 130, 80, 90], 50: [50, 50, 0, 0], 64: [20, 20, 0, 0]},
+          {34: [130, 130, 70, 90], 50: [60, 60, 30, 40], 64: [25, 25, 15, 25]},
+          {34: [130, 130, 70, 80], 50: [60, 60, 30, 40]},
+          {34: [0, 0, 0, 0]},
+          {34: [0, 0, 0, 0]}],
          'init': datetime.datetime(2018, 10, 8, 0, 0)}
+        
+        As of Tropycal v0.5, ``windrad`` represents the forecast sustained wind radii (34, 50 and 64 knots) organized by [NE quadrant,SE quadrant,SW quadrant,NW quadrant] in nautical miles.
         """
         
         #Check to ensure the data source is HURDAT

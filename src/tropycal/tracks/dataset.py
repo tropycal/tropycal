@@ -972,6 +972,7 @@ class TrackDataset:
                 wmo_basin = basin_reverse.get(basin,'')
                 if subbasin in ['WA','EA']:
                     wmo_basin = 'australia'
+                if sid == 'AL041932': wmo_basin = 'north_atlantic'
                 self.data[sid]['wmo_basin'].append(wmo_basin)
 
                 hhmm = date.strftime('%H%M')
@@ -991,6 +992,13 @@ class TrackDataset:
         for key in all_keys:
             if len(self.data[key]['lat']) == 0:
                 del(self.data[key])
+        
+        #Remove entries where requested basin doesn't appear
+        if self.basin not in ['all','both']:
+            all_keys = [k for k in self.data.keys()]
+            for key in all_keys:
+                if self.basin not in self.data[key]['wmo_basin']:
+                    del(self.data[key])
         
         #Replace neumann entries
         if self.neumann:

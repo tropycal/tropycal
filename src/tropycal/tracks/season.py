@@ -378,6 +378,8 @@ class Season:
                 if multi_season == False:
                     if 'season_start' not in summary_dict.keys():
                         summary_dict['season_start'] = trop_time[0]
+                    else:
+                        if trop_time[0] < summary_dict['season_start']: summary_dict['season_start'] = trop_time[0]
                     if 'season_end' not in summary_dict.keys():
                         summary_dict['season_end'] = trop_time[-1]
                     else:
@@ -385,6 +387,8 @@ class Season:
                 else:
                     if summary_dict['season_start'][season_idx] == 0:
                         summary_dict['season_start'][season_idx] = trop_time[0]
+                    else:
+                        if trop_time[0] < summary_dict['season_start'][season_idx]: summary_dict['season_start'][season_idx] = trop_time[0]
                     if summary_dict['season_end'][season_idx] == 0:
                         summary_dict['season_end'][season_idx] = trop_time[-1]
                     else:

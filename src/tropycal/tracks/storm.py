@@ -1707,7 +1707,12 @@ class Storm:
 
             #Get basic components
             lineArray = [i.replace(" ","") for i in line]
-            basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype,rad,windcode,neq,seq,swq,nwq = lineArray[:17]
+            try:
+                basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype,rad,windcode,neq,seq,swq,nwq = lineArray[:17]
+                use_wind = True
+            except:
+                basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
+                use_wind = False
 
             #Enter into forecast dict
             if model not in forecasts.keys(): forecasts[model] = {}
@@ -1743,11 +1748,25 @@ class Storm:
                 if mslp < 1: mslp = np.nan
 
             #Format wind radii
-            rad = int(rad)
-            neq = -999 if windcode=='' else int(neq)
-            seq = -999 if windcode in ['','AAA'] else int(seq)
-            swq = -999 if windcode in ['','AAA'] else int(swq)
-            nwq = -999 if windcode in ['','AAA'] else int(nwq) 
+            if use_wind:
+                try:
+                    rad = int(rad)
+                    neq = -999 if windcode=='' else int(neq)
+                    seq = -999 if windcode in ['','AAA'] else int(seq)
+                    swq = -999 if windcode in ['','AAA'] else int(swq)
+                    nwq = -999 if windcode in ['','AAA'] else int(nwq)
+                except:
+                    rad = -999
+                    neq = -999
+                    seq = -999
+                    swq = -999
+                    nwq = -999
+            else:
+                rad = -999
+                neq = -999
+                seq = -999
+                swq = -999
+                nwq = -999
             
             #Add forecast data to dict if forecast hour isn't already there
             if fhr not in forecasts[model][run_init]['fhr']:

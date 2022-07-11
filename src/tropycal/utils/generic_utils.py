@@ -353,7 +353,13 @@ def get_basin(lat,lon,source_basin=""):
     if lat >= 0.0:
         
         if lon < 100.0:
-            return "north_indian"
+            if lat < 40.0:
+                return "north_indian"
+            else:
+                if lon < 70.0:
+                    return "north_atlantic"
+                else:
+                    return "west_pacific"
         elif lon <= 180.0:
             return "west_pacific"
         else:

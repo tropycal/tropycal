@@ -2156,22 +2156,23 @@ class Storm:
             if use_wind:
                 try:
                     rad = int(rad)
-                    neq = -999 if windcode=='' else int(neq)
-                    seq = -999 if windcode in ['','AAA'] else int(seq)
-                    swq = -999 if windcode in ['','AAA'] else int(swq)
-                    nwq = -999 if windcode in ['','AAA'] else int(nwq)
+                    if rad in [0,35]: rad = 34
+                    neq = np.nan if windcode=='' else int(neq)
+                    seq = np.nan if windcode in ['','AAA'] else int(seq)
+                    swq = np.nan if windcode in ['','AAA'] else int(swq)
+                    nwq = np.nan if windcode in ['','AAA'] else int(nwq)
                 except:
-                    rad = -999
-                    neq = -999
-                    seq = -999
-                    swq = -999
-                    nwq = -999
+                    rad = 34
+                    neq = np.nan
+                    seq = np.nan
+                    swq = np.nan
+                    nwq = np.nan
             else:
-                rad = -999
-                neq = -999
-                seq = -999
-                swq = -999
-                nwq = -999
+                rad = 34
+                neq = np.nan
+                seq = np.nan
+                swq = np.nan
+                nwq = np.nan
             
             #Add forecast data to dict if forecast hour isn't already there
             if fhr not in forecasts[model][run_init]['fhr']:

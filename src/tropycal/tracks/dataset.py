@@ -791,7 +791,7 @@ class TrackDataset:
                     #Calculate ACE & append to storm total
                     if np.isnan(neumann_vmax) == False:
                         ace = (10**-4) * (neumann_vmax**2)
-                        if hhmm in constants.STANDARD_HOURS and neumann_type in constants.NAMED_TROPICAL_STORM_TYPES:
+                        if hhmm in constants.STANDARD_HOURS and neumann_type in constants.NAMED_TROPICAL_STORM_TYPES and np.isnan(ace) == False:
                             neumann[ibtracs_id]['ace'] += np.round(ace,4)
                         
             #Skip missing entries
@@ -894,7 +894,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(jtwc_vmax) == False:
                     ace = (10**-4) * (jtwc_vmax**2)
-                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES:
+                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES and np.isnan(ace) == False:
                         self.data[ibtracs_id]['ace'] += np.round(ace,4)
                 
             #Handle non-WMO mode
@@ -983,7 +983,7 @@ class TrackDataset:
                 #Calculate ACE & append to storm total
                 if np.isnan(vmax) == False:
                     ace = (10**-4) * (vmax**2)
-                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES:
+                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES and np.isnan(ace) == False:
                         self.data[sid]['ace'] += np.round(ace,4)
                     
         #Remove empty entries
@@ -1561,8 +1561,11 @@ class TrackDataset:
         for year in years:
             
             #Get info for this year
-            season = self.get_season(year)
-            year_info = season.summary()
+            try:
+                season = self.get_season(year)
+                year_info = season.summary()
+            except:
+                continue
             
             #Generate list of dates for this year
             year_dates = np.array([dt.strptime(((pd.to_datetime(i)).strftime('%Y%m%d%H')),'%Y%m%d%H') for i in np.arange(dt(year,1,1),dt(year+1,1,1),timedelta(hours=6))])
@@ -3305,8 +3308,11 @@ class TrackDataset:
         #Iterate over all seasons in the TrackDataset object
         for season in range(start_season,end_season+1):
 
-            #Get season summary
-            season_summary = self.get_season(season).summary()
+            #Get season summary, if season can be retrieved
+            try:
+                season_summary = self.get_season(season).summary()
+            except:
+                continue
             if len(season_summary['id']) == 0: continue
 
             #Add information to dict

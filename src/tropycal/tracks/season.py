@@ -359,6 +359,7 @@ class Season:
                     if i_time.strftime('%H%M') not in constants.STANDARD_HOURS: continue
                     if i_type not in constants.NAMED_TROPICAL_STORM_TYPES: continue
                     if self.basin == 'all' and i_time.year != self.year: continue
+                    if np.isnan(i_vmax): continue
                     temp_ace += accumulated_cyclone_energy(i_vmax)
                 temp_ace = np.round(temp_ace,1)
 

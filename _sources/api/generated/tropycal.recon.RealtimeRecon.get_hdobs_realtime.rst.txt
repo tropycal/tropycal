@@ -1,0 +1,12 @@
+RealtimeRecon.get_hdobs_realtime
+===============================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: RealtimeRecon.get_hdobs_realtime
+
+.. include:: tropycal.recon.RealtimeRecon.get_hdobs_realtime
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -24,8 +24,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Individual Season Analysis" href="tracks.season.html" />
-    <link rel="prev" title="Examples" href="index.html" /> 
+    <link rel="next" title="Tornado Analyses" href="tracks.tornado.html" />
+    <link rel="prev" title="Individual Season Analysis" href="tracks.season.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -48,13 +48,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Example Scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tracks.season.html">Individual Season Analysis</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Realtime Functionality</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#reading-in-realtime-dataset">Reading In Realtime Dataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#view-current-activity">View Current Activity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#realtime-storms">Realtime Storms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#realtime-invests">Realtime Invests</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tracks.season.html">Individual Season Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tracks.tornado.html">Tornado Analyses</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tracks.storm.html">Individual Storm Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tc_rainfall.html">Tropical Cyclone Rainfall</a></li>
@@ -101,7 +102,7 @@ to download the full example code</p>
 </div>
 <div class="sphx-glr-example-title section" id="realtime-functionality">
 <span id="sphx-glr-examples-realtime-py"></span><h1>Realtime Functionality<a class="headerlink" href="#realtime-functionality" title="Permalink to this headline">¶</a></h1>
-<p>This sample script shows how to use Tropycal to retrieve and plot real time tropical cyclones and potential formation. As this script was written on 2 June 2022, the data below is valid for the time this script was written.</p>
+<p>This sample script shows how to use Tropycal to retrieve and plot real time tropical cyclones and potential formation. As this script was written on 15 June 2022, the data below is valid for the time this script was written.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">realtime</span>
 </pre></div>
 </div>
@@ -115,7 +116,7 @@ to download the full example code</p>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in current storm data
---&gt; Completed reading in current storm data (0.68 seconds)
+--&gt; Completed reading in current storm data (0.95 seconds)
 </pre></div>
 </div>
 </div>
@@ -128,39 +129,57 @@ to download the full example code</p>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.realtime.Realtime&gt;
 Dataset Summary:
-    Numbers of active storms: 1
+    Numbers of active storms: 3
 
 Active Storms:
-    AL012022
+    EP022022
 
 Active Invests:
+    AL932022
+    EP932022
 </pre></div>
 </div>
 <p>Alternatively, we can also list all active storms, along with an optional filter by basin.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.Realtime.list_active_storms.html#tropycal.realtime.Realtime.list_active_storms" title="tropycal.realtime.Realtime.list_active_storms" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-method"><span class="n">realtime_obj</span><span class="o">.</span><span class="n">list_active_storms</span></a><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.Realtime.list_active_storms.html#tropycal.realtime.Realtime.list_active_storms" title="tropycal.realtime.Realtime.list_active_storms" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-method"><span class="n">realtime_obj</span><span class="o">.</span><span class="n">list_active_storms</span></a><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;east_pacific&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;AL012022&#39;]
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;EP022022&#39;, &#39;EP932022&#39;]
 </pre></div>
 </div>
 <p>A new functionality with Tropycal v0.4 is to plot a summary of all ongoing activity, whether globally or by basin. This function can be highly customized, with more details in the documentation.</p>
-<p>At the time this script was written, Potential Tropical Cyclone #1 is active in the western Caribbean, with a 90% of development into a tropical cyclone. This will be plotted in the summary below:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.Realtime.html#tropycal.realtime.Realtime" title="tropycal.realtime.Realtime" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">realtime_obj</span></a><span class="o">.</span><span class="n">plot_summary</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">)</span>
+<p>At the time this script was written, Hurricane Blas is active in the eastern Pacific Ocean, with East Pacific invest 93E (60% of development) and Atlantic invest 93L (30% of development).</p>
+<p>The domain option for this plot is set to ‘all’ by default, plotting the full globe. This can also be a basin (e.g., ‘north_atlantic’, ‘east_pacific’), or a custom domain, as we’ll plot below.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.Realtime.html#tropycal.realtime.Realtime" title="tropycal.realtime.Realtime" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">realtime_obj</span></a><span class="o">.</span><span class="n">plot_summary</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">130</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">60</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span><span class="mi">50</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_realtime_001.png" srcset="../_images/sphx_glr_realtime_001.png" alt="Summary & NHC 5-Day Formation Outlook, Valid: 22 UTC 02 Jun 2022" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<img src="../_images/sphx_glr_realtime_001.png" srcset="../_images/sphx_glr_realtime_001.png" alt="Summary & NHC 5-Day Formation Outlook, Valid: 17 UTC 15 Jun 2022" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>C:\Users\Tomer4\anaconda3\envs\main\lib\site-packages\shapefile.py:391: UserWarning: Shapefile shape has invalid polygon: no exterior rings found (must have clockwise orientation); interpreting holes as exteriors.
   warnings.warn(&#39;Shapefile shape has invalid polygon: no exterior rings found (must have clockwise orientation); interpreting holes as exteriors.&#39;)
 
-&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Summary &amp; NHC 5-Day Formation Outlook&#39;,&#39;right&#39;:&#39;Valid: 22 UTC 02 Jun 2022&#39;}&gt;
+&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Summary &amp; NHC 5-Day Formation Outlook&#39;,&#39;right&#39;:&#39;Valid: 17 UTC 15 Jun 2022&#39;}&gt;
+</pre></div>
+</div>
+<p>Let’s look at a few ways to customize this plot. There are four properties available to customize the plot, detailed more thoroughly in the documentation:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">two_prop</span></code> - Properties to customize NHC Tropical Weather Outlook (TWO) plotting</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">invest_prop</span></code> - Properties to customize invest plotting</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">storm_prop</span></code> - Properties to customize tropical cyclone plotting</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cone_prop</span></code> - Properties to customize forecast cone/track plotting</p></li>
+</ul>
+<p>The above plot includes the NHC TWO by default. Plotting the TWO overrides any invests that have a TWO associated with them (invests that are outside of NHC’s area of responsibility or don’t have a TWO still appear). We can pass the <code class="docutils literal notranslate"><span class="pre">'plot':False</span></code> argument to any property dict, which in doing so removes that element from the summary map. Let’s test this out by removing the TWO and cone of uncertainty from the plot:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.Realtime.html#tropycal.realtime.Realtime" title="tropycal.realtime.Realtime" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">realtime_obj</span></a><span class="o">.</span><span class="n">plot_summary</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">130</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">60</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span><span class="mi">50</span><span class="p">},</span> <span class="n">two_prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;plot&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">},</span> <span class="n">cone_prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;plot&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">})</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_realtime_002.png" srcset="../_images/sphx_glr_realtime_002.png" alt="Summary, Valid: 17 UTC 15 Jun 2022" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Summary&#39;,&#39;right&#39;:&#39;Valid: 17 UTC 15 Jun 2022&#39;}&gt;
 </pre></div>
 </div>
 </div>
 <div class="section" id="realtime-storms">
 <h2>Realtime Storms<a class="headerlink" href="#realtime-storms" title="Permalink to this headline">¶</a></h2>
 <p>To retrieve a storm from a Realtime object, simply use its <code class="docutils literal notranslate"><span class="pre">get_storm()</span></code> method and provide an ID as listed in <code class="docutils literal notranslate"><span class="pre">list_active_storms()</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm" title="tropycal.realtime.RealtimeStorm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.realtime.Realtime.get_storm.html#tropycal.realtime.Realtime.get_storm" title="tropycal.realtime.Realtime.get_storm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-method"><span class="n">realtime_obj</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">(</span><span class="s1">&#39;AL012022&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm" title="tropycal.realtime.RealtimeStorm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.realtime.Realtime.get_storm.html#tropycal.realtime.Realtime.get_storm" title="tropycal.realtime.Realtime.get_storm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-method"><span class="n">realtime_obj</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">(</span><span class="s1">&#39;EP022022&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This now returns a RealtimeStorm object. RealtimeStorm objects inherit the same functionality as Storm objects, but have additional functions unique to realtime storms. Additionally, as these can also be valid for invests, certain functionality that is only available for tropical cyclones (e.g., NHC forecasts or discussions) is unavailable for invests.</p>
@@ -171,44 +190,44 @@ Active Invests:
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.realtime.RealtimeStorm&gt;
 Storm Summary:
-    Maximum Wind:      N/A knots
-    Minimum Pressure:  N/A hPa
-    Start Date:        N/A
-    End Date:          N/A
+    Maximum Wind:      65 knots
+    Minimum Pressure:  988 hPa
+    Start Date:        0000 UTC 14 June 2022
+    End Date:          1200 UTC 15 June 2022
 
 Variables:
-    date        (datetime) [2022-05-31 18:00:00 .... 2022-06-02 18:00:00]
+    date        (datetime) [2022-06-05 00:00:00 .... 2022-06-15 12:00:00]
     extra_obs   (int32) [0 .... 0]
     special     (str) [ .... ]
-    type        (str) [DB .... LO]
-    lat         (float64) [17.2 .... 21.3]
-    lon         (float64) [-88.7 .... -87.5]
-    vmax        (int32) [20 .... 30]
-    mslp        (int32) [1008 .... 1004]
-    wmo_basin   (str) [north_atlantic .... north_atlantic]
+    type        (str) [DB .... HU]
+    lat         (float64) [11.8 .... 15.0]
+    lon         (float64) [-94.0 .... -102.7]
+    vmax        (int32) [20 .... 65]
+    mslp        (int32) [1008 .... 988]
+    wmo_basin   (str) [east_pacific .... east_pacific]
 
 More Information:
-    id:              AL012022
-    operational_id:  AL012022
-    name:            ONE
+    id:              EP022022
+    operational_id:  EP022022
+    name:            BLAS
     year:            2022
     season:          2022
-    basin:           north_atlantic
+    basin:           east_pacific
     source_info:     NHC Hurricane Database
     invest:          False
     source_method:   NHC&#39;s Automated Tropical Cyclone Forecasting System (ATCF)
     source_url:      https://ftp.nhc.noaa.gov/atcf/btk/
     source:          hurdat
-    ace:             0.0
-    prob_2day:       90%
-    prob_5day:       90%
-    risk_2day:       High
-    risk_5day:       High
+    ace:             1.4
+    prob_2day:       N/A
+    prob_5day:       N/A
+    risk_2day:       N/A
+    risk_5day:       N/A
     realtime:        True
 </pre></div>
 </div>
 <p>A quick and easy way to check if a storm is an invest is by checking its <code class="docutils literal notranslate"><span class="pre">invest</span></code> attribute. This will let you know if you can use the full set of functionality available for tropical cyclones or not.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm" title="tropycal.realtime.RealtimeStorm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">invest</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm" title="tropycal.realtime.RealtimeStorm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><a href="../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm" title="tropycal.realtime.RealtimeStorm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">invest</span></a>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
@@ -221,15 +240,15 @@ More Information:
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;fhr&#39;: [0, 3, 12, 24, 36, 48, 60, 72, 96, 120], &#39;lat&#39;: [21.3, 21.4, 22.3, 23.5, 24.8, 26.5, 28.7, 30.6, 33.5, 36.0], &#39;lon&#39;: [-87.5, -87.5, -87.4, -86.5, -84.9, -82.3, -79.3, -76.0, -70.0, -64.0], &#39;vmax&#39;: [30, 30, 30, 35, 35, 35, 40, 45, 45, 40], &#39;mslp&#39;: [nan, 1003, nan, nan, nan, nan, nan, nan, nan, nan], &#39;cumulative_ace&#39;: [0.0, 0.0, 0.1, 0.4, 0.6, 0.9, 1.3, 2.1, 2.8], &#39;cumulative_ace_fhr&#39;: [0, 12, 24, 36, 48, 60, 72, 96, 120], &#39;type&#39;: [&#39;LO&#39;, &#39;LO&#39;, &#39;TD&#39;, &#39;TS&#39;, &#39;TS&#39;, &#39;TS&#39;, &#39;TD&#39;, &#39;TS&#39;, &#39;TS&#39;, &#39;TS&#39;], &#39;init&#39;: datetime.datetime(2022, 6, 2, 18, 0)}
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;fhr&#39;: [0, 3, 12, 24, 36, 48, 60, 72, 96, 120], &#39;lat&#39;: [15.0, 14.9, 15.3, 15.8, 16.5, 17.1, 17.7, 18.2, 18.8, 19.0], &#39;lon&#39;: [-102.7, -102.8, -103.5, -104.8, -106.6, -108.3, -110.0, -111.6, -114.1, -116.5], &#39;vmax&#39;: [65, 65, 75, 85, 80, 75, 65, 55, 40, 30], &#39;mslp&#39;: [nan, 988, nan, nan, nan, nan, nan, nan, nan, nan], &#39;cumulative_ace&#39;: [1.4, 2.4, 3.8, 5.1, 6.3, 7.2, 7.9, 8.7, 9.0], &#39;cumulative_ace_fhr&#39;: [0, 12, 24, 36, 48, 60, 72, 96, 120], &#39;type&#39;: [&#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;TS&#39;, &#39;TS&#39;, &#39;TD&#39;], &#39;init&#39;: datetime.datetime(2022, 6, 15, 12, 0)}
 </pre></div>
 </div>
 <p>We can also plot it using the <code class="docutils literal notranslate"><span class="pre">plot_forecast_realtime()</span></code> method:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.RealtimeStorm.plot_forecast_realtime.html#tropycal.realtime.RealtimeStorm.plot_forecast_realtime" title="tropycal.realtime.RealtimeStorm.plot_forecast_realtime" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">plot_forecast_realtime</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_realtime_002.png" srcset="../_images/sphx_glr_realtime_002.png" alt="Potential Tropical Cyclone ONE, Current Intensity: 35 mph • 1003 hPa NHC Issued: 2100 UTC 02 Jun 2022" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Potential Tropical Cyclone ONE&#39;,&#39;right&#39;:&#39;Current Intensity: 35 mph • 1003 hPa\nNHC Issued: 2100 UTC 02 Jun 2022&#39;}&gt;
+<img src="../_images/sphx_glr_realtime_003.png" srcset="../_images/sphx_glr_realtime_003.png" alt="Hurricane BLAS, Current Intensity: 75 mph • 988 hPa NHC Issued: 1500 UTC 15 Jun 2022" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane BLAS&#39;,&#39;right&#39;:&#39;Current Intensity: 75 mph • 988 hPa\nNHC Issued: 1500 UTC 15 Jun 2022&#39;}&gt;
 </pre></div>
 </div>
 <p>Storm forecast discussions can also be retrieved for storms in NHC’s area of responsibility, or the Prognostic Reasoning product for JTWC’s area of responsibility.</p>
@@ -237,7 +256,7 @@ More Information:
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;id&#39;: 1, &#39;time_issued&#39;: datetime.datetime(2022, 6, 2, 21, 0), &#39;text&#39;: &#39;ZCZC MIATCDAT1 ALL\nTTAA00 KNHC DDHHMM\n \nPotential Tropical Cyclone One Discussion Number   1\nNWS National Hurricane Center Miami FL       AL012022\n400 PM CDT Thu Jun 02 2022\n \nSatellite imagery, surface observations, and reports from an Air \nForce Reserve Hurricane Hunter aircraft show that a broad low \npressure area is centered over the northeastern part of the Yucatan \nPeninsula of Mexico.  This system is currently producing poorly \norganized convection in the northeastern quadrant due to the effects \nof 20-30 kt of southwesterly vertical wind shear.  The central \npressure is near 1003 mb, and earlier scatterometer data showed \nwinds near 30 kt well to the east of the center.  Due to the \npossibility that the system could become a tropical storm with \nimpacts in the Florida Keys, and portions of the Florida Peninsula \nand western Cuba, advisories are initiated on Potential Tropical \nCyclone One with tropical storm watches issued for those areas.\n\nThe initial motion is 360/3.  The system should turn northeastward \nduring the next 12-24 h as it encounters the southern edge of the \nmid-latitude westerlies, and a general northeastward motion should \ncontinue through the end of the forecast period.  The guidance is \nin good agreement that the system should cross the Florida \nPeninsula on Saturday.  It should be noted that the guidance \nsuggests the possibility that the center could re-form due to \nconvective bursts, which would cause jumps in the track \nsuperimposed on top of the general northeastward motion.\n\nThe intensity and structure forecasts for this system are very \nuncertain.  It has a large envelope and a large radius of maximum \nwinds, and a combination of moderate to strong shear and interaction \nwith an upper-level trough seem unfavorable for significant \ndevelopment over the Gulf of Mexico.  The guidance does suggests \nslight development despite the hostile conditions, so the intensity \nforecast calls for the system to become a tropical depression in \nabout 12 h and a tropical storm in about 24 h.  However, these winds \nare likely to be well removed from the center.  Interaction with a \nmid-latitude trough could allow some additional strengthening over \nthe Atlantic, and this is reflected in the intensity forecast.  \nRegardless of development, widespread heavy rain will occur over \nportions of western Cuba, the southern Florida Peninsula, the \nFlorida Keys, and the northwestern Bahamas in association with this \nsystem.\n\n\nKEY MESSAGES:\n\n1. Heavy rain associated with the system is expected to continue \nthrough Friday across the eastern portions of the Yucatan Peninsula, \nthe Cayman Islands and western Cuba.  Life-threatening flash \nflooding and mudslides are possible across western Cuba. \n\n2. Heavy rain will begin to affect South Florida and the Florida \nKeys Friday and continue through Saturday. Considerable flash and \nurban flooding is possible across the urban corridors in South \nFlorida and in the Keys. \n\n3. Tropical storm conditions are possible in the watch area in \nwestern Cuba Friday and Friday night, and are possible in the watch \narea in the Florida Peninsula and Florida Keys Friday night and \nSaturday. \n \nFORECAST POSITIONS AND MAX WINDS\n \nINIT  02/2100Z 21.4N  87.5W   30 KT  35 MPH...POTENTIAL TROP CYCLONE\n 12H  03/0600Z 22.3N  87.4W   30 KT  35 MPH...TROPICAL CYCLONE\n 24H  03/1800Z 23.5N  86.5W   35 KT  40 MPH\n 36H  04/0600Z 24.8N  84.9W   35 KT  40 MPH\n 48H  04/1800Z 26.5N  82.3W   35 KT  40 MPH\n 60H  05/0600Z 28.7N  79.3W   40 KT  45 MPH\n 72H  05/1800Z 30.6N  76.0W   45 KT  50 MPH\n 96H  06/1800Z 33.5N  70.0W   45 KT  50 MPH\n120H  07/1800Z 36.0N  64.0W   40 KT  45 MPH\n \n$$\nForecaster Beven\n \nNNNN\n&#39;}
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;id&#39;: 6, &#39;time_issued&#39;: datetime.datetime(2022, 6, 15, 15, 0), &#39;text&#39;: &#39;ZCZC MIATCDEP2 ALL\nTTAA00 KNHC DDHHMM\n \nHurricane Blas Discussion Number   6\nNWS National Hurricane Center Miami FL       EP022022\n1000 AM CDT Wed Jun 15 2022\n \nSince the prior advisory, the structure of Blas has continued to \nimprove on both conventional and microwave satellite imagery. In \nfact, several SSMIS microwave passes indicate that Blas is \ndeveloping an inner core, with at least a banding mid-level eye \nfeature showing up on the 89-GHz channel. The latest 1200 UTC \nsubjective Dvorak estimates were T3.5/55 kt from TAFB and T4.0/65 kt \nfrom SAB. In addition, the most recent objective Dvorak estimates \nfrom UW-CIMSS have been quickly increasing with the latest estimate \nat T4.3/72 kt. A blend of the aforementioned data yields 65 kt for \nthe advisory initial intensity, making Blas a hurricane.\n \nThe center of Blas may have relocated a bit further south into the \nlarge overnight convective burst, but its mean motion this morning \nhas continued a pronounced left turn, estimated at 290/4 kt. A \ncontinued west-northwest motion with some acceleration is \nanticipated over the next several days as the mid-level ridge \npoleward of the storm continues to build in and extend westward \nahead of Blas. Towards the end of the forecast, Blas is expected to \nbecome a shallow system, resulting in a slowing westward motion as \nthe low-level flow exerts greater influence. The latest forecast \ntrack has been adjusted a bit south in the short-term based on the \nadjusted initial position , but ends up just north of the previous \nforecast by the end of the period, close to the center of the track \nguidance envelope.\n \nThe most recent microwave images suggest that Blas is developing an \ninner core, which would likely support further intensification today \nas the system remains over warm (28-29 C) sea surface temperatures \n(SSTs) embedded in sufficently high mid-level moisture. A possible \ncomplicating factor is that both the GFS- and ECMWF-based SHIPS \nguidance indicates easterly shear increasing to 20-25 kt over \nthe next 24-36 h. Assuming this does not play a major inhibiting \nfactor, the latest NHC forecast indicates continued intensification \nand peaks Blas as category 2 hurricane in 24 h. After 36 h, Blas \nwill be crossing a sharp SST gradient, moving over sub 26 C waters \nby 60 h. For this reason, weakening is anticipated to begin by \nFriday. At the end of the forecast period, Blas is likely to lose \nits deep-convective activity and become a shallow low-level vortex.\n \nWhile Blas is expected to remain off the coast of Mexico, its\nassociated swells are expected to affect portions of the coast of\nsouthwestern Mexico beginning today and continuing through the end\nof the week.\n \n \nFORECAST POSITIONS AND MAX WINDS\n \nINIT  15/1500Z 14.9N 102.8W   65 KT  75 MPH\n 12H  16/0000Z 15.3N 103.5W   75 KT  85 MPH\n 24H  16/1200Z 15.8N 104.8W   85 KT 100 MPH\n 36H  17/0000Z 16.5N 106.6W   80 KT  90 MPH\n 48H  17/1200Z 17.1N 108.3W   75 KT  85 MPH\n 60H  18/0000Z 17.7N 110.0W   65 KT  75 MPH\n 72H  18/1200Z 18.2N 111.6W   55 KT  65 MPH\n 96H  19/1200Z 18.8N 114.1W   40 KT  45 MPH\n120H  20/1200Z 19.0N 116.5W   30 KT  35 MPH\n \n$$\nForecaster Papin\n \nNNNN\n&#39;}
 </pre></div>
 </div>
 <p>Lastly, RealtimeStorms also provide the latest available information using the <code class="docutils literal notranslate"><span class="pre">get_realtime_info()</span></code> method.</p>
@@ -246,10 +265,65 @@ More Information:
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;source&#39;: &#39;NHC Public Advisory&#39;, &#39;advisory_number&#39;: &#39;1&#39;, &#39;time_utc&#39;: datetime.datetime(2022, 6, 2, 21, 0), &#39;type&#39;: &#39;Potential Tropical Cyclone&#39;, &#39;name&#39;: &#39;One&#39;, &#39;lat&#39;: 21.4, &#39;lon&#39;: -87.5, &#39;wind_mph&#39;: 35, &#39;wind_kph&#39;: 55, &#39;wind_kt&#39;: 30, &#39;mslp&#39;: 1003, &#39;category&#39;: -1, &#39;motion_direction&#39;: &#39;N&#39;, &#39;motion_direction_degrees&#39;: 360, &#39;motion_mph&#39;: 5, &#39;motion_kph&#39;: 7, &#39;motion_kt&#39;: 4}
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;source&#39;: &#39;NHC Public Advisory&#39;, &#39;advisory_number&#39;: &#39;6&#39;, &#39;time_utc&#39;: datetime.datetime(2022, 6, 15, 15, 0), &#39;type&#39;: &#39;Hurricane&#39;, &#39;name&#39;: &#39;Blas&#39;, &#39;lat&#39;: 14.9, &#39;lon&#39;: -102.8, &#39;wind_mph&#39;: 75, &#39;wind_kph&#39;: 120, &#39;wind_kt&#39;: 65, &#39;mslp&#39;: 988, &#39;category&#39;: 1, &#39;motion_direction&#39;: &#39;WNW&#39;, &#39;motion_direction_degrees&#39;: 290, &#39;motion_mph&#39;: 5, &#39;motion_kph&#39;: 7, &#39;motion_kt&#39;: 4}
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  24.820 seconds)</p>
+</div>
+<div class="section" id="realtime-invests">
+<h2>Realtime Invests<a class="headerlink" href="#realtime-invests" title="Permalink to this headline">¶</a></h2>
+<p>Invests are essentially RealtimeStorm objects, but without much of the functionality that comes with tropical cyclones (e.g., official forecast track, forecast discussion, etc.). Let’s test this out for invest 93E:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm" title="tropycal.realtime.RealtimeStorm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">invest</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.realtime.Realtime.get_storm.html#tropycal.realtime.Realtime.get_storm" title="tropycal.realtime.Realtime.get_storm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-method"><span class="n">realtime_obj</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">(</span><span class="s1">&#39;EP932022&#39;</span><span class="p">)</span>
+<a href="../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm" title="tropycal.realtime.RealtimeStorm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">invest</span></a>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.realtime.RealtimeStorm&gt;
+Storm Summary:
+    Maximum Wind:      25 knots
+    Minimum Pressure:  1007.0 hPa
+    Start Date:        1800 UTC 13 June 2022
+    End Date:          1200 UTC 15 June 2022
+
+Variables:
+    date        (datetime) [2022-06-13 18:00:00 .... 2022-06-15 12:00:00]
+    extra_obs   (int32) [0 .... 0]
+    special     (str) [ .... ]
+    type        (str) [DB .... DB]
+    lat         (float64) [12.0 .... 11.8]
+    lon         (float64) [-88.0 .... -90.7]
+    vmax        (int32) [15 .... 25]
+    mslp        (float64) [nan .... 1007.0]
+    wmo_basin   (str) [east_pacific .... east_pacific]
+
+More Information:
+    id:              EP932022
+    operational_id:  EP932022
+    name:            93E
+    year:            2022
+    season:          2022
+    basin:           east_pacific
+    source_info:     NHC Hurricane Database
+    invest:          True
+    source_method:   NHC&#39;s Automated Tropical Cyclone Forecasting System (ATCF)
+    source_url:      https://ftp.nhc.noaa.gov/atcf/btk/
+    source:          hurdat
+    ace:             0.0
+    prob_2day:       60%
+    prob_5day:       60%
+    risk_2day:       Medium
+    risk_5day:       Medium
+    realtime:        True
+</pre></div>
+</div>
+<p>As we can see above, the <code class="docutils literal notranslate"><span class="pre">invest</span></code> attribute of this object is True. For invests in NHC’s area of responsibility, we can retrieve NHC’s probability of formation which is matched to the closest TWO to the invest within a certain distance of the invest.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm" title="tropycal.realtime.RealtimeStorm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">invest</span></a><span class="o">.</span><span class="n">get_realtime_formation_prob</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;prob_2day&#39;: &#39;60%&#39;, &#39;risk_2day&#39;: &#39;Medium&#39;, &#39;prob_5day&#39;: &#39;60%&#39;, &#39;risk_5day&#39;: &#39;Medium&#39;}
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  20.253 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-realtime-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/02a92a29ae07ed68c983bdf30f6a7451/realtime.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">realtime.py</span></code></a></p>
@@ -266,8 +340,8 @@ More Information:
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="tracks.season.html" class="btn btn-neutral float-right" title="Individual Season Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tracks.season.html" class="btn btn-neutral float-left" title="Individual Season Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tracks.tornado.html" class="btn btn-neutral float-right" title="Tornado Analyses" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

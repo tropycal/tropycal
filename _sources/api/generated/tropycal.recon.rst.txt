@@ -23,6 +23,8 @@ Recon
    .. autosummary::
       :toctree: ./
    
+      Mission
+      RealtimeRecon
       ReconDataset
       dropsondes
       hdobs

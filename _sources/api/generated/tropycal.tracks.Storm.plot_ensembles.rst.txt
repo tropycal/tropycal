@@ -1,0 +1,12 @@
+Storm.plot_ensembles
+====================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Storm.plot_ensembles
+
+.. include:: tropycal.tracks.Storm.plot_ensembles
+
+.. raw:: html
+
+      <div style='clear:both'></div>

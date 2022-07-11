@@ -1,0 +1,12 @@
+Mission.plot_points
+==================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: Mission.plot_points
+
+.. include:: tropycal.recon.Mission.plot_points
+
+.. raw:: html
+
+      <div style='clear:both'></div>

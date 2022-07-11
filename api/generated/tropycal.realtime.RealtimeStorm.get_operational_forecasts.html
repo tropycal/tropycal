@@ -62,7 +62,6 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_discussion_realtime.html">RealtimeStorm.get_discussion_realtime</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_forecast_realtime.html">RealtimeStorm.get_forecast_realtime</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_nhc_discussion.html">RealtimeStorm.get_nhc_discussion</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime.html">RealtimeStorm.get_nhc_discussion_realtime</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_nhc_forecast_dict.html">RealtimeStorm.get_nhc_forecast_dict</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">RealtimeStorm.get_operational_forecasts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_realtime_formation_prob.html">RealtimeStorm.get_realtime_formation_prob</a></li>
@@ -72,8 +71,9 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.list_nhc_discussions.html">RealtimeStorm.list_nhc_discussions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot.html">RealtimeStorm.plot</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_TCtors_rotated.html">RealtimeStorm.plot_TCtors_rotated</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_ensembles.html">RealtimeStorm.plot_ensembles</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_forecast_realtime.html">RealtimeStorm.plot_forecast_realtime</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_gefs_ensembles.html">RealtimeStorm.plot_gefs_ensembles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_models.html">RealtimeStorm.plot_models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_nhc_forecast.html">RealtimeStorm.plot_nhc_forecast</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_tors.html">RealtimeStorm.plot_tors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.query_nhc_discussions.html">RealtimeStorm.query_nhc_discussions</a></li>
@@ -131,6 +131,56 @@
 <dd class="field-odd"><p><em>dict</em> – Dictionary containing all forecast entries.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>This function fetches all available forecasts, whether operational (e.g., NHC or JTWC), deterministic or ensemble model forecasts, from the Best Track a-deck as far back as data allows (1954 for NHC’s area of responsibility, 2019 for JTWC).</p>
+<p>For example, this code retrieves all forecasts for Hurricane Michael (2018):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Get Storm object</span>
+<span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">tracks</span>
+<span class="n">basin</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">()</span>
+<span class="n">storm</span> <span class="o">=</span> <span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+
+<span class="c1">#Retrieve all forecasts</span>
+<span class="n">forecasts</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">get_operational_forecasts</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The resulting dict is structured as follows:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="go">dict_keys([&#39;CARQ&#39;, &#39;NAM&#39;, &#39;AC00&#39;, &#39;AEMN&#39;, &#39;AP01&#39;, &#39;AP02&#39;, &#39;AP03&#39;, &#39;AP04&#39;, &#39;AP05&#39;, &#39;AP06&#39;, &#39;AP07&#39;, &#39;AP08&#39;, &#39;AP09&#39;,</span>
+<span class="go">&#39;AP10&#39;, &#39;AP11&#39;, &#39;AP12&#39;, &#39;AP13&#39;, &#39;AP14&#39;, &#39;AP15&#39;, &#39;AP16&#39;, &#39;AP17&#39;, &#39;AP18&#39;, &#39;AP19&#39;, &#39;AP20&#39;, &#39;AVNO&#39;, &#39;AVNX&#39;, &#39;CLP5&#39;,</span>
+<span class="go">&#39;CTCX&#39;, &#39;DSHP&#39;, &#39;GFSO&#39;, &#39;HCCA&#39;, &#39;IVCN&#39;, &#39;IVDR&#39;, &#39;LGEM&#39;, &#39;OCD5&#39;, &#39;PRFV&#39;, &#39;SHF5&#39;, &#39;SHIP&#39;, &#39;TABD&#39;, &#39;TABM&#39;, &#39;TABS&#39;,</span>
+<span class="go">&#39;TCLP&#39;, &#39;XTRP&#39;, &#39;CMC&#39;, &#39;NGX&#39;, &#39;UKX&#39;, &#39;AEMI&#39;, &#39;AHNI&#39;, &#39;AVNI&#39;, &#39;CEMN&#39;, &#39;CHCI&#39;, &#39;CTCI&#39;, &#39;DSPE&#39;, &#39;EGRR&#39;, &#39;LGME&#39;,</span>
+<span class="go">&#39;NAMI&#39;, &#39;NEMN&#39;, &#39;RVCN&#39;, &#39;RVCX&#39;, &#39;SHPE&#39;, &#39;TBDE&#39;, &#39;TBME&#39;, &#39;TBSE&#39;, &#39;TVCA&#39;, &#39;TVCE&#39;, &#39;TVCN&#39;, &#39;TVCX&#39;, &#39;TVDG&#39;, &#39;UE00&#39;,</span>
+<span class="go">&#39;UE01&#39;, &#39;UE02&#39;, &#39;UE03&#39;, &#39;UE04&#39;, &#39;UE05&#39;, &#39;UE06&#39;, &#39;UE07&#39;, &#39;UE08&#39;, &#39;UE09&#39;, &#39;UE10&#39;, &#39;UE11&#39;, &#39;UE12&#39;, &#39;UE13&#39;, &#39;UE14&#39;,</span>
+<span class="go">&#39;UE15&#39;, &#39;UE16&#39;, &#39;UE17&#39;, &#39;UE18&#39;, &#39;UE19&#39;, &#39;UE20&#39;, &#39;UE21&#39;, &#39;UE22&#39;, &#39;UE23&#39;, &#39;UE24&#39;, &#39;UE25&#39;, &#39;UE26&#39;, &#39;UE27&#39;, &#39;UE28&#39;,</span>
+<span class="go">&#39;UE29&#39;, &#39;UE30&#39;, &#39;UE31&#39;, &#39;UE32&#39;, &#39;UE33&#39;, &#39;UE34&#39;, &#39;UE35&#39;, &#39;UEMN&#39;, &#39;CEMI&#39;, &#39;CMCI&#39;, &#39;COTC&#39;, &#39;EGRI&#39;, &#39;HMON&#39;, &#39;HWRF&#39;,</span>
+<span class="go">&#39;NGXI&#39;, &#39;NVGM&#39;, &#39;PRV2&#39;, &#39;PRVI&#39;, &#39;UEMI&#39;, &#39;UKXI&#39;, &#39;CEM2&#39;, &#39;CMC2&#39;, &#39;COTI&#39;, &#39;EGR2&#39;, &#39;HHFI&#39;, &#39;HHNI&#39;, &#39;HMNI&#39;, &#39;HWFI&#39;,</span>
+<span class="go">&#39;ICON&#39;, &#39;IVRI&#39;, &#39;NGX2&#39;, &#39;NVGI&#39;, &#39;OFCP&#39;, &#39;TCOA&#39;, &#39;TCOE&#39;, &#39;TCON&#39;, &#39;UEM2&#39;, &#39;UKX2&#39;, &#39;CHC2&#39;, &#39;CTC2&#39;, &#39;NAM2&#39;, &#39;OFCL&#39;,</span>
+<span class="go">&#39;OFPI&#39;, &#39;AEM2&#39;, &#39;AHN2&#39;, &#39;AVN2&#39;, &#39;DRCL&#39;, &#39;HHF2&#39;, &#39;HHN2&#39;, &#39;HMN2&#39;, &#39;HWF2&#39;, &#39;NVG2&#39;, &#39;OFCI&#39;, &#39;OFP2&#39;, &#39;FSSE&#39;, &#39;RI25&#39;, &#39;RI30&#39;])</span>
+</pre></div>
+</div>
+<p>Each of these keys represents a forecast model/ensemble member/center. If we select the GFS (AVNO), we now get a dictionary containing all forecast initializations for this model:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;AVNO&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="go">dict_keys([&#39;2018100518&#39;, &#39;2018100600&#39;, &#39;2018100606&#39;, &#39;2018100612&#39;, &#39;2018100700&#39;, &#39;2018100706&#39;, &#39;2018100712&#39;,</span>
+<span class="go">&#39;2018100718&#39;, &#39;2018100800&#39;, &#39;2018100806&#39;, &#39;2018100812&#39;, &#39;2018100818&#39;, &#39;2018100900&#39;, &#39;2018100906&#39;, &#39;2018100912&#39;,</span>
+<span class="go">&#39;2018100918&#39;, &#39;2018101000&#39;, &#39;2018101006&#39;, &#39;2018101012&#39;, &#39;2018101018&#39;, &#39;2018101100&#39;, &#39;2018101106&#39;, &#39;2018101112&#39;,</span>
+<span class="go">&#39;2018101118&#39;, &#39;2018101200&#39;, &#39;2018101206&#39;, &#39;2018101212&#39;])</span>
+</pre></div>
+</div>
+<p>Providing a forecast initialization, for example 1200 UTC 8 October 2018 (2018100812), we now get a forecast dict containing the GFS initialized at this time:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;AVNO&#39;</span><span class="p">][</span><span class="s1">&#39;2018100812&#39;</span><span class="p">])</span>
+<span class="go">{&#39;fhr&#39;: [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 102, 108, 114, 120, 126, 132, 138, 144],</span>
+<span class="go"> &#39;lat&#39;: [20.8, 21.7, 22.7, 24.0, 25.1, 25.9, 26.9, 27.9, 29.0, 30.0, 31.1, 32.1, 33.1, 34.1, 35.4, 37.2, 38.9, 40.2,</span>
+<span class="go">         42.4, 44.9, 46.4, 48.2, 49.3, 50.5, 51.3],</span>
+<span class="go"> &#39;lon&#39;: [-85.1, -85.1, -85.2, -85.6, -86.4, -86.8, -86.9, -86.9, -86.6, -86.2, -85.3, -84.4, -83.0, -81.3, -78.9,</span>
+<span class="go">         -75.9, -72.2, -67.8, -62.5, -56.5, -50.5, -44.4, -38.8, -32.8, -27.9],</span>
+<span class="go"> &#39;vmax&#39;: [57, 62, 61, 67, 74, 69, 75, 78, 80, 76, 47, 38, 34, 36, 38, 41, 52, 58, 55, 51, 48, 44, 37, 36, 37],</span>
+<span class="go"> &#39;mslp&#39;: [984, 982, 979, 974, 972, 970, 966, 964, 957, 959, 969, 982, 988, 993, 994, 990, 984, 978, 978, 975, 979,</span>
+<span class="go">          984, 987, 989, 991],</span>
+<span class="go"> &#39;type&#39;: [&#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;,</span>
+<span class="go">          &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;],</span>
+<span class="go"> &#39;init&#39;: datetime.datetime(2018, 10, 8, 12, 0)}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <div style='clear:both'></div></div>

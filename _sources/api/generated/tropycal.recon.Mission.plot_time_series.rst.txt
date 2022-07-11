@@ -1,0 +1,12 @@
+Mission.plot_time_series
+=======================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: Mission.plot_time_series
+
+.. include:: tropycal.recon.Mission.plot_time_series
+
+.. raw:: html
+
+      <div style='clear:both'></div>

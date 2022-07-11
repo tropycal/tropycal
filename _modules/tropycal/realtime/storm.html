@@ -332,45 +332,7 @@
         <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span><span class="sa">f</span><span class="s2">&quot;Forecast_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">url_ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
-        
-    
-<div class="viewcode-block" id="RealtimeStorm.get_nhc_discussion_realtime"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime.html#tropycal.realtime.RealtimeStorm.get_nhc_discussion_realtime">[docs]</a>    <span class="k">def</span> <span class="nf">get_nhc_discussion_realtime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve the latest available forecast discussion. For JTWC storms, the Prognostic Reasoning product is retrieved.</span>
-<span class="sd">        </span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            Dict entry containing the latest official forecast discussion.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="c1">#Warn about pending deprecation</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;&#39;get_nhc_discussion_realtime&#39; will be deprecated in future Tropycal versions, use &#39;get_discussion_realtime&#39; instead&quot;</span><span class="p">,</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
-        
-        <span class="c1">#Check to ensure storm is not an invest</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">invest</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Error: NHC does not issue advisories for invests that have not been designated as Potential Tropical Cyclones.&quot;</span><span class="p">)</span>
-        
-        <span class="c1">#Get latest forecast discussion for HURDAT source storm objects</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="s2">&quot;hurdat&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nhc_discussion</span><span class="p">(</span><span class="n">forecast</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        
-        <span class="c1">#Get latest forecast discussion for JTWC source storm objects</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;jtwc&#39;</span><span class="p">:</span>
-            
-            <span class="c1">#Read in discussion file</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.metoc.navy.mil/jtwc/products/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">prog.txt&quot;</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-            <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-            <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">content</span>
-        
-        <span class="c1">#Otherwise, return error message</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No realtime forecast discussion is available for this storm.&quot;</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
     
 <div class="viewcode-block" id="RealtimeStorm.get_discussion_realtime"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.RealtimeStorm.get_discussion_realtime.html#tropycal.realtime.RealtimeStorm.get_discussion_realtime">[docs]</a>    <span class="k">def</span> <span class="nf">get_discussion_realtime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         
@@ -415,7 +377,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        ssl_certificate : boolean, optional</span>
-<span class="sd">            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from the default JTWC source (&quot;jtwc&quot;). Default is True. Use False *ONLY* if True causes an SSL certification error.</span>
+<span class="sd">            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -451,12 +413,18 @@
                 <span class="c1">#Get basic components</span>
                 <span class="n">lineArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">line</span><span class="p">]</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lineArray</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">11</span><span class="p">:</span> <span class="k">continue</span>
-                <span class="n">basin</span><span class="p">,</span><span class="n">number</span><span class="p">,</span><span class="n">run_init</span><span class="p">,</span><span class="n">n_a</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">mslp</span><span class="p">,</span><span class="n">stype</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[:</span><span class="mi">11</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">basin</span><span class="p">,</span><span class="n">number</span><span class="p">,</span><span class="n">run_init</span><span class="p">,</span><span class="n">n_a</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">mslp</span><span class="p">,</span><span class="n">stype</span><span class="p">,</span><span class="n">rad</span><span class="p">,</span><span class="n">windcode</span><span class="p">,</span><span class="n">neq</span><span class="p">,</span><span class="n">seq</span><span class="p">,</span><span class="n">swq</span><span class="p">,</span><span class="n">nwq</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[:</span><span class="mi">17</span><span class="p">]</span>
+                    <span class="n">use_wind</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">basin</span><span class="p">,</span><span class="n">number</span><span class="p">,</span><span class="n">run_init</span><span class="p">,</span><span class="n">n_a</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">mslp</span><span class="p">,</span><span class="n">stype</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[:</span><span class="mi">11</span><span class="p">]</span>
+                    <span class="n">use_wind</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">if</span> <span class="n">model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;OFCL&quot;</span><span class="p">,</span><span class="s2">&quot;OFCI&quot;</span><span class="p">]:</span> <span class="k">continue</span>
 
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">forecasts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">forecasts</span> <span class="o">=</span> <span class="p">{</span>
-                        <span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;cumulative_ace&#39;</span><span class="p">:[],</span><span class="s1">&#39;cumulative_ace_fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;type&#39;</span><span class="p">:[],</span><span class="s1">&#39;init&#39;</span><span class="p">:</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">run_init</span><span class="p">,</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
+                        <span class="s1">&#39;init&#39;</span><span class="p">:</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">run_init</span><span class="p">,</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">),</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;type&#39;</span><span class="p">:[],</span>
+                        <span class="s1">&#39;windrad&#39;</span><span class="p">:[],</span><span class="s1">&#39;cumulative_ace&#39;</span><span class="p">:[],</span><span class="s1">&#39;cumulative_ace_fhr&#39;</span><span class="p">:[]</span>
                     <span class="p">}</span>
 
                 <span class="c1">#Format lat &amp; lon</span>
@@ -485,7 +453,29 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">mslp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mslp</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">mslp</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span> <span class="n">mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-
+                    
+                <span class="c1">#Format wind radii</span>
+                <span class="k">if</span> <span class="n">use_wind</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">rad</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rad</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">rad</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">35</span><span class="p">]:</span> <span class="n">rad</span> <span class="o">=</span> <span class="mi">34</span>
+                        <span class="n">neq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span><span class="o">==</span><span class="s1">&#39;&#39;</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">neq</span><span class="p">)</span>
+                        <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;AAA&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+                        <span class="n">swq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;AAA&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">swq</span><span class="p">)</span>
+                        <span class="n">nwq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;AAA&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">nwq</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">rad</span> <span class="o">=</span> <span class="mi">34</span>
+                        <span class="n">neq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="n">swq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="n">nwq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">rad</span> <span class="o">=</span> <span class="mi">34</span>
+                    <span class="n">neq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">swq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">nwq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                
                 <span class="c1">#Add forecast data to dict if forecast hour isn&#39;t already there</span>
                 <span class="k">if</span> <span class="n">fhr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span>
                     <span class="k">if</span> <span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;OFCL&#39;</span><span class="p">,</span><span class="s1">&#39;OFCI&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">fhr</span> <span class="o">&gt;</span> <span class="mi">120</span><span class="p">:</span>
@@ -498,18 +488,25 @@
                         <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
                         <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span>
                         <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mslp</span><span class="p">)</span>
+                        <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;windrad&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">rad</span><span class="p">:[</span><span class="n">neq</span><span class="p">,</span><span class="n">seq</span><span class="p">,</span><span class="n">swq</span><span class="p">,</span><span class="n">nwq</span><span class="p">]})</span>
 
                         <span class="c1">#Get storm type, if it can be determined</span>
                         <span class="k">if</span> <span class="n">stype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;DB&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">vmax</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
                             <span class="n">stype</span> <span class="o">=</span> <span class="n">get_storm_type</span><span class="p">(</span><span class="n">vmax</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
                         <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stype</span><span class="p">)</span>
-        
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ifhr</span> <span class="o">=</span> <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span>
+                    <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;windrad&#39;</span><span class="p">][</span><span class="n">ifhr</span><span class="p">][</span><span class="n">rad</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">neq</span><span class="p">,</span><span class="n">seq</span><span class="p">,</span><span class="n">swq</span><span class="p">,</span><span class="n">nwq</span><span class="p">]</span>
+                    
         <span class="c1">#Retrieve JTWC forecast otherwise</span>
         <span class="k">else</span><span class="p">:</span>
             
             <span class="c1">#Get forecast for this storm</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.nrlmry.navy.mil/atcf_web/docs/current_storms/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.sum&quot;</span>
-            <span class="k">if</span> <span class="n">ssl_certificate</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;jtwc&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jtwc_source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span><span class="s1">&#39;ucar&#39;</span><span class="p">]:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.nrlmry.navy.mil/atcf_web/docs/current_storms/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.sum&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.fst&quot;</span>
+            <span class="k">if</span> <span class="n">ssl_certificate</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">jtwc_source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span><span class="s1">&#39;ucar&#39;</span><span class="p">]:</span>
                 <span class="kn">import</span> <span class="nn">ssl</span>
                 <span class="k">if</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;JTWC forecast data is unavailable for this storm.&quot;</span><span class="p">)</span>
@@ -517,7 +514,7 @@
                 <span class="k">if</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;JTWC forecast data is unavailable for this storm.&quot;</span><span class="p">)</span>
 
             <span class="c1">#Read file content</span>
-            <span class="k">if</span> <span class="n">ssl_certificate</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;jtwc&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ssl_certificate</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">jtwc_source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span><span class="s1">&#39;ucar&#39;</span><span class="p">]:</span>
                 <span class="kn">import</span> <span class="nn">ssl</span>
                 <span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">context</span><span class="o">=</span><span class="n">ssl</span><span class="o">.</span><span class="n">_create_unverified_context</span><span class="p">())</span>
             <span class="k">else</span><span class="p">:</span>
@@ -527,64 +524,174 @@
             <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-            <span class="c1">#Iterate through every line in content:</span>
-            <span class="n">run_init</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">forecasts</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jtwc_source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span><span class="s1">&#39;ucar&#39;</span><span class="p">]:</span>
+                <span class="c1">#Iterate through every line in content:</span>
+                <span class="n">run_init</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">forecasts</span> <span class="o">=</span> <span class="p">{}</span>
 
-            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span><span class="p">[</span><span class="mi">3</span><span class="p">:]:</span>
-                
-                <span class="c1">#Exit once done retrieving forecast</span>
-                <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;AMP&quot;</span><span class="p">:</span> <span class="k">break</span>
-                
-                <span class="c1">#Get basic components</span>
-                <span class="n">lineArray</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lineArray</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span> <span class="k">continue</span>
-                
-                <span class="c1">#Exit once done retrieving forecast</span>
-                <span class="k">if</span> <span class="n">lineArray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;AMP&quot;</span><span class="p">:</span> <span class="k">break</span>
-                    
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">forecasts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">forecasts</span> <span class="o">=</span> <span class="p">{</span>
-                        <span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;cumulative_ace&#39;</span><span class="p">:[],</span><span class="s1">&#39;cumulative_ace_fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;type&#39;</span><span class="p">:[],</span><span class="s1">&#39;init&#39;</span><span class="p">:</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">run_init</span><span class="p">,</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
-                    <span class="p">}</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span><span class="p">[</span><span class="mi">3</span><span class="p">:]:</span>
 
-                <span class="c1">#Forecast hour</span>
-                <span class="n">fhr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lineArray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
-                
-                <span class="c1">#Format lat &amp; lon</span>
-                <span class="n">lat</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">lon</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-                <span class="k">if</span> <span class="s2">&quot;N&quot;</span> <span class="ow">in</span> <span class="n">lat</span><span class="p">:</span>
-                    <span class="n">lat_temp</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="s2">&quot;S&quot;</span> <span class="ow">in</span> <span class="n">lat</span><span class="p">:</span>
-                    <span class="n">lat_temp</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-                <span class="k">if</span> <span class="s2">&quot;W&quot;</span> <span class="ow">in</span> <span class="n">lon</span><span class="p">:</span>
-                    <span class="n">lon_temp</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;W&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="s2">&quot;E&quot;</span> <span class="ow">in</span> <span class="n">lon</span><span class="p">:</span>
-                    <span class="n">lon_temp</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="c1">#Exit once done retrieving forecast</span>
+                    <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;AMP&quot;</span><span class="p">:</span> <span class="k">break</span>
 
-                <span class="c1">#Format vmax &amp; MSLP</span>
-                <span class="n">vmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lineArray</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">vmax</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="ow">or</span> <span class="n">vmax</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">:</span> <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                <span class="n">mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="c1">#Get basic components</span>
+                    <span class="n">lineArray</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lineArray</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span> <span class="k">continue</span>
 
-                <span class="c1">#Add forecast data to dict if forecast hour isn&#39;t already there</span>
-                <span class="k">if</span> <span class="n">fhr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span>
-                    <span class="k">if</span> <span class="n">lat</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">lon</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span> <span class="k">continue</span>
-                    <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span>
-                    <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
-                    <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
-                    <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span>
-                    <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mslp</span><span class="p">)</span>
+                    <span class="c1">#Exit once done retrieving forecast</span>
+                    <span class="k">if</span> <span class="n">lineArray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;AMP&quot;</span><span class="p">:</span> <span class="k">break</span>
 
-                    <span class="c1">#Get storm type, if it can be determined</span>
-                    <span class="n">stype</span> <span class="o">=</span> <span class="n">get_storm_type</span><span class="p">(</span><span class="n">vmax</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
-                    <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stype</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">forecasts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">forecasts</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="s1">&#39;init&#39;</span><span class="p">:</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">run_init</span><span class="p">,</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">),</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span>
+                            <span class="s1">&#39;windrad&#39;</span><span class="p">:[],</span><span class="s1">&#39;cumulative_ace&#39;</span><span class="p">:[],</span><span class="s1">&#39;cumulative_ace_fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;type&#39;</span><span class="p">:[]</span>
+                        <span class="p">}</span>
+
+                    <span class="c1">#Forecast hour</span>
+                    <span class="n">fhr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lineArray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+
+                    <span class="c1">#Format lat &amp; lon</span>
+                    <span class="n">lat</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">lon</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="s2">&quot;N&quot;</span> <span class="ow">in</span> <span class="n">lat</span><span class="p">:</span>
+                        <span class="n">lat_temp</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;S&quot;</span> <span class="ow">in</span> <span class="n">lat</span><span class="p">:</span>
+                        <span class="n">lat_temp</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s2">&quot;W&quot;</span> <span class="ow">in</span> <span class="n">lon</span><span class="p">:</span>
+                        <span class="n">lon_temp</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;W&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;E&quot;</span> <span class="ow">in</span> <span class="n">lon</span><span class="p">:</span>
+                        <span class="n">lon_temp</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+                    <span class="c1">#Format vmax &amp; MSLP</span>
+                    <span class="n">vmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lineArray</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">vmax</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="ow">or</span> <span class="n">vmax</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">:</span> <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+                    <span class="c1">#Format wind radii</span>
+                    <span class="n">windrad</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="k">for</span> <span class="n">rad</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">34</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">64</span><span class="p">):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">irad</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">lineArray</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;R</span><span class="si">{</span><span class="n">rad</span><span class="si">:</span><span class="s1">03</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                            <span class="n">windrad</span><span class="p">[</span><span class="n">rad</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">lineArray</span><span class="p">[</span><span class="n">irad</span><span class="o">+</span><span class="n">j</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">10</span><span class="p">)]</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="k">continue</span>
+
+                    <span class="c1">#Add forecast data to dict if forecast hour isn&#39;t already there</span>
+                    <span class="k">if</span> <span class="n">fhr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">lat</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">lon</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span> <span class="k">continue</span>
+                        <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span>
+                        <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+                        <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+                        <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span>
+                        <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mslp</span><span class="p">)</span>
+                        <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;windrad&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">windrad</span><span class="p">)</span>
+
+                        <span class="c1">#Get storm type, if it can be determined</span>
+                        <span class="n">stype</span> <span class="o">=</span> <span class="n">get_storm_type</span><span class="p">(</span><span class="n">vmax</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stype</span><span class="p">)</span>
             
+            <span class="k">else</span><span class="p">:</span>
+                
+                <span class="n">content</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span><span class="p">]</span>
+                
+                <span class="c1">#Iterate through every line in content:</span>
+                <span class="n">forecasts</span> <span class="o">=</span> <span class="p">{}</span>
+
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+
+                    <span class="c1">#Get basic components</span>
+                    <span class="n">lineArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">line</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lineArray</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">11</span><span class="p">:</span> <span class="k">continue</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">basin</span><span class="p">,</span><span class="n">number</span><span class="p">,</span><span class="n">run_init</span><span class="p">,</span><span class="n">n_a</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">mslp</span><span class="p">,</span><span class="n">stype</span><span class="p">,</span><span class="n">rad</span><span class="p">,</span><span class="n">windcode</span><span class="p">,</span><span class="n">neq</span><span class="p">,</span><span class="n">seq</span><span class="p">,</span><span class="n">swq</span><span class="p">,</span><span class="n">nwq</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[:</span><span class="mi">17</span><span class="p">]</span>
+                        <span class="n">use_wind</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">basin</span><span class="p">,</span><span class="n">number</span><span class="p">,</span><span class="n">run_init</span><span class="p">,</span><span class="n">n_a</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">mslp</span><span class="p">,</span><span class="n">stype</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[:</span><span class="mi">11</span><span class="p">]</span>
+                        <span class="n">use_wind</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">if</span> <span class="n">model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;JTWC&quot;</span><span class="p">]:</span> <span class="k">continue</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">forecasts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">forecasts</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="s1">&#39;init&#39;</span><span class="p">:</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">run_init</span><span class="p">,</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">),</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;type&#39;</span><span class="p">:[],</span>
+                            <span class="s1">&#39;windrad&#39;</span><span class="p">:[],</span><span class="s1">&#39;cumulative_ace&#39;</span><span class="p">:[],</span><span class="s1">&#39;cumulative_ace_fhr&#39;</span><span class="p">:[]</span>
+                        <span class="p">}</span>
+
+                    <span class="c1">#Format lat &amp; lon</span>
+                    <span class="n">fhr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s2">&quot;N&quot;</span> <span class="ow">in</span> <span class="n">lat</span><span class="p">:</span>
+                        <span class="n">lat_temp</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;S&quot;</span> <span class="ow">in</span> <span class="n">lat</span><span class="p">:</span>
+                        <span class="n">lat_temp</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s2">&quot;W&quot;</span> <span class="ow">in</span> <span class="n">lon</span><span class="p">:</span>
+                        <span class="n">lon_temp</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;W&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="s2">&quot;E&quot;</span> <span class="ow">in</span> <span class="n">lon</span><span class="p">:</span>
+                        <span class="n">lon_temp</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+                    <span class="c1">#Format vmax &amp; MSLP</span>
+                    <span class="k">if</span> <span class="n">vmax</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                        <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">vmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">vmax</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="ow">or</span> <span class="n">vmax</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">:</span> <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="k">if</span> <span class="n">mslp</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                        <span class="n">mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">mslp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mslp</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">mslp</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span> <span class="n">mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+                    <span class="c1">#Format wind radii</span>
+                    <span class="k">if</span> <span class="n">use_wind</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">rad</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rad</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">rad</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">35</span><span class="p">]:</span> <span class="n">rad</span> <span class="o">=</span> <span class="mi">34</span>
+                            <span class="n">neq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span><span class="o">==</span><span class="s1">&#39;&#39;</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">neq</span><span class="p">)</span>
+                            <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;AAA&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+                            <span class="n">swq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;AAA&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">swq</span><span class="p">)</span>
+                            <span class="n">nwq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;AAA&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">nwq</span><span class="p">)</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="n">rad</span> <span class="o">=</span> <span class="mi">34</span>
+                            <span class="n">neq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                            <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                            <span class="n">swq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                            <span class="n">nwq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">rad</span> <span class="o">=</span> <span class="mi">34</span>
+                        <span class="n">neq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="n">swq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="n">nwq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+                    <span class="c1">#Add forecast data to dict if forecast hour isn&#39;t already there</span>
+                    <span class="k">if</span> <span class="n">fhr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;OFCL&#39;</span><span class="p">,</span><span class="s1">&#39;OFCI&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">fhr</span> <span class="o">&gt;</span> <span class="mi">120</span><span class="p">:</span>
+                            <span class="k">pass</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">lat</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">lon</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                                <span class="k">continue</span>
+                            <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span>
+                            <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+                            <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+                            <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span>
+                            <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mslp</span><span class="p">)</span>
+                            <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;windrad&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">rad</span><span class="p">:[</span><span class="n">neq</span><span class="p">,</span><span class="n">seq</span><span class="p">,</span><span class="n">swq</span><span class="p">,</span><span class="n">nwq</span><span class="p">]})</span>
+
+                            <span class="c1">#Get storm type, if it can be determined</span>
+                            <span class="k">if</span> <span class="n">stype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;DB&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">vmax</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                                <span class="n">stype</span> <span class="o">=</span> <span class="n">get_storm_type</span><span class="p">(</span><span class="n">vmax</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;TY&#39;</span><span class="p">:</span> <span class="n">stype</span> <span class="o">=</span> <span class="s1">&#39;HU&#39;</span>
+                            <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stype</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ifhr</span> <span class="o">=</span> <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span>
+                        <span class="n">forecasts</span><span class="p">[</span><span class="s1">&#39;windrad&#39;</span><span class="p">][</span><span class="n">ifhr</span><span class="p">][</span><span class="n">rad</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">neq</span><span class="p">,</span><span class="n">seq</span><span class="p">,</span><span class="n">swq</span><span class="p">,</span><span class="n">nwq</span><span class="p">]</span>
+                    
         <span class="c1">#Determine ACE thus far (prior to initial forecast hour)</span>
         <span class="n">ace</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">)):</span>
@@ -662,7 +769,7 @@
 <span class="sd">        Other Parameters</span>
 <span class="sd">        ----------------</span>
 <span class="sd">        ssl_certificate : boolean, optional</span>
-<span class="sd">            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from the default JTWC source (&quot;jtwc&quot;). Default is True. Use False *ONLY* if True causes an SSL certification error.</span>
+<span class="sd">            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.</span>
 <span class="sd">        prop : dict</span>
 <span class="sd">            Property of storm track lines.</span>
 <span class="sd">        map_prop : dict</span>

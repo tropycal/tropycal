@@ -1,0 +1,12 @@
+Mission.plot_skewt
+=================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: Mission.plot_skewt
+
+.. include:: tropycal.recon.Mission.plot_skewt
+
+.. raw:: html
+
+      <div style='clear:both'></div>

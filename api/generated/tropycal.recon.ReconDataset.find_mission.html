@@ -53,10 +53,13 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">Recon</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.Mission.html">tropycal.recon.Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.RealtimeRecon.html">tropycal.recon.RealtimeRecon</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.recon.ReconDataset.html">tropycal.recon.ReconDataset</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">ReconDataset.find_mission</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_dropsondes.html">ReconDataset.get_dropsondes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_hdobs.html">ReconDataset.get_hdobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_mission.html">ReconDataset.get_mission</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_track.html">ReconDataset.get_track</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_vdms.html">ReconDataset.get_vdms</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.plot_summary.html">ReconDataset.plot_summary</a></li>
@@ -108,19 +111,35 @@
 <h1>ReconDataset.find_mission<a class="headerlink" href="#recondataset-find-mission" title="Permalink to this headline">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="tropycal.recon.ReconDataset.find_mission">
-<span class="sig-prename descclassname"><span class="pre">ReconDataset.</span></span><span class="sig-name descname"><span class="pre">find_mission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.find_mission"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.find_mission" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the name of a mission or list of recon missions given a specified time.</p>
+<span class="sig-prename descclassname"><span class="pre">ReconDataset.</span></span><span class="sig-name descname"><span class="pre">find_mission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#ReconDataset.find_mission"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.recon.ReconDataset.find_mission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of a mission or list of recon missions for this storm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>time</strong> (<em>datetime.datetime</em><em> or </em><em>list</em>) – Datetime object or list of datetime objects representing the time of the requested mission.</p></li>
+<li><p><strong>time</strong> (<em>datetime.datetime</em><em> or </em><em>list</em><em>, </em><em>optional</em>) – Datetime object or list of datetime objects representing the time of the requested mission. If none, all missions will be returned.</p></li>
 <li><p><strong>distance</strong> (<em>int</em><em>, </em><em>optional</em>) – Distance from storm center, in kilometers.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>list</em> – The names of any/all missions that had in-storm observations during the specified time.</p>
+<dd class="field-even"><p><em>list</em> – The IDs of any/all missions that had in-storm observations during the specified time.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Especially in earlier years, missions are not always numbered sequentially (e.g., the first mission might not have an ID of “01”).</p>
+<p>To get a <code class="docutils literal notranslate"><span class="pre">Mission</span></code> object for one or more mission IDs, use the mission ID as an argument in <code class="docutils literal notranslate"><span class="pre">ReconDataset.get_mission()</span></code>. For example, to retrieve a Mission object for every mission valid at a requested time, assuming that <code class="docutils literal notranslate"><span class="pre">ReconDataset</span></code> is linked to a Storm object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Enter a requested time here</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="n">requested_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span> <span class="c1">#enter your requested time here</span>
+
+<span class="c1">#Get all active mission ID(s), if any, for this time</span>
+<span class="n">mission_ids</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">find_mission</span><span class="p">(</span><span class="n">requested_time</span><span class="p">)</span>
+
+<span class="c1">#Get Mission object for each mission</span>
+<span class="k">for</span> <span class="n">mission_id</span> <span class="ow">in</span> <span class="n">mission_ids</span><span class="p">:</span>
+    <span class="n">mission</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">get_mission</span><span class="p">(</span><span class="n">mission_id</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mission</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <div style='clear:both'></div></div>

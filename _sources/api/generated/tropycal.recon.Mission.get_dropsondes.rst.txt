@@ -1,0 +1,12 @@
+Mission.get_dropsondes
+=====================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: Mission.get_dropsondes
+
+.. include:: tropycal.recon.Mission.get_dropsondes
+
+.. raw:: html
+
+      <div style='clear:both'></div>

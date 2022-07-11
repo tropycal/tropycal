@@ -53,6 +53,8 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">Recon</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.Mission.html">tropycal.recon.Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.RealtimeRecon.html">tropycal.recon.RealtimeRecon</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.recon.ReconDataset.html">tropycal.recon.ReconDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.recon.dropsondes.html">tropycal.recon.dropsondes</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.recon.hdobs.html">tropycal.recon.hdobs</a><ul class="current">
@@ -61,6 +63,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.plot_maps.html">hdobs.plot_maps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.plot_points.html">hdobs.plot_points</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.plot_swath.html">hdobs.plot_swath</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.plot_time_series.html">hdobs.plot_time_series</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.sel.html">hdobs.sel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.to_pickle.html">hdobs.to_pickle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.update.html">hdobs.update</a></li>
@@ -138,6 +141,8 @@
 <dd class="field-odd"><p><em>ax</em> – Axes instance containing the plot.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The special colormap <strong>category_recon</strong> can be used in the prop dict (<code class="docutils literal notranslate"><span class="pre">prop={'cmap':'category_recon'}</span></code>). This uses the standard SSHWS colormap, but with a new color for wind between 50 and 64 knots.</p>
 </dd></dl>
 
 <div style='clear:both'></div></div>

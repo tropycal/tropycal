@@ -1,0 +1,12 @@
+hdobs.plot_time_series
+=====================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: hdobs.plot_time_series
+
+.. include:: tropycal.recon.hdobs.plot_time_series
+
+.. raw:: html
+
+      <div style='clear:both'></div>

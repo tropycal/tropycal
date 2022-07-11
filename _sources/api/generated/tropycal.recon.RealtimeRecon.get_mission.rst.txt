@@ -1,0 +1,12 @@
+RealtimeRecon.get_mission
+========================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: RealtimeRecon.get_mission
+
+.. include:: tropycal.recon.RealtimeRecon.get_mission
+
+.. raw:: html
+
+      <div style='clear:both'></div>

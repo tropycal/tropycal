@@ -203,8 +203,8 @@
             <span class="n">time_tropical</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">]</span>
             <span class="n">start_date</span> <span class="o">=</span> <span class="n">time_tropical</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H00 UTC </span><span class="si">%d</span><span class="s2"> %B %Y&quot;</span><span class="p">)</span>
             <span class="n">end_date</span> <span class="o">=</span> <span class="n">time_tropical</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H00 UTC </span><span class="si">%d</span><span class="s2"> %B %Y&quot;</span><span class="p">)</span>
-            <span class="n">max_wind</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span> <span class="k">if</span> <span class="n">all_nan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">])</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">])</span>
-            <span class="n">min_mslp</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span> <span class="k">if</span> <span class="n">all_nan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">])</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">max_wind</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span> <span class="k">if</span> <span class="n">all_nan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">])</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">]))</span>
+            <span class="n">min_mslp</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span> <span class="k">if</span> <span class="n">all_nan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">])</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">])[</span><span class="n">idx</span><span class="p">]))</span>
         <span class="n">summary_keys</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Maximum Wind&#39;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">max_wind</span><span class="si">}</span><span class="s2"> knots&quot;</span><span class="p">,</span>
                         <span class="s1">&#39;Minimum Pressure&#39;</span><span class="p">:</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">min_mslp</span><span class="si">}</span><span class="s2"> hPa&quot;</span><span class="p">,</span>
                         <span class="s1">&#39;Start Date&#39;</span><span class="p">:</span><span class="n">start_date</span><span class="p">,</span>
@@ -789,7 +789,6 @@
         <span class="c1">#Return axis</span>
         <span class="k">return</span> <span class="n">plot_ax</span></div>
         
-    <span class="c1">#PLOT FUNCTION FOR HURDAT</span>
 <div class="viewcode-block" id="Storm.plot_nhc_forecast"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.plot_nhc_forecast.html#tropycal.tracks.Storm.plot_nhc_forecast">[docs]</a>    <span class="k">def</span> <span class="nf">plot_nhc_forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">forecast</span><span class="p">,</span><span class="n">track_labels</span><span class="o">=</span><span class="s1">&#39;fhr&#39;</span><span class="p">,</span><span class="n">cone_days</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic_forecast&quot;</span><span class="p">,</span>
                           <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
@@ -965,28 +964,19 @@
         
         <span class="c1">#Return axis</span>
         <span class="k">return</span> <span class="n">plot_ax</span></div>
-        
     
-    <span class="c1">#PLOT FUNCTION FOR HURDAT</span>
-<div class="viewcode-block" id="Storm.plot_gefs_ensembles"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.plot_gefs_ensembles.html#tropycal.tracks.Storm.plot_gefs_ensembles">[docs]</a>    <span class="k">def</span> <span class="nf">plot_gefs_ensembles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">forecast</span><span class="p">,</span><span class="n">fhr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                            <span class="n">prop_members</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;linecolor&#39;</span><span class="p">:</span><span class="s1">&#39;k&#39;</span><span class="p">},</span>
-                            <span class="n">prop_mean</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mf">2.0</span><span class="p">,</span> <span class="s1">&#39;linecolor&#39;</span><span class="p">:</span><span class="s1">&#39;k&#39;</span><span class="p">},</span>
-                            <span class="n">prop_gfs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mf">2.0</span><span class="p">,</span> <span class="s1">&#39;linecolor&#39;</span><span class="p">:</span><span class="s1">&#39;b&#39;</span><span class="p">},</span>
-                            <span class="n">prop_ellipse</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mf">2.0</span><span class="p">,</span> <span class="s1">&#39;linecolor&#39;</span><span class="p">:</span><span class="s1">&#39;r&#39;</span><span class="p">},</span>
-                            <span class="n">prop_density</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;radius&#39;</span><span class="p">:</span><span class="mi">200</span><span class="p">,</span> <span class="s1">&#39;cmap&#39;</span><span class="p">:</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlOrRd</span><span class="p">,</span> <span class="s1">&#39;levels&#39;</span><span class="p">:[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">105</span><span class="p">,</span><span class="mi">5</span><span class="p">)]},</span>
-                            <span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{}):</span>
+    
+<div class="viewcode-block" id="Storm.plot_models"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.plot_models.html#tropycal.tracks.Storm.plot_models">[docs]</a>    <span class="k">def</span> <span class="nf">plot_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">forecast</span><span class="p">,</span><span class="n">plot_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a plot of individual GEFS ensemble tracks.</span>
+<span class="sd">        Creates a plot of operational model forecast tracks.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        forecast : datetime.datetime</span>
 <span class="sd">            Datetime object representing the GEFS run initialization.</span>
-<span class="sd">        fhr : int or list, optional</span>
-<span class="sd">            Forecast hour(s) to plot. If None (default), a plot of all forecast hours will be produced. If a list, multiple plots will be produced. If an integer, a single plot will be produced.</span>
-<span class="sd">        plot_density : bool, optional</span>
-<span class="sd">            If True, track density will be computed and plotted in addition to individual ensemble tracks.</span>
+<span class="sd">        plot_btk : bool, optional</span>
+<span class="sd">            If True, Best Track will be plotted alongside operational forecast models. Default is False.</span>
 <span class="sd">        domain : str</span>
 <span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
 <span class="sd">        ax : axes</span>
@@ -998,8 +988,10 @@
 <span class="sd">        </span>
 <span class="sd">        Other Parameters</span>
 <span class="sd">        ----------------</span>
+<span class="sd">        models : dict</span>
+<span class="sd">            Dictionary with **key** = model name (case-insensitive) and **value** = model color. Scroll below for available model names.</span>
 <span class="sd">        prop : dict</span>
-<span class="sd">            Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.</span>
+<span class="sd">            Customization properties of forecast lines. Scroll below for available options.</span>
 <span class="sd">        map_prop : dict</span>
 <span class="sd">            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.</span>
 <span class="sd">        </span>
@@ -1007,21 +999,82 @@
 <span class="sd">        -------</span>
 <span class="sd">        ax</span>
 <span class="sd">            Instance of axes containing the plot is returned.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        .. note::</span>
+<span class="sd">            1. For years before the HMON model was available, the HMON key instead defaults to the old GFDL model.</span>
+<span class="sd">            </span>
+<span class="sd">            2. For storms in the JTWC area of responsibility, the NHC key defaults to JTWC.</span>
+<span class="sd">        </span>
+<span class="sd">        The following model names are available as keys in the &quot;model&quot; dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {&#39;gfs&#39;:None}`` or ``models = {&#39;GFS&#39;:None}``).</span>
+<span class="sd">        </span>
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Model Acronym</span>
+<span class="sd">             - Full Model Name</span>
+<span class="sd">           * - CMC</span>
+<span class="sd">             - Canadian Meteorological Centre (CMC)</span>
+<span class="sd">           * - GFS</span>
+<span class="sd">             - Global Forecast System (GFS)</span>
+<span class="sd">           * - UKM</span>
+<span class="sd">             - UK Met Office (UKMET)</span>
+<span class="sd">           * - ECM</span>
+<span class="sd">             - European Centre for Medium-range Weather Forecasts (ECMWF)</span>
+<span class="sd">           * - HMON</span>
+<span class="sd">             - Hurricanes in a Multi-scale Ocean-coupled Non-hydrostatic Model (HMON)</span>
+<span class="sd">           * - HWRF</span>
+<span class="sd">             - Hurricane Weather Research and Forecast (HWRF)</span>
+<span class="sd">           * - NHC</span>
+<span class="sd">             - National Hurricane Center (NHC)</span>
+<span class="sd">        </span>
+<span class="sd">        The following properties are available for customizing forecast model tracks, via ``prop``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Property</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - linewidth</span>
+<span class="sd">             - Line width of forecast model track. Default is 2.5.</span>
+<span class="sd">           * - marker</span>
+<span class="sd">             - Marker type for forecast hours. Options are &#39;label&#39; (default), &#39;dot&#39; or None.</span>
+<span class="sd">           * - marker_hours</span>
+<span class="sd">             - List of forecast hours to mark. Default is [24,48,72,96,120,144,168].</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Dictionary mapping model names to the interpolated model key</span>
+        <span class="n">dict_models</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;cmc&#39;</span><span class="p">:</span><span class="s1">&#39;CMC2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;gfs&#39;</span><span class="p">:</span><span class="s1">&#39;AVNI&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ukm&#39;</span><span class="p">:</span><span class="s1">&#39;UKX2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ecm&#39;</span><span class="p">:</span><span class="s1">&#39;ECO2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;hmon&#39;</span><span class="p">:</span><span class="s1">&#39;HMNI&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;hwrf&#39;</span><span class="p">:</span><span class="s1">&#39;HWFI&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nhc&#39;</span><span class="p">:</span><span class="s1">&#39;OFCI&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">backup_models</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;gfs&#39;</span><span class="p">:[</span><span class="s1">&#39;AVNO&#39;</span><span class="p">,</span><span class="s1">&#39;AVNX&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;ukm&#39;</span><span class="p">:[</span><span class="s1">&#39;UKM2&#39;</span><span class="p">,</span><span class="s1">&#39;UKM&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;cmc&#39;</span><span class="p">:[</span><span class="s1">&#39;CMC&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;hmon&#39;</span><span class="p">:[</span><span class="s1">&#39;GFDI&#39;</span><span class="p">,</span><span class="s1">&#39;GFDL&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;nhc&#39;</span><span class="p">:[</span><span class="s1">&#39;OFCL&#39;</span><span class="p">,</span><span class="s1">&#39;JTWC&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;hwrf&#39;</span><span class="p">:[</span><span class="s1">&#39;HWRF&#39;</span><span class="p">],</span>
+        <span class="p">}</span>
+        
+        <span class="c1">#Pop kwargs</span>
+        <span class="n">prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prop&#39;</span><span class="p">,{})</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;models&#39;</span><span class="p">,{})</span>
+        <span class="n">map_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;map_prop&#39;</span><span class="p">,{})</span>
         
         <span class="c1">#Create instance of plot object</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
-        
-        <span class="c1">#Create cartopy projection</span>
-        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">cartopy_proj</span>
-        <span class="k">elif</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">150</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">150</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
         
         <span class="c1">#-------------------------------------------------------------------------</span>
         
@@ -1031,99 +1084,397 @@
         <span class="k">except</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_operational_forecasts</span><span class="p">()</span>
         
-        <span class="c1">#Create dict to store all data in</span>
-        <span class="n">ds</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gfs&#39;</span><span class="p">:{</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;date&#39;</span><span class="p">:[]},</span>
-              <span class="s1">&#39;gefs&#39;</span><span class="p">:{</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;date&#39;</span><span class="p">:[],</span>
-                      <span class="s1">&#39;members&#39;</span><span class="p">:[],</span><span class="s1">&#39;ellipse_lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;ellipse_lon&#39;</span><span class="p">:[]}</span>
-              <span class="p">}</span>
+        <span class="c1">#Error check forecast date</span>
+        <span class="k">if</span> <span class="n">forecast</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">forecast</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Requested forecast is outside of the storm&#39;s duration.&quot;</span><span class="p">)</span>
         
-        <span class="c1">#String formatting for ensembles</span>
-        <span class="k">def</span> <span class="nf">str2</span><span class="p">(</span><span class="n">ens</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">ens</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="s2">&quot;AC00&quot;</span>
-            <span class="k">if</span> <span class="n">ens</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span> <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;AP0</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;AP</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s2">&quot;</span>
-
-        <span class="c1">#Get GFS forecast entry (AVNX is valid for RAL a-deck source)</span>
-        <span class="n">gfs_key</span> <span class="o">=</span> <span class="s1">&#39;AVNO&#39;</span> <span class="k">if</span> <span class="s1">&#39;AVNO&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;AVNX&#39;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">forecast_gfs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">gfs_key</span><span class="p">][</span><span class="n">forecast</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H&quot;</span><span class="p">)]</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The requested GFS initialization isn&#39;t available for this storm.&quot;</span><span class="p">)</span>
-        
-        <span class="c1">#Enter into dict entry</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]]</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]]</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]]</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]]</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span>
-        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">forecast</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]]</span>
-        
-        <span class="c1">#Retrieve GEFS ensemble data (30 members 2019-present, 20 members prior)</span>
-        <span class="n">nens</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">ens</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">31</span><span class="p">):</span>
+        <span class="c1">#Construct forecast dict</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">proj_lons</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">forecast_str</span> <span class="o">=</span> <span class="n">forecast</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
+        <span class="n">input_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="n">input_keys_lower</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dict_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             
-            <span class="c1">#Create dict entry</span>
-            <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;date&#39;</span><span class="p">:[]}</span>
+            <span class="c1">#Only proceed if model isn&#39;t not requested</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">input_keys_lower</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">input_keys_lower</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">models</span><span class="p">[</span><span class="n">input_keys</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span> <span class="k">continue</span>
+            
+            <span class="c1">#Find official key</span>
+            <span class="n">official_key</span> <span class="o">=</span> <span class="n">dict_models</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">official_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">backup_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">for</span> <span class="n">backup_key</span> <span class="ow">in</span> <span class="n">backup_models</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">backup_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="n">official_key</span> <span class="o">=</span> <span class="n">backup_key</span>
+                            <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+            
+            <span class="c1">#Check for 2 vs. I if needed</span>
+            <span class="k">if</span> <span class="n">found</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">or</span> <span class="n">forecast_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">official_key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s1">&#39;2&#39;</span> <span class="ow">in</span> <span class="n">official_key</span><span class="p">:</span>
+                    <span class="n">official_key</span> <span class="o">=</span> <span class="n">dict_models</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">,</span><span class="s1">&#39;I&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">official_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">backup_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="k">for</span> <span class="n">backup_key_iter</span> <span class="ow">in</span> <span class="n">backup_models</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                                <span class="n">backup_key</span> <span class="o">=</span> <span class="n">backup_key_iter</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">,</span><span class="s1">&#39;I&#39;</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">backup_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                                    <span class="n">official_key</span> <span class="o">=</span> <span class="n">backup_key</span>
+                                    <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                                    <span class="k">break</span>
+                            <span class="k">if</span> <span class="n">found</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> <span class="k">continue</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            
+            <span class="c1">#Append forecast data if it exists for this initialization</span>
+            <span class="k">if</span> <span class="n">forecast_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">official_key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="k">continue</span>
+            <span class="n">enter_key</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;hmon&#39;</span> <span class="ow">and</span> <span class="s1">&#39;gf&#39;</span> <span class="ow">in</span> <span class="n">official_key</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">enter_key</span> <span class="o">=</span> <span class="s1">&#39;gfdl&#39;</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;nhc&#39;</span> <span class="ow">and</span> <span class="s1">&#39;jt&#39;</span> <span class="ow">in</span> <span class="n">official_key</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">enter_key</span> <span class="o">=</span> <span class="s1">&#39;jtwc&#39;</span>
+            <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">official_key</span><span class="p">][</span><span class="n">forecast_str</span><span class="p">]</span>
+            
+            <span class="c1">#Filter out to hour 168</span>
+            <span class="k">if</span> <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">168</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">168</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">][</span><span class="n">key</span><span class="p">],</span><span class="nb">list</span><span class="p">):</span>
+                        <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">][</span><span class="n">key</span><span class="p">][:</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                    
+            <span class="n">proj_lons</span> <span class="o">+=</span> <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+        
+        <span class="c1">#Proceed if data exists</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No forecasts are available for the given parameters.&quot;</span><span class="p">)</span>
+        
+        <span class="c1">#Create cartopy projection</span>
+        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">cartopy_proj</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">proj_lons</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">150</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">proj_lons</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">150</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        
+        <span class="c1">#Plot storm</span>
+        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_models</span><span class="p">(</span><span class="n">forecast</span><span class="p">,</span><span class="n">plot_btk</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="n">models</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="n">save_path</span><span class="p">)</span>
+        
+        <span class="c1">#Return axis</span>
+        <span class="k">return</span> <span class="n">plot_ax</span></div>
+    
+    
+<div class="viewcode-block" id="Storm.plot_ensembles"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.plot_ensembles.html#tropycal.tracks.Storm.plot_ensembles">[docs]</a>    <span class="k">def</span> <span class="nf">plot_ensembles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">forecast</span><span class="p">,</span><span class="n">fhr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">interpolate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a plot of individual GEFS ensemble tracks.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        forecast : datetime.datetime</span>
+<span class="sd">            Datetime object representing the GEFS run initialization.</span>
+<span class="sd">        fhr : int, optional</span>
+<span class="sd">            Forecast hour to plot. If None (default), a cumulative plot of all forecast hours will be produced. If an integer, a single plot will be produced.</span>
+<span class="sd">        interpolate : bool, optional</span>
+<span class="sd">            If True, and fhr is None, track density data will be interpolated to hourly. Default is False (6-hourly track density data). Setting this to True greatly slows down the function.</span>
+<span class="sd">        domain : str</span>
+<span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
+<span class="sd">        ax : axes</span>
+<span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
+<span class="sd">        cartopy_proj : ccrs</span>
+<span class="sd">            Instance of a cartopy projection to use. If none, one will be generated. Default is none.</span>
+<span class="sd">        save_path : str</span>
+<span class="sd">            Relative or full path of directory to save the image in. If none, image will not be saved.</span>
+<span class="sd">        </span>
+<span class="sd">        Other Parameters</span>
+<span class="sd">        ----------------</span>
+<span class="sd">        prop_members : dict</span>
+<span class="sd">            Customization properties of GEFS ensemble member track lines. Scroll down below for available options.</span>
+<span class="sd">        prop_mean : dict</span>
+<span class="sd">            Customization properties of GEFS ensemble mean track. Scroll down below for available options.</span>
+<span class="sd">        prop_gfs : dict</span>
+<span class="sd">            Customization properties of GFS forecast track. Scroll down below for available options.</span>
+<span class="sd">        prop_btk : dict</span>
+<span class="sd">            Customization properties of Best Track line. Scroll down below for available options.</span>
+<span class="sd">        prop_ellipse : dict</span>
+<span class="sd">            Customization properties of GEFS ensemble ellipse. Scroll down below for available options.</span>
+<span class="sd">        prop_density : dict</span>
+<span class="sd">            Customization properties of GEFS ensemble track density. Scroll down below for available options.</span>
+<span class="sd">        map_prop : dict</span>
+<span class="sd">            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ax</span>
+<span class="sd">            Instance of axes containing the plot is returned.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        .. note::</span>
+<span class="sd">            The total number of GEFS members available for analysis is as follows:</span>
+<span class="sd">            </span>
+<span class="sd">            * **2020 - present** - 31 members</span>
+<span class="sd">            * **2006 - 2019** - 21 members</span>
+<span class="sd">            * **2005 &amp; back** - 5 members</span>
+<span class="sd">            </span>
+<span class="sd">            As the density plot and ensemble ellipse require a minimum of 10 ensemble members, they will not be generated for storms from 2005 and earlier.</span>
+<span class="sd">            </span>
+<span class="sd">            Additionally, ellipses are not generated if using the default ``fhr=None``, meaning a cumulative track density plot is generated instead.</span>
+<span class="sd">        </span>
+<span class="sd">        The ensemble ellipse used in this function follows the methodology of `Hamill et al. (2011)`_, denoting the spread in ensemble member cyclone positions. The size of the ellipse is calculated to contain 90% of ensemble members at any given time. This ellipse can be used to determine the primary type of ensemble variability:</span>
+<span class="sd">        </span>
+<span class="sd">        * **Along-track variability** - if the major axis of the ellipse is parallel to the ensemble mean motion vector.</span>
+<span class="sd">        * **Across-track variability** - if the major axis of the ellipse is normal to the ensemble mean motion vector.</span>
 
-            <span class="c1">#Retrieve ensemble member data</span>
-            <span class="n">ens_str</span> <span class="o">=</span> <span class="n">str2</span><span class="p">(</span><span class="n">ens</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">ens_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="k">continue</span>
-            <span class="n">forecast_ens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">ens_str</span><span class="p">][</span><span class="n">forecast</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H&quot;</span><span class="p">)]</span>
+<span class="sd">        .. _Hamill et al. (2011): https://doi.org/10.1175/2010MWR3456.1</span>
+<span class="sd">        </span>
+<span class="sd">        The following properties are available for customizing ensemble member tracks, via ``prop_members``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Property</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - plot</span>
+<span class="sd">             - Boolean to determine whether to plot ensemble member tracks. Default is True.</span>
+<span class="sd">           * - linewidth</span>
+<span class="sd">             - Forecast track linewidth. Default is 0.2.</span>
+<span class="sd">           * - linecolor</span>
+<span class="sd">             - Forecast track line color. Default is black.</span>
+
+<span class="sd">        The following properties are available for customizing ensemble mean track, via ``prop_mean``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Property</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - plot</span>
+<span class="sd">             - Boolean to determine whether to plot ensemble mean forecast track. Default is True.</span>
+<span class="sd">           * - linewidth</span>
+<span class="sd">             - Forecast track linewidth. Default is 3.0.</span>
+<span class="sd">           * - linecolor</span>
+<span class="sd">             - Forecast track line color. Default is black.</span>
+<span class="sd">        </span>
+<span class="sd">        The following properties are available for customizing GFS forecast track, via ``prop_gfs``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Property</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - plot</span>
+<span class="sd">             - Boolean to determine whether to plot GFS forecast track. Default is True.</span>
+<span class="sd">           * - linewidth</span>
+<span class="sd">             - Forecast track linewidth. Default is 3.0.</span>
+<span class="sd">           * - linecolor</span>
+<span class="sd">             - Forecast track line color. Default is red.</span>
+<span class="sd">        </span>
+<span class="sd">        The following properties are available for customizing Best Track line, via ``prop_btk``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Property</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - plot</span>
+<span class="sd">             - Boolean to determine whether to plot Best Track line. Default is True.</span>
+<span class="sd">           * - linewidth</span>
+<span class="sd">             - Best Track linewidth. Default is 2.5.</span>
+<span class="sd">           * - linecolor</span>
+<span class="sd">             - Best Track line color. Default is blue.</span>
+<span class="sd">        </span>
+<span class="sd">        The following properties are available for customizing the ensemble ellipse plot, via ``prop_ellipse``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Property</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - plot</span>
+<span class="sd">             - Boolean to determine whether to plot ensemble member ellipse. Default is True.</span>
+<span class="sd">           * - linewidth</span>
+<span class="sd">             - Ellipse linewidth. Default is 3.0.</span>
+<span class="sd">           * - linecolor</span>
+<span class="sd">             - Ellipse line color. Default is blue.</span>
+<span class="sd">        </span>
+<span class="sd">        The following properties are available for customizing ensemble member track density, via ``prop_density``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Property</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - plot</span>
+<span class="sd">             - Boolean to determine whether to plot ensemble member track density. Default is True.</span>
+<span class="sd">           * - radius</span>
+<span class="sd">             - Radius (in km) for which to calculate track density. Default is 200 km.</span>
+<span class="sd">           * - cmap</span>
+<span class="sd">             - Matplotlib colormap for track density plot. Default is &quot;plasma_r&quot;.</span>
+<span class="sd">           * - levels</span>
+<span class="sd">             - List of levels for contour filling track density.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#Pop kwargs</span>
+        <span class="n">prop_members</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prop_members&#39;</span><span class="p">,{})</span>
+        <span class="n">prop_mean</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prop_mean&#39;</span><span class="p">,{})</span>
+        <span class="n">prop_gfs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prop_gfs&#39;</span><span class="p">,{})</span>
+        <span class="n">prop_btk</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prop_btk&#39;</span><span class="p">,{})</span>
+        <span class="n">prop_ellipse</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prop_ellipse&#39;</span><span class="p">,{})</span>
+        <span class="n">prop_density</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prop_density&#39;</span><span class="p">,{})</span>
+        <span class="n">map_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;map_prop&#39;</span><span class="p">,{})</span>
+        
+        <span class="c1">#Create instance of plot object</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
+        
+        <span class="c1">#-------------------------------------------------------------------------</span>
+        
+        <span class="c1">#Get forecasts dict saved into storm object, if it hasn&#39;t been already</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_operational_forecasts</span><span class="p">()</span>
+        
+        <span class="c1">#Determine max members by year</span>
+        <span class="n">nens</span> <span class="o">=</span> <span class="mi">21</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">&gt;=</span> <span class="mi">2020</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;AP21&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;AP22&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;AP23&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span> <span class="n">nens</span> <span class="o">=</span> <span class="mi">31</span>
+        
+        <span class="c1">#Enforce fhr type</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fhr</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span> <span class="n">fhr</span> <span class="o">=</span> <span class="n">fhr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="c1">#If this forecast init was recently used, don&#39;t re-calculate</span>
+        <span class="n">init_used</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gefs_init</span> <span class="o">==</span> <span class="n">forecast</span><span class="p">:</span> <span class="n">init_used</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        
+        <span class="c1">#Only calculate if needed to</span>
+        <span class="k">if</span> <span class="n">init_used</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--&gt; Starting to calculate ellipse data&quot;</span><span class="p">)</span>
+            
+            <span class="c1">#Create dict to store all data in</span>
+            <span class="n">ds</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;gfs&#39;</span><span class="p">:{</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;date&#39;</span><span class="p">:[]},</span>
+                  <span class="s1">&#39;gefs&#39;</span><span class="p">:{</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;date&#39;</span><span class="p">:[],</span>
+                          <span class="s1">&#39;members&#39;</span><span class="p">:[],</span><span class="s1">&#39;ellipse_lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;ellipse_lon&#39;</span><span class="p">:[]}</span>
+                  <span class="p">}</span>
+
+            <span class="c1">#String formatting for ensembles</span>
+            <span class="k">def</span> <span class="nf">str2</span><span class="p">(</span><span class="n">ens</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">ens</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="s2">&quot;AC00&quot;</span>
+                <span class="k">if</span> <span class="n">ens</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span> <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;AP0</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;AP</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="c1">#Get GFS forecast entry (AVNX is valid for RAL a-deck source)</span>
+            <span class="n">gfs_key</span> <span class="o">=</span> <span class="s1">&#39;AVNO&#39;</span> <span class="k">if</span> <span class="s1">&#39;AVNO&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;AVNX&#39;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">forecast_gfs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">gfs_key</span><span class="p">][</span><span class="n">forecast</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H&quot;</span><span class="p">)]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The requested GFS initialization isn&#39;t available for this storm.&quot;</span><span class="p">)</span>
 
             <span class="c1">#Enter into dict entry</span>
-            <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]]</span>
-            <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]]</span>
-            <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]]</span>
-            <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]]</span>
-            <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span>
-            <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">forecast</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]]</span>
-            <span class="n">nens</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]]</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]]</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]]</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]]</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span>
+            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">forecast</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_gfs</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]]</span>
 
-        <span class="c1">#Construct ensemble mean data</span>
-        <span class="c1">#Iterate through all forecast hours</span>
-        <span class="k">for</span> <span class="n">iter_fhr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">246</span><span class="p">,</span><span class="mi">6</span><span class="p">):</span>
+            <span class="c1">#Retrieve GEFS ensemble data (30 members 2019-present, 20 members prior)</span>
+            <span class="k">for</span> <span class="n">ens</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nens</span><span class="p">):</span>
 
-            <span class="c1">#Temporary data arrays</span>
-            <span class="n">temp_data</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span> <span class="n">temp_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1">#Create dict entry</span>
+                <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;date&#39;</span><span class="p">:[]}</span>
 
-            <span class="c1">#Iterate through ensemble member</span>
-            <span class="k">for</span> <span class="n">ens</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nens</span><span class="p">):</span>
+                <span class="c1">#Retrieve ensemble member data</span>
+                <span class="n">ens_str</span> <span class="o">=</span> <span class="n">str2</span><span class="p">(</span><span class="n">ens</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ens_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">forecast</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">ens_str</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="k">continue</span>
+                <span class="n">forecast_ens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">ens_str</span><span class="p">][</span><span class="n">forecast</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H&quot;</span><span class="p">)]</span>
 
-                <span class="c1">#Determine if member has data valid at this forecast hour</span>
-                <span class="k">if</span> <span class="n">iter_fhr</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span>
+                <span class="c1">#Enter into dict entry</span>
+                <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]]</span>
+                <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]]</span>
+                <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]]</span>
+                <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]]</span>
+                <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span>
+                <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">forecast</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">forecast_ens</span><span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">]]</span>
 
-                    <span class="c1">#Retrieve index</span>
-                    <span class="n">idx</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">iter_fhr</span><span class="p">)</span>
+            <span class="c1">#Construct ensemble mean data</span>
+            <span class="c1">#Iterate through all forecast hours</span>
+            <span class="k">for</span> <span class="n">iter_fhr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">246</span><span class="p">,</span><span class="mi">6</span><span class="p">):</span>
+
+                <span class="c1">#Temporary data arrays</span>
+                <span class="n">temp_data</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span> <span class="n">temp_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="c1">#Iterate through ensemble member</span>
+                <span class="k">for</span> <span class="n">ens</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nens</span><span class="p">):</span>
+
+                    <span class="c1">#Determine if member has data valid at this forecast hour</span>
+                    <span class="k">if</span> <span class="n">iter_fhr</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span>
+
+                        <span class="c1">#Retrieve index</span>
+                        <span class="n">idx</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">iter_fhr</span><span class="p">)</span>
+
+                        <span class="c1">#Append data</span>
+                        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span> <span class="n">temp_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="n">idx</span><span class="p">])</span>
+
+                <span class="c1">#Proceed if 20 or more ensemble members</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">temp_data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
 
                     <span class="c1">#Append data</span>
                     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span> <span class="n">temp_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;gefs_</span><span class="si">{</span><span class="n">ens</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="n">idx</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span>
+                            <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">temp_data</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+                    <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iter_fhr</span><span class="p">)</span>
+                    <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forecast</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">iter_fhr</span><span class="p">))</span>
+                    <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="s1">&#39;members&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp_data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]))</span>
 
-            <span class="c1">#Proceed if 20 or more ensemble members</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">temp_data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
-
-                <span class="c1">#Append data</span>
-                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gfs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span>
-                        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">temp_data</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
-                <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iter_fhr</span><span class="p">)</span>
-                <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forecast</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">iter_fhr</span><span class="p">))</span>
-                <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="s1">&#39;members&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp_data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]))</span>
-
-                <span class="c1">#Calculate ellipse data</span>
-                <span class="k">if</span> <span class="n">prop_ellipse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">ellipse_data</span> <span class="o">=</span> <span class="n">plot_ellipse</span><span class="p">(</span><span class="n">temp_data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span><span class="n">temp_data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
-                    <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="s1">&#39;ellipse_lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ellipse_data</span><span class="p">[</span><span class="s1">&#39;xell&#39;</span><span class="p">])</span>
-                    <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="s1">&#39;ellipse_lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ellipse_data</span><span class="p">[</span><span class="s1">&#39;yell&#39;</span><span class="p">])</span>
+                    <span class="c1">#Calculate ellipse data</span>
+                    <span class="k">if</span> <span class="n">prop_ellipse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">ellipse_data</span> <span class="o">=</span> <span class="n">calc_ensemble_ellipse</span><span class="p">(</span><span class="n">temp_data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">],</span><span class="n">temp_data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">])</span>
+                        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="s1">&#39;ellipse_lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ellipse_data</span><span class="p">[</span><span class="s1">&#39;ellipse_lon&#39;</span><span class="p">])</span>
+                        <span class="n">ds</span><span class="p">[</span><span class="s1">&#39;gefs&#39;</span><span class="p">][</span><span class="s1">&#39;ellipse_lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ellipse_data</span><span class="p">[</span><span class="s1">&#39;ellipse_lat&#39;</span><span class="p">])</span>
         
-        <span class="c1">#Convert fhr to list</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fhr</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fhr</span><span class="p">,</span><span class="nb">float</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">fhr</span> <span class="o">=</span> <span class="p">[</span><span class="n">fhr</span><span class="p">]</span>
+            <span class="c1">#Save data for future use if needed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gefs_init</span> <span class="o">=</span> <span class="n">forecast</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span>
+            
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--&gt; Done calculating ellipse data&quot;</span><span class="p">)</span>
+        
+        <span class="c1">#Determine lon bounds for cartopy projection</span>
+        <span class="n">proj_lons</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">proj_lons</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+        
+        <span class="c1">#Create cartopy projection</span>
+        <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">cartopy_proj</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">proj_lons</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">150</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">proj_lons</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">150</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
         
         <span class="c1">#Plot storm</span>
-        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_ensembles</span><span class="p">(</span><span class="n">forecast</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">prop_members</span><span class="p">,</span><span class="n">prop_mean</span><span class="p">,</span><span class="n">prop_gfs</span><span class="p">,</span><span class="n">prop_ellipse</span><span class="p">,</span><span class="n">prop_density</span><span class="p">,</span><span class="n">nens</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="n">save_path</span><span class="p">)</span>
+        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_ensembles</span><span class="p">(</span><span class="n">forecast</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">interpolate</span><span class="p">,</span><span class="n">prop_members</span><span class="p">,</span><span class="n">prop_mean</span><span class="p">,</span><span class="n">prop_gfs</span><span class="p">,</span><span class="n">prop_btk</span><span class="p">,</span><span class="n">prop_ellipse</span><span class="p">,</span><span class="n">prop_density</span><span class="p">,</span><span class="n">nens</span><span class="p">,</span><span class="n">domain</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span><span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="n">save_path</span><span class="p">)</span>
         
         <span class="c1">#Return axis</span>
         <span class="k">return</span> <span class="n">plot_ax</span></div>
@@ -1710,6 +2061,60 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            Dictionary containing all forecast entries.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This function fetches all available forecasts, whether operational (e.g., NHC or JTWC), deterministic or ensemble model forecasts, from the Best Track a-deck as far back as data allows (1954 for NHC&#39;s area of responsibility, 2019 for JTWC).</span>
+<span class="sd">        </span>
+<span class="sd">        For example, this code retrieves all forecasts for Hurricane Michael (2018):</span>
+<span class="sd">        </span>
+<span class="sd">        .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">            #Get Storm object</span>
+<span class="sd">            from tropycal import tracks</span>
+<span class="sd">            basin = tracks.TrackDataset()</span>
+<span class="sd">            storm = basin.get_storm((&#39;michael&#39;,2018))</span>
+<span class="sd">            </span>
+<span class="sd">            #Retrieve all forecasts</span>
+<span class="sd">            forecasts = storm.get_operational_forecasts()</span>
+<span class="sd">        </span>
+<span class="sd">        The resulting dict is structured as follows:</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; print(forecasts.keys())</span>
+<span class="sd">        dict_keys([&#39;CARQ&#39;, &#39;NAM&#39;, &#39;AC00&#39;, &#39;AEMN&#39;, &#39;AP01&#39;, &#39;AP02&#39;, &#39;AP03&#39;, &#39;AP04&#39;, &#39;AP05&#39;, &#39;AP06&#39;, &#39;AP07&#39;, &#39;AP08&#39;, &#39;AP09&#39;,</span>
+<span class="sd">        &#39;AP10&#39;, &#39;AP11&#39;, &#39;AP12&#39;, &#39;AP13&#39;, &#39;AP14&#39;, &#39;AP15&#39;, &#39;AP16&#39;, &#39;AP17&#39;, &#39;AP18&#39;, &#39;AP19&#39;, &#39;AP20&#39;, &#39;AVNO&#39;, &#39;AVNX&#39;, &#39;CLP5&#39;,</span>
+<span class="sd">        &#39;CTCX&#39;, &#39;DSHP&#39;, &#39;GFSO&#39;, &#39;HCCA&#39;, &#39;IVCN&#39;, &#39;IVDR&#39;, &#39;LGEM&#39;, &#39;OCD5&#39;, &#39;PRFV&#39;, &#39;SHF5&#39;, &#39;SHIP&#39;, &#39;TABD&#39;, &#39;TABM&#39;, &#39;TABS&#39;,</span>
+<span class="sd">        &#39;TCLP&#39;, &#39;XTRP&#39;, &#39;CMC&#39;, &#39;NGX&#39;, &#39;UKX&#39;, &#39;AEMI&#39;, &#39;AHNI&#39;, &#39;AVNI&#39;, &#39;CEMN&#39;, &#39;CHCI&#39;, &#39;CTCI&#39;, &#39;DSPE&#39;, &#39;EGRR&#39;, &#39;LGME&#39;,</span>
+<span class="sd">        &#39;NAMI&#39;, &#39;NEMN&#39;, &#39;RVCN&#39;, &#39;RVCX&#39;, &#39;SHPE&#39;, &#39;TBDE&#39;, &#39;TBME&#39;, &#39;TBSE&#39;, &#39;TVCA&#39;, &#39;TVCE&#39;, &#39;TVCN&#39;, &#39;TVCX&#39;, &#39;TVDG&#39;, &#39;UE00&#39;,</span>
+<span class="sd">        &#39;UE01&#39;, &#39;UE02&#39;, &#39;UE03&#39;, &#39;UE04&#39;, &#39;UE05&#39;, &#39;UE06&#39;, &#39;UE07&#39;, &#39;UE08&#39;, &#39;UE09&#39;, &#39;UE10&#39;, &#39;UE11&#39;, &#39;UE12&#39;, &#39;UE13&#39;, &#39;UE14&#39;,</span>
+<span class="sd">        &#39;UE15&#39;, &#39;UE16&#39;, &#39;UE17&#39;, &#39;UE18&#39;, &#39;UE19&#39;, &#39;UE20&#39;, &#39;UE21&#39;, &#39;UE22&#39;, &#39;UE23&#39;, &#39;UE24&#39;, &#39;UE25&#39;, &#39;UE26&#39;, &#39;UE27&#39;, &#39;UE28&#39;,</span>
+<span class="sd">        &#39;UE29&#39;, &#39;UE30&#39;, &#39;UE31&#39;, &#39;UE32&#39;, &#39;UE33&#39;, &#39;UE34&#39;, &#39;UE35&#39;, &#39;UEMN&#39;, &#39;CEMI&#39;, &#39;CMCI&#39;, &#39;COTC&#39;, &#39;EGRI&#39;, &#39;HMON&#39;, &#39;HWRF&#39;,</span>
+<span class="sd">        &#39;NGXI&#39;, &#39;NVGM&#39;, &#39;PRV2&#39;, &#39;PRVI&#39;, &#39;UEMI&#39;, &#39;UKXI&#39;, &#39;CEM2&#39;, &#39;CMC2&#39;, &#39;COTI&#39;, &#39;EGR2&#39;, &#39;HHFI&#39;, &#39;HHNI&#39;, &#39;HMNI&#39;, &#39;HWFI&#39;,</span>
+<span class="sd">        &#39;ICON&#39;, &#39;IVRI&#39;, &#39;NGX2&#39;, &#39;NVGI&#39;, &#39;OFCP&#39;, &#39;TCOA&#39;, &#39;TCOE&#39;, &#39;TCON&#39;, &#39;UEM2&#39;, &#39;UKX2&#39;, &#39;CHC2&#39;, &#39;CTC2&#39;, &#39;NAM2&#39;, &#39;OFCL&#39;,</span>
+<span class="sd">        &#39;OFPI&#39;, &#39;AEM2&#39;, &#39;AHN2&#39;, &#39;AVN2&#39;, &#39;DRCL&#39;, &#39;HHF2&#39;, &#39;HHN2&#39;, &#39;HMN2&#39;, &#39;HWF2&#39;, &#39;NVG2&#39;, &#39;OFCI&#39;, &#39;OFP2&#39;, &#39;FSSE&#39;, &#39;RI25&#39;, &#39;RI30&#39;])</span>
+<span class="sd">        </span>
+<span class="sd">        Each of these keys represents a forecast model/ensemble member/center. If we select the GFS (AVNO), we now get a dictionary containing all forecast initializations for this model:</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; print(forecasts[&#39;AVNO&#39;].keys())</span>
+<span class="sd">        dict_keys([&#39;2018100518&#39;, &#39;2018100600&#39;, &#39;2018100606&#39;, &#39;2018100612&#39;, &#39;2018100700&#39;, &#39;2018100706&#39;, &#39;2018100712&#39;,</span>
+<span class="sd">        &#39;2018100718&#39;, &#39;2018100800&#39;, &#39;2018100806&#39;, &#39;2018100812&#39;, &#39;2018100818&#39;, &#39;2018100900&#39;, &#39;2018100906&#39;, &#39;2018100912&#39;,</span>
+<span class="sd">        &#39;2018100918&#39;, &#39;2018101000&#39;, &#39;2018101006&#39;, &#39;2018101012&#39;, &#39;2018101018&#39;, &#39;2018101100&#39;, &#39;2018101106&#39;, &#39;2018101112&#39;,</span>
+<span class="sd">        &#39;2018101118&#39;, &#39;2018101200&#39;, &#39;2018101206&#39;, &#39;2018101212&#39;])</span>
+<span class="sd">        </span>
+<span class="sd">        Providing a forecast initialization, for example 1200 UTC 8 October 2018 (2018100812), we now get a forecast dict containing the GFS initialized at this time:</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; print(forecasts[&#39;AVNO&#39;][&#39;2018100812&#39;])</span>
+<span class="sd">        {&#39;fhr&#39;: [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 102, 108, 114, 120, 126, 132, 138, 144],</span>
+<span class="sd">         &#39;lat&#39;: [20.8, 21.7, 22.7, 24.0, 25.1, 25.9, 26.9, 27.9, 29.0, 30.0, 31.1, 32.1, 33.1, 34.1, 35.4, 37.2, 38.9, 40.2,</span>
+<span class="sd">                 42.4, 44.9, 46.4, 48.2, 49.3, 50.5, 51.3],</span>
+<span class="sd">         &#39;lon&#39;: [-85.1, -85.1, -85.2, -85.6, -86.4, -86.8, -86.9, -86.9, -86.6, -86.2, -85.3, -84.4, -83.0, -81.3, -78.9,</span>
+<span class="sd">                 -75.9, -72.2, -67.8, -62.5, -56.5, -50.5, -44.4, -38.8, -32.8, -27.9],</span>
+<span class="sd">         &#39;vmax&#39;: [57, 62, 61, 67, 74, 69, 75, 78, 80, 76, 47, 38, 34, 36, 38, 41, 52, 58, 55, 51, 48, 44, 37, 36, 37],</span>
+<span class="sd">         &#39;mslp&#39;: [984, 982, 979, 974, 972, 970, 966, 964, 957, 959, 969, 982, 988, 993, 994, 990, 984, 978, 978, 975, 979,</span>
+<span class="sd">                  984, 987, 989, 991],</span>
+<span class="sd">         &#39;type&#39;: [&#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;,</span>
+<span class="sd">                  &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;, &#39;XX&#39;],</span>
+<span class="sd">         &#39;init&#39;: datetime.datetime(2018, 10, 8, 12, 0)}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1">#Real time ensemble data:</span>
@@ -1762,10 +2167,10 @@
             
             <span class="c1">#Get storm ID &amp; corresponding data URL</span>
             <span class="n">storm_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">storm_year</span> <span class="o">&lt;</span> <span class="mi">2016</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Forecast data is unavailable for JTWC storms prior to 2016.&quot;</span>
+            <span class="k">if</span> <span class="n">storm_year</span> <span class="o">&lt;</span> <span class="mi">2019</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Forecast data is unavailable for JTWC storms prior to 2019.&quot;</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="n">url_models</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;http://hurricanes.ral.ucar.edu/repository/data/adecks_open/a</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.dat&quot;</span>
+            <span class="n">url_models</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;http://hurricanes.ral.ucar.edu/repository/data/adecks_open/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">/a</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.dat&quot;</span>
             
             <span class="c1">#Retrieve model data text</span>
             <span class="k">try</span><span class="p">:</span>
@@ -1785,28 +2190,33 @@
 
             <span class="c1">#Get basic components</span>
             <span class="n">lineArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">line</span><span class="p">]</span>
-            <span class="n">basin</span><span class="p">,</span><span class="n">number</span><span class="p">,</span><span class="n">run_init</span><span class="p">,</span><span class="n">n_a</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">mslp</span><span class="p">,</span><span class="n">stype</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[:</span><span class="mi">11</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">basin</span><span class="p">,</span><span class="n">number</span><span class="p">,</span><span class="n">run_init</span><span class="p">,</span><span class="n">n_a</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">mslp</span><span class="p">,</span><span class="n">stype</span><span class="p">,</span><span class="n">rad</span><span class="p">,</span><span class="n">windcode</span><span class="p">,</span><span class="n">neq</span><span class="p">,</span><span class="n">seq</span><span class="p">,</span><span class="n">swq</span><span class="p">,</span><span class="n">nwq</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[:</span><span class="mi">17</span><span class="p">]</span>
+                <span class="n">use_wind</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">basin</span><span class="p">,</span><span class="n">number</span><span class="p">,</span><span class="n">run_init</span><span class="p">,</span><span class="n">n_a</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">mslp</span><span class="p">,</span><span class="n">stype</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[:</span><span class="mi">11</span><span class="p">]</span>
+                <span class="n">use_wind</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="c1">#Enter into forecast dict</span>
             <span class="k">if</span> <span class="n">model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">if</span> <span class="n">run_init</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;type&#39;</span><span class="p">:[],</span><span class="s1">&#39;init&#39;</span><span class="p">:</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">run_init</span><span class="p">,</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
+                <span class="s1">&#39;init&#39;</span><span class="p">:</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">run_init</span><span class="p">,</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">),</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;type&#39;</span><span class="p">:[],</span><span class="s1">&#39;windrad&#39;</span><span class="p">:[]</span>
             <span class="p">}</span>
 
             <span class="c1">#Format lat &amp; lon</span>
             <span class="n">fhr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span>
             <span class="k">if</span> <span class="s2">&quot;N&quot;</span> <span class="ow">in</span> <span class="n">lat</span><span class="p">:</span>
                 <span class="n">lat_temp</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">lat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>
+                <span class="n">lat</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">elif</span> <span class="s2">&quot;S&quot;</span> <span class="ow">in</span> <span class="n">lat</span><span class="p">:</span>
                 <span class="n">lat_temp</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">lat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span>
+                <span class="n">lat</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">if</span> <span class="s2">&quot;W&quot;</span> <span class="ow">in</span> <span class="n">lon</span><span class="p">:</span>
                 <span class="n">lon_temp</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;W&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">lon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span>
+                <span class="n">lon</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">elif</span> <span class="s2">&quot;E&quot;</span> <span class="ow">in</span> <span class="n">lon</span><span class="p">:</span>
                 <span class="n">lon_temp</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">lon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>
+                <span class="n">lon</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
             
             <span class="c1">#Format vmax &amp; MSLP</span>
             <span class="k">if</span> <span class="n">vmax</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
@@ -1820,6 +2230,28 @@
                 <span class="n">mslp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mslp</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">mslp</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span> <span class="n">mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
+            <span class="c1">#Format wind radii</span>
+            <span class="k">if</span> <span class="n">use_wind</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">rad</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rad</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">rad</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">35</span><span class="p">]:</span> <span class="n">rad</span> <span class="o">=</span> <span class="mi">34</span>
+                    <span class="n">neq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span><span class="o">==</span><span class="s1">&#39;&#39;</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">neq</span><span class="p">)</span>
+                    <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;AAA&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+                    <span class="n">swq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;AAA&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">swq</span><span class="p">)</span>
+                    <span class="n">nwq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">windcode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;AAA&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">nwq</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">rad</span> <span class="o">=</span> <span class="mi">34</span>
+                    <span class="n">neq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">swq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">nwq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rad</span> <span class="o">=</span> <span class="mi">34</span>
+                <span class="n">neq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">swq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">nwq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            
             <span class="c1">#Add forecast data to dict if forecast hour isn&#39;t already there</span>
             <span class="k">if</span> <span class="n">fhr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;OFCL&#39;</span><span class="p">,</span><span class="s1">&#39;OFCI&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">fhr</span> <span class="o">&gt;</span> <span class="mi">120</span><span class="p">:</span>
@@ -1832,12 +2264,16 @@
                     <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
                     <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span>
                     <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">][</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mslp</span><span class="p">)</span>
+                    <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">][</span><span class="s1">&#39;windrad&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">rad</span><span class="p">:[</span><span class="n">neq</span><span class="p">,</span><span class="n">seq</span><span class="p">,</span><span class="n">swq</span><span class="p">,</span><span class="n">nwq</span><span class="p">]})</span>
                     
                     <span class="c1">#Get storm type, if it can be determined</span>
                     <span class="k">if</span> <span class="n">stype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;DB&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">vmax</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
                         <span class="n">stype</span> <span class="o">=</span> <span class="n">get_storm_type</span><span class="p">(</span><span class="n">vmax</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
                     <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stype</span><span class="p">)</span>
-
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ifhr</span> <span class="o">=</span> <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span>
+                <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">][</span><span class="s1">&#39;windrad&#39;</span><span class="p">][</span><span class="n">ifhr</span><span class="p">][</span><span class="n">rad</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">neq</span><span class="p">,</span><span class="n">seq</span><span class="p">,</span><span class="n">swq</span><span class="p">,</span><span class="n">nwq</span><span class="p">]</span>
+                
         <span class="c1">#Save dict locally</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span> <span class="o">=</span> <span class="n">forecasts</span>
         
@@ -1862,7 +2298,27 @@
 <span class="sd">        </span>
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
-<span class="sd">        This dict can be provided to ``utils.generate_nhc_cone()`` to generate the cone of uncertainty.</span>
+<span class="sd">        This dict can be provided to ``utils.generate_nhc_cone()`` to generate the cone of uncertainty. Below is an example forecast dict for Hurricane Michael (2018):</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; storm.get_nhc_forecast_dict(dt.datetime(2018,10,8,0))</span>
+<span class="sd">        {&#39;fhr&#39;: [0, 3, 12, 24, 36, 48, 72, 96, 120],</span>
+<span class="sd">         &#39;lat&#39;: [19.8, 20.0, 21.1, 22.7, 24.4, 26.3, 30.4, 34.9, 40.7],</span>
+<span class="sd">         &#39;lon&#39;: [-85.4, -85.4, -85.3, -85.6, -86.0, -86.1, -84.5, -78.4, -64.4],</span>
+<span class="sd">         &#39;vmax&#39;: [50, 50, 60, 65, 75, 85, 75, 55, 55],</span>
+<span class="sd">         &#39;mslp&#39;: [nan, 997, nan, nan, nan, nan, nan, nan, nan],</span>
+<span class="sd">         &#39;type&#39;: [&#39;TS&#39;, &#39;TS&#39;, &#39;TS&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;HU&#39;, &#39;TS&#39;, &#39;TS&#39;],</span>
+<span class="sd">         &#39;windrad&#39;: [{34: [120, 150, 90, 90], 50: [40, 0, 0, 0]},</span>
+<span class="sd">          {34: [120, 150, 90, 90], 50: [40, 0, 0, 0]},</span>
+<span class="sd">          {34: [120, 150, 90, 90], 50: [40, 40, 0, 0]},</span>
+<span class="sd">          {34: [130, 140, 90, 90], 50: [50, 50, 0, 0], 64: [20, 20, 0, 0]},</span>
+<span class="sd">          {34: [130, 130, 80, 90], 50: [50, 50, 0, 0], 64: [20, 20, 0, 0]},</span>
+<span class="sd">          {34: [130, 130, 70, 90], 50: [60, 60, 30, 40], 64: [25, 25, 15, 25]},</span>
+<span class="sd">          {34: [130, 130, 70, 80], 50: [60, 60, 30, 40]},</span>
+<span class="sd">          {34: [0, 0, 0, 0]},</span>
+<span class="sd">          {34: [0, 0, 0, 0]}],</span>
+<span class="sd">         &#39;init&#39;: datetime.datetime(2018, 10, 8, 0, 0)}</span>
+<span class="sd">        </span>
+<span class="sd">        As of Tropycal v0.5, ``windrad`` represents the forecast sustained wind radii (34, 50 and 64 knots) organized by [NE quadrant,SE quadrant,SW quadrant,NW quadrant] in nautical miles.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1">#Check to ensure the data source is HURDAT</span>
@@ -1951,8 +2407,7 @@
 <span class="sd">        dist_thresh : int</span>
 <span class="sd">            Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km.</span>
 <span class="sd">        Tors : pandas.DataFrame</span>
-<span class="sd">            DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm</span>
-<span class="sd">                for future use.</span>
+<span class="sd">            DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm for future use.</span>
 <span class="sd">        domain : str</span>
 <span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
 <span class="sd">        plotPPH : bool or str</span>
@@ -2132,28 +2587,83 @@
         
         <span class="c1">#Return axis or show figure</span>
         <span class="k">return</span> <span class="n">ax</span></div>
-            
-<div class="viewcode-block" id="Storm.get_recon"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.get_recon.html#tropycal.tracks.Storm.get_recon">[docs]</a>    <span class="k">def</span> <span class="nf">get_recon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">deltap_thresh</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">read_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">mission_url_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Storm.get_recon"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.get_recon.html#tropycal.tracks.Storm.get_recon">[docs]</a>    <span class="k">def</span> <span class="nf">get_recon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">path_vdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">path_hdobs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">path_dropsondes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates an instance of ReconDataset for this storm&#39;s data. Saves it as an attribute of this object (storm.recon).</span>
+<span class="sd">        Retrieves all aircraft reconnaissance data for this storm.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        storm : tropycal.tracks.Storm</span>
-<span class="sd">            Requested storm as an instance of a Storm object.</span>
-<span class="sd">        save_path : str, optional</span>
-<span class="sd">            Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.</span>
-<span class="sd">        read_path : str, optional</span>
-<span class="sd">            Filepath to read saved recon data from. If specified, &quot;save_path&quot; cannot be passed as an argument.</span>
+<span class="sd">        path_vdm : str, optional</span>
+<span class="sd">            Filepath of pickle file containing VDM data retrieved from ``vdms.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.</span>
+<span class="sd">        path_hdobs : str, optional</span>
+<span class="sd">            Filepath of pickle file containing HDOBs data retrieved from ``hdobs.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.</span>
+<span class="sd">        path_dropsondes : str, optional</span>
+<span class="sd">            Filepath of pickle file containing dropsonde data retrieved from ``dropsondes.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ReconDataset</span>
+<span class="sd">            Instance of ReconDataset is returned.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        In addition to returning an instance of ``ReconDataset``, this function additionally stores it as an attribute of this Storm object, such that all attributes and methods associated with the ``vdms``, ``hdobs`` and ``dropsondes`` classes can be directly accessed from this Storm object.</span>
+<span class="sd">        </span>
+<span class="sd">        One method of accessing the ``hdobs.plot_points()`` method is as follows:</span>
+<span class="sd">        </span>
+<span class="sd">        .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">            #Get data for Hurricane Michael (2018)</span>
+<span class="sd">            from tropycal import tracks</span>
+<span class="sd">            basin = tracks.TrackDataset()</span>
+<span class="sd">            storm = basin.get_storm((&#39;michael&#39;,2018))</span>
+<span class="sd">            </span>
+<span class="sd">            #Get all recon data for this storm</span>
+<span class="sd">            storm.get_recon()</span>
+<span class="sd">            </span>
+<span class="sd">            #Plot HDOBs points</span>
+<span class="sd">            storm.recon.hdobs.plot_points()</span>
+<span class="sd">        </span>
+<span class="sd">        The other method is using the returned ReconDataset instance from this function:</span>
+<span class="sd">        </span>
+<span class="sd">        .. code-block:: python</span>
+<span class="sd">    </span>
+<span class="sd">            #Get data for Hurricane Michael (2018)</span>
+<span class="sd">            from tropycal import tracks</span>
+<span class="sd">            basin = tracks.TrackDataset()</span>
+<span class="sd">            storm = basin.get_storm((&#39;michael&#39;,2018))</span>
+<span class="sd">            </span>
+<span class="sd">            #Get all recon data for this storm</span>
+<span class="sd">            recon = storm.get_recon()</span>
+<span class="sd">            </span>
+<span class="sd">            #Plot HDOBs points</span>
+<span class="sd">            recon.hdobs.plot_points()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">recon</span> <span class="o">=</span> <span class="n">ReconDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">deltap_thresh</span><span class="p">,</span><span class="n">mission_url_list</span><span class="p">,</span><span class="n">save_path</span><span class="p">,</span><span class="n">read_path</span><span class="p">,</span><span class="n">update</span><span class="p">)</span></div>
-                
+        <span class="bp">self</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">get_vdms</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">path_vdm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">get_hdobs</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">path_hdobs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">get_dropsondes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">path_dropsondes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recon</span></div>
+    
 <div class="viewcode-block" id="Storm.get_archer"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.get_archer.html#tropycal.tracks.Storm.get_archer">[docs]</a>    <span class="k">def</span> <span class="nf">get_archer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieves satellite-derived Archer track data for this storm, if available. Saves it as an attribute of this object (storm.archer).</span>
+<span class="sd">        Retrieves satellite-derived ARCHER track data for this storm, if available.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary containing ARCHER data for this storm.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The ARCHER (Automated Rotational Center Hurricane Eye Retrieval) data is provided courtesy of the `University of Wisconsin`_. This data is at a much higher temporal resolution than the Best Track data.</span>
+
+<span class="sd">        This function additionally saves the ARCHER data as an attribute of this object (storm.archer).</span>
+<span class="sd">        </span>
+<span class="sd">        .. _University of Wisconsin: http://tropic.ssec.wisc.edu/real-time/archerOnline/web/index.shtml</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1">#Format URL</span>
@@ -2175,7 +2685,10 @@
                 <span class="n">archer</span><span class="p">[</span><span class="s1">&#39;mnCldTmp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="o">-</span><span class="mi">9</span><span class="o">-</span><span class="n">ndx</span><span class="p">]))</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">continue</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">archer</span> <span class="o">=</span> <span class="n">archer</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">archer</span> <span class="o">=</span> <span class="n">archer</span>
+        
+        <span class="k">return</span> <span class="n">archer</span></div></div>
+    
     
 </pre></div>
 

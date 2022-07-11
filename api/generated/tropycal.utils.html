@@ -59,6 +59,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.accumulated_cyclone_energy.html">accumulated_cyclone_energy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.wind_to_category.html">wind_to_category</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.category_to_wind.html">category_to_wind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.calc_ensemble_ellipse.html">calc_ensemble_ellipse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.classify_subtropical.html">classify_subtropical</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.dropsonde_mslp_estimate.html">dropsonde_mslp_estimate</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.generate_nhc_cone.html">generate_nhc_cone</a></li>
@@ -137,34 +138,37 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.category_to_wind.html#tropycal.utils.category_to_wind" title="tropycal.utils.category_to_wind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">category_to_wind</span></code></a>(category)</p></td>
 <td><p>Convert Saffir-Simpson Hurricane Wind Scale category to minimum threshold sustained wind speed in knots.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.classify_subtropical.html#tropycal.utils.classify_subtropical" title="tropycal.utils.classify_subtropical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classify_subtropical</span></code></a>(storm_type)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.calc_ensemble_ellipse.html#tropycal.utils.calc_ensemble_ellipse" title="tropycal.utils.calc_ensemble_ellipse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_ensemble_ellipse</span></code></a>(member_lons, member_lats)</p></td>
+<td><p>Calculate an ellipse representing ensemble member location spread.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.classify_subtropical.html#tropycal.utils.classify_subtropical" title="tropycal.utils.classify_subtropical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classify_subtropical</span></code></a>(storm_type)</p></td>
 <td><p>Determine whether a tropical cyclone was purely subtropical.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.dropsonde_mslp_estimate.html#tropycal.utils.dropsonde_mslp_estimate" title="tropycal.utils.dropsonde_mslp_estimate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropsonde_mslp_estimate</span></code></a>(mslp, surface_wind)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.dropsonde_mslp_estimate.html#tropycal.utils.dropsonde_mslp_estimate" title="tropycal.utils.dropsonde_mslp_estimate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropsonde_mslp_estimate</span></code></a>(mslp, surface_wind)</p></td>
 <td><p>Apply a NHC rule of thumb for estimating a TC's minimum central MSLP.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.generate_nhc_cone.html#tropycal.utils.generate_nhc_cone" title="tropycal.utils.generate_nhc_cone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_nhc_cone</span></code></a>(forecast, basin[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.generate_nhc_cone.html#tropycal.utils.generate_nhc_cone" title="tropycal.utils.generate_nhc_cone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_nhc_cone</span></code></a>(forecast, basin[, ...])</p></td>
 <td><p>Generates a gridded cone of uncertainty using forecast data from NHC.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.get_basin.html#tropycal.utils.get_basin" title="tropycal.utils.get_basin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_basin</span></code></a>(lat, lon[, storm_id])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.get_basin.html#tropycal.utils.get_basin" title="tropycal.utils.get_basin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_basin</span></code></a>(lat, lon[, source_basin])</p></td>
 <td><p>Returns the current basin of the tropical cyclone.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.get_storm_classification.html#tropycal.utils.get_storm_classification" title="tropycal.utils.get_storm_classification"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm_classification</span></code></a>(wind_speed, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.get_storm_classification.html#tropycal.utils.get_storm_classification" title="tropycal.utils.get_storm_classification"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm_classification</span></code></a>(wind_speed, ...)</p></td>
 <td><p>Retrieve the tropical cyclone classification given its subtropical status and current basin.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.get_storm_type.html#tropycal.utils.get_storm_type" title="tropycal.utils.get_storm_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm_type</span></code></a>(wind_speed, subtropical_flag)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.get_storm_type.html#tropycal.utils.get_storm_type" title="tropycal.utils.get_storm_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_storm_type</span></code></a>(wind_speed, subtropical_flag)</p></td>
 <td><p>Retrieve the 2-character tropical cyclone type (e.g., &quot;TD&quot;, &quot;TS&quot;, &quot;HU&quot;) given its subtropical status.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.get_two_current.html#tropycal.utils.get_two_current" title="tropycal.utils.get_two_current"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_two_current</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.get_two_current.html#tropycal.utils.get_two_current" title="tropycal.utils.get_two_current"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_two_current</span></code></a>()</p></td>
 <td><p>Retrieve the latest NHC Tropical Weather Outlook (TWO).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.get_two_archive.html#tropycal.utils.get_two_archive" title="tropycal.utils.get_two_archive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_two_archive</span></code></a>(time)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.get_two_archive.html#tropycal.utils.get_two_archive" title="tropycal.utils.get_two_archive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_two_archive</span></code></a>(time)</p></td>
 <td><p>Retrieve an archived NHC Tropical Weather Outlook (TWO).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.knots_to_mph.html#tropycal.utils.knots_to_mph" title="tropycal.utils.knots_to_mph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">knots_to_mph</span></code></a>(wind_speed)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.knots_to_mph.html#tropycal.utils.knots_to_mph" title="tropycal.utils.knots_to_mph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">knots_to_mph</span></code></a>(wind_speed)</p></td>
 <td><p>Convert wind from knots to miles per hour, in increments of 5 as used by NHC.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.nhc_cone_radii.html#tropycal.utils.nhc_cone_radii" title="tropycal.utils.nhc_cone_radii"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nhc_cone_radii</span></code></a>(year, basin[, forecast_hour])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.nhc_cone_radii.html#tropycal.utils.nhc_cone_radii" title="tropycal.utils.nhc_cone_radii"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nhc_cone_radii</span></code></a>(year, basin[, forecast_hour])</p></td>
 <td><p>Retrieve the official NHC Cone of Uncertainty radii by basin, year and forecast hour(s).</p></td>
 </tr>
 </tbody>

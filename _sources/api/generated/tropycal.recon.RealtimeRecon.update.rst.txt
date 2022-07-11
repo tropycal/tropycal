@@ -1,0 +1,12 @@
+RealtimeRecon.update
+===================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: RealtimeRecon.update
+
+.. include:: tropycal.recon.RealtimeRecon.update
+
+.. raw:: html
+
+      <div style='clear:both'></div>

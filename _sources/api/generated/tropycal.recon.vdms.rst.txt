@@ -18,6 +18,7 @@ tropycal.recon.vdms
       
          vdms.isel
          vdms.plot_points
+         vdms.plot_time_series
          vdms.sel
          vdms.to_pickle
          vdms.update

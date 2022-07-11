@@ -59,6 +59,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.accumulated_cyclone_energy.html">accumulated_cyclone_energy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.wind_to_category.html">wind_to_category</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.category_to_wind.html">category_to_wind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.calc_ensemble_ellipse.html">calc_ensemble_ellipse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.classify_subtropical.html">classify_subtropical</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.dropsonde_mslp_estimate.html">dropsonde_mslp_estimate</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.generate_nhc_cone.html">generate_nhc_cone</a></li>
@@ -115,7 +116,6 @@
 <span class="sig-prename descclassname"><span class="pre">tropycal.utils.</span></span><span class="sig-name descname"><span class="pre">get_storm_classification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtropical_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/generic_utils.html#get_storm_classification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.utils.get_storm_classification" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve the tropical cyclone classification given its subtropical status and current basin.</p>
 <p>These strings take the format of “Tropical Storm”, “Hurricane”, “Typhoon”, etc.</p>
-<p>Warning: This function currently does not differentiate between 1-minute, 3-minute and 10-minute sustained wind speeds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -128,6 +128,11 @@
 <dd class="field-even"><p><em>str</em> – String denoting the classification of the tropical cyclone.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function currently does not differentiate between 1-minute, 3-minute and 10-minute sustained wind speeds.</p>
+</div>
 </dd></dl>
 
 <div style='clear:both'></div></div>

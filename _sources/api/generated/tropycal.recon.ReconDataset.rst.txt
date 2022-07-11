@@ -19,6 +19,7 @@ tropycal.recon.ReconDataset
          ReconDataset.find_mission
          ReconDataset.get_dropsondes
          ReconDataset.get_hdobs
+         ReconDataset.get_mission
          ReconDataset.get_track
          ReconDataset.get_vdms
          ReconDataset.plot_summary

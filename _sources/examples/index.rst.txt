@@ -15,27 +15,6 @@ Examples of using tropycal to generate images and text.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Realtime Functionality">
-
-.. only:: html
-
- .. figure:: /examples/images/thumb/sphx_glr_realtime_thumb.png
-     :alt: Realtime Functionality
-
-     :ref:`sphx_glr_examples_realtime.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /examples/realtime
-
-.. raw:: html
-
     <div class="sphx-glr-thumbcontainer" tooltip="Individual Season Analysis">
 
 .. only:: html
@@ -54,6 +33,27 @@ Examples of using tropycal to generate images and text.
    :hidden:
 
    /examples/tracks.season
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Realtime Functionality">
+
+.. only:: html
+
+ .. figure:: /examples/images/thumb/sphx_glr_realtime_thumb.png
+     :alt: Realtime Functionality
+
+     :ref:`sphx_glr_examples_realtime.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/realtime
 
 .. raw:: html
 

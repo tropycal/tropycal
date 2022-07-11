@@ -1,0 +1,12 @@
+Storm.plot_models
+=================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Storm.plot_models
+
+.. include:: tropycal.tracks.Storm.plot_models
+
+.. raw:: html
+
+      <div style='clear:both'></div>

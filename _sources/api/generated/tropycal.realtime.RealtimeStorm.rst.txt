@@ -22,7 +22,6 @@ tropycal.realtime.RealtimeStorm
          RealtimeStorm.get_discussion_realtime
          RealtimeStorm.get_forecast_realtime
          RealtimeStorm.get_nhc_discussion
-         RealtimeStorm.get_nhc_discussion_realtime
          RealtimeStorm.get_nhc_forecast_dict
          RealtimeStorm.get_operational_forecasts
          RealtimeStorm.get_realtime_formation_prob
@@ -32,8 +31,9 @@ tropycal.realtime.RealtimeStorm
          RealtimeStorm.list_nhc_discussions
          RealtimeStorm.plot
          RealtimeStorm.plot_TCtors_rotated
+         RealtimeStorm.plot_ensembles
          RealtimeStorm.plot_forecast_realtime
-         RealtimeStorm.plot_gefs_ensembles
+         RealtimeStorm.plot_models
          RealtimeStorm.plot_nhc_forecast
          RealtimeStorm.plot_tors
          RealtimeStorm.query_nhc_discussions

@@ -53,6 +53,8 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">Recon</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.Mission.html">tropycal.recon.Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.RealtimeRecon.html">tropycal.recon.RealtimeRecon</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.recon.ReconDataset.html">tropycal.recon.ReconDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.recon.dropsondes.html">tropycal.recon.dropsondes</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.recon.hdobs.html">tropycal.recon.hdobs</a><ul class="current">
@@ -61,6 +63,7 @@
 <li class="toctree-l4 current"><a class="current reference internal" href="#">hdobs.plot_maps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.plot_points.html">hdobs.plot_points</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.plot_swath.html">hdobs.plot_swath</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.plot_time_series.html">hdobs.plot_time_series</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.sel.html">hdobs.sel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.to_pickle.html">hdobs.to_pickle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.hdobs.update.html">hdobs.update</a></li>
@@ -124,7 +127,7 @@
 </ul>
 </p></li>
 <li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
-<li><p><strong>radlim</strong> (<em>int</em><em>, </em><em>optional</em>) – Radius from storm center, in kilometers, to plot in hovmoller. Default is 200 km.</p></li>
+<li><p><strong>radlim</strong> (<em>int</em><em>, </em><em>optional</em>) – Radius from storm center, in kilometers, to plot. Default is 200 km.</p></li>
 <li><p><strong>window</strong> (<em>int</em><em>, </em><em>optional</em>) – Window of hours to interpolate between observations. Default is 6 hours.</p></li>
 <li><p><strong>align</strong> (<em>str</em><em>, </em><em>optional</em>) – Alignment of window. Default is ‘center’.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em><em>, </em><em>optional</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>

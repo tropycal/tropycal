@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RealtimeStorm.plot_models &mdash; tropycal </title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="RealtimeStorm.plot_nhc_forecast" href="tropycal.realtime.RealtimeStorm.plot_nhc_forecast.html" />
+    <link rel="prev" title="RealtimeStorm.plot_forecast_realtime" href="tropycal.realtime.RealtimeStorm.plot_forecast_realtime.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> tropycal
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">Tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.realtime.html">Realtime</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.realtime.Realtime.html">tropycal.realtime.Realtime</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.html">tropycal.realtime.RealtimeStorm</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.download_graphic_realtime.html">RealtimeStorm.download_graphic_realtime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.download_tcr.html">RealtimeStorm.download_tcr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_archer.html">RealtimeStorm.get_archer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_discussion_realtime.html">RealtimeStorm.get_discussion_realtime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_forecast_realtime.html">RealtimeStorm.get_forecast_realtime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_nhc_discussion.html">RealtimeStorm.get_nhc_discussion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_nhc_forecast_dict.html">RealtimeStorm.get_nhc_forecast_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_operational_forecasts.html">RealtimeStorm.get_operational_forecasts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_realtime_formation_prob.html">RealtimeStorm.get_realtime_formation_prob</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_realtime_info.html">RealtimeStorm.get_realtime_info</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_recon.html">RealtimeStorm.get_recon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.interp.html">RealtimeStorm.interp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.list_nhc_discussions.html">RealtimeStorm.list_nhc_discussions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot.html">RealtimeStorm.plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_TCtors_rotated.html">RealtimeStorm.plot_TCtors_rotated</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_ensembles.html">RealtimeStorm.plot_ensembles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_forecast_realtime.html">RealtimeStorm.plot_forecast_realtime</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">RealtimeStorm.plot_models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_nhc_forecast.html">RealtimeStorm.plot_nhc_forecast</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_tors.html">RealtimeStorm.plot_tors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.query_nhc_discussions.html">RealtimeStorm.query_nhc_discussions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.sel.html">RealtimeStorm.sel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.to_dataframe.html">RealtimeStorm.to_dataframe</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.to_dict.html">RealtimeStorm.to_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.to_xarray.html">RealtimeStorm.to_xarray</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tropycal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+          <li><a href="tropycal.realtime.html">Realtime</a> &raquo;</li>
+          <li><a href="tropycal.realtime.RealtimeStorm.html">tropycal.realtime.RealtimeStorm</a> &raquo;</li>
+      <li>RealtimeStorm.plot_models</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/generated/tropycal.realtime.RealtimeStorm.plot_models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="realtimestorm-plot-models">
+<h1>RealtimeStorm.plot_models<a class="headerlink" href="#realtimestorm-plot-models" title="Permalink to this headline">¶</a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="tropycal.realtime.RealtimeStorm.plot_models">
+<span class="sig-prename descclassname"><span class="pre">RealtimeStorm.</span></span><span class="sig-name descname"><span class="pre">plot_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">forecast</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_btk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dynamic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cartopy_proj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a plot of operational model forecast tracks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>forecast</strong> (<em>datetime.datetime</em>) – Datetime object representing the GEFS run initialization.</p></li>
+<li><p><strong>plot_btk</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, Best Track will be plotted alongside operational forecast models. Default is False.</p></li>
+<li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
+<li><p><strong>ax</strong> (<em>axes</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>cartopy_proj</strong> (<em>ccrs</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>models</strong> (<em>dict</em>) – Dictionary with <strong>key</strong> = model name (case-insensitive) and <strong>value</strong> = model color. Scroll below for available model names.</p></li>
+<li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of forecast lines. Scroll below for available options.</p></li>
+<li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>ax</em> – Instance of axes containing the plot is returned.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ol class="arabic simple">
+<li><p>For years before the HMON model was available, the HMON key instead defaults to the old GFDL model.</p></li>
+<li><p>For storms in the JTWC area of responsibility, the NHC key defaults to JTWC.</p></li>
+</ol>
+</div>
+<p>The following model names are available as keys in the “model” dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., <code class="docutils literal notranslate"><span class="pre">models</span> <span class="pre">=</span> <span class="pre">{'gfs':None}</span></code> or <code class="docutils literal notranslate"><span class="pre">models</span> <span class="pre">=</span> <span class="pre">{'GFS':None}</span></code>).</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Model Acronym</p></th>
+<th class="head"><p>Full Model Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CMC</p></td>
+<td><p>Canadian Meteorological Centre (CMC)</p></td>
+</tr>
+<tr class="row-odd"><td><p>GFS</p></td>
+<td><p>Global Forecast System (GFS)</p></td>
+</tr>
+<tr class="row-even"><td><p>UKM</p></td>
+<td><p>UK Met Office (UKMET)</p></td>
+</tr>
+<tr class="row-odd"><td><p>ECM</p></td>
+<td><p>European Centre for Medium-range Weather Forecasts (ECMWF)</p></td>
+</tr>
+<tr class="row-even"><td><p>HMON</p></td>
+<td><p>Hurricanes in a Multi-scale Ocean-coupled Non-hydrostatic Model (HMON)</p></td>
+</tr>
+<tr class="row-odd"><td><p>HWRF</p></td>
+<td><p>Hurricane Weather Research and Forecast (HWRF)</p></td>
+</tr>
+<tr class="row-even"><td><p>NHC</p></td>
+<td><p>National Hurricane Center (NHC)</p></td>
+</tr>
+</tbody>
+</table>
+<p>The following properties are available for customizing forecast model tracks, via <code class="docutils literal notranslate"><span class="pre">prop</span></code>.</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>linewidth</p></td>
+<td><p>Line width of forecast model track. Default is 2.5.</p></td>
+</tr>
+<tr class="row-odd"><td><p>marker</p></td>
+<td><p>Marker type for forecast hours. Options are ‘label’ (default), ‘dot’ or None.</p></td>
+</tr>
+<tr class="row-even"><td><p>marker_hours</p></td>
+<td><p>List of forecast hours to mark. Default is [24,48,72,96,120,144,168].</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div style='clear:both'></div></div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tropycal.realtime.RealtimeStorm.plot_forecast_realtime.html" class="btn btn-neutral float-left" title="RealtimeStorm.plot_forecast_realtime" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.realtime.RealtimeStorm.plot_nhc_forecast.html" class="btn btn-neutral float-right" title="RealtimeStorm.plot_nhc_forecast" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

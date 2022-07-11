@@ -1,0 +1,12 @@
+Realtime.update
+=================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: Realtime.update
+
+.. include:: tropycal.realtime.Realtime.update
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -1,0 +1,12 @@
+Mission.get_vdms
+===============================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: Mission.get_vdms
+
+.. include:: tropycal.recon.Mission.get_vdms
+
+.. raw:: html
+
+      <div style='clear:both'></div>

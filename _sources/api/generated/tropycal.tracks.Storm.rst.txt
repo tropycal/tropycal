@@ -26,7 +26,8 @@ tropycal.tracks.Storm
          Storm.list_nhc_discussions
          Storm.plot
          Storm.plot_TCtors_rotated
-         Storm.plot_gefs_ensembles
+         Storm.plot_ensembles
+         Storm.plot_models
          Storm.plot_nhc_forecast
          Storm.plot_tors
          Storm.query_nhc_discussions

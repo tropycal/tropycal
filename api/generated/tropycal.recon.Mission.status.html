@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission.status &mdash; tropycal </title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="tropycal.recon.RealtimeRecon" href="tropycal.recon.RealtimeRecon.html" />
+    <link rel="prev" title="Mission.plot_time_series" href="tropycal.recon.Mission.plot_time_series.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> tropycal
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">Tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">Recon</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="tropycal.recon.Mission.html">tropycal.recon.Mission</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.Mission.get_dropsondes.html">Mission.get_dropsondes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.Mission.get_hdobs.html">Mission.get_hdobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.Mission.get_vdms.html">Mission.get_vdms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.Mission.plot_points.html">Mission.plot_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.Mission.plot_skewt.html">Mission.plot_skewt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.Mission.plot_time_series.html">Mission.plot_time_series</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Mission.status</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.RealtimeRecon.html">tropycal.recon.RealtimeRecon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.ReconDataset.html">tropycal.recon.ReconDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.dropsondes.html">tropycal.recon.dropsondes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.hdobs.html">tropycal.recon.hdobs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.vdms.html">tropycal.recon.vdms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tropycal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+          <li><a href="tropycal.recon.html">Recon</a> &raquo;</li>
+          <li><a href="tropycal.recon.Mission.html">tropycal.recon.Mission</a> &raquo;</li>
+      <li>Mission.status</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/generated/tropycal.recon.Mission.status.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="mission-status">
+<h1>Mission.status<a class="headerlink" href="#mission-status" title="Permalink to this headline">¶</a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="tropycal.recon.Mission.status">
+<span class="sig-prename descclassname"><span class="pre">Mission.</span></span><span class="sig-name descname"><span class="pre">status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/realtime.html#Mission.status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.recon.Mission.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current mission status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>str</em> – String corresponding to the current mission status.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function returns four possible values:</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>“En Route”</p></td>
+<td><p>Mission has not flown higher than 650 hPa or initial peak altitude yet</p></td>
+</tr>
+<tr class="row-odd"><td><p>“In Progress”</p></td>
+<td><p>Mission has descended below 650 hPa, or is constant below 650 hPa</p></td>
+</tr>
+<tr class="row-even"><td><p>“Finished”</p></td>
+<td><p>Mission has re-ascended above 650 hPa for a sufficient duration</p></td>
+</tr>
+<tr class="row-odd"><td><p>“Upper Air”</p></td>
+<td><p>Mission is a NOAA9 aircraft, suggesting it is an upper-level mission.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div style='clear:both'></div></div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tropycal.recon.Mission.plot_time_series.html" class="btn btn-neutral float-left" title="Mission.plot_time_series" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.recon.RealtimeRecon.html" class="btn btn-neutral float-right" title="tropycal.recon.RealtimeRecon" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Tropycal Developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

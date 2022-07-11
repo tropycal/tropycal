@@ -21,7 +21,7 @@
 ======================
 Realtime Functionality
 ======================
-This sample script shows how to use Tropycal to retrieve and plot real time tropical cyclones and potential formation. As this script was written on 2 June 2022, the data below is valid for the time this script was written.
+This sample script shows how to use Tropycal to retrieve and plot real time tropical cyclones and potential formation. As this script was written on 15 June 2022, the data below is valid for the time this script was written.
 
 .. GENERATED FROM PYTHON SOURCE LINES 7-10
 
@@ -66,7 +66,7 @@ To keep this demonstration simple, we'll solely focus on the North Atlantic basi
  .. code-block:: none
 
     --> Starting to read in current storm data
-    --> Completed reading in current storm data (0.68 seconds)
+    --> Completed reading in current storm data (0.95 seconds)
 
 
 
@@ -98,12 +98,14 @@ To quickly view the content of the Realtime object, we can simply print it:
 
     <tropycal.realtime.Realtime>
     Dataset Summary:
-        Numbers of active storms: 1
+        Numbers of active storms: 3
 
     Active Storms:
-        AL012022
+        EP022022
 
     Active Invests:
+        AL932022
+        EP932022
 
 
 
@@ -116,7 +118,7 @@ Alternatively, we can also list all active storms, along with an optional filter
 .. code-block:: default
 
 
-    realtime_obj.list_active_storms(basin='north_atlantic')
+    realtime_obj.list_active_storms(basin='east_pacific')
 
 
 
@@ -129,28 +131,30 @@ Alternatively, we can also list all active storms, along with an optional filter
  .. code-block:: none
 
 
-    ['AL012022']
+    ['EP022022', 'EP932022']
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-39
+.. GENERATED FROM PYTHON SOURCE LINES 36-41
 
 A new functionality with Tropycal v0.4 is to plot a summary of all ongoing activity, whether globally or by basin. This function can be highly customized, with more details in the documentation.
 
-At the time this script was written, Potential Tropical Cyclone #1 is active in the western Caribbean, with a 90% of development into a tropical cyclone. This will be plotted in the summary below:
+At the time this script was written, Hurricane Blas is active in the eastern Pacific Ocean, with East Pacific invest 93E (60% of development) and Atlantic invest 93L (30% of development).
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-42
+The domain option for this plot is set to 'all' by default, plotting the full globe. This can also be a basin (e.g., 'north_atlantic', 'east_pacific'), or a custom domain, as we'll plot below.
+
+.. GENERATED FROM PYTHON SOURCE LINES 41-44
 
 .. code-block:: default
 
 
-    realtime_obj.plot_summary(domain='north_atlantic')
+    realtime_obj.plot_summary(domain={'w':-130,'e':-60,'s':5,'n':50})
 
 
 
 
 .. image-sg:: /examples/images/sphx_glr_realtime_001.png
-   :alt: Summary & NHC 5-Day Formation Outlook, Valid: 22 UTC 02 Jun 2022
+   :alt: Summary & NHC 5-Day Formation Outlook, Valid: 17 UTC 15 Jun 2022
    :srcset: /examples/images/sphx_glr_realtime_001.png
    :class: sphx-glr-single-img
 
@@ -164,22 +168,60 @@ At the time this script was written, Potential Tropical Cyclone #1 is active in 
     C:\Users\Tomer4\anaconda3\envs\main\lib\site-packages\shapefile.py:391: UserWarning: Shapefile shape has invalid polygon: no exterior rings found (must have clockwise orientation); interpreting holes as exteriors.
       warnings.warn('Shapefile shape has invalid polygon: no exterior rings found (must have clockwise orientation); interpreting holes as exteriors.')
 
-    <GeoAxesSubplot:title={'left':'Summary & NHC 5-Day Formation Outlook','right':'Valid: 22 UTC 02 Jun 2022'}>
+    <GeoAxesSubplot:title={'left':'Summary & NHC 5-Day Formation Outlook','right':'Valid: 17 UTC 15 Jun 2022'}>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-46
+.. GENERATED FROM PYTHON SOURCE LINES 45-53
+
+Let's look at a few ways to customize this plot. There are four properties available to customize the plot, detailed more thoroughly in the documentation:
+
+- ``two_prop`` - Properties to customize NHC Tropical Weather Outlook (TWO) plotting
+- ``invest_prop`` - Properties to customize invest plotting
+- ``storm_prop`` - Properties to customize tropical cyclone plotting
+- ``cone_prop`` - Properties to customize forecast cone/track plotting
+
+The above plot includes the NHC TWO by default. Plotting the TWO overrides any invests that have a TWO associated with them (invests that are outside of NHC's area of responsibility or don't have a TWO still appear). We can pass the ``'plot':False`` argument to any property dict, which in doing so removes that element from the summary map. Let's test this out by removing the TWO and cone of uncertainty from the plot:
+
+.. GENERATED FROM PYTHON SOURCE LINES 53-56
+
+.. code-block:: default
+
+
+    realtime_obj.plot_summary(domain={'w':-130,'e':-60,'s':5,'n':50}, two_prop={'plot':False}, cone_prop={'plot':False})
+
+
+
+
+.. image-sg:: /examples/images/sphx_glr_realtime_002.png
+   :alt: Summary, Valid: 17 UTC 15 Jun 2022
+   :srcset: /examples/images/sphx_glr_realtime_002.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <GeoAxesSubplot:title={'left':'Summary','right':'Valid: 17 UTC 15 Jun 2022'}>
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 57-60
 
 Realtime Storms
 ---------------
 To retrieve a storm from a Realtime object, simply use its ``get_storm()`` method and provide an ID as listed in ``list_active_storms()``:
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-49
+.. GENERATED FROM PYTHON SOURCE LINES 60-63
 
 .. code-block:: default
 
 
-    storm = realtime_obj.get_storm('AL012022')
+    storm = realtime_obj.get_storm('EP022022')
 
 
 
@@ -188,13 +230,13 @@ To retrieve a storm from a Realtime object, simply use its ``get_storm()`` metho
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 50-53
+.. GENERATED FROM PYTHON SOURCE LINES 64-67
 
 This now returns a RealtimeStorm object. RealtimeStorm objects inherit the same functionality as Storm objects, but have additional functions unique to realtime storms. Additionally, as these can also be valid for invests, certain functionality that is only available for tropical cyclones (e.g., NHC forecasts or discussions) is unavailable for invests.
 
 Let's view what this RealtimeStorm object contains:
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-56
+.. GENERATED FROM PYTHON SOURCE LINES 67-70
 
 .. code-block:: default
 
@@ -214,48 +256,48 @@ Let's view what this RealtimeStorm object contains:
 
     <tropycal.realtime.RealtimeStorm>
     Storm Summary:
-        Maximum Wind:      N/A knots
-        Minimum Pressure:  N/A hPa
-        Start Date:        N/A
-        End Date:          N/A
+        Maximum Wind:      65 knots
+        Minimum Pressure:  988 hPa
+        Start Date:        0000 UTC 14 June 2022
+        End Date:          1200 UTC 15 June 2022
 
     Variables:
-        date        (datetime) [2022-05-31 18:00:00 .... 2022-06-02 18:00:00]
+        date        (datetime) [2022-06-05 00:00:00 .... 2022-06-15 12:00:00]
         extra_obs   (int32) [0 .... 0]
         special     (str) [ .... ]
-        type        (str) [DB .... LO]
-        lat         (float64) [17.2 .... 21.3]
-        lon         (float64) [-88.7 .... -87.5]
-        vmax        (int32) [20 .... 30]
-        mslp        (int32) [1008 .... 1004]
-        wmo_basin   (str) [north_atlantic .... north_atlantic]
+        type        (str) [DB .... HU]
+        lat         (float64) [11.8 .... 15.0]
+        lon         (float64) [-94.0 .... -102.7]
+        vmax        (int32) [20 .... 65]
+        mslp        (int32) [1008 .... 988]
+        wmo_basin   (str) [east_pacific .... east_pacific]
 
     More Information:
-        id:              AL012022
-        operational_id:  AL012022
-        name:            ONE
+        id:              EP022022
+        operational_id:  EP022022
+        name:            BLAS
         year:            2022
         season:          2022
-        basin:           north_atlantic
+        basin:           east_pacific
         source_info:     NHC Hurricane Database
         invest:          False
         source_method:   NHC's Automated Tropical Cyclone Forecasting System (ATCF)
         source_url:      https://ftp.nhc.noaa.gov/atcf/btk/
         source:          hurdat
-        ace:             0.0
-        prob_2day:       90%
-        prob_5day:       90%
-        risk_2day:       High
-        risk_5day:       High
+        ace:             1.4
+        prob_2day:       N/A
+        prob_5day:       N/A
+        risk_2day:       N/A
+        risk_5day:       N/A
         realtime:        True
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-58
+.. GENERATED FROM PYTHON SOURCE LINES 71-72
 
 A quick and easy way to check if a storm is an invest is by checking its ``invest`` attribute. This will let you know if you can use the full set of functionality available for tropical cyclones or not.
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-61
+.. GENERATED FROM PYTHON SOURCE LINES 72-75
 
 .. code-block:: default
 
@@ -277,13 +319,13 @@ A quick and easy way to check if a storm is an invest is by checking its ``inves
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-65
+.. GENERATED FROM PYTHON SOURCE LINES 76-79
 
 The next few blocks will overview functions unique to RealtimeStorm objects. We can easily retrieve the latest available forecast dictionary from NHC or JTWC, depending on what area of responsibility the storm is in.
 
 This function also calculates the forecast Accumulated Cyclone Energy (ACE), derived by combining its observed ACE through the current time plus the forecast ACE using linearly interpolated forecast sustained wind.
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-68
+.. GENERATED FROM PYTHON SOURCE LINES 79-82
 
 .. code-block:: default
 
@@ -301,15 +343,15 @@ This function also calculates the forecast Accumulated Cyclone Energy (ACE), der
  .. code-block:: none
 
 
-    {'fhr': [0, 3, 12, 24, 36, 48, 60, 72, 96, 120], 'lat': [21.3, 21.4, 22.3, 23.5, 24.8, 26.5, 28.7, 30.6, 33.5, 36.0], 'lon': [-87.5, -87.5, -87.4, -86.5, -84.9, -82.3, -79.3, -76.0, -70.0, -64.0], 'vmax': [30, 30, 30, 35, 35, 35, 40, 45, 45, 40], 'mslp': [nan, 1003, nan, nan, nan, nan, nan, nan, nan, nan], 'cumulative_ace': [0.0, 0.0, 0.1, 0.4, 0.6, 0.9, 1.3, 2.1, 2.8], 'cumulative_ace_fhr': [0, 12, 24, 36, 48, 60, 72, 96, 120], 'type': ['LO', 'LO', 'TD', 'TS', 'TS', 'TS', 'TD', 'TS', 'TS', 'TS'], 'init': datetime.datetime(2022, 6, 2, 18, 0)}
+    {'fhr': [0, 3, 12, 24, 36, 48, 60, 72, 96, 120], 'lat': [15.0, 14.9, 15.3, 15.8, 16.5, 17.1, 17.7, 18.2, 18.8, 19.0], 'lon': [-102.7, -102.8, -103.5, -104.8, -106.6, -108.3, -110.0, -111.6, -114.1, -116.5], 'vmax': [65, 65, 75, 85, 80, 75, 65, 55, 40, 30], 'mslp': [nan, 988, nan, nan, nan, nan, nan, nan, nan, nan], 'cumulative_ace': [1.4, 2.4, 3.8, 5.1, 6.3, 7.2, 7.9, 8.7, 9.0], 'cumulative_ace_fhr': [0, 12, 24, 36, 48, 60, 72, 96, 120], 'type': ['HU', 'HU', 'HU', 'HU', 'HU', 'HU', 'HU', 'TS', 'TS', 'TD'], 'init': datetime.datetime(2022, 6, 15, 12, 0)}
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-70
+.. GENERATED FROM PYTHON SOURCE LINES 83-84
 
 We can also plot it using the ``plot_forecast_realtime()`` method:
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-73
+.. GENERATED FROM PYTHON SOURCE LINES 84-87
 
 .. code-block:: default
 
@@ -319,9 +361,9 @@ We can also plot it using the ``plot_forecast_realtime()`` method:
 
 
 
-.. image-sg:: /examples/images/sphx_glr_realtime_002.png
-   :alt: Potential Tropical Cyclone ONE, Current Intensity: 35 mph • 1003 hPa NHC Issued: 2100 UTC 02 Jun 2022
-   :srcset: /examples/images/sphx_glr_realtime_002.png
+.. image-sg:: /examples/images/sphx_glr_realtime_003.png
+   :alt: Hurricane BLAS, Current Intensity: 75 mph • 988 hPa NHC Issued: 1500 UTC 15 Jun 2022
+   :srcset: /examples/images/sphx_glr_realtime_003.png
    :class: sphx-glr-single-img
 
 
@@ -332,15 +374,15 @@ We can also plot it using the ``plot_forecast_realtime()`` method:
  .. code-block:: none
 
 
-    <GeoAxesSubplot:title={'left':'Potential Tropical Cyclone ONE','right':'Current Intensity: 35 mph • 1003 hPa\nNHC Issued: 2100 UTC 02 Jun 2022'}>
+    <GeoAxesSubplot:title={'left':'Hurricane BLAS','right':'Current Intensity: 75 mph • 988 hPa\nNHC Issued: 1500 UTC 15 Jun 2022'}>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-75
+.. GENERATED FROM PYTHON SOURCE LINES 88-89
 
 Storm forecast discussions can also be retrieved for storms in NHC's area of responsibility, or the Prognostic Reasoning product for JTWC's area of responsibility.
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-78
+.. GENERATED FROM PYTHON SOURCE LINES 89-92
 
 .. code-block:: default
 
@@ -358,22 +400,23 @@ Storm forecast discussions can also be retrieved for storms in NHC's area of res
  .. code-block:: none
 
 
-    {'id': 1, 'time_issued': datetime.datetime(2022, 6, 2, 21, 0), 'text': 'ZCZC MIATCDAT1 ALL\nTTAA00 KNHC DDHHMM\n \nPotential Tropical Cyclone One Discussion Number   1\nNWS National Hurricane Center Miami FL       AL012022\n400 PM CDT Thu Jun 02 2022\n \nSatellite imagery, surface observations, and reports from an Air \nForce Reserve Hurricane Hunter aircraft show that a broad low \npressure area is centered over the northeastern part of the Yucatan \nPeninsula of Mexico.  This system is currently producing poorly \norganized convection in the northeastern quadrant due to the effects \nof 20-30 kt of southwesterly vertical wind shear.  The central \npressure is near 1003 mb, and earlier scatterometer data showed \nwinds near 30 kt well to the east of the center.  Due to the \npossibility that the system could become a tropical storm with \nimpacts in the Florida Keys, and portions of the Florida Peninsula \nand western Cuba, advisories are initiated on Potential Tropical \nCyclone One with tropical storm watches issued for those areas.\n\nThe initial motion is 360/3.  The system should turn northeastward \nduring the next 12-24 h as it encounters the southern edge of the \nmid-latitude westerlies, and a general northeastward motion should \ncontinue through the end of the forecast period.  The guidance is \nin good agreement that the system should cross the Florida \nPeninsula on Saturday.  It should be noted that the guidance \nsuggests the possibility that the center could re-form due to \nconvective bursts, which would cause jumps in the track \nsuperimposed on top of the general northeastward motion.\n\nThe intensity and structure forecasts for this system are very \nuncertain.  It has a large envelope and a large radius of maximum \nwinds, and a combination of moderate to strong shear and interaction \nwith an upper-level trough seem unfavorable for significant \ndevelopment over the Gulf of Mexico.  The guidance does suggests \nslight development despite the hostile conditions, so the intensity \nforecast calls for the system to become a tropical depression in \nabout 12 h and a tropical storm in about 24 h.  However, these winds \nare likely to be well removed from the center.  Interaction with a \nmid-latitude trough could allow some additional strengthening over \nthe Atlantic, and this is reflected in the intensity forecast.  \nRegardless of development, widespread heavy rain will occur over \nportions of western Cuba, the southern Florida Peninsula, the \nFlorida Keys, and the northwestern Bahamas in association with this \nsystem.\n\n\nKEY MESSAGES:\n\n1. Heavy rain associated with the system is expected to continue \nthrough Friday across the eastern portions of the Yucatan Peninsula, \nthe Cayman Islands and western Cuba.  Life-threatening flash \nflooding and mudslides are possible across western Cuba. \n\n2. Heavy rain will begin to affect South Florida and the Florida \nKeys Friday and continue through Saturday. Considerable flash and \nurban flooding is possible across the urban corridors in South \nFlorida and in the Keys. \n\n3. Tropical storm conditions are possible in the watch area in \nwestern Cuba Friday and Friday night, and are possible in the watch \narea in the Florida Peninsula and Florida Keys Friday night and \nSaturday. \n \nFORECAST POSITIONS AND MAX WINDS\n \nINIT  02/2100Z 21.4N  87.5W   30 KT  35 MPH...POTENTIAL TROP CYCLONE\n 12H  03/0600Z 22.3N  87.4W   30 KT  35 MPH...TROPICAL CYCLONE\n 24H  03/1800Z 23.5N  86.5W   35 KT  40 MPH\n 36H  04/0600Z 24.8N  84.9W   35 KT  40 MPH\n 48H  04/1800Z 26.5N  82.3W   35 KT  40 MPH\n 60H  05/0600Z 28.7N  79.3W   40 KT  45 MPH\n 72H  05/1800Z 30.6N  76.0W   45 KT  50 MPH\n 96H  06/1800Z 33.5N  70.0W   45 KT  50 MPH\n120H  07/1800Z 36.0N  64.0W   40 KT  45 MPH\n \n$$\nForecaster Beven\n \nNNNN\n'}
+    {'id': 6, 'time_issued': datetime.datetime(2022, 6, 15, 15, 0), 'text': 'ZCZC MIATCDEP2 ALL\nTTAA00 KNHC DDHHMM\n \nHurricane Blas Discussion Number   6\nNWS National Hurricane Center Miami FL       EP022022\n1000 AM CDT Wed Jun 15 2022\n \nSince the prior advisory, the structure of Blas has continued to \nimprove on both conventional and microwave satellite imagery. In \nfact, several SSMIS microwave passes indicate that Blas is \ndeveloping an inner core, with at least a banding mid-level eye \nfeature showing up on the 89-GHz channel. The latest 1200 UTC \nsubjective Dvorak estimates were T3.5/55 kt from TAFB and T4.0/65 kt \nfrom SAB. In addition, the most recent objective Dvorak estimates \nfrom UW-CIMSS have been quickly increasing with the latest estimate \nat T4.3/72 kt. A blend of the aforementioned data yields 65 kt for \nthe advisory initial intensity, making Blas a hurricane.\n \nThe center of Blas may have relocated a bit further south into the \nlarge overnight convective burst, but its mean motion this morning \nhas continued a pronounced left turn, estimated at 290/4 kt. A \ncontinued west-northwest motion with some acceleration is \nanticipated over the next several days as the mid-level ridge \npoleward of the storm continues to build in and extend westward \nahead of Blas. Towards the end of the forecast, Blas is expected to \nbecome a shallow system, resulting in a slowing westward motion as \nthe low-level flow exerts greater influence. The latest forecast \ntrack has been adjusted a bit south in the short-term based on the \nadjusted initial position , but ends up just north of the previous \nforecast by the end of the period, close to the center of the track \nguidance envelope.\n \nThe most recent microwave images suggest that Blas is developing an \ninner core, which would likely support further intensification today \nas the system remains over warm (28-29 C) sea surface temperatures \n(SSTs) embedded in sufficently high mid-level moisture. A possible \ncomplicating factor is that both the GFS- and ECMWF-based SHIPS \nguidance indicates easterly shear increasing to 20-25 kt over \nthe next 24-36 h. Assuming this does not play a major inhibiting \nfactor, the latest NHC forecast indicates continued intensification \nand peaks Blas as category 2 hurricane in 24 h. After 36 h, Blas \nwill be crossing a sharp SST gradient, moving over sub 26 C waters \nby 60 h. For this reason, weakening is anticipated to begin by \nFriday. At the end of the forecast period, Blas is likely to lose \nits deep-convective activity and become a shallow low-level vortex.\n \nWhile Blas is expected to remain off the coast of Mexico, its\nassociated swells are expected to affect portions of the coast of\nsouthwestern Mexico beginning today and continuing through the end\nof the week.\n \n \nFORECAST POSITIONS AND MAX WINDS\n \nINIT  15/1500Z 14.9N 102.8W   65 KT  75 MPH\n 12H  16/0000Z 15.3N 103.5W   75 KT  85 MPH\n 24H  16/1200Z 15.8N 104.8W   85 KT 100 MPH\n 36H  17/0000Z 16.5N 106.6W   80 KT  90 MPH\n 48H  17/1200Z 17.1N 108.3W   75 KT  85 MPH\n 60H  18/0000Z 17.7N 110.0W   65 KT  75 MPH\n 72H  18/1200Z 18.2N 111.6W   55 KT  65 MPH\n 96H  19/1200Z 18.8N 114.1W   40 KT  45 MPH\n120H  20/1200Z 19.0N 116.5W   30 KT  35 MPH\n \n$$\nForecaster Papin\n \nNNNN\n'}
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 79-82
+.. GENERATED FROM PYTHON SOURCE LINES 93-96
 
 Lastly, RealtimeStorms also provide the latest available information using the ``get_realtime_info()`` method.
 
 The default argument is ``source='all'``, which returns the latest available data whether from Best Track or NHC Public Advisories. Other possible values are "public_advisory", which only returns the latest public advisory, or "best_track", which only returns the latest best track data.
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-84
+.. GENERATED FROM PYTHON SOURCE LINES 96-99
 
 .. code-block:: default
 
 
     storm.get_realtime_info()
+
 
 
 
@@ -385,14 +428,103 @@ The default argument is ``source='all'``, which returns the latest available dat
  .. code-block:: none
 
 
-    {'source': 'NHC Public Advisory', 'advisory_number': '1', 'time_utc': datetime.datetime(2022, 6, 2, 21, 0), 'type': 'Potential Tropical Cyclone', 'name': 'One', 'lat': 21.4, 'lon': -87.5, 'wind_mph': 35, 'wind_kph': 55, 'wind_kt': 30, 'mslp': 1003, 'category': -1, 'motion_direction': 'N', 'motion_direction_degrees': 360, 'motion_mph': 5, 'motion_kph': 7, 'motion_kt': 4}
+    {'source': 'NHC Public Advisory', 'advisory_number': '6', 'time_utc': datetime.datetime(2022, 6, 15, 15, 0), 'type': 'Hurricane', 'name': 'Blas', 'lat': 14.9, 'lon': -102.8, 'wind_mph': 75, 'wind_kph': 120, 'wind_kt': 65, 'mslp': 988, 'category': 1, 'motion_direction': 'WNW', 'motion_direction_degrees': 290, 'motion_mph': 5, 'motion_kph': 7, 'motion_kt': 4}
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 100-103
+
+Realtime Invests
+----------------
+Invests are essentially RealtimeStorm objects, but without much of the functionality that comes with tropical cyclones (e.g., official forecast track, forecast discussion, etc.). Let's test this out for invest 93E:
+
+.. GENERATED FROM PYTHON SOURCE LINES 103-107
+
+.. code-block:: default
+
+
+    invest = realtime_obj.get_storm('EP932022')
+    invest
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <tropycal.realtime.RealtimeStorm>
+    Storm Summary:
+        Maximum Wind:      25 knots
+        Minimum Pressure:  1007.0 hPa
+        Start Date:        1800 UTC 13 June 2022
+        End Date:          1200 UTC 15 June 2022
+
+    Variables:
+        date        (datetime) [2022-06-13 18:00:00 .... 2022-06-15 12:00:00]
+        extra_obs   (int32) [0 .... 0]
+        special     (str) [ .... ]
+        type        (str) [DB .... DB]
+        lat         (float64) [12.0 .... 11.8]
+        lon         (float64) [-88.0 .... -90.7]
+        vmax        (int32) [15 .... 25]
+        mslp        (float64) [nan .... 1007.0]
+        wmo_basin   (str) [east_pacific .... east_pacific]
+
+    More Information:
+        id:              EP932022
+        operational_id:  EP932022
+        name:            93E
+        year:            2022
+        season:          2022
+        basin:           east_pacific
+        source_info:     NHC Hurricane Database
+        invest:          True
+        source_method:   NHC's Automated Tropical Cyclone Forecasting System (ATCF)
+        source_url:      https://ftp.nhc.noaa.gov/atcf/btk/
+        source:          hurdat
+        ace:             0.0
+        prob_2day:       60%
+        prob_5day:       60%
+        risk_2day:       Medium
+        risk_5day:       Medium
+        realtime:        True
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 108-109
+
+As we can see above, the ``invest`` attribute of this object is True. For invests in NHC's area of responsibility, we can retrieve NHC's probability of formation which is matched to the closest TWO to the invest within a certain distance of the invest.
+
+.. GENERATED FROM PYTHON SOURCE LINES 109-111
+
+.. code-block:: default
+
+
+    invest.get_realtime_formation_prob()
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    {'prob_2day': '60%', 'risk_2day': 'Medium', 'prob_5day': '60%', 'risk_5day': 'Medium'}
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  24.820 seconds)
+   **Total running time of the script:** ( 0 minutes  20.253 seconds)
 
 
 .. _sphx_glr_download_examples_realtime.py:

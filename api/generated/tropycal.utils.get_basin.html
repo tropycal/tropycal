@@ -59,6 +59,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.accumulated_cyclone_energy.html">accumulated_cyclone_energy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.wind_to_category.html">wind_to_category</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.category_to_wind.html">category_to_wind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.calc_ensemble_ellipse.html">calc_ensemble_ellipse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.classify_subtropical.html">classify_subtropical</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.dropsonde_mslp_estimate.html">dropsonde_mslp_estimate</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.generate_nhc_cone.html">generate_nhc_cone</a></li>
@@ -112,7 +113,7 @@
 <h1>get_basin<a class="headerlink" href="#get-basin" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="tropycal.utils.get_basin">
-<span class="sig-prename descclassname"><span class="pre">tropycal.utils.</span></span><span class="sig-name descname"><span class="pre">get_basin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storm_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/generic_utils.html#get_basin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.utils.get_basin" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tropycal.utils.</span></span><span class="sig-name descname"><span class="pre">get_basin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_basin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/generic_utils.html#get_basin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.utils.get_basin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the current basin of the tropical cyclone.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -122,12 +123,14 @@
 </ul>
 </dd>
 <dt class="field-even">Other Parameters</dt>
-<dd class="field-even"><p><strong>storm_id</strong> (<em>str</em>) – String representing storm ID. Used to distinguish between Atlantic and Pacific basins.</p>
+<dd class="field-even"><p><strong>source_basin</strong> (<em>str, optional</em>) – String representing the origin storm basin (e.g., “north_atlantic”, “east_pacific”).</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><em>str</em> – String representing the current basin (e.g., “north_atlantic”, “east_pacific”).</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>For storms in the North Atlantic or East Pacific basin, <code class="docutils literal notranslate"><span class="pre">source_basin</span></code> must be provided. This is because storms located over Mexico or Central America could be in either basin depending on where they originated (e.g., storms originated in the Atlantic basin are considered to be within the Atlantic basin while over Mexico or Central America until emerging in the Pacific Ocean).</p>
 </dd></dl>
 
 <div style='clear:both'></div></div>

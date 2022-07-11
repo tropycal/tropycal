@@ -53,10 +53,13 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">Recon</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.Mission.html">tropycal.recon.Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.RealtimeRecon.html">tropycal.recon.RealtimeRecon</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.recon.ReconDataset.html">tropycal.recon.ReconDataset</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.find_mission.html">ReconDataset.find_mission</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_dropsondes.html">ReconDataset.get_dropsondes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_hdobs.html">ReconDataset.get_hdobs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_mission.html">ReconDataset.get_mission</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.get_track.html">ReconDataset.get_track</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">ReconDataset.get_vdms</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.ReconDataset.plot_summary.html">ReconDataset.plot_summary</a></li>
@@ -112,7 +115,7 @@
 <dd><p>Retrieve Vortex Data Messages (VDMs) for this storm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>str</em><em>, </em><em>optional</em>) – String representing the path of a pickle file containing VDM data, saved via <code class="docutils literal notranslate"><span class="pre">vdms.get_pickle()</span></code>. If none, data is read from NHC.</p>
+<dd class="field-odd"><p><strong>data</strong> (<em>str</em><em>, </em><em>optional</em>) – String representing the path of a pickle file containing VDM data, saved via <code class="docutils literal notranslate"><span class="pre">vdms.to_pickle()</span></code>. If none, data is read from NHC.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

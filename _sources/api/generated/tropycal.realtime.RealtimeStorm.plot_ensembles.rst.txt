@@ -1,0 +1,12 @@
+RealtimeStorm.plot_ensembles
+==============================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.plot_ensembles
+
+.. include:: tropycal.realtime.RealtimeStorm.plot_ensembles
+
+.. raw:: html
+
+      <div style='clear:both'></div>

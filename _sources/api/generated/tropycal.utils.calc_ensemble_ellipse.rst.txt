@@ -1,0 +1,12 @@
+calc_ensemble_ellipse
+====================================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: calc_ensemble_ellipse
+
+.. include:: tropycal.utils.calc_ensemble_ellipse
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -1,0 +1,27 @@
+tropycal.recon.Mission
+======================
+
+.. currentmodule:: tropycal.recon
+
+.. autoclass:: Mission
+
+   
+   
+   
+   
+   
+   Methods Summary
+
+   
+      .. autosummary::
+         :toctree:
+      
+         Mission.get_dropsondes
+         Mission.get_hdobs
+         Mission.get_vdms
+         Mission.plot_points
+         Mission.plot_skewt
+         Mission.plot_time_series
+         Mission.status
+   
+   

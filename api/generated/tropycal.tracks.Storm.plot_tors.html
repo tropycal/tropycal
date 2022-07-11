@@ -62,7 +62,8 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.list_nhc_discussions.html">Storm.list_nhc_discussions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot.html">Storm.plot</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_TCtors_rotated.html">Storm.plot_TCtors_rotated</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_gefs_ensembles.html">Storm.plot_gefs_ensembles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_ensembles.html">Storm.plot_ensembles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_models.html">Storm.plot_models</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_nhc_forecast.html">Storm.plot_nhc_forecast</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Storm.plot_tors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.query_nhc_discussions.html">Storm.query_nhc_discussions</a></li>
@@ -124,11 +125,7 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dist_thresh</strong> (<em>int</em>) – Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km.</p></li>
-<li><p><strong>Tors</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm</dt><dd><p>for future use.</p>
-</dd>
-</dl>
-</p></li>
+<li><p><strong>Tors</strong> (<em>pandas.DataFrame</em>) – DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm for future use.</p></li>
 <li><p><strong>domain</strong> (<em>str</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
 <li><p><strong>plotPPH</strong> (<em>bool</em><em> or </em><em>str</em>) – <p>Whether to plot practically perfect forecast (PPH). True defaults to “daily”. Default is False.</p>
 <ul>

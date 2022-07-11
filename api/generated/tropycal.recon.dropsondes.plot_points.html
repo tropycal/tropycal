@@ -53,6 +53,8 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">Recon</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.Mission.html">tropycal.recon.Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.RealtimeRecon.html">tropycal.recon.RealtimeRecon</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.recon.ReconDataset.html">tropycal.recon.ReconDataset</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.recon.dropsondes.html">tropycal.recon.dropsondes</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.dropsondes.isel.html">dropsondes.isel</a></li>
@@ -108,7 +110,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="tropycal.recon.dropsondes.plot_points">
 <span class="sig-prename descclassname"><span class="pre">dropsondes.</span></span><span class="sig-name descname"><span class="pre">plot_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">varname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'slp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dynamic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cartopy_proj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#dropsondes.plot_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.recon.dropsondes.plot_points" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a plot of recon data points.</p>
+<dd><p>Creates a plot of dropsonde data points.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -124,6 +126,9 @@
 <li><p><strong>prop</strong> (<em>dict</em>) – Customization properties of recon plot. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-prop-recon-plot"><span class="std std-ref">Recon Properties</span></a> for available options.</p></li>
 <li><p><strong>map_prop</strong> (<em>dict</em>) – Customization properties of Cartopy map. Please refer to <a class="reference internal" href="../../options/map_prop.html#options-map-prop"><span class="std std-ref">Map prop</span></a> for available options.</p></li>
 </ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>ax</em> – Instance of axes containing the plot is returned.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

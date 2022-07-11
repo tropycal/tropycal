@@ -130,18 +130,47 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>basin</strong> (<em>str</em>) – <p>Ocean basin to load data for. Can be any of the following:</p>
-<ul>
-<li><p><strong>north_atlantic</strong> - HURDAT2, ibtracs</p></li>
-<li><p><strong>east_pacific</strong> - HURDAT2, ibtracs</p></li>
-<li><p><strong>west_pacific</strong> - ibtracs</p></li>
-<li><p><strong>north_indian</strong> - ibtracs</p></li>
-<li><p><strong>south_indian</strong> - ibtracs</p></li>
-<li><p><strong>australia</strong> - ibtracs</p></li>
-<li><p><strong>south_pacific</strong> - ibtracs</p></li>
-<li><p><strong>south_america</strong> - ibtracs</p></li>
-<li><p><strong>all</strong> - ibtracs</p></li>
-</ul>
+<li><p><strong>basin</strong> (<em>str</em>) – <p>Ocean basin(s) to load data for. Can be any of the following:</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Source(s)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>”north_atlantic”</p></td>
+<td><p>HURDAT2, IBTrACS</p></td>
+</tr>
+<tr class="row-odd"><td><p>”east_pacific”</p></td>
+<td><p>HURDAT2, IBTrACS</p></td>
+</tr>
+<tr class="row-even"><td><p>”both”</p></td>
+<td><p>HURDAT2 (“north_atlantic” &amp; “east_pacific” combined)</p></td>
+</tr>
+<tr class="row-odd"><td><p>”west_pacific”</p></td>
+<td><p>IBTrACS</p></td>
+</tr>
+<tr class="row-even"><td><p>”north_indian”</p></td>
+<td><p>IBTrACS</p></td>
+</tr>
+<tr class="row-odd"><td><p>”south_indian”</p></td>
+<td><p>IBTrACS</p></td>
+</tr>
+<tr class="row-even"><td><p>”australia”</p></td>
+<td><p>IBTrACS</p></td>
+</tr>
+<tr class="row-odd"><td><p>”south_america”</p></td>
+<td><p>IBTrACS</p></td>
+</tr>
+<tr class="row-even"><td><p>”all”</p></td>
+<td><p>IBTrACS</p></td>
+</tr>
+</tbody>
+</table>
 </p></li>
 <li><p><strong>source</strong> (<em>str</em>) – <p>Data source to read in. Default is HURDAT2.</p>
 <ul>
@@ -185,6 +214,10 @@
 </pre></div>
 </div>
 <p>For IBTrACS datasets, please refer to <a class="reference internal" href="../../data.html#ibtracs-caveats"><span class="std std-ref">IBTrACS</span></a> for pros and cons of each mode of IBTrACS data available.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If using <code class="docutils literal notranslate"><span class="pre">basin=&quot;both&quot;</span></code>, this combines the North Atlantic and East/Central Pacific HURDATv2 data into a single TrackDataset object. As of Tropycal v0.5, this now merges cross-basin storms (i.e., North Atlantic to East Pacific) which were reclassified with a new East Pacific ID into single Storm objects.</p>
+</div>
 <p>Methods Summary</p>
 <blockquote>
 <div><table class="longtable docutils align-default">

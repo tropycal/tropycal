@@ -1,0 +1,25 @@
+tropycal.recon.RealtimeRecon
+============================
+
+.. currentmodule:: tropycal.recon
+
+.. autoclass:: RealtimeRecon
+
+   
+   
+   
+   
+   
+   Methods Summary
+
+   
+      .. autosummary::
+         :toctree:
+      
+         RealtimeRecon.get_hdobs_realtime
+         RealtimeRecon.get_hdobs_summary
+         RealtimeRecon.get_mission
+         RealtimeRecon.get_mission_ids
+         RealtimeRecon.update
+   
+   

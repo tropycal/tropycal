@@ -1,0 +1,12 @@
+Mission.status
+=============================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: Mission.status
+
+.. include:: tropycal.recon.Mission.status
+
+.. raw:: html
+
+      <div style='clear:both'></div>

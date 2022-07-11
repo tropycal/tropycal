@@ -1,0 +1,12 @@
+vdms.plot_time_series
+====================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: vdms.plot_time_series
+
+.. include:: tropycal.recon.vdms.plot_time_series
+
+.. raw:: html
+
+      <div style='clear:both'></div>

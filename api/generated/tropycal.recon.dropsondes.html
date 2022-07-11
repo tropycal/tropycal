@@ -53,6 +53,8 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">Recon</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.Mission.html">tropycal.recon.Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.RealtimeRecon.html">tropycal.recon.RealtimeRecon</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.recon.ReconDataset.html">tropycal.recon.ReconDataset</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">tropycal.recon.dropsondes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.dropsondes.isel.html">dropsondes.isel</a></li>
@@ -112,7 +114,7 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Requested storm.</p></li>
-<li><p><strong>data</strong> (<em>str</em><em>, or </em><em>list of dictionaries</em><em>, </em><em>optional</em>) – String with filepath to pickle file with list of dictionaries, or the list, containing dropsonde data.</p></li>
+<li><p><strong>data</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath of pickle file containing dropsondes data retrieved from <code class="docutils literal notranslate"><span class="pre">dropsondes.to_pickle()</span></code>. If provided, data will be retrieved from the local pickle file instead of the NHC server.</p></li>
 <li><p><strong>update</strong> (<em>bool</em>) – True = search for new data, following existing data in the dropsonde object, and concatenate.</p></li>
 </ul>
 </dd>
@@ -120,6 +122,41 @@
 <dd class="field-even"><p><em>Dataset</em> – An instance of dropsondes.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Recon data is currently only available from 2006 onwards.</p>
+</div>
+<p>There are two recommended ways of retrieving a dropsondes object. Since the <code class="docutils literal notranslate"><span class="pre">ReconDataset</span></code>, <code class="docutils literal notranslate"><span class="pre">hdobs</span></code>, <code class="docutils literal notranslate"><span class="pre">dropsondes</span></code> and <code class="docutils literal notranslate"><span class="pre">vdms</span></code> classes are <strong>storm-centric</strong>, a Storm object is required for both methods.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve Hurricane Michael (2018) from TrackDataset</span>
+<span class="n">basin</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">()</span>
+<span class="n">storm</span> <span class="o">=</span> <span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a <code class="docutils literal notranslate"><span class="pre">get_dropsondes()</span></code> method thus allowing all of the dropsondes attributes and methods to be accessed from the Storm object. As a result, a Storm object does not need to be provided as an argument.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve all dropsondes for this storm</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">get_dropsondes</span><span class="p">()</span>
+
+<span class="c1">#Retrieve the raw dropsondes data</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">dropsondes</span><span class="o">.</span><span class="n">data</span>
+
+<span class="c1">#Use the plot_points() method of dropsondes</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">dropsondes</span><span class="o">.</span><span class="n">plot_points</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The second method is to use the dropsondes class independently of the other recon classes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tropycal.recon</span> <span class="kn">import</span> <span class="n">dropsondes</span>
+
+<span class="c1">#Retrieve all dropsondes for this storm, passing the Storm object as an argument</span>
+<span class="n">dropsondes_obj</span> <span class="o">=</span> <span class="n">dropsondes</span><span class="p">(</span><span class="n">storm</span><span class="p">)</span>
+
+<span class="c1">#Retrieve the raw dropsondes data</span>
+<span class="n">dropsondes_obj</span><span class="o">.</span><span class="n">data</span>
+
+<span class="c1">#Use the plot_points() method of dropsondes</span>
+<span class="n">dropsondes_obj</span><span class="o">.</span><span class="n">plot_points</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>Methods Summary</p>
 <blockquote>
 <div><table class="longtable docutils align-default">
@@ -132,7 +169,7 @@
 <td><p>Select a single dropsonde by index of the list.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.dropsondes.plot_points.html#tropycal.recon.dropsondes.plot_points" title="tropycal.recon.dropsondes.plot_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropsondes.plot_points</span></code></a>([varname, level, ...])</p></td>
-<td><p>Creates a plot of recon data points.</p></td>
+<td><p>Creates a plot of dropsonde data points.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.dropsondes.plot_skewt.html#tropycal.recon.dropsondes.plot_skewt" title="tropycal.recon.dropsondes.plot_skewt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropsondes.plot_skewt</span></code></a>([time])</p></td>
 <td><p>Plot a Skew-T chart for selected dropsondes.</p></td>

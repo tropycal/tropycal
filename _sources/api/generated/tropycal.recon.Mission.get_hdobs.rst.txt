@@ -1,0 +1,12 @@
+Mission.get_hdobs
+================================
+
+.. currentmodule:: tropycal.recon
+
+.. automethod:: Mission.get_hdobs
+
+.. include:: tropycal.recon.Mission.get_hdobs
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -21,6 +21,8 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script>window.MathJax = {"chtml": {"displayAlign": "left"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -59,6 +61,7 @@
 <li class="toctree-l4 current"><a class="current reference internal" href="#">accumulated_cyclone_energy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.wind_to_category.html">wind_to_category</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.category_to_wind.html">category_to_wind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.calc_ensemble_ellipse.html">calc_ensemble_ellipse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.classify_subtropical.html">classify_subtropical</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.dropsonde_mslp_estimate.html">dropsonde_mslp_estimate</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.generate_nhc_cone.html">generate_nhc_cone</a></li>
@@ -117,7 +120,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>wind_speed</strong> (<em>int</em>) – Sustained wind in knots.</p></li>
+<li><p><strong>wind_speed</strong> (<em>int</em><em> or </em><em>list</em><em>, </em><em>numpy.ndarray</em>) – Sustained wind in knots.</p></li>
 <li><p><strong>hours</strong> (<em>int</em><em>, </em><em>optional</em>) – Duration in hours over which the sustained wind was observed. Default is 6 hours.</p></li>
 </ul>
 </dd>
@@ -125,6 +128,11 @@
 <dd class="field-even"><p><em>float</em> – Accumulated cyclone energy.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>As defined in <a class="reference external" href="https://journals.ametsoc.org/view/journals/bams/81/6/1520-0477_2000_81_s1_caf_2_0_co_2.xml">Bell et al. (2000)</a>, Accumulated Cyclone Energy (ACE) is calculated as follows:</p>
+<div class="math notranslate nohighlight">
+\[ACE = 10^{-4} \sum v^{2}_{max}\]</div>
+<p>As shown above, ACE is the sum of the squares of the estimated maximum sustained wind speed (in knots). By default, this assumes data is provided every 6 hours, as is the standard in HURDATv2 and NHC’s Best Track, though this function provides an option to use a different hour duration.</p>
 </dd></dl>
 
 <div style='clear:both'></div></div>

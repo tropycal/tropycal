@@ -21,6 +21,7 @@ tropycal.recon.hdobs
          hdobs.plot_maps
          hdobs.plot_points
          hdobs.plot_swath
+         hdobs.plot_time_series
          hdobs.sel
          hdobs.to_pickle
          hdobs.update

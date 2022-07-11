@@ -53,12 +53,15 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.recon.html">Recon</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.Mission.html">tropycal.recon.Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.recon.RealtimeRecon.html">tropycal.recon.RealtimeRecon</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.recon.ReconDataset.html">tropycal.recon.ReconDataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.recon.dropsondes.html">tropycal.recon.dropsondes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.recon.hdobs.html">tropycal.recon.hdobs</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">tropycal.recon.vdms</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.vdms.isel.html">vdms.isel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.vdms.plot_points.html">vdms.plot_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.recon.vdms.plot_time_series.html">vdms.plot_time_series</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.vdms.sel.html">vdms.sel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.vdms.to_pickle.html">vdms.to_pickle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.recon.vdms.update.html">vdms.update</a></li>
@@ -106,12 +109,12 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="tropycal.recon.vdms">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tropycal.recon.</span></span><span class="sig-name descname"><span class="pre">vdms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/dataset.html#vdms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.recon.vdms" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates an instance of a VDMs object containing all VDM data for a single storm.</p>
+<dd><p>Creates an instance of a VDMs object containing all Vortex Data Message (VDM) data for a single storm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>storm</strong> (<a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm"><em>tropycal.tracks.Storm</em></a>) – Requested storm.</p></li>
-<li><p><strong>data</strong> (<em>str</em><em>, or </em><em>list of dictionaries</em><em>, </em><em>optional</em>) – String with filepath to pickle file with list of dictionaries, or the list, containing dropsonde data.</p></li>
+<li><p><strong>data</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath of pickle file containing VDM data retrieved from <code class="docutils literal notranslate"><span class="pre">vdms.to_pickle()</span></code>. If provided, data will be retrieved from the local pickle file instead of the NHC server.</p></li>
 <li><p><strong>update</strong> (<em>bool</em>) – True = search for new data, following existing data in the dropsonde object, and concatenate.</p></li>
 </ul>
 </dd>
@@ -119,6 +122,41 @@
 <dd class="field-even"><p><em>Dataset</em> – An instance of VDMs.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Recon data is currently only available from 2006 onwards.</p>
+</div>
+<p>There are two recommended ways of retrieving a vdms object. Since the <code class="docutils literal notranslate"><span class="pre">ReconDataset</span></code>, <code class="docutils literal notranslate"><span class="pre">hdobs</span></code>, <code class="docutils literal notranslate"><span class="pre">dropsondes</span></code> and <code class="docutils literal notranslate"><span class="pre">vdms</span></code> classes are <strong>storm-centric</strong>, a Storm object is required for both methods.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve Hurricane Michael (2018) from TrackDataset</span>
+<span class="n">basin</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">()</span>
+<span class="n">storm</span> <span class="o">=</span> <span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The first method is to use the empty instance of ReconDataset already initialized in the Storm object, which has a <code class="docutils literal notranslate"><span class="pre">get_vdms()</span></code> method thus allowing all of the vdms attributes and methods to be accessed from the Storm object. As a result, a Storm object does not need to be provided as an argument.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve all VDMs for this storm</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">get_vdms</span><span class="p">()</span>
+
+<span class="c1">#Retrieve the raw VDM data</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">vdms</span><span class="o">.</span><span class="n">data</span>
+
+<span class="c1">#Use the plot_points() method of hdobs</span>
+<span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">vdms</span><span class="o">.</span><span class="n">plot_points</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The second method is to use the vdms class independently of the other recon classes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tropycal.recon</span> <span class="kn">import</span> <span class="n">vdms</span>
+
+<span class="c1">#Retrieve all VDMs for this storm, passing the Storm object as an argument</span>
+<span class="n">vdms_obj</span> <span class="o">=</span> <span class="n">vdms</span><span class="p">(</span><span class="n">storm</span><span class="p">)</span>
+
+<span class="c1">#Retrieve the raw VDM data</span>
+<span class="n">vdms_obj</span><span class="o">.</span><span class="n">data</span>
+
+<span class="c1">#Use the plot_points() method of vdms</span>
+<span class="n">vdms_obj</span><span class="o">.</span><span class="n">plot_points</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>Methods Summary</p>
 <blockquote>
 <div><table class="longtable docutils align-default">
@@ -133,13 +171,16 @@
 <tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.vdms.plot_points.html#tropycal.recon.vdms.plot_points" title="tropycal.recon.vdms.plot_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vdms.plot_points</span></code></a>([varname, domain, ax, ...])</p></td>
 <td><p>Creates a plot of recon data points.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.vdms.sel.html#tropycal.recon.vdms.sel" title="tropycal.recon.vdms.sel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vdms.sel</span></code></a>([mission, time, domain])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.vdms.plot_time_series.html#tropycal.recon.vdms.plot_time_series" title="tropycal.recon.vdms.plot_time_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vdms.plot_time_series</span></code></a>([time, best_track, dots])</p></td>
+<td><p>Creates a time series of MSLP VDM data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.vdms.sel.html#tropycal.recon.vdms.sel" title="tropycal.recon.vdms.sel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vdms.sel</span></code></a>([mission, time, domain])</p></td>
 <td><p>Select a subset of VDMs by any of its parameters and return a new vdms object.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.vdms.to_pickle.html#tropycal.recon.vdms.to_pickle" title="tropycal.recon.vdms.to_pickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vdms.to_pickle</span></code></a>(filename)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.vdms.to_pickle.html#tropycal.recon.vdms.to_pickle" title="tropycal.recon.vdms.to_pickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vdms.to_pickle</span></code></a>(filename)</p></td>
 <td><p>Save VDM data (list of dictionaries) to a pickle file</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.recon.vdms.update.html#tropycal.recon.vdms.update" title="tropycal.recon.vdms.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vdms.update</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.recon.vdms.update.html#tropycal.recon.vdms.update" title="tropycal.recon.vdms.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vdms.update</span></code></a>()</p></td>
 <td><p>Update with the latest data for an ongoing storm.</p></td>
 </tr>
 </tbody>

@@ -2112,12 +2112,17 @@ class Storm:
 
             #Get basic components
             lineArray = [i.replace(" ","") for i in line]
-            basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
+            try:
+                basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype,rad,windcode,neq,seq,swq,nwq = lineArray[:17]
+                use_wind = True
+            except:
+                basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
+                use_wind = False
 
             #Enter into forecast dict
             if model not in forecasts.keys(): forecasts[model] = {}
             if run_init not in forecasts[model].keys(): forecasts[model][run_init] = {
-                'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
+                'init':dt.strptime(run_init,'%Y%m%d%H'),'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],'windrad':[]
             }
 
             #Format lat & lon
@@ -2147,6 +2152,27 @@ class Storm:
                 mslp = int(mslp)
                 if mslp < 1: mslp = np.nan
 
+            #Format wind radii
+            if use_wind:
+                try:
+                    rad = int(rad)
+                    neq = -999 if windcode=='' else int(neq)
+                    seq = -999 if windcode in ['','AAA'] else int(seq)
+                    swq = -999 if windcode in ['','AAA'] else int(swq)
+                    nwq = -999 if windcode in ['','AAA'] else int(nwq)
+                except:
+                    rad = -999
+                    neq = -999
+                    seq = -999
+                    swq = -999
+                    nwq = -999
+            else:
+                rad = -999
+                neq = -999
+                seq = -999
+                swq = -999
+                nwq = -999
+            
             #Add forecast data to dict if forecast hour isn't already there
             if fhr not in forecasts[model][run_init]['fhr']:
                 if model in ['OFCL','OFCI'] and fhr > 120:
@@ -2159,12 +2185,16 @@ class Storm:
                     forecasts[model][run_init]['lon'].append(lon)
                     forecasts[model][run_init]['vmax'].append(vmax)
                     forecasts[model][run_init]['mslp'].append(mslp)
+                    forecasts[model][run_init]['windrad'].append({rad:[neq,seq,swq,nwq]})
                     
                     #Get storm type, if it can be determined
                     if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
                         stype = get_storm_type(vmax,False)
                     forecasts[model][run_init]['type'].append(stype)
-
+            else:
+                ifhr = forecasts[model][run_init]['fhr'].index(fhr)
+                forecasts[model][run_init]['windrad'][ifhr][rad]=[neq,seq,swq,nwq]
+                
         #Save dict locally
         self.forecast_dict = forecasts
         

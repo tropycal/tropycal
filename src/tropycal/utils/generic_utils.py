@@ -353,7 +353,13 @@ def get_basin(lat,lon,source_basin=""):
     if lat >= 0.0:
         
         if lon < 100.0:
-            return "north_indian"
+            if lat < 40.0:
+                return "north_indian"
+            else:
+                if lon < 70.0:
+                    return "north_atlantic"
+                else:
+                    return "west_pacific"
         elif lon <= 180.0:
             return "west_pacific"
         else:
@@ -422,7 +428,7 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
     
     Parameters
     ----------
-    wind_speed : int
+    wind_speed : int or list, numpy.ndarray
         Sustained wind in knots.
     hours : int, optional
         Duration in hours over which the sustained wind was observed. Default is 6 hours.
@@ -444,14 +450,20 @@ def accumulated_cyclone_energy(wind_speed,hours=6):
     .. _Bell et al. (2000): https://journals.ametsoc.org/view/journals/bams/81/6/1520-0477_2000_81_s1_caf_2_0_co_2.xml
     """
     
+    #Determine types
+    if isinstance(wind_speed,(np.ndarray,list)):
+        wind_speed = np.copy(wind_speed)
+    
     #Calculate ACE
     ace = ((10**-4) * (wind_speed**2)) * (hours/6.0)
     
     #Coerce to zero if wind speed less than TS force
-    if wind_speed < 34: ace = 0.0
-    
-    #Return ACE
-    return round(ace,4)
+    if isinstance(ace,(np.ndarray,list)):
+        ace[wind_speed < 34] = 0.0
+        return np.round(ace,4)
+    else:
+        if wind_speed < 34: ace = 0.0
+        return round(ace,4)
 
 def dropsonde_mslp_estimate(mslp,surface_wind):
     
@@ -938,6 +950,73 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
         return_dict = {'lat':gridlats,'lon':gridlons,'lat2d':gridlats2d,'lon2d':gridlons2d,'cone':griddata,
                    'center_lon':interp_lon,'center_lat':interp_lat,'year':cone_year}
         return return_dict
+
+def calc_ensemble_ellipse(member_lons,member_lats):
+    
+    r"""
+    Calculate an ellipse representing ensemble member location spread. This function follows the methodology of Hamill et al. (2011).
+    
+    Parameters
+    ----------
+    member_lons : list
+        List containing longitudes of ensemble members valid at a single time.
+    member_lats : list
+        List containing latitudes of ensemble members valid at a single time.
+    
+    Returns
+    -------
+    dict
+        Dictionary containing the longitude and latitude of the ellipse.
+    
+    Notes
+    -----
+    The ensemble ellipse used in this function follows the methodology of `Hamill et al. (2011)`_, denoting the spread in ensemble member cyclone positions. The size of the ellipse is calculated to contain 90% of ensemble members at any given time. This ellipse can be used to determine the primary type of ensemble variability:
+
+    * **Along-track variability** - if the major axis of the ellipse is parallel to the ensemble mean motion vector.
+    * **Across-track variability** - if the major axis of the ellipse is normal to the ensemble mean motion vector.
+
+    .. _Hamill et al. (2011): https://doi.org/10.1175/2010MWR3456.1
+    
+    This code is adapted from NCAR Command Language (NCL) code courtesy of Ryan Torn and Thomas Hamill.
+    """
+    
+    #Compute ensemble mean lon & lat
+    mean_lon = np.average(member_lons)
+    mean_lat = np.average(member_lats)
+
+    Pb = [[0,0],[0,0]]
+    for i in range(len(member_lats)):
+        Pb[0][0] = Pb[0][0] + (member_lons[i]-mean_lon) * (member_lons[i]-mean_lon)
+        Pb[1][1] = Pb[1][1] + (member_lats[i]-mean_lat) * (member_lats[i]-mean_lat)
+        Pb[1][0] = Pb[1][0] + (member_lats[i]-mean_lat) * (member_lons[i]-mean_lon)
+    Pb[0][1] = Pb[1][0]
+    Pb = np.array(Pb) / float(len(member_lats)-1)
+
+    rho = Pb[1][0] / (np.sqrt(Pb[0][0]) * np.sqrt(Pb[1][1]))
+    sigmax = np.sqrt(Pb[0][0])
+    sigmay = np.sqrt(Pb[1][1])
+    fac = 1.0 / (2.0 * (1 - rho**2))
+
+    #Calculate lon & lat coordinates of ellipse
+    ellipse_lon = []
+    ellipse_lat = []
+    increment = np.pi/180.0
+    for radians in np.arange(0,(2.0*np.pi)+increment,increment):
+        xstart = np.cos(radians)
+        ystart = np.sin(radians)
+
+        for rdistance in np.arange(0.,2400.):
+            xloc = xstart * rdistance/80.0
+            yloc = ystart * rdistance/80.0
+            dist = np.sqrt(xloc * xloc + yloc * yloc)
+            prob = np.exp(-1.0 * fac * ((xloc/sigmax)**2 + (yloc/sigmay)**2 - 2.0 * rho * (xloc/sigmax)*(yloc/sigmay)))
+            if prob < 0.256:
+                ellipse_lon.append(xloc + mean_lon)
+                ellipse_lat.append(yloc + mean_lat)
+                break
+
+    #Return ellipse data
+    return {'ellipse_lon':ellipse_lon, 'ellipse_lat':ellipse_lat}
 
 #===========================================================================================================
 # Private utilities

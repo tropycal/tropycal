@@ -172,7 +172,7 @@ class Realtime():
             
             #Get time difference
             hours_diff = (current_date - last_date).total_seconds() / 3600.0
-            if hours_diff >= 18.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
+            if hours_diff >= 15.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
                 del self.data[key]
             if hours_diff <= -48.0:
                 del self.data[key]
@@ -872,9 +872,12 @@ class Realtime():
         else:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0) #0.0
         
+        #Get realtime forecasts
+        forecasts = [self.get_storm(key).get_forecast_realtime(ssl_certificate) if self[key].invest == False else {} for key in self.storms]
+        forecasts = [entry if 'init' in entry.keys() and (dt.utcnow() - entry['init']).total_seconds() / 3600.0 <= 12 else {} for entry in forecasts]
+        
         #Plot
-        ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms],
-                                        [self.get_storm(key).get_forecast_realtime(ssl_certificate) if self[key].invest == False else {} for key in self.storms],
+        ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms],forecasts,
                                         shapefiles,dt.utcnow(),domain,ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
         
         return ax

@@ -88,6 +88,9 @@ class Plot:
         #get resolution corresponding to string in prop
         res = self.check_res(prop['res'])
         
+        #Add "hidden" state alpha prop
+        if 'state_alpha' not in prop.keys(): prop['state_alpha'] = 1.0
+        
         #fill oceans if specified
         self.ax.set_facecolor(prop['ocean_color'])
         ocean_mask = self.ax.add_feature(cfeature.OCEAN.with_scale(res),facecolor=prop['ocean_color'],edgecolor='face')
@@ -95,7 +98,7 @@ class Plot:
         continent_mask = self.ax.add_feature(cfeature.LAND.with_scale(res),facecolor=prop['land_color'],edgecolor='face')
         
         #draw geography
-        states = self.ax.add_feature(cfeature.STATES.with_scale(res),linewidths=prop['linewidth'],linestyle='solid',edgecolor=prop['linecolor'])
+        states = self.ax.add_feature(cfeature.STATES.with_scale(res),linewidths=prop['linewidth'],linestyle='solid',edgecolor=prop['linecolor'],alpha=prop['state_alpha'])
         countries = self.ax.add_feature(cfeature.BORDERS.with_scale(res),linewidths=prop['linewidth'],linestyle='solid',edgecolor=prop['linecolor'])
         coastlines = self.ax.add_feature(cfeature.COASTLINE.with_scale(res),linewidths=prop['linewidth'],linestyle='solid',edgecolor=prop['linecolor'])
         
@@ -314,10 +317,10 @@ class Plot:
             
         #North Indian plot domain
         elif domain == "north_indian":
-            bound_w = 30.0
+            bound_w = 35.0
             bound_e = 110.0
             bound_s = -5.0
-            bound_n = 40.0
+            bound_n = 42.0
             
         #South Indian plot domain
         elif domain == "south_indian":

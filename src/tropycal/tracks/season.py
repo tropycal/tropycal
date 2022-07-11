@@ -359,6 +359,7 @@ class Season:
                     if i_time.strftime('%H%M') not in constants.STANDARD_HOURS: continue
                     if i_type not in constants.NAMED_TROPICAL_STORM_TYPES: continue
                     if self.basin == 'all' and i_time.year != self.year: continue
+                    if np.isnan(i_vmax): continue
                     temp_ace += accumulated_cyclone_energy(i_vmax)
                 temp_ace = np.round(temp_ace,1)
 
@@ -377,6 +378,8 @@ class Season:
                 if multi_season == False:
                     if 'season_start' not in summary_dict.keys():
                         summary_dict['season_start'] = trop_time[0]
+                    else:
+                        if trop_time[0] < summary_dict['season_start']: summary_dict['season_start'] = trop_time[0]
                     if 'season_end' not in summary_dict.keys():
                         summary_dict['season_end'] = trop_time[-1]
                     else:
@@ -384,6 +387,8 @@ class Season:
                 else:
                     if summary_dict['season_start'][season_idx] == 0:
                         summary_dict['season_start'][season_idx] = trop_time[0]
+                    else:
+                        if trop_time[0] < summary_dict['season_start'][season_idx]: summary_dict['season_start'][season_idx] = trop_time[0]
                     if summary_dict['season_end'][season_idx] == 0:
                         summary_dict['season_end'][season_idx] = trop_time[-1]
                     else:
@@ -435,7 +440,7 @@ class Season:
             if multi_season == False:
                 narray = np.array(summary_dict['max_wspd'])
                 narray = narray[~np.isnan(narray)]
-                summary_dict['season_storms'] = len(narray)
+                summary_dict['season_storms'] = len(summary_dict['max_wspd'])
                 summary_dict['season_named'] = len(narray[narray>=34])
                 summary_dict['season_hurricane'] = len(narray[narray>=65])
                 summary_dict['season_major'] = len(narray[narray>=100])
@@ -445,7 +450,7 @@ class Season:
             else:
                 narray = np.array(summary_dict['max_wspd'][season_idx])
                 narray = narray[~np.isnan(narray)]
-                summary_dict['season_storms'][season_idx] = len(narray)
+                summary_dict['season_storms'][season_idx] = len(summary_dict['max_wspd'])
                 summary_dict['season_named'][season_idx] = len(narray[narray>=34])
                 summary_dict['season_hurricane'][season_idx] = len(narray[narray>=65])
                 summary_dict['season_major'][season_idx] = len(narray[narray>=100])

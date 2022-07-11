@@ -119,7 +119,8 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
         c3 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 3', marker='o', color=get_colors_sshws(96))
         c4 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 4', marker='o', color=get_colors_sshws(113))
         c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
-        ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5}, loc=1)
+        l = ax.legend(handles=[ex,sb,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5}, loc=1)
+        l.set_zorder(1001)
 
     #Linecolor category without dots
     elif prop['linecolor'] == 'category' and prop['dots'] == False:
@@ -131,7 +132,8 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
         c3 = mlines.Line2D([], [], linestyle='solid', label='Category 3', color=get_colors_sshws(96))
         c4 = mlines.Line2D([], [], linestyle='solid', label='Category 4', color=get_colors_sshws(113))
         c5 = mlines.Line2D([], [], linestyle='solid', label='Category 5', color=get_colors_sshws(137))
-        ax.legend(handles=[ex,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5}, loc=1)
+        l = ax.legend(handles=[ex,td,ts,c1,c2,c3,c4,c5], prop={'size':11.5}, loc=1)
+        l.set_zorder(1001)
 
     #Non-segmented custom colormap with dots
     elif prop['dots'] == True and segmented_colors == False:
@@ -139,14 +141,16 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
         sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Subtropical', marker='s', color=prop['fillcolor'])
         td = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',mew=0.5, label='Tropical', marker='o', color=prop['fillcolor'])
         handles=[ex,sb,td]
-        ax.legend(handles=handles,fontsize=11.5, prop={'size':11.5}, loc=1)
+        l = ax.legend(handles=handles,fontsize=11.5, prop={'size':11.5}, loc=1)
+        l.set_zorder(1001)
 
     #Non-segmented custom colormap without dots
     elif prop['dots'] == False and segmented_colors == False:
         ex = mlines.Line2D([], [], linestyle='dotted',label='Non-Tropical', color=prop['linecolor'])
         td = mlines.Line2D([], [], linestyle='solid',label='Tropical', color=prop['linecolor'])
         handles=[ex,td]
-        ax.legend(handles=handles,fontsize=11.5, prop={'size':11.5}, loc=1)
+        l = ax.legend(handles=handles,fontsize=11.5, prop={'size':11.5}, loc=1)
+        l.set_zorder(1001)
 
     #Custom colormap with dots
     elif prop['dots'] == True and segmented_colors == True:
@@ -157,6 +161,7 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
         for _ in range(7):
             handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
         l = ax.legend(handles=handles,fontsize=11.5)
+        l.set_zorder(1001)
         plt.draw()
 
         #Get the bbox
@@ -197,7 +202,8 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
         handles=[ex,td]
         for _ in range(7):
             handles.append(mlines.Line2D([], [], linestyle='-',label='',lw=0))
-        l=ax.legend(handles=handles,fontsize=11.5)
+        l = ax.legend(handles=handles,fontsize=11.5)
+        l.set_zorder(1001)
         plt.draw()
 
         #Get the bbox
@@ -952,45 +958,222 @@ None,prop={},map_prop={}):
         #Return axis if specified, otherwise display figure
         return self.ax
 
-    def plot_ensembles(self,forecast,storm_dict,fhr,prop_ensemble_members,prop_ensemble_mean,prop_gfs,prop_ellipse,prop_density,nens,
-                       domain,ds,ax,map_prop,save_path):
+    def plot_models(self,forecast,plot_btk,storm_dict,forecast_dict,models,domain,ax,prop,map_prop,save_path):
         
         r"""
+        Plot multi-model forecast tracks.
+        """
         
+         #Set default properties
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200,'plot_gridlines':True}
+        default_model = {'nhc':'k',
+                         'gfs':'#0000ff',
+                         'ecm':'#ff1493',
+                         'cmc':'#1e90ff',
+                         'ukm':'#00ff00',
+                         'hmon':'#ff8c00',
+                         'hwrf':'#66cdaa'}
+        default_prop = {'linewidth':2.5,'marker':'label','marker_hours':[24,48,72,96,120,144,168]}
+        
+        #Initialize plot
+        prop = self.add_prop(prop,default_prop)
+        map_prop = self.add_prop(map_prop,default_map_prop)
+        model_prop = self.add_prop(models,default_model)
+        self.plot_init(ax,map_prop)
+        
+        #Fix GFDL
+        if 'gfdl' in forecast_dict.keys():
+            model_prop['gfdl'] = model_prop['hmon']
+        if 'jtwc' in forecast_dict.keys():
+            model_prop['jtwc'] = model_prop['nhc']
+        
+        #================================================================================================
+        
+        #Keep record of lat/lon coordinate extrema
+        lat_max_extrema = []
+        lat_min_extrema = []
+        lon_max_extrema = []
+        lon_min_extrema = []
+        
+        #================================================================================================
+        
+        #Plot models
+        for model in forecast_dict.keys():
+            
+            #Plot forecast track
+            lons = forecast_dict[model]['lon']
+            lats = forecast_dict[model]['lat']
+            self.ax.plot(lons,lats,color=model_prop[model],linewidth=prop['linewidth'],label=model.upper(),transform=ccrs.PlateCarree())
+            
+            #Add labels if requested
+            if prop['marker'] != None and len(prop['marker_hours']) >= 1:
+                for hour in prop['marker_hours']:
+                    if hour not in forecast_dict[model]['fhr']: continue
+                    idx = forecast_dict[model]['fhr'].index(hour)
+                    if prop['marker'] == 'label':
+                        self.ax.text(lons[idx],lats[idx],str(hour),ha='center',va='center',zorder=100,transform=ccrs.PlateCarree())
+                    elif prop['marker'] == 'dot':
+                        self.ax.plot(lons[idx],lats[idx],'o',ms=prop['linewidth']*3,zorder=100,
+                                     mfc=model_prop[model],mec='k',transform=ccrs.PlateCarree())
+                    else:
+                        raise ValueError("Acceptable values for 'marker' prop are 'label' or 'dot'.")
+            
+            #Add to lat/lon extrema
+            lat_max_extrema.append(np.nanmax(lats))
+            lat_min_extrema.append(np.nanmin(lats))
+            lon_max_extrema.append(np.nanmax(lons))
+            lon_min_extrema.append(np.nanmin(lons))
+        
+        #Plot best track if requested
+        if plot_btk:
+            
+            #Determine maximum forecast hour
+            max_fhr = max([max(forecast_dict[model]['fhr']) for model in forecast_dict.keys()])
+            
+            #Determine range of forecast data in best track
+            idx_start = storm_dict['date'].index(forecast)
+            end_date = forecast + timedelta(hours=max_fhr)
+            if end_date in storm_dict['date']:
+                idx_end = storm_dict['date'].index(end_date)
+            else:
+                idx_end = len(storm_dict['date'])
+            
+            #Plot best track
+            lons = storm_dict['lon'][idx_start:idx_end+1]
+            lats = storm_dict['lat'][idx_start:idx_end+1]
+            storm_dates = storm_dict['date'][idx_start:idx_end+1]
+            self.ax.plot(lons,lats,':',color='k',linewidth=prop['linewidth']*0.8,label='Best Track',transform=ccrs.PlateCarree())
+            
+            #Add to lat/lon extrema
+            lat_max_extrema.append(np.nanmax(lats))
+            lat_min_extrema.append(np.nanmin(lats))
+            lon_max_extrema.append(np.nanmax(lons))
+            lon_min_extrema.append(np.nanmin(lons))
+            
+            #Add labels if requested
+            if prop['marker'] != None and len(prop['marker_hours']) >= 1:
+                for hour in prop['marker_hours']:
+                    valid_date = forecast + timedelta(hours=hour)
+                    if valid_date not in storm_dates: continue
+                    idx = storm_dict['date'].index(valid_date)
+                    if prop['marker'] == 'label':
+                        self.ax.text(storm_dict['lon'][idx],storm_dict['lat'][idx],
+                                     str(hour),ha='center',va='center',zorder=100,clip_on=True,transform=ccrs.PlateCarree())
+                    elif prop['marker'] == 'dot':
+                        self.ax.plot(storm_dict['lon'][idx],storm_dict['lat'][idx],'o',ms=prop['linewidth']*3,zorder=100,
+                                     mfc='k',mec='k',transform=ccrs.PlateCarree())
+                    else:
+                        raise ValueError("Acceptable values for 'marker' prop are 'label' or 'dot'.")
+        
+        #================================================================================================
+        
+        #Calcuate lat/lon extrema
+        lat_max_extrema = np.sort(lat_max_extrema)
+        lat_min_extrema = np.sort(lat_min_extrema)
+        lon_max_extrema = np.sort(lon_max_extrema)
+        lon_min_extrema = np.sort(lon_min_extrema)
+        
+        max_lat = np.nanpercentile(lat_max_extrema,95)
+        min_lat = np.nanpercentile(lat_min_extrema,5)
+        max_lon = np.nanpercentile(lon_max_extrema,95)
+        min_lon = np.nanpercentile(lon_min_extrema,5)
+        
+        #================================================================================================
+
+        #Add legend
+        import matplotlib.patches as mpatches
+        import matplotlib.lines as mlines
+        l = self.ax.legend(loc=1,prop={'size':12})
+        l.set_zorder(1001)
+
+        #Plot title
+        plot_title = f"Model Forecast Tracks for {storm_dict['name'].title()}"
+        self.ax.set_title(plot_title,fontsize=16,loc='left',fontweight='bold')
+
+        title_str = f"Initialized {forecast.strftime('%H%M UTC %d %B %Y')}"
+        self.ax.set_title(title_str,fontsize=12,loc='right')
+
+        #--------------------------------------------------------------------------------------
+
+        #Storm-centered plot domain
+        if domain == "dynamic":
+
+            bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
+            self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
+
+        #Pre-generated or custom domain
+        else:
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
+
+        #Plot parallels and meridians
+        #This is currently not supported for all cartopy projections.
+        if map_prop['plot_gridlines']:
+            try:
+                self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+            except:
+                pass
+
+        #--------------------------------------------------------------------------------------
+
+        credit_text = self.plot_credit()
+        self.add_credit(credit_text)
+
+        #Save image if specified
+        if save_path is not None and isinstance(save_path,str) == True:
+            plt.savefig(os.path.join(save_path),bbox_inches='tight')
+
+        #Return axis if specified, otherwise display figure
+        return self.ax
+    
+    def plot_ensembles(self,forecast,storm_dict,fhr,interpolate,prop_ensemble_members,prop_ensemble_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,
+               domain,ds,ax,map_prop,save_path):
+        
+        r"""
+        Plot GEFS ensemble forecast tracks.
         """
         
         #Set default properties
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200,'plot_gridlines':True}
-        default_prop_ensemble_members = {'linewidth':0.5, 'linecolor':'k'}
-        default_prop_ensemble_mean = {'linewidth':2.0, 'linecolor':'k'}
-        default_prop_gfs = {'linewidth':2.0, 'linecolor':'b'}
-        default_prop_ellipse = {'linewidth':2.0, 'linecolor':'r'}
-        default_prop_density = {'radius':200, 'cmap':plt.cm.YlOrRd, 'levels':[i for i in range(5,105,5)]}
+        default_prop_ensemble_members = {'plot':True, 'linewidth':0.2, 'linecolor':'k'}
+        default_prop_ensemble_mean = {'plot':True, 'linewidth':3.0, 'linecolor':'k'}
+        default_prop_gfs = {'plot':True, 'linewidth':3.0, 'linecolor':'r'}
+        default_prop_btk = {'plot':True, 'linewidth':2.5, 'linecolor':'b'}
+        default_prop_ellipse = {'plot':True, 'linewidth':3.0, 'linecolor':'b'}
+        default_prop_density = {'plot':True, 'radius':200, 'cmap':plt.cm.plasma_r, 'levels':[1]+[i for i in range(10,101,10)]}
         
         #Initialize plot
         map_prop = self.add_prop(map_prop,default_map_prop)
-        if prop_ensemble_members is not None: prop_ensemble_members = self.add_prop(prop_ensemble_members,default_prop_ensemble_members)
-        if prop_ensemble_mean is not None: prop_ensemble_mean = self.add_prop(prop_ensemble_mean,default_prop_ensemble_mean)
-        if prop_gfs is not None: prop_gfs = self.add_prop(prop_gfs,default_prop_gfs)
-        if prop_ellipse is not None: prop_ellipse = self.add_prop(prop_ellipse,default_prop_ellipse)
-        if prop_density is not None: prop_density = self.add_prop(prop_density,default_prop_density)
+        prop_ensemble_members = self.add_prop(prop_ensemble_members,default_prop_ensemble_members)
+        prop_ensemble_mean = self.add_prop(prop_ensemble_mean,default_prop_ensemble_mean)
+        prop_gfs = self.add_prop(prop_gfs,default_prop_gfs)
+        prop_btk = self.add_prop(prop_btk,default_prop_btk)
+        prop_ellipse = self.add_prop(prop_ellipse,default_prop_ellipse)
+        prop_density = self.add_prop(prop_density,default_prop_density)
         self.plot_init(ax,map_prop)
         
         #================================================================================================
         
-        #Iterate over all forecast hours
-        for hr in fhr:
+        #Get valid time
+        hr = fhr
+        
+        #Keep record of lat/lon coordinate extrema
+        lat_max_extrema = []
+        lat_min_extrema = []
+        lon_max_extrema = []
+        lon_min_extrema = []
 
-            #Keep record of lat/lon coordinate extrema
-            max_lat = None
-            min_lat = None
-            max_lon = None
-            min_lon = None
+        #================================================================================================
 
-            #================================================================================================
-
-            #Plot density
-            if prop_density is not None and hr in ds['gefs']['fhr']:
+        #Function for temporal interpolation
+        import scipy.interpolate as interp
+        def temporal_interpolation(value, orig_times, target_times):
+            f = interp.interp1d(orig_times,value)
+            ynew = f(target_times)
+            return ynew
+        
+        #Plot density
+        if prop_density['plot']:
+            if hr == None or (hr != None and hr in ds['gefs']['fhr']):
 
                 #Create 0.5 degree grid for plotting
                 gridlats = np.arange(0,90,0.25)
@@ -999,228 +1182,364 @@ None,prop={},map_prop={}):
                 griddata = np.zeros((gridlons2d.shape))
 
                 #Iterate over all ensemble members
+                if hr == None:
+                    start_time = dt.now()
+                    print("--> Starting to calculate track density")
                 for ens in range(nens):
 
-                    #Proceed if hour is available
-                    if hr in ds[f'gefs_{ens}']['fhr']:
-                        idx = ds[f'gefs_{ens}']['fhr'].index(hr)
-                        griddata += add_radius(gridlats2d, gridlons2d, ds[f'gefs_{ens}']['lat'][idx],
-                                               ds[f'gefs_{ens}']['lon'][idx], prop_density['radius']) #350-km radius
+                    #Calculate for one hour
+                    if hr != None:
+                        
+                        #Proceed if hour is available
+                        if hr in ds[f'gefs_{ens}']['fhr']:
+                            idx = ds[f'gefs_{ens}']['fhr'].index(hr)
+                            griddata += add_radius(gridlats2d, gridlons2d, ds[f'gefs_{ens}']['lat'][idx],
+                                                   ds[f'gefs_{ens}']['lon'][idx], prop_density['radius'])
+                    
+                    #Calculate for cumulative
+                    else:
+                        
+                        #Ensemble temporary gridded field
+                        temp_grid = np.zeros((gridlons2d.shape))
+
+                        #Interpolate temporally to hourly if requested
+                        if interpolate:
+                            if len(ds[f'gefs_{ens}']['lat']) == 0:
+                                continue
+                            elif len(ds[f'gefs_{ens}']['lat']) == 1:
+                                new_lats = ds[f'gefs_{ens}']['lat']
+                                new_lons = ds[f'gefs_{ens}']['lon']
+                            else:
+                                new_hours = np.arange(min(ds[f'gefs_{ens}']['fhr']),max(ds[f'gefs_{ens}']['fhr']),1)
+                                new_lats = temporal_interpolation(ds[f'gefs_{ens}']['lat'],ds[f'gefs_{ens}']['fhr'],new_hours)
+                                new_lons = temporal_interpolation(ds[f'gefs_{ens}']['lon'],ds[f'gefs_{ens}']['fhr'],new_hours)
+
+                            #Iterate over all forecast hours
+                            for i,(i_lon,i_lat) in enumerate(zip(new_lons,new_lats)):
+                                radius_grid = add_radius(gridlats2d, gridlons2d, i_lat, i_lon, prop_density['radius'])
+                                temp_grid = np.maximum(temp_grid, radius_grid)
+                        
+                        #Otherwise don't interpolate
+                        else:
+                            
+                            #Iterate over all forecast hours
+                            for idx,iter_hr in enumerate(ds[f'gefs_{ens}']['fhr']):
+                                radius_grid = add_radius(gridlats2d, gridlons2d, ds[f'gefs_{ens}']['lat'][idx],
+                                                         ds[f'gefs_{ens}']['lon'][idx], prop_density['radius'])
+                                temp_grid = np.maximum(temp_grid, radius_grid)
+
+                        #Add temporary grid to full grid
+                        griddata += temp_grid
 
                 #Convert density to percent
-                idx = ds[f'gefs']['fhr'].index(hr)
-                #density_percent = (griddata / ds['eps']['members'][idx]) * 100.0
+                if hr == None:
+                    time_elapsed = dt.now() - start_time
+                    tsec = str(round(time_elapsed.total_seconds(),2))
+                    print(f"--> Completed calculating track density ({tsec} seconds)")
                 density_percent = (griddata / nens) * 100.0
 
                 #Plot density
-                clevs = np.arange(5,105,5)
+                norm = mcolors.BoundaryNorm(prop_density['levels'], prop_density['cmap'].N)
                 cs = self.ax.contourf(gridlons, gridlats, density_percent, prop_density['levels'],
-                                      cmap=prop_density['cmap'], alpha=0.6, transform=ccrs.PlateCarree())
-                cbar = plt.colorbar(cs,ticks=np.arange(5,105,5))
+                                      cmap=prop_density['cmap'], norm=norm, alpha=0.6, transform=ccrs.PlateCarree())
+                cbar = plt.colorbar(cs,ticks=prop_density['levels'])
                 cbar.ax.tick_params(labelsize=12)
 
-            #Plot ellipse
-            if hr in ds['gefs']['fhr'] and prop_ellipse is not None:
-                idx = ds['gefs']['fhr'].index(hr)
+        #-------------------------------------------------------------------
+        #Plot ellipse
+        if hr != None and hr in ds['gefs']['fhr'] and prop_ellipse['plot']:
+            idx = ds['gefs']['fhr'].index(hr)
 
-                try:
-                    self.ax.plot(ds['gefs']['ellipse_lon'][idx],ds['gefs']['ellipse_lat'][idx],'-', color='w', linewidth=3.4,
+            try:
+                self.ax.plot(ds['gefs']['ellipse_lon'][idx],ds['gefs']['ellipse_lat'][idx],'-',
+                             color='w', linewidth=prop_ellipse['linewidth']*1.2,
                              transform=ccrs.PlateCarree(), alpha=0.8)
-                    self.ax.plot(ds['gefs']['ellipse_lon'][idx],ds['gefs']['ellipse_lat'][idx],'-', color='b', linewidth=2.8,
+                self.ax.plot(ds['gefs']['ellipse_lon'][idx],ds['gefs']['ellipse_lat'][idx],'-',
+                             color=prop_ellipse['linecolor'], linewidth=prop_ellipse['linewidth'],
                              transform=ccrs.PlateCarree(), alpha=0.8)
-                except:
-                    pass
+            except:
+                pass
 
-            #Plot GEFS member tracks
-            for i in range(nens):
-                
-                #Update coordinate bounds
-                skip_bounds = False
-                if hr in ds[f'gefs_{i}']['fhr']:
-                    idx = ds[f'gefs_{i}']['fhr'].index(hr)
-                    use_lats = ds[f'gefs_{i}']['lat'][:idx+1]
-                    use_lons = ds[f'gefs_{i}']['lon'][:idx+1]
+        #-------------------------------------------------------------------
+        #Plot GEFS member tracks
+        for i in range(nens):
+
+            #Update coordinate bounds
+            skip_bounds = False
+            if hr in ds[f'gefs_{i}']['fhr']:
+                idx = ds[f'gefs_{i}']['fhr'].index(hr)
+                use_lats = ds[f'gefs_{i}']['lat'][:idx+1]
+                use_lons = ds[f'gefs_{i}']['lon'][:idx+1]
+            elif len(ds[f'gefs_{i}']['fhr']) > 0:
+                idx = 0
+                if hr == None:
+                    idx = len(ds[f'gefs_{i}']['lon'])
                 else:
-                    diff = [ihr-hr for ihr in ds[f'gefs_{i}']['fhr']]
-                    idx = np.where(np.array(diff)>0)[0]
-                    if len(idx) > 0:
-                        use_lats = ds[f'gefs_{i}']['lat'][:idx[0]]
-                        use_lons = ds[f'gefs_{i}']['lon'][:idx[0]]
-                    else:
-                        skip_bounds = True
-                
-                if skip_bounds == False:
-                    if max_lat is None:
-                        max_lat = np.nanmax(use_lats)
-                    else:
-                        if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
-                    if min_lat is None:
-                        min_lat = np.nanmin(use_lats)
-                    else:
-                        if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
-                    if max_lon is None:
-                        max_lon = np.nanmax(use_lons)
-                    else:
-                        if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
-                    if min_lon is None:
-                        min_lon = np.nanmin(use_lons)
-                    else:
-                        if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
-                
-                if hr in ds[f'gefs_{i}']['fhr']:
-                    idx = ds[f'gefs_{i}']['fhr'].index(hr)
-                    self.ax.plot(ds[f'gefs_{i}']['lon'][:idx+1], ds[f'gefs_{i}']['lat'][:idx+1], linewidth=0.2,
-                             color='k', transform=ccrs.PlateCarree())
-                    self.ax.plot(ds[f'gefs_{i}']['lon'][idx], ds[f'gefs_{i}']['lat'][idx], 'o', ms=4, mfc='k',mec='k',
+                    for idx_hr in ds[f'gefs_{i}']['fhr']:
+                        if idx_hr <= hr: idx = ds[f'gefs_{i}']['fhr'].index(idx_hr)
+                use_lons = ds[f'gefs_{i}']['lon'][:idx+1]
+                use_lats = ds[f'gefs_{i}']['lat'][:idx+1]
+            else:
+                skip_bounds = True
+
+            if skip_bounds == False:
+                lat_max_extrema.append(np.nanmax(use_lats))
+                lat_min_extrema.append(np.nanmin(use_lats))
+                lon_max_extrema.append(np.nanmax(use_lons))
+                lon_min_extrema.append(np.nanmin(use_lons))
+
+            if hr in ds[f'gefs_{i}']['fhr']:
+                idx = ds[f'gefs_{i}']['fhr'].index(hr)
+                self.ax.plot(ds[f'gefs_{i}']['lon'][:idx+1], ds[f'gefs_{i}']['lat'][:idx+1],
+                             linewidth=prop_ensemble_members['linewidth'],
+                             color=prop_ensemble_members['linecolor'], transform=ccrs.PlateCarree())
+                self.ax.plot(ds[f'gefs_{i}']['lon'][idx], ds[f'gefs_{i}']['lat'][idx], 'o', ms=4,
+                             mfc=prop_ensemble_members['linecolor'],mec='k',
                              alpha=0.6,transform=ccrs.PlateCarree())
-                elif len(ds[f'gefs_{i}']['fhr']) > 0:
-                    diff = [ihr-hr for ihr in ds[f'gefs_{i}']['fhr']]
-                    idx = np.where(np.array(diff)>0)[0]
-                    if len(idx) > 0:
-                        self.ax.plot(ds[f'gefs_{i}']['lon'][:idx[0]], ds[f'gefs_{i}']['lat'][:idx[0]], linewidth=0.2,
-                                 color='k', transform=ccrs.PlateCarree())
+            elif len(ds[f'gefs_{i}']['fhr']) > 0:
+                idx = 0
+                if hr == None:
+                    idx = len(ds[f'gefs_{i}']['lon'])
+                else:
+                    for idx_hr in ds[f'gefs_{i}']['fhr']:
+                        if idx_hr <= hr: idx = ds[f'gefs_{i}']['fhr'].index(idx_hr)
+                self.ax.plot(ds[f'gefs_{i}']['lon'][:idx+1], ds[f'gefs_{i}']['lat'][:idx+1], 
+                             linewidth=prop_ensemble_members['linewidth'],
+                             color=prop_ensemble_members['linecolor'], transform=ccrs.PlateCarree())
 
-            #Plot operational GFS track
+        #-------------------------------------------------------------------
+        #Plot best track
+        if prop_btk['plot']:
+            
+            #Get valid time
+            valid_time = np.nan if hr == None else forecast + timedelta(hours=hr)
+            end_time = forecast + timedelta(hours=240) if storm_dict['year'] >= 2015 else forecast + timedelta(hours=240)
+            
+            #Update coordinate bounds
+            skip_bounds = False
+            idx_start = storm_dict['date'].index(forecast)
+            if valid_time in storm_dict['date']:
+                idx = storm_dict['date'].index(valid_time)
+                
+                use_lats = storm_dict['lat'][idx_start:idx+1]
+                use_lons = storm_dict['lon'][idx_start:idx+1]
+            else:
+                idx = 0
+                if hr == None:
+                    if end_time in storm_dict['date']:
+                        idx = storm_dict['date'].index(end_time)
+                    else:
+                        idx = len(storm_dict['lat'])
+                else:
+                    for idx_date in storm_dict['date']:
+                        if idx_date <= valid_time: idx = storm_dict['date'].index(idx_date)
+                use_lats = storm_dict['lat'][idx_start:idx+1]
+                use_lons = storm_dict['lon'][idx_start:idx+1]
+
+            if skip_bounds == False:
+                lat_max_extrema.append(np.nanmax(use_lats))
+                lat_min_extrema.append(np.nanmin(use_lats))
+                lon_max_extrema.append(np.nanmax(use_lons))
+                lon_min_extrema.append(np.nanmin(use_lons))
+
+            #Plot observed track before now
+            self.ax.plot(storm_dict['lon'][:idx_start+1], storm_dict['lat'][:idx_start+1],
+                         linewidth=1.5, color='k', linestyle=":", transform=ccrs.PlateCarree())
+            
+            if valid_time in storm_dict['date']:
+                idx = storm_dict['date'].index(valid_time)
+                self.ax.plot(storm_dict['lon'][idx_start:idx+1], storm_dict['lat'][idx_start:idx+1],
+                             linewidth=prop_btk['linewidth'], color=prop_btk['linecolor'],transform=ccrs.PlateCarree())
+                self.ax.plot(storm_dict['lon'][idx], storm_dict['lat'][idx], 'o', ms=12,
+                             mfc=prop_btk['linecolor'],mec='k', transform=ccrs.PlateCarree())
+            elif len(storm_dict['date']) > 0:
+                idx = 0
+                if hr == None:
+                    if end_time in storm_dict['date']:
+                        idx = storm_dict['date'].index(end_time)
+                    else:
+                        idx = len(storm_dict['lat'])
+                else:
+                    for idx_date in storm_dict['date']:
+                        if idx_date <= valid_time: idx = storm_dict['date'].index(idx_date)
+                self.ax.plot(storm_dict['lon'][idx_start:idx+1], storm_dict['lat'][idx_start:idx+1],
+                             linewidth=prop_btk['linewidth'], color=prop_btk['linecolor'],transform=ccrs.PlateCarree())
+
+        #-------------------------------------------------------------------
+        #Plot operational GFS track
+        if prop_gfs['plot']:
+
+            #Update coordinate bounds
+            skip_bounds = False
             if hr in ds['gfs']['fhr']:
-                
-                #Update coordinate bounds
-                skip_bounds = False
-                if hr in ds['gfs']['fhr']:
-                    use_lats = ds['gfs']['lat'][:idx+1]
-                    use_lons = ds['gfs']['lon'][:idx+1]
-                else:
-                    diff = [ihr-hr for ihr in ds['gfs']['fhr']]
-                    idx = np.where(np.array(diff)>0)[0]
-                    if len(idx) > 0:
-                        use_lats = ds['gfs']['lat'][:idx[0]]
-                        use_lons = ds['gfs']['lon'][:idx[0]]
-                    else:
-                        skip_bounds = True
-                
-                if skip_bounds == False:
-                    if max_lat is None:
-                        max_lat = np.nanmax(use_lats)
-                    else:
-                        if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
-                    if min_lat is None:
-                        min_lat = np.nanmin(use_lats)
-                    else:
-                        if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
-                    if max_lon is None:
-                        max_lon = np.nanmax(use_lons)
-                    else:
-                        if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
-                    if min_lon is None:
-                        min_lon = np.nanmin(use_lons)
-                    else:
-                        if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
-                
                 idx = ds['gfs']['fhr'].index(hr)
-                self.ax.plot(ds['gfs']['lon'][:idx+1], ds['gfs']['lat'][:idx+1], linewidth=3.0, color='r', transform=ccrs.PlateCarree())
-                self.ax.plot(ds['gfs']['lon'][idx], ds['gfs']['lat'][idx], 'o', ms=12, mfc='r',mec='k', transform=ccrs.PlateCarree())
+                use_lats = ds['gfs']['lat'][:idx+1]
+                use_lons = ds['gfs']['lon'][:idx+1]
             elif len(ds['gfs']['fhr']) > 0:
-                diff = [ihr-hr for ihr in ds['gfs']['fhr']]
-                idx = np.where(np.array(diff)>0)[0]
-                if len(idx) > 0:
-                    self.ax.plot(ds['gfs']['lon'][:idx[0]], ds['gfs']['lat'][:idx[0]], linewidth=3.0, color='r', transform=ccrs.PlateCarree())
-
-            #Plot ensemble mean track
-            if hr in ds['gefs']['fhr']:
-                
-                #Update coordinate bounds
-                skip_bounds = False
-                if hr in ds['gefs']['fhr']:
-                    use_lats = ds['gefs']['lat'][:idx+1]
-                    use_lons = ds['gefs']['lon'][:idx+1]
+                idx = 0
+                if hr == None:
+                    idx = len(ds['gfs']['lon'])
                 else:
-                    diff = [ihr-hr for ihr in ds['gefs']['fhr']]
-                    idx = np.where(np.array(diff)>0)[0]
-                    if len(idx) > 0:
-                        use_lats = ds['gefs']['lat'][:idx[0]]
-                        use_lons = ds['gefs']['lon'][:idx[0]]
-                    else:
-                        skip_bounds = True
-                
-                if skip_bounds == False:
-                    if max_lat is None:
-                        max_lat = np.nanmax(use_lats)
-                    else:
-                        if np.nanmax(use_lats) > max_lat: max_lat = np.nanmax(use_lats)
-                    if min_lat is None:
-                        min_lat = np.nanmin(use_lats)
-                    else:
-                        if np.nanmin(use_lats) < min_lat: min_lat = np.nanmin(use_lats)
-                    if max_lon is None:
-                        max_lon = np.nanmax(use_lons)
-                    else:
-                        if np.nanmax(use_lons) > max_lon: max_lon = np.nanmax(use_lons)
-                    if min_lon is None:
-                        min_lon = np.nanmin(use_lons)
-                    else:
-                        if np.nanmin(use_lons) < min_lon: min_lon = np.nanmin(use_lons)
-                
+                    for idx_hr in ds['gfs']['fhr']:
+                        if idx_hr <= hr: idx = ds['gfs']['fhr'].index(idx_hr)
+                use_lats = ds['gfs']['lat'][:idx+1]
+                use_lons = ds['gfs']['lon'][:idx+1]
+            else:
+                skip_bounds = True
+
+            if skip_bounds == False:
+                lat_max_extrema.append(np.nanmax(use_lats))
+                lat_min_extrema.append(np.nanmin(use_lats))
+                lon_max_extrema.append(np.nanmax(use_lons))
+                lon_min_extrema.append(np.nanmin(use_lons))
+
+            #Plot GFS forecast line and latest dot
+            if hr in ds['gfs']['fhr']:
+                idx = ds['gfs']['fhr'].index(hr)
+                self.ax.plot(ds['gfs']['lon'][:idx+1], ds['gfs']['lat'][:idx+1],
+                             linewidth=prop_gfs['linewidth'], color=prop_gfs['linecolor'], transform=ccrs.PlateCarree())
+                self.ax.plot(ds['gfs']['lon'][idx], ds['gfs']['lat'][idx], 'o', ms=12,
+                             mfc=prop_gfs['linecolor'],mec='k', transform=ccrs.PlateCarree())
+
+            elif len(ds['gfs']['fhr']) > 0:
+                idx = 0
+                if hr == None:
+                    idx = len(ds['gfs']['lon'])
+                else:
+                    for idx_hr in ds['gfs']['fhr']:
+                        if idx_hr <= hr: idx = ds['gfs']['fhr'].index(idx_hr)
+                self.ax.plot(ds['gfs']['lon'][:idx+1], ds['gfs']['lat'][:idx+1],
+                             linewidth=prop_gfs['linewidth'], color=prop_gfs['linecolor'], transform=ccrs.PlateCarree())
+
+        #-------------------------------------------------------------------
+        #Plot ensemble mean track
+        if prop_ensemble_mean['plot']:
+
+            #Update coordinate bounds
+            skip_bounds = False
+            if hr in ds['gefs']['fhr']:
                 idx = ds['gefs']['fhr'].index(hr)
-                self.ax.plot(ds['gefs']['lon'][:idx+1], ds['gefs']['lat'][:idx+1], linewidth=3.0, color='k', transform=ccrs.PlateCarree())
-                self.ax.plot(ds['gefs']['lon'][idx], ds['gefs']['lat'][idx], 'o', ms=12, mfc='k',mec='k', transform=ccrs.PlateCarree())
+                use_lats = ds['gefs']['lat'][:idx+1]
+                use_lons = ds['gefs']['lon'][:idx+1]
             elif len(ds['gefs']['fhr']) > 0:
-                diff = [ihr-hr for ihr in ds['gefs']['fhr']]
-                idx = np.where(np.array(diff)>0)[0]
-                if len(idx) > 0:
-                    self.ax.plot(ds['gefs']['lon'][:idx[0]], ds['gefs']['lat'][:idx[0]], linewidth=3.0, color='k', transform=ccrs.PlateCarree())
+                idx = 0
+                if hr == None:
+                    idx = len(ds['gefs']['lon'])
+                else:
+                    for idx_hr in ds['gefs']['fhr']:
+                        if idx_hr <= hr: idx = ds['gefs']['fhr'].index(idx_hr)
+                use_lats = ds['gefs']['lat'][:idx+1]
+                use_lons = ds['gefs']['lon'][:idx+1]
+            else:
+                skip_bounds = True
 
-            #================================================================================================
+            if skip_bounds == False:
+                lat_max_extrema.append(np.nanmax(use_lats))
+                lat_min_extrema.append(np.nanmin(use_lats))
+                lon_max_extrema.append(np.nanmax(use_lons))
+                lon_min_extrema.append(np.nanmin(use_lons))
 
-            #Add legend
-            import matplotlib.patches as mpatches
-            import matplotlib.lines as mlines
-            p1 = mlines.Line2D([], [], color='r', linewidth=3.0, label='Deterministic GFS')
-            p2 = mlines.Line2D([], [], color='k', linewidth=3.0, label='GEFS Mean')
-            p3 = mlines.Line2D([], [], color='k', linewidth=0.5, label='GEFS Members')
-            p4 = mlines.Line2D([], [], color='w', marker='o', ms=12, mec='b', mew=2.0, label='GEFS Ellipse')
-            l = self.ax.legend(handles=[p1,p2,p3,p4],loc=1,prop={'size':14})
-            l.set_zorder(200)
+            if hr in ds['gefs']['fhr']:
+                idx = ds['gefs']['fhr'].index(hr)
+                self.ax.plot(ds['gefs']['lon'][:idx+1], ds['gefs']['lat'][:idx+1],
+                             linewidth=prop_ensemble_mean['linewidth'],
+                             color=prop_ensemble_mean['linecolor'], transform=ccrs.PlateCarree())
+                self.ax.plot(ds['gefs']['lon'][idx], ds['gefs']['lat'][idx], 'o', ms=12,
+                             mfc=prop_ensemble_mean['linecolor'],mec='k', transform=ccrs.PlateCarree())
+            elif len(ds['gefs']['fhr']) > 0:
+                idx = 0
+                if hr == None:
+                    idx = len(ds['gefs']['lon'])
+                else:
+                    for idx_hr in ds['gefs']['fhr']:
+                        if idx_hr <= hr: idx = ds['gefs']['fhr'].index(idx_hr)
+                self.ax.plot(ds['gefs']['lon'][:idx+1], ds['gefs']['lat'][:idx+1],
+                             linewidth=prop_ensemble_mean['linewidth'],
+                             color=prop_ensemble_mean['linecolor'], transform=ccrs.PlateCarree())
+        
+        #================================================================================================
+        
+        #Calcuate lat/lon extrema
+        lat_max_extrema = np.sort(lat_max_extrema)
+        lat_min_extrema = np.sort(lat_min_extrema)
+        lon_max_extrema = np.sort(lon_max_extrema)
+        lon_min_extrema = np.sort(lon_min_extrema)
+        
+        if hr == None:
+            max_lat = np.nanpercentile(lat_max_extrema,95)
+            min_lat = np.nanpercentile(lat_min_extrema,5)
+            max_lon = np.nanpercentile(lon_max_extrema,95)
+            min_lon = np.nanpercentile(lon_min_extrema,5)
+        else:
+            max_lat = np.nanmax(lat_max_extrema)
+            min_lat = np.nanmin(lat_min_extrema)
+            max_lon = np.nanmax(lon_max_extrema)
+            min_lon = np.nanmin(lon_min_extrema)
+        
+        #================================================================================================
 
-            #Plot title
-            plot_title = f"GEFS Forecast Tracks for {storm_dict['name'].title()}"
-            if prop_density is not None: plot_title += f"\nTrack Density ({np.int(prop_density['radius'])}-km radius)"
-            self.ax.set_title(plot_title,fontsize=18,loc='left',fontweight='bold')
+        #Add legend
+        import matplotlib.patches as mpatches
+        import matplotlib.lines as mlines
+        p1 = mlines.Line2D([], [], color=prop_btk['linecolor'], linewidth=prop_btk['linewidth'], label='Best Track')
+        p2 = mlines.Line2D([], [], color=prop_gfs['linecolor'], linewidth=prop_gfs['linewidth'], label='Deterministic GFS')
+        p3 = mlines.Line2D([], [], color=prop_ensemble_mean['linecolor'], linewidth=prop_ensemble_mean['linewidth'], label='GEFS Mean')
+        p4 = mlines.Line2D([], [], color=prop_ensemble_members['linecolor'], linewidth=prop_ensemble_members['linewidth'], label='GEFS Members')
+        p5 = mlines.Line2D([], [], color='w', marker='o', ms=12, mec=prop_ellipse['linecolor'], mew=prop_ellipse['linewidth'], label='GEFS Ellipse')
+        handles_list = []
+        if prop_btk['plot']: handles_list.append(p1)
+        if prop_gfs['plot']: handles_list.append(p2)
+        if prop_ensemble_mean['plot']: handles_list.append(p3)
+        if prop_ensemble_members['plot']: handles_list.append(p4)
+        if hr != None and prop_ellipse['plot']: handles_list.append(p5)
+        if len(handles_list) > 0:
+            l = self.ax.legend(handles=handles_list,loc=1,prop={'size':12})
+            l.set_zorder(1001)
 
+        #Plot title
+        plot_title = f"GEFS Forecast Tracks for {storm_dict['name'].title()}"
+        if prop_density['plot']: plot_title += f"\nTrack Density ({np.int(prop_density['radius'])}-km radius)"
+        self.ax.set_title(plot_title,fontsize=16,loc='left',fontweight='bold')
+
+        if hr == None:
+            title_str = f"Initialized {forecast.strftime('%H%M UTC %d %B %Y')}"
+        else:
             title_str = f"Hour {hr} | Valid {(forecast+timedelta(hours=hr)).strftime('%H%M UTC %d %B %Y')}\n"
             title_str += f"Initialized {forecast.strftime('%H%M UTC %d %B %Y')}"
-            self.ax.set_title(title_str,fontsize=14,loc='right')
+        self.ax.set_title(title_str,fontsize=12,loc='right')
 
-            #--------------------------------------------------------------------------------------
+        #--------------------------------------------------------------------------------------
 
-            #Storm-centered plot domain
-            if domain == "dynamic":
+        #Storm-centered plot domain
+        if domain == "dynamic":
 
-                bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
-                self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
+            bound_w,bound_e,bound_s,bound_n = self.dynamic_map_extent(min_lon,max_lon,min_lat,max_lat)
+            self.ax.set_extent([bound_w,bound_e,bound_s,bound_n], crs=ccrs.PlateCarree())
 
-            #Pre-generated or custom domain
-            else:
-                bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
+        #Pre-generated or custom domain
+        else:
+            bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
 
-            #Plot parallels and meridians
-            #This is currently not supported for all cartopy projections.
-            if map_prop['plot_gridlines']:
-                try:
-                    self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
-                except:
-                    pass
+        #Plot parallels and meridians
+        #This is currently not supported for all cartopy projections.
+        if map_prop['plot_gridlines']:
+            try:
+                self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+            except:
+                pass
 
-            #--------------------------------------------------------------------------------------
+        #--------------------------------------------------------------------------------------
 
-            credit_text = self.plot_credit()
-            self.add_credit(credit_text)
+        credit_text = self.plot_credit()
+        self.add_credit(credit_text)
 
-            #Save image if specified
-            if save_path is not None and isinstance(save_path,str) == True:
-                plt.savefig(os.path.join(save_path),bbox_inches='tight')
+        #Save image if specified
+        if save_path is not None and isinstance(save_path,str) == True:
+            plt.savefig(os.path.join(save_path),bbox_inches='tight')
 
-            #Return axis if specified, otherwise display figure
-            return self.ax
-    
+        #Return axis if specified, otherwise display figure
+        return self.ax
+
     def plot_season(self,season,domain=None,ax=None,save_path=None,prop={},map_prop={}):
         
         r"""

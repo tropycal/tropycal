@@ -711,7 +711,6 @@ class Storm:
         #Return axis
         return plot_ax
         
-    #PLOT FUNCTION FOR HURDAT
     def plot_nhc_forecast(self,forecast,track_labels='fhr',cone_days=5,domain="dynamic_forecast",
                           ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
@@ -887,28 +886,19 @@ class Storm:
         
         #Return axis
         return plot_ax
-        
     
-    #PLOT FUNCTION FOR HURDAT
-    def plot_gefs_ensembles(self,forecast,fhr=None,
-                            prop_members = {'linewidth':0.5, 'linecolor':'k'},
-                            prop_mean = {'linewidth':2.0, 'linecolor':'k'},
-                            prop_gfs = {'linewidth':2.0, 'linecolor':'b'},
-                            prop_ellipse = {'linewidth':2.0, 'linecolor':'r'},
-                            prop_density = {'radius':200, 'cmap':plt.cm.YlOrRd, 'levels':[i for i in range(5,105,5)]},
-                            domain="dynamic",ax=None,cartopy_proj=None,save_path=None,map_prop={}):
+    
+    def plot_models(self,forecast,plot_btk=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
-        Creates a plot of individual GEFS ensemble tracks.
+        Creates a plot of operational model forecast tracks.
         
         Parameters
         ----------
         forecast : datetime.datetime
             Datetime object representing the GEFS run initialization.
-        fhr : int or list, optional
-            Forecast hour(s) to plot. If None (default), a plot of all forecast hours will be produced. If a list, multiple plots will be produced. If an integer, a single plot will be produced.
-        plot_density : bool, optional
-            If True, track density will be computed and plotted in addition to individual ensemble tracks.
+        plot_btk : bool, optional
+            If True, Best Track will be plotted alongside operational forecast models. Default is False.
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
@@ -920,8 +910,10 @@ class Storm:
         
         Other Parameters
         ----------------
+        models : dict
+            Dictionary with **key** = model name (case-insensitive) and **value** = model color. Scroll below for available model names.
         prop : dict
-            Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
+            Customization properties of forecast lines. Scroll below for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
         
@@ -929,21 +921,82 @@ class Storm:
         -------
         ax
             Instance of axes containing the plot is returned.
+        
+        Notes
+        -----
+        .. note::
+            1. For years before the HMON model was available, the HMON key instead defaults to the old GFDL model.
+            
+            2. For storms in the JTWC area of responsibility, the NHC key defaults to JTWC.
+        
+        The following model names are available as keys in the "model" dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {'gfs':None}`` or ``models = {'GFS':None}``).
+        
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Model Acronym
+             - Full Model Name
+           * - CMC
+             - Canadian Meteorological Centre (CMC)
+           * - GFS
+             - Global Forecast System (GFS)
+           * - UKM
+             - UK Met Office (UKMET)
+           * - ECM
+             - European Centre for Medium-range Weather Forecasts (ECMWF)
+           * - HMON
+             - Hurricanes in a Multi-scale Ocean-coupled Non-hydrostatic Model (HMON)
+           * - HWRF
+             - Hurricane Weather Research and Forecast (HWRF)
+           * - NHC
+             - National Hurricane Center (NHC)
+        
+        The following properties are available for customizing forecast model tracks, via ``prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - linewidth
+             - Line width of forecast model track. Default is 2.5.
+           * - marker
+             - Marker type for forecast hours. Options are 'label' (default), 'dot' or None.
+           * - marker_hours
+             - List of forecast hours to mark. Default is [24,48,72,96,120,144,168].
         """
+        
+        #Dictionary mapping model names to the interpolated model key
+        dict_models = {
+            'cmc':'CMC2',
+            'gfs':'AVNI',
+            'ukm':'UKX2',
+            'ecm':'ECO2',
+            'hmon':'HMNI',
+            'hwrf':'HWFI',
+            'nhc':'OFCI',
+        }
+        backup_models = {
+            'gfs':['AVNO','AVNX'],
+            'ukm':['UKM2','UKM'],
+            'cmc':['CMC'],
+            'hmon':['GFDI','GFDL'],
+            'nhc':['OFCL','JTWC'],
+            'hwrf':['HWRF'],
+        }
+        
+        #Pop kwargs
+        prop = kwargs.pop('prop',{})
+        models = kwargs.pop('models',{})
+        map_prop = kwargs.pop('map_prop',{})
         
         #Create instance of plot object
         try:
             self.plot_obj
         except:
             self.plot_obj = TrackPlot()
-        
-        #Create cartopy projection
-        if cartopy_proj is not None:
-            self.plot_obj.proj = cartopy_proj
-        elif max(self.dict['lon']) > 150 or min(self.dict['lon']) < -150:
-            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
-        else:
-            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
         
         #-------------------------------------------------------------------------
         
@@ -953,99 +1006,397 @@ class Storm:
         except:
             self.get_operational_forecasts()
         
-        #Create dict to store all data in
-        ds = {'gfs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]},
-              'gefs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[],
-                      'members':[],'ellipse_lat':[],'ellipse_lon':[]}
-              }
+        #Error check forecast date
+        if forecast < self.date[0] or forecast > self.date[-1]:
+            raise ValueError("Requested forecast is outside of the storm's duration.")
         
-        #String formatting for ensembles
-        def str2(ens):
-            if ens == 0: return "AC00"
-            if ens < 10: return f"AP0{ens}"
-            return f"AP{ens}"
-
-        #Get GFS forecast entry (AVNX is valid for RAL a-deck source)
-        gfs_key = 'AVNO' if 'AVNO' in self.forecast_dict.keys() else 'AVNX'
-        try:
-            forecast_gfs = self.forecast_dict[gfs_key][forecast.strftime("%Y%m%d%H")]
-        except:
-            raise RuntimeError("The requested GFS initialization isn't available for this storm.")
-        
-        #Enter into dict entry
-        ds['gfs']['fhr'] = [int(i) for i in forecast_gfs['fhr']]
-        ds['gfs']['lat'] = [np.round(i,1) for i in forecast_gfs['lat']]
-        ds['gfs']['lon'] = [np.round(i,1) for i in forecast_gfs['lon']]
-        ds['gfs']['vmax'] = [float(i) for i in forecast_gfs['vmax']]
-        ds['gfs']['mslp'] = forecast_gfs['mslp']
-        ds['gfs']['date'] = [forecast+timedelta(hours=i) for i in forecast_gfs['fhr']]
-        
-        #Retrieve GEFS ensemble data (30 members 2019-present, 20 members prior)
-        nens = 0
-        for ens in range(0,31):
+        #Construct forecast dict
+        ds = {}
+        proj_lons = []
+        forecast_str = forecast.strftime('%Y%m%d%H')
+        input_keys = [k for k in models.keys()]
+        input_keys_lower = [k.lower() for k in models.keys()]
+        for key in dict_models.keys():
             
-            #Create dict entry
-            ds[f'gefs_{ens}'] = {'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]}
+            #Only proceed if model isn't not requested
+            if key in input_keys_lower:
+                idx = input_keys_lower.index(key)
+                if models[input_keys[idx]] == None: continue
+            
+            #Find official key
+            official_key = dict_models[key]
+            found = False
+            if official_key not in self.forecast_dict.keys():
+                if key in backup_models.keys():
+                    for backup_key in backup_models[key]:
+                        if backup_key in self.forecast_dict.keys():
+                            official_key = backup_key
+                            found = True
+                            break
+            else:
+                found = True
+            
+            #Check for 2 vs. I if needed
+            if found == False or forecast_str not in self.forecast_dict[official_key].keys():
+                if '2' in official_key:
+                    official_key = dict_models[key].replace('2','I')
+                    if official_key not in self.forecast_dict.keys():
+                        if key in backup_models.keys():
+                            found = False
+                            for backup_key_iter in backup_models[key]:
+                                backup_key = backup_key_iter.replace('2','I')
+                                if backup_key in self.forecast_dict.keys():
+                                    official_key = backup_key
+                                    found = True
+                                    break
+                            if found == False: continue
+                        else:
+                            continue
+                else:
+                    continue
+            
+            #Append forecast data if it exists for this initialization
+            if forecast_str not in self.forecast_dict[official_key].keys(): continue
+            enter_key = key + ''
+            if key.lower() == 'hmon' and 'gf' in official_key.lower(): enter_key = 'gfdl'
+            if key.lower() == 'nhc' and 'jt' in official_key.lower(): enter_key = 'jtwc'
+            ds[enter_key] = self.forecast_dict[official_key][forecast_str]
+            
+            #Filter out to hour 168
+            if ds[enter_key]['fhr'][-1] > 168:
+                idx = ds[enter_key]['fhr'].index(168)
+                for key in ds[enter_key].keys():
+                    if isinstance(ds[enter_key][key],list):
+                        ds[enter_key][key] = ds[enter_key][key][:idx+1]
+                    
+            proj_lons += ds[enter_key]['lon']
+        
+        #Proceed if data exists
+        if len(ds) == 0:
+            raise RuntimeError("No forecasts are available for the given parameters.")
+        
+        #Create cartopy projection
+        if cartopy_proj is not None:
+            self.plot_obj.proj = cartopy_proj
+        elif np.nanmax(proj_lons) > 150 or np.nanmin(proj_lons) < -150:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        
+        #Plot storm
+        plot_ax = self.plot_obj.plot_models(forecast,plot_btk,self.dict,ds,models,domain,ax=ax,prop=prop,map_prop=map_prop,save_path=save_path)
+        
+        #Return axis
+        return plot_ax
+    
+    
+    def plot_ensembles(self,forecast,fhr=None,interpolate=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
+        
+        r"""
+        Creates a plot of individual GEFS ensemble tracks.
+        
+        Parameters
+        ----------
+        forecast : datetime.datetime
+            Datetime object representing the GEFS run initialization.
+        fhr : int, optional
+            Forecast hour to plot. If None (default), a cumulative plot of all forecast hours will be produced. If an integer, a single plot will be produced.
+        interpolate : bool, optional
+            If True, and fhr is None, track density data will be interpolated to hourly. Default is False (6-hourly track density data). Setting this to True greatly slows down the function.
+        domain : str
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
+        ax : axes
+            Instance of axes to plot on. If none, one will be generated. Default is none.
+        cartopy_proj : ccrs
+            Instance of a cartopy projection to use. If none, one will be generated. Default is none.
+        save_path : str
+            Relative or full path of directory to save the image in. If none, image will not be saved.
+        
+        Other Parameters
+        ----------------
+        prop_members : dict
+            Customization properties of GEFS ensemble member track lines. Scroll down below for available options.
+        prop_mean : dict
+            Customization properties of GEFS ensemble mean track. Scroll down below for available options.
+        prop_gfs : dict
+            Customization properties of GFS forecast track. Scroll down below for available options.
+        prop_btk : dict
+            Customization properties of Best Track line. Scroll down below for available options.
+        prop_ellipse : dict
+            Customization properties of GEFS ensemble ellipse. Scroll down below for available options.
+        prop_density : dict
+            Customization properties of GEFS ensemble track density. Scroll down below for available options.
+        map_prop : dict
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
+        
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
+        
+        Notes
+        -----
+        .. note::
+            The total number of GEFS members available for analysis is as follows:
+            
+            * **2020 - present** - 31 members
+            * **2006 - 2019** - 21 members
+            * **2005 & back** - 5 members
+            
+            As the density plot and ensemble ellipse require a minimum of 10 ensemble members, they will not be generated for storms from 2005 and earlier.
+            
+            Additionally, ellipses are not generated if using the default ``fhr=None``, meaning a cumulative track density plot is generated instead.
+        
+        The ensemble ellipse used in this function follows the methodology of `Hamill et al. (2011)`_, denoting the spread in ensemble member cyclone positions. The size of the ellipse is calculated to contain 90% of ensemble members at any given time. This ellipse can be used to determine the primary type of ensemble variability:
+        
+        * **Along-track variability** - if the major axis of the ellipse is parallel to the ensemble mean motion vector.
+        * **Across-track variability** - if the major axis of the ellipse is normal to the ensemble mean motion vector.
 
-            #Retrieve ensemble member data
-            ens_str = str2(ens)
-            if ens_str not in self.forecast_dict.keys(): continue
-            forecast_ens = self.forecast_dict[ens_str][forecast.strftime("%Y%m%d%H")]
+        .. _Hamill et al. (2011): https://doi.org/10.1175/2010MWR3456.1
+        
+        The following properties are available for customizing ensemble member tracks, via ``prop_members``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot ensemble member tracks. Default is True.
+           * - linewidth
+             - Forecast track linewidth. Default is 0.2.
+           * - linecolor
+             - Forecast track line color. Default is black.
+
+        The following properties are available for customizing ensemble mean track, via ``prop_mean``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot ensemble mean forecast track. Default is True.
+           * - linewidth
+             - Forecast track linewidth. Default is 3.0.
+           * - linecolor
+             - Forecast track line color. Default is black.
+        
+        The following properties are available for customizing GFS forecast track, via ``prop_gfs``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot GFS forecast track. Default is True.
+           * - linewidth
+             - Forecast track linewidth. Default is 3.0.
+           * - linecolor
+             - Forecast track line color. Default is red.
+        
+        The following properties are available for customizing Best Track line, via ``prop_btk``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot Best Track line. Default is True.
+           * - linewidth
+             - Best Track linewidth. Default is 2.5.
+           * - linecolor
+             - Best Track line color. Default is blue.
+        
+        The following properties are available for customizing the ensemble ellipse plot, via ``prop_ellipse``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot ensemble member ellipse. Default is True.
+           * - linewidth
+             - Ellipse linewidth. Default is 3.0.
+           * - linecolor
+             - Ellipse line color. Default is blue.
+        
+        The following properties are available for customizing ensemble member track density, via ``prop_density``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - plot
+             - Boolean to determine whether to plot ensemble member track density. Default is True.
+           * - radius
+             - Radius (in km) for which to calculate track density. Default is 200 km.
+           * - cmap
+             - Matplotlib colormap for track density plot. Default is "plasma_r".
+           * - levels
+             - List of levels for contour filling track density.
+        
+        """
+        
+        #Pop kwargs
+        prop_members = kwargs.pop('prop_members',{})
+        prop_mean = kwargs.pop('prop_mean',{})
+        prop_gfs = kwargs.pop('prop_gfs',{})
+        prop_btk = kwargs.pop('prop_btk',{})
+        prop_ellipse = kwargs.pop('prop_ellipse',{})
+        prop_density = kwargs.pop('prop_density',{})
+        map_prop = kwargs.pop('map_prop',{})
+        
+        #Create instance of plot object
+        try:
+            self.plot_obj
+        except:
+            self.plot_obj = TrackPlot()
+        
+        #-------------------------------------------------------------------------
+        
+        #Get forecasts dict saved into storm object, if it hasn't been already
+        try:
+            self.forecast_dict
+        except:
+            self.get_operational_forecasts()
+        
+        #Determine max members by year
+        nens = 21
+        if self.year >= 2020 and ('AP21' in self.forecast_dict.keys() or 'AP22' in self.forecast_dict.keys() or 'AP23' in self.forecast_dict.keys()): nens = 31
+        
+        #Enforce fhr type
+        if isinstance(fhr,list): fhr = fhr[0]
+        
+        #If this forecast init was recently used, don't re-calculate
+        init_used = False
+        try:
+            if self.gefs_init == forecast: init_used = True
+        except:
+            pass
+        
+        #Only calculate if needed to
+        if init_used == False:
+            
+            print("--> Starting to calculate ellipse data")
+            
+            #Create dict to store all data in
+            ds = {'gfs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]},
+                  'gefs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[],
+                          'members':[],'ellipse_lat':[],'ellipse_lon':[]}
+                  }
+
+            #String formatting for ensembles
+            def str2(ens):
+                if ens == 0: return "AC00"
+                if ens < 10: return f"AP0{ens}"
+                return f"AP{ens}"
+
+            #Get GFS forecast entry (AVNX is valid for RAL a-deck source)
+            gfs_key = 'AVNO' if 'AVNO' in self.forecast_dict.keys() else 'AVNX'
+            try:
+                forecast_gfs = self.forecast_dict[gfs_key][forecast.strftime("%Y%m%d%H")]
+            except:
+                raise RuntimeError("The requested GFS initialization isn't available for this storm.")
 
             #Enter into dict entry
-            ds[f'gefs_{ens}']['fhr'] = [int(i) for i in forecast_ens['fhr']]
-            ds[f'gefs_{ens}']['lat'] = [np.round(i,1) for i in forecast_ens['lat']]
-            ds[f'gefs_{ens}']['lon'] = [np.round(i,1) for i in forecast_ens['lon']]
-            ds[f'gefs_{ens}']['vmax'] = [float(i) for i in forecast_ens['vmax']]
-            ds[f'gefs_{ens}']['mslp'] = forecast_ens['mslp']
-            ds[f'gefs_{ens}']['date'] = [forecast+timedelta(hours=i) for i in forecast_ens['fhr']]
-            nens += 1
+            ds['gfs']['fhr'] = [int(i) for i in forecast_gfs['fhr']]
+            ds['gfs']['lat'] = [np.round(i,1) for i in forecast_gfs['lat']]
+            ds['gfs']['lon'] = [np.round(i,1) for i in forecast_gfs['lon']]
+            ds['gfs']['vmax'] = [float(i) for i in forecast_gfs['vmax']]
+            ds['gfs']['mslp'] = forecast_gfs['mslp']
+            ds['gfs']['date'] = [forecast+timedelta(hours=i) for i in forecast_gfs['fhr']]
 
-        #Construct ensemble mean data
-        #Iterate through all forecast hours
-        for iter_fhr in range(0,246,6):
+            #Retrieve GEFS ensemble data (30 members 2019-present, 20 members prior)
+            for ens in range(0,nens):
 
-            #Temporary data arrays
-            temp_data = {}
-            for key in ds['gfs'].keys():
-                if key not in ['date','fhr']: temp_data[key] = []
+                #Create dict entry
+                ds[f'gefs_{ens}'] = {'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]}
 
-            #Iterate through ensemble member
-            for ens in range(nens):
+                #Retrieve ensemble member data
+                ens_str = str2(ens)
+                if ens_str not in self.forecast_dict.keys(): continue
+                if forecast.strftime("%Y%m%d%H") not in self.forecast_dict[ens_str].keys(): continue
+                forecast_ens = self.forecast_dict[ens_str][forecast.strftime("%Y%m%d%H")]
 
-                #Determine if member has data valid at this forecast hour
-                if iter_fhr in ds[f'gefs_{ens}']['fhr']:
+                #Enter into dict entry
+                ds[f'gefs_{ens}']['fhr'] = [int(i) for i in forecast_ens['fhr']]
+                ds[f'gefs_{ens}']['lat'] = [np.round(i,1) for i in forecast_ens['lat']]
+                ds[f'gefs_{ens}']['lon'] = [np.round(i,1) for i in forecast_ens['lon']]
+                ds[f'gefs_{ens}']['vmax'] = [float(i) for i in forecast_ens['vmax']]
+                ds[f'gefs_{ens}']['mslp'] = forecast_ens['mslp']
+                ds[f'gefs_{ens}']['date'] = [forecast+timedelta(hours=i) for i in forecast_ens['fhr']]
 
-                    #Retrieve index
-                    idx = ds[f'gefs_{ens}']['fhr'].index(iter_fhr)
+            #Construct ensemble mean data
+            #Iterate through all forecast hours
+            for iter_fhr in range(0,246,6):
+
+                #Temporary data arrays
+                temp_data = {}
+                for key in ds['gfs'].keys():
+                    if key not in ['date','fhr']: temp_data[key] = []
+
+                #Iterate through ensemble member
+                for ens in range(nens):
+
+                    #Determine if member has data valid at this forecast hour
+                    if iter_fhr in ds[f'gefs_{ens}']['fhr']:
+
+                        #Retrieve index
+                        idx = ds[f'gefs_{ens}']['fhr'].index(iter_fhr)
+
+                        #Append data
+                        for key in ds['gfs'].keys():
+                            if key not in ['date','fhr']: temp_data[key].append(ds[f'gefs_{ens}'][key][idx])
+
+                #Proceed if 20 or more ensemble members
+                if len(temp_data['lat']) >= 10:
 
                     #Append data
                     for key in ds['gfs'].keys():
-                        if key not in ['date','fhr']: temp_data[key].append(ds[f'gefs_{ens}'][key][idx])
+                        if key not in ['date','fhr']:
+                            ds['gefs'][key].append(np.nanmean(temp_data[key]))
+                    ds['gefs']['fhr'].append(iter_fhr)
+                    ds['gefs']['date'].append(forecast+timedelta(hours=iter_fhr))
+                    ds['gefs']['members'].append(len(temp_data['lat']))
 
-            #Proceed if 20 or more ensemble members
-            if len(temp_data['lat']) >= 10:
-
-                #Append data
-                for key in ds['gfs'].keys():
-                    if key not in ['date','fhr']:
-                        ds['gefs'][key].append(np.nanmean(temp_data[key]))
-                ds['gefs']['fhr'].append(iter_fhr)
-                ds['gefs']['date'].append(forecast+timedelta(hours=iter_fhr))
-                ds['gefs']['members'].append(len(temp_data['lat']))
-
-                #Calculate ellipse data
-                if prop_ellipse is not None:
-                    ellipse_data = plot_ellipse(temp_data['lat'],temp_data['lon'])
-                    ds['gefs']['ellipse_lon'].append(ellipse_data['xell'])
-                    ds['gefs']['ellipse_lat'].append(ellipse_data['yell'])
+                    #Calculate ellipse data
+                    if prop_ellipse is not None:
+                        ellipse_data = calc_ensemble_ellipse(temp_data['lon'],temp_data['lat'])
+                        ds['gefs']['ellipse_lon'].append(ellipse_data['ellipse_lon'])
+                        ds['gefs']['ellipse_lat'].append(ellipse_data['ellipse_lat'])
         
-        #Convert fhr to list
-        if isinstance(fhr,int) == True or isinstance(fhr,float) == True:
-            fhr = [fhr]
+            #Save data for future use if needed
+            self.gefs_init = forecast
+            self.ds = ds
+            
+            print("--> Done calculating ellipse data")
+        
+        #Determine lon bounds for cartopy projection
+        proj_lons = []
+        for key in self.ds.keys():
+            proj_lons += self.ds[key]['lon']
+        
+        #Create cartopy projection
+        if cartopy_proj is not None:
+            self.plot_obj.proj = cartopy_proj
+        elif np.nanmax(proj_lons) > 150 or np.nanmin(proj_lons) < -150:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+        else:
+            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
         
         #Plot storm
-        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,prop_members,prop_mean,prop_gfs,prop_ellipse,prop_density,nens,domain,ds,ax=ax,map_prop=map_prop,save_path=save_path)
+        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,interpolate,prop_members,prop_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,domain,self.ds,ax=ax,map_prop=map_prop,save_path=save_path)
         
         #Return axis
         return plot_ax
@@ -1632,6 +1983,60 @@ class Storm:
         -------
         dict
             Dictionary containing all forecast entries.
+        
+        Notes
+        -----
+        This function fetches all available forecasts, whether operational (e.g., NHC or JTWC), deterministic or ensemble model forecasts, from the Best Track a-deck as far back as data allows (1954 for NHC's area of responsibility, 2019 for JTWC).
+        
+        For example, this code retrieves all forecasts for Hurricane Michael (2018):
+        
+        .. code-block:: python
+    
+            #Get Storm object
+            from tropycal import tracks
+            basin = tracks.TrackDataset()
+            storm = basin.get_storm(('michael',2018))
+            
+            #Retrieve all forecasts
+            forecasts = storm.get_operational_forecasts()
+        
+        The resulting dict is structured as follows:
+        
+        >>> print(forecasts.keys())
+        dict_keys(['CARQ', 'NAM', 'AC00', 'AEMN', 'AP01', 'AP02', 'AP03', 'AP04', 'AP05', 'AP06', 'AP07', 'AP08', 'AP09',
+        'AP10', 'AP11', 'AP12', 'AP13', 'AP14', 'AP15', 'AP16', 'AP17', 'AP18', 'AP19', 'AP20', 'AVNO', 'AVNX', 'CLP5',
+        'CTCX', 'DSHP', 'GFSO', 'HCCA', 'IVCN', 'IVDR', 'LGEM', 'OCD5', 'PRFV', 'SHF5', 'SHIP', 'TABD', 'TABM', 'TABS',
+        'TCLP', 'XTRP', 'CMC', 'NGX', 'UKX', 'AEMI', 'AHNI', 'AVNI', 'CEMN', 'CHCI', 'CTCI', 'DSPE', 'EGRR', 'LGME',
+        'NAMI', 'NEMN', 'RVCN', 'RVCX', 'SHPE', 'TBDE', 'TBME', 'TBSE', 'TVCA', 'TVCE', 'TVCN', 'TVCX', 'TVDG', 'UE00',
+        'UE01', 'UE02', 'UE03', 'UE04', 'UE05', 'UE06', 'UE07', 'UE08', 'UE09', 'UE10', 'UE11', 'UE12', 'UE13', 'UE14',
+        'UE15', 'UE16', 'UE17', 'UE18', 'UE19', 'UE20', 'UE21', 'UE22', 'UE23', 'UE24', 'UE25', 'UE26', 'UE27', 'UE28',
+        'UE29', 'UE30', 'UE31', 'UE32', 'UE33', 'UE34', 'UE35', 'UEMN', 'CEMI', 'CMCI', 'COTC', 'EGRI', 'HMON', 'HWRF',
+        'NGXI', 'NVGM', 'PRV2', 'PRVI', 'UEMI', 'UKXI', 'CEM2', 'CMC2', 'COTI', 'EGR2', 'HHFI', 'HHNI', 'HMNI', 'HWFI',
+        'ICON', 'IVRI', 'NGX2', 'NVGI', 'OFCP', 'TCOA', 'TCOE', 'TCON', 'UEM2', 'UKX2', 'CHC2', 'CTC2', 'NAM2', 'OFCL',
+        'OFPI', 'AEM2', 'AHN2', 'AVN2', 'DRCL', 'HHF2', 'HHN2', 'HMN2', 'HWF2', 'NVG2', 'OFCI', 'OFP2', 'FSSE', 'RI25', 'RI30'])
+        
+        Each of these keys represents a forecast model/ensemble member/center. If we select the GFS (AVNO), we now get a dictionary containing all forecast initializations for this model:
+        
+        >>> print(forecasts['AVNO'].keys())
+        dict_keys(['2018100518', '2018100600', '2018100606', '2018100612', '2018100700', '2018100706', '2018100712',
+        '2018100718', '2018100800', '2018100806', '2018100812', '2018100818', '2018100900', '2018100906', '2018100912',
+        '2018100918', '2018101000', '2018101006', '2018101012', '2018101018', '2018101100', '2018101106', '2018101112',
+        '2018101118', '2018101200', '2018101206', '2018101212'])
+        
+        Providing a forecast initialization, for example 1200 UTC 8 October 2018 (2018100812), we now get a forecast dict containing the GFS initialized at this time:
+        
+        >>> print(forecasts['AVNO']['2018100812'])
+        {'fhr': [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 102, 108, 114, 120, 126, 132, 138, 144],
+         'lat': [20.8, 21.7, 22.7, 24.0, 25.1, 25.9, 26.9, 27.9, 29.0, 30.0, 31.1, 32.1, 33.1, 34.1, 35.4, 37.2, 38.9, 40.2,
+                 42.4, 44.9, 46.4, 48.2, 49.3, 50.5, 51.3],
+         'lon': [-85.1, -85.1, -85.2, -85.6, -86.4, -86.8, -86.9, -86.9, -86.6, -86.2, -85.3, -84.4, -83.0, -81.3, -78.9,
+                 -75.9, -72.2, -67.8, -62.5, -56.5, -50.5, -44.4, -38.8, -32.8, -27.9],
+         'vmax': [57, 62, 61, 67, 74, 69, 75, 78, 80, 76, 47, 38, 34, 36, 38, 41, 52, 58, 55, 51, 48, 44, 37, 36, 37],
+         'mslp': [984, 982, 979, 974, 972, 970, 966, 964, 957, 959, 969, 982, 988, 993, 994, 990, 984, 978, 978, 975, 979,
+                  984, 987, 989, 991],
+         'type': ['XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX',
+                  'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX'],
+         'init': datetime.datetime(2018, 10, 8, 12, 0)}
         """
         
         #Real time ensemble data:
@@ -1684,10 +2089,10 @@ class Storm:
             
             #Get storm ID & corresponding data URL
             storm_year = self.dict['year']
-            if storm_year < 2016:
-                msg = "Forecast data is unavailable for JTWC storms prior to 2016."
+            if storm_year < 2019:
+                msg = "Forecast data is unavailable for JTWC storms prior to 2019."
                 raise RuntimeError(msg)
-            url_models = f"http://hurricanes.ral.ucar.edu/repository/data/adecks_open/a{self.id.lower()}.dat"
+            url_models = f"http://hurricanes.ral.ucar.edu/repository/data/adecks_open/{self.year}/a{self.id.lower()}.dat"
             
             #Retrieve model data text
             try:
@@ -1724,16 +2129,16 @@ class Storm:
             fhr = int(fhr)
             if "N" in lat:
                 lat_temp = lat.split("N")[0]
-                lat = float(lat_temp) * 0.1
+                lat = round(float(lat_temp) * 0.1,1)
             elif "S" in lat:
                 lat_temp = lat.split("S")[0]
-                lat = float(lat_temp) * -0.1
+                lat = round(float(lat_temp) * -0.1,1)
             if "W" in lon:
                 lon_temp = lon.split("W")[0]
-                lon = float(lon_temp) * -0.1
+                lon = round(float(lon_temp) * -0.1,1)
             elif "E" in lon:
                 lon_temp = lon.split("E")[0]
-                lon = float(lon_temp) * 0.1
+                lon = round(float(lon_temp) * 0.1,1)
             
             #Format vmax & MSLP
             if vmax == '':
@@ -1751,22 +2156,23 @@ class Storm:
             if use_wind:
                 try:
                     rad = int(rad)
-                    neq = -999 if windcode=='' else int(neq)
-                    seq = -999 if windcode in ['','AAA'] else int(seq)
-                    swq = -999 if windcode in ['','AAA'] else int(swq)
-                    nwq = -999 if windcode in ['','AAA'] else int(nwq)
+                    if rad in [0,35]: rad = 34
+                    neq = np.nan if windcode=='' else int(neq)
+                    seq = np.nan if windcode in ['','AAA'] else int(seq)
+                    swq = np.nan if windcode in ['','AAA'] else int(swq)
+                    nwq = np.nan if windcode in ['','AAA'] else int(nwq)
                 except:
-                    rad = -999
-                    neq = -999
-                    seq = -999
-                    swq = -999
-                    nwq = -999
+                    rad = 34
+                    neq = np.nan
+                    seq = np.nan
+                    swq = np.nan
+                    nwq = np.nan
             else:
-                rad = -999
-                neq = -999
-                seq = -999
-                swq = -999
-                nwq = -999
+                rad = 34
+                neq = np.nan
+                seq = np.nan
+                swq = np.nan
+                nwq = np.nan
             
             #Add forecast data to dict if forecast hour isn't already there
             if fhr not in forecasts[model][run_init]['fhr']:
@@ -1814,7 +2220,27 @@ class Storm:
         
         Notes
         -----
-        This dict can be provided to ``utils.generate_nhc_cone()`` to generate the cone of uncertainty.
+        This dict can be provided to ``utils.generate_nhc_cone()`` to generate the cone of uncertainty. Below is an example forecast dict for Hurricane Michael (2018):
+        
+        >>> storm.get_nhc_forecast_dict(dt.datetime(2018,10,8,0))
+        {'fhr': [0, 3, 12, 24, 36, 48, 72, 96, 120],
+         'lat': [19.8, 20.0, 21.1, 22.7, 24.4, 26.3, 30.4, 34.9, 40.7],
+         'lon': [-85.4, -85.4, -85.3, -85.6, -86.0, -86.1, -84.5, -78.4, -64.4],
+         'vmax': [50, 50, 60, 65, 75, 85, 75, 55, 55],
+         'mslp': [nan, 997, nan, nan, nan, nan, nan, nan, nan],
+         'type': ['TS', 'TS', 'TS', 'HU', 'HU', 'HU', 'HU', 'TS', 'TS'],
+         'windrad': [{34: [120, 150, 90, 90], 50: [40, 0, 0, 0]},
+          {34: [120, 150, 90, 90], 50: [40, 0, 0, 0]},
+          {34: [120, 150, 90, 90], 50: [40, 40, 0, 0]},
+          {34: [130, 140, 90, 90], 50: [50, 50, 0, 0], 64: [20, 20, 0, 0]},
+          {34: [130, 130, 80, 90], 50: [50, 50, 0, 0], 64: [20, 20, 0, 0]},
+          {34: [130, 130, 70, 90], 50: [60, 60, 30, 40], 64: [25, 25, 15, 25]},
+          {34: [130, 130, 70, 80], 50: [60, 60, 30, 40]},
+          {34: [0, 0, 0, 0]},
+          {34: [0, 0, 0, 0]}],
+         'init': datetime.datetime(2018, 10, 8, 0, 0)}
+        
+        As of Tropycal v0.5, ``windrad`` represents the forecast sustained wind radii (34, 50 and 64 knots) organized by [NE quadrant,SE quadrant,SW quadrant,NW quadrant] in nautical miles.
         """
         
         #Check to ensure the data source is HURDAT
@@ -1903,8 +2329,7 @@ class Storm:
         dist_thresh : int
             Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km.
         Tors : pandas.DataFrame
-            DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm
-                for future use.
+            DataFrame containing tornado data associated with the storm. If None, data is automatically retrieved from TornadoDatabase. A dataframe of tornadoes associated with the TC will then be saved to this instance of storm for future use.
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         plotPPH : bool or str
@@ -2084,28 +2509,83 @@ class Storm:
         
         #Return axis or show figure
         return ax
-            
-    def get_recon(self,deltap_thresh=8,save_path="",read_path="",mission_url_list=None,update=False):
+
+    def get_recon(self,path_vdm=None,path_hdobs=None,path_dropsondes=None):
         
         r"""
-        Creates an instance of ReconDataset for this storm's data. Saves it as an attribute of this object (storm.recon).
+        Retrieves all aircraft reconnaissance data for this storm.
         
         Parameters
         ----------
-        storm : tropycal.tracks.Storm
-            Requested storm as an instance of a Storm object.
-        save_path : str, optional
-            Filepath to save recon data in. Recommended in order to avoid having to re-read in the data.
-        read_path : str, optional
-            Filepath to read saved recon data from. If specified, "save_path" cannot be passed as an argument.
+        path_vdm : str, optional
+            Filepath of pickle file containing VDM data retrieved from ``vdms.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
+        path_hdobs : str, optional
+            Filepath of pickle file containing HDOBs data retrieved from ``hdobs.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
+        path_dropsondes : str, optional
+            Filepath of pickle file containing dropsonde data retrieved from ``dropsondes.to_pickle()``. If provided, data will be retrieved from the local pickle file instead of the NHC server.
+        
+        Returns
+        -------
+        ReconDataset
+            Instance of ReconDataset is returned.
+        
+        Notes
+        -----
+        In addition to returning an instance of ``ReconDataset``, this function additionally stores it as an attribute of this Storm object, such that all attributes and methods associated with the ``vdms``, ``hdobs`` and ``dropsondes`` classes can be directly accessed from this Storm object.
+        
+        One method of accessing the ``hdobs.plot_points()`` method is as follows:
+        
+        .. code-block:: python
+    
+            #Get data for Hurricane Michael (2018)
+            from tropycal import tracks
+            basin = tracks.TrackDataset()
+            storm = basin.get_storm(('michael',2018))
+            
+            #Get all recon data for this storm
+            storm.get_recon()
+            
+            #Plot HDOBs points
+            storm.recon.hdobs.plot_points()
+        
+        The other method is using the returned ReconDataset instance from this function:
+        
+        .. code-block:: python
+    
+            #Get data for Hurricane Michael (2018)
+            from tropycal import tracks
+            basin = tracks.TrackDataset()
+            storm = basin.get_storm(('michael',2018))
+            
+            #Get all recon data for this storm
+            recon = storm.get_recon()
+            
+            #Plot HDOBs points
+            recon.hdobs.plot_points()
         """
         
-        self.recon = ReconDataset(self,deltap_thresh,mission_url_list,save_path,read_path,update)
-                
+        self.recon.get_vdms(data=path_vdm)
+        self.recon.get_hdobs(data=path_hdobs)
+        self.recon.get_dropsondes(data=path_dropsondes)
+        return self.recon
+    
     def get_archer(self):
         
         r"""
-        Retrieves satellite-derived Archer track data for this storm, if available. Saves it as an attribute of this object (storm.archer).
+        Retrieves satellite-derived ARCHER track data for this storm, if available.
+        
+        Returns
+        -------
+        dict
+            Dictionary containing ARCHER data for this storm.
+        
+        Notes
+        -----
+        The ARCHER (Automated Rotational Center Hurricane Eye Retrieval) data is provided courtesy of the `University of Wisconsin`_. This data is at a much higher temporal resolution than the Best Track data.
+
+        This function additionally saves the ARCHER data as an attribute of this object (storm.archer).
+        
+        .. _University of Wisconsin: http://tropic.ssec.wisc.edu/real-time/archerOnline/web/index.shtml
         """
         
         #Format URL
@@ -2128,4 +2608,7 @@ class Storm:
             except:
                 continue
         self.archer = archer
+        
+        return archer
+    
     

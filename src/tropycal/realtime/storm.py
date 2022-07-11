@@ -380,22 +380,23 @@ class RealtimeStorm(Storm):
                 if use_wind:
                     try:
                         rad = int(rad)
-                        neq = -999 if windcode=='' else int(neq)
-                        seq = -999 if windcode in ['','AAA'] else int(seq)
-                        swq = -999 if windcode in ['','AAA'] else int(swq)
-                        nwq = -999 if windcode in ['','AAA'] else int(nwq)
+                        if rad in [0,35]: rad = 34
+                        neq = np.nan if windcode=='' else int(neq)
+                        seq = np.nan if windcode in ['','AAA'] else int(seq)
+                        swq = np.nan if windcode in ['','AAA'] else int(swq)
+                        nwq = np.nan if windcode in ['','AAA'] else int(nwq)
                     except:
-                        rad = -999
-                        neq = -999
-                        seq = -999
-                        swq = -999
-                        nwq = -999
+                        rad = 34
+                        neq = np.nan
+                        seq = np.nan
+                        swq = np.nan
+                        nwq = np.nan
                 else:
-                    rad = -999
-                    neq = -999
-                    seq = -999
-                    swq = -999
-                    nwq = -999
+                    rad = 34
+                    neq = np.nan
+                    seq = np.nan
+                    swq = np.nan
+                    nwq = np.nan
                 
                 #Add forecast data to dict if forecast hour isn't already there
                 if fhr not in forecasts['fhr']:
@@ -464,7 +465,7 @@ class RealtimeStorm(Storm):
 
                     if len(forecasts) == 0:
                         forecasts = {
-                            'init':dt.strptime(run_init,'%Y%m%d%H'),'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],\
+                            'init':dt.strptime(run_init,'%Y%m%d%H'),'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],
                             'windrad':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[]
                         }
 
@@ -527,14 +528,19 @@ class RealtimeStorm(Storm):
                     #Get basic components
                     lineArray = [i.replace(" ","") for i in line]
                     if len(lineArray) < 11: continue
-                    basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype,rad,windcode,neq,seq,swq,nwq = lineArray[:17]
+                    try:
+                        basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype,rad,windcode,neq,seq,swq,nwq = lineArray[:17]
+                        use_wind = True
+                    except:
+                        basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
+                        use_wind = False
                     if model not in ["JTWC"]: continue
 
                     if len(forecasts) == 0:
                         forecasts = {
-                            'init':dt.strptime(run_init,'%Y%m%d%H'),'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],\
+                            'init':dt.strptime(run_init,'%Y%m%d%H'),'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],
                             'windrad':[],'cumulative_ace':[],'cumulative_ace_fhr':[]
-                            }
+                        }
 
                     #Format lat & lon
                     fhr = int(fhr)
@@ -564,11 +570,26 @@ class RealtimeStorm(Storm):
                         if mslp < 1: mslp = np.nan
 
                     #Format wind radii
-                    rad = int(rad)
-                    neq = -999 if windcode=='' else int(neq)
-                    seq = -999 if windcode in ['','AAA'] else int(seq)
-                    swq = -999 if windcode in ['','AAA'] else int(swq)
-                    nwq = -999 if windcode in ['','AAA'] else int(nwq)
+                    if use_wind:
+                        try:
+                            rad = int(rad)
+                            if rad in [0,35]: rad = 34
+                            neq = np.nan if windcode=='' else int(neq)
+                            seq = np.nan if windcode in ['','AAA'] else int(seq)
+                            swq = np.nan if windcode in ['','AAA'] else int(swq)
+                            nwq = np.nan if windcode in ['','AAA'] else int(nwq)
+                        except:
+                            rad = 34
+                            neq = np.nan
+                            seq = np.nan
+                            swq = np.nan
+                            nwq = np.nan
+                    else:
+                        rad = 34
+                        neq = np.nan
+                        seq = np.nan
+                        swq = np.nan
+                        nwq = np.nan
 
                     #Add forecast data to dict if forecast hour isn't already there
                     if fhr not in forecasts['fhr']:

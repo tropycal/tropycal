@@ -314,10 +314,10 @@ class Plot:
             
         #North Indian plot domain
         elif domain == "north_indian":
-            bound_w = 30.0
+            bound_w = 35.0
             bound_e = 110.0
             bound_s = -5.0
-            bound_n = 40.0
+            bound_n = 42.0
             
         #South Indian plot domain
         elif domain == "south_indian":

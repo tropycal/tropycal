@@ -335,12 +335,18 @@ class RealtimeStorm(Storm):
                 #Get basic components
                 lineArray = [i.replace(" ","") for i in line]
                 if len(lineArray) < 11: continue
-                basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
+                try:
+                    basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype,rad,windcode,neq,seq,swq,nwq = lineArray[:17]
+                    use_wind = True
+                except:
+                    basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
+                    use_wind = False
                 if model not in ["OFCL","OFCI"]: continue
 
                 if len(forecasts) == 0:
                     forecasts = {
-                        'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
+                        'init':dt.strptime(run_init,'%Y%m%d%H'),'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],
+                        'windrad':[],'cumulative_ace':[],'cumulative_ace_fhr':[]
                     }
 
                 #Format lat & lon
@@ -369,7 +375,28 @@ class RealtimeStorm(Storm):
                 else:
                     mslp = int(mslp)
                     if mslp < 1: mslp = np.nan
-
+                    
+                #Format wind radii
+                if use_wind:
+                    try:
+                        rad = int(rad)
+                        neq = -999 if windcode=='' else int(neq)
+                        seq = -999 if windcode in ['','AAA'] else int(seq)
+                        swq = -999 if windcode in ['','AAA'] else int(swq)
+                        nwq = -999 if windcode in ['','AAA'] else int(nwq)
+                    except:
+                        rad = -999
+                        neq = -999
+                        seq = -999
+                        swq = -999
+                        nwq = -999
+                else:
+                    rad = -999
+                    neq = -999
+                    seq = -999
+                    swq = -999
+                    nwq = -999
+                
                 #Add forecast data to dict if forecast hour isn't already there
                 if fhr not in forecasts['fhr']:
                     if model in ['OFCL','OFCI'] and fhr > 120:
@@ -382,12 +409,16 @@ class RealtimeStorm(Storm):
                         forecasts['lon'].append(lon)
                         forecasts['vmax'].append(vmax)
                         forecasts['mslp'].append(mslp)
+                        forecasts['windrad'].append({rad:[neq,seq,swq,nwq]})
 
                         #Get storm type, if it can be determined
                         if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
                             stype = get_storm_type(vmax,False)
                         forecasts['type'].append(stype)
-        
+                else:
+                    ifhr = forecasts['fhr'].index(fhr)
+                    forecasts['windrad'][ifhr][rad] = [neq,seq,swq,nwq]
+                    
         #Retrieve JTWC forecast otherwise
         else:
             
@@ -433,7 +464,8 @@ class RealtimeStorm(Storm):
 
                     if len(forecasts) == 0:
                         forecasts = {
-                            'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
+                            'init':dt.strptime(run_init,'%Y%m%d%H'),'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],\
+                            'windrad':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[]
                         }
 
                     #Forecast hour
@@ -460,6 +492,15 @@ class RealtimeStorm(Storm):
                     if vmax < 10 or vmax > 300: vmax = np.nan
                     mslp = np.nan
 
+                    #Format wind radii
+                    windrad = {}
+                    for rad in (34,50,64):
+                        try:
+                            irad = list(lineArray).index(f'R{rad:03}')
+                            windrad[rad] = [int(lineArray[irad+j]) for j in (1,4,7,10)]
+                        except:
+                            continue
+
                     #Add forecast data to dict if forecast hour isn't already there
                     if fhr not in forecasts['fhr']:
                         if lat == 0.0 and lon == 0.0: continue
@@ -468,6 +509,7 @@ class RealtimeStorm(Storm):
                         forecasts['lon'].append(lon)
                         forecasts['vmax'].append(vmax)
                         forecasts['mslp'].append(mslp)
+                        forecasts['windrad'].append(windrad)
 
                         #Get storm type, if it can be determined
                         stype = get_storm_type(vmax,False)
@@ -485,13 +527,14 @@ class RealtimeStorm(Storm):
                     #Get basic components
                     lineArray = [i.replace(" ","") for i in line]
                     if len(lineArray) < 11: continue
-                    basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
+                    basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype,rad,windcode,neq,seq,swq,nwq = lineArray[:17]
                     if model not in ["JTWC"]: continue
 
                     if len(forecasts) == 0:
                         forecasts = {
-                            'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'cumulative_ace':[],'cumulative_ace_fhr':[],'type':[],'init':dt.strptime(run_init,'%Y%m%d%H')
-                        }
+                            'init':dt.strptime(run_init,'%Y%m%d%H'),'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],\
+                            'windrad':[],'cumulative_ace':[],'cumulative_ace_fhr':[]
+                            }
 
                     #Format lat & lon
                     fhr = int(fhr)
@@ -520,6 +563,13 @@ class RealtimeStorm(Storm):
                         mslp = int(mslp)
                         if mslp < 1: mslp = np.nan
 
+                    #Format wind radii
+                    rad = int(rad)
+                    neq = -999 if windcode=='' else int(neq)
+                    seq = -999 if windcode in ['','AAA'] else int(seq)
+                    swq = -999 if windcode in ['','AAA'] else int(swq)
+                    nwq = -999 if windcode in ['','AAA'] else int(nwq)
+
                     #Add forecast data to dict if forecast hour isn't already there
                     if fhr not in forecasts['fhr']:
                         if model in ['OFCL','OFCI'] and fhr > 120:
@@ -532,13 +582,17 @@ class RealtimeStorm(Storm):
                             forecasts['lon'].append(lon)
                             forecasts['vmax'].append(vmax)
                             forecasts['mslp'].append(mslp)
+                            forecasts['windrad'].append({rad:[neq,seq,swq,nwq]})
 
                             #Get storm type, if it can be determined
                             if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
                                 stype = get_storm_type(vmax,False)
                             if stype == 'TY': stype = 'HU'
                             forecasts['type'].append(stype)
-            
+                    else:
+                        ifhr = forecasts['fhr'].index(fhr)
+                        forecasts['windrad'][ifhr][rad]=[neq,seq,swq,nwq]
+                    
         #Determine ACE thus far (prior to initial forecast hour)
         ace = 0.0
         for i in range(len(self.date)):

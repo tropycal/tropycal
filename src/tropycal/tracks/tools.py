@@ -606,7 +606,8 @@ def cyclone_catarina():
     storm_dict = {}
     
     storm_dict = {'id':'AL502004','operational_id':'','name':'CATARINA','season':2004,'year':2004,'basin':'south_atlantic'}
-    storm_dict['source'] = 'McTaggart-Cowan et al. (2006): https://doi.org/10.1175/MWR3330.1'
+    storm_dict['source'] = 'ibtracs'
+    storm_dict['source_info'] = 'McTaggart-Cowan et al. (2006): https://doi.org/10.1175/MWR3330.1'
 
     #add empty lists
     for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:

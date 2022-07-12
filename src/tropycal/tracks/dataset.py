@@ -63,7 +63,7 @@ class TrackDataset:
            * - "south_indian"
              - IBTrACS
            * - "australia"
-             - IBTrACS
+             - IBTrACS* (special case)
            * - "south_atlantic"
              - IBTrACS
            * - "all"
@@ -124,7 +124,9 @@ class TrackDataset:
     
     .. note::
     
-        If using ``basin="both"``, this combines the North Atlantic and East/Central Pacific HURDATv2 data into a single TrackDataset object. As of Tropycal v0.5, this now merges cross-basin storms (i.e., North Atlantic to East Pacific) which were reclassified with a new East Pacific ID into single Storm objects.
+        1. If using ``basin="both"``, this combines the North Atlantic and East/Central Pacific HURDATv2 data into a single TrackDataset object. As of Tropycal v0.5, this now merges cross-basin storms (i.e., North Atlantic to East Pacific) which were reclassified with a new East Pacific ID into single Storm objects.
+        
+        2. If using ``basin="australia", source="ibtracs"``, since IBTrACS doesn't provide an Australia-only basin file by default, this will fetch the full global IBTrACS data and filter storms to only those that existed in the Australia basin.
     """
  
     def __repr__(self):
@@ -674,7 +676,8 @@ class TrackDataset:
         
         #read in ibtracs file
         if ibtracs_online:
-            path = self.ibtracs_url.replace("(basin)",ibtracs_basin)
+            enter_basin = 'ALL' if self.basin == 'australia' else ibtracs_basin+''
+            path = self.ibtracs_url.replace("(basin)",enter_basin)
             content = read_url(path)
         else:
             f = open(self.ibtracs_url,"r")

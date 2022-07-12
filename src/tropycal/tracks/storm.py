@@ -888,15 +888,15 @@ class Storm:
         return plot_ax
     
     
-    def plot_models(self,forecast,plot_btk=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
+    def plot_models(self,forecast=None,plot_btk=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of operational model forecast tracks.
         
         Parameters
         ----------
-        forecast : datetime.datetime
-            Datetime object representing the GEFS run initialization.
+        forecast : datetime.datetime, optional
+            Datetime object representing the forecast initialization. If None (default), fetches the latest forecast.
         plot_btk : bool, optional
             If True, Best Track will be plotted alongside operational forecast models. Default is False.
         domain : str
@@ -1006,6 +1006,11 @@ class Storm:
         except:
             self.get_operational_forecasts()
         
+        #Fetch latest forecast if None
+        if forecast == None:
+            inits = [dt.strptime([k for k in self.forecast_dict[key]][-1],'%Y%m%d%H') for key in ['AVNI','OFCI','HWFI']]
+            forecast = min(inits)
+        
         #Error check forecast date
         if forecast < self.date[0] or forecast > self.date[-1]:
             raise ValueError("Requested forecast is outside of the storm's duration.")
@@ -1090,15 +1095,15 @@ class Storm:
         return plot_ax
     
     
-    def plot_ensembles(self,forecast,fhr=None,interpolate=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
+    def plot_ensembles(self,forecast=None,fhr=None,interpolate=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of individual GEFS ensemble tracks.
         
         Parameters
         ----------
-        forecast : datetime.datetime
-            Datetime object representing the GEFS run initialization.
+        forecast : datetime.datetime, optional
+            Datetime object representing the GEFS run initialization. If None (default), fetches the latest run.
         fhr : int, optional
             Forecast hour to plot. If None (default), a cumulative plot of all forecast hours will be produced. If an integer, a single plot will be produced.
         interpolate : bool, optional
@@ -1270,6 +1275,17 @@ class Storm:
             self.forecast_dict
         except:
             self.get_operational_forecasts()
+        
+        #Fetch latest forecast if None
+        if forecast == None:
+            inits = []
+            for key in ['AC00','AP01','AP02','AP03','AP04','AP05']:
+                if key in self.forecast_dict.keys():
+                    inits.append( dt.strptime([k for k in self.forecast_dict[key]][-1],'%Y%m%d%H') )
+            if len(inits) > 0:
+                forecast = min(inits)
+            else:
+                raise RuntimeError("Error: Could not determine the latest available GEFS forecast.")
         
         #Determine max members by year
         nens = 21

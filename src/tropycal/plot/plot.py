@@ -300,6 +300,13 @@ class Plot:
             bound_e = -5.0
             bound_s = 0.0
             bound_n = 65.0
+        
+        #South Atlantic plot domain
+        elif domain == "south_atlantic":
+            bound_w = -105.0
+            bound_e = -5.0
+            bound_s = -65.0
+            bound_n = 0.0
             
         #East Pacific plot domain
         elif domain == "east_pacific":

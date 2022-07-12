@@ -64,7 +64,7 @@ class TrackDataset:
              - IBTrACS
            * - "australia"
              - IBTrACS
-           * - "south_america"
+           * - "south_atlantic"
              - IBTrACS
            * - "all"
              - IBTrACS
@@ -1465,7 +1465,7 @@ class TrackDataset:
         #Error check
         if len(season_dict) == 0:
             raise RuntimeError("No storms were identified for the given year in the given basin.")
-                
+        
         #Add attributes
         first_key = [k for k in season_dict.keys()][0]
         season_info = {}

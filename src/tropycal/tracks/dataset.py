@@ -759,6 +759,8 @@ class TrackDataset:
                     neumann_lon = float(wmo_lon)
                     neumann_vmax = np.nan if neumann_vmax == "" else int(neumann_vmax)
                     neumann_mslp = np.nan if neumann_mslp == "" else int(neumann_mslp)
+                    if np.isnan(neumann_vmax) == False:
+                        if str(neumann_vmax)[-1] in ['4','9']: neumann_vmax += 1
                     if neumann_type == 'TC':
                         if neumann_vmax < 34:
                             neumann_type = 'TD'
@@ -841,6 +843,8 @@ class TrackDataset:
                         jtwc_vmax = int(wmo_vmax + 0.0)
                     else:
                         jtwc_vmax = np.nan
+                if np.isnan(jtwc_vmax) == False:
+                    if str(jtwc_vmax)[-1] in ['4','9']: jtwc_vmax += 1
                 
                 #Convert storm type from ibtracs to hurdat style
                 """
@@ -920,6 +924,8 @@ class TrackDataset:
                 lon = float(lon)
                 vmax = np.nan if vmax == "" else int(vmax)
                 mslp = np.nan if mslp == "" else int(mslp)
+                if np.isnan(vmax) == False:
+                    if str(vmax)[-1] in ['4','9']: vmax += 1
 
                 #Convert storm type from ibtracs to hurdat style
                 if stype == "ST" or stype == "TY":

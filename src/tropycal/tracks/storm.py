@@ -1008,7 +1008,17 @@ class Storm:
         
         #Fetch latest forecast if None
         if forecast == None:
-            inits = [dt.strptime([k for k in self.forecast_dict[key]][-1],'%Y%m%d%H') for key in ['AVNI','OFCI','HWFI']]
+            check_keys = ['AVNI','OFCI','HWFI']
+            if 'HWFI' not in self.forecast_dict.keys(): check_keys[2] = 'HWRF'
+            if 'HWRF' not in self.forecast_dict.keys() and 'HWRF' in check_keys: check_keys.pop(check_keys.index('HWRF'))
+            if 'OFCI' not in self.forecast_dict.keys(): check_keys[1] = 'OFCL'
+            if 'OFCL' not in self.forecast_dict.keys(): check_keys[1] = 'JTWC'
+            if 'JTWC' not in self.forecast_dict.keys() and 'JTWC' in check_keys: check_keys.pop(check_keys.index('JTWC'))
+            if 'AVNI' not in self.forecast_dict.keys(): check_keys[0] = 'AVNO'
+            if 'AVNO' not in self.forecast_dict.keys(): check_keys[0] = 'AVNX'
+            if 'AVNX' not in self.forecast_dict.keys() and 'AVNX' in check_keys: check_keys.pop(check_keys.index('AVNX'))
+            if len(check_keys) == 0: raise ValueError("No models are available for this storm.")
+            inits = [dt.strptime([k for k in self.forecast_dict[key]][-1],'%Y%m%d%H') for key in check_keys]
             forecast = min(inits)
         
         #Error check forecast date

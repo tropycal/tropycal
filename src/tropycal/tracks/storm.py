@@ -1075,7 +1075,7 @@ class Storm:
             enter_key = key + ''
             if key.lower() == 'hmon' and 'gf' in official_key.lower(): enter_key = 'gfdl'
             if key.lower() == 'nhc' and 'jt' in official_key.lower(): enter_key = 'jtwc'
-            ds[enter_key] = self.forecast_dict[official_key][forecast_str]
+            ds[enter_key] = copy.deepcopy(self.forecast_dict[official_key][forecast_str])
             
             #Filter out to hour 168
             if ds[enter_key]['fhr'][-1] > 168:
@@ -1097,6 +1097,13 @@ class Storm:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
         else:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
+        
+        #Account for cases crossing dateline
+        if np.nanmax(proj_lons) > 150 or np.nanmin(proj_lons) < -150:
+            for key in ds.keys():
+                new_lons = np.array(ds[key]['lon'])
+                new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
+                ds[key]['lon'] = new_lons.tolist()
         
         #Plot storm
         plot_ax = self.plot_obj.plot_models(forecast,plot_btk,self.dict,ds,models,domain,ax=ax,prop=prop,map_prop=map_prop,save_path=save_path)
@@ -1398,9 +1405,16 @@ class Storm:
 
                     #Calculate ellipse data
                     if prop_ellipse is not None:
-                        ellipse_data = calc_ensemble_ellipse(temp_data['lon'],temp_data['lat'])
-                        ds['gefs']['ellipse_lon'].append(ellipse_data['ellipse_lon'])
-                        ds['gefs']['ellipse_lat'].append(ellipse_data['ellipse_lat'])
+                        try:
+                            ellipse_data = calc_ensemble_ellipse(temp_data['lon'],temp_data['lat'])
+                            ds['gefs']['ellipse_lon'].append(ellipse_data['ellipse_lon'])
+                            ds['gefs']['ellipse_lat'].append(ellipse_data['ellipse_lat'])
+                        except:
+                            ds['gefs']['ellipse_lon'].append([])
+                            ds['gefs']['ellipse_lat'].append([])
+                    else:
+                        ds['gefs']['ellipse_lon'].append([])
+                        ds['gefs']['ellipse_lat'].append([])
         
             #Save data for future use if needed
             self.gefs_init = forecast
@@ -1412,6 +1426,9 @@ class Storm:
         proj_lons = []
         for key in self.ds.keys():
             proj_lons += self.ds[key]['lon']
+        if fhr != None and fhr in self.ds['gefs']['fhr']:
+            fhr_idx = self.ds['gefs']['fhr'].index(fhr)
+            proj_lons += self.ds['gefs']['ellipse_lon'][fhr_idx]
         
         #Create cartopy projection
         if cartopy_proj is not None:
@@ -1421,8 +1438,21 @@ class Storm:
         else:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
         
+        #Account for cases crossing dateline
+        ds = copy.deepcopy(self.ds)
+        if np.nanmax(proj_lons) > 150 or np.nanmin(proj_lons) < -150:
+            for key in ds.keys():
+                new_lons = np.array(ds[key]['lon'])
+                new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
+                ds[key]['lon'] = new_lons.tolist()
+                
+            #Re-calculate GEFS mean
+            for iter_hr in ds['gefs']['fhr']:
+                fhr_idx = ds['gefs']['fhr'].index(iter_hr)
+                ds['gefs']['lon'][fhr_idx] = np.nanmean([ds[f'gefs_{ens}']['lon'][ds[f'gefs_{ens}']['fhr'].index(iter_hr)] for ens in range(nens) if iter_hr in ds[f'gefs_{ens}']['fhr']])
+        
         #Plot storm
-        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,interpolate,prop_members,prop_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,domain,self.ds,ax=ax,map_prop=map_prop,save_path=save_path)
+        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,interpolate,prop_members,prop_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,domain,ds,ax=ax,map_prop=map_prop,save_path=save_path)
         
         #Return axis
         return plot_ax

@@ -1027,6 +1027,14 @@ None,prop={},map_prop={}):
         #Plot best track if requested
         if plot_btk:
             
+            #Account for cases crossing dateline
+            if self.proj.proj4_params['lon_0'] == 180.0:
+                new_lons = np.array(storm_dict['lon'])
+                new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
+                use_lons = new_lons.tolist()
+            else:
+                use_lons = storm_dict['lon']
+            
             #Determine maximum forecast hour
             max_fhr = max([max(forecast_dict[model]['fhr']) for model in forecast_dict.keys()])
             
@@ -1039,7 +1047,7 @@ None,prop={},map_prop={}):
                 idx_end = len(storm_dict['date'])
             
             #Plot best track
-            lons = storm_dict['lon'][idx_start:idx_end+1]
+            lons = use_lons[idx_start:idx_end+1]
             lats = storm_dict['lat'][idx_start:idx_end+1]
             storm_dates = storm_dict['date'][idx_start:idx_end+1]
             self.ax.plot(lons,lats,':',color='k',linewidth=prop['linewidth']*0.8,label='Best Track',transform=ccrs.PlateCarree())
@@ -1057,10 +1065,10 @@ None,prop={},map_prop={}):
                     if valid_date not in storm_dates: continue
                     idx = storm_dict['date'].index(valid_date)
                     if prop['marker'] == 'label':
-                        self.ax.text(storm_dict['lon'][idx],storm_dict['lat'][idx],
+                        self.ax.text(use_lons[idx],storm_dict['lat'][idx],
                                      str(hour),ha='center',va='center',zorder=100,clip_on=True,transform=ccrs.PlateCarree())
                     elif prop['marker'] == 'dot':
-                        self.ax.plot(storm_dict['lon'][idx],storm_dict['lat'][idx],'o',ms=prop['linewidth']*3,zorder=100,
+                        self.ax.plot(use_lons[idx],storm_dict['lat'][idx],'o',ms=prop['linewidth']*3,zorder=100,
                                      mfc='k',mec='k',transform=ccrs.PlateCarree())
                     else:
                         raise ValueError("Acceptable values for 'marker' prop are 'label' or 'dot'.")
@@ -1177,7 +1185,7 @@ None,prop={},map_prop={}):
 
                 #Create 0.5 degree grid for plotting
                 gridlats = np.arange(0,90,0.25)
-                gridlons = np.arange(180-360.0,180.0,0.25) #gridlons = np.arange(180-360.0,360-360.0,0.25)
+                gridlons = np.arange(180-360.0,180.1,0.25) #gridlons = np.arange(180-360.0,360-360.0,0.25)
                 gridlons2d,gridlats2d = np.meshgrid(gridlons,gridlats)
                 griddata = np.zeros((gridlons2d.shape))
 
@@ -1250,11 +1258,19 @@ None,prop={},map_prop={}):
         if hr != None and hr in ds['gefs']['fhr'] and prop_ellipse['plot']:
             idx = ds['gefs']['fhr'].index(hr)
 
+            #Account for cases crossing dateline
+            if self.proj.proj4_params['lon_0'] == 180.0:
+                new_lons = np.array(ds['gefs']['ellipse_lon'][idx])
+                new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
+                new_lons = new_lons.tolist()
+            else:
+                new_lons = ds['gefs']['ellipse_lon'][idx]
+            
             try:
-                self.ax.plot(ds['gefs']['ellipse_lon'][idx],ds['gefs']['ellipse_lat'][idx],'-',
+                self.ax.plot(new_lons,ds['gefs']['ellipse_lat'][idx],'-',
                              color='w', linewidth=prop_ellipse['linewidth']*1.2,
                              transform=ccrs.PlateCarree(), alpha=0.8)
-                self.ax.plot(ds['gefs']['ellipse_lon'][idx],ds['gefs']['ellipse_lat'][idx],'-',
+                self.ax.plot(new_lons,ds['gefs']['ellipse_lat'][idx],'-',
                              color=prop_ellipse['linecolor'], linewidth=prop_ellipse['linewidth'],
                              transform=ccrs.PlateCarree(), alpha=0.8)
             except:
@@ -1311,6 +1327,14 @@ None,prop={},map_prop={}):
         #Plot best track
         if prop_btk['plot']:
             
+            #Account for cases crossing dateline
+            if self.proj.proj4_params['lon_0'] == 180.0:
+                new_lons = np.array(storm_dict['lon'])
+                new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
+                new_lons = new_lons.tolist()
+            else:
+                new_lons = storm_dict['lon']
+            
             #Get valid time
             valid_time = np.nan if hr == None else forecast + timedelta(hours=hr)
             end_time = forecast + timedelta(hours=240) if storm_dict['year'] >= 2015 else forecast + timedelta(hours=240)
@@ -1322,7 +1346,7 @@ None,prop={},map_prop={}):
                 idx = storm_dict['date'].index(valid_time)
                 
                 use_lats = storm_dict['lat'][idx_start:idx+1]
-                use_lons = storm_dict['lon'][idx_start:idx+1]
+                use_lons = new_lons[idx_start:idx+1]
             else:
                 idx = 0
                 if hr == None:
@@ -1334,7 +1358,7 @@ None,prop={},map_prop={}):
                     for idx_date in storm_dict['date']:
                         if idx_date <= valid_time: idx = storm_dict['date'].index(idx_date)
                 use_lats = storm_dict['lat'][idx_start:idx+1]
-                use_lons = storm_dict['lon'][idx_start:idx+1]
+                use_lons = new_lons[idx_start:idx+1]
 
             if skip_bounds == False:
                 lat_max_extrema.append(np.nanmax(use_lats))
@@ -1343,14 +1367,14 @@ None,prop={},map_prop={}):
                 lon_min_extrema.append(np.nanmin(use_lons))
 
             #Plot observed track before now
-            self.ax.plot(storm_dict['lon'][:idx_start+1], storm_dict['lat'][:idx_start+1],
+            self.ax.plot(new_lons[:idx_start+1], storm_dict['lat'][:idx_start+1],
                          linewidth=1.5, color='k', linestyle=":", transform=ccrs.PlateCarree())
             
             if valid_time in storm_dict['date']:
                 idx = storm_dict['date'].index(valid_time)
-                self.ax.plot(storm_dict['lon'][idx_start:idx+1], storm_dict['lat'][idx_start:idx+1],
+                self.ax.plot(new_lons[idx_start:idx+1], storm_dict['lat'][idx_start:idx+1],
                              linewidth=prop_btk['linewidth'], color=prop_btk['linecolor'],transform=ccrs.PlateCarree())
-                self.ax.plot(storm_dict['lon'][idx], storm_dict['lat'][idx], 'o', ms=12,
+                self.ax.plot(new_lons[idx], storm_dict['lat'][idx], 'o', ms=12,
                              mfc=prop_btk['linecolor'],mec='k', transform=ccrs.PlateCarree())
             elif len(storm_dict['date']) > 0:
                 idx = 0
@@ -1362,7 +1386,7 @@ None,prop={},map_prop={}):
                 else:
                     for idx_date in storm_dict['date']:
                         if idx_date <= valid_time: idx = storm_dict['date'].index(idx_date)
-                self.ax.plot(storm_dict['lon'][idx_start:idx+1], storm_dict['lat'][idx_start:idx+1],
+                self.ax.plot(new_lons[idx_start:idx+1], storm_dict['lat'][idx_start:idx+1],
                              linewidth=prop_btk['linewidth'], color=prop_btk['linecolor'],transform=ccrs.PlateCarree())
 
         #-------------------------------------------------------------------

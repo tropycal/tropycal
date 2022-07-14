@@ -1,7 +1,7 @@
 # Tropycal
 Tropycal is a Python package intended to simplify the process of retrieving and analyzing tropical cyclone data, both for past storms and in real time, and is geared towards the research and operational meteorology sectors.
 
-Tropycal can read in HURDAT2 and IBTrACS reanalysis data and operational National Hurricane Center (NHC) Best Track data and conform them to the same format, which can be used to perform climatological, seasonal and individual storm analyses. For each individual storm, operational NHC forecasts, aircraft reconnaissance data, and any associated tornado activity can be retrieved and plotted.
+Tropycal can read in HURDAT2 and IBTrACS reanalysis data and operational National Hurricane Center (NHC) Best Track data and conform them to the same format, which can be used to perform climatological, seasonal and individual storm analyses. For each individual storm, operational NHC and model forecasts, aircraft reconnaissance data, rainfall data, and any associated tornado activity can be retrieved and plotted.
 
 The latest version of Tropycal is v0.5.
 
@@ -57,7 +57,7 @@ As an example, read in the North Atlantic HURDAT2 reanalysis dataset, excluding 
 ```python
 import tropycal.tracks as tracks
 
-hurdat = tracks.TrackDataset(basin='north_atlantic')
+basin = tracks.TrackDataset(basin='north_atlantic')
 ```
 
 ### Individual Storm Analysis
@@ -67,7 +67,7 @@ Individual storms can be retrieved from the dataset by calling the "get_storm" f
 Let's retrieve an instance of Hurricane Michael from 2018:
 
 ```python
-storm = hurdat_atl.get_storm(('michael',2018))
+storm = basin.get_storm(('michael',2018))
 ```
 
 This instance of Storm contains several methods that return the storm data back in different data types. The following examples will show how to retrieve 3 different data types.

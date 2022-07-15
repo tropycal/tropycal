@@ -351,6 +351,7 @@ def interp_storm(storm_dict,hours=1,dt_window=24,dt_align='middle',method='linea
                 new_storm[name] = tmp2+[np.nan]*(len(new_storm[name])-len(tmp2))
             if dt_align=='start':
                 new_storm[name] = list(tmp)+[np.nan]*(len(new_storm[name])-len(tmp))
+            new_storm[name] = list(np.array(new_storm[name])*(hours))
         
         #Convert change in position to change over specified window
         for name in ['dx_dt','dy_dt','speed']:

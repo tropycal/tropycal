@@ -9,6 +9,7 @@ import matplotlib.dates as mdates
 import matplotlib.colors as mcolors
 import matplotlib as mlib
 import warnings
+import scipy.interpolate as interp
 
 from .. import constants
 
@@ -224,7 +225,7 @@ def construct_title(thresh):
     return thresh, plot_subtitle
 
 
-def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
+def interp_storm(storm_dict,hours=1,dt_window=24,dt_align='middle',method='linear'):
     
     r"""
     Interpolate a storm dictionary temporally to a specified time resolution. Referenced from ``TrackDataset.filter_storms()``. Internal function.
@@ -233,12 +234,14 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
     ----------
     storm_dict : dict
         Dictionary containing a storm entry.
-    timeres : int
+    hours : int
         Temporal resolution in hours to interpolate storm data to. Default is 1 hour.
     dt_window : int
         Time window in hours over which to calculate temporal change data. Default is 24 hours.
     dt_align : str
         Whether to align the temporal change window as "start", "middle" or "end" of the dt_window time period.
+    method : str
+        Method by which to interpolate lat & lon coordinates. Options are "linear" (default) or "quadratic".
     
     Returns
     -------
@@ -278,10 +281,12 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
     try:
         
         #Create a list of target times given the requested temporal resolution
-        targettimes = np.arange(times[0],times[-1]+timeres/24,timeres/24)
+        targettimes = np.arange(times[0],times[-1]+hours/24.0,hours/24.0)
+        targettimes = targettimes[targettimes<=times[-1]+0.001]
         
         #Update dates
-        new_storm['date'] = [round_datetime(t.replace(tzinfo=None)) for t in mdates.num2date(targettimes)]
+        use_minutes = 10 if hours > (1.0/6.0) else hours * 60.0
+        new_storm['date'] = [round_datetime(t.replace(tzinfo=None),use_minutes) for t in mdates.num2date(targettimes)]
         targettimes = mdates.date2num(np.array(new_storm['date']))
         
         #Create same-length lists for other things
@@ -310,29 +315,35 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
         newtype[newtype=='EX'] = np.where(isDB[newtype=='EX']>0,'DB','EX')
         
         #Interpolate and fill in other variables
-        for name in ['vmax','mslp','lat','lon']:
+        for name in ['vmax','mslp']:
             new_storm[name] = np.interp(targettimes,times,storm_dict[name])
+            new_storm[name] = np.array([int(round(i)) for i in new_storm[name]])
+        for name in ['lat','lon']:
+            func = interp.interp1d(times,storm_dict[name],kind=method)
+            new_storm[name] = func(targettimes)
+            new_storm[name] = np.array([round(i,2) for i in new_storm[name]])
+        
         #Correct storm type by intensity
         newtype[newtype=='TROP'] = [['TD','TS','HU'][int(i>34)+int(i>63)] for i in new_storm['vmax'][newtype=='TROP']]
         newtype[newtype=='SUB'] = [['SD','SS'][int(i>34)] for i in new_storm['vmax'][newtype=='SUB']]
         new_storm['type'] = newtype
         
         #Calculate change in wind & MSLP over temporal resolution
-        new_storm['dvmax_dt'] = [np.nan] + list((new_storm['vmax'][1:]-new_storm['vmax'][:-1]) / timeres)
-        new_storm['dmslp_dt'] = [np.nan] + list((new_storm['mslp'][1:]-new_storm['mslp'][:-1]) / timeres)
+        new_storm['dvmax_dt'] = [np.nan] + list((new_storm['vmax'][1:]-new_storm['vmax'][:-1]) / hours)
+        new_storm['dmslp_dt'] = [np.nan] + list((new_storm['mslp'][1:]-new_storm['mslp'][:-1]) / hours)
         
         #Calculate x and y position change over temporal window
         rE = 6.371e3 * 0.539957 #nautical miles
         d2r = np.pi/180.
         new_storm['dx_dt'] = [np.nan]+list(d2r*(new_storm['lon'][1:]-new_storm['lon'][:-1])* \
-                 rE*np.cos(d2r*np.mean([new_storm['lat'][1:],new_storm['lat'][:-1]],axis=0))/timeres)
+                 rE*np.cos(d2r*np.mean([new_storm['lat'][1:],new_storm['lat'][:-1]],axis=0))/hours)
         new_storm['dy_dt'] = [np.nan]+list(d2r*(new_storm['lat'][1:]-new_storm['lat'][:-1])* \
-                 rE/timeres)
+                 rE/hours)
         new_storm['speed'] = [(x**2+y**2)**0.5 for x,y in zip(new_storm['dx_dt'],new_storm['dy_dt'])]
         
         #Convert change in wind & MSLP to change over specified window
         for name in ['dvmax_dt','dmslp_dt']:
-            tmp = np.round(np.convolve(new_storm[name],[1]*int(dt_window/timeres),mode='valid'),1)         
+            tmp = np.round(np.convolve(new_storm[name],[1]*int(dt_window/hours),mode='valid'),1)         
             if dt_align=='end':
                 new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
             if dt_align=='middle':
@@ -343,7 +354,7 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
         
         #Convert change in position to change over specified window
         for name in ['dx_dt','dy_dt','speed']:
-            tmp = np.convolve(new_storm[name],[timeres/dt_window]*int(dt_window/timeres),mode='valid')
+            tmp = np.convolve(new_storm[name],[hours/dt_window]*int(dt_window/hours),mode='valid')
             if dt_align=='end':
                 new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
             if dt_align=='middle':

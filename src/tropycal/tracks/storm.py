@@ -527,19 +527,21 @@ class Storm:
                 
         return NEW_STORM
 
-    def interp(self,timeres=1,dt_window=24,dt_align='middle'):
+    def interp(self,hours=1,dt_window=24,dt_align='middle',method='linear'):
         
         r"""
         Interpolate a storm temporally to a specified time resolution.
         
         Parameters
         ----------
-        timeres : int
-            Temporal resolution in hours to interpolate storm data to. Default is 1 hour.
+        hours : int or float
+            Temporal resolution in hours (or fraction of an hour) to interpolate storm data to. Default is 1 hour.
         dt_window : int
             Time window in hours over which to calculate temporal change data. Default is 24 hours.
         dt_align : str
             Whether to align the temporal change window as "start", "middle" or "end" of the dt_window time period.
+        method : str
+            Method by which to interpolate lat & lon coordinates. Options are "linear" (default) or "quadratic".
         
         Returns
         -------
@@ -548,7 +550,7 @@ class Storm:
         """
         
         NEW_STORM = copy.deepcopy(self)
-        newdict = interp_storm(NEW_STORM.dict,timeres,dt_window,dt_align)
+        newdict = interp_storm(NEW_STORM.dict,hours,dt_window,dt_align,method)
         for key in newdict.keys(): 
             NEW_STORM.dict[key] = newdict[key]
 

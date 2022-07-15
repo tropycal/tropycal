@@ -1063,7 +1063,7 @@ class TrackDataset:
         
         for key in keys:
             if key not in self.data_interp.keys():
-                self.data_interp[key] = interp_storm(self.data[key].copy(),timeres=1,dt_window=24,dt_align='middle')
+                self.data_interp[key] = interp_storm(self.data[key].copy(),hours=1,dt_window=24,dt_align='middle')
         
         #Determine time elapsed
         time_elapsed = dt.now() - start_time
@@ -2683,7 +2683,7 @@ class TrackDataset:
                 try:
                     istorm = self.data_interp[key]
                 except:
-                    istorm = interp_storm(self.data[key].copy(),timeres=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
+                    istorm = interp_storm(self.data[key].copy(),hours=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
                     self.data_interp[key] = istorm.copy()
                 timeres = 1
             else:

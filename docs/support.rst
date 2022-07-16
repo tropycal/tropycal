@@ -11,4 +11,6 @@ project developers:
 * Tomer Burg (tomerburg@gmail.com)
 * Sam Lillo (splillo@gmail.com)
 
+We are also grateful to Tomer Aberbach and Ryan May for help and support in developing Tropycal.
+
 .. _Github: https://github.com/tropycal/tropycal/issues

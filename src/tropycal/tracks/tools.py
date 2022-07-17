@@ -319,8 +319,15 @@ def interp_storm(storm_dict,hours=1,dt_window=24,dt_align='middle',method='linea
             new_storm[name] = np.interp(targettimes,times,storm_dict[name])
             new_storm[name] = np.array([int(round(i)) if np.isnan(i) == False else np.nan for i in new_storm[name]])
         for name in ['lat','lon']:
-            if len(storm_dict[name]) >= 3:
-                func = interp.interp1d(times,storm_dict[name],kind=method)
+            filtered_array = np.array(storm_dict[name])
+            new_times = np.array(storm_dict['date'])
+            if 'linear' not in method:
+                converted_hours = np.array([1 if i.strftime('%H%M') in constants.STANDARD_HOURS else 0 for i in storm_dict['date']])
+                filtered_array = filtered_array[converted_hours == 1]
+                new_times = new_times[converted_hours == 1]
+            new_times = mdates.date2num(new_times)
+            if len(filtered_array) >= 3:
+                func = interp.interp1d(new_times,filtered_array,kind=method)
                 new_storm[name] = func(targettimes)
                 new_storm[name] = np.array([round(i,2) if np.isnan(i) == False else np.nan for i in new_storm[name]])
             else:

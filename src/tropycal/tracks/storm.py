@@ -1196,6 +1196,12 @@ class Storm:
              - Forecast track linewidth. Default is 0.2.
            * - linecolor
              - Forecast track line color. Default is black.
+           * - color_var
+             - Variable name to color ensemble members by ('vmax' or 'mslp'). Default is None.
+           * - cmap
+             - If ``color_var`` is specified, matplotlib colormap to color the variable by.
+           * - levels
+             - If ``color_var`` is specified, list of contour levels to color the variable by.
 
         The following properties are available for customizing ensemble mean track, via ``prop_mean``.
 

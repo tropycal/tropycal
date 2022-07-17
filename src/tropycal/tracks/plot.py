@@ -1142,7 +1142,7 @@ None,prop={},map_prop={}):
         
         #Set default properties
         default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200,'plot_gridlines':True}
-        default_prop_ensemble_members = {'plot':True, 'linewidth':0.2, 'linecolor':'k'}
+        default_prop_ensemble_members = {'plot':True, 'linewidth':0.2, 'linecolor':'k','color_var':None,'cmap':None,'levels':None}
         default_prop_ensemble_mean = {'plot':True, 'linewidth':3.0, 'linecolor':'k'}
         default_prop_gfs = {'plot':True, 'linewidth':3.0, 'linecolor':'r'}
         default_prop_btk = {'plot':True, 'linewidth':2.5, 'linecolor':'b'}
@@ -1180,6 +1180,7 @@ None,prop={},map_prop={}):
             return ynew
         
         #Plot density
+        density_colorbar = False
         if prop_density['plot']:
             if hr == None or (hr != None and hr in ds['gefs']['fhr']):
 
@@ -1250,8 +1251,9 @@ None,prop={},map_prop={}):
                 norm = mcolors.BoundaryNorm(prop_density['levels'], prop_density['cmap'].N)
                 cs = self.ax.contourf(gridlons, gridlats, density_percent, prop_density['levels'],
                                       cmap=prop_density['cmap'], norm=norm, alpha=0.6, transform=ccrs.PlateCarree())
-                cbar = plt.colorbar(cs,ticks=prop_density['levels'])
+                cbar = add_colorbar(cs,ticks=prop_density['levels'],ax=self.ax)
                 cbar.ax.tick_params(labelsize=12)
+                density_colorbar = True
 
         #-------------------------------------------------------------------
         #Plot ellipse
@@ -1304,24 +1306,39 @@ None,prop={},map_prop={}):
                 lon_max_extrema.append(np.nanmax(use_lons))
                 lon_min_extrema.append(np.nanmin(use_lons))
 
-            if hr in ds[f'gefs_{i}']['fhr']:
-                idx = ds[f'gefs_{i}']['fhr'].index(hr)
-                self.ax.plot(ds[f'gefs_{i}']['lon'][:idx+1], ds[f'gefs_{i}']['lat'][:idx+1],
-                             linewidth=prop_ensemble_members['linewidth'],
-                             color=prop_ensemble_members['linecolor'], transform=ccrs.PlateCarree())
-                self.ax.plot(ds[f'gefs_{i}']['lon'][idx], ds[f'gefs_{i}']['lat'][idx], 'o', ms=4,
-                             mfc=prop_ensemble_members['linecolor'],mec='k',
-                             alpha=0.6,transform=ccrs.PlateCarree())
-            elif len(ds[f'gefs_{i}']['fhr']) > 0:
-                idx = 0
-                if hr == None:
-                    idx = len(ds[f'gefs_{i}']['lon'])
-                else:
-                    for idx_hr in ds[f'gefs_{i}']['fhr']:
-                        if idx_hr <= hr: idx = ds[f'gefs_{i}']['fhr'].index(idx_hr)
-                self.ax.plot(ds[f'gefs_{i}']['lon'][:idx+1], ds[f'gefs_{i}']['lat'][:idx+1], 
-                             linewidth=prop_ensemble_members['linewidth'],
-                             color=prop_ensemble_members['linecolor'], transform=ccrs.PlateCarree())
+                #Plot cumulative track
+                if len(ds[f'gefs_{i}']['fhr']) > 0:
+                    if prop_ensemble_members['color_var'] not in ['vmax','mslp']:
+                        self.ax.plot(ds[f'gefs_{i}']['lon'][:idx+1], ds[f'gefs_{i}']['lat'][:idx+1], 
+                                     linewidth=prop_ensemble_members['linewidth'],
+                                     color=prop_ensemble_members['linecolor'], transform=ccrs.PlateCarree())
+                    else:
+                        #Color by variable
+                        cmap = prop_ensemble_members['cmap']
+                        levels = prop_ensemble_members['levels']
+                        norm = mcolors.BoundaryNorm(levels,cmap.N)
+                        for j in range(1,idx):
+                            i_val = ds[f'gefs_{i}'][prop_ensemble_members['color_var']][j]
+                            color = 'w' if np.isnan(i_val) else cmap(norm(i_val))
+                            self.ax.plot([ds[f'gefs_{i}']['lon'][j-1],ds[f'gefs_{i}']['lon'][j]],
+                                         [ds[f'gefs_{i}']['lat'][j-1],ds[f'gefs_{i}']['lat'][j]], 
+                                         linewidth=prop_ensemble_members['linewidth'],
+                                         color=color, transform=ccrs.PlateCarree())
+                        
+                        #Add colorbar
+                        if density_colorbar == False:
+                            cs = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+                            cs.set_array([])
+                            cbar = add_colorbar(cs,ticks=prop_ensemble_members['levels'],ax=self.ax)
+                            cbar.ax.tick_params(labelsize=12)
+                            density_colorbar = True
+                
+                #Plot latest dot if applicable
+                if hr in ds[f'gefs_{i}']['fhr']:
+                    idx = ds[f'gefs_{i}']['fhr'].index(hr)
+                    self.ax.plot(ds[f'gefs_{i}']['lon'][idx], ds[f'gefs_{i}']['lat'][idx], 'o', ms=4,
+                                 mfc=prop_ensemble_members['linecolor'],mec='k',
+                                 alpha=0.6,transform=ccrs.PlateCarree())
 
         #-------------------------------------------------------------------
         #Plot best track
@@ -1501,7 +1518,7 @@ None,prop={},map_prop={}):
             min_lon = np.nanmin(lon_min_extrema)
         
         #================================================================================================
-
+        
         #Add legend
         import matplotlib.patches as mpatches
         import matplotlib.lines as mlines
@@ -1521,8 +1538,10 @@ None,prop={},map_prop={}):
             l.set_zorder(1001)
 
         #Plot title
+        format_title = {'vmax':'Ensemble member sustained wind (knots)','mslp':'Ensemble member minimum MSLP (hPa)'}
         plot_title = f"GEFS Forecast Tracks for {storm_dict['name'].title()}"
         if prop_density['plot']: plot_title += f"\nTrack Density ({np.int(prop_density['radius'])}-km radius)"
+        if prop_ensemble_members['color_var'] in ['vmax','mslp']: plot_title += f"\n{format_title.get(prop_ensemble_members['color_var'])}"
         self.ax.set_title(plot_title,fontsize=16,loc='left',fontweight='bold')
 
         if hr == None:

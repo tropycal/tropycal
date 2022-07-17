@@ -10,6 +10,7 @@ import matplotlib.colors as mcolors
 import matplotlib as mlib
 import warnings
 import scipy.interpolate as interp
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from .. import constants
 
@@ -754,3 +755,59 @@ def date_diff(a,b):
         except:
             c = a.replace(year=2000)-b.replace(year=1999)
     return c
+
+def add_colorbar(mappable=None,location='right',size="2.5%",pad='1%',fig=None,ax=None,**kwargs):
+    """
+    Uses the axes_grid toolkit to add a colorbar to the parent axis and rescale its size to match
+    that of the parent axis. This is adapted from Basemap's original ``colorbar()`` method.
+
+    Parameters
+    ----------
+    mappable
+        The image mappable to which the colorbar applies. If none specified, matplotlib.pyplot.gci() is
+        used to retrieve the latest mappable.
+    location
+        Location in which to place the colorbar ('right','left','top','bottom'). Default is right.
+    size
+        Size of the colorbar. Default is 3%.
+    pad
+        Pad of colorbar from axis. Default is 1%.
+    ax
+        Axes instance to associated the colorbar with. If none provided, or if no
+        axis is associated with the instance of Map, then plt.gca() is used.
+    """
+
+    #Get current mappable if none is specified
+    if fig is None or mappable is None:
+        import matplotlib.pyplot as plt
+    if fig is None:
+        fig = plt.gcf()
+
+    if mappable is None:
+        mappable = plt.gci()
+
+    #Create axis to insert colorbar in
+    divider = make_axes_locatable(ax)
+
+    if location == "left":
+        orientation = 'vertical'
+        ax_cb = divider.new_horizontal(size, pad, pack_start=True, axes_class=plt.Axes)
+    elif location == "right":
+        orientation = 'vertical'
+        ax_cb = divider.new_horizontal(size, pad, pack_start=False, axes_class=plt.Axes)
+    elif location == "bottom":
+        orientation = 'horizontal'
+        ax_cb = divider.new_vertical(size, pad, pack_start=True, axes_class=plt.Axes)
+    elif location == "top":
+        orientation = 'horizontal'
+        ax_cb = divider.new_vertical(size, pad, pack_start=False, axes_class=plt.Axes)
+    else:
+        raise ValueError('Improper location entered')
+
+    #Create colorbar
+    fig.add_axes(ax_cb)
+    cb = plt.colorbar(mappable, orientation=orientation, cax=ax_cb, **kwargs)
+
+    #Reset parent axis as the current axis
+    fig.sca(ax)
+    return cb

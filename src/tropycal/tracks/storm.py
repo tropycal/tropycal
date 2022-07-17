@@ -539,14 +539,18 @@ class Storm:
         dt_window : int
             Time window in hours over which to calculate temporal change data. Default is 24 hours.
         dt_align : str
-            Whether to align the temporal change window as "start", "middle" or "end" of the dt_window time period.
+            Whether to align the temporal change window as "start", "middle" (default) or "end" of the dt_window time period.
         method : str
-            Method by which to interpolate lat & lon coordinates. Options are "linear" (default) or "quadratic".
+            Interpolation method for lat/lon coordinates passed to scipy. Options are "linear" (default) or "quadratic".
         
         Returns
         -------
         tropycal.tracks.Storm
             New Storm object containing the updated dictionary.
+        
+        Notes
+        -----
+        When interpolating data using a non-linear method, all non-standard hour observations (i.e., not within 00, 06, 12 or 18 UTC) are ignored for latitude & longitude interpolation in order to produce a smoother line.
         """
         
         NEW_STORM = copy.deepcopy(self)

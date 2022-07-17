@@ -131,6 +131,8 @@ The following properties are available only for the ``tropycal.tracks.TrackDatas
 
    * - Property
      - Description
+   * - smooth
+     - Number (in units of sigma) to smooth the data using scipy's gaussian filter. Default is 0 (no smoothing).
    * - cmap
      - Colormap to use for the plot. If string 'category' is passed (default), uses a pre-defined color scale corresponding to the Saffir-Simpson Hurricane Wind Scale.
    * - clevs

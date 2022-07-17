@@ -2808,7 +2808,7 @@ class TrackDataset:
         year_average : bool, optional
             If True, both year ranges will be computed and plotted as an annual average.
         date_range : list or tuple, optional
-            List or tuple representing the start and end dates as a string in 'month/day' format (e.g., ('6/1','8/15')). Default is ('1/1','12/31') or full year.
+            List or tuple representing the start and end dates as a string in 'month/day' format (e.g., ``('6/1','8/15')``). Default is ``('1/1','12/31')`` i.e., the full year.
         binsize : float, optional
             Grid resolution in degrees. Default is 1 degree.
         domain : str, optional
@@ -2830,6 +2830,27 @@ class TrackDataset:
         Returns
         -------
         By default, the plot axes is returned. If "return_array" are set to True, a dictionary is returned containing both the axes and data array.
+        
+        Notes
+        -----
+        The following properties are available for customizing the plot, via ``prop``:
+        
+        .. list-table:: 
+            :widths: 25 75
+            :header-rows: 1
+
+            * - Property
+              - Description
+            * - smooth
+              - Number (in units of sigma) to smooth the data using scipy's gaussian filter. Default is 0 (no smoothing).
+            * - cmap
+              - Colormap to use for the plot. If string 'category' is passed (default), uses a pre-defined color scale corresponding to the Saffir-Simpson Hurricane Wind Scale.
+            * - clevs
+              - Contour levels for the plot. Default is minimum and maximum values in the grid.
+            * - left_title
+              - Title string for the left side of the plot. Default is the string passed via the 'request' keyword argument.
+            * - right_title
+              - Title string for the right side of the plot. Default is 'All storms'.
         """
         
         #Retrieve kwargs

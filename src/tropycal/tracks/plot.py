@@ -34,7 +34,7 @@ try:
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
-def plot_dot(ax,lon,lat,date,vmax,i_type,zorder,storm_data,prop):
+def plot_dot(ax,lon,lat,date,vmax,i_type,zorder,storm_data,prop,i):
 
     r"""
     Plot a dot on the map per user settings.
@@ -66,6 +66,9 @@ def plot_dot(ax,lon,lat,date,vmax,i_type,zorder,storm_data,prop):
     segmented_colors : bool
         Information for colorbar generation on whether a segmented colormap was used or not.
     """
+    
+    #Return cmap & levels if needed
+    extra = {}
 
     #Determine fill color, with SSHWS scale used as default
     if prop['fillcolor'] == 'category':
@@ -80,6 +83,8 @@ def plot_dot(ax,lon,lat,date,vmax,i_type,zorder,storm_data,prop):
             prop['levels'] = [np.nanmin(color_variable),np.nanmax(color_variable)]
         cmap,levels = get_cmap_levels(prop['fillcolor'],prop['cmap'],prop['levels'])
         fill_color = cmap((color_variable-min(levels))/(max(levels)-min(levels)))[i]
+        extra['cmap'] = cmap
+        extra['levels'] = levels
 
     #Otherwise go with user input as is
     else:
@@ -97,7 +102,7 @@ def plot_dot(ax,lon,lat,date,vmax,i_type,zorder,storm_data,prop):
     ax.plot(lon,lat,marker_type,mfc=fill_color,mec='k',mew=0.5,
                  zorder=zorder,ms=prop['ms'],transform=ccrs.PlateCarree())
 
-    return ax, segmented_colors
+    return ax, segmented_colors, extra
 
 def rgb(self,rgb):
     r,g,b = rgb
@@ -412,8 +417,10 @@ class TrackPlot(Plot):
                 #Plot dots if requested
                 if prop['dots'] == True:
                     if plot_all_dots == False and i_date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
-                    self.ax,segmented_colors = plot_dot(self.ax,i_lon,i_lat,i_date,i_vmax,i_type,
-                                                        zorder=5,storm_data=storm_data,prop=prop)
+                    self.ax,segmented_colors,extra = plot_dot(self.ax,i_lon,i_lat,i_date,i_vmax,i_type,
+                                                              zorder=5,storm_data=storm_data,prop=prop,i=i)
+                    if 'cmap' in extra.keys(): cmap = extra['cmap']
+                    if 'levels' in extra.keys(): levels = extra['levels']
                 
                 #Label track dots
                 if track_labels in ['valid_utc']:
@@ -1719,8 +1726,10 @@ None,prop={},map_prop={}):
                 
                 #Plot dots if requested
                 if prop['dots'] == True:
-                    self.ax,segmented_colors = plot_dot(self.ax,i_lon,i_lat,i_date,i_vmax,i_type,
-                                                        zorder=900+i_vmax,storm_data=storm,prop=prop)
+                    self.ax,segmented_colors,extra = plot_dot(self.ax,i_lon,i_lat,i_date,i_vmax,i_type,
+                                                              zorder=900+i_vmax,storm_data=storm,prop=prop,i=i)
+                    if 'cmap' in extra.keys(): cmap = extra['cmap']
+                    if 'levels' in extra.keys(): levels = extra['levels']
 
         #--------------------------------------------------------------------------------------
         

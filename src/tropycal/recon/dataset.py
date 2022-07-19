@@ -2322,21 +2322,31 @@ class vdms:
     def __init__(self, storm, data=None, update=False):
 
         self.storm = storm
-        if storm.basin == 'north_atlantic':
-            archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT2/'
+        if storm.year >= 2006:
+            self.format = 1
+            if storm.basin == 'north_atlantic':
+                archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT2/'
+            else:
+                archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN2/'
         else:
-            archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN2/'
+            self.format = 2
+            archive_url = f'http://hurricanes.ral.ucar.edu/structure/vortex/vdm_data/{self.storm.year}/'
+        
         timestr = [f'{t:%Y%m%d}' for t in self.storm.dict['date']]
 
         #Retrieve list of files in URL and filter by storm dates
-        page = requests.get(archiveURL).text
+        page = requests.get(archive_url).text
         content = page.split("\n")
         files = []
         for line in content:
             if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
         del content
-        files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
-        linksub = [archiveURL+'.'.join(l) for l in files]
+        if self.format == 1:
+            files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
+            linksub = [archive_url+'.'.join(l) for l in files]
+        elif self.format == 2:
+            files = [f[0] for f in files]
+            linksub = [archive_url+l for l in files if storm.name.upper() in l]
         
         self.data = []
 
@@ -2351,24 +2361,66 @@ class vdms:
             for link in linksub:
                 response = http.request('GET',link)
                 content = response.data.decode('utf-8')
-                date = link.split('.')[-2]
-                year = int(date[:4])
-                month = int(date[4:6])
-                day = int(date[6:8])
-                try:
-                    missionname,tmp = decode_vdm(content,date=dt(year,month,day))
-                except:
-                    continue
-                testkeys = ('time','lat','lon')
-                if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
-                    if self.data is None:
-                        self.data = [copy.copy(tmp)]
-                        filecount+=1
-                    elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
-                        self.data.append(tmp)
-                        filecount+=1
-                    else:
-                        pass
+                
+                #Parse with NHC format
+                if self.format == 1:
+                    try:
+                        date = link.split('.')[-2]
+                        date = dt(int(date[:4]),int(date[4:6]),int(date[6:8]))
+                        missionname,tmp = decode_vdm(content,date=dt(year,month,day))
+                    except:
+                        continue
+                    
+                    testkeys = ('time','lat','lon')
+                    if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
+                        if self.data is None:
+                            self.data = [copy.copy(tmp)]
+                            filecount+=1
+                        elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
+                            self.data.append(tmp)
+                            filecount+=1
+                        else:
+                            pass
+                
+                #Parse with UCAR format
+                elif self.format == 2:
+                    content_split = content.split("URNT12")
+                    content_split = ['URNT12' + i for i in content_split]
+                    for iter_content in content_split:
+                        
+                        try:
+                            #Check for line length
+                            iter_split = iter_content.split("\n")
+                            if len(iter_split) < 10: continue
+
+                            #Check for date
+                            for line in iter_split:
+                                if line[:2] == 'A.': day = int((line[3:].split('/'))[0])
+                            for iter_date in storm.dict['date']:
+                                found_date = False
+                                if iter_date.day == day:
+                                    date = dt(iter_date.year,iter_date.month,iter_date.day)
+                                    found_date = True
+                                    break
+                            if found_date == False: continue
+
+                            #Decode VDMs
+                            missionname,tmp = decode_vdm(iter_content,date)
+
+                            testkeys = ('time','lat','lon')
+                            if self.data is None:
+                                self.data = [copy.copy(tmp)]
+                                filecount+=1
+                            elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
+                                self.data.append(tmp)
+                                filecount+=1
+                            else:
+                                pass
+                        
+                        except:
+                            continue
+
+                
             print(f'--> Completed reading in recon VDM files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files')
             

@@ -846,8 +846,17 @@ def decode_vdm(content,date):
     lines = content.split('\n')
     RemarksNext = False
     LonNext = False
-    FORMAT = 1 if date.year<2018 else 2
     missionname = ''
+    
+    
+    if date.year >= 2018:
+        FORMAT = 1
+    elif date.year >= 1999:
+        FORMAT = 2
+    elif date.year == 1998:
+        FORMAT = 3
+    else:
+        FORMAT = 4
 
     def isNA(x):
         if x == 'NA':
@@ -888,10 +897,10 @@ def decode_vdm(content,date):
 
         if line[:2] == 'B.':
             info = line[3:].split()
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['lat'] = np.round((float(info[0])+float(info[2])/60)*[-1,1][info[4]=='N'],2)
                 LonNext = True
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['lat'] = float(info[0])*[-1,1][info[2]=='N']
                 data['lon'] = float(info[3])*[-1,1][info[5]=='E']
 
@@ -902,31 +911,31 @@ def decode_vdm(content,date):
 
         if line[:2] == 'D.':
             info = line[3:].split()*5
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Estimated Maximum Surface Wind Inbound (kt)'] = isNA(info[0])
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Minimum Sea Level Pressure (hPa)']=isNA(info[-2])                    
 
         if line[:2] == 'E.':
             info = line[3:].split()*5
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Dropsonde Surface Wind Speed at Center (kt)']=isNA(info[2])
                 data['Dropsonde Surface Wind Direction at Center (deg)']=isNA(info[0])
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Location of Estimated Maximum Surface Wind Inbound']=isNA(line[3:])
 
         if line[:2] == 'F.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Maximum Flight Level Wind Inbound']=isNA(info)
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Eye character']=isNA(info)
 
         if line[:2] == 'G.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Location of the Maximum Flight Level Wind Inbound']=isNA(info)
-            if FORMAT==2:
+            if FORMAT == 1:
                 if isNA(info) == np.nan:
                     data.update({'Eye Shape':np.nan,'Eye Diameter (nmi)':np.nan})
                 else:
@@ -952,42 +961,50 @@ def decode_vdm(content,date):
 
         if line[:2] == 'H.':
             info = line[3:].split()*5
-            if FORMAT==1:
-                data['Minimum Sea Level Pressure (hPa)']=isNA(info[-2]) 
-            if FORMAT==2:
+            if FORMAT >= 3:
+                info = (line[3:].split("MB")[0]).split()
+                if info[0] == '/':
+                    data['Minimum Sea Level Pressure (hPa)']=np.nan
+                else:
+                    parsed_mslp = info[-1]
+                    if '/' in parsed_mslp: parsed_mslp = parsed_mslp.split("/")[1]
+                    data['Minimum Sea Level Pressure (hPa)']=isNA(parsed_mslp)
+            elif FORMAT == 2:
+                data['Minimum Sea Level Pressure (hPa)']=isNA(info[-2])
+            elif FORMAT == 1:
                 data['Estimated Maximum Surface Wind Inbound (kt)']=isNA(info[0])
 
         if line[:2] == 'I.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Maximum Flight Level Temp Outside Eye (C)']=isNA(info.split()[0])
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Location & Time of the Estimated Maximum Surface Wind Inbound']=isNA(info)
 
         if line[:2] == 'J.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Maximum Flight Level Temp Inside Eye (C)']=isNA(info.split()[0])
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Maximum Flight Level Wind Inbound (kt)']=isNA(info)
 
         if line[:2] == 'K.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Dew Point Inside Eye (C)']=isNA(info.split()[0])
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Location & Time of the Maximum Flight Level Wind Inbound']=isNA(info)
 
         if line[:2] == 'L.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Eye character']=isNA(info)
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Estimated Maximum Surface Wind Outbound (kt)']=isNA(info)
 
         if line[:2] == 'M.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 if isNA(info) == np.nan:
                     data.update({'Eye Shape':np.nan,'Eye Diameter (nmi)':np.nan})
                 else:
@@ -1006,57 +1023,66 @@ def decode_vdm(content,date):
                             data.update({f'Eye Diameter {i+1} (nmi)':float(s) for i,s in enumerate(size.split(' ')[1:])})
                     elif shape=='E':
                         einfo = size.split('/')
-                        data.update({'Eye Shape':'elliptical','Orientation':float(einfo[0])*10,\
-                                     'Eye Major Axis (nmi)':float(einfo[1]),'Eye Minor Axis (nmi)':float(einfo[1])})
+                        try:
+                            data.update({'Eye Shape':'elliptical','Orientation':float(einfo[0])*10,
+                                         'Eye Major Axis (nmi)':float(einfo[1]),'Eye Minor Axis (nmi)':float(einfo[1])})
+                        except:
+                            data.update({'Eye Shape':'elliptical','Orientation':np.nan,
+                                         'Eye Major Axis (nmi)':np.nan,'Eye Minor Axis (nmi)':np.nan})
                     else:
                         data.update({'Eye Shape':np.nan,'Eye Diameter (nmi)':np.nan})
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Location & Time of the Estimated Maximum Surface Wind Outbound']=isNA(info)
 
         if line[:2] == 'N.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Maximum Flight Level Wind Outbound (kt)']=isNA(info)
 
         if line[:2] == 'O.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Location & Time of the Maximum Flight Level Wind Outbound']=isNA(info)
 
         if line[:2] == 'P.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Aircraft'] = info.split()[0]
                 missionname = info.split()[1]
                 data['mission'] = missionname[:2]
                 data['Remarks'] = ''
                 RemarksNext = True
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Maximum Flight Level Temp & Pressure Altitude Outside Eye']=isNA(info)
 
         if line[:2] == 'Q.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Maximum Flight Level Temp & Pressure Altitude Inside Eye']=isNA(info)
+            if FORMAT == 3:
+                data['Aircraft'] = info.split()[0]
+                missionname = info.split()[1]
+                data['mission'] = missionname[:2]
+                data['Remarks'] = ''
 
         if line[:2] == 'R.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Dewpoint Temp (collected at same location as temp inside eye)']=isNA(info)
 
         if line[:2] == 'S.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Fix']=isNA(info)
 
         if line[:2] == 'T.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Accuracy']=isNA(info)
 
         if line[:2] == 'U.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Aircraft'] = info.split()[0]
                 missionname = info.split()[1]
                 data['mission'] = missionname[:2]
@@ -1064,9 +1090,17 @@ def decode_vdm(content,date):
                 RemarksNext = True
 
     content_split = content.split("\n")
-    if FORMAT == 1:
-        mission_id = ['-'.join(i.split("P. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "P."][0]
+    if FORMAT == 4:
+        mission_id = '-'.join(content_split[1].replace("  "," ").split(" ")[:3])
+        data['Aircraft'] = mission_id.split("-")[0]
+        missionname = mission_id.split("-")[1]
+        data['mission'] = missionname[:2]
+        data['Remarks'] = ''
+    elif FORMAT == 3:
+        mission_id = ['-'.join(i.split("Q. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "Q."][0]
     elif FORMAT == 2:
+        mission_id = ['-'.join(i.split("P. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "P."][0]
+    elif FORMAT == 1:
         mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
     data['mission_id'] = mission_id
     

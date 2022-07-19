@@ -617,9 +617,14 @@ class hdobs:
         elif storm.year == 2006:
             self.format = 4
             archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/HDOB/']
-        else:
+        elif storm.year >= 2002:
             self.format = 5
-            raise RuntimeError("Recon data is currently only available from 2006 onwards.")
+            archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/{self.storm.name.upper()}/']
+        elif storm.year <= 2001 and storm.year >= 1989:
+            self.format = 6
+            archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/{self.storm.name.lower()}/']
+        else:
+            raise RuntimeError("Recon data is not available prior to 1989.")
 
         if isinstance(data,str):
             with open(data, 'rb') as f:
@@ -639,7 +644,7 @@ class hdobs:
                       [f'{end_time:%Y%m%d}']
 
             #Retrieve list of files in URL(s) and filter by storm dates
-            if len(archive_url) == 1:
+            if self.format in [1,3,4]:
                 page = requests.get(archive_url[0]).text
                 content = page.split("\n")
                 files = []
@@ -648,7 +653,7 @@ class hdobs:
                 del content
                 files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
                 linksub = [archive_url[0]+'.'.join(l) for l in files]
-            else:
+            elif self.format == 2:
                 linksub = []
                 for url in archive_url:
                     files = []
@@ -659,6 +664,14 @@ class hdobs:
                     del content
                     linksub += sorted([url+'.'.join(i) for i in files if i[1][:8] in timestr],key=lambda x: x[1])
                 linksub = sorted(linksub)
+            elif self.format == 5:
+                page = requests.get(archive_url[0]).text
+                content = page.split("\n")
+                files = []
+                for line in content:
+                    if ".txt" in line and 'HDOBS' in line: files.append(((line.split('txt">')[1]).split("</a>")[0]))
+                del content
+                linksub = [archive_url[0]+l for l in files]
 
             #Initiate urllib3
             urllib3.disable_warnings()
@@ -676,21 +689,57 @@ class hdobs:
                 content = response.data.decode('utf-8')
                 
                 #Find mission name line
-                row = 3
-                while len(content.split("\n")[row]) < 3 or content.split("\n")[row][:3] == "SXX": row += 1
+                row = 3 if self.format <= 4 else 0
+                while len(content.split("\n")[row]) < 3 or content.split("\n")[row][:3] in ["SXX","URN","URP"]:
+                    row += 1
+                    if row >= 100: break
+                if row >= 100: continue
                 missionname = [i.split() for i in content.split('\n')][row][1]
                 
                 #Read HDOBs if this file matches the requested storm
                 if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
                     filecount += 1
-                    
+
                     try:
+
                         #Decode HDOBs by format
                         if self.format <= 3:
                             iter_hdob = decode_hdob(content,mission_row=row)
                         elif self.format == 4:
                             strdate = (link.split('.')[-2])[:8]
                             iter_hdob = decode_hdob_2006(content,strdate,mission_row=row)
+                        elif self.format == 5:
+                            #Split content by 10/20 minute blocks
+                            strdate = (link.split('.')[-3]).split("_")[-1]
+                            content_split = content.split("NNNN")
+                            iter_hdob = None
+                            for iter_content in content_split:
+                                iter_split = iter_content.split("\n")
+                                if len(iter_split) < 10: continue
+
+                                #Search for starting line of data within sub-block
+                                found = False
+                                for line in iter_split:
+                                    if missionname in line: found = True
+                                temp_row = 0
+                                while len(iter_split[temp_row]) < 3 or iter_split[temp_row][:3] in ["SXX","URN","URP"]:
+                                    temp_row += 1
+                                    if temp_row >= 100: break
+                                if temp_row >= 100: break
+
+                                #Parse data by format
+                                if 'NOAA' in link:
+                                    iter_hdob_loop = decode_hdob_2005_noaa(iter_content,strdate,temp_row)
+                                else:
+                                    iter_hdob_loop = decode_hdob_2006(iter_content,strdate,temp_row)
+
+                                #Append HDOBs to full data
+                                if iter_hdob is None:
+                                    iter_hdob = copy.copy(iter_hdob_loop)
+                                elif max(iter_hdob_loop['time']) > start_time:
+                                    iter_hdob = pd.concat([iter_hdob,iter_hdob_loop])
+                                else:
+                                    pass
 
                         #Append HDOBs to full data
                         if self.data is None:
@@ -699,9 +748,10 @@ class hdobs:
                             self.data = pd.concat([self.data,iter_hdob])
                         else:
                             pass
+
                     except:
                         unreadable += 1
-                    
+
             print(f'--> Completed reading in recon HDOB files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files'+\
                   f'\nUnable to decode {unreadable} files')

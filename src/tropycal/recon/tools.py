@@ -576,10 +576,94 @@ def time_series_plot(varname):
 # Decoding HDOBs
 #=======================================================================================================
 
+def decode_hdob_2005_noaa(content,strdate,mission_row=0):
+    
+    r"""
+    Function for decoding HDOBs in the format between 2002 and 2005, for NOAA aircraft.
+    """
+    
+    def check_error(string):
+        if '/' in string: return True
+        if ';' in string: return True
+        if 'off' in string: return True
+        return False
+    
+    #Split items by lines
+    temp = [i.split() for i in content.split('\n')]
+    temp = [i for j,i in enumerate(temp) if len(i)>0]
+    items = []
+    found_sxxx = False
+    for j,i in enumerate(temp):
+        if j>mission_row and len(i[0]) >= 2 and i[0][:2] == "$$": break
+        if j>mission_row+12 and len(i[0]) >= 3 and i[0][:3] == "000": break #avoid reading in extra set of HDOBs
+        if j<=mission_row:
+            if len(i[0]) >= 4 and i[0][:3] in ["URN","URP"]:
+                if found_sxxx == False:
+                    found_sxxx = True
+                    items.append(i)
+            else:
+                items.append(i)
+        if j>mission_row and i[0][0].isdigit() and len(i) > 8:
+            items.append(i)
+    
+    #Parse dates
+    data = {}
+    data['time'] = [dt.strptime(strdate+i[0],'%Y%m%d%H%M%S') for i in items[3:]]
+    if data['time'][0].hour>12 and data['time'][-1].hour<12:
+        data['time'] = [t+timedelta(days=[0,1][t.hour<12]) for t in data['time']]
+
+    #Derive plane altitude using D-value
+    altitude = []
+    for i in items[3:]:
+        if '/' in i[3] or '/' in i[4]:
+            altitude.append(np.nan)
+        else:
+            pres_altitude = int(i[3])
+            d_value = int(i[4][1:])*-1 if i[4][0] == '-' else int(i[4][1:])
+            altitude.append(pres_altitude+d_value)
+    data['plane_z'] = altitude
+    
+    #Parse full data
+    data['lat'] = [np.nan if check_error(i[1]) else round((float(i[1][:-2])+float(i[1][-2:])/60),2) \
+                   for i in items[3:]]
+    data['lon'] = [np.nan if check_error(i[2]) else round((float(i[2][:-2])+float(i[2][-2:])/60),2)*-1 \
+                   for i in items[3:]]
+    data['temp'] = [np.nan if check_error(i[6]) else round(float(i[7])*0.1,1) for i in items[3:]]
+    data['dwpt'] = [np.nan if check_error(i[7]) else round(float(i[8])*0.1,1) for i in items[3:]]
+    data['wdir'] = [np.nan if check_error(i[5][:3]) else round(float(i[5][:3]),0) for i in items[3:]]
+    data['wspd'] = [np.nan if check_error(i[5][3:]) else round(float(i[5][3:]),0) for i in items[3:]]
+    data['pkwnd'] = [np.nan if check_error(i[8]) else round(float(i[8][3:]),0) for i in items[3:]]
+    
+    #Data not available prior to 2007
+    data['plane_p'] = [np.nan for i in items[3:]]
+    data['p_sfc'] = [np.nan for i in items[3:]]
+    data['sfmr'] = [np.nan for i in items[3:]]
+    data['rain'] = [np.nan for i in items[3:]]
+    data['flag'] = [[] for i in items[3:]]
+
+    #Ignore entries with lat/lon of 0
+    orig_lat = np.copy(data['lat'])
+    orig_lon = np.copy(data['lon'])
+    for key in data.keys():
+        data[key] = [data[key][i] for i in range(len(orig_lat)) if orig_lat[i] != 0 and orig_lon[i] != 0 and np.isnan(orig_lat[i]) == False and np.isnan(orig_lat[i]) == False]
+
+    #Identify mission number and ID
+    content_split = content.split("\n")
+    mission_id = '-'.join((content_split[mission_row].replace("  "," ")).split(" ")[:3])
+    missionname = (mission_id.split("-")[1])[:2]
+    data['mission'] = [missionname[:2]]*len(data['time'])
+    data['mission_id'] = [mission_id]*len(data['time'])
+
+    #remove nan's for lat/lon coordinates
+    return_data = pd.DataFrame.from_dict(data).reset_index()
+    return_data = return_data.dropna(subset=['lat', 'lon'])
+
+    return return_data
+
 def decode_hdob_2006(content,strdate,mission_row=3):
     
     r"""
-    Function for decoding HDOBs in the format between 2006 and early 2007.
+    Function for decoding HDOBs in the format between 2006 and early 2007. This also serves as the USAF decoder between 2002 and 2005.
     """
     
     def check_error(string):
@@ -604,7 +688,14 @@ def decode_hdob_2006(content,strdate,mission_row=3):
             else:
                 items.append(i)
         if j>mission_row and i[0][0].isdigit() and len(i) > 8:
-            items.append(i)
+            if int(strdate[0:4]) >= 2006:
+                items.append(i)
+            else:
+                if '.' in i[0] and i[0][-1] != '.' and i[0][-2] != '.':
+                    new_i = [i[0].split(".")[0]+'.',i[0].split(".")[1]] + i[1:]
+                else:
+                    new_i = i
+                items.append(new_i)
     
     #Parse dates
     missionname = items[2][1]
@@ -620,7 +711,7 @@ def decode_hdob_2006(content,strdate,mission_row=3):
             altitude.append(np.nan)
         else:
             pres_altitude = int(i[3])
-            d_value = int(i[4][1:])*-1 if i[4] == '5' else int(i[4][1:])
+            d_value = int(i[4][1:])*-1 if i[4][0] == '5' else int(i[4][1:])
             altitude.append(pres_altitude+d_value)
     data['plane_z'] = altitude
     
@@ -651,6 +742,7 @@ def decode_hdob_2006(content,strdate,mission_row=3):
     #Identify mission number and ID
     content_split = content.split("\n")
     mission_id = '-'.join((content_split[mission_row].replace("  "," ")).split(" ")[:3])
+    if int(strdate[0:4]) < 2006: missionname = (mission_id.split("-")[1])[:2]
     data['mission'] = [missionname[:2]]*len(data['time'])
     data['mission_id'] = [mission_id]*len(data['time'])
 

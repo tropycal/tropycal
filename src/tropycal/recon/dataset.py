@@ -1867,10 +1867,15 @@ class dropsondes:
     def __init__(self, storm, data=None, update=False):
 
         self.storm = storm
-        if storm.basin == 'north_atlantic':
-            self.archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT3/'
-        else:
-            self.archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN3/'
+        if storm.year >= 2006:
+            self.format = 1
+            if storm.basin == 'north_atlantic':
+                archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT3/'
+            else:
+                archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN3/'
+        elif storm.year >= 2002 and storm.year <= 2005:
+            self.format = 2
+            archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/{self.storm.name.upper()}/'
         self.data = None
 
         if isinstance(data,str):
@@ -1889,14 +1894,20 @@ class dropsondes:
             timeboundstrs = [f'{t:%Y%m%d%H%M}' for t in (start_time,end_time)]
             
             #Retrieve list of files in URL and filter by storm dates
-            page = requests.get(self.archiveURL).text
+            page = requests.get(archive_url).text
             content = page.split("\n")
             files = []
-            for line in content:
-                if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
-            del content
-            files = sorted([i for i in files if i[1]>=min(timeboundstrs) and i[1]<=max(timeboundstrs)],key=lambda x: x[1])
-            linksub = [self.archiveURL+'.'.join(l) for l in files]
+            if self.format == 1:
+                for line in content:
+                    if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
+                del content
+                files = sorted([i for i in files if i[1]>=min(timeboundstrs) and i[1]<=max(timeboundstrs)],key=lambda x: x[1])
+                linksub = [archive_url+'.'.join(l) for l in files]
+            elif self.format == 2:
+                for line in content:
+                    if ".txt" in line and 'DROPS' in line: files.append(((line.split('txt">')[1]).split("</a>")[0]))
+                del content
+                linksub = [archive_url+l for l in files]
             
             urllib3.disable_warnings()
             http = urllib3.PoolManager()
@@ -1907,20 +1918,60 @@ class dropsondes:
             for link in linksub:
                 response = http.request('GET',link)
                 content = response.data.decode('utf-8')
-                datestamp = dt.strptime(link.split('.')[-2],'%Y%m%d%H%M')
-                try:
-                    missionname,tmp = decode_dropsonde(content,date=datestamp)
-                except:
-                    continue
-                testkeys = ('TOPtime','lat','lon')
-                if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
-                    filecount += 1
-                    if self.data is None:
-                        self.data = [copy.copy(tmp)]
-                    elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
-                        self.data.append(tmp)
-                    else:
-                        pass
+                
+                #Post-2006 format
+                if self.format == 1:
+                    datestamp = dt.strptime(link.split('.')[-2],'%Y%m%d%H%M')
+                    try:
+                        missionname,tmp = decode_dropsonde(content,date=datestamp)
+                    except:
+                        continue
+                    
+                    testkeys = ('TOPtime','lat','lon')
+                    if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
+                        filecount += 1
+                        if self.data is None:
+                            self.data = [copy.copy(tmp)]
+                        elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
+                            self.data.append(tmp)
+                        else:
+                            pass
+                
+                #Pre-2006 format
+                elif self.format == 2:
+                    strdate = (link.split('.')[-3]).split("_")[-1]
+                    content_split = content.split("NNNN")
+                    
+                    for iter_content in content_split:
+                        
+                        iter_split = iter_content.split("\n")
+                        if len(iter_split) < 6: continue
+                        
+                        #Format date
+                        found_date = False
+                        for line in iter_split:
+                            if 'UZNT13' in line:
+                                date_string = line.split()[2]
+                                found_date = True
+                                datestamp = dt.strptime(strdate,'%Y%m%d')
+                                datestamp = datestamp.replace(day=int(date_string[:2]),hour=int(date_string[2:4]),minute=int(date_string[4:6]))
+                        
+                        #Decode dropsondes
+                        if found_date == False: continue
+                        try:
+                            missionname,tmp = decode_dropsonde(iter_content,date=datestamp)
+                        except:
+                            continue
+
+                        testkeys = ('lat','lon')
+                        filecount += 1
+                        if self.data is None:
+                            self.data = [copy.copy(tmp)]
+                        elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
+                            self.data.append(tmp)
+                        else:
+                            pass
+                
             print(f'--> Completed reading in recon dropsonde files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files')
         

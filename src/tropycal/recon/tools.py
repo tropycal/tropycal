@@ -1134,10 +1134,13 @@ def decode_dropsonde(content,date):
         sections[k] = tmp
 
     def _time(timestr):
-        if timestr < f'{date:%H%M}':
-            return date.replace(hour=int(timestr[:2]),minute=int(timestr[2:4]))
-        else:
-            return date.replace(hour=int(timestr[:2]),minute=int(timestr[2:4]))-timedelta(days=1)
+        try:
+            if timestr < f'{date:%H%M}':
+                return date.replace(hour=int(timestr[:2]),minute=int(timestr[2:4]))
+            else:
+                return date.replace(hour=int(timestr[:2]),minute=int(timestr[2:4]))-timedelta(days=1)
+        except:
+            return None
 
     def _tempdwpt(item):
         if '/' in item[:3]:
@@ -1205,6 +1208,8 @@ def decode_dropsonde(content,date):
                                'BOTTOMlat','BOTTOMlon','BOTTOMtime',\
                                'MBLdir','MBLspd','DLMdir','DLMspd',\
                                'WL150dir','WL150spd','top','LSThgt','software','levels')}
+    data['TOPtime'] = None
+    data['BOTTOMtime'] = None
 
     for sec,items in sections.items():
 
@@ -1250,19 +1255,19 @@ def decode_dropsonde(content,date):
                 data['TOPlat'] = round(float(tmp[:4])*.01*[-1,1][tmp[4]=='N'],2)
                 data['TOPlon'] = round(float(tmp[5:10])*.01*[-1,1][tmp[10]=='E'],2)
                 tmp = items[items.index('REL')+2]
-                data['TOPtime'] = _time(tmp) #date + timedelta(hours=int(tmp[:2]),minutes=int(tmp[2:4]),seconds=int(tmp[4:6]))                    
+                if data['TOPtime'] == None: data['TOPtime'] = _time(tmp)
             if 'SPG' in items:
                 tmp = items[items.index('SPG')+1]
                 data['BOTTOMlat'] = round(float(tmp[:4])*.01*[-1,1][tmp[4]=='N'],2)
                 data['BOTTOMlon'] = round(float(tmp[5:10])*.01*[-1,1][tmp[10]=='E'],2)
                 tmp = items[items.index('SPG')+2]
-                data['BOTTOMtime'] = _time(tmp) #date + timedelta(hours=int(tmp[:2]),minutes=int(tmp[2:4]),seconds=int(tmp[4:6]))                
+                if data['BOTTOMtime'] == None: data['BOTTOMtime'] = _time(tmp)
             elif 'SPL' in items:
                 tmp = items[items.index('SPL')+1]
                 data['BOTTOMlat'] = round(float(tmp[:4])*.01*[-1,1][tmp[4]=='N'],2)
                 data['BOTTOMlon'] = round(float(tmp[5:10])*.01*[-1,1][tmp[10]=='E'],2)
                 tmp = items[items.index('SPL')+2]
-                data['BOTTOMtime'] = _time(tmp) #date + timedelta(hours=int(tmp[:2]),minutes=int(tmp[2:4]))                  
+                if data['BOTTOMtime'] == None: data['BOTTOMtime'] = _time(tmp)
             if 'MBL' in items:
                 tmp = items[items.index('MBL')+2]
                 wdir,wspd = _wdirwspd(tmp)
@@ -1305,6 +1310,10 @@ def decode_dropsonde(content,date):
                 sigwind['wdir'].append(wdir)
                 sigwind['wspd'].append(wspd)
             sigwind = pd.DataFrame.from_dict(sigwind).sort_values('pres',ascending=False)
+        
+        if sec == '31313' and len(items)>0 and not NOLOCFLAG:
+            tmp = [i for i in items if i[0] == '8'][0]
+            data['TOPtime'] = _time(tmp[1:])
 
     if not NOLOCFLAG:
         def _justify(a, axis=0):    
@@ -1321,6 +1330,10 @@ def decode_dropsonde(content,date):
     content_split = content.split("\n")
     mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
     data['mission_id'] = mission_id
+    
+    #Fix NaNs
+    if data['BOTTOMtime'] == None: data['BOTTOMtime'] = np.nan
+    if data['TOPtime'] == None: data['TOPtime'] = np.nan
     
     return missionname, data
 

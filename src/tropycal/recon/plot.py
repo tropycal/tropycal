@@ -103,7 +103,7 @@ class ReconPlot(Plot):
             pass
         else:
             raise RuntimeError("Error: recon_data must be dataframe")
-
+        
         #Retrieve storm data
         if radlim == None:
             lats = recon_data['lat']
@@ -163,14 +163,13 @@ class ReconPlot(Plot):
         if len(vdms) > 0:
             for vdm_idx in range(len(vdms)):
                 vdm = vdms[vdm_idx]
-                
-                #Plot dot
-                #self.ax.plot(vdm['lon'],vdm['lat'],'o',ms=prop['vdm_ms'],mfc='orange',mec='k',mew=prop['vdm_ms']*0.1,
-                #             transform=ccrs.PlateCarree())
-                
+
                 #Transform coordinates for label
-                a = self.ax.text(vdm['lon'],vdm['lat'],str(int(np.round(vdm['Minimum Sea Level Pressure (hPa)']))),zorder=30,clip_on=True,fontsize=12,fontweight='bold',ha='center',va='center')
-                a.set_path_effects([patheffects.Stroke(linewidth=0.5,foreground='w'),patheffects.Normal()])
+                try:
+                    a = self.ax.text(vdm['lon'],vdm['lat'],str(int(np.round(vdm['Minimum Sea Level Pressure (hPa)']))),zorder=30,clip_on=True,fontsize=12,fontweight='bold',ha='center',va='center')
+                    a.set_path_effects([patheffects.Stroke(linewidth=0.5,foreground='w'),patheffects.Normal()])
+                except:
+                    pass
         
         #--------------------------------------------------------------------------------------
         

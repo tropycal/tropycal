@@ -1329,7 +1329,10 @@ def decode_dropsonde(content,date):
         data['top'] = np.nanmin(data['levels']['pres'])
 
     content_split = content.split("\n")
-    mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
+    try:
+        mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
+    except:
+        mission_id = '-'.join(content.split("\n")[1].replace("  "," ").split(" ")[:3])
     data['mission_id'] = mission_id
     
     #Fix NaNs

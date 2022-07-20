@@ -1902,6 +1902,11 @@ class dropsondes:
         elif storm.year >= 2002 and storm.year <= 2005:
             self.format = 2
             archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/{self.storm.name.upper()}/'
+        elif storm.year >= 1989 and storm.year <= 2001:
+            self.format = 3
+            archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/{self.storm.name.lower()}/'
+        else:
+            raise RuntimeError("Recon data is not available prior to 1989.")
         self.data = None
 
         if isinstance(data,str):
@@ -1934,6 +1939,11 @@ class dropsondes:
                     if ".txt" in line and 'DROPS' in line: files.append(((line.split('txt">')[1]).split("</a>")[0]))
                 del content
                 linksub = [archive_url+l for l in files]
+            elif self.format == 3:
+                for line in content:
+                    if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]))
+                del content
+                linksub = [archive_url+l for l in files if l[0] in ['D','d']]
             
             urllib3.disable_warnings()
             http = urllib3.PoolManager()
@@ -1962,6 +1972,39 @@ class dropsondes:
                             self.data.append(tmp)
                         else:
                             pass
+                
+                #Pre-2002 format
+                elif self.format == 3:
+                    
+                    #Check for date
+                    try:
+                        day = int(content.split("\n")[0].split()[2][:2])
+                        for iter_date in storm.dict['date']:
+                            found_date = False
+                            if iter_date.day == day:
+                                date = dt(iter_date.year,iter_date.month,iter_date.day)
+                                found_date = True
+                                break
+                        if found_date == False: continue
+                        missionname,tmp = decode_dropsonde(content.replace(";",""),date=date)
+                        
+                        #Add date to mission
+                        hh = int(content.split("\n")[0].split()[2][2:4])
+                        mm = int(content.split("\n")[0].split()[2][4:6])
+                        tmp['TOPtime'] = dt(iter_date.year,iter_date.month,iter_date.day,hh,mm)
+                        if np.isnan(tmp['TOPlat']): tmp['TOPlat'] = tmp['lat']
+                        if np.isnan(tmp['TOPlon']): tmp['TOPlon'] = tmp['lon']
+                        
+                        testkeys = ('TOPtime','lat','lon')
+                        filecount += 1
+                        if self.data is None:
+                            self.data = [copy.copy(tmp)]
+                        elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
+                            self.data.append(tmp)
+                        else:
+                            pass
+                    except:
+                        pass
                 
                 #Pre-2006 format
                 elif self.format == 2:
@@ -2244,11 +2287,19 @@ class dropsondes:
             for m in self.data]
         else:
             plotdata = [m[varname] if varname in m.keys() else np.nan for m in self.data]
-            
-        dfRecon = pd.DataFrame.from_dict({'time':[m['BOTTOMtime'] for m in self.data],\
-                                          'lat':[m['BOTTOMlat'] for m in self.data],\
-                                          'lon':[m['BOTTOMlon'] for m in self.data],\
-                                          varname:plotdata})
+        
+        #Make sure data doesn't have NaNs
+        check_data = [m['BOTTOMlat'] for m in self.data if np.isnan(m['BOTTOMlat']) == False]
+        if len(check_data) == 0:
+            dfRecon = pd.DataFrame.from_dict({'time':[m['TOPtime'] for m in self.data],
+                                              'lat':[m['TOPlat'] for m in self.data],
+                                              'lon':[m['TOPlon'] for m in self.data],
+                                              varname:plotdata})
+        else:
+            dfRecon = pd.DataFrame.from_dict({'time':[m['BOTTOMtime'] for m in self.data],
+                                              'lat':[m['BOTTOMlat'] for m in self.data],
+                                              'lon':[m['BOTTOMlon'] for m in self.data],
+                                              varname:plotdata})
         
         #Create instance of plot object
         self.plot_obj = ReconPlot()
@@ -2405,9 +2456,11 @@ class vdms:
                 archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT2/'
             else:
                 archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN2/'
-        else:
+        elif storm.year >= 1989:
             self.format = 2
             archive_url = f'http://hurricanes.ral.ucar.edu/structure/vortex/vdm_data/{self.storm.year}/'
+        else:
+            raise RuntimeError("Recon data is not available prior to 1989.")
         
         timestr = [f'{t:%Y%m%d}' for t in self.storm.dict['date']]
 

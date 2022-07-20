@@ -749,6 +749,7 @@ def decode_hdob_2006(content,strdate,mission_row=3):
     #remove nan's for lat/lon coordinates
     return_data = pd.DataFrame.from_dict(data).reset_index()
     return_data = return_data.dropna(subset=['lat', 'lon'])
+    if np.nanmax(data['lat']) < 0: return_data = {}
 
     return return_data 
     

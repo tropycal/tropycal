@@ -672,6 +672,14 @@ class hdobs:
                     if ".txt" in line and 'HDOBS' in line: files.append(((line.split('txt">')[1]).split("</a>")[0]))
                 del content
                 linksub = [archive_url[0]+l for l in files]
+            elif self.format == 6:
+                page = requests.get(archive_url[0]).text
+                content = page.split("\n")
+                files = []
+                for line in content:
+                    if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]))
+                del content
+                linksub = [archive_url[0]+l for l in files if l[0] in ['H','h','M','m']]
 
             #Initiate urllib3
             urllib3.disable_warnings()
@@ -690,14 +698,20 @@ class hdobs:
                 
                 #Find mission name line
                 row = 3 if self.format <= 4 else 0
-                while len(content.split("\n")[row]) < 3 or content.split("\n")[row][:3] in ["SXX","URN","URP"]:
+                while len(content.split("\n")[row]) < 3 or content.split("\n")[row][:3] in ["SXX","URN","URP","YYX"]:
                     row += 1
                     if row >= 100: break
                 if row >= 100: continue
                 missionname = [i.split() for i in content.split('\n')][row][1]
                 
+                #Check for mission name to storm match by format
+                if self.format != 6:
+                    check = missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]
+                else:
+                    check = True
+                
                 #Read HDOBs if this file matches the requested storm
-                if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
+                if check == True:
                     filecount += 1
 
                     try:
@@ -707,6 +721,18 @@ class hdobs:
                             iter_hdob = decode_hdob(content,mission_row=row)
                         elif self.format == 4:
                             strdate = (link.split('.')[-2])[:8]
+                            iter_hdob = decode_hdob_2006(content,strdate,mission_row=row)
+                        elif self.format == 6:
+                            #Check for date
+                            day = int(content.split("\n")[row-1].split()[2][:2])
+                            for iter_date in storm.dict['date']:
+                                found_date = False
+                                if iter_date.day == day:
+                                    date = dt(iter_date.year,iter_date.month,iter_date.day)
+                                    strdate = date.strftime('%Y%m%d')
+                                    found_date = True
+                                    break
+                            if found_date == False: continue
                             iter_hdob = decode_hdob_2006(content,strdate,mission_row=row)
                         elif self.format == 5:
                             #Split content by 10/20 minute blocks

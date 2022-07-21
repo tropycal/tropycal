@@ -2497,7 +2497,7 @@ class vdms:
                     try:
                         date = link.split('.')[-2]
                         date = dt(int(date[:4]),int(date[4:6]),int(date[6:8]))
-                        missionname,tmp = decode_vdm(content,date=dt(year,month,day))
+                        missionname,tmp = decode_vdm(content,date)
                     except:
                         continue
                     

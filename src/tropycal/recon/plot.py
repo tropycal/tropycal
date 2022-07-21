@@ -133,7 +133,7 @@ class ReconPlot(Plot):
 
         #Get colormap and level extrema
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
-        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] in ['category','category_recon']:
+        if varname in ['vmax','sfmr','wspd','fl_to_sfc'] and prop['cmap'] in ['category','category_recon']:
             vmin = min(clevs); vmax = max(clevs)
         else:
             vmin = min(prop['levels']); vmax = max(prop['levels'])
@@ -253,7 +253,7 @@ class ReconPlot(Plot):
         cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
-        if prop['cmap'] in ['category','category_recon'] and varname=='sfmr':
+        if prop['cmap'] in ['category','category_recon'] and varname in ['sfmr','wspd']:
             cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
             cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
@@ -435,7 +435,7 @@ class ReconPlot(Plot):
         cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
-        if prop['cmap']=='category' and varname=='sfmr':
+        if prop['cmap'] == 'category' and varname in ['sfmr','wspd']:
             cax.yaxis.set_ticks(np.linspace(0,1,len(clevs)))
             cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()

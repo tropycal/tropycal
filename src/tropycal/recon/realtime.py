@@ -515,10 +515,14 @@ class Mission():
         summary = ["<tropycal.recon.Mission>"]
         
         #Find maximum wind and minimum pressure
-        max_wspd = np.nanmax(self.hdobs['wspd'])
-        max_pkwnd = np.nanmax(self.hdobs['pkwnd'])
-        max_sfmr = np.nanmax(self.hdobs['sfmr'])
-        min_psfc = np.nanmin(self.hdobs['p_sfc'])
+        array = [val for i,val in enumerate(self.hdobs['sfmr']) if 'sfmr' not in self.hdobs['flag'].values[i]]
+        max_sfmr = np.nanmax(array) if all_nan(array) == False else np.nan
+        array = [val for i,val in enumerate(self.hdobs['p_sfc']) if 'p_sfc' not in self.hdobs['flag'].values[i]]
+        min_psfc = np.nanmin(array) if all_nan(array) == False else np.nan
+        array = [val for i,val in enumerate(self.hdobs['wspd']) if 'wspd' not in self.hdobs['flag'].values[i]]
+        max_wspd = np.nanmax(array) if all_nan(array) == False else np.nan
+        array = [val for i,val in enumerate(self.hdobs['pkwnd']) if 'pkwnd' not in self.hdobs['flag'].values[i]]
+        max_pkwnd = np.nanmax(array) if all_nan(array) == False else np.nan
         time_range = [pd.to_datetime(t) for t in (np.nanmin(self.hdobs['time']),np.nanmax(self.hdobs['time']))]
 
         #Add summary text

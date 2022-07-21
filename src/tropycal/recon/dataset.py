@@ -51,7 +51,7 @@ class ReconDataset:
     -----
     .. warning::
     
-        Recon data is currently only available from 2006 onwards.
+        Recon data is currently only available from 1989 onwards.
     
     ReconDataset and its subclasses (hdobs, dropsondes and vdms) consist the **storm-centric** part of the recon module, meaning that recon data is retrieved specifically for tropical cyclones, and all recon missions for the requested storm are additionally transformed to storm-centric coordinates. This differs from realtime recon functionality, which is **mission-centric**.
     
@@ -520,7 +520,7 @@ class hdobs:
     -----
     .. warning::
     
-        Recon data is currently only available from 2006 onwards.
+        Recon data is currently only available from 1989 onwards.
     
     There are two recommended ways of retrieving an hdob object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
     
@@ -2382,7 +2382,9 @@ class vdms:
     -----
     .. warning::
     
-        Recon data is currently only available from 2006 onwards.
+        Recon data is currently only available from 1989 onwards.
+    
+    VDM data is currently retrieved from the National Hurricane Center from 2006 onwards, and UCAR from 1989 through 2005.
     
     There are two recommended ways of retrieving a vdms object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
     

@@ -280,7 +280,7 @@ class ReconDataset:
         mission_id = hdobs_mission['mission_id'].values[0]
         vdms_mission = [i for i in self.vdms.data if i['mission_id'] == mission_id]
         dropsondes_mission = [i for i in self.dropsondes.data if i['mission_id'] == mission_id]
-        
+
         mission_dict = {
             'hdobs':hdobs_mission,
             'vdms':vdms_mission,
@@ -288,6 +288,14 @@ class ReconDataset:
             'aircraft':mission_id.split("-")[0],
             'storm_name':mission_id.split("-")[2]
         }
+        
+        #Get sources
+        try:
+            sources = list(np.unique([self.vdms.source,self.hdobs.source,self.dropsondes.source]))
+            if len(sources) == 1: sources = sources[0]
+        except:
+            sources = 'National Hurricane Center (NHC)'
+        mission_dict['source'] = sources
         
         return Mission(mission_dict,mission_id)
         
@@ -578,7 +586,8 @@ class hdobs:
                         'Max 30sec flight level wind':f"{max_wspd} knots",
                         'Max 10sec flight level wind':f"{max_pkwnd} knots",
                         'Max SFMR wind':f"{max_sfmr} knots",
-                        'Min surface pressure':f"{min_psfc} hPa"}
+                        'Min surface pressure':f"{min_psfc} hPa",
+                        'Source':self.source}
 
         #Add dataset summary
         summary.append("Dataset Summary:")
@@ -594,6 +603,7 @@ class hdobs:
         self.storm = storm
         self.data = None
         self.format = 1
+        self.source = 'National Hurricane Center (NHC)'
         
         #Get URL based on storm year
         if storm.year >= 2012:
@@ -1879,7 +1889,8 @@ class dropsondes:
                         'Dropsondes':len(self.data),
                         'Max 500m-avg wind':max_MBLspd,
                         'Max 150m-avg wind':max_WL150spd,
-                        'Min sea level pressure':min_slp}
+                        'Min sea level pressure':min_slp,
+                        'Source':self.source}
 
         #Add dataset summary
         summary.append("Dataset Summary:")
@@ -1893,6 +1904,8 @@ class dropsondes:
     def __init__(self, storm, data=None, update=False):
 
         self.storm = storm
+        self.source = 'National Hurricane Center (NHC)'
+        
         if storm.year >= 2006:
             self.format = 1
             if storm.basin == 'north_atlantic':
@@ -2438,7 +2451,8 @@ class vdms:
         summary_keys = {'Storm':f'{self.storm.name} {self.storm.year}',\
                         'Missions':len(missions),
                         'VDMs':len(self.data),
-                        'Min sea level pressure':f"{min_slp} hPa"}
+                        'Min sea level pressure':f"{min_slp} hPa",
+                        'Source':self.source}
 
         #Add dataset summary
         summary.append("Dataset Summary:")
@@ -2452,6 +2466,7 @@ class vdms:
     def __init__(self, storm, data=None, update=False):
 
         self.storm = storm
+        self.source = 'National Hurricane Center (NHC)'
         if storm.year >= 2006:
             self.format = 1
             if storm.basin == 'north_atlantic':
@@ -2460,6 +2475,7 @@ class vdms:
                 archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN2/'
         elif storm.year >= 1989:
             self.format = 2
+            self.source = "UCAR's Tropical Cyclone Guidance Project (TCGP)"
             archive_url = f'http://hurricanes.ral.ucar.edu/structure/vortex/vdm_data/{self.storm.year}/'
         else:
             raise RuntimeError("Recon data is not available prior to 1989.")

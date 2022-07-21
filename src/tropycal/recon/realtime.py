@@ -561,6 +561,15 @@ class Mission():
         self.start_time = pd.to_datetime(np.nanmin(self.hdobs['time']))
         self.end_time = pd.to_datetime(np.nanmax(self.hdobs['time']))
         
+        #Get sources
+        if 'source' in data.keys():
+            self.source = data['source']
+        else:
+            if self.start_time.year <= 2005 and self.start_time.year >= 1989:
+                self.source = ['National Hurricane Center (NHC)',"UCAR's Tropical Cyclone Guidance Project (TCGP)"]
+            else:
+                self.source = 'National Hurricane Center (NHC)'
+        
         #Retrieve attributes
         self.attrs = {
             'aircraft':data['aircraft'],
@@ -568,6 +577,7 @@ class Mission():
             'mission_id':mission_id,
             'start_time': pd.to_datetime(np.nanmin(self.hdobs['time'])),
             'end_time': pd.to_datetime(np.nanmax(self.hdobs['time'])),
+            'source': self.source,
         }
         
         #Add status for mission

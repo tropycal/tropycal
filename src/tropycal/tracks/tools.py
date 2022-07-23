@@ -9,6 +9,8 @@ import matplotlib.dates as mdates
 import matplotlib.colors as mcolors
 import matplotlib as mlib
 import warnings
+import scipy.interpolate as interp
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from .. import constants
 
@@ -224,7 +226,7 @@ def construct_title(thresh):
     return thresh, plot_subtitle
 
 
-def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
+def interp_storm(storm_dict,hours=1,dt_window=24,dt_align='middle',method='linear'):
     
     r"""
     Interpolate a storm dictionary temporally to a specified time resolution. Referenced from ``TrackDataset.filter_storms()``. Internal function.
@@ -233,12 +235,14 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
     ----------
     storm_dict : dict
         Dictionary containing a storm entry.
-    timeres : int
+    hours : int
         Temporal resolution in hours to interpolate storm data to. Default is 1 hour.
     dt_window : int
         Time window in hours over which to calculate temporal change data. Default is 24 hours.
     dt_align : str
         Whether to align the temporal change window as "start", "middle" or "end" of the dt_window time period.
+    method : str
+        Method by which to interpolate lat & lon coordinates. Options are "linear" (default) or "quadratic".
     
     Returns
     -------
@@ -278,10 +282,12 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
     try:
         
         #Create a list of target times given the requested temporal resolution
-        targettimes = np.arange(times[0],times[-1]+timeres/24,timeres/24)
+        targettimes = np.arange(times[0],times[-1]+hours/24.0,hours/24.0)
+        targettimes = targettimes[targettimes<=times[-1]+0.001]
         
         #Update dates
-        new_storm['date'] = [round_datetime(t.replace(tzinfo=None)) for t in mdates.num2date(targettimes)]
+        use_minutes = 10 if hours > (1.0/6.0) else hours * 60.0
+        new_storm['date'] = [round_datetime(t.replace(tzinfo=None),use_minutes) for t in mdates.num2date(targettimes)]
         targettimes = mdates.date2num(np.array(new_storm['date']))
         
         #Create same-length lists for other things
@@ -310,29 +316,46 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
         newtype[newtype=='EX'] = np.where(isDB[newtype=='EX']>0,'DB','EX')
         
         #Interpolate and fill in other variables
-        for name in ['vmax','mslp','lat','lon']:
+        for name in ['vmax','mslp']:
             new_storm[name] = np.interp(targettimes,times,storm_dict[name])
+            new_storm[name] = np.array([int(round(i)) if np.isnan(i) == False else np.nan for i in new_storm[name]])
+        for name in ['lat','lon']:
+            filtered_array = np.array(storm_dict[name])
+            new_times = np.array(storm_dict['date'])
+            if 'linear' not in method:
+                converted_hours = np.array([1 if i.strftime('%H%M') in constants.STANDARD_HOURS else 0 for i in storm_dict['date']])
+                filtered_array = filtered_array[converted_hours == 1]
+                new_times = new_times[converted_hours == 1]
+            new_times = mdates.date2num(new_times)
+            if len(filtered_array) >= 3:
+                func = interp.interp1d(new_times,filtered_array,kind=method)
+                new_storm[name] = func(targettimes)
+                new_storm[name] = np.array([round(i,2) if np.isnan(i) == False else np.nan for i in new_storm[name]])
+            else:
+                new_storm[name] = np.interp(targettimes,times,storm_dict[name])
+                new_storm[name] = np.array([int(round(i)) if np.isnan(i) == False else np.nan for i in new_storm[name]])
+        
         #Correct storm type by intensity
         newtype[newtype=='TROP'] = [['TD','TS','HU'][int(i>34)+int(i>63)] for i in new_storm['vmax'][newtype=='TROP']]
         newtype[newtype=='SUB'] = [['SD','SS'][int(i>34)] for i in new_storm['vmax'][newtype=='SUB']]
         new_storm['type'] = newtype
         
         #Calculate change in wind & MSLP over temporal resolution
-        new_storm['dvmax_dt'] = [np.nan] + list((new_storm['vmax'][1:]-new_storm['vmax'][:-1]) / timeres)
-        new_storm['dmslp_dt'] = [np.nan] + list((new_storm['mslp'][1:]-new_storm['mslp'][:-1]) / timeres)
+        new_storm['dvmax_dt'] = [np.nan] + list((new_storm['vmax'][1:]-new_storm['vmax'][:-1]) / hours)
+        new_storm['dmslp_dt'] = [np.nan] + list((new_storm['mslp'][1:]-new_storm['mslp'][:-1]) / hours)
         
         #Calculate x and y position change over temporal window
         rE = 6.371e3 * 0.539957 #nautical miles
         d2r = np.pi/180.
         new_storm['dx_dt'] = [np.nan]+list(d2r*(new_storm['lon'][1:]-new_storm['lon'][:-1])* \
-                 rE*np.cos(d2r*np.mean([new_storm['lat'][1:],new_storm['lat'][:-1]],axis=0))/timeres)
+                 rE*np.cos(d2r*np.mean([new_storm['lat'][1:],new_storm['lat'][:-1]],axis=0))/hours)
         new_storm['dy_dt'] = [np.nan]+list(d2r*(new_storm['lat'][1:]-new_storm['lat'][:-1])* \
-                 rE/timeres)
+                 rE/hours)
         new_storm['speed'] = [(x**2+y**2)**0.5 for x,y in zip(new_storm['dx_dt'],new_storm['dy_dt'])]
         
         #Convert change in wind & MSLP to change over specified window
         for name in ['dvmax_dt','dmslp_dt']:
-            tmp = np.round(np.convolve(new_storm[name],[1]*int(dt_window/timeres),mode='valid'),1)         
+            tmp = np.round(np.convolve(new_storm[name],[1]*int(dt_window/hours),mode='valid'),1)         
             if dt_align=='end':
                 new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
             if dt_align=='middle':
@@ -340,10 +363,11 @@ def interp_storm(storm_dict,timeres=1,dt_window=24,dt_align='middle'):
                 new_storm[name] = tmp2+[np.nan]*(len(new_storm[name])-len(tmp2))
             if dt_align=='start':
                 new_storm[name] = list(tmp)+[np.nan]*(len(new_storm[name])-len(tmp))
+            new_storm[name] = list(np.array(new_storm[name])*(hours))
         
         #Convert change in position to change over specified window
         for name in ['dx_dt','dy_dt','speed']:
-            tmp = np.convolve(new_storm[name],[timeres/dt_window]*int(dt_window/timeres),mode='valid')
+            tmp = np.convolve(new_storm[name],[hours/dt_window]*int(dt_window/hours),mode='valid')
             if dt_align=='end':
                 new_storm[name] = [np.nan]*(len(new_storm[name])-len(tmp))+list(tmp)
             if dt_align=='middle':
@@ -606,7 +630,8 @@ def cyclone_catarina():
     storm_dict = {}
     
     storm_dict = {'id':'AL502004','operational_id':'','name':'CATARINA','season':2004,'year':2004,'basin':'south_atlantic'}
-    storm_dict['source'] = 'McTaggart-Cowan et al. (2006): https://doi.org/10.1175/MWR3330.1'
+    storm_dict['source'] = 'ibtracs'
+    storm_dict['source_info'] = 'McTaggart-Cowan et al. (2006): https://doi.org/10.1175/MWR3330.1'
 
     #add empty lists
     for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
@@ -730,3 +755,59 @@ def date_diff(a,b):
         except:
             c = a.replace(year=2000)-b.replace(year=1999)
     return c
+
+def add_colorbar(mappable=None,location='right',size="2.5%",pad='1%',fig=None,ax=None,**kwargs):
+    """
+    Uses the axes_grid toolkit to add a colorbar to the parent axis and rescale its size to match
+    that of the parent axis. This is adapted from Basemap's original ``colorbar()`` method.
+
+    Parameters
+    ----------
+    mappable
+        The image mappable to which the colorbar applies. If none specified, matplotlib.pyplot.gci() is
+        used to retrieve the latest mappable.
+    location
+        Location in which to place the colorbar ('right','left','top','bottom'). Default is right.
+    size
+        Size of the colorbar. Default is 3%.
+    pad
+        Pad of colorbar from axis. Default is 1%.
+    ax
+        Axes instance to associated the colorbar with. If none provided, or if no
+        axis is associated with the instance of Map, then plt.gca() is used.
+    """
+
+    #Get current mappable if none is specified
+    if fig is None or mappable is None:
+        import matplotlib.pyplot as plt
+    if fig is None:
+        fig = plt.gcf()
+
+    if mappable is None:
+        mappable = plt.gci()
+
+    #Create axis to insert colorbar in
+    divider = make_axes_locatable(ax)
+
+    if location == "left":
+        orientation = 'vertical'
+        ax_cb = divider.new_horizontal(size, pad, pack_start=True, axes_class=plt.Axes)
+    elif location == "right":
+        orientation = 'vertical'
+        ax_cb = divider.new_horizontal(size, pad, pack_start=False, axes_class=plt.Axes)
+    elif location == "bottom":
+        orientation = 'horizontal'
+        ax_cb = divider.new_vertical(size, pad, pack_start=True, axes_class=plt.Axes)
+    elif location == "top":
+        orientation = 'horizontal'
+        ax_cb = divider.new_vertical(size, pad, pack_start=False, axes_class=plt.Axes)
+    else:
+        raise ValueError('Improper location entered')
+
+    #Create colorbar
+    fig.add_axes(ax_cb)
+    cb = plt.colorbar(mappable, orientation=orientation, cax=ax_cb, **kwargs)
+
+    #Reset parent axis as the current axis
+    fig.sca(ax)
+    return cb

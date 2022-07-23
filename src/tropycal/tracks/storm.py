@@ -527,28 +527,34 @@ class Storm:
                 
         return NEW_STORM
 
-    def interp(self,timeres=1,dt_window=24,dt_align='middle'):
+    def interp(self,hours=1,dt_window=24,dt_align='middle',method='linear'):
         
         r"""
         Interpolate a storm temporally to a specified time resolution.
         
         Parameters
         ----------
-        timeres : int
-            Temporal resolution in hours to interpolate storm data to. Default is 1 hour.
+        hours : int or float
+            Temporal resolution in hours (or fraction of an hour) to interpolate storm data to. Default is 1 hour.
         dt_window : int
             Time window in hours over which to calculate temporal change data. Default is 24 hours.
         dt_align : str
-            Whether to align the temporal change window as "start", "middle" or "end" of the dt_window time period.
+            Whether to align the temporal change window as "start", "middle" (default) or "end" of the dt_window time period.
+        method : str
+            Interpolation method for lat/lon coordinates passed to scipy. Options are "linear" (default) or "quadratic".
         
         Returns
         -------
         tropycal.tracks.Storm
             New Storm object containing the updated dictionary.
+        
+        Notes
+        -----
+        When interpolating data using a non-linear method, all non-standard hour observations (i.e., not within 00, 06, 12 or 18 UTC) are ignored for latitude & longitude interpolation in order to produce a smoother line.
         """
         
         NEW_STORM = copy.deepcopy(self)
-        newdict = interp_storm(NEW_STORM.dict,timeres,dt_window,dt_align)
+        newdict = interp_storm(NEW_STORM.dict,hours,dt_window,dt_align,method)
         for key in newdict.keys(): 
             NEW_STORM.dict[key] = newdict[key]
 
@@ -888,15 +894,15 @@ class Storm:
         return plot_ax
     
     
-    def plot_models(self,forecast,plot_btk=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
+    def plot_models(self,forecast=None,plot_btk=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of operational model forecast tracks.
         
         Parameters
         ----------
-        forecast : datetime.datetime
-            Datetime object representing the GEFS run initialization.
+        forecast : datetime.datetime, optional
+            Datetime object representing the forecast initialization. If None (default), fetches the latest forecast.
         plot_btk : bool, optional
             If True, Best Track will be plotted alongside operational forecast models. Default is False.
         domain : str
@@ -1006,6 +1012,21 @@ class Storm:
         except:
             self.get_operational_forecasts()
         
+        #Fetch latest forecast if None
+        if forecast == None:
+            check_keys = ['AVNI','OFCI','HWFI']
+            if 'HWFI' not in self.forecast_dict.keys(): check_keys[2] = 'HWRF'
+            if 'HWRF' not in self.forecast_dict.keys() and 'HWRF' in check_keys: check_keys.pop(check_keys.index('HWRF'))
+            if 'OFCI' not in self.forecast_dict.keys(): check_keys[1] = 'OFCL'
+            if 'OFCL' not in self.forecast_dict.keys(): check_keys[1] = 'JTWC'
+            if 'JTWC' not in self.forecast_dict.keys() and 'JTWC' in check_keys: check_keys.pop(check_keys.index('JTWC'))
+            if 'AVNI' not in self.forecast_dict.keys(): check_keys[0] = 'AVNO'
+            if 'AVNO' not in self.forecast_dict.keys(): check_keys[0] = 'AVNX'
+            if 'AVNX' not in self.forecast_dict.keys() and 'AVNX' in check_keys: check_keys.pop(check_keys.index('AVNX'))
+            if len(check_keys) == 0: raise ValueError("No models are available for this storm.")
+            inits = [dt.strptime([k for k in self.forecast_dict[key]][-1],'%Y%m%d%H') for key in check_keys]
+            forecast = min(inits)
+        
         #Error check forecast date
         if forecast < self.date[0] or forecast > self.date[-1]:
             raise ValueError("Requested forecast is outside of the storm's duration.")
@@ -1060,7 +1081,7 @@ class Storm:
             enter_key = key + ''
             if key.lower() == 'hmon' and 'gf' in official_key.lower(): enter_key = 'gfdl'
             if key.lower() == 'nhc' and 'jt' in official_key.lower(): enter_key = 'jtwc'
-            ds[enter_key] = self.forecast_dict[official_key][forecast_str]
+            ds[enter_key] = copy.deepcopy(self.forecast_dict[official_key][forecast_str])
             
             #Filter out to hour 168
             if ds[enter_key]['fhr'][-1] > 168:
@@ -1083,6 +1104,13 @@ class Storm:
         else:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
         
+        #Account for cases crossing dateline
+        if np.nanmax(proj_lons) > 150 or np.nanmin(proj_lons) < -150:
+            for key in ds.keys():
+                new_lons = np.array(ds[key]['lon'])
+                new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
+                ds[key]['lon'] = new_lons.tolist()
+        
         #Plot storm
         plot_ax = self.plot_obj.plot_models(forecast,plot_btk,self.dict,ds,models,domain,ax=ax,prop=prop,map_prop=map_prop,save_path=save_path)
         
@@ -1090,15 +1118,15 @@ class Storm:
         return plot_ax
     
     
-    def plot_ensembles(self,forecast,fhr=None,interpolate=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
+    def plot_ensembles(self,forecast=None,fhr=None,interpolate=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of individual GEFS ensemble tracks.
         
         Parameters
         ----------
-        forecast : datetime.datetime
-            Datetime object representing the GEFS run initialization.
+        forecast : datetime.datetime, optional
+            Datetime object representing the GEFS run initialization. If None (default), fetches the latest run.
         fhr : int, optional
             Forecast hour to plot. If None (default), a cumulative plot of all forecast hours will be produced. If an integer, a single plot will be produced.
         interpolate : bool, optional
@@ -1168,6 +1196,12 @@ class Storm:
              - Forecast track linewidth. Default is 0.2.
            * - linecolor
              - Forecast track line color. Default is black.
+           * - color_var
+             - Variable name to color ensemble members by ('vmax' or 'mslp'). Default is None.
+           * - cmap
+             - If ``color_var`` is specified, matplotlib colormap to color the variable by.
+           * - levels
+             - If ``color_var`` is specified, list of contour levels to color the variable by.
 
         The following properties are available for customizing ensemble mean track, via ``prop_mean``.
 
@@ -1271,6 +1305,17 @@ class Storm:
         except:
             self.get_operational_forecasts()
         
+        #Fetch latest forecast if None
+        if forecast == None:
+            inits = []
+            for key in ['AC00','AP01','AP02','AP03','AP04','AP05']:
+                if key in self.forecast_dict.keys():
+                    inits.append( dt.strptime([k for k in self.forecast_dict[key]][-1],'%Y%m%d%H') )
+            if len(inits) > 0:
+                forecast = min(inits)
+            else:
+                raise RuntimeError("Error: Could not determine the latest available GEFS forecast.")
+        
         #Determine max members by year
         nens = 21
         if self.year >= 2020 and ('AP21' in self.forecast_dict.keys() or 'AP22' in self.forecast_dict.keys() or 'AP23' in self.forecast_dict.keys()): nens = 31
@@ -1372,9 +1417,16 @@ class Storm:
 
                     #Calculate ellipse data
                     if prop_ellipse is not None:
-                        ellipse_data = calc_ensemble_ellipse(temp_data['lon'],temp_data['lat'])
-                        ds['gefs']['ellipse_lon'].append(ellipse_data['ellipse_lon'])
-                        ds['gefs']['ellipse_lat'].append(ellipse_data['ellipse_lat'])
+                        try:
+                            ellipse_data = calc_ensemble_ellipse(temp_data['lon'],temp_data['lat'])
+                            ds['gefs']['ellipse_lon'].append(ellipse_data['ellipse_lon'])
+                            ds['gefs']['ellipse_lat'].append(ellipse_data['ellipse_lat'])
+                        except:
+                            ds['gefs']['ellipse_lon'].append([])
+                            ds['gefs']['ellipse_lat'].append([])
+                    else:
+                        ds['gefs']['ellipse_lon'].append([])
+                        ds['gefs']['ellipse_lat'].append([])
         
             #Save data for future use if needed
             self.gefs_init = forecast
@@ -1386,6 +1438,9 @@ class Storm:
         proj_lons = []
         for key in self.ds.keys():
             proj_lons += self.ds[key]['lon']
+        if fhr != None and fhr in self.ds['gefs']['fhr']:
+            fhr_idx = self.ds['gefs']['fhr'].index(fhr)
+            proj_lons += self.ds['gefs']['ellipse_lon'][fhr_idx]
         
         #Create cartopy projection
         if cartopy_proj is not None:
@@ -1395,8 +1450,21 @@ class Storm:
         else:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
         
+        #Account for cases crossing dateline
+        ds = copy.deepcopy(self.ds)
+        if np.nanmax(proj_lons) > 150 or np.nanmin(proj_lons) < -150:
+            for key in ds.keys():
+                new_lons = np.array(ds[key]['lon'])
+                new_lons[new_lons<0] = new_lons[new_lons<0]+360.0
+                ds[key]['lon'] = new_lons.tolist()
+                
+            #Re-calculate GEFS mean
+            for iter_hr in ds['gefs']['fhr']:
+                fhr_idx = ds['gefs']['fhr'].index(iter_hr)
+                ds['gefs']['lon'][fhr_idx] = np.nanmean([ds[f'gefs_{ens}']['lon'][ds[f'gefs_{ens}']['fhr'].index(iter_hr)] for ens in range(nens) if iter_hr in ds[f'gefs_{ens}']['fhr']])
+        
         #Plot storm
-        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,interpolate,prop_members,prop_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,domain,self.ds,ax=ax,map_prop=map_prop,save_path=save_path)
+        plot_ax = self.plot_obj.plot_ensembles(forecast,self.dict,fhr,interpolate,prop_members,prop_mean,prop_gfs,prop_btk,prop_ellipse,prop_density,nens,domain,ds,ax=ax,map_prop=map_prop,save_path=save_path)
         
         #Return axis
         return plot_ax

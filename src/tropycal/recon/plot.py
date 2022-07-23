@@ -755,9 +755,12 @@ def plot_skewt(dict_list,storm_name_title):
         ax1 = fig.add_subplot(gs[:,0])
 
         #Determine dropsonde time
-        if np.isnan(data["TOPtime"]):
-            use_time = data["BOTTOMtime"]
-        else:
+        try:
+            if np.isnan(data["TOPtime"]):
+                use_time = data["BOTTOMtime"]
+            else:
+                use_time = data["TOPtime"]
+        except:
             use_time = data["TOPtime"]
         
         #Add title for main axis

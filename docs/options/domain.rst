@@ -28,6 +28,8 @@ Tropycal offers a variety of pre-defined map domains to use for plotting, passed
      - Australian basin.
    * - "south_pacific"
      - South Pacific Ocean basin.
+   * - "south_atlantic"
+     - South Atlantic Ocean basin.
    * - "conus"
      - Continental United States.
    * - "east_conus"

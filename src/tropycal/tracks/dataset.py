@@ -63,8 +63,8 @@ class TrackDataset:
            * - "south_indian"
              - IBTrACS
            * - "australia"
-             - IBTrACS
-           * - "south_america"
+             - IBTrACS* (special case)
+           * - "south_atlantic"
              - IBTrACS
            * - "all"
              - IBTrACS
@@ -124,7 +124,9 @@ class TrackDataset:
     
     .. note::
     
-        If using ``basin="both"``, this combines the North Atlantic and East/Central Pacific HURDATv2 data into a single TrackDataset object. As of Tropycal v0.5, this now merges cross-basin storms (i.e., North Atlantic to East Pacific) which were reclassified with a new East Pacific ID into single Storm objects.
+        1. If using ``basin="both"``, this combines the North Atlantic and East/Central Pacific HURDATv2 data into a single TrackDataset object. As of Tropycal v0.5, this now merges cross-basin storms (i.e., North Atlantic to East Pacific) which were reclassified with a new East Pacific ID into single Storm objects.
+        
+        2. If using ``basin="australia", source="ibtracs"``, since IBTrACS doesn't provide an Australia-only basin file by default, this will fetch the full global IBTrACS data and filter storms to only those that existed in the Australia basin.
     """
  
     def __repr__(self):
@@ -674,7 +676,8 @@ class TrackDataset:
         
         #read in ibtracs file
         if ibtracs_online:
-            path = self.ibtracs_url.replace("(basin)",ibtracs_basin)
+            enter_basin = 'ALL' if self.basin == 'australia' else ibtracs_basin+''
+            path = self.ibtracs_url.replace("(basin)",enter_basin)
             content = read_url(path)
         else:
             f = open(self.ibtracs_url,"r")
@@ -756,6 +759,9 @@ class TrackDataset:
                     neumann_lon = float(wmo_lon)
                     neumann_vmax = np.nan if neumann_vmax == "" else int(neumann_vmax)
                     neumann_mslp = np.nan if neumann_mslp == "" else int(neumann_mslp)
+                    if np.isnan(neumann_vmax) == False:
+                        if str(neumann_vmax)[-1] in ['4','9']: neumann_vmax += 1
+                        if str(neumann_vmax)[-1] in ['1','6']: neumann_vmax = neumann_vmax - 1
                     if neumann_type == 'TC':
                         if neumann_vmax < 34:
                             neumann_type = 'TD'
@@ -838,6 +844,9 @@ class TrackDataset:
                         jtwc_vmax = int(wmo_vmax + 0.0)
                     else:
                         jtwc_vmax = np.nan
+                if np.isnan(jtwc_vmax) == False:
+                    if str(jtwc_vmax)[-1] in ['4','9']: jtwc_vmax += 1
+                    if str(jtwc_vmax)[-1] in ['1','6']: jtwc_vmax = jtwc_vmax - 1
                 
                 #Convert storm type from ibtracs to hurdat style
                 """
@@ -917,6 +926,9 @@ class TrackDataset:
                 lon = float(lon)
                 vmax = np.nan if vmax == "" else int(vmax)
                 mslp = np.nan if mslp == "" else int(mslp)
+                if np.isnan(vmax) == False:
+                    if str(vmax)[-1] in ['4','9']: vmax += 1
+                    if str(vmax)[-1] in ['1','6']: vmax = vmax - 1
 
                 #Convert storm type from ibtracs to hurdat style
                 if stype == "ST" or stype == "TY":
@@ -1051,7 +1063,7 @@ class TrackDataset:
         
         for key in keys:
             if key not in self.data_interp.keys():
-                self.data_interp[key] = interp_storm(self.data[key].copy(),timeres=1,dt_window=24,dt_align='middle')
+                self.data_interp[key] = interp_storm(self.data[key].copy(),hours=1,dt_window=24,dt_align='middle')
         
         #Determine time elapsed
         time_elapsed = dt.now() - start_time
@@ -1465,7 +1477,7 @@ class TrackDataset:
         #Error check
         if len(season_dict) == 0:
             raise RuntimeError("No storms were identified for the given year in the given basin.")
-                
+        
         #Add attributes
         first_key = [k for k in season_dict.keys()][0]
         season_info = {}
@@ -2671,7 +2683,7 @@ class TrackDataset:
                 try:
                     istorm = self.data_interp[key]
                 except:
-                    istorm = interp_storm(self.data[key].copy(),timeres=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
+                    istorm = interp_storm(self.data[key].copy(),hours=1,dt_window=thresh['dt_window'],dt_align=thresh['dt_align'])
                     self.data_interp[key] = istorm.copy()
                 timeres = 1
             else:
@@ -2796,7 +2808,7 @@ class TrackDataset:
         year_average : bool, optional
             If True, both year ranges will be computed and plotted as an annual average.
         date_range : list or tuple, optional
-            List or tuple representing the start and end dates as a string in 'month/day' format (e.g., ('6/1','8/15')). Default is ('1/1','12/31') or full year.
+            List or tuple representing the start and end dates as a string in 'month/day' format (e.g., ``('6/1','8/15')``). Default is ``('1/1','12/31')`` i.e., the full year.
         binsize : float, optional
             Grid resolution in degrees. Default is 1 degree.
         domain : str, optional
@@ -2818,6 +2830,27 @@ class TrackDataset:
         Returns
         -------
         By default, the plot axes is returned. If "return_array" are set to True, a dictionary is returned containing both the axes and data array.
+        
+        Notes
+        -----
+        The following properties are available for customizing the plot, via ``prop``:
+        
+        .. list-table:: 
+            :widths: 25 75
+            :header-rows: 1
+
+            * - Property
+              - Description
+            * - smooth
+              - Number (in units of sigma) to smooth the data using scipy's gaussian filter. Default is 0 (no smoothing).
+            * - cmap
+              - Colormap to use for the plot. If string 'category' is passed (default), uses a pre-defined color scale corresponding to the Saffir-Simpson Hurricane Wind Scale.
+            * - clevs
+              - Contour levels for the plot. Default is minimum and maximum values in the grid.
+            * - left_title
+              - Title string for the left side of the plot. Default is the string passed via the 'request' keyword argument.
+            * - right_title
+              - Title string for the right side of the plot. Default is 'All storms'.
         """
         
         #Retrieve kwargs

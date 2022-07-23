@@ -11,4 +11,6 @@ project developers:
 * Tomer Burg (tomerburg@gmail.com)
 * Sam Lillo (splillo@gmail.com)
 
+We are grateful to Tomer Aberbach and Ryan May for help and support in developing Tropycal. We also thank Dr. Ray Bell for helping to add Tropycal to conda-forge.
+
 .. _Github: https://github.com/tropycal/tropycal/issues

@@ -168,7 +168,7 @@ This string is also used as the plot title.</p>
 <li><p><strong>year_range</strong> (<em>list</em><em> or </em><em>tuple</em><em>, </em><em>optional</em>) – List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.</p></li>
 <li><p><strong>year_range_subtract</strong> (<em>list</em><em> or </em><em>tuple</em><em>, </em><em>optional</em>) – A year range to subtract from the previously specified “year_range”. If specified, will create a difference plot.</p></li>
 <li><p><strong>year_average</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, both year ranges will be computed and plotted as an annual average.</p></li>
-<li><p><strong>date_range</strong> (<em>list</em><em> or </em><em>tuple</em><em>, </em><em>optional</em>) – List or tuple representing the start and end dates as a string in ‘month/day’ format (e.g., (‘6/1’,’8/15’)). Default is (‘1/1’,’12/31’) or full year.</p></li>
+<li><p><strong>date_range</strong> (<em>list</em><em> or </em><em>tuple</em><em>, </em><em>optional</em>) – List or tuple representing the start and end dates as a string in ‘month/day’ format (e.g., <code class="docutils literal notranslate"><span class="pre">('6/1','8/15')</span></code>). Default is <code class="docutils literal notranslate"><span class="pre">('1/1','12/31')</span></code> i.e., the full year.</p></li>
 <li><p><strong>binsize</strong> (<em>float</em><em>, </em><em>optional</em>) – Grid resolution in degrees. Default is 1 degree.</p></li>
 <li><p><strong>domain</strong> (<em>str</em><em>, </em><em>optional</em>) – Domain for the plot. Default is “dynamic”. Please refer to <a class="reference internal" href="../../options/domain.html#options-domain"><span class="std std-ref">Map Domain Options</span></a> for available domain options.</p></li>
 <li><p><strong>ax</strong> (<em>axes</em><em>, </em><em>optional</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
@@ -186,6 +186,36 @@ This string is also used as the plot title.</p>
 <dd class="field-odd"><p><em>By default, the plot axes is returned. If “return_array” are set to True, a dictionary is returned containing both the axes and data array.</em></p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The following properties are available for customizing the plot, via <code class="docutils literal notranslate"><span class="pre">prop</span></code>:</p>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>smooth</p></td>
+<td><p>Number (in units of sigma) to smooth the data using scipy’s gaussian filter. Default is 0 (no smoothing).</p></td>
+</tr>
+<tr class="row-odd"><td><p>cmap</p></td>
+<td><p>Colormap to use for the plot. If string ‘category’ is passed (default), uses a pre-defined color scale corresponding to the Saffir-Simpson Hurricane Wind Scale.</p></td>
+</tr>
+<tr class="row-even"><td><p>clevs</p></td>
+<td><p>Contour levels for the plot. Default is minimum and maximum values in the grid.</p></td>
+</tr>
+<tr class="row-odd"><td><p>left_title</p></td>
+<td><p>Title string for the left side of the plot. Default is the string passed via the ‘request’ keyword argument.</p></td>
+</tr>
+<tr class="row-even"><td><p>right_title</p></td>
+<td><p>Title string for the right side of the plot. Default is ‘All storms’.</p></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div style='clear:both'></div></div>

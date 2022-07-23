@@ -141,8 +141,8 @@
 <span class="sd">           * - &quot;south_indian&quot;</span>
 <span class="sd">             - IBTrACS</span>
 <span class="sd">           * - &quot;australia&quot;</span>
-<span class="sd">             - IBTrACS</span>
-<span class="sd">           * - &quot;south_america&quot;</span>
+<span class="sd">             - IBTrACS* (special case)</span>
+<span class="sd">           * - &quot;south_atlantic&quot;</span>
 <span class="sd">             - IBTrACS</span>
 <span class="sd">           * - &quot;all&quot;</span>
 <span class="sd">             - IBTrACS</span>
@@ -202,7 +202,9 @@
 <span class="sd">    </span>
 <span class="sd">    .. note::</span>
 <span class="sd">    </span>
-<span class="sd">        If using ``basin=&quot;both&quot;``, this combines the North Atlantic and East/Central Pacific HURDATv2 data into a single TrackDataset object. As of Tropycal v0.5, this now merges cross-basin storms (i.e., North Atlantic to East Pacific) which were reclassified with a new East Pacific ID into single Storm objects.</span>
+<span class="sd">        1. If using ``basin=&quot;both&quot;``, this combines the North Atlantic and East/Central Pacific HURDATv2 data into a single TrackDataset object. As of Tropycal v0.5, this now merges cross-basin storms (i.e., North Atlantic to East Pacific) which were reclassified with a new East Pacific ID into single Storm objects.</span>
+<span class="sd">        </span>
+<span class="sd">        2. If using ``basin=&quot;australia&quot;, source=&quot;ibtracs&quot;``, since IBTrACS doesn&#39;t provide an Australia-only basin file by default, this will fetch the full global IBTrACS data and filter storms to only those that existed in the Australia basin.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
  
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -752,7 +754,8 @@
         
         <span class="c1">#read in ibtracs file</span>
         <span class="k">if</span> <span class="n">ibtracs_online</span><span class="p">:</span>
-            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ibtracs_url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;(basin)&quot;</span><span class="p">,</span><span class="n">ibtracs_basin</span><span class="p">)</span>
+            <span class="n">enter_basin</span> <span class="o">=</span> <span class="s1">&#39;ALL&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;australia&#39;</span> <span class="k">else</span> <span class="n">ibtracs_basin</span><span class="o">+</span><span class="s1">&#39;&#39;</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ibtracs_url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;(basin)&quot;</span><span class="p">,</span><span class="n">enter_basin</span><span class="p">)</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">read_url</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ibtracs_url</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
@@ -834,6 +837,9 @@
                     <span class="n">neumann_lon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">wmo_lon</span><span class="p">)</span>
                     <span class="n">neumann_vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">neumann_vmax</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">neumann_vmax</span><span class="p">)</span>
                     <span class="n">neumann_mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">neumann_mslp</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">neumann_mslp</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">neumann_vmax</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">neumann_vmax</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="s1">&#39;9&#39;</span><span class="p">]:</span> <span class="n">neumann_vmax</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">neumann_vmax</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="s1">&#39;6&#39;</span><span class="p">]:</span> <span class="n">neumann_vmax</span> <span class="o">=</span> <span class="n">neumann_vmax</span> <span class="o">-</span> <span class="mi">1</span>
                     <span class="k">if</span> <span class="n">neumann_type</span> <span class="o">==</span> <span class="s1">&#39;TC&#39;</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">neumann_vmax</span> <span class="o">&lt;</span> <span class="mi">34</span><span class="p">:</span>
                             <span class="n">neumann_type</span> <span class="o">=</span> <span class="s1">&#39;TD&#39;</span>
@@ -916,6 +922,9 @@
                         <span class="n">jtwc_vmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">wmo_vmax</span> <span class="o">+</span> <span class="mf">0.0</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">jtwc_vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">jtwc_vmax</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">jtwc_vmax</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="s1">&#39;9&#39;</span><span class="p">]:</span> <span class="n">jtwc_vmax</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">jtwc_vmax</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="s1">&#39;6&#39;</span><span class="p">]:</span> <span class="n">jtwc_vmax</span> <span class="o">=</span> <span class="n">jtwc_vmax</span> <span class="o">-</span> <span class="mi">1</span>
                 
                 <span class="c1">#Convert storm type from ibtracs to hurdat style</span>
                 <span class="sd">&quot;&quot;&quot;</span>
@@ -995,6 +1004,9 @@
                 <span class="n">lon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
                 <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">vmax</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span>
                 <span class="n">mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">mslp</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">mslp</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vmax</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">vmax</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="s1">&#39;9&#39;</span><span class="p">]:</span> <span class="n">vmax</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">vmax</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="s1">&#39;6&#39;</span><span class="p">]:</span> <span class="n">vmax</span> <span class="o">=</span> <span class="n">vmax</span> <span class="o">-</span> <span class="mi">1</span>
 
                 <span class="c1">#Convert storm type from ibtracs to hurdat style</span>
                 <span class="k">if</span> <span class="n">stype</span> <span class="o">==</span> <span class="s2">&quot;ST&quot;</span> <span class="ow">or</span> <span class="n">stype</span> <span class="o">==</span> <span class="s2">&quot;TY&quot;</span><span class="p">:</span>
@@ -1129,7 +1141,7 @@
         
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_interp</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data_interp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp_storm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span><span class="n">timeres</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">dt_window</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span><span class="n">dt_align</span><span class="o">=</span><span class="s1">&#39;middle&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_interp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp_storm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">dt_window</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span><span class="n">dt_align</span><span class="o">=</span><span class="s1">&#39;middle&#39;</span><span class="p">)</span>
         
         <span class="c1">#Determine time elapsed</span>
         <span class="n">time_elapsed</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
@@ -1543,7 +1555,7 @@
         <span class="c1">#Error check</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">season_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No storms were identified for the given year in the given basin.&quot;</span><span class="p">)</span>
-                
+        
         <span class="c1">#Add attributes</span>
         <span class="n">first_key</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">season_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">season_info</span> <span class="o">=</span> <span class="p">{}</span>
@@ -2749,7 +2761,7 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">istorm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_interp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
                 <span class="k">except</span><span class="p">:</span>
-                    <span class="n">istorm</span> <span class="o">=</span> <span class="n">interp_storm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span><span class="n">timeres</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">dt_window</span><span class="o">=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dt_window&#39;</span><span class="p">],</span><span class="n">dt_align</span><span class="o">=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dt_align&#39;</span><span class="p">])</span>
+                    <span class="n">istorm</span> <span class="o">=</span> <span class="n">interp_storm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">dt_window</span><span class="o">=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dt_window&#39;</span><span class="p">],</span><span class="n">dt_align</span><span class="o">=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dt_align&#39;</span><span class="p">])</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data_interp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">istorm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                 <span class="n">timeres</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
@@ -2874,7 +2886,7 @@
 <span class="sd">        year_average : bool, optional</span>
 <span class="sd">            If True, both year ranges will be computed and plotted as an annual average.</span>
 <span class="sd">        date_range : list or tuple, optional</span>
-<span class="sd">            List or tuple representing the start and end dates as a string in &#39;month/day&#39; format (e.g., (&#39;6/1&#39;,&#39;8/15&#39;)). Default is (&#39;1/1&#39;,&#39;12/31&#39;) or full year.</span>
+<span class="sd">            List or tuple representing the start and end dates as a string in &#39;month/day&#39; format (e.g., ``(&#39;6/1&#39;,&#39;8/15&#39;)``). Default is ``(&#39;1/1&#39;,&#39;12/31&#39;)`` i.e., the full year.</span>
 <span class="sd">        binsize : float, optional</span>
 <span class="sd">            Grid resolution in degrees. Default is 1 degree.</span>
 <span class="sd">        domain : str, optional</span>
@@ -2896,6 +2908,27 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        By default, the plot axes is returned. If &quot;return_array&quot; are set to True, a dictionary is returned containing both the axes and data array.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The following properties are available for customizing the plot, via ``prop``:</span>
+<span class="sd">        </span>
+<span class="sd">        .. list-table:: </span>
+<span class="sd">            :widths: 25 75</span>
+<span class="sd">            :header-rows: 1</span>
+
+<span class="sd">            * - Property</span>
+<span class="sd">              - Description</span>
+<span class="sd">            * - smooth</span>
+<span class="sd">              - Number (in units of sigma) to smooth the data using scipy&#39;s gaussian filter. Default is 0 (no smoothing).</span>
+<span class="sd">            * - cmap</span>
+<span class="sd">              - Colormap to use for the plot. If string &#39;category&#39; is passed (default), uses a pre-defined color scale corresponding to the Saffir-Simpson Hurricane Wind Scale.</span>
+<span class="sd">            * - clevs</span>
+<span class="sd">              - Contour levels for the plot. Default is minimum and maximum values in the grid.</span>
+<span class="sd">            * - left_title</span>
+<span class="sd">              - Title string for the left side of the plot. Default is the string passed via the &#39;request&#39; keyword argument.</span>
+<span class="sd">            * - right_title</span>
+<span class="sd">              - Title string for the right side of the plot. Default is &#39;All storms&#39;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1">#Retrieve kwargs</span>

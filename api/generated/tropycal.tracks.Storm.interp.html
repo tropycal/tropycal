@@ -119,20 +119,23 @@
 <h1>Storm.interp<a class="headerlink" href="#storm-interp" title="Permalink to this headline">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="tropycal.tracks.Storm.interp">
-<span class="sig-prename descclassname"><span class="pre">Storm.</span></span><span class="sig-name descname"><span class="pre">interp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">24</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'middle'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.interp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.tracks.Storm.interp" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Storm.</span></span><span class="sig-name descname"><span class="pre">interp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hours</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">24</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'middle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.interp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.tracks.Storm.interp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate a storm temporally to a specified time resolution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>timeres</strong> (<em>int</em>) – Temporal resolution in hours to interpolate storm data to. Default is 1 hour.</p></li>
+<li><p><strong>hours</strong> (<em>int</em><em> or </em><em>float</em>) – Temporal resolution in hours (or fraction of an hour) to interpolate storm data to. Default is 1 hour.</p></li>
 <li><p><strong>dt_window</strong> (<em>int</em>) – Time window in hours over which to calculate temporal change data. Default is 24 hours.</p></li>
-<li><p><strong>dt_align</strong> (<em>str</em>) – Whether to align the temporal change window as “start”, “middle” or “end” of the dt_window time period.</p></li>
+<li><p><strong>dt_align</strong> (<em>str</em>) – Whether to align the temporal change window as “start”, “middle” (default) or “end” of the dt_window time period.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – Interpolation method for lat/lon coordinates passed to scipy. Options are “linear” (default) or “quadratic”.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><em>tropycal.tracks.Storm</em> – New Storm object containing the updated dictionary.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>When interpolating data using a non-linear method, all non-standard hour observations (i.e., not within 00, 06, 12 or 18 UTC) are ignored for latitude &amp; longitude interpolation in order to produce a smoother line.</p>
 </dd></dl>
 
 <div style='clear:both'></div></div>

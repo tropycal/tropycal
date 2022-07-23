@@ -161,9 +161,9 @@
 <td><p>IBTrACS</p></td>
 </tr>
 <tr class="row-even"><td><p>”australia”</p></td>
-<td><p>IBTrACS</p></td>
+<td><p>IBTrACS* (special case)</p></td>
 </tr>
-<tr class="row-odd"><td><p>”south_america”</p></td>
+<tr class="row-odd"><td><p>”south_atlantic”</p></td>
 <td><p>IBTrACS</p></td>
 </tr>
 <tr class="row-even"><td><p>”all”</p></td>
@@ -216,7 +216,10 @@
 <p>For IBTrACS datasets, please refer to <a class="reference internal" href="../../data.html#ibtracs-caveats"><span class="std std-ref">IBTrACS</span></a> for pros and cons of each mode of IBTrACS data available.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If using <code class="docutils literal notranslate"><span class="pre">basin=&quot;both&quot;</span></code>, this combines the North Atlantic and East/Central Pacific HURDATv2 data into a single TrackDataset object. As of Tropycal v0.5, this now merges cross-basin storms (i.e., North Atlantic to East Pacific) which were reclassified with a new East Pacific ID into single Storm objects.</p>
+<ol class="arabic simple">
+<li><p>If using <code class="docutils literal notranslate"><span class="pre">basin=&quot;both&quot;</span></code>, this combines the North Atlantic and East/Central Pacific HURDATv2 data into a single TrackDataset object. As of Tropycal v0.5, this now merges cross-basin storms (i.e., North Atlantic to East Pacific) which were reclassified with a new East Pacific ID into single Storm objects.</p></li>
+<li><p>If using <code class="docutils literal notranslate"><span class="pre">basin=&quot;australia&quot;,</span> <span class="pre">source=&quot;ibtracs&quot;</span></code>, since IBTrACS doesn’t provide an Australia-only basin file by default, this will fetch the full global IBTrACS data and filter storms to only those that existed in the Australia basin.</p></li>
+</ol>
 </div>
 <p>Methods Summary</p>
 <blockquote>

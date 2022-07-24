@@ -634,6 +634,10 @@ def decode_hdob_2005_noaa(content,strdate,mission_row=0):
     data['wspd'] = [np.nan if check_error(i[5][3:]) else round(float(i[5][3:]),0) for i in items[3:]]
     data['pkwnd'] = [np.nan if check_error(i[8]) else round(float(i[8][3:]),0) for i in items[3:]]
     
+    #Fix erroneous data
+    data['wspd'] = [np.nan if i > 300 else i for i in data['wspd']]
+    data['pkwnd'] = [np.nan if i > 300 else i for i in data['pkwnd']]
+    
     #Data not available prior to 2007
     data['plane_p'] = [np.nan for i in items[3:]]
     data['p_sfc'] = [np.nan for i in items[3:]]
@@ -732,6 +736,10 @@ def decode_hdob_2006(content,strdate,mission_row=3):
     data['sfmr'] = [np.nan for i in items[3:]]
     data['rain'] = [np.nan for i in items[3:]]
     data['flag'] = [[] for i in items[3:]]
+    
+    #Fix erroneous data
+    data['wspd'] = [np.nan if i > 300 else i for i in data['wspd']]
+    data['pkwnd'] = [np.nan if i > 300 else i for i in data['pkwnd']]
 
     #Ignore entries with lat/lon of 0
     orig_lat = np.copy(data['lat'])
@@ -798,6 +806,8 @@ def decode_hdob(content,mission_row=3):
     
     #Fix erroneous SFMR
     data['sfmr'] = [np.nan if i > 300 else i for i in data['sfmr']]
+    data['wspd'] = [np.nan if i > 300 else i for i in data['wspd']]
+    data['pkwnd'] = [np.nan if i > 300 else i for i in data['pkwnd']]
 
     #Ignore entries with lat/lon of 0
     orig_lat = np.copy(data['lat'])

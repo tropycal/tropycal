@@ -2155,24 +2155,19 @@ class Storm:
         #Follow JTWC procedure
         else:
             
-            #Get storm ID & corresponding data URL
-            storm_year = self.dict['year']
-            if storm_year < 2019:
-                msg = "Forecast data is unavailable for JTWC storms prior to 2019."
-                raise RuntimeError(msg)
-            url_models = f"http://hurricanes.ral.ucar.edu/repository/data/adecks_open/{self.year}/a{self.id.lower()}.dat"
+            url_models_noaa = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/a{self.id.lower()}.dat"
+            url_models_ucar = f"http://hurricanes.ral.ucar.edu/repository/data/adecks_open/{self.year}/a{self.id.lower()}.dat"
             
             #Retrieve model data text
             try:
-                f = urllib.request.urlopen(url_models)
-                content = f.read()
-                content = content.decode("utf-8")
-                content = content.split("\n")
-                content = [i.split(",") for i in content]
-                content = [i for i in content if len(i) > 10]
-                f.close()
+                content = read_url(url_models_noaa,split=True,subsplit=False)
             except:
-                raise RuntimeError("No operational model data is available for this storm.")
+                try:
+                    content = read_url(url_models_ucar,split=True,subsplit=False)
+                except:
+                    raise RuntimeError("No operational model data is available for this storm.")
+            content = [i.split(",") for i in content]
+            content = [i for i in content if len(i) > 10]
 
         #Iterate through every line in content:
         forecasts = {}

@@ -2181,11 +2181,15 @@ class Storm:
             except:
                 basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
                 use_wind = False
-
+            
+            #Check init date is within storm date range
+            run_init_dt = dt.strptime(run_init,'%Y%m%d%H')
+            if run_init_dt < self.dict['date'][0]-timedelta(hours=6) or run_init_dt > self.dict['date'][-1]+timedelta(hours=6): continue
+            
             #Enter into forecast dict
             if model not in forecasts.keys(): forecasts[model] = {}
             if run_init not in forecasts[model].keys(): forecasts[model][run_init] = {
-                'init':dt.strptime(run_init,'%Y%m%d%H'),'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],'windrad':[]
+                'init':run_init_dt,'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],'windrad':[]
             }
 
             #Format lat & lon
@@ -2258,7 +2262,7 @@ class Storm:
             else:
                 ifhr = forecasts[model][run_init]['fhr'].index(fhr)
                 forecasts[model][run_init]['windrad'][ifhr][rad]=[neq,seq,swq,nwq]
-                
+        
         #Save dict locally
         self.forecast_dict = forecasts
         

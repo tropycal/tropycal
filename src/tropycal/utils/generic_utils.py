@@ -581,7 +581,7 @@ def get_two_archive(time):
     diff = [i for i in diff if i >= 0]
 
     #Continue if less than 24 hours difference
-    if np.nanmin(diff) <= 30:
+    if len(diff) > 0 and np.nanmin(diff) <= 30:
         two_date = dates[diff.index(np.nanmin(diff))].strftime('%Y%m%d%H%M')
 
         #Retrieve NHC shapefiles for development areas

@@ -3844,7 +3844,7 @@ class TrackDataset:
         
         return ax
 
-    def plot_summary(self,time,domain='all',ax=None,cartopy_proj=None,save_path=None,**kwargs):
+    def plot_summary(self,time,domain=None,ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Plot a summary map of past tropical cyclone and NHC potential development activity. Only valid for areas in NHC's area of responsibility at this time.
@@ -3854,7 +3854,7 @@ class TrackDataset:
         time : datetime
             Valid time for the summary plot.
         domain : str
-            Domain for the plot. Default is "all". Please refer to :ref:`options-domain` for available domain options.
+            Domain for the plot. Default is current basin. Please refer to :ref:`options-domain` for available domain options.
         ax : axes, optional
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs, optional
@@ -3950,6 +3950,10 @@ class TrackDataset:
         #Error check
         if self.source != 'hurdat':
             raise RuntimeError("This function is only available for NHC's area of responsibility at this time.")
+        
+        #Set basin
+        if domain == None:
+            domain = self.basin
         
         #Find closest NHC shapefile
         shapefiles = get_two_archive(time)

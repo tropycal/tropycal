@@ -4074,6 +4074,11 @@ class TrackDataset:
             track_dict['prob_5day'] = 'N/A'
             track_dict['risk_5day'] = 'N/A'
             
+            #Fill empty observed dicts (assuming storm just formed)
+            if len(track_dict['lat']) == 0:
+                for iter_key in ['lat','lon','vmax','mslp','type']:
+                    track_dict[iter_key] = [forecast_dict[iter_key][0]]
+            
             track_dict['basin'] = storm.basin
             storms.append(Storm(track_dict))
             forecasts.append(forecast_dict)

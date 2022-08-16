@@ -605,6 +605,17 @@ def get_two_archive(time):
                 files = []
                 for file in filelist:
                     if file not in files: files.append(file.split(".shp")[0]) #remove duplicates
+                
+                #Alternatively, check files for older format (generally 2014 and earlier)
+                if len(files) == 0:
+                    if name in ['lines','points']:
+                        shapefiles[name] = None
+                        continue
+                    search_pattern = f'20{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}_gtwo.shp'
+                    pattern = re.compile(search_pattern)
+                    filelist = pattern.findall(members)
+                    for file in filelist:
+                        if file not in files: files.append(file.split(".shp")[0]) #remove duplicates
 
                 #Retrieve necessary components for shapefile
                 members = tar.namelist()

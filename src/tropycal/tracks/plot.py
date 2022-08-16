@@ -2136,7 +2136,7 @@ None,prop={},map_prop={}):
         #Format title
         add_title = ""
         if two_prop['plot'] == True:
-            if two_prop['days'] == 2:
+            if two_prop['days'] == 2 or valid_date <= dt(2014,7,1):
                 add_title = " & NHC 2-Day Formation Outlook"
             else:
                 add_title = " & NHC 5-Day Formation Outlook"
@@ -2151,52 +2151,88 @@ None,prop={},map_prop={}):
             color_base = {'Low':'yellow','Medium':'orange','High':'red'}
 
             #Plot areas
-            for record, geom in zip(shapefiles['areas'].records(), shapefiles['areas'].geometries()):
+            if shapefiles['areas'] != None:
+                for record, geom in zip(shapefiles['areas'].records(), shapefiles['areas'].geometries()):
 
-                #Read relevant data
-                if two_prop['days'] == 2:
-                    color = color_base.get(record.attributes['RISK2DAY'],'yellow')
-                else:
-                    color = color_base.get(record.attributes['RISK5DAY'],'yellow')
+                    #Read relevant data
+                    if 'RISK2DAY' in record.attributes.keys() or 'RISK5DAY' in record.attributes.keys():
+                        if two_prop['days'] == 2:
+                            color = color_base.get(record.attributes['RISK2DAY'],'yellow')
+                        else:
+                            color = color_base.get(record.attributes['RISK5DAY'],'yellow')
+                    else:
+                        color = color_base.get(record.attributes['GENCAT'],'yellow')
 
-                #Plot area
-                self.ax.add_feature(cfeature.ShapelyFeature([geom], ccrs.PlateCarree()),
-                                    facecolor=color, edgecolor=color, alpha=0.3, linewidth=1.5, zorder=3)
+                    #Plot area
+                    self.ax.add_feature(cfeature.ShapelyFeature([geom], ccrs.PlateCarree()),
+                                        facecolor=color, edgecolor=color, alpha=0.3, linewidth=1.5, zorder=3)
 
-                #Plot hatching
-                self.ax.add_feature(cfeature.ShapelyFeature([geom], ccrs.PlateCarree()),
-                                    facecolor='none', edgecolor='k', linewidth=2.25, zorder=4)
-                self.ax.add_feature(cfeature.ShapelyFeature([geom], ccrs.PlateCarree()),
-                                    facecolor='none', edgecolor=color, linewidth=1.5, zorder=4)
+                    #Plot hatching
+                    self.ax.add_feature(cfeature.ShapelyFeature([geom], ccrs.PlateCarree()),
+                                        facecolor='none', edgecolor='k', linewidth=2.25, zorder=4)
+                    self.ax.add_feature(cfeature.ShapelyFeature([geom], ccrs.PlateCarree()),
+                                        facecolor='none', edgecolor=color, linewidth=1.5, zorder=4)
+                    
+                    #Add label if needed
+                    plot_coords = []
+                    if 'GENCAT' in record.attributes.keys() or shapefiles['points'] == None:
+                        bounds = record.geometry.bounds
+                        plot_coords.append((bounds[0] + bounds[2]) * 0.5) #lon
+                        plot_coords.append(bounds[1]) #lat
+                        plot_coords.append(record.attributes['GENPROB'])
+                    else:
+                        found_areas = []
+                        for i_record, i_point in zip(shapefiles['points'].records(), shapefiles['points'].geometries()):
+                            found_areas.append(i_record.attributes['AREA'])
+                        if 'AREA' in record.attributes.keys() and record.attributes['AREA'] not in found_areas:
+                            bounds = record.geometry.bounds
+                            plot_coords.append((bounds[0] + bounds[2]) * 0.5) #lon
+                            plot_coords.append(bounds[1]) #lat
+                            if two_prop['days'] == 2:
+                                plot_coords.append(record.attributes['PROB2DAY'])
+                            else:
+                                plot_coords.append(record.attributes['PROB5DAY'])
+                    
+                    if len(plot_coords) > 0:
+                        #Transform coordinates for label
+                        x1, y1 = self.ax.projection.transform_point(plot_coords[0], plot_coords[1], ccrs.PlateCarree())
+                        x2, y2 = self.ax.transData.transform((x1, y1))
+                        x, y = self.ax.transAxes.inverted().transform((x2, y2))
+
+                        # plot same point but using axes coordinates
+                        text = plot_coords[2]
+                        a = self.ax.text(x,y-0.02,text,ha='center',va='top',transform=self.ax.transAxes,zorder=30,fontweight='bold',fontsize=two_prop['fontsize'],clip_on=True,bbox=bbox_prop)
+                        a.set_path_effects([path_effects.Stroke(linewidth=0.5,foreground='w'),path_effects.Normal()])
 
             #Plot points
-            for record, point in zip(shapefiles['points'].records(), shapefiles['points'].geometries()):
+            if shapefiles['points'] != None:
+                for record, point in zip(shapefiles['points'].records(), shapefiles['points'].geometries()):
 
-                #Read relevant data
-                lon = (list(point.coords)[0][0])
-                lat = (list(point.coords)[0][1])
-                prob_2day = record.attributes['PROB2DAY'].replace(" ","")
-                prob_5day = record.attributes['PROB5DAY'].replace(" ","")
-                risk_2day = record.attributes['RISK2DAY'].replace(" ","")
-                risk_5day = record.attributes['RISK5DAY'].replace(" ","")
+                    #Read relevant data
+                    lon = (list(point.coords)[0][0])
+                    lat = (list(point.coords)[0][1])
+                    prob_2day = record.attributes['PROB2DAY'].replace(" ","")
+                    prob_5day = record.attributes['PROB5DAY'].replace(" ","")
+                    risk_2day = record.attributes['RISK2DAY'].replace(" ","")
+                    risk_5day = record.attributes['RISK5DAY'].replace(" ","")
 
-                #Label area
-                if two_prop['days'] == 2:
-                    color = color_base.get(risk_2day,'yellow')
-                    text = prob_2day
-                else:
-                    color = color_base.get(risk_5day,'yellow')
-                    text = prob_5day
-                self.ax.plot(lon,lat,'X',ms=two_prop['ms'],color=color,mec='k',mew=1.5*(two_prop['ms']/15.0),transform=ccrs.PlateCarree(),zorder=20)
+                    #Label area
+                    if two_prop['days'] == 2:
+                        color = color_base.get(risk_2day,'yellow')
+                        text = prob_2day
+                    else:
+                        color = color_base.get(risk_5day,'yellow')
+                        text = prob_5day
+                    self.ax.plot(lon,lat,'X',ms=two_prop['ms'],color=color,mec='k',mew=1.5*(two_prop['ms']/15.0),transform=ccrs.PlateCarree(),zorder=20)
 
-                #Transform coordinates for label
-                x1, y1 = self.ax.projection.transform_point(lon, lat, ccrs.PlateCarree())
-                x2, y2 = self.ax.transData.transform((x1, y1))
-                x, y = self.ax.transAxes.inverted().transform((x2, y2))
+                    #Transform coordinates for label
+                    x1, y1 = self.ax.projection.transform_point(lon, lat, ccrs.PlateCarree())
+                    x2, y2 = self.ax.transData.transform((x1, y1))
+                    x, y = self.ax.transAxes.inverted().transform((x2, y2))
 
-                # plot same point but using axes coordinates
-                a = self.ax.text(x,y-0.03,text,ha='center',va='top',transform=self.ax.transAxes,zorder=30,fontweight='bold',fontsize=two_prop['fontsize'],clip_on=True,bbox=bbox_prop)
-                a.set_path_effects([path_effects.Stroke(linewidth=0.5,foreground='w'),path_effects.Normal()])
+                    # plot same point but using axes coordinates
+                    a = self.ax.text(x,y-0.03,text,ha='center',va='top',transform=self.ax.transAxes,zorder=30,fontweight='bold',fontsize=two_prop['fontsize'],clip_on=True,bbox=bbox_prop)
+                    a.set_path_effects([path_effects.Stroke(linewidth=0.5,foreground='w'),path_effects.Normal()])
         
         #--------------------------------------------------------------------------------------
         

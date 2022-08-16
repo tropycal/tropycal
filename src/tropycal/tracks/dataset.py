@@ -1005,13 +1005,6 @@ class TrackDataset:
             if len(self.data[key]['lat']) == 0:
                 del(self.data[key])
         
-        #Remove entries where requested basin doesn't appear
-        if self.basin not in ['all','both']:
-            all_keys = [k for k in self.data.keys()]
-            for key in all_keys:
-                if self.basin not in self.data[key]['wmo_basin']:
-                    del(self.data[key])
-        
         #Replace neumann entries
         if self.neumann:
             
@@ -1028,7 +1021,14 @@ class TrackDataset:
                 
                 #replace id
                 self.data[jtwc_id]['id'] = jtwc_id
-                
+        
+        #Remove entries where requested basin doesn't appear
+        if self.basin not in ['all','both']:
+            all_keys = [k for k in self.data.keys()]
+            for key in all_keys:
+                if self.basin not in self.data[key]['wmo_basin']:
+                    del(self.data[key])
+        
         #Fix cyclone Catarina, if specified & requested
         all_keys = [k for k in self.data.keys()]
         if '2004086S29318' in all_keys and self.catarina:

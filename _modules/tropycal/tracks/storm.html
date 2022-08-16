@@ -2233,24 +2233,19 @@
         <span class="c1">#Follow JTWC procedure</span>
         <span class="k">else</span><span class="p">:</span>
             
-            <span class="c1">#Get storm ID &amp; corresponding data URL</span>
-            <span class="n">storm_year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">storm_year</span> <span class="o">&lt;</span> <span class="mi">2019</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Forecast data is unavailable for JTWC storms prior to 2019.&quot;</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="n">url_models</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;http://hurricanes.ral.ucar.edu/repository/data/adecks_open/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">/a</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.dat&quot;</span>
+            <span class="n">url_models_noaa</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/a</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.dat&quot;</span>
+            <span class="n">url_models_ucar</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;http://hurricanes.ral.ucar.edu/repository/data/adecks_open/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">/a</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.dat&quot;</span>
             
             <span class="c1">#Retrieve model data text</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url_models</span><span class="p">)</span>
-                <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-                <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-                <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">content</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span><span class="p">]</span>
-                <span class="n">content</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">]</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="n">read_url</span><span class="p">(</span><span class="n">url_models_noaa</span><span class="p">,</span><span class="n">split</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">subsplit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No operational model data is available for this storm.&quot;</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">content</span> <span class="o">=</span> <span class="n">read_url</span><span class="p">(</span><span class="n">url_models_ucar</span><span class="p">,</span><span class="n">split</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">subsplit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No operational model data is available for this storm.&quot;</span><span class="p">)</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span><span class="p">]</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">]</span>
 
         <span class="c1">#Iterate through every line in content:</span>
         <span class="n">forecasts</span> <span class="o">=</span> <span class="p">{}</span>
@@ -2264,11 +2259,15 @@
             <span class="k">except</span><span class="p">:</span>
                 <span class="n">basin</span><span class="p">,</span><span class="n">number</span><span class="p">,</span><span class="n">run_init</span><span class="p">,</span><span class="n">n_a</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">fhr</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">mslp</span><span class="p">,</span><span class="n">stype</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[:</span><span class="mi">11</span><span class="p">]</span>
                 <span class="n">use_wind</span> <span class="o">=</span> <span class="kc">False</span>
-
+            
+            <span class="c1">#Check init date is within storm date range</span>
+            <span class="n">run_init_dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">run_init</span><span class="p">,</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">run_init_dt</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="ow">or</span> <span class="n">run_init_dt</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span> <span class="k">continue</span>
+            
             <span class="c1">#Enter into forecast dict</span>
             <span class="k">if</span> <span class="n">model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">if</span> <span class="n">run_init</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s1">&#39;init&#39;</span><span class="p">:</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">run_init</span><span class="p">,</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">),</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;type&#39;</span><span class="p">:[],</span><span class="s1">&#39;windrad&#39;</span><span class="p">:[]</span>
+                <span class="s1">&#39;init&#39;</span><span class="p">:</span><span class="n">run_init_dt</span><span class="p">,</span><span class="s1">&#39;fhr&#39;</span><span class="p">:[],</span><span class="s1">&#39;lat&#39;</span><span class="p">:[],</span><span class="s1">&#39;lon&#39;</span><span class="p">:[],</span><span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span><span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span><span class="s1">&#39;type&#39;</span><span class="p">:[],</span><span class="s1">&#39;windrad&#39;</span><span class="p">:[]</span>
             <span class="p">}</span>
 
             <span class="c1">#Format lat &amp; lon</span>
@@ -2341,7 +2340,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ifhr</span> <span class="o">=</span> <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span>
                 <span class="n">forecasts</span><span class="p">[</span><span class="n">model</span><span class="p">][</span><span class="n">run_init</span><span class="p">][</span><span class="s1">&#39;windrad&#39;</span><span class="p">][</span><span class="n">ifhr</span><span class="p">][</span><span class="n">rad</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">neq</span><span class="p">,</span><span class="n">seq</span><span class="p">,</span><span class="n">swq</span><span class="p">,</span><span class="n">nwq</span><span class="p">]</span>
-                
+        
         <span class="c1">#Save dict locally</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span> <span class="o">=</span> <span class="n">forecasts</span>
         
@@ -2767,7 +2766,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Tropycal Developers.</p>
+    <p>&#169; Copyright 2022, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

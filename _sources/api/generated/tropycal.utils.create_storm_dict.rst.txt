@@ -1,0 +1,12 @@
+create_storm_dict
+================================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: create_storm_dict
+
+.. include:: tropycal.utils.create_storm_dict
+
+.. raw:: html
+
+      <div style='clear:both'></div>

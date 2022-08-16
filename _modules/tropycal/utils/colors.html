@@ -343,7 +343,7 @@
     <span class="k">if</span> <span class="n">colormap</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">,</span><span class="s1">&#39;category_recon&#39;</span><span class="p">]:</span>
         
         <span class="c1">#Ensure variable contains some element of surface wind</span>
-        <span class="k">if</span> <span class="n">varname</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;sfmr&#39;</span><span class="p">,</span><span class="s1">&#39;fl_to_sfc&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">varname</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;sfmr&#39;</span><span class="p">,</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="s1">&#39;fl_to_sfc&#39;</span><span class="p">]:</span>
             
             <span class="c1">#Generate contour levels</span>
             <span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="n">category_to_wind</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">)]</span><span class="o">+</span><span class="p">[</span><span class="mi">200</span><span class="p">]</span>
@@ -365,7 +365,7 @@
         
         <span class="c1">#Otherwise, default to plasma colormap</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Saffir Simpson category colors allowed only for surface winds&#39;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Saffir Simpson category colors are not allowed for this variable.&#39;</span><span class="p">)</span>
             <span class="n">colormap</span> <span class="o">=</span> <span class="s1">&#39;plasma&#39;</span>
     
     <span class="c1">#Other colormap options</span>
@@ -429,7 +429,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Tropycal Developers.</p>
+    <p>&#169; Copyright 2022, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

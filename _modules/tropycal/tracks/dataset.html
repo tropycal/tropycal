@@ -1083,13 +1083,6 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
         
-        <span class="c1">#Remove entries where requested basin doesn&#39;t appear</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">basin</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="s1">&#39;both&#39;</span><span class="p">]:</span>
-            <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">basin</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]:</span>
-                    <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-        
         <span class="c1">#Replace neumann entries</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">neumann</span><span class="p">:</span>
             
@@ -1106,7 +1099,14 @@
                 
                 <span class="c1">#replace id</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">jtwc_id</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jtwc_id</span>
-                
+        
+        <span class="c1">#Remove entries where requested basin doesn&#39;t appear</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">basin</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="s1">&#39;both&#39;</span><span class="p">]:</span>
+            <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">basin</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]:</span>
+                    <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        
         <span class="c1">#Fix cyclone Catarina, if specified &amp; requested</span>
         <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
         <span class="k">if</span> <span class="s1">&#39;2004086S29318&#39;</span> <span class="ow">in</span> <span class="n">all_keys</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">catarina</span><span class="p">:</span>
@@ -3922,7 +3922,7 @@
         
         <span class="k">return</span> <span class="n">ax</span></div>
 
-<div class="viewcode-block" id="TrackDataset.plot_summary"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.plot_summary.html#tropycal.tracks.TrackDataset.plot_summary">[docs]</a>    <span class="k">def</span> <span class="nf">plot_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="TrackDataset.plot_summary"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.TrackDataset.plot_summary.html#tropycal.tracks.TrackDataset.plot_summary">[docs]</a>    <span class="k">def</span> <span class="nf">plot_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot a summary map of past tropical cyclone and NHC potential development activity. Only valid for areas in NHC&#39;s area of responsibility at this time.</span>
@@ -3932,7 +3932,7 @@
 <span class="sd">        time : datetime</span>
 <span class="sd">            Valid time for the summary plot.</span>
 <span class="sd">        domain : str</span>
-<span class="sd">            Domain for the plot. Default is &quot;all&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
+<span class="sd">            Domain for the plot. Default is current basin. Please refer to :ref:`options-domain` for available domain options.</span>
 <span class="sd">        ax : axes, optional</span>
 <span class="sd">            Instance of axes to plot on. If none, one will be generated. Default is none.</span>
 <span class="sd">        cartopy_proj : ccrs, optional</span>
@@ -4028,6 +4028,10 @@
         <span class="c1">#Error check</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">!=</span> <span class="s1">&#39;hurdat&#39;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This function is only available for NHC&#39;s area of responsibility at this time.&quot;</span><span class="p">)</span>
+        
+        <span class="c1">#Set basin</span>
+        <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">domain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basin</span>
         
         <span class="c1">#Find closest NHC shapefile</span>
         <span class="n">shapefiles</span> <span class="o">=</span> <span class="n">get_two_archive</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
@@ -4152,6 +4156,11 @@
             <span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;prob_5day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
             <span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;risk_5day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
             
+            <span class="c1">#Fill empty observed dicts (assuming storm just formed)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">iter_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;mslp&#39;</span><span class="p">,</span><span class="s1">&#39;type&#39;</span><span class="p">]:</span>
+                    <span class="n">track_dict</span><span class="p">[</span><span class="n">iter_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">iter_key</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+            
             <span class="n">track_dict</span><span class="p">[</span><span class="s1">&#39;basin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">basin</span>
             <span class="n">storms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Storm</span><span class="p">(</span><span class="n">track_dict</span><span class="p">))</span>
             <span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forecast_dict</span><span class="p">)</span>
@@ -4190,7 +4199,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Tropycal Developers.</p>
+    <p>&#169; Copyright 2022, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

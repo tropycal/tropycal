@@ -659,7 +659,7 @@
     <span class="n">diff</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">diff</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">]</span>
 
     <span class="c1">#Continue if less than 24 hours difference</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">30</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">30</span><span class="p">:</span>
         <span class="n">two_date</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="n">diff</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">diff</span><span class="p">))]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M&#39;</span><span class="p">)</span>
 
         <span class="c1">#Retrieve NHC shapefiles for development areas</span>
@@ -683,6 +683,17 @@
                 <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#remove duplicates</span>
+                
+                <span class="c1">#Alternatively, check files for older format (generally 2014 and earlier)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span><span class="s1">&#39;points&#39;</span><span class="p">]:</span>
+                        <span class="n">shapefiles</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="k">continue</span>
+                    <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;20</span><span class="si">{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}</span><span class="s1">_gtwo.shp&#39;</span>
+                    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">search_pattern</span><span class="p">)</span>
+                    <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">members</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#remove duplicates</span>
 
                 <span class="c1">#Retrieve necessary components for shapefile</span>
                 <span class="n">members</span> <span class="o">=</span> <span class="n">tar</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
@@ -1096,6 +1107,254 @@
     <span class="c1">#Return ellipse data</span>
     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;ellipse_lon&#39;</span><span class="p">:</span><span class="n">ellipse_lon</span><span class="p">,</span> <span class="s1">&#39;ellipse_lat&#39;</span><span class="p">:</span><span class="n">ellipse_lat</span><span class="p">}</span></div>
 
+<div class="viewcode-block" id="create_storm_dict"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.create_storm_dict.html#tropycal.utils.create_storm_dict">[docs]</a><span class="k">def</span> <span class="nf">create_storm_dict</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span><span class="n">storm_name</span><span class="p">,</span><span class="n">storm_id</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span><span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a storm dict from custom user-provided data.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filepath : str</span>
+<span class="sd">        Relative or absolute file path containing custom storm data.</span>
+<span class="sd">    storm_name : str</span>
+<span class="sd">        Storm name for custom storm entry.</span>
+<span class="sd">    storm_id : str</span>
+<span class="sd">        Storm ID for custom storm entry.</span>
+<span class="sd">    </span>
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    delimiter : str</span>
+<span class="sd">        Delimiter separating columns for text files. Default is &quot;,&quot;.</span>
+<span class="sd">    time_format : str</span>
+<span class="sd">        Time format for which to convert times to Datetime objects. Default is ``&quot;%Y%m%d%H&quot;`` (e.g., ``&quot;2015070112&quot;`` for 1200 UTC 1 July 2015).</span>
+<span class="sd">    time_header : str</span>
+<span class="sd">        Name of time dimension. If not provided, function will attempt to locate it internally.</span>
+<span class="sd">    lat_header : str</span>
+<span class="sd">        Name of latitude dimension. If not provided, function will attempt to locate it internally.</span>
+<span class="sd">    lon_header : str</span>
+<span class="sd">        Name of longitude dimension. If not provided, function will attempt to locate it internally.</span>
+<span class="sd">    vmax_header : str</span>
+<span class="sd">        Name of maximum sustained wind (knots) dimension. If not provided, function will attempt to locate it internally.</span>
+<span class="sd">    mslp_header : str</span>
+<span class="sd">        Name of minimum MSLP (hPa) dimension. If not provided, function will attempt to locate it internally.</span>
+<span class="sd">    type_header : str</span>
+<span class="sd">        Name of storm type dimension. If not provided, function will attempt to locate it internally. If not part of entry data, storm type will be derived based on provided wind speed values.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary containing formatted custom storm data.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function creates a formatted storm data dictionary using custom user-provided data. The constraints for the parser are as follows:</span>
+<span class="sd">    </span>
+<span class="sd">    1. Rows that begin with a ``#`` or ``\`` are automatically ignored.</span>
+<span class="sd">    2. The first non-commented row must be a header row.</span>
+<span class="sd">    3. The header row must contain entries for time, latitude, longitude, maximum sustained wind (knots), and minimum MSLP (hPa). The order of these columns does not matter.</span>
+<span class="sd">    4. Preferred header names are &quot;date&quot;, &quot;lat&quot;, &quot;lon&quot;, &quot;vmax&quot; and &quot;mslp&quot; for the main 5 categories, but custom header names can be provided. Refer to the &quot;Other Parameters&quot; section above.</span>
+<span class="sd">    5. Providing a &quot;type&quot; column (e.g., &quot;TS&quot;, &quot;HU&quot;, &quot;EX&quot;) is not required, but is recommended especially if dealing with subtropical or non-tropical types.</span>
+<span class="sd">    </span>
+<span class="sd">    Below is an example file which we&#39;ll call ``data.txt``::</span>
+
+<span class="sd">        # The row below is a header row. The order of the columns doesn&#39;t matter.</span>
+<span class="sd">        date,lat,lon,vmax,mslp,type</span>
+<span class="sd">        2021080518,19.4,-59.9,25,1014,DB</span>
+<span class="sd">        2021080600,19.7,-60.2,25,1014,DB</span>
+<span class="sd">        2021080606,20.1,-60.5,30,1012,DB</span>
+<span class="sd">        2021080612,20.5,-60.8,30,1011,TD</span>
+<span class="sd">        2021080618,20.7,-61.3,30,1011,TD</span>
+<span class="sd">        2021080700,20.8,-61.8,35,1008,TS</span>
+<span class="sd">        2021080706,20.8,-62.6,35,1007,TS</span>
+<span class="sd">        2021080712,21.0,-63.3,40,1004,TS</span>
+<span class="sd">        2021080718,21.3,-64.1,45,1002,TS</span>
+<span class="sd">        2021080800,21.6,-65.1,55,998,TS</span>
+<span class="sd">        2021080806,22.0,-66.1,60,994,TS</span>
+<span class="sd">        2021080812,22.5,-66.9,65,989,HU</span>
+<span class="sd">        2021080818,23.2,-67.4,65,988,HU</span>
+<span class="sd">        2021080900,23.9,-67.6,60,992,TS</span>
+<span class="sd">        2021080906,25.0,-67.5,55,994,TS</span>
+<span class="sd">        2021080912,26.5,-67.1,55,993,TS</span>
+<span class="sd">        2021080918,28.0,-66.4,50,992,TS</span>
+<span class="sd">        2021081000,29.5,-65.6,50,994,TS</span>
+<span class="sd">        2021081006,31.4,-64.0,45,996,TS</span>
+<span class="sd">        2021081012,33.4,-62.0,45,997,EX</span>
+<span class="sd">        2021081018,35.4,-59.5,50,997,EX</span>
+<span class="sd">    </span>
+<span class="sd">    Reading it into the parser returns the following dict:</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; from tropycal import utils</span>
+<span class="sd">    &gt;&gt;&gt; storm_dict = utils.create_storm_dict(filename=&#39;data.txt&#39;, storm_name=&#39;Test&#39;, storm_id=&#39;AL502021&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; print(storm_dict)</span>
+<span class="sd">    {&#39;id&#39;: &#39;AL502021&#39;,</span>
+<span class="sd">     &#39;operational_id&#39;: &#39;AL502021&#39;,</span>
+<span class="sd">     &#39;name&#39;: &#39;Test&#39;,</span>
+<span class="sd">     &#39;source_info&#39;: &#39;Custom User Data&#39;,</span>
+<span class="sd">     &#39;source&#39;: &#39;custom&#39;,</span>
+<span class="sd">     &#39;date&#39;: [datetime.datetime(2021, 8, 5, 18, 0),</span>
+<span class="sd">              datetime.datetime(2021, 8, 6, 0, 0),</span>
+<span class="sd">              ....</span>
+<span class="sd">              datetime.datetime(2021, 8, 10, 12, 0),</span>
+<span class="sd">              datetime.datetime(2021, 8, 10, 18, 0)],</span>
+<span class="sd">     &#39;extra_obs&#39;: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],</span>
+<span class="sd">     &#39;special&#39;: [&#39;&#39;,&#39;&#39;,....,&#39;&#39;,&#39;&#39;],</span>
+<span class="sd">     &#39;type&#39;: [&#39;DB&#39;,&#39;DB&#39;,&#39;DB&#39;,&#39;TD&#39;,&#39;TD&#39;,&#39;TS&#39;,&#39;TS&#39;,&#39;TS&#39;,&#39;TS&#39;,&#39;TS&#39;,&#39;TS&#39;,&#39;HU&#39;,&#39;HU&#39;,&#39;TS&#39;,&#39;TS&#39;,&#39;TS&#39;,&#39;TS&#39;,&#39;TS&#39;,&#39;TS&#39;,&#39;EX&#39;,&#39;EX&#39;],</span>
+<span class="sd">     &#39;lat&#39;: [19.4,19.7,20.1,20.5,20.7,20.8,20.8,21.0,21.3,21.6,22.0,22.5,23.2,23.9,25.0,26.5,28.0,29.5,31.4,33.4,35.4],</span>
+<span class="sd">     &#39;lon&#39;: [-59.9,-60.2,-60.5,-60.8,-61.3,-61.8,-62.6,-63.3,-64.1,-65.1,-66.1,-66.9,-67.4,-67.6,-67.5,-67.1,-66.4,-65.6,-64.0,-62.0,-59.5],</span>
+<span class="sd">     &#39;vmax&#39;: [25.0,25.0,30.0,30.0,30.0,35.0,35.0,40.0,45.0,55.0,60.0,65.0,65.0,60.0,55.0,55.0,50.0,50.0,45.0,45.0,50.0],</span>
+<span class="sd">     &#39;mslp&#39;: [1014,1014,1012,1011,1011,1008,1007,1004,1002,998,994,989,988,992,994,993,992,994,996,997,997],</span>
+<span class="sd">     &#39;wmo_basin&#39;: [&#39;north_atlantic&#39;,&#39;north_atlantic&#39;,....,&#39;north_atlantic&#39;,&#39;north_atlantic&#39;],</span>
+<span class="sd">     &#39;ace&#39;: 3.7825,</span>
+<span class="sd">     &#39;basin&#39;: &#39;north_atlantic&#39;,</span>
+<span class="sd">     &#39;year&#39;: 2021,</span>
+<span class="sd">     &#39;season&#39;: 2021}</span>
+<span class="sd">    </span>
+<span class="sd">    This custom data can then be plugged into a Storm object:</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; from tropycal import tracks</span>
+<span class="sd">    &gt;&gt;&gt; storm = tracks.Storm(storm_dict)</span>
+<span class="sd">    &gt;&gt;&gt; print(storm)</span>
+<span class="sd">    &lt;tropycal.tracks.Storm&gt;</span>
+<span class="sd">    Storm Summary:</span>
+<span class="sd">        Maximum Wind:      65 knots</span>
+<span class="sd">        Minimum Pressure:  988 hPa</span>
+<span class="sd">        Start Date:        1200 UTC 06 August 2021</span>
+<span class="sd">        End Date:          0600 UTC 10 August 2021</span>
+<span class="sd">    .</span>
+<span class="sd">    Variables:</span>
+<span class="sd">        date        (datetime) [2021-08-05 18:00:00 .... 2021-08-10 18:00:00]</span>
+<span class="sd">        extra_obs   (int32) [0 .... 0]</span>
+<span class="sd">        special     (str) [ .... ]</span>
+<span class="sd">        type        (str) [DB .... EX]</span>
+<span class="sd">        lat         (float64) [19.4 .... 35.4]</span>
+<span class="sd">        lon         (float64) [-59.9 .... -59.5]</span>
+<span class="sd">        vmax        (float64) [25.0 .... 50.0]</span>
+<span class="sd">        mslp        (float64) [1014.0 .... 997.0]</span>
+<span class="sd">        wmo_basin   (str) [north_atlantic .... north_atlantic]</span>
+<span class="sd">    .</span>
+<span class="sd">    More Information:</span>
+<span class="sd">        id:              AL502021</span>
+<span class="sd">        operational_id:  AL502021</span>
+<span class="sd">        name:            Test</span>
+<span class="sd">        source_info:     Custom User Data</span>
+<span class="sd">        source:          custom</span>
+<span class="sd">        ace:             3.8</span>
+<span class="sd">        basin:           north_atlantic</span>
+<span class="sd">        year:            2021</span>
+<span class="sd">        season:          2021</span>
+<span class="sd">        realtime:        False</span>
+<span class="sd">        invest:          False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#Pop kwargs</span>
+    <span class="n">time_header</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;time_header&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">lat_header</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;lat_header&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">lon_header</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;lon_header&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">vmax_header</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;vmax_header&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">mslp_header</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;mslp_header&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">type_header</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type_header&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+    
+    <span class="c1">#Check for file extension</span>
+    <span class="n">netcdf</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">filepath</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;.nc&#39;</span> <span class="k">else</span> <span class="kc">False</span>
+    
+    <span class="c1">#Create empty dict</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span><span class="n">storm_id</span><span class="p">,</span>
+            <span class="s1">&#39;operational_id&#39;</span><span class="p">:</span><span class="n">storm_id</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="n">storm_name</span><span class="p">,</span>
+            <span class="s1">&#39;source_info&#39;</span><span class="p">:</span><span class="s1">&#39;Custom User Data&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;source&#39;</span><span class="p">:</span><span class="s1">&#39;custom&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;date&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;extra_obs&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;special&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;lat&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;lon&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;vmax&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;mslp&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;wmo_basin&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;ace&#39;</span><span class="p">:</span><span class="mf">0.0</span><span class="p">}</span>
+
+    <span class="c1">#Parse text file</span>
+    <span class="k">if</span> <span class="n">netcdf</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        
+        <span class="c1">#Store header data</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="c1">#Read file content</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;#&#39;</span><span class="p">,</span><span class="s1">&#39;/&#39;</span><span class="p">]:</span> <span class="k">continue</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            
+            <span class="c1">#Split line</span>
+            <span class="k">if</span> <span class="n">delimiter</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">]:</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">lineArray</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">delimiter</span><span class="p">)</span>
+            <span class="n">lineArray</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">lineArray</span><span class="p">]</span>
+            
+            <span class="c1">#Determine header</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">lineArray</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">time_header</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;valid_time&#39;</span><span class="p">,</span><span class="s1">&#39;valid_date&#39;</span><span class="p">]:</span>
+                        <span class="n">header</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">,</span><span class="n">lineArray</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span>
+                    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="n">lat_header</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;lat_0&#39;</span><span class="p">]:</span>
+                        <span class="n">header</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">,</span><span class="n">lineArray</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span>
+                    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="n">lon_header</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span><span class="s1">&#39;lon_0&#39;</span><span class="p">]:</span>
+                        <span class="n">header</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">,</span><span class="n">lineArray</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span>
+                    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="n">vmax_header</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;wind&#39;</span><span class="p">,</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="s1">&#39;max_wind&#39;</span><span class="p">,</span><span class="s1">&#39;wind_speed&#39;</span><span class="p">]:</span>
+                        <span class="n">header</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">,</span><span class="n">lineArray</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span>
+                    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="n">mslp_header</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">,</span><span class="s1">&#39;slp&#39;</span><span class="p">,</span><span class="s1">&#39;min_mslp&#39;</span><span class="p">,</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span><span class="s1">&#39;pres&#39;</span><span class="p">,</span><span class="s1">&#39;minimum_mslp&#39;</span><span class="p">]:</span>
+                        <span class="n">header</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">,</span><span class="n">lineArray</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span>
+                    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="n">type_header</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">,</span><span class="s1">&#39;storm_type&#39;</span><span class="p">]:</span>
+                        <span class="n">header</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">,</span><span class="n">lineArray</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="ow">in</span> <span class="n">header</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;mslp&#39;</span><span class="p">]]</span>
+                <span class="k">if</span> <span class="kc">False</span> <span class="ow">in</span> <span class="n">found</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Data must have columns for &#39;date&#39;, &#39;lat&#39;, &#39;lon&#39;, &#39;vmax&#39; and &#39;mslp&#39;.&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+                
+            <span class="c1">#Enter standard data into dict</span>
+            <span class="n">enter_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">lineArray</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]],</span><span class="n">time_format</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">enter_date</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error: Multiple entries detected for the same valid time.&quot;</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">enter_date</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lineArray</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lat&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]))</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lineArray</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lon&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]))</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lineArray</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vmax&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]))</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lineArray</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mslp&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]))</span>
+            
+            <span class="c1">#Derive storm type if needed</span>
+            <span class="k">if</span> <span class="s1">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">header</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">temp_type</span> <span class="o">=</span> <span class="n">lineArray</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="k">if</span> <span class="n">temp_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;TY&#39;</span><span class="p">,</span><span class="s1">&#39;ST&#39;</span><span class="p">]:</span> <span class="n">temp_type</span> <span class="o">=</span> <span class="s1">&#39;HU&#39;</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_type</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_storm_type</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="kc">False</span><span class="p">))</span>
+            
+            <span class="c1">#Derive ACE</span>
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">STANDARD_HOURS</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">NAMED_TROPICAL_STORM_TYPES</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">accumulated_cyclone_energy</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            
+            <span class="c1">#Derive basin</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_basin</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">))</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;basin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_basin</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;basin&#39;</span><span class="p">]))</span>
+            
+            <span class="c1">#Other entries</span>
+            <span class="n">extra_obs</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">STANDARD_HOURS</span> <span class="k">else</span> <span class="mi">1</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;extra_obs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extra_obs</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;special&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        
+        <span class="c1">#Add other info</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">year</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">year</span>
+        
+        <span class="c1">#Return dict</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+    
+
 <span class="c1">#===========================================================================================================</span>
 <span class="c1"># Private utilities</span>
 <span class="c1"># These are primarily intended to be used internally. Do not add these to documentation.</span>
@@ -1459,7 +1718,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2021, Tropycal Developers.</p>
+    <p>&#169; Copyright 2022, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

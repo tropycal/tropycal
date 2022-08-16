@@ -2155,24 +2155,19 @@ class Storm:
         #Follow JTWC procedure
         else:
             
-            #Get storm ID & corresponding data URL
-            storm_year = self.dict['year']
-            if storm_year < 2019:
-                msg = "Forecast data is unavailable for JTWC storms prior to 2019."
-                raise RuntimeError(msg)
-            url_models = f"http://hurricanes.ral.ucar.edu/repository/data/adecks_open/{self.year}/a{self.id.lower()}.dat"
+            url_models_noaa = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/a{self.id.lower()}.dat"
+            url_models_ucar = f"http://hurricanes.ral.ucar.edu/repository/data/adecks_open/{self.year}/a{self.id.lower()}.dat"
             
             #Retrieve model data text
             try:
-                f = urllib.request.urlopen(url_models)
-                content = f.read()
-                content = content.decode("utf-8")
-                content = content.split("\n")
-                content = [i.split(",") for i in content]
-                content = [i for i in content if len(i) > 10]
-                f.close()
+                content = read_url(url_models_noaa,split=True,subsplit=False)
             except:
-                raise RuntimeError("No operational model data is available for this storm.")
+                try:
+                    content = read_url(url_models_ucar,split=True,subsplit=False)
+                except:
+                    raise RuntimeError("No operational model data is available for this storm.")
+            content = [i.split(",") for i in content]
+            content = [i for i in content if len(i) > 10]
 
         #Iterate through every line in content:
         forecasts = {}
@@ -2186,11 +2181,15 @@ class Storm:
             except:
                 basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
                 use_wind = False
-
+            
+            #Check init date is within storm date range
+            run_init_dt = dt.strptime(run_init,'%Y%m%d%H')
+            if run_init_dt < self.dict['date'][0]-timedelta(hours=6) or run_init_dt > self.dict['date'][-1]+timedelta(hours=6): continue
+            
             #Enter into forecast dict
             if model not in forecasts.keys(): forecasts[model] = {}
             if run_init not in forecasts[model].keys(): forecasts[model][run_init] = {
-                'init':dt.strptime(run_init,'%Y%m%d%H'),'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],'windrad':[]
+                'init':run_init_dt,'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],'windrad':[]
             }
 
             #Format lat & lon
@@ -2263,7 +2262,7 @@ class Storm:
             else:
                 ifhr = forecasts[model][run_init]['fhr'].index(fhr)
                 forecasts[model][run_init]['windrad'][ifhr][rad]=[neq,seq,swq,nwq]
-                
+        
         #Save dict locally
         self.forecast_dict = forecasts
         

@@ -1005,13 +1005,6 @@ class TrackDataset:
             if len(self.data[key]['lat']) == 0:
                 del(self.data[key])
         
-        #Remove entries where requested basin doesn't appear
-        if self.basin not in ['all','both']:
-            all_keys = [k for k in self.data.keys()]
-            for key in all_keys:
-                if self.basin not in self.data[key]['wmo_basin']:
-                    del(self.data[key])
-        
         #Replace neumann entries
         if self.neumann:
             
@@ -1028,7 +1021,14 @@ class TrackDataset:
                 
                 #replace id
                 self.data[jtwc_id]['id'] = jtwc_id
-                
+        
+        #Remove entries where requested basin doesn't appear
+        if self.basin not in ['all','both']:
+            all_keys = [k for k in self.data.keys()]
+            for key in all_keys:
+                if self.basin not in self.data[key]['wmo_basin']:
+                    del(self.data[key])
+        
         #Fix cyclone Catarina, if specified & requested
         all_keys = [k for k in self.data.keys()]
         if '2004086S29318' in all_keys and self.catarina:
@@ -3844,7 +3844,7 @@ class TrackDataset:
         
         return ax
 
-    def plot_summary(self,time,domain='all',ax=None,cartopy_proj=None,save_path=None,**kwargs):
+    def plot_summary(self,time,domain=None,ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Plot a summary map of past tropical cyclone and NHC potential development activity. Only valid for areas in NHC's area of responsibility at this time.
@@ -3854,7 +3854,7 @@ class TrackDataset:
         time : datetime
             Valid time for the summary plot.
         domain : str
-            Domain for the plot. Default is "all". Please refer to :ref:`options-domain` for available domain options.
+            Domain for the plot. Default is current basin. Please refer to :ref:`options-domain` for available domain options.
         ax : axes, optional
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs, optional
@@ -3950,6 +3950,10 @@ class TrackDataset:
         #Error check
         if self.source != 'hurdat':
             raise RuntimeError("This function is only available for NHC's area of responsibility at this time.")
+        
+        #Set basin
+        if domain == None:
+            domain = self.basin
         
         #Find closest NHC shapefile
         shapefiles = get_two_archive(time)
@@ -4073,6 +4077,11 @@ class TrackDataset:
             track_dict['risk_2day'] = 'N/A'
             track_dict['prob_5day'] = 'N/A'
             track_dict['risk_5day'] = 'N/A'
+            
+            #Fill empty observed dicts (assuming storm just formed)
+            if len(track_dict['lat']) == 0:
+                for iter_key in ['lat','lon','vmax','mslp','type']:
+                    track_dict[iter_key] = [forecast_dict[iter_key][0]]
             
             track_dict['basin'] = storm.basin
             storms.append(Storm(track_dict))

@@ -581,7 +581,7 @@ def get_two_archive(time):
     diff = [i for i in diff if i >= 0]
 
     #Continue if less than 24 hours difference
-    if np.nanmin(diff) <= 30:
+    if len(diff) > 0 and np.nanmin(diff) <= 30:
         two_date = dates[diff.index(np.nanmin(diff))].strftime('%Y%m%d%H%M')
 
         #Retrieve NHC shapefiles for development areas
@@ -605,6 +605,17 @@ def get_two_archive(time):
                 files = []
                 for file in filelist:
                     if file not in files: files.append(file.split(".shp")[0]) #remove duplicates
+                
+                #Alternatively, check files for older format (generally 2014 and earlier)
+                if len(files) == 0:
+                    if name in ['lines','points']:
+                        shapefiles[name] = None
+                        continue
+                    search_pattern = f'20{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}{nums}_gtwo.shp'
+                    pattern = re.compile(search_pattern)
+                    filelist = pattern.findall(members)
+                    for file in filelist:
+                        if file not in files: files.append(file.split(".shp")[0]) #remove duplicates
 
                 #Retrieve necessary components for shapefile
                 members = tar.namelist()

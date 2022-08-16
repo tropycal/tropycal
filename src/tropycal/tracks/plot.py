@@ -2273,6 +2273,9 @@ None,prop={},map_prop={}):
                     color = get_colors_sshws(storm.vmax[-1])
                     if category == "0": category = 'S'
                     if category == "-1": category = 'D'
+                    if np.isnan(storm.vmax[-1]):
+                        category = 'U'
+                        color = 'w'
                     
                     if storm_prop['fillcolor'] == 'none':
                         self.ax.plot(storm.lon[-1],storm.lat[-1],'o',ms=storm_prop['ms'],color='none',mec='k',mew=3.0,transform=ccrs.PlateCarree(),zorder=20)
@@ -2330,16 +2333,19 @@ None,prop={},map_prop={}):
                                 if forecast_dict['fhr'][idx]/24.0 > cone_prop['days']: continue
                                 if cone_prop['ms'] == 0: continue
                                 color = get_colors_sshws(forecast_dict['vmax'][idx])
+                                if np.isnan(forecast_dict['vmax'][idx]): color = 'w'
                                 if cone_prop['fillcolor'] != 'category': color = cone_prop['fillcolor']
                                 
                                 marker = 'o'
                                 if forecast_dict['type'][idx] not in constants.TROPICAL_STORM_TYPES: marker = '^'
+                                if np.isnan(forecast_dict['vmax'][idx]): marker = 'o'
                                 self.ax.plot(forecast_dict['lon'][idx],forecast_dict['lat'][idx],marker,ms=cone_prop['ms'],mfc=color,mec='k',zorder=7,transform=ccrs.PlateCarree(),clip_on=True)
 
                                 if cone_prop['label_category'] == True and marker == 'o':
                                     category = str(wind_to_category(forecast_dict['vmax'][idx]))
                                     if category == "0": category = 'S'
                                     if category == "-1": category = 'D'
+                                    if np.isnan(forecast_dict['vmax'][idx]): category = 'U'
 
                                     color = mcolors.to_rgb(color)
                                     red,green,blue = color

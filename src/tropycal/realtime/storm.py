@@ -609,6 +609,7 @@ class RealtimeStorm(Storm):
                             if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
                                 stype = get_storm_type(vmax,False)
                             if stype == 'TY': stype = 'HU'
+                            if stype == 'ST': stype = 'HU'
                             forecasts['type'].append(stype)
                     else:
                         ifhr = forecasts['fhr'].index(fhr)

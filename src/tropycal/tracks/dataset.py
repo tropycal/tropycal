@@ -3976,7 +3976,6 @@ class TrackDataset:
             diff = [(time-i).total_seconds()/3600 for i in self.data[key]['date']]
             diff_maxes = [i for i in diff if i >= 0]
             idx = diff.index(np.nanmin(diff_maxes))
-            if self.data[key]['type'][idx] not in constants.TROPICAL_STORM_TYPES: continue
             
             #Get forecast
             storm = self.get_storm(key)
@@ -3996,6 +3995,10 @@ class TrackDataset:
             closest_idx = np.abs(time_diff).argmin()
             forecast_dict = nhc_forecasts[nhc_forecast_init[closest_idx]]
             advisory_num = closest_idx+1
+            
+            #Second filter
+            if np.nanmin(time_diff) > 0: continue
+            if time_diff[closest_idx] > (9.0/24.0): continue
 
             #Get observed track as per NHC analyses
             track_dict = {'lat':[],'lon':[],'vmax':[],'type':[],'mslp':[],'date':[],'extra_obs':[],'special':[],'ace':0.0}

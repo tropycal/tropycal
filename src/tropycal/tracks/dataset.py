@@ -455,7 +455,7 @@ class TrackDataset:
                         current_year_id = 2
                 
             #Estimate operational storm ID (which sometimes differs from HURDAT2 ID)
-            blocked_list = []
+            blocked_list = ['EP072020']
             potential_tcs = ['AL102017']
             increment_but_pass = []
             

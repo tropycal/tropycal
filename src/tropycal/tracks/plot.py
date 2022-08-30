@@ -2315,6 +2315,9 @@ None,prop={},map_prop={}):
                         forecast_dict = forecasts[storm_idx]
                         
                         try:
+                            #Fix longitudes for cone if crossing dateline
+                            if np.nanmax(forecast_dict['lon']) > 165 or np.nanmin(forecast_dict['lon']) < -165:
+                                forecast_dict['lon'] = [i if i > 0 else i + 360.0 for i in forecast_dict['lon']]
                             cone = generate_nhc_cone(forecast_dict,storm.basin,cone_days=cone_prop['days'])
 
                             #Plot cone

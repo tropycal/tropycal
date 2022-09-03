@@ -131,6 +131,8 @@ The following properties are available only for the ``tropycal.tracks.TrackDatas
 
    * - Property
      - Description
+   * - plot_values
+     - Boolean for whether to plot label values for each gridpoint. Default is False.
    * - smooth
      - Number (in units of sigma) to smooth the data using scipy's gaussian filter. Default is 0 (no smoothing).
    * - cmap

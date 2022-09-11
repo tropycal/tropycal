@@ -359,7 +359,7 @@ class RealtimeRecon():
         
         return data
     
-    def get_hdobs_realtime(self,basin,aircraft,decoded=False):
+    def get_hdobs_realtime(self,basin,aircraft,decoded=True):
         
         r"""
         Retrieve the latest 10-minute HDOBs directly from NHC.
@@ -371,7 +371,7 @@ class RealtimeRecon():
         aircraft : str
             Type of aircraft for recon mission. Available options are ``"noaa"`` or ``"usaf"`` (US Air Force).
         decoded : bool, optional
-            If False (default), returns a Pandas DataFrame of all HDOBs. If True, returns a dictionary with decoded HDOBs highlights.
+            If False, returns a Pandas DataFrame of all HDOBs. If True (default), returns a dictionary with decoded HDOBs highlights.
 
         Returns
         -------
@@ -421,7 +421,9 @@ class RealtimeRecon():
                 hdob_content.append(line)
             if line == '</pre>': break
         df = decode_hdob('\n'.join(hdob_content),mission_row=2)
-
+        
+        if decoded == False: return df
+        
         #Parse data
         array = [val for i,val in enumerate(df['sfmr']) if 'sfmr' not in df['flag'].values[i]]
         max_sfmr = np.nanmax(array) if all_nan(array) == False else np.nan

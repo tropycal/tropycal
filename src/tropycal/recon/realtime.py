@@ -110,16 +110,19 @@ class RealtimeRecon():
             content_split = content.split("\n")
 
             #Construct mission ID
-            mission_id = '-'.join((content_split[3].replace("  "," ")).split(" ")[:3])
-            if mission_id not in self.missions:
-                self.missions[mission_id] = {'hdobs':decode_hdob(content),
-                                        'vdms':[],
-                                        'dropsondes':[],
-                                        'aircraft':mission_id.split("-")[0],
-                                        'storm_name':mission_id.split("-")[2]
-                                       }
-            else:
-                self.missions[mission_id]['hdobs'] = pd.concat([self.missions[mission_id]['hdobs'],decode_hdob(content)])
+            try:
+                mission_id = '-'.join((content_split[3].replace("  "," ")).split(" ")[:3])
+                if mission_id not in self.missions:
+                    self.missions[mission_id] = {'hdobs':decode_hdob(content),
+                                            'vdms':[],
+                                            'dropsondes':[],
+                                            'aircraft':mission_id.split("-")[0],
+                                            'storm_name':mission_id.split("-")[2]
+                                           }
+                else:
+                    self.missions[mission_id]['hdobs'] = pd.concat([self.missions[mission_id]['hdobs'],decode_hdob(content)])
+            except:
+                pass
 
         #Retrieve VDMs
         for file in files['vdms']:

@@ -576,10 +576,98 @@ def time_series_plot(varname):
 # Decoding HDOBs
 #=======================================================================================================
 
+def decode_hdob_2005_noaa(content,strdate,mission_row=0):
+    
+    r"""
+    Function for decoding HDOBs in the format between 2002 and 2005, for NOAA aircraft.
+    """
+    
+    def check_error(string):
+        if '/' in string: return True
+        if ';' in string: return True
+        if 'off' in string: return True
+        return False
+    
+    #Split items by lines
+    temp = [i.split() for i in content.split('\n')]
+    temp = [i for j,i in enumerate(temp) if len(i)>0]
+    items = []
+    found_sxxx = False
+    for j,i in enumerate(temp):
+        if j>mission_row and len(i[0]) >= 2 and i[0][:2] == "$$": break
+        if j>mission_row+12 and len(i[0]) >= 3 and i[0][:3] == "000": break #avoid reading in extra set of HDOBs
+        if j<=mission_row:
+            if len(i[0]) >= 4 and i[0][:3] in ["URN","URP"]:
+                if found_sxxx == False:
+                    found_sxxx = True
+                    items.append(i)
+            else:
+                items.append(i)
+        if j>mission_row and i[0][0].isdigit() and len(i) > 8:
+            items.append(i)
+    
+    #Parse dates
+    data = {}
+    data['time'] = [dt.strptime(strdate+i[0],'%Y%m%d%H%M%S') for i in items[3:]]
+    if data['time'][0].hour>12 and data['time'][-1].hour<12:
+        data['time'] = [t+timedelta(days=[0,1][t.hour<12]) for t in data['time']]
+
+    #Derive plane altitude using D-value
+    altitude = []
+    for i in items[3:]:
+        if '/' in i[3] or '/' in i[4]:
+            altitude.append(np.nan)
+        else:
+            pres_altitude = int(i[3])
+            d_value = int(i[4][1:])*-1 if i[4][0] == '-' else int(i[4][1:])
+            altitude.append(pres_altitude+d_value)
+    data['plane_z'] = altitude
+    
+    #Parse full data
+    data['lat'] = [np.nan if check_error(i[1]) else round((float(i[1][:-2])+float(i[1][-2:])/60),2) \
+                   for i in items[3:]]
+    data['lon'] = [np.nan if check_error(i[2]) else round((float(i[2][:-2])+float(i[2][-2:])/60),2)*-1 \
+                   for i in items[3:]]
+    data['temp'] = [np.nan if check_error(i[6]) else round(float(i[7])*0.1,1) for i in items[3:]]
+    data['dwpt'] = [np.nan if check_error(i[7]) else round(float(i[8])*0.1,1) for i in items[3:]]
+    data['wdir'] = [np.nan if check_error(i[5][:3]) else round(float(i[5][:3]),0) for i in items[3:]]
+    data['wspd'] = [np.nan if check_error(i[5][3:]) else round(float(i[5][3:]),0) for i in items[3:]]
+    data['pkwnd'] = [np.nan if check_error(i[8]) else round(float(i[8][3:]),0) for i in items[3:]]
+    
+    #Fix erroneous data
+    data['wspd'] = [np.nan if i > 300 else i for i in data['wspd']]
+    data['pkwnd'] = [np.nan if i > 300 else i for i in data['pkwnd']]
+    
+    #Data not available prior to 2007
+    data['plane_p'] = [np.nan for i in items[3:]]
+    data['p_sfc'] = [np.nan for i in items[3:]]
+    data['sfmr'] = [np.nan for i in items[3:]]
+    data['rain'] = [np.nan for i in items[3:]]
+    data['flag'] = [[] for i in items[3:]]
+
+    #Ignore entries with lat/lon of 0
+    orig_lat = np.copy(data['lat'])
+    orig_lon = np.copy(data['lon'])
+    for key in data.keys():
+        data[key] = [data[key][i] for i in range(len(orig_lat)) if orig_lat[i] != 0 and orig_lon[i] != 0 and np.isnan(orig_lat[i]) == False and np.isnan(orig_lat[i]) == False]
+
+    #Identify mission number and ID
+    content_split = content.split("\n")
+    mission_id = '-'.join((content_split[mission_row].replace("  "," ")).split(" ")[:3])
+    missionname = (mission_id.split("-")[1])[:2]
+    data['mission'] = [missionname[:2]]*len(data['time'])
+    data['mission_id'] = [mission_id]*len(data['time'])
+
+    #remove nan's for lat/lon coordinates
+    return_data = pd.DataFrame.from_dict(data).reset_index()
+    return_data = return_data.dropna(subset=['lat', 'lon'])
+
+    return return_data
+
 def decode_hdob_2006(content,strdate,mission_row=3):
     
     r"""
-    Function for decoding HDOBs in the format between 2006 and early 2007.
+    Function for decoding HDOBs in the format between 2006 and early 2007. This also serves as the USAF decoder between 2002 and 2005.
     """
     
     def check_error(string):
@@ -604,7 +692,14 @@ def decode_hdob_2006(content,strdate,mission_row=3):
             else:
                 items.append(i)
         if j>mission_row and i[0][0].isdigit() and len(i) > 8:
-            items.append(i)
+            if int(strdate[0:4]) >= 2006:
+                items.append(i)
+            else:
+                if '.' in i[0] and i[0][-1] != '.' and i[0][-2] != '.':
+                    new_i = [i[0].split(".")[0]+'.',i[0].split(".")[1]] + i[1:]
+                else:
+                    new_i = i
+                items.append(new_i)
     
     #Parse dates
     missionname = items[2][1]
@@ -620,7 +715,7 @@ def decode_hdob_2006(content,strdate,mission_row=3):
             altitude.append(np.nan)
         else:
             pres_altitude = int(i[3])
-            d_value = int(i[4][1:])*-1 if i[4] == '5' else int(i[4][1:])
+            d_value = int(i[4][1:])*-1 if i[4][0] == '5' else int(i[4][1:])
             altitude.append(pres_altitude+d_value)
     data['plane_z'] = altitude
     
@@ -641,6 +736,10 @@ def decode_hdob_2006(content,strdate,mission_row=3):
     data['sfmr'] = [np.nan for i in items[3:]]
     data['rain'] = [np.nan for i in items[3:]]
     data['flag'] = [[] for i in items[3:]]
+    
+    #Fix erroneous data
+    data['wspd'] = [np.nan if i > 300 else i for i in data['wspd']]
+    data['pkwnd'] = [np.nan if i > 300 else i for i in data['pkwnd']]
 
     #Ignore entries with lat/lon of 0
     orig_lat = np.copy(data['lat'])
@@ -651,12 +750,14 @@ def decode_hdob_2006(content,strdate,mission_row=3):
     #Identify mission number and ID
     content_split = content.split("\n")
     mission_id = '-'.join((content_split[mission_row].replace("  "," ")).split(" ")[:3])
+    if int(strdate[0:4]) < 2006: missionname = (mission_id.split("-")[1])[:2]
     data['mission'] = [missionname[:2]]*len(data['time'])
     data['mission_id'] = [mission_id]*len(data['time'])
 
     #remove nan's for lat/lon coordinates
     return_data = pd.DataFrame.from_dict(data).reset_index()
     return_data = return_data.dropna(subset=['lat', 'lon'])
+    if np.nanmax(data['lat']) < 0: return_data = {}
 
     return return_data 
     
@@ -705,6 +806,8 @@ def decode_hdob(content,mission_row=3):
     
     #Fix erroneous SFMR
     data['sfmr'] = [np.nan if i > 300 else i for i in data['sfmr']]
+    data['wspd'] = [np.nan if i > 300 else i for i in data['wspd']]
+    data['pkwnd'] = [np.nan if i > 300 else i for i in data['pkwnd']]
 
     #Ignore entries with lat/lon of 0
     orig_lat = np.copy(data['lat'])
@@ -754,8 +857,17 @@ def decode_vdm(content,date):
     lines = content.split('\n')
     RemarksNext = False
     LonNext = False
-    FORMAT = 1 if date.year<2018 else 2
     missionname = ''
+    
+    
+    if date.year >= 2018:
+        FORMAT = 1
+    elif date.year >= 1999:
+        FORMAT = 2
+    elif date.year == 1998:
+        FORMAT = 3
+    else:
+        FORMAT = 4
 
     def isNA(x):
         if x == 'NA':
@@ -796,10 +908,10 @@ def decode_vdm(content,date):
 
         if line[:2] == 'B.':
             info = line[3:].split()
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['lat'] = np.round((float(info[0])+float(info[2])/60)*[-1,1][info[4]=='N'],2)
                 LonNext = True
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['lat'] = float(info[0])*[-1,1][info[2]=='N']
                 data['lon'] = float(info[3])*[-1,1][info[5]=='E']
 
@@ -810,31 +922,31 @@ def decode_vdm(content,date):
 
         if line[:2] == 'D.':
             info = line[3:].split()*5
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Estimated Maximum Surface Wind Inbound (kt)'] = isNA(info[0])
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Minimum Sea Level Pressure (hPa)']=isNA(info[-2])                    
 
         if line[:2] == 'E.':
             info = line[3:].split()*5
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Dropsonde Surface Wind Speed at Center (kt)']=isNA(info[2])
                 data['Dropsonde Surface Wind Direction at Center (deg)']=isNA(info[0])
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Location of Estimated Maximum Surface Wind Inbound']=isNA(line[3:])
 
         if line[:2] == 'F.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Maximum Flight Level Wind Inbound']=isNA(info)
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Eye character']=isNA(info)
 
         if line[:2] == 'G.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Location of the Maximum Flight Level Wind Inbound']=isNA(info)
-            if FORMAT==2:
+            if FORMAT == 1:
                 if isNA(info) == np.nan:
                     data.update({'Eye Shape':np.nan,'Eye Diameter (nmi)':np.nan})
                 else:
@@ -860,42 +972,50 @@ def decode_vdm(content,date):
 
         if line[:2] == 'H.':
             info = line[3:].split()*5
-            if FORMAT==1:
-                data['Minimum Sea Level Pressure (hPa)']=isNA(info[-2]) 
-            if FORMAT==2:
+            if FORMAT >= 3:
+                info = (line[3:].split("MB")[0]).split()
+                if info[0] == '/':
+                    data['Minimum Sea Level Pressure (hPa)']=np.nan
+                else:
+                    parsed_mslp = info[-1]
+                    if '/' in parsed_mslp: parsed_mslp = parsed_mslp.split("/")[1]
+                    data['Minimum Sea Level Pressure (hPa)']=isNA(parsed_mslp)
+            elif FORMAT == 2:
+                data['Minimum Sea Level Pressure (hPa)']=isNA(info[-2])
+            elif FORMAT == 1:
                 data['Estimated Maximum Surface Wind Inbound (kt)']=isNA(info[0])
 
         if line[:2] == 'I.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Maximum Flight Level Temp Outside Eye (C)']=isNA(info.split()[0])
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Location & Time of the Estimated Maximum Surface Wind Inbound']=isNA(info)
 
         if line[:2] == 'J.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Maximum Flight Level Temp Inside Eye (C)']=isNA(info.split()[0])
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Maximum Flight Level Wind Inbound (kt)']=isNA(info)
 
         if line[:2] == 'K.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Dew Point Inside Eye (C)']=isNA(info.split()[0])
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Location & Time of the Maximum Flight Level Wind Inbound']=isNA(info)
 
         if line[:2] == 'L.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Eye character']=isNA(info)
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Estimated Maximum Surface Wind Outbound (kt)']=isNA(info)
 
         if line[:2] == 'M.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 if isNA(info) == np.nan:
                     data.update({'Eye Shape':np.nan,'Eye Diameter (nmi)':np.nan})
                 else:
@@ -914,57 +1034,66 @@ def decode_vdm(content,date):
                             data.update({f'Eye Diameter {i+1} (nmi)':float(s) for i,s in enumerate(size.split(' ')[1:])})
                     elif shape=='E':
                         einfo = size.split('/')
-                        data.update({'Eye Shape':'elliptical','Orientation':float(einfo[0])*10,\
-                                     'Eye Major Axis (nmi)':float(einfo[1]),'Eye Minor Axis (nmi)':float(einfo[1])})
+                        try:
+                            data.update({'Eye Shape':'elliptical','Orientation':float(einfo[0])*10,
+                                         'Eye Major Axis (nmi)':float(einfo[1]),'Eye Minor Axis (nmi)':float(einfo[1])})
+                        except:
+                            data.update({'Eye Shape':'elliptical','Orientation':np.nan,
+                                         'Eye Major Axis (nmi)':np.nan,'Eye Minor Axis (nmi)':np.nan})
                     else:
                         data.update({'Eye Shape':np.nan,'Eye Diameter (nmi)':np.nan})
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Location & Time of the Estimated Maximum Surface Wind Outbound']=isNA(info)
 
         if line[:2] == 'N.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Maximum Flight Level Wind Outbound (kt)']=isNA(info)
 
         if line[:2] == 'O.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Location & Time of the Maximum Flight Level Wind Outbound']=isNA(info)
 
         if line[:2] == 'P.':
             info = line[3:]
-            if FORMAT==1:
+            if FORMAT >= 2:
                 data['Aircraft'] = info.split()[0]
                 missionname = info.split()[1]
                 data['mission'] = missionname[:2]
                 data['Remarks'] = ''
                 RemarksNext = True
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Maximum Flight Level Temp & Pressure Altitude Outside Eye']=isNA(info)
 
         if line[:2] == 'Q.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Maximum Flight Level Temp & Pressure Altitude Inside Eye']=isNA(info)
+            if FORMAT == 3:
+                data['Aircraft'] = info.split()[0]
+                missionname = info.split()[1]
+                data['mission'] = missionname[:2]
+                data['Remarks'] = ''
 
         if line[:2] == 'R.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Dewpoint Temp (collected at same location as temp inside eye)']=isNA(info)
 
         if line[:2] == 'S.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Fix']=isNA(info)
 
         if line[:2] == 'T.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Accuracy']=isNA(info)
 
         if line[:2] == 'U.':
             info = line[3:]
-            if FORMAT==2:
+            if FORMAT == 1:
                 data['Aircraft'] = info.split()[0]
                 missionname = info.split()[1]
                 data['mission'] = missionname[:2]
@@ -972,9 +1101,17 @@ def decode_vdm(content,date):
                 RemarksNext = True
 
     content_split = content.split("\n")
-    if FORMAT == 1:
-        mission_id = ['-'.join(i.split("P. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "P."][0]
+    if FORMAT == 4:
+        mission_id = '-'.join(content_split[1].replace("  "," ").split(" ")[:3])
+        data['Aircraft'] = mission_id.split("-")[0]
+        missionname = mission_id.split("-")[1]
+        data['mission'] = missionname[:2]
+        data['Remarks'] = ''
+    elif FORMAT == 3:
+        mission_id = ['-'.join(i.split("Q. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "Q."][0]
     elif FORMAT == 2:
+        mission_id = ['-'.join(i.split("P. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "P."][0]
+    elif FORMAT == 1:
         mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
     data['mission_id'] = mission_id
     
@@ -1008,10 +1145,13 @@ def decode_dropsonde(content,date):
         sections[k] = tmp
 
     def _time(timestr):
-        if timestr < f'{date:%H%M}':
-            return date.replace(hour=int(timestr[:2]),minute=int(timestr[2:4]))
-        else:
-            return date.replace(hour=int(timestr[:2]),minute=int(timestr[2:4]))-timedelta(days=1)
+        try:
+            if timestr < f'{date:%H%M}':
+                return date.replace(hour=int(timestr[:2]),minute=int(timestr[2:4]))
+            else:
+                return date.replace(hour=int(timestr[:2]),minute=int(timestr[2:4]))-timedelta(days=1)
+        except:
+            return None
 
     def _tempdwpt(item):
         if '/' in item[:3]:
@@ -1079,6 +1219,8 @@ def decode_dropsonde(content,date):
                                'BOTTOMlat','BOTTOMlon','BOTTOMtime',\
                                'MBLdir','MBLspd','DLMdir','DLMspd',\
                                'WL150dir','WL150spd','top','LSThgt','software','levels')}
+    data['TOPtime'] = None
+    data['BOTTOMtime'] = None
 
     for sec,items in sections.items():
 
@@ -1124,19 +1266,19 @@ def decode_dropsonde(content,date):
                 data['TOPlat'] = round(float(tmp[:4])*.01*[-1,1][tmp[4]=='N'],2)
                 data['TOPlon'] = round(float(tmp[5:10])*.01*[-1,1][tmp[10]=='E'],2)
                 tmp = items[items.index('REL')+2]
-                data['TOPtime'] = _time(tmp) #date + timedelta(hours=int(tmp[:2]),minutes=int(tmp[2:4]),seconds=int(tmp[4:6]))                    
+                if data['TOPtime'] == None: data['TOPtime'] = _time(tmp)
             if 'SPG' in items:
                 tmp = items[items.index('SPG')+1]
                 data['BOTTOMlat'] = round(float(tmp[:4])*.01*[-1,1][tmp[4]=='N'],2)
                 data['BOTTOMlon'] = round(float(tmp[5:10])*.01*[-1,1][tmp[10]=='E'],2)
                 tmp = items[items.index('SPG')+2]
-                data['BOTTOMtime'] = _time(tmp) #date + timedelta(hours=int(tmp[:2]),minutes=int(tmp[2:4]),seconds=int(tmp[4:6]))                
+                if data['BOTTOMtime'] == None: data['BOTTOMtime'] = _time(tmp)
             elif 'SPL' in items:
                 tmp = items[items.index('SPL')+1]
                 data['BOTTOMlat'] = round(float(tmp[:4])*.01*[-1,1][tmp[4]=='N'],2)
                 data['BOTTOMlon'] = round(float(tmp[5:10])*.01*[-1,1][tmp[10]=='E'],2)
                 tmp = items[items.index('SPL')+2]
-                data['BOTTOMtime'] = _time(tmp) #date + timedelta(hours=int(tmp[:2]),minutes=int(tmp[2:4]))                  
+                if data['BOTTOMtime'] == None: data['BOTTOMtime'] = _time(tmp)
             if 'MBL' in items:
                 tmp = items[items.index('MBL')+2]
                 wdir,wspd = _wdirwspd(tmp)
@@ -1179,6 +1321,10 @@ def decode_dropsonde(content,date):
                 sigwind['wdir'].append(wdir)
                 sigwind['wspd'].append(wspd)
             sigwind = pd.DataFrame.from_dict(sigwind).sort_values('pres',ascending=False)
+        
+        if sec == '31313' and len(items)>0 and not NOLOCFLAG:
+            tmp = [i for i in items if i[0] == '8'][0]
+            data['TOPtime'] = _time(tmp[1:])
 
     if not NOLOCFLAG:
         def _justify(a, axis=0):    
@@ -1193,8 +1339,15 @@ def decode_dropsonde(content,date):
         data['top'] = np.nanmin(data['levels']['pres'])
 
     content_split = content.split("\n")
-    mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
+    try:
+        mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
+    except:
+        mission_id = '-'.join(content.split("\n")[1].replace("  "," ").split(" ")[:3])
     data['mission_id'] = mission_id
+    
+    #Fix NaNs
+    if data['BOTTOMtime'] == None: data['BOTTOMtime'] = np.nan
+    if data['TOPtime'] == None: data['TOPtime'] = np.nan
     
     return missionname, data
 

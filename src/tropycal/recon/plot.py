@@ -75,8 +75,8 @@ class ReconPlot(Plot):
         #Set default properties
         default_prop={'cmap':'category','levels':(np.nanmin(recon_data[varname]),np.nanmax(recon_data[varname])),\
                       'sortby':varname,'ascending':(varname!='p_sfc'),'linewidth':1.5,'ms':7.5,'marker':'o','zorder':None}
-        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF',\
-                          'linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k',
+                          'figsize':(14,9),'dpi':200,'plot_gridlines':True}
         
         #Initialize plot
         prop = self.add_prop(prop,default_prop)
@@ -103,7 +103,7 @@ class ReconPlot(Plot):
             pass
         else:
             raise RuntimeError("Error: recon_data must be dataframe")
-
+        
         #Retrieve storm data
         if radlim == None:
             lats = recon_data['lat']
@@ -133,7 +133,7 @@ class ReconPlot(Plot):
 
         #Get colormap and level extrema
         cmap,clevs = get_cmap_levels(varname,prop['cmap'],prop['levels'])
-        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] in ['category','category_recon']:
+        if varname in ['vmax','sfmr','wspd','fl_to_sfc'] and prop['cmap'] in ['category','category_recon']:
             vmin = min(clevs); vmax = max(clevs)
         else:
             vmin = min(prop['levels']); vmax = max(prop['levels'])
@@ -163,14 +163,13 @@ class ReconPlot(Plot):
         if len(vdms) > 0:
             for vdm_idx in range(len(vdms)):
                 vdm = vdms[vdm_idx]
-                
-                #Plot dot
-                #self.ax.plot(vdm['lon'],vdm['lat'],'o',ms=prop['vdm_ms'],mfc='orange',mec='k',mew=prop['vdm_ms']*0.1,
-                #             transform=ccrs.PlateCarree())
-                
+
                 #Transform coordinates for label
-                a = self.ax.text(vdm['lon'],vdm['lat'],str(int(np.round(vdm['Minimum Sea Level Pressure (hPa)']))),zorder=30,clip_on=True,fontsize=12,fontweight='bold',ha='center',va='center')
-                a.set_path_effects([patheffects.Stroke(linewidth=0.5,foreground='w'),patheffects.Normal()])
+                try:
+                    a = self.ax.text(vdm['lon'],vdm['lat'],str(int(np.round(vdm['Minimum Sea Level Pressure (hPa)']))),zorder=30,clip_on=True,fontsize=12,fontweight='bold',ha='center',va='center')
+                    a.set_path_effects([patheffects.Stroke(linewidth=0.5,foreground='w'),patheffects.Normal()])
+                except:
+                    pass
         
         #--------------------------------------------------------------------------------------
         
@@ -185,7 +184,8 @@ class ReconPlot(Plot):
             bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
         
         #Determine number of lat/lon lines to use for parallels & meridians
-        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        if map_prop['plot_gridlines']:
+            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
         
         #--------------------------------------------------------------------------------------
         
@@ -254,7 +254,7 @@ class ReconPlot(Plot):
         cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
-        if prop['cmap'] in ['category','category_recon'] and varname=='sfmr':
+        if prop['cmap'] in ['category','category_recon'] and varname in ['sfmr','wspd']:
             cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
             cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
@@ -290,7 +290,7 @@ class ReconPlot(Plot):
 
         #Set default properties
         default_prop={'cmap':'category','levels':None,'left_title':'','right_title':'All storms','pcolor':True}
-        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(14,9),'dpi':200,'plot_gridlines':True}
                           
         #Initialize plot
         prop = self.add_prop(prop,default_prop)
@@ -384,7 +384,8 @@ class ReconPlot(Plot):
             bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
         
         #Determine number of lat/lon lines to use for parallels & meridians
-        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        if map_prop['plot_gridlines']:
+            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
 
         #--------------------------------------------------------------------------------------
                 
@@ -436,7 +437,7 @@ class ReconPlot(Plot):
         cax.yaxis.set_ticks_position('left')
     
         rect_offset = 0.0
-        if prop['cmap']=='category' and varname=='sfmr':
+        if prop['cmap'] == 'category' and varname in ['sfmr','wspd']:
             cax.yaxis.set_ticks(np.linspace(0,1,len(clevs)))
             cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
@@ -547,7 +548,7 @@ class ReconPlot(Plot):
 
         #Set default properties
         default_prop={'cmap':'category','levels':None,'left_title':'','right_title':'','pcolor':True}
-        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(12.5,8.5),'dpi':120}
+        default_map_prop={'res':'m','land_color':'#FBF5EA','ocean_color':'#EDFBFF','linewidth':0.5,'linecolor':'k','figsize':(12.5,8.5),'dpi':120,'plot_gridlines':True}
         
         #Initialize plot
         prop = self.add_prop(prop,default_prop)
@@ -601,7 +602,8 @@ class ReconPlot(Plot):
             bound_w,bound_e,bound_s,bound_n = self.set_projection(domain)
 
         #Determine number of lat/lon lines to use for parallels & meridians
-        self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
+        if map_prop['plot_gridlines']:
+            self.plot_lat_lon_lines([bound_w,bound_e,bound_s,bound_n])
         
 #        rightarrow = u"\u2192"
 #        plt.xlabel(f'W {rightarrow} E Distance (km)')

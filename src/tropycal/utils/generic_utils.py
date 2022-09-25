@@ -1029,6 +1029,254 @@ def calc_ensemble_ellipse(member_lons,member_lats):
     #Return ellipse data
     return {'ellipse_lon':ellipse_lon, 'ellipse_lat':ellipse_lat}
 
+def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y%m%d%H',**kwargs):
+    
+    r"""
+    Creates a storm dict from custom user-provided data.
+    
+    Parameters
+    ----------
+    filepath : str
+        Relative or absolute file path containing custom storm data.
+    storm_name : str
+        Storm name for custom storm entry.
+    storm_id : str
+        Storm ID for custom storm entry.
+    
+    Other Parameters
+    ----------------
+    delimiter : str
+        Delimiter separating columns for text files. Default is ",".
+    time_format : str
+        Time format for which to convert times to Datetime objects. Default is ``"%Y%m%d%H"`` (e.g., ``"2015070112"`` for 1200 UTC 1 July 2015).
+    time_header : str
+        Name of time dimension. If not provided, function will attempt to locate it internally.
+    lat_header : str
+        Name of latitude dimension. If not provided, function will attempt to locate it internally.
+    lon_header : str
+        Name of longitude dimension. If not provided, function will attempt to locate it internally.
+    vmax_header : str
+        Name of maximum sustained wind (knots) dimension. If not provided, function will attempt to locate it internally.
+    mslp_header : str
+        Name of minimum MSLP (hPa) dimension. If not provided, function will attempt to locate it internally.
+    type_header : str
+        Name of storm type dimension. If not provided, function will attempt to locate it internally. If not part of entry data, storm type will be derived based on provided wind speed values.
+    
+    Returns
+    -------
+    dict
+        Dictionary containing formatted custom storm data.
+    
+    Notes
+    -----
+    This function creates a formatted storm data dictionary using custom user-provided data. The constraints for the parser are as follows:
+    
+    1. Rows that begin with a ``#`` or ``\`` are automatically ignored.
+    2. The first non-commented row must be a header row.
+    3. The header row must contain entries for time, latitude, longitude, maximum sustained wind (knots), and minimum MSLP (hPa). The order of these columns does not matter.
+    4. Preferred header names are "date", "lat", "lon", "vmax" and "mslp" for the main 5 categories, but custom header names can be provided. Refer to the "Other Parameters" section above.
+    5. Providing a "type" column (e.g., "TS", "HU", "EX") is not required, but is recommended especially if dealing with subtropical or non-tropical types.
+    
+    Below is an example file which we'll call ``data.txt``::
+
+        # The row below is a header row. The order of the columns doesn't matter.
+        date,lat,lon,vmax,mslp,type
+        2021080518,19.4,-59.9,25,1014,DB
+        2021080600,19.7,-60.2,25,1014,DB
+        2021080606,20.1,-60.5,30,1012,DB
+        2021080612,20.5,-60.8,30,1011,TD
+        2021080618,20.7,-61.3,30,1011,TD
+        2021080700,20.8,-61.8,35,1008,TS
+        2021080706,20.8,-62.6,35,1007,TS
+        2021080712,21.0,-63.3,40,1004,TS
+        2021080718,21.3,-64.1,45,1002,TS
+        2021080800,21.6,-65.1,55,998,TS
+        2021080806,22.0,-66.1,60,994,TS
+        2021080812,22.5,-66.9,65,989,HU
+        2021080818,23.2,-67.4,65,988,HU
+        2021080900,23.9,-67.6,60,992,TS
+        2021080906,25.0,-67.5,55,994,TS
+        2021080912,26.5,-67.1,55,993,TS
+        2021080918,28.0,-66.4,50,992,TS
+        2021081000,29.5,-65.6,50,994,TS
+        2021081006,31.4,-64.0,45,996,TS
+        2021081012,33.4,-62.0,45,997,EX
+        2021081018,35.4,-59.5,50,997,EX
+    
+    Reading it into the parser returns the following dict:
+    
+    >>> from tropycal import utils
+    >>> storm_dict = utils.create_storm_dict(filename='data.txt', storm_name='Test', storm_id='AL502021')
+    >>> print(storm_dict)
+    {'id': 'AL502021',
+     'operational_id': 'AL502021',
+     'name': 'Test',
+     'source_info': 'Custom User Data',
+     'source': 'custom',
+     'date': [datetime.datetime(2021, 8, 5, 18, 0),
+              datetime.datetime(2021, 8, 6, 0, 0),
+              ....
+              datetime.datetime(2021, 8, 10, 12, 0),
+              datetime.datetime(2021, 8, 10, 18, 0)],
+     'extra_obs': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+     'special': ['','',....,'',''],
+     'type': ['DB','DB','DB','TD','TD','TS','TS','TS','TS','TS','TS','HU','HU','TS','TS','TS','TS','TS','TS','EX','EX'],
+     'lat': [19.4,19.7,20.1,20.5,20.7,20.8,20.8,21.0,21.3,21.6,22.0,22.5,23.2,23.9,25.0,26.5,28.0,29.5,31.4,33.4,35.4],
+     'lon': [-59.9,-60.2,-60.5,-60.8,-61.3,-61.8,-62.6,-63.3,-64.1,-65.1,-66.1,-66.9,-67.4,-67.6,-67.5,-67.1,-66.4,-65.6,-64.0,-62.0,-59.5],
+     'vmax': [25.0,25.0,30.0,30.0,30.0,35.0,35.0,40.0,45.0,55.0,60.0,65.0,65.0,60.0,55.0,55.0,50.0,50.0,45.0,45.0,50.0],
+     'mslp': [1014,1014,1012,1011,1011,1008,1007,1004,1002,998,994,989,988,992,994,993,992,994,996,997,997],
+     'wmo_basin': ['north_atlantic','north_atlantic',....,'north_atlantic','north_atlantic'],
+     'ace': 3.7825,
+     'basin': 'north_atlantic',
+     'year': 2021,
+     'season': 2021}
+    
+    This custom data can then be plugged into a Storm object:
+    
+    >>> from tropycal import tracks
+    >>> storm = tracks.Storm(storm_dict)
+    >>> print(storm)
+    <tropycal.tracks.Storm>
+    Storm Summary:
+        Maximum Wind:      65 knots
+        Minimum Pressure:  988 hPa
+        Start Date:        1200 UTC 06 August 2021
+        End Date:          0600 UTC 10 August 2021
+    .
+    Variables:
+        date        (datetime) [2021-08-05 18:00:00 .... 2021-08-10 18:00:00]
+        extra_obs   (int32) [0 .... 0]
+        special     (str) [ .... ]
+        type        (str) [DB .... EX]
+        lat         (float64) [19.4 .... 35.4]
+        lon         (float64) [-59.9 .... -59.5]
+        vmax        (float64) [25.0 .... 50.0]
+        mslp        (float64) [1014.0 .... 997.0]
+        wmo_basin   (str) [north_atlantic .... north_atlantic]
+    .
+    More Information:
+        id:              AL502021
+        operational_id:  AL502021
+        name:            Test
+        source_info:     Custom User Data
+        source:          custom
+        ace:             3.8
+        basin:           north_atlantic
+        year:            2021
+        season:          2021
+        realtime:        False
+        invest:          False
+    """
+
+    #Pop kwargs
+    time_header = kwargs.pop('time_header',None)
+    lat_header = kwargs.pop('lat_header',None)
+    lon_header = kwargs.pop('lon_header',None)
+    vmax_header = kwargs.pop('vmax_header',None)
+    mslp_header = kwargs.pop('mslp_header',None)
+    type_header = kwargs.pop('type_header',None)
+    
+    #Check for file extension
+    netcdf = True if filepath[-3:] == '.nc' else False
+    
+    #Create empty dict
+    data = {'id':storm_id,
+            'operational_id':storm_id,
+            'name':storm_name,
+            'source_info':'Custom User Data',
+            'source':'custom',
+            'date':[],
+            'extra_obs':[],
+            'special':[],
+            'type':[],
+            'lat':[],
+            'lon':[],
+            'vmax':[],
+            'mslp':[],
+            'wmo_basin':[],
+            'ace':0.0}
+
+    #Parse text file
+    if netcdf == False:
+        
+        #Store header data
+        header = {}
+        
+        #Read file content
+        f = open(filepath,"r")
+        content = f.readlines()
+        f.close()
+        for line in content:
+            if len(line) < 5: continue
+            if line[0] in ['#','/']: continue
+            line = line.split("\n")[0]
+            line = line.split("\r")[0]
+            
+            #Split line
+            if delimiter in ['',' ']: delimiter = None
+            lineArray = line.split(delimiter)
+            lineArray = [i.replace(" ","") for i in lineArray]
+            
+            #Determine header
+            if len(header) == 0:
+                for value in lineArray:
+                    if value == time_header or value.lower() in ['time','date','valid_time','valid_date']:
+                        header['date'] = [value,lineArray.index(value)]
+                    elif value == lat_header or value.lower() in ['lat','latitude','lat_0']:
+                        header['lat'] = [value,lineArray.index(value)]
+                    elif value == lon_header or value.lower() in ['lon','longitude','lon_0']:
+                        header['lon'] = [value,lineArray.index(value)]
+                    elif value == vmax_header or value.lower() in ['vmax','wind','wspd','max_wind','wind_speed']:
+                        header['vmax'] = [value,lineArray.index(value)]
+                    elif value == mslp_header or value.lower() in ['mslp','slp','min_mslp','pressure','pres','minimum_mslp']:
+                        header['mslp'] = [value,lineArray.index(value)]
+                    elif value == type_header or value.lower() in ['type','storm_type']:
+                        header['type'] = [value,lineArray.index(value)]
+                found = [i in header.keys() for i in ['date','lat','lon','vmax','mslp']]
+                if False in found: raise ValueError("Data must have columns for 'date', 'lat', 'lon', 'vmax' and 'mslp'.")
+                continue
+                
+            #Enter standard data into dict
+            enter_date = dt.strptime(lineArray[header.get('date')[1]],time_format)
+            if enter_date in data['date']: raise ValueError("Error: Multiple entries detected for the same valid time.")
+            data['date'].append(enter_date)
+            data['lat'].append(float(lineArray[header.get('lat')[1]]))
+            data['lon'].append(float(lineArray[header.get('lon')[1]]))
+            data['vmax'].append(float(lineArray[header.get('vmax')[1]]))
+            data['mslp'].append(float(lineArray[header.get('mslp')[1]]))
+            
+            #Derive storm type if needed
+            if 'type' in header.keys():
+                temp_type = lineArray[header.get('type')[1]]
+                if temp_type in ['TY','ST']: temp_type = 'HU'
+                data['type'].append(temp_type)
+            else:
+                data['type'].append(get_storm_type(data['vmax'][-1],False))
+            
+            #Derive ACE
+            if data['date'][-1].strftime('%H%M') in constants.STANDARD_HOURS and data['type'][-1] in constants.NAMED_TROPICAL_STORM_TYPES:
+                data['ace'] += accumulated_cyclone_energy(data['vmax'][-1])
+            
+            #Derive basin
+            if len(data['wmo_basin']) == 0:
+                data['wmo_basin'].append(get_basin(data['lat'][-1],data['lon'][-1],'north_atlantic'))
+                data['basin'] = data['wmo_basin'][-1]
+            else:
+                data['wmo_basin'].append(get_basin(data['lat'][-1],data['lon'][-1],data['basin']))
+            
+            #Other entries
+            extra_obs = 0 if data['date'][-1].strftime('%H%M') in constants.STANDARD_HOURS else 1
+            data['extra_obs'].append(extra_obs)
+            data['special'].append('')
+        
+        #Add other info
+        data['year'] = data['date'][0].year
+        data['season'] = data['date'][0].year
+        
+        #Return dict
+        return data
+    
+
 #===========================================================================================================
 # Private utilities
 # These are primarily intended to be used internally. Do not add these to documentation.

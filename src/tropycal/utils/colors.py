@@ -265,7 +265,7 @@ def get_cmap_levels(varname,colormap,levels,linear=False):
     if colormap in ['category','category_recon']:
         
         #Ensure variable contains some element of surface wind
-        if varname in ['vmax','sfmr','fl_to_sfc']:
+        if varname in ['vmax','sfmr','wspd','fl_to_sfc']:
             
             #Generate contour levels
             levels = [category_to_wind(c) for c in range(-1,6)]+[200]
@@ -287,7 +287,7 @@ def get_cmap_levels(varname,colormap,levels,linear=False):
         
         #Otherwise, default to plasma colormap
         else:
-            warnings.warn('Saffir Simpson category colors allowed only for surface winds')
+            warnings.warn('Saffir Simpson category colors are not allowed for this variable.')
             colormap = 'plasma'
     
     #Other colormap options

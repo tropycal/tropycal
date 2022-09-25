@@ -873,7 +873,15 @@ class Realtime():
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0) #0.0
         
         #Get realtime forecasts
-        forecasts = [self.get_storm(key).get_forecast_realtime(ssl_certificate) if self[key].invest == False else {} for key in self.storms]
+        forecasts = []
+        for key in self.storms:
+            if self[key].invest == False:
+                try:
+                    forecasts.append(self.get_storm(key).get_forecast_realtime(ssl_certificate))
+                except:
+                    forecasts.append({})
+            else:
+                forecasts.append({})
         forecasts = [entry if 'init' in entry.keys() and (dt.utcnow() - entry['init']).total_seconds() / 3600.0 <= 12 else {} for entry in forecasts]
         
         #Plot

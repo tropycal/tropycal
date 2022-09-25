@@ -51,7 +51,7 @@ class ReconDataset:
     -----
     .. warning::
     
-        Recon data is currently only available from 2006 onwards.
+        Recon data is currently only available from 1989 onwards.
     
     ReconDataset and its subclasses (hdobs, dropsondes and vdms) consist the **storm-centric** part of the recon module, meaning that recon data is retrieved specifically for tropical cyclones, and all recon missions for the requested storm are additionally transformed to storm-centric coordinates. This differs from realtime recon functionality, which is **mission-centric**.
     
@@ -280,7 +280,7 @@ class ReconDataset:
         mission_id = hdobs_mission['mission_id'].values[0]
         vdms_mission = [i for i in self.vdms.data if i['mission_id'] == mission_id]
         dropsondes_mission = [i for i in self.dropsondes.data if i['mission_id'] == mission_id]
-        
+
         mission_dict = {
             'hdobs':hdobs_mission,
             'vdms':vdms_mission,
@@ -288,6 +288,14 @@ class ReconDataset:
             'aircraft':mission_id.split("-")[0],
             'storm_name':mission_id.split("-")[2]
         }
+        
+        #Get sources
+        try:
+            sources = list(np.unique([self.vdms.source,self.hdobs.source,self.dropsondes.source]))
+            if len(sources) == 1: sources = sources[0]
+        except:
+            sources = 'National Hurricane Center (NHC)'
+        mission_dict['source'] = sources
         
         return Mission(mission_dict,mission_id)
         
@@ -520,7 +528,7 @@ class hdobs:
     -----
     .. warning::
     
-        Recon data is currently only available from 2006 onwards.
+        Recon data is currently only available from 1989 onwards.
     
     There are two recommended ways of retrieving an hdob object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
     
@@ -578,7 +586,8 @@ class hdobs:
                         'Max 30sec flight level wind':f"{max_wspd} knots",
                         'Max 10sec flight level wind':f"{max_pkwnd} knots",
                         'Max SFMR wind':f"{max_sfmr} knots",
-                        'Min surface pressure':f"{min_psfc} hPa"}
+                        'Min surface pressure':f"{min_psfc} hPa",
+                        'Source':self.source}
 
         #Add dataset summary
         summary.append("Dataset Summary:")
@@ -594,6 +603,7 @@ class hdobs:
         self.storm = storm
         self.data = None
         self.format = 1
+        self.source = 'National Hurricane Center (NHC)'
         
         #Get URL based on storm year
         if storm.year >= 2012:
@@ -617,9 +627,14 @@ class hdobs:
         elif storm.year == 2006:
             self.format = 4
             archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/HDOB/']
-        else:
+        elif storm.year >= 2002:
             self.format = 5
-            raise RuntimeError("Recon data is currently only available from 2006 onwards.")
+            archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/{self.storm.name.upper()}/']
+        elif storm.year <= 2001 and storm.year >= 1989:
+            self.format = 6
+            archive_url = [f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/{self.storm.name.lower()}/']
+        else:
+            raise RuntimeError("Recon data is not available prior to 1989.")
 
         if isinstance(data,str):
             with open(data, 'rb') as f:
@@ -639,7 +654,7 @@ class hdobs:
                       [f'{end_time:%Y%m%d}']
 
             #Retrieve list of files in URL(s) and filter by storm dates
-            if len(archive_url) == 1:
+            if self.format in [1,3,4]:
                 page = requests.get(archive_url[0]).text
                 content = page.split("\n")
                 files = []
@@ -648,7 +663,7 @@ class hdobs:
                 del content
                 files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
                 linksub = [archive_url[0]+'.'.join(l) for l in files]
-            else:
+            elif self.format == 2:
                 linksub = []
                 for url in archive_url:
                     files = []
@@ -659,6 +674,22 @@ class hdobs:
                     del content
                     linksub += sorted([url+'.'.join(i) for i in files if i[1][:8] in timestr],key=lambda x: x[1])
                 linksub = sorted(linksub)
+            elif self.format == 5:
+                page = requests.get(archive_url[0]).text
+                content = page.split("\n")
+                files = []
+                for line in content:
+                    if ".txt" in line and 'HDOBS' in line: files.append(((line.split('txt">')[1]).split("</a>")[0]))
+                del content
+                linksub = [archive_url[0]+l for l in files]
+            elif self.format == 6:
+                page = requests.get(archive_url[0]).text
+                content = page.split("\n")
+                files = []
+                for line in content:
+                    if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]))
+                del content
+                linksub = [archive_url[0]+l for l in files if l[0] in ['H','h','M','m']]
 
             #Initiate urllib3
             urllib3.disable_warnings()
@@ -676,21 +707,75 @@ class hdobs:
                 content = response.data.decode('utf-8')
                 
                 #Find mission name line
-                row = 3
-                while len(content.split("\n")[row]) < 3 or content.split("\n")[row][:3] == "SXX": row += 1
+                row = 3 if self.format <= 4 else 0
+                while len(content.split("\n")[row]) < 3 or content.split("\n")[row][:3] in ["SXX","URN","URP","YYX"]:
+                    row += 1
+                    if row >= 100: break
+                if row >= 100: continue
                 missionname = [i.split() for i in content.split('\n')][row][1]
                 
+                #Check for mission name to storm match by format
+                if self.format != 6:
+                    check = missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]
+                else:
+                    check = True
+                
                 #Read HDOBs if this file matches the requested storm
-                if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
+                if check == True:
                     filecount += 1
-                    
+
                     try:
+
                         #Decode HDOBs by format
                         if self.format <= 3:
                             iter_hdob = decode_hdob(content,mission_row=row)
                         elif self.format == 4:
                             strdate = (link.split('.')[-2])[:8]
                             iter_hdob = decode_hdob_2006(content,strdate,mission_row=row)
+                        elif self.format == 6:
+                            #Check for date
+                            day = int(content.split("\n")[row-1].split()[2][:2])
+                            for iter_date in storm.dict['date']:
+                                found_date = False
+                                if iter_date.day == day:
+                                    date = dt(iter_date.year,iter_date.month,iter_date.day)
+                                    strdate = date.strftime('%Y%m%d')
+                                    found_date = True
+                                    break
+                            if found_date == False: continue
+                            iter_hdob = decode_hdob_2006(content,strdate,mission_row=row)
+                        elif self.format == 5:
+                            #Split content by 10/20 minute blocks
+                            strdate = (link.split('.')[-3]).split("_")[-1]
+                            content_split = content.split("NNNN")
+                            iter_hdob = None
+                            for iter_content in content_split:
+                                iter_split = iter_content.split("\n")
+                                if len(iter_split) < 10: continue
+
+                                #Search for starting line of data within sub-block
+                                found = False
+                                for line in iter_split:
+                                    if missionname in line: found = True
+                                temp_row = 0
+                                while len(iter_split[temp_row]) < 3 or iter_split[temp_row][:3] in ["SXX","URN","URP"]:
+                                    temp_row += 1
+                                    if temp_row >= 100: break
+                                if temp_row >= 100: break
+
+                                #Parse data by format
+                                if 'NOAA' in link:
+                                    iter_hdob_loop = decode_hdob_2005_noaa(iter_content,strdate,temp_row)
+                                else:
+                                    iter_hdob_loop = decode_hdob_2006(iter_content,strdate,temp_row)
+
+                                #Append HDOBs to full data
+                                if iter_hdob is None:
+                                    iter_hdob = copy.copy(iter_hdob_loop)
+                                elif max(iter_hdob_loop['time']) > start_time:
+                                    iter_hdob = pd.concat([iter_hdob,iter_hdob_loop])
+                                else:
+                                    pass
 
                         #Append HDOBs to full data
                         if self.data is None:
@@ -699,9 +784,10 @@ class hdobs:
                             self.data = pd.concat([self.data,iter_hdob])
                         else:
                             pass
+
                     except:
                         unreadable += 1
-                    
+
             print(f'--> Completed reading in recon HDOB files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files'+\
                   f'\nUnable to decode {unreadable} files')
@@ -1273,7 +1359,7 @@ class hdobs:
         ax = plt.subplot()
         
         #Plot surface category colors individually, necessitating normalizing colormap
-        if varname in ['vmax','sfmr','fl_to_sfc'] and prop['cmap'] in ['category','category_recon']:
+        if varname in ['vmax','sfmr','wspd','fl_to_sfc'] and prop['cmap'] in ['category','category_recon']:
             norm = mcolors.BoundaryNorm(clevs,cmap.N)
             cf = ax.contourf(radius,time,gfilt1d(vardata,sigma=3,axis=1),
                              levels=clevs,cmap=cmap,norm=norm)
@@ -1803,7 +1889,8 @@ class dropsondes:
                         'Dropsondes':len(self.data),
                         'Max 500m-avg wind':max_MBLspd,
                         'Max 150m-avg wind':max_WL150spd,
-                        'Min sea level pressure':min_slp}
+                        'Min sea level pressure':min_slp,
+                        'Source':self.source}
 
         #Add dataset summary
         summary.append("Dataset Summary:")
@@ -1817,10 +1904,22 @@ class dropsondes:
     def __init__(self, storm, data=None, update=False):
 
         self.storm = storm
-        if storm.basin == 'north_atlantic':
-            self.archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT3/'
+        self.source = 'National Hurricane Center (NHC)'
+        
+        if storm.year >= 2006:
+            self.format = 1
+            if storm.basin == 'north_atlantic':
+                archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT3/'
+            else:
+                archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN3/'
+        elif storm.year >= 2002 and storm.year <= 2005:
+            self.format = 2
+            archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/{self.storm.name.upper()}/'
+        elif storm.year >= 1989 and storm.year <= 2001:
+            self.format = 3
+            archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/{self.storm.name.lower()}/'
         else:
-            self.archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN3/'
+            raise RuntimeError("Recon data is not available prior to 1989.")
         self.data = None
 
         if isinstance(data,str):
@@ -1839,14 +1938,25 @@ class dropsondes:
             timeboundstrs = [f'{t:%Y%m%d%H%M}' for t in (start_time,end_time)]
             
             #Retrieve list of files in URL and filter by storm dates
-            page = requests.get(self.archiveURL).text
+            page = requests.get(archive_url).text
             content = page.split("\n")
             files = []
-            for line in content:
-                if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
-            del content
-            files = sorted([i for i in files if i[1]>=min(timeboundstrs) and i[1]<=max(timeboundstrs)],key=lambda x: x[1])
-            linksub = [self.archiveURL+'.'.join(l) for l in files]
+            if self.format == 1:
+                for line in content:
+                    if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
+                del content
+                files = sorted([i for i in files if i[1]>=min(timeboundstrs) and i[1]<=max(timeboundstrs)],key=lambda x: x[1])
+                linksub = [archive_url+'.'.join(l) for l in files]
+            elif self.format == 2:
+                for line in content:
+                    if ".txt" in line and 'DROPS' in line: files.append(((line.split('txt">')[1]).split("</a>")[0]))
+                del content
+                linksub = [archive_url+l for l in files]
+            elif self.format == 3:
+                for line in content:
+                    if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]))
+                del content
+                linksub = [archive_url+l for l in files if l[0] in ['D','d']]
             
             urllib3.disable_warnings()
             http = urllib3.PoolManager()
@@ -1857,20 +1967,93 @@ class dropsondes:
             for link in linksub:
                 response = http.request('GET',link)
                 content = response.data.decode('utf-8')
-                datestamp = dt.strptime(link.split('.')[-2],'%Y%m%d%H%M')
-                try:
-                    missionname,tmp = decode_dropsonde(content,date=datestamp)
-                except:
-                    continue
-                testkeys = ('TOPtime','lat','lon')
-                if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
-                    filecount += 1
-                    if self.data is None:
-                        self.data = [copy.copy(tmp)]
-                    elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
-                        self.data.append(tmp)
-                    else:
+                
+                #Post-2006 format
+                if self.format == 1:
+                    datestamp = dt.strptime(link.split('.')[-2],'%Y%m%d%H%M')
+                    try:
+                        missionname,tmp = decode_dropsonde(content,date=datestamp)
+                    except:
+                        continue
+                    
+                    testkeys = ('TOPtime','lat','lon')
+                    if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
+                        filecount += 1
+                        if self.data is None:
+                            self.data = [copy.copy(tmp)]
+                        elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
+                            self.data.append(tmp)
+                        else:
+                            pass
+                
+                #Pre-2002 format
+                elif self.format == 3:
+                    
+                    #Check for date
+                    try:
+                        day = int(content.split("\n")[0].split()[2][:2])
+                        for iter_date in storm.dict['date']:
+                            found_date = False
+                            if iter_date.day == day:
+                                date = dt(iter_date.year,iter_date.month,iter_date.day)
+                                found_date = True
+                                break
+                        if found_date == False: continue
+                        missionname,tmp = decode_dropsonde(content.replace(";",""),date=date)
+                        
+                        #Add date to mission
+                        hh = int(content.split("\n")[0].split()[2][2:4])
+                        mm = int(content.split("\n")[0].split()[2][4:6])
+                        tmp['TOPtime'] = dt(iter_date.year,iter_date.month,iter_date.day,hh,mm)
+                        if np.isnan(tmp['TOPlat']): tmp['TOPlat'] = tmp['lat']
+                        if np.isnan(tmp['TOPlon']): tmp['TOPlon'] = tmp['lon']
+                        
+                        testkeys = ('TOPtime','lat','lon')
+                        filecount += 1
+                        if self.data is None:
+                            self.data = [copy.copy(tmp)]
+                        elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
+                            self.data.append(tmp)
+                        else:
+                            pass
+                    except:
                         pass
+                
+                #Pre-2006 format
+                elif self.format == 2:
+                    strdate = (link.split('.')[-3]).split("_")[-1]
+                    content_split = content.split("NNNN")
+                    
+                    for iter_content in content_split:
+                        
+                        iter_split = iter_content.split("\n")
+                        if len(iter_split) < 6: continue
+                        
+                        #Format date
+                        found_date = False
+                        for line in iter_split:
+                            if 'UZNT13' in line:
+                                date_string = line.split()[2]
+                                found_date = True
+                                datestamp = dt.strptime(strdate,'%Y%m%d')
+                                datestamp = datestamp.replace(day=int(date_string[:2]),hour=int(date_string[2:4]),minute=int(date_string[4:6]))
+                        
+                        #Decode dropsondes
+                        if found_date == False: continue
+                        try:
+                            missionname,tmp = decode_dropsonde(iter_content,date=datestamp)
+                        except:
+                            continue
+
+                        testkeys = ('lat','lon')
+                        filecount += 1
+                        if self.data is None:
+                            self.data = [copy.copy(tmp)]
+                        elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
+                            self.data.append(tmp)
+                        else:
+                            pass
+                
             print(f'--> Completed reading in recon dropsonde files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files')
         
@@ -2117,11 +2300,19 @@ class dropsondes:
             for m in self.data]
         else:
             plotdata = [m[varname] if varname in m.keys() else np.nan for m in self.data]
-            
-        dfRecon = pd.DataFrame.from_dict({'time':[m['BOTTOMtime'] for m in self.data],\
-                                          'lat':[m['BOTTOMlat'] for m in self.data],\
-                                          'lon':[m['BOTTOMlon'] for m in self.data],\
-                                          varname:plotdata})
+        
+        #Make sure data doesn't have NaNs
+        check_data = [m['BOTTOMlat'] for m in self.data if np.isnan(m['BOTTOMlat']) == False]
+        if len(check_data) == 0:
+            dfRecon = pd.DataFrame.from_dict({'time':[m['TOPtime'] for m in self.data],
+                                              'lat':[m['TOPlat'] for m in self.data],
+                                              'lon':[m['TOPlon'] for m in self.data],
+                                              varname:plotdata})
+        else:
+            dfRecon = pd.DataFrame.from_dict({'time':[m['BOTTOMtime'] for m in self.data],
+                                              'lat':[m['BOTTOMlat'] for m in self.data],
+                                              'lon':[m['BOTTOMlon'] for m in self.data],
+                                              varname:plotdata})
         
         #Create instance of plot object
         self.plot_obj = ReconPlot()
@@ -2204,7 +2395,9 @@ class vdms:
     -----
     .. warning::
     
-        Recon data is currently only available from 2006 onwards.
+        Recon data is currently only available from 1989 onwards.
+    
+    VDM data is currently retrieved from the National Hurricane Center from 2006 onwards, and UCAR from 1989 through 2005.
     
     There are two recommended ways of retrieving a vdms object. Since the ``ReconDataset``, ``hdobs``, ``dropsondes`` and ``vdms`` classes are **storm-centric**, a Storm object is required for both methods.
     
@@ -2258,7 +2451,8 @@ class vdms:
         summary_keys = {'Storm':f'{self.storm.name} {self.storm.year}',\
                         'Missions':len(missions),
                         'VDMs':len(self.data),
-                        'Min sea level pressure':f"{min_slp} hPa"}
+                        'Min sea level pressure':f"{min_slp} hPa",
+                        'Source':self.source}
 
         #Add dataset summary
         summary.append("Dataset Summary:")
@@ -2272,21 +2466,35 @@ class vdms:
     def __init__(self, storm, data=None, update=False):
 
         self.storm = storm
-        if storm.basin == 'north_atlantic':
-            archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT2/'
+        self.source = 'National Hurricane Center (NHC)'
+        if storm.year >= 2006:
+            self.format = 1
+            if storm.basin == 'north_atlantic':
+                archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPNT2/'
+            else:
+                archive_url = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN2/'
+        elif storm.year >= 1989:
+            self.format = 2
+            self.source = "UCAR's Tropical Cyclone Guidance Project (TCGP)"
+            archive_url = f'http://hurricanes.ral.ucar.edu/structure/vortex/vdm_data/{self.storm.year}/'
         else:
-            archiveURL = f'https://www.nhc.noaa.gov/archive/recon/{self.storm.year}/REPPN2/'
+            raise RuntimeError("Recon data is not available prior to 1989.")
+        
         timestr = [f'{t:%Y%m%d}' for t in self.storm.dict['date']]
 
         #Retrieve list of files in URL and filter by storm dates
-        page = requests.get(archiveURL).text
+        page = requests.get(archive_url).text
         content = page.split("\n")
         files = []
         for line in content:
             if ".txt" in line: files.append(((line.split('txt">')[1]).split("</a>")[0]).split("."))
         del content
-        files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
-        linksub = [archiveURL+'.'.join(l) for l in files]
+        if self.format == 1:
+            files = sorted([i for i in files if i[1][:8] in timestr],key=lambda x: x[1])
+            linksub = [archive_url+'.'.join(l) for l in files]
+        elif self.format == 2:
+            files = [f[0] for f in files]
+            linksub = [archive_url+l for l in files if storm.name.upper() in l]
         
         self.data = []
 
@@ -2301,24 +2509,66 @@ class vdms:
             for link in linksub:
                 response = http.request('GET',link)
                 content = response.data.decode('utf-8')
-                date = link.split('.')[-2]
-                year = int(date[:4])
-                month = int(date[4:6])
-                day = int(date[6:8])
-                try:
-                    missionname,tmp = decode_vdm(content,date=dt(year,month,day))
-                except:
-                    continue
-                testkeys = ('time','lat','lon')
-                if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
-                    if self.data is None:
-                        self.data = [copy.copy(tmp)]
-                        filecount+=1
-                    elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
-                        self.data.append(tmp)
-                        filecount+=1
-                    else:
-                        pass
+                
+                #Parse with NHC format
+                if self.format == 1:
+                    try:
+                        date = link.split('.')[-2]
+                        date = dt(int(date[:4]),int(date[4:6]),int(date[6:8]))
+                        missionname,tmp = decode_vdm(content,date)
+                    except:
+                        continue
+                    
+                    testkeys = ('time','lat','lon')
+                    if missionname[2:5] == self.storm.operational_id[2:4]+self.storm.operational_id[0]:
+                        if self.data is None:
+                            self.data = [copy.copy(tmp)]
+                            filecount+=1
+                        elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
+                            self.data.append(tmp)
+                            filecount+=1
+                        else:
+                            pass
+                
+                #Parse with UCAR format
+                elif self.format == 2:
+                    content_split = content.split("URNT12")
+                    content_split = ['URNT12' + i for i in content_split]
+                    for iter_content in content_split:
+                        
+                        try:
+                            #Check for line length
+                            iter_split = iter_content.split("\n")
+                            if len(iter_split) < 10: continue
+
+                            #Check for date
+                            for line in iter_split:
+                                if line[:2] == 'A.': day = int((line[3:].split('/'))[0])
+                            for iter_date in storm.dict['date']:
+                                found_date = False
+                                if iter_date.day == day:
+                                    date = dt(iter_date.year,iter_date.month,iter_date.day)
+                                    found_date = True
+                                    break
+                            if found_date == False: continue
+
+                            #Decode VDMs
+                            missionname,tmp = decode_vdm(iter_content,date)
+
+                            testkeys = ('time','lat','lon')
+                            if self.data is None:
+                                self.data = [copy.copy(tmp)]
+                                filecount+=1
+                            elif [tmp[k] for k in testkeys] not in [[d[k] for k in testkeys] for d in self.data]:
+                                self.data.append(tmp)
+                                filecount+=1
+                            else:
+                                pass
+                        
+                        except:
+                            continue
+
+                
             print(f'--> Completed reading in recon VDM files ({(dt.now()-timer_start).total_seconds():.1f} seconds)'+\
                   f'\nRead {filecount} files')
             

@@ -1324,7 +1324,8 @@ None,prop={},map_prop={}):
                         cmap = prop_ensemble_members['cmap']
                         levels = prop_ensemble_members['levels']
                         norm = mcolors.BoundaryNorm(levels,cmap.N)
-                        for j in range(1,idx):
+                        for j in range(1,idx+1):
+                            if j >= len(ds[f'gefs_{i}'][prop_ensemble_members['color_var']]): continue
                             i_val = ds[f'gefs_{i}'][prop_ensemble_members['color_var']][j]
                             color = 'w' if np.isnan(i_val) else cmap(norm(i_val))
                             self.ax.plot([ds[f'gefs_{i}']['lon'][j-1],ds[f'gefs_{i}']['lon'][j]],
@@ -2314,6 +2315,9 @@ None,prop={},map_prop={}):
                         forecast_dict = forecasts[storm_idx]
                         
                         try:
+                            #Fix longitudes for cone if crossing dateline
+                            if np.nanmax(forecast_dict['lon']) > 165 or np.nanmin(forecast_dict['lon']) < -165:
+                                forecast_dict['lon'] = [i if i > 0 else i + 360.0 for i in forecast_dict['lon']]
                             cone = generate_nhc_cone(forecast_dict,storm.basin,cone_days=cone_prop['days'])
 
                             #Plot cone

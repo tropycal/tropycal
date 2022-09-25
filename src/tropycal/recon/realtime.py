@@ -110,16 +110,19 @@ class RealtimeRecon():
             content_split = content.split("\n")
 
             #Construct mission ID
-            mission_id = '-'.join((content_split[3].replace("  "," ")).split(" ")[:3])
-            if mission_id not in self.missions:
-                self.missions[mission_id] = {'hdobs':decode_hdob(content),
-                                        'vdms':[],
-                                        'dropsondes':[],
-                                        'aircraft':mission_id.split("-")[0],
-                                        'storm_name':mission_id.split("-")[2]
-                                       }
-            else:
-                self.missions[mission_id]['hdobs'] = pd.concat([self.missions[mission_id]['hdobs'],decode_hdob(content)])
+            try:
+                mission_id = '-'.join((content_split[3].replace("  "," ")).split(" ")[:3])
+                if mission_id not in self.missions:
+                    self.missions[mission_id] = {'hdobs':decode_hdob(content),
+                                            'vdms':[],
+                                            'dropsondes':[],
+                                            'aircraft':mission_id.split("-")[0],
+                                            'storm_name':mission_id.split("-")[2]
+                                           }
+                else:
+                    self.missions[mission_id]['hdobs'] = pd.concat([self.missions[mission_id]['hdobs'],decode_hdob(content)])
+            except:
+                pass
 
         #Retrieve VDMs
         for file in files['vdms']:
@@ -359,7 +362,7 @@ class RealtimeRecon():
         
         return data
     
-    def get_hdobs_realtime(self,basin,aircraft,decoded=False):
+    def get_hdobs_realtime(self,basin,aircraft,decoded=True):
         
         r"""
         Retrieve the latest 10-minute HDOBs directly from NHC.
@@ -371,7 +374,7 @@ class RealtimeRecon():
         aircraft : str
             Type of aircraft for recon mission. Available options are ``"noaa"`` or ``"usaf"`` (US Air Force).
         decoded : bool, optional
-            If False (default), returns a Pandas DataFrame of all HDOBs. If True, returns a dictionary with decoded HDOBs highlights.
+            If False, returns a Pandas DataFrame of all HDOBs. If True (default), returns a dictionary with decoded HDOBs highlights.
 
         Returns
         -------
@@ -421,7 +424,9 @@ class RealtimeRecon():
                 hdob_content.append(line)
             if line == '</pre>': break
         df = decode_hdob('\n'.join(hdob_content),mission_row=2)
-
+        
+        if decoded == False: return df
+        
         #Parse data
         array = [val for i,val in enumerate(df['sfmr']) if 'sfmr' not in df['flag'].values[i]]
         max_sfmr = np.nanmax(array) if all_nan(array) == False else np.nan
@@ -515,10 +520,14 @@ class Mission():
         summary = ["<tropycal.recon.Mission>"]
         
         #Find maximum wind and minimum pressure
-        max_wspd = np.nanmax(self.hdobs['wspd'])
-        max_pkwnd = np.nanmax(self.hdobs['pkwnd'])
-        max_sfmr = np.nanmax(self.hdobs['sfmr'])
-        min_psfc = np.nanmin(self.hdobs['p_sfc'])
+        array = [val for i,val in enumerate(self.hdobs['sfmr']) if 'sfmr' not in self.hdobs['flag'].values[i]]
+        max_sfmr = np.nanmax(array) if all_nan(array) == False else np.nan
+        array = [val for i,val in enumerate(self.hdobs['p_sfc']) if 'p_sfc' not in self.hdobs['flag'].values[i]]
+        min_psfc = np.nanmin(array) if all_nan(array) == False else np.nan
+        array = [val for i,val in enumerate(self.hdobs['wspd']) if 'wspd' not in self.hdobs['flag'].values[i]]
+        max_wspd = np.nanmax(array) if all_nan(array) == False else np.nan
+        array = [val for i,val in enumerate(self.hdobs['pkwnd']) if 'pkwnd' not in self.hdobs['flag'].values[i]]
+        max_pkwnd = np.nanmax(array) if all_nan(array) == False else np.nan
         time_range = [pd.to_datetime(t) for t in (np.nanmin(self.hdobs['time']),np.nanmax(self.hdobs['time']))]
 
         #Add summary text
@@ -561,6 +570,15 @@ class Mission():
         self.start_time = pd.to_datetime(np.nanmin(self.hdobs['time']))
         self.end_time = pd.to_datetime(np.nanmax(self.hdobs['time']))
         
+        #Get sources
+        if 'source' in data.keys():
+            self.source = data['source']
+        else:
+            if self.start_time.year <= 2005 and self.start_time.year >= 1989:
+                self.source = ['National Hurricane Center (NHC)',"UCAR's Tropical Cyclone Guidance Project (TCGP)"]
+            else:
+                self.source = 'National Hurricane Center (NHC)'
+        
         #Retrieve attributes
         self.attrs = {
             'aircraft':data['aircraft'],
@@ -568,6 +586,7 @@ class Mission():
             'mission_id':mission_id,
             'start_time': pd.to_datetime(np.nanmin(self.hdobs['time'])),
             'end_time': pd.to_datetime(np.nanmax(self.hdobs['time'])),
+            'source': self.source,
         }
         
         #Add status for mission

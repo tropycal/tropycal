@@ -455,7 +455,7 @@ class TrackDataset:
                         current_year_id = 2
                 
             #Estimate operational storm ID (which sometimes differs from HURDAT2 ID)
-            blocked_list = []
+            blocked_list = ['EP072020']
             potential_tcs = ['AL102017']
             increment_but_pass = []
             
@@ -2841,6 +2841,8 @@ class TrackDataset:
 
             * - Property
               - Description
+            * - plot_values
+              - Boolean for whether to plot label values for each gridpoint. Default is False.
             * - smooth
               - Number (in units of sigma) to smooth the data using scipy's gaussian filter. Default is 0 (no smoothing).
             * - cmap
@@ -3976,7 +3978,6 @@ class TrackDataset:
             diff = [(time-i).total_seconds()/3600 for i in self.data[key]['date']]
             diff_maxes = [i for i in diff if i >= 0]
             idx = diff.index(np.nanmin(diff_maxes))
-            if self.data[key]['type'][idx] not in constants.TROPICAL_STORM_TYPES: continue
             
             #Get forecast
             storm = self.get_storm(key)
@@ -3991,16 +3992,24 @@ class TrackDataset:
             carq_forecast_init = [k for k in carq_forecasts.keys()]
 
             #Find closest matching time to the provided forecast date, or time
-            nhc_forecast_init_dt = [dt.strptime(k,'%Y%m%d%H') for k in nhc_forecast_init]
-            time_diff = np.array([(i-time).days + (i-time).seconds/86400 for i in nhc_forecast_init_dt])
+            nhc_forecast_init_dt = [dt.strptime(k,'%Y%m%d%H') if 3 not in nhc_forecasts[k]['fhr'] else dt.strptime(k,'%Y%m%d%H')+timedelta(hours=3) for k in nhc_forecast_init]
+            time_diff = [(i-time).days + (i-time).seconds/86400 for i in nhc_forecast_init_dt]            
+            time_diff = np.array([i for i in time_diff if i <= 0.0])
+            if len(time_diff) == 0: continue
             closest_idx = np.abs(time_diff).argmin()
             forecast_dict = nhc_forecasts[nhc_forecast_init[closest_idx]]
             advisory_num = closest_idx+1
+            
+            #Second filter
+            if np.nanmin(time_diff) > 0: continue
+            if time_diff[closest_idx] < (-9.0/24.0): continue
+            if time_diff[closest_idx] > (9.0/24.0): continue
 
             #Get observed track as per NHC analyses
             track_dict = {'lat':[],'lon':[],'vmax':[],'type':[],'mslp':[],'date':[],'extra_obs':[],'special':[],'ace':0.0}
             use_carq = True
             for k in nhc_forecast_init:
+                if k not in carq_forecasts.keys(): continue
                 if carq_forecasts[k]['init'] > time: continue
                 hrs = nhc_forecasts[k]['fhr']
                 hrs_carq = carq_forecasts[k]['fhr'] if k in carq_forecast_init else []
@@ -4033,6 +4042,7 @@ class TrackDataset:
                     else:
                         hr_idx = 0
                         hr_add = 0
+                    if nhc_forecasts[k]['init']+timedelta(hours=hr_add) > time: continue
                     track_dict['lat'].append(nhc_forecasts[k]['lat'][hr_idx])
                     track_dict['lon'].append(nhc_forecasts[k]['lon'][hr_idx])
                     track_dict['vmax'].append(nhc_forecasts[k]['vmax'][hr_idx])
@@ -4067,7 +4077,14 @@ class TrackDataset:
                     forecast_dict['vmax'].insert(0,track_dict['vmax'][insert_idx])
                     forecast_dict['mslp'].insert(0,track_dict['mslp'][insert_idx])
                     forecast_dict['type'].insert(0,track_dict['type'][insert_idx])
-
+            
+            #Fix forecast dict if hour 3 is available
+            if use_carq == False and 3 in forecast_dict['fhr']:
+                idx_3 = forecast_dict['fhr'].index(3)
+                for iter_key in ['fhr','lat','lon','vmax','mslp','type']:
+                    forecast_dict[iter_key] = forecast_dict[iter_key][idx_3:]
+                forecast_dict['fhr'][0] = 0
+            
             #Add other info to forecast dict
             forecast_dict['advisory_num'] = advisory_num
             forecast_dict['basin'] = storm.basin
@@ -4082,6 +4099,13 @@ class TrackDataset:
             if len(track_dict['lat']) == 0:
                 for iter_key in ['lat','lon','vmax','mslp','type']:
                     track_dict[iter_key] = [forecast_dict[iter_key][0]]
+            
+            #Fix name if applicable
+            if np.nanmax(track_dict['vmax']) < 34:
+                if track_dict['operational_id'] != '':
+                    track_dict['name'] = num_to_text(int(track_dict['operational_id'][2:4])).upper()
+                else:
+                    track_dict['name'] = num_to_text(int(track_dict['id'][2:4])).upper()
             
             track_dict['basin'] = storm.basin
             storms.append(Storm(track_dict))

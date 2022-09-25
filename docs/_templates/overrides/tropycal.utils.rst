@@ -15,6 +15,7 @@ Generic Utilities
       category_to_wind
       calc_ensemble_ellipse
       classify_subtropical
+      create_storm_dict
       dropsonde_mslp_estimate
       generate_nhc_cone
       get_basin

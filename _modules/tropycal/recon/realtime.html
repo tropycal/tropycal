@@ -188,16 +188,19 @@
             <span class="n">content_split</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
             <span class="c1">#Construct mission ID</span>
-            <span class="n">mission_id</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">content_split</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">,</span><span class="s2">&quot; &quot;</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[:</span><span class="mi">3</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">mission_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">missions</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">missions</span><span class="p">[</span><span class="n">mission_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hdobs&#39;</span><span class="p">:</span><span class="n">decode_hdob</span><span class="p">(</span><span class="n">content</span><span class="p">),</span>
-                                        <span class="s1">&#39;vdms&#39;</span><span class="p">:[],</span>
-                                        <span class="s1">&#39;dropsondes&#39;</span><span class="p">:[],</span>
-                                        <span class="s1">&#39;aircraft&#39;</span><span class="p">:</span><span class="n">mission_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
-                                        <span class="s1">&#39;storm_name&#39;</span><span class="p">:</span><span class="n">mission_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
-                                       <span class="p">}</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">missions</span><span class="p">[</span><span class="n">mission_id</span><span class="p">][</span><span class="s1">&#39;hdobs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">missions</span><span class="p">[</span><span class="n">mission_id</span><span class="p">][</span><span class="s1">&#39;hdobs&#39;</span><span class="p">],</span><span class="n">decode_hdob</span><span class="p">(</span><span class="n">content</span><span class="p">)])</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">mission_id</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">content_split</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">,</span><span class="s2">&quot; &quot;</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[:</span><span class="mi">3</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">mission_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">missions</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">missions</span><span class="p">[</span><span class="n">mission_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hdobs&#39;</span><span class="p">:</span><span class="n">decode_hdob</span><span class="p">(</span><span class="n">content</span><span class="p">),</span>
+                                            <span class="s1">&#39;vdms&#39;</span><span class="p">:[],</span>
+                                            <span class="s1">&#39;dropsondes&#39;</span><span class="p">:[],</span>
+                                            <span class="s1">&#39;aircraft&#39;</span><span class="p">:</span><span class="n">mission_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+                                            <span class="s1">&#39;storm_name&#39;</span><span class="p">:</span><span class="n">mission_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+                                           <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">missions</span><span class="p">[</span><span class="n">mission_id</span><span class="p">][</span><span class="s1">&#39;hdobs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">missions</span><span class="p">[</span><span class="n">mission_id</span><span class="p">][</span><span class="s1">&#39;hdobs&#39;</span><span class="p">],</span><span class="n">decode_hdob</span><span class="p">(</span><span class="n">content</span><span class="p">)])</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
 
         <span class="c1">#Retrieve VDMs</span>
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">[</span><span class="s1">&#39;vdms&#39;</span><span class="p">]:</span>
@@ -437,7 +440,7 @@
         
         <span class="k">return</span> <span class="n">data</span></div>
     
-<div class="viewcode-block" id="RealtimeRecon.get_hdobs_realtime"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.RealtimeRecon.get_hdobs_realtime.html#tropycal.recon.RealtimeRecon.get_hdobs_realtime">[docs]</a>    <span class="k">def</span> <span class="nf">get_hdobs_realtime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">basin</span><span class="p">,</span><span class="n">aircraft</span><span class="p">,</span><span class="n">decoded</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="RealtimeRecon.get_hdobs_realtime"><a class="viewcode-back" href="../../../api/generated/tropycal.recon.RealtimeRecon.get_hdobs_realtime.html#tropycal.recon.RealtimeRecon.get_hdobs_realtime">[docs]</a>    <span class="k">def</span> <span class="nf">get_hdobs_realtime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">basin</span><span class="p">,</span><span class="n">aircraft</span><span class="p">,</span><span class="n">decoded</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieve the latest 10-minute HDOBs directly from NHC.</span>
@@ -449,7 +452,7 @@
 <span class="sd">        aircraft : str</span>
 <span class="sd">            Type of aircraft for recon mission. Available options are ``&quot;noaa&quot;`` or ``&quot;usaf&quot;`` (US Air Force).</span>
 <span class="sd">        decoded : bool, optional</span>
-<span class="sd">            If False (default), returns a Pandas DataFrame of all HDOBs. If True, returns a dictionary with decoded HDOBs highlights.</span>
+<span class="sd">            If False, returns a Pandas DataFrame of all HDOBs. If True (default), returns a dictionary with decoded HDOBs highlights.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -499,7 +502,9 @@
                 <span class="n">hdob_content</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s1">&#39;&lt;/pre&gt;&#39;</span><span class="p">:</span> <span class="k">break</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">decode_hdob</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hdob_content</span><span class="p">),</span><span class="n">mission_row</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-
+        
+        <span class="k">if</span> <span class="n">decoded</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> <span class="k">return</span> <span class="n">df</span>
+        
         <span class="c1">#Parse data</span>
         <span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;sfmr&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="s1">&#39;sfmr&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
         <span class="n">max_sfmr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="k">if</span> <span class="n">all_nan</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>

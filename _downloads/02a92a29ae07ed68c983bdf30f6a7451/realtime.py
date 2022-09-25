@@ -2,7 +2,7 @@
 ======================
 Realtime Functionality
 ======================
-This sample script shows how to use Tropycal to retrieve and plot real time tropical cyclones and potential formation. As this script was written on 15 June 2022, the data below is valid for the time this script was written.
+This sample script shows how to use Tropycal to retrieve and plot real time tropical cyclones and potential formation. As this script was written on 24 September 2022, the data below is valid for the time this script was written.
 """
 
 from tropycal import realtime
@@ -30,16 +30,16 @@ realtime_obj
 ###########################################
 # Alternatively, we can also list all active storms, along with an optional filter by basin.
 
-realtime_obj.list_active_storms(basin='east_pacific')
+realtime_obj.list_active_storms(basin='north_atlantic')
 
 ###########################################
 # A new functionality with Tropycal v0.4 is to plot a summary of all ongoing activity, whether globally or by basin. This function can be highly customized, with more details in the documentation.
 #
-# At the time this script was written, Hurricane Blas is active in the eastern Pacific Ocean, with East Pacific invest 93E (60% of development) and Atlantic invest 93L (30% of development).
+# At the time this script was written, Ian, Gaston and Hermine are active in the Atlantic Ocean, with invest 99L (30% of development) active as well.
 #
 # The domain option for this plot is set to 'all' by default, plotting the full globe. This can also be a basin (e.g., 'north_atlantic', 'east_pacific'), or a custom domain, as we'll plot below.
 
-realtime_obj.plot_summary(domain={'w':-130,'e':-60,'s':5,'n':50})
+realtime_obj.plot_summary(domain={'w':-100,'e':-10,'s':4,'n':60})
 
 ###########################################
 # Let's look at a few ways to customize this plot. There are four properties available to customize the plot, detailed more thoroughly in the documentation:
@@ -51,14 +51,14 @@ realtime_obj.plot_summary(domain={'w':-130,'e':-60,'s':5,'n':50})
 #
 # The above plot includes the NHC TWO by default. Plotting the TWO overrides any invests that have a TWO associated with them (invests that are outside of NHC's area of responsibility or don't have a TWO still appear). We can pass the ``'plot':False`` argument to any property dict, which in doing so removes that element from the summary map. Let's test this out by removing the TWO and cone of uncertainty from the plot:
 
-realtime_obj.plot_summary(domain={'w':-130,'e':-60,'s':5,'n':50}, two_prop={'plot':False}, cone_prop={'plot':False})
+realtime_obj.plot_summary(domain='north_atlantic', two_prop={'plot':False}, cone_prop={'plot':False})
 
 ###########################################
 # Realtime Storms
 # ---------------
 # To retrieve a storm from a Realtime object, simply use its ``get_storm()`` method and provide an ID as listed in ``list_active_storms()``:
 
-storm = realtime_obj.get_storm('EP022022')
+storm = realtime_obj.get_storm('AL092022')
 
 ###########################################
 # This now returns a RealtimeStorm object. RealtimeStorm objects inherit the same functionality as Storm objects, but have additional functions unique to realtime storms. Additionally, as these can also be valid for invests, certain functionality that is only available for tropical cyclones (e.g., NHC forecasts or discussions) is unavailable for invests.
@@ -99,9 +99,9 @@ storm.get_realtime_info()
 ###########################################
 # Realtime Invests
 # ----------------
-# Invests are essentially RealtimeStorm objects, but without much of the functionality that comes with tropical cyclones (e.g., official forecast track, forecast discussion, etc.). Let's test this out for invest 93E:
+# Invests are essentially RealtimeStorm objects, but without much of the functionality that comes with tropical cyclones (e.g., official forecast track, forecast discussion, etc.). Let's test this out for invest 99L:
 
-invest = realtime_obj.get_storm('EP932022')
+invest = realtime_obj.get_storm('AL992022')
 invest
 
 ###########################################

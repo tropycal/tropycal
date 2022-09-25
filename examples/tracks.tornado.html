@@ -116,11 +116,7 @@ to download the full example code</p>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in tornado track data
-c:\users\tomer4\documents\python\github\tropycal\src\tropycal\tornado\dataset.py:68: FutureWarning: The error_bad_lines argument has been deprecated and will be removed in a future version. Use on_bad_lines in the future.
-
-
-  Tors = pd.read_csv(f&#39;https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv&#39;,\
---&gt; Completed reading in tornado data for 1950-2020 (12.01 seconds)
+--&gt; Completed reading in tornado data for 1950-2021 (11.67 seconds)
 </pre></div>
 </div>
 <p>We can use a TornadoDataset object to analyze both tornadoes associated with tropical cyclones and non-TC tornadoes. As an example of the latter, we can make a plot of all tornadoes during the 27 April 2011 tornado outbreak, along with the Practically Perfect Forecast (PPH) in filled contours:</p>
@@ -129,14 +125,7 @@ c:\users\tomer4\documents\python\github\tropycal\src\tropycal\tornado\dataset.py
 </pre></div>
 </div>
 <img src="../_images/sphx_glr_tracks.tornado_001.png" srcset="../_images/sphx_glr_tracks.tornado_001.png" alt="Tornado tracks and daily PPH (%), Start ... 12:02 UTC 27 Apr 2011 End ... 11:50 UTC 28 Apr 2011" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>c:\users\tomer4\documents\python\github\tropycal\src\tropycal\tornado\tools.py:36: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame.
-Try using .loc[row_indexer,col_indexer] = value instead
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  dfTors[&#39;SPC_time&#39;] = dfTors[&#39;UTC_time&#39;] - timedelta(hours=12)
-
-&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Tornado tracks and daily PPH (%)&#39;,&#39;right&#39;:&#39;Start ... 12:02 UTC 27 Apr 2011\nEnd ... 11:50 UTC 28 Apr 2011&#39;}&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Tornado tracks and daily PPH (%)&#39;,&#39;right&#39;:&#39;Start ... 12:02 UTC 27 Apr 2011\nEnd ... 11:50 UTC 28 Apr 2011&#39;}&gt;
 </pre></div>
 </div>
 </div>
@@ -148,7 +137,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (4.43 seconds)
+--&gt; Completed reading in HURDAT2 data (5.72 seconds)
 </pre></div>
 </div>
 <p>This instance of Storm contains several methods that return the storm data back in different data types. The following examples will show how to retrieve 3 different data types.</p>
@@ -159,9 +148,9 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in tornado track data
---&gt; Completed reading in tornado data for 1950-2020 (11.45 seconds)
+--&gt; Completed reading in tornado data for 1950-2021 (10.80 seconds)
 --&gt; Starting to assign tornadoes to storms
---&gt; Completed assigning tornadoes to storm (139.60 seconds)
+--&gt; Completed assigning tornadoes to storm (198.18 seconds)
 </pre></div>
 </div>
 <p>Once the above block is done running, we can now look at a climatology of tornadoes associated with North Atlantic tropical cyclones. The current method of analysis is via the <code class="docutils literal notranslate"><span class="pre">plot_TCtors_rotated()</span></code> method, which rotates tropical cyclones to a storm motion relative framework.</p>
@@ -169,8 +158,8 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.plot_TCtors_rotated.html#tropycal.tracks.TrackDataset.plot_TCtors_rotated" title="tropycal.tracks.TrackDataset.plot_TCtors_rotated" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">hurdat_atl</span><span class="o">.</span><span class="n">plot_TCtors_rotated</span></a><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_tracks.tornado_002.png" srcset="../_images/sphx_glr_tracks.tornado_002.png" alt="Composite motion-relative tornadoes Min threshold: EF-0 | n=234 storms" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:title={&#39;center&#39;:&#39;Composite motion-relative tornadoes\nMin threshold: EF-0 | n=234 storms&#39;}, xlabel=&#39;Left/Right of Storm Heading (km)&#39;, ylabel=&#39;Behind/Ahead of Storm Heading (km)&#39;&gt;
+<img src="../_images/sphx_glr_tracks.tornado_002.png" srcset="../_images/sphx_glr_tracks.tornado_002.png" alt="Composite motion-relative tornadoes Min threshold: EF-0 | n=241 storms" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:title={&#39;center&#39;:&#39;Composite motion-relative tornadoes\nMin threshold: EF-0 | n=241 storms&#39;}, xlabel=&#39;Left/Right of Storm Heading (km)&#39;, ylabel=&#39;Behind/Ahead of Storm Heading (km)&#39;&gt;
 </pre></div>
 </div>
 <p>We can also make the same plot for a composite subset of tropical cyclones, given either their IDs (e.g., “AL052004”), or a storm tuple. For instance, let’s composite the four hurricanes that made landfall in Florida in 2004:</p>
@@ -208,7 +197,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:title={&#39;center&#39;:&#39;IVAN 2004 tornadoes relative to heading&#39;}, xlabel=&#39;Left/Right of Storm Heading (km)&#39;, ylabel=&#39;Behind/Ahead of Storm Heading (km)&#39;&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  57.743 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 3 minutes  56.647 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-tornado-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/a506bea07afada80573c7bf4216395cf/tracks.tornado.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.tornado.py</span></code></a></p>

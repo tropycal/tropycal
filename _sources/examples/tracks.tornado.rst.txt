@@ -65,11 +65,7 @@ Let's start by creating an instance of a TornadoDataset object. By default, this
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    c:\users\tomer4\documents\python\github\tropycal\src\tropycal\tornado\dataset.py:68: FutureWarning: The error_bad_lines argument has been deprecated and will be removed in a future version. Use on_bad_lines in the future.
-
-
-      Tors = pd.read_csv(f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv',\
-    --> Completed reading in tornado data for 1950-2020 (12.01 seconds)
+    --> Completed reading in tornado data for 1950-2021 (11.67 seconds)
 
 
 
@@ -101,12 +97,6 @@ We can use a TornadoDataset object to analyze both tornadoes associated with tro
 
  .. code-block:: none
 
-    c:\users\tomer4\documents\python\github\tropycal\src\tropycal\tornado\tools.py:36: SettingWithCopyWarning: 
-    A value is trying to be set on a copy of a slice from a DataFrame.
-    Try using .loc[row_indexer,col_indexer] = value instead
-
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      dfTors['SPC_time'] = dfTors['UTC_time'] - timedelta(hours=12)
 
     <GeoAxesSubplot:title={'left':'Tornado tracks and daily PPH (%)','right':'Start ... 12:02 UTC 27 Apr 2011\nEnd ... 11:50 UTC 28 Apr 2011'}>
 
@@ -136,7 +126,7 @@ We can also use TornadoDataset to assess tornadoes associated with tropical cycl
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (4.43 seconds)
+    --> Completed reading in HURDAT2 data (5.72 seconds)
 
 
 
@@ -167,9 +157,9 @@ This code block will take a while to run, as it will iterate over every storm in
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2020 (11.45 seconds)
+    --> Completed reading in tornado data for 1950-2021 (10.80 seconds)
     --> Starting to assign tornadoes to storms
-    --> Completed assigning tornadoes to storm (139.60 seconds)
+    --> Completed assigning tornadoes to storm (198.18 seconds)
 
 
 
@@ -191,7 +181,7 @@ Most tornadoes associated with tropical cyclones occur in the front right quadra
 
 
 .. image-sg:: /examples/images/sphx_glr_tracks.tornado_002.png
-   :alt: Composite motion-relative tornadoes Min threshold: EF-0 | n=234 storms
+   :alt: Composite motion-relative tornadoes Min threshold: EF-0 | n=241 storms
    :srcset: /examples/images/sphx_glr_tracks.tornado_002.png
    :class: sphx-glr-single-img
 
@@ -203,7 +193,7 @@ Most tornadoes associated with tropical cyclones occur in the front right quadra
  .. code-block:: none
 
 
-    <AxesSubplot:title={'center':'Composite motion-relative tornadoes\nMin threshold: EF-0 | n=234 storms'}, xlabel='Left/Right of Storm Heading (km)', ylabel='Behind/Ahead of Storm Heading (km)'>
+    <AxesSubplot:title={'center':'Composite motion-relative tornadoes\nMin threshold: EF-0 | n=241 storms'}, xlabel='Left/Right of Storm Heading (km)', ylabel='Behind/Ahead of Storm Heading (km)'>
 
 
 
@@ -327,7 +317,7 @@ Let's make a plot of the tornadoes in storm motion relative coordinates:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  57.743 seconds)
+   **Total running time of the script:** ( 3 minutes  56.647 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.tornado.py:

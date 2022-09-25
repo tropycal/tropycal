@@ -66,7 +66,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (4.67 seconds)
+    --> Completed reading in HURDAT2 data (7.33 seconds)
 
 
 
@@ -473,6 +473,12 @@ Simply plug in a valid date and domain to plot over, and this plot will display 
 
     --> Reading storm data
     --> Generating plot
+    Possible issue encountered when converting Shape #0 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+    Possible issue encountered when converting Shape #0 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+    Possible issue encountered when converting Shape #1 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+    Possible issue encountered when converting Shape #1 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+    Possible issue encountered when converting Shape #2 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+    Possible issue encountered when converting Shape #2 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
 
     <GeoAxesSubplot:title={'left':'Summary & NHC 5-Day Formation Outlook','right':'Valid: 00 UTC 17 Sep 2020'}>
 
@@ -505,7 +511,7 @@ First, let's take a look at the climatology for the basin. The default period is
  .. code-block:: none
 
 
-    {'all_storms': 16.4, 'named_storms': 14.6, 'hurricanes': 7.2, 'major_hurricanes': 3.3, 'ace': 123.3, 'start_time': datetime.datetime(2022, 6, 1, 2, 24), 'end_time': datetime.datetime(2022, 11, 13, 7, 12)}
+    {'all_storms': 16.4, 'named_storms': 14.6, 'hurricanes': 7.2, 'major_hurricanes': 3.3, 'ace': 123.2, 'start_time': datetime.datetime(2022, 6, 1, 2, 24), 'end_time': datetime.datetime(2022, 11, 13, 7, 12)}
 
 
 
@@ -531,7 +537,7 @@ Another useful functionality for research or seasonal forecast purposes is to qu
  .. code-block:: none
 
 
-    {'all_storms': {'list': [16, 31, 17, 21, 18, 31], 'average': 22.3, 'composite_anomaly': 5.9, 'percentile_ranks': [50.0, 98.4, 61.3, 88.7, 67.7, 98.4]}, 'named_storms': {'list': [15, 28, 16, 19, 17, 30], 'average': 20.8, 'composite_anomaly': 6.2, 'percentile_ranks': [56.5, 96.8, 69.4, 85.5, 74.2, 100.0]}, 'hurricanes': {'list': [9, 15, 8, 12, 10, 14], 'average': 11.3, 'composite_anomaly': 4.1, 'percentile_ranks': [74.2, 100.0, 62.9, 93.5, 83.9, 96.8]}, 'major_hurricanes': {'list': [6, 7, 5, 5, 6, 7], 'average': 6.0, 'composite_anomaly': 2.7, 'percentile_ranks': [90.3, 98.4, 79.0, 79.0, 90.3, 98.4]}, 'ace': {'list': [226.7, 250.3, 145.8, 165.5, 224.8, 180.3], 'average': 198.9, 'composite_anomaly': 75.6, 'percentile_ranks': [93.5, 100.0, 67.7, 71.0, 90.3, 83.9]}}
+    {'all_storms': {'list': [6, 6, 6, 6, 6, 6], 'average': 6.0, 'composite_anomaly': -10.4, 'percentile_ranks': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}, 'named_storms': {'list': [15, 28, 16, 19, 17, 30], 'average': 20.8, 'composite_anomaly': 6.2, 'percentile_ranks': [56.5, 96.8, 69.4, 85.5, 74.2, 100.0]}, 'hurricanes': {'list': [9, 15, 8, 12, 10, 14], 'average': 11.3, 'composite_anomaly': 4.1, 'percentile_ranks': [74.2, 100.0, 62.9, 93.5, 83.9, 96.8]}, 'major_hurricanes': {'list': [6, 7, 5, 5, 6, 7], 'average': 6.0, 'composite_anomaly': 2.7, 'percentile_ranks': [90.3, 98.4, 79.0, 79.0, 90.3, 98.4]}, 'ace': {'list': [226.7, 250.3, 145.8, 165.5, 224.8, 180.3], 'average': 198.9, 'composite_anomaly': 75.7, 'percentile_ranks': [93.5, 100.0, 67.7, 71.0, 90.3, 83.9]}}
 
 
 
@@ -752,7 +758,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (107.07 seconds)
+    --> Completed reading in ibtracs data (64.56 seconds)
 
 
 
@@ -866,7 +872,7 @@ Make a plot of the total number of rapidly intensifying storms (>=30 kt over 24 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 7 minutes  58.847 seconds)
+   **Total running time of the script:** ( 9 minutes  6.523 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.TrackDataset.py:

@@ -66,7 +66,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (4.57 seconds)
+    --> Completed reading in HURDAT2 data (6.92 seconds)
 
 
 
@@ -107,9 +107,9 @@ Note that the first time you run an analog function, if storms in `basin` haven'
  .. code-block:: none
 
     --> Starting to interpolate storms
-    --> Completed interpolating storms (16.81 seconds)
+    --> Completed interpolating storms (27.31 seconds)
 
-    {'AL051861': 25.6, 'AL061863': 22.4, 'AL051872': 20.2, 'AL061874': 16.4, 'AL041893': 8.4, 'AL031955': 14.8, 'AL031960': 27.9, 'AL091971': 6.2, 'AL021972': 19.7, 'AL021996': 21.1, 'AL081999': 43.6, 'AL082008': 37.3, 'AL092011': 11.1, 'AL062020': 23.7}
+    {'AL051861': 25.6, 'AL061863': 22.2, 'AL051872': 20.2, 'AL061874': 16.0, 'AL041893': 8.4, 'AL031955': 14.5, 'AL031960': 27.9, 'AL091971': 6.1, 'AL021972': 19.4, 'AL021996': 20.9, 'AL081999': 43.6, 'AL082008': 37.1, 'AL092011': 11.1, 'AL062020': 24.1}
 
 
 
@@ -138,7 +138,7 @@ The default ordering of the dict is by chronological order. We can resort it to 
  .. code-block:: none
 
 
-    {'AL091971': 6.2, 'AL041893': 8.4, 'AL092011': 11.1, 'AL031955': 14.8, 'AL061874': 16.4, 'AL021972': 19.7, 'AL051872': 20.2, 'AL021996': 21.1, 'AL061863': 22.4, 'AL062020': 23.7, 'AL051861': 25.6, 'AL031960': 27.9, 'AL082008': 37.3, 'AL081999': 43.6}
+    {'AL091971': 6.1, 'AL041893': 8.4, 'AL092011': 11.1, 'AL031955': 14.5, 'AL061874': 16.0, 'AL021972': 19.4, 'AL051872': 20.2, 'AL021996': 20.9, 'AL061863': 22.2, 'AL062020': 24.1, 'AL051861': 25.6, 'AL031960': 27.9, 'AL082008': 37.1, 'AL081999': 43.6}
 
 
 
@@ -206,7 +206,7 @@ Let's test this out by expanding the radius to 100 km, adding a minimum sustaine
 
  .. code-block:: none
 
-    {'AL041893': 8.4, 'AL071934': 79.2, 'AL061938': 92.7, 'AL051960': 89.2, 'AL071976': 70.0, 'AL091985': 60.1}
+    {'AL041893': 8.4, 'AL071934': 79.2, 'AL061938': 92.7, 'AL051960': 89.2, 'AL071976': 69.7, 'AL091985': 60.1}
 
     <GeoAxesSubplot:title={'left':'TCs Within 100 km of 40.7°N, 74.0°W','right':'Number of storms: 6\nMay 01 – Oct 01 • 1851 – 2021'}>
 
@@ -312,7 +312,7 @@ The example below plots all* tropical cyclones that passed through the New Jerse
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  49.603 seconds)
+   **Total running time of the script:** ( 1 minutes  5.434 seconds)
 
 
 .. _sphx_glr_download_examples_analogs.py:

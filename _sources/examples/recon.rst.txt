@@ -63,7 +63,7 @@ There are several ways of retrieving a ReconDataset object. The first step is to
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (5.45 seconds)
+    --> Completed reading in HURDAT2 data (5.73 seconds)
 
 
 
@@ -146,13 +146,13 @@ The following functionality is used to retrieve data for each sub-class. Each cl
  .. code-block:: none
 
     Searching through recon VDM files between 20170830 and 20170913 ...
-    --> Completed reading in recon VDM files (14.3 seconds)
+    --> Completed reading in recon VDM files (16.4 seconds)
     Read 82 files
     Searching through recon dropsonde files between 201708290000 and 201709141200 ...
-    --> Completed reading in recon dropsonde files (68.9 seconds)
+    --> Completed reading in recon dropsonde files (76.8 seconds)
     Read 460 files
     Searching through recon HDOB files between 20170829 and 20170914 ...
-    --> Completed reading in recon HDOB files (316.3 seconds)
+    --> Completed reading in recon HDOB files (298.9 seconds)
     Read 1491 files
     Unable to decode 0 files
 
@@ -201,6 +201,7 @@ Print the recon object to see a summary of the data in recon from the three obje
         Max 10sec flight level wind:  167.0 knots
         Max SFMR wind:                172.0 knots
         Min surface pressure:         909.1 hPa
+        Source:                       National Hurricane Center (NHC)
     <tropycal.recon.dropsondes>
     Dataset Summary:
         Storm:                   IRMA 2017
@@ -209,12 +210,14 @@ Print the recon object to see a summary of the data in recon from the three obje
         Max 500m-avg wind:       170.0 knots
         Max 150m-avg wind:       163.0 knots
         Min sea level pressure:  915.0 hPa
+        Source:                  National Hurricane Center (NHC)
     <tropycal.recon.vdms>
     Dataset Summary:
         Storm:                   IRMA 2017
         Missions:                23
         VDMs:                    82
         Min sea level pressure:  915.0 hPa
+        Source:                  National Hurricane Center (NHC)
 
 
 
@@ -339,6 +342,7 @@ The first class we'll be reviewing is the HDOBs class, which is the largest cont
         Max 10sec flight level wind:  167.0 knots
         Max SFMR wind:                172.0 knots
         Min surface pressure:         909.1 hPa
+        Source:                       National Hurricane Center (NHC)
 
 
 
@@ -395,6 +399,7 @@ And view HDOB Pandas DataFrame data:
           <th>rain</th>
           <th>flag</th>
           <th>mission</th>
+          <th>mission_id</th>
           <th>xdist</th>
           <th>ydist</th>
           <th>distance</th>
@@ -420,6 +425,7 @@ And view HDOB Pandas DataFrame data:
           <td>NaN</td>
           <td>[sfmr, rain]</td>
           <td>01</td>
+          <td>NOAA2-0111A-IRMA</td>
           <td>-1064.102798</td>
           <td>-494.372330</td>
           <td>1173.336595</td>
@@ -443,6 +449,7 @@ And view HDOB Pandas DataFrame data:
           <td>NaN</td>
           <td>[sfmr, rain]</td>
           <td>01</td>
+          <td>NOAA2-0111A-IRMA</td>
           <td>-1060.748502</td>
           <td>-494.302829</td>
           <td>1170.266069</td>
@@ -466,6 +473,7 @@ And view HDOB Pandas DataFrame data:
           <td>NaN</td>
           <td>[sfmr, rain]</td>
           <td>01</td>
+          <td>NOAA2-0111A-IRMA</td>
           <td>-1058.454254</td>
           <td>-493.121318</td>
           <td>1167.687476</td>
@@ -489,6 +497,7 @@ And view HDOB Pandas DataFrame data:
           <td>NaN</td>
           <td>[sfmr, rain]</td>
           <td>01</td>
+          <td>NOAA2-0111A-IRMA</td>
           <td>-1055.099988</td>
           <td>-493.051701</td>
           <td>1164.618377</td>
@@ -512,6 +521,7 @@ And view HDOB Pandas DataFrame data:
           <td>NaN</td>
           <td>[sfmr, rain]</td>
           <td>01</td>
+          <td>NOAA2-0111A-IRMA</td>
           <td>-1051.745735</td>
           <td>-490.758124</td>
           <td>1160.608732</td>
@@ -519,6 +529,7 @@ And view HDOB Pandas DataFrame data:
         </tr>
         <tr>
           <th>...</th>
+          <td>...</td>
           <td>...</td>
           <td>...</td>
           <td>...</td>
@@ -558,6 +569,7 @@ And view HDOB Pandas DataFrame data:
           <td>0.0</td>
           <td>[]</td>
           <td>31</td>
+          <td>AF307-3111A-IRMA</td>
           <td>-414.301548</td>
           <td>283.314691</td>
           <td>501.909341</td>
@@ -581,6 +593,7 @@ And view HDOB Pandas DataFrame data:
           <td>0.0</td>
           <td>[]</td>
           <td>31</td>
+          <td>AF307-3111A-IRMA</td>
           <td>-419.299612</td>
           <td>285.347534</td>
           <td>507.183773</td>
@@ -604,6 +617,7 @@ And view HDOB Pandas DataFrame data:
           <td>0.0</td>
           <td>[sfmr, rain]</td>
           <td>31</td>
+          <td>AF307-3111A-IRMA</td>
           <td>-423.302335</td>
           <td>286.268366</td>
           <td>511.013154</td>
@@ -627,6 +641,7 @@ And view HDOB Pandas DataFrame data:
           <td>0.0</td>
           <td>[]</td>
           <td>31</td>
+          <td>AF307-3111A-IRMA</td>
           <td>-428.299609</td>
           <td>290.524992</td>
           <td>517.537753</td>
@@ -650,6 +665,7 @@ And view HDOB Pandas DataFrame data:
           <td>0.0</td>
           <td>[]</td>
           <td>31</td>
+          <td>AF307-3111A-IRMA</td>
           <td>-433.296478</td>
           <td>291.445707</td>
           <td>522.193870</td>
@@ -657,7 +673,7 @@ And view HDOB Pandas DataFrame data:
         </tr>
       </tbody>
     </table>
-    <p>29820 rows × 20 columns</p>
+    <p>29694 rows × 21 columns</p>
     </div>
     </div>
     <br />
@@ -721,7 +737,7 @@ Plot a hovmoller from recon data interpolated to time and radius - note the eyew
  .. code-block:: none
 
     --> Starting interpolation
-    --> Completed interpolation (7.65 seconds)
+    --> Completed interpolation (6.71 seconds)
 
     <AxesSubplot:title={'left':'Hurricane IRMA\nRecon: 10s FL wind speed (kt)','right':'Start ... 06:00 UTC 04 Sep 2017\nEnd ... 19:29 UTC 10 Sep 2017'}, xlabel='Radius (km)', ylabel='UTC Time (MM-DD HH)'>
 
@@ -756,7 +772,7 @@ Plot a map valid at 1200 UTC 6 September 2017 interpolated to time and space:
 
     --> Starting interpolation
     2017-09-06 12:00:00
-    --> Completed interpolation (8.22 seconds)
+    --> Completed interpolation (8.51 seconds)
 
     <GeoAxesSubplot:title={'left':'Hurricane IRMA\nRecon: 10s FL wind speed (kt)','right':'12:00 UTC 06 Sep 2017'}>
 
@@ -794,6 +810,7 @@ Next we'll take a look at the dropsonde data for Hurricane Irma. First, let's ta
         Max 500m-avg wind:       170.0 knots
         Max 150m-avg wind:       163.0 knots
         Min sea level pressure:  915.0 hPa
+        Source:                  National Hurricane Center (NHC)
 
 
 
@@ -827,6 +844,7 @@ Now use the ``sel`` function to subset to only dropsondes released in the eyewal
         Max 500m-avg wind:       170.0 knots
         Max 150m-avg wind:       163.0 knots
         Min sea level pressure:  926.0 hPa
+        Source:                  National Hurricane Center (NHC)
 
 
 
@@ -874,7 +892,7 @@ We can view data from one of the dropsondes by using the ``isel`` method to sele
     18   756.0     NaN   NaN   NaN   40.0  124.0
     19   732.0     NaN  16.4  14.1    NaN    NaN
     20   700.0  2626.0  11.0   7.6   45.0  145.0
-    21   696.0     NaN  10.2   6.6   45.0  146.0, 'mission': '11', 'stormname': 'IRMA', 'obsnum': 21, 'TOPxdist': -17.607565905503332, 'TOPydist': 18.667114071950596, 'TOPdistance': 25.66101176672228, 'BOTTOMxdist': -24.822341252146206, 'BOTTOMydist': 4.665134677347142, 'BOTTOMdistance': 25.256921958065, 'location': 'EYEWALL', 'octant': 'NW'}]
+    21   696.0     NaN  10.2   6.6   45.0  146.0, 'mission': '11', 'stormname': 'IRMA', 'obsnum': 21, 'mission_id': 'AF305-1111A-IRMA', 'TOPxdist': -17.607565905503332, 'TOPydist': 18.667114071950596, 'TOPdistance': 25.66101176672228, 'BOTTOMxdist': -24.822341252146206, 'BOTTOMydist': 4.665134677347142, 'BOTTOMdistance': 25.256921958065, 'location': 'EYEWALL', 'octant': 'NW'}]
 
 
 
@@ -996,6 +1014,7 @@ The last class we'll look at is the VDM class. Let's start off by viewing a summ
         Missions:                23
         VDMs:                    82
         Min sea level pressure:  915.0 hPa
+        Source:                  National Hurricane Center (NHC)
 
 
 
@@ -1021,7 +1040,7 @@ Let's look at decoded VDMs for a specific pass:
  .. code-block:: none
 
 
-    [{'time': datetime.datetime(2017, 9, 4, 23, 7, 5), 'lat': 16.68, 'lon': -54.87, 'Standard Level (hPa)': nan, 'Minimum Height at Standard Level (m)': nan, 'Estimated Maximum Surface Wind Inbound (kt)': 97.0, 'Dropsonde Surface Wind Speed at Center (kt)': 13.0, 'Dropsonde Surface Wind Direction at Center (deg)': 263.0, 'Maximum Flight Level Wind Inbound': '353 deg 110 kt', 'Location of the Maximum Flight Level Wind Inbound': '264 deg 15 nm', 'Minimum Sea Level Pressure (hPa)': 945.0, 'Maximum Flight Level Temp Outside Eye (C)': 13.0, 'Maximum Flight Level Temp Inside Eye (C)': 19.0, 'Dew Point Inside Eye (C)': 18.0, 'Eye character': 'closed', 'Eye Shape': 'circular', 'Eye Diameter (nmi)': 25.0, 'Aircraft': 'NOAA2', 'mission': '05', 'Remarks': ' MAX FL WIND 130 KT 001 / 22 NM 21:45:54Z MAX FL TEMP 19 C 108 / 6 NM FROM FL CNTR CNTR DROPSONDE SFC WIND 130 / 06 KTS  '}]
+    [{'time': datetime.datetime(2017, 9, 4, 23, 7, 5), 'lat': 16.68, 'lon': -54.87, 'Standard Level (hPa)': nan, 'Minimum Height at Standard Level (m)': nan, 'Estimated Maximum Surface Wind Inbound (kt)': 97.0, 'Dropsonde Surface Wind Speed at Center (kt)': 13.0, 'Dropsonde Surface Wind Direction at Center (deg)': 263.0, 'Maximum Flight Level Wind Inbound': '353 deg 110 kt', 'Location of the Maximum Flight Level Wind Inbound': '264 deg 15 nm', 'Minimum Sea Level Pressure (hPa)': 945.0, 'Maximum Flight Level Temp Outside Eye (C)': 13.0, 'Maximum Flight Level Temp Inside Eye (C)': 19.0, 'Dew Point Inside Eye (C)': 18.0, 'Eye character': 'closed', 'Eye Shape': 'circular', 'Eye Diameter (nmi)': 25.0, 'Aircraft': 'NOAA2', 'mission': '05', 'Remarks': ' MAX FL WIND 130 KT 001 / 22 NM 21:45:54Z MAX FL TEMP 19 C 108 / 6 NM FROM FL CNTR CNTR DROPSONDE SFC WIND 130 / 06 KTS  ', 'mission_id': 'NOAA2-0511A-IRMA'}]
 
 
 
@@ -1058,7 +1077,7 @@ Plot a map of VDM center location, colored by minimum pressure (default):
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 7 minutes  56.393 seconds)
+   **Total running time of the script:** ( 7 minutes  54.202 seconds)
 
 
 .. _sphx_glr_download_examples_recon.py:

@@ -64,7 +64,7 @@ HURDAT data is not available for the most recent hurricane seasons. To include t
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (4.49 seconds)
+    --> Completed reading in HURDAT2 data (5.94 seconds)
 
 
 
@@ -346,7 +346,7 @@ Plot the tornado tracks associated with Michael, along with the accompanying dai
  .. code-block:: none
 
     --> Starting to read in tornado track data
-    --> Completed reading in tornado data for 1950-2020 (13.93 seconds)
+    --> Completed reading in tornado data for 1950-2021 (14.56 seconds)
 
     <GeoAxesSubplot:title={'left':'Hurricane MICHAEL\nTornado tracks and daily PPH (%)','right':'07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE'}>
 
@@ -542,7 +542,7 @@ This is a subset of the ``get_operational_forecasts()`` method, which pulls in a
  .. code-block:: none
 
 
-    {'fhr': [0, 3, 12, 24, 36, 48, 72, 96, 120], 'lat': [25.5, 26.0, 27.6, 29.700000000000003, 31.8, 33.9, 39.0, 45.5, 50.0], 'lon': [-86.4, -86.4, -86.60000000000001, -85.9, -84.10000000000001, -81.0, -70.0, -51.0, -30.0], 'vmax': [105, 105, 110, 110, 60, 45, 55, 55, 45], 'mslp': [nan, 957, nan, nan, nan, nan, nan, nan, nan], 'type': ['HU', 'HU', 'HU', 'HU', 'TS', 'TS', 'TS', 'EX', 'EX'], 'init': datetime.datetime(2018, 10, 9, 18, 0)}
+    {'init': datetime.datetime(2018, 10, 9, 18, 0), 'fhr': [0, 3, 12, 24, 36, 48, 72, 96, 120], 'lat': [25.5, 26.0, 27.6, 29.7, 31.8, 33.9, 39.0, 45.5, 50.0], 'lon': [-86.4, -86.4, -86.6, -85.9, -84.1, -81.0, -70.0, -51.0, -30.0], 'vmax': [105, 105, 110, 110, 60, 45, 55, 55, 45], 'mslp': [nan, 957, nan, nan, nan, nan, nan, nan, nan], 'type': ['HU', 'HU', 'HU', 'HU', 'TS', 'TS', 'TS', 'EX', 'EX'], 'windrad': [{34: [150, 140, 70, 140], 50: [70, 50, 30, 50], 64: [40, 30, 20, 30]}, {34: [150, 140, 70, 140], 50: [70, 50, 30, 50], 64: [40, 30, 20, 30]}, {34: [150, 140, 70, 140], 50: [70, 60, 40, 50], 64: [35, 30, 25, 30]}, {34: [130, 140, 90, 130], 50: [60, 60, 40, 50], 64: [35, 30, 25, 30]}, {34: [90, 120, 60, 60], 50: [40, 40, 20, 20]}, {34: [50, 140, 40, 40]}, {34: [150, 240, 180, 70], 50: [0, 90, 90, 0]}, {34: [0, 0, 0, 0]}, {34: [0, 0, 0, 0]}]}
 
 
 
@@ -577,7 +577,7 @@ We can also read in IBTrACS data and use it the same way as we would use HURDAT2
  .. code-block:: none
 
     --> Starting to read in ibtracs data
-    --> Completed reading in ibtracs data (96.36 seconds)
+    --> Completed reading in ibtracs data (66.43 seconds)
 
 
 
@@ -659,7 +659,7 @@ If we were to read in IBTrACS without setting ``Catarina=True`` (which sets it t
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  33.771 seconds)
+   **Total running time of the script:** ( 1 minutes  50.996 seconds)
 
 
 .. _sphx_glr_download_examples_tracks.storm.py:

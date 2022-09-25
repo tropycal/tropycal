@@ -67,7 +67,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (4.82 seconds)
+    --> Completed reading in HURDAT2 data (6.36 seconds)
 
 
 
@@ -333,7 +333,7 @@ We'll also use a custom colormap to make rapid intensification and rapid weakeni
 
 
 .. image-sg:: /examples/images/sphx_glr_customize_storm_008.png
-   :alt: Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 138 kt • 920 hPa • 12.5 ACE
+   :alt: Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 139 kt • 920 hPa • 12.5 ACE
    :srcset: /examples/images/sphx_glr_customize_storm_008.png
    :class: sphx-glr-single-img
 
@@ -345,7 +345,7 @@ We'll also use a custom colormap to make rapid intensification and rapid weakeni
  .. code-block:: none
 
 
-    <GeoAxesSubplot:title={'left':'Hurricane MICHAEL','right':'07 Oct 2018 – 11 Oct 2018\n138 kt • 920 hPa • 12.5 ACE'}>
+    <GeoAxesSubplot:title={'left':'Hurricane MICHAEL','right':'07 Oct 2018 – 11 Oct 2018\n139 kt • 920 hPa • 12.5 ACE'}>
 
 
 
@@ -419,7 +419,7 @@ Using what we did earlier, let's customize the plot to (1) not plot dots, (2) co
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  31.619 seconds)
+   **Total running time of the script:** ( 0 minutes  35.876 seconds)
 
 
 .. _sphx_glr_download_examples_customize_storm.py:

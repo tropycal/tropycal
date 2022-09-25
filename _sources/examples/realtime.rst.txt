@@ -21,7 +21,7 @@
 ======================
 Realtime Functionality
 ======================
-This sample script shows how to use Tropycal to retrieve and plot real time tropical cyclones and potential formation. As this script was written on 15 June 2022, the data below is valid for the time this script was written.
+This sample script shows how to use Tropycal to retrieve and plot real time tropical cyclones and potential formation. As this script was written on 24 September 2022, the data below is valid for the time this script was written.
 
 .. GENERATED FROM PYTHON SOURCE LINES 7-10
 
@@ -66,7 +66,7 @@ To keep this demonstration simple, we'll solely focus on the North Atlantic basi
  .. code-block:: none
 
     --> Starting to read in current storm data
-    --> Completed reading in current storm data (0.95 seconds)
+    --> Completed reading in current storm data (13.45 seconds)
 
 
 
@@ -98,14 +98,18 @@ To quickly view the content of the Realtime object, we can simply print it:
 
     <tropycal.realtime.Realtime>
     Dataset Summary:
-        Numbers of active storms: 3
+        Numbers of active storms: 6
+        Time Updated: 2106 UTC 24 September 2022
 
     Active Storms:
-        EP022022
+        AL082022
+        AL092022
+        AL102022
+        EP152022
 
     Active Invests:
-        AL932022
-        EP932022
+        AL072022
+        AL992022
 
 
 
@@ -118,7 +122,7 @@ Alternatively, we can also list all active storms, along with an optional filter
 .. code-block:: default
 
 
-    realtime_obj.list_active_storms(basin='east_pacific')
+    realtime_obj.list_active_storms(basin='north_atlantic')
 
 
 
@@ -131,7 +135,7 @@ Alternatively, we can also list all active storms, along with an optional filter
  .. code-block:: none
 
 
-    ['EP022022', 'EP932022']
+    ['AL072022', 'AL082022', 'AL092022', 'AL102022', 'AL992022']
 
 
 
@@ -139,7 +143,7 @@ Alternatively, we can also list all active storms, along with an optional filter
 
 A new functionality with Tropycal v0.4 is to plot a summary of all ongoing activity, whether globally or by basin. This function can be highly customized, with more details in the documentation.
 
-At the time this script was written, Hurricane Blas is active in the eastern Pacific Ocean, with East Pacific invest 93E (60% of development) and Atlantic invest 93L (30% of development).
+At the time this script was written, Ian, Gaston and Hermine are active in the Atlantic Ocean, with invest 99L (30% of development) active as well.
 
 The domain option for this plot is set to 'all' by default, plotting the full globe. This can also be a basin (e.g., 'north_atlantic', 'east_pacific'), or a custom domain, as we'll plot below.
 
@@ -148,13 +152,13 @@ The domain option for this plot is set to 'all' by default, plotting the full gl
 .. code-block:: default
 
 
-    realtime_obj.plot_summary(domain={'w':-130,'e':-60,'s':5,'n':50})
+    realtime_obj.plot_summary(domain={'w':-100,'e':-10,'s':4,'n':60})
 
 
 
 
 .. image-sg:: /examples/images/sphx_glr_realtime_001.png
-   :alt: Summary & NHC 5-Day Formation Outlook, Valid: 17 UTC 15 Jun 2022
+   :alt: Summary & NHC 5-Day Formation Outlook, Valid: 01 UTC 25 Sep 2022
    :srcset: /examples/images/sphx_glr_realtime_001.png
    :class: sphx-glr-single-img
 
@@ -165,10 +169,10 @@ The domain option for this plot is set to 'all' by default, plotting the full gl
 
  .. code-block:: none
 
-    C:\Users\Tomer4\anaconda3\envs\main\lib\site-packages\shapefile.py:391: UserWarning: Shapefile shape has invalid polygon: no exterior rings found (must have clockwise orientation); interpreting holes as exteriors.
-      warnings.warn('Shapefile shape has invalid polygon: no exterior rings found (must have clockwise orientation); interpreting holes as exteriors.')
+    Possible issue encountered when converting Shape #0 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+    Possible issue encountered when converting Shape #0 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
 
-    <GeoAxesSubplot:title={'left':'Summary & NHC 5-Day Formation Outlook','right':'Valid: 17 UTC 15 Jun 2022'}>
+    <GeoAxesSubplot:title={'left':'Summary & NHC 5-Day Formation Outlook','right':'Valid: 01 UTC 25 Sep 2022'}>
 
 
 
@@ -188,13 +192,13 @@ The above plot includes the NHC TWO by default. Plotting the TWO overrides any i
 .. code-block:: default
 
 
-    realtime_obj.plot_summary(domain={'w':-130,'e':-60,'s':5,'n':50}, two_prop={'plot':False}, cone_prop={'plot':False})
+    realtime_obj.plot_summary(domain='north_atlantic', two_prop={'plot':False}, cone_prop={'plot':False})
 
 
 
 
 .. image-sg:: /examples/images/sphx_glr_realtime_002.png
-   :alt: Summary, Valid: 17 UTC 15 Jun 2022
+   :alt: Summary, Valid: 01 UTC 25 Sep 2022
    :srcset: /examples/images/sphx_glr_realtime_002.png
    :class: sphx-glr-single-img
 
@@ -206,7 +210,7 @@ The above plot includes the NHC TWO by default. Plotting the TWO overrides any i
  .. code-block:: none
 
 
-    <GeoAxesSubplot:title={'left':'Summary','right':'Valid: 17 UTC 15 Jun 2022'}>
+    <GeoAxesSubplot:title={'left':'Summary','right':'Valid: 01 UTC 25 Sep 2022'}>
 
 
 
@@ -221,7 +225,7 @@ To retrieve a storm from a Realtime object, simply use its ``get_storm()`` metho
 .. code-block:: default
 
 
-    storm = realtime_obj.get_storm('EP022022')
+    storm = realtime_obj.get_storm('AL092022')
 
 
 
@@ -256,35 +260,36 @@ Let's view what this RealtimeStorm object contains:
 
     <tropycal.realtime.RealtimeStorm>
     Storm Summary:
-        Maximum Wind:      65 knots
-        Minimum Pressure:  988 hPa
-        Start Date:        0000 UTC 14 June 2022
-        End Date:          1200 UTC 15 June 2022
+        Maximum Wind:      45 knots
+        Minimum Pressure:  1002 hPa
+        Start Date:        0600 UTC 23 September 2022
+        End Date:          0000 UTC 25 September 2022
 
     Variables:
-        date        (datetime) [2022-06-05 00:00:00 .... 2022-06-15 12:00:00]
+        date        (datetime) [2022-09-19 12:00:00 .... 2022-09-25 00:00:00]
         extra_obs   (int32) [0 .... 0]
         special     (str) [ .... ]
-        type        (str) [DB .... HU]
-        lat         (float64) [11.8 .... 15.0]
-        lon         (float64) [-94.0 .... -102.7]
-        vmax        (int32) [20 .... 65]
-        mslp        (int32) [1008 .... 988]
-        wmo_basin   (str) [east_pacific .... east_pacific]
+        type        (str) [DB .... TS]
+        lat         (float64) [9.9 .... 14.6]
+        lon         (float64) [-46.6 .... -77.2]
+        vmax        (int32) [20 .... 45]
+        mslp        (int32) [1012 .... 1002]
+        wmo_basin   (str) [north_atlantic .... north_atlantic]
 
     More Information:
-        id:              EP022022
-        operational_id:  EP022022
-        name:            BLAS
+        id:              AL092022
+        operational_id:  AL092022
+        name:            IAN
         year:            2022
         season:          2022
-        basin:           east_pacific
+        basin:           north_atlantic
         source_info:     NHC Hurricane Database
         invest:          False
         source_method:   NHC's Automated Tropical Cyclone Forecasting System (ATCF)
         source_url:      https://ftp.nhc.noaa.gov/atcf/btk/
         source:          hurdat
-        ace:             1.4
+        jtwc_source:     N/A
+        ace:             0.8
         prob_2day:       N/A
         prob_5day:       N/A
         risk_2day:       N/A
@@ -343,7 +348,7 @@ This function also calculates the forecast Accumulated Cyclone Energy (ACE), der
  .. code-block:: none
 
 
-    {'fhr': [0, 3, 12, 24, 36, 48, 60, 72, 96, 120], 'lat': [15.0, 14.9, 15.3, 15.8, 16.5, 17.1, 17.7, 18.2, 18.8, 19.0], 'lon': [-102.7, -102.8, -103.5, -104.8, -106.6, -108.3, -110.0, -111.6, -114.1, -116.5], 'vmax': [65, 65, 75, 85, 80, 75, 65, 55, 40, 30], 'mslp': [nan, 988, nan, nan, nan, nan, nan, nan, nan, nan], 'cumulative_ace': [1.4, 2.4, 3.8, 5.1, 6.3, 7.2, 7.9, 8.7, 9.0], 'cumulative_ace_fhr': [0, 12, 24, 36, 48, 60, 72, 96, 120], 'type': ['HU', 'HU', 'HU', 'HU', 'HU', 'HU', 'HU', 'TS', 'TS', 'TD'], 'init': datetime.datetime(2022, 6, 15, 12, 0)}
+    {'init': datetime.datetime(2022, 9, 24, 18, 0), 'fhr': [0, 3, 12, 24, 36, 48, 60, 72, 96, 120], 'lat': [14.2, 14.3, 14.6, 15.7, 17.4, 19.2, 20.9, 23.1, 26.2, 28.7], 'lon': [-76.2, -77.0, -78.4, -80.3, -82.2, -83.5, -84.4, -85.0, -84.8, -83.9], 'vmax': [40, 40, 50, 60, 75, 95, 110, 115, 115, 90], 'mslp': [nan, 1003, nan, nan, nan, nan, nan, nan, nan, nan], 'type': ['TS', 'TS', 'TS', 'TS', 'HU', 'HU', 'HU', 'HU', 'HU', 'HU'], 'windrad': [{34: [0, 0, 0, 50]}, {34: [0, 0, 0, 50]}, {34: [40, 30, 0, 50]}, {34: [70, 50, 30, 60], 50: [30, 0, 0, 0]}, {34: [100, 70, 50, 90], 50: [40, 30, 20, 30], 64: [20, 15, 0, 15]}, {34: [110, 100, 70, 100], 50: [50, 40, 30, 40], 64: [25, 20, 20, 20]}, {34: [120, 110, 90, 110], 50: [60, 60, 50, 60]}, {34: [130, 120, 100, 120], 50: [70, 70, 50, 60]}, {34: [0, 0, 0, 0], 50: [0, 0, 0, 0]}, {34: [0, 0, 0, 0], 50: [0, 0, 0, 0]}], 'cumulative_ace': [0.6, 1.0, 1.7, 2.7, 4.3, 6.6, 9.2, 14.4, 18.4], 'cumulative_ace_fhr': [0, 12, 24, 36, 48, 60, 72, 96, 120]}
 
 
 
@@ -362,7 +367,7 @@ We can also plot it using the ``plot_forecast_realtime()`` method:
 
 
 .. image-sg:: /examples/images/sphx_glr_realtime_003.png
-   :alt: Hurricane BLAS, Current Intensity: 75 mph • 988 hPa NHC Issued: 1500 UTC 15 Jun 2022
+   :alt: Tropical Storm IAN, Current Intensity: 45 mph • 1003 hPa NHC Issued: 2100 UTC 24 Sep 2022
    :srcset: /examples/images/sphx_glr_realtime_003.png
    :class: sphx-glr-single-img
 
@@ -374,7 +379,7 @@ We can also plot it using the ``plot_forecast_realtime()`` method:
  .. code-block:: none
 
 
-    <GeoAxesSubplot:title={'left':'Hurricane BLAS','right':'Current Intensity: 75 mph • 988 hPa\nNHC Issued: 1500 UTC 15 Jun 2022'}>
+    <GeoAxesSubplot:title={'left':'Tropical Storm IAN','right':'Current Intensity: 45 mph • 1003 hPa\nNHC Issued: 2100 UTC 24 Sep 2022'}>
 
 
 
@@ -400,7 +405,7 @@ Storm forecast discussions can also be retrieved for storms in NHC's area of res
  .. code-block:: none
 
 
-    {'id': 6, 'time_issued': datetime.datetime(2022, 6, 15, 15, 0), 'text': 'ZCZC MIATCDEP2 ALL\nTTAA00 KNHC DDHHMM\n \nHurricane Blas Discussion Number   6\nNWS National Hurricane Center Miami FL       EP022022\n1000 AM CDT Wed Jun 15 2022\n \nSince the prior advisory, the structure of Blas has continued to \nimprove on both conventional and microwave satellite imagery. In \nfact, several SSMIS microwave passes indicate that Blas is \ndeveloping an inner core, with at least a banding mid-level eye \nfeature showing up on the 89-GHz channel. The latest 1200 UTC \nsubjective Dvorak estimates were T3.5/55 kt from TAFB and T4.0/65 kt \nfrom SAB. In addition, the most recent objective Dvorak estimates \nfrom UW-CIMSS have been quickly increasing with the latest estimate \nat T4.3/72 kt. A blend of the aforementioned data yields 65 kt for \nthe advisory initial intensity, making Blas a hurricane.\n \nThe center of Blas may have relocated a bit further south into the \nlarge overnight convective burst, but its mean motion this morning \nhas continued a pronounced left turn, estimated at 290/4 kt. A \ncontinued west-northwest motion with some acceleration is \nanticipated over the next several days as the mid-level ridge \npoleward of the storm continues to build in and extend westward \nahead of Blas. Towards the end of the forecast, Blas is expected to \nbecome a shallow system, resulting in a slowing westward motion as \nthe low-level flow exerts greater influence. The latest forecast \ntrack has been adjusted a bit south in the short-term based on the \nadjusted initial position , but ends up just north of the previous \nforecast by the end of the period, close to the center of the track \nguidance envelope.\n \nThe most recent microwave images suggest that Blas is developing an \ninner core, which would likely support further intensification today \nas the system remains over warm (28-29 C) sea surface temperatures \n(SSTs) embedded in sufficently high mid-level moisture. A possible \ncomplicating factor is that both the GFS- and ECMWF-based SHIPS \nguidance indicates easterly shear increasing to 20-25 kt over \nthe next 24-36 h. Assuming this does not play a major inhibiting \nfactor, the latest NHC forecast indicates continued intensification \nand peaks Blas as category 2 hurricane in 24 h. After 36 h, Blas \nwill be crossing a sharp SST gradient, moving over sub 26 C waters \nby 60 h. For this reason, weakening is anticipated to begin by \nFriday. At the end of the forecast period, Blas is likely to lose \nits deep-convective activity and become a shallow low-level vortex.\n \nWhile Blas is expected to remain off the coast of Mexico, its\nassociated swells are expected to affect portions of the coast of\nsouthwestern Mexico beginning today and continuing through the end\nof the week.\n \n \nFORECAST POSITIONS AND MAX WINDS\n \nINIT  15/1500Z 14.9N 102.8W   65 KT  75 MPH\n 12H  16/0000Z 15.3N 103.5W   75 KT  85 MPH\n 24H  16/1200Z 15.8N 104.8W   85 KT 100 MPH\n 36H  17/0000Z 16.5N 106.6W   80 KT  90 MPH\n 48H  17/1200Z 17.1N 108.3W   75 KT  85 MPH\n 60H  18/0000Z 17.7N 110.0W   65 KT  75 MPH\n 72H  18/1200Z 18.2N 111.6W   55 KT  65 MPH\n 96H  19/1200Z 18.8N 114.1W   40 KT  45 MPH\n120H  20/1200Z 19.0N 116.5W   30 KT  35 MPH\n \n$$\nForecaster Papin\n \nNNNN\n'}
+    {'id': 7, 'time_issued': datetime.datetime(2022, 9, 24, 21, 0), 'text': 'ZCZC MIATCDAT4 ALL\nTTAA00 KNHC DDHHMM\n \nTropical Storm Ian Discussion Number   7\nNWS National Hurricane Center Miami FL       AL092022\n500 PM EDT Sat Sep 24 2022\n \nThe satellite presentation of Ian has improved this afternoon. The\nassociated deep convection shows increased signs of organization,\nand the deep-layer shear appears to have diminished over the cyclone\nbased on more extensive upper-level outflow noted in visible\nsatellite imagery. An Air Force Hurricane Hunter aircraft found\n850-mb peak flight level winds of 44 kt and several SFMR retrievals\ngreater than 40 kt, while dropsonde data suggest the minimum\npressure has not changed much since the previous flight. A blend of\nthese data support an initial intensity of 40 kt for this advisory.\n \nThe aircraft data suggest the center could be re-forming slightly\nwest of previous estimates, so the initial motion is an uncertain\n265/14 kt. Ian is expected to move westward through early Sunday\nbefore turning northwestward around the southwestern periphery of a\nridge to the north. A north-northwestward to northward motion is\nforecast on Monday and Tuesday as the center of Ian passes near or\nover the western tip of Cuba and emerges over the southeastern Gulf\nof Mexico. Overall, the westward trend in the track models\ncontinues, with the latest GFS on the far left side of the guidance\nenvelope and the ECMWF on the right edge. The track forecast is\nstill highly uncertain at days 4-5, with the GFS and ECMWF positions\nabout 200 n mi apart by 96 h. There is significant spread noted even\namong the GFS ensemble members, with positions that range from the\nnorth-central Gulf of Mexico to the west coast of Florida.\nHopefully, data collected from special radiosonde releases and a\nNOAA G-IV flight this evening will help better resolve the steering\nflow around Ian and the deep-layer trough that is forecast to be\nover the eastern U.S. early next week. The latest NHC track forecast\nis once again adjusted westward, and further adjustments may be\nneeded given the increased uncertainty in the day 3-5 period.\n \nIan is expected to significantly strengthen over the next few\ndays as it moves within a low shear environment over SSTs greater\nthan 30 deg C in the northwestern Caribbean Sea. As the structure\nof the cyclone continues to improve and Ian develops an inner core,\nrapid intensification (RI) appears very likely. The SHIPS-RII\nprobabilities continue to highlight this potential, with a 66\npercent chance of a 65-kt intensity increase in 72 h. The NHC\nintensity forecast has been raised substantially through 96 h, and\nit now shows Ian reaching major hurricane strength by late Monday\nbefore it nears western Cuba. These changes closely follow the IVCN\nand HCCA consensus aids, although there remains guidance even higher\nthan the current forecast. Ian is forecast to remain a major\nhurricane as it moves northward across the eastern Gulf of Mexico\nand approaches Florida. Environmental conditions could become less\nfavorable late in the period due to southerly shear associated with\nthe aforementioned trough, but Ian is expected to remain a large\nand powerful hurricane through the period.\n \n \nKey Messages:\n \n1.  Ian is expected to produce heavy rainfall, flash flooding, and\npossible mudslides in areas of higher terrain, particularly over\nJamaica and Cuba. Limited flash and urban flooding is possible with\nrainfall across the Florida Keys and Florida peninsula through mid\nnext week.\n \n2.  Hurricane or tropical storm conditions are expected on Grand\nCayman beginning early Monday.\n \n3.  Ian is forecast to be a major hurricane when it passes near or\nover western Cuba, and there is increasing confidence in a\nlife-threatening storm surge and hurricane-force winds in portions\nof western Cuba beginning late Monday.\n \n4. Ian is expected to remain a major hurricane when it moves\ngenerally northward across the eastern Gulf of Mexico during the\nmiddle of next week, but uncertainty in the track forecast is higher\nthan usual.  Regardless of Ian’s exact track, there is a risk of\ndangerous storm surge, hurricane-force winds, and heavy rainfall\nalong the west coast of Florida and the Florida Panhandle by the\nmiddle of next week, and residents in Florida should ensure they\nhave their hurricane plan in place, follow any advice given by local\nofficials, and closely monitor updates to the forecast.\n \n \nFORECAST POSITIONS AND MAX WINDS\n \nINIT  24/2100Z 14.3N  77.0W   40 KT  45 MPH\n 12H  25/0600Z 14.6N  78.4W   50 KT  60 MPH\n 24H  25/1800Z 15.7N  80.3W   60 KT  70 MPH\n 36H  26/0600Z 17.4N  82.2W   75 KT  85 MPH\n 48H  26/1800Z 19.2N  83.5W   95 KT 110 MPH\n 60H  27/0600Z 20.9N  84.4W  110 KT 125 MPH\n 72H  27/1800Z 23.1N  85.0W  115 KT 130 MPH\n 96H  28/1800Z 26.2N  84.8W  115 KT 130 MPH\n120H  29/1800Z 28.7N  83.9W   90 KT 105 MPH\n \n$$\nForecaster Reinhart\n \nNNNN\n'}
 
 
 
@@ -428,7 +433,7 @@ The default argument is ``source='all'``, which returns the latest available dat
  .. code-block:: none
 
 
-    {'source': 'NHC Public Advisory', 'advisory_number': '6', 'time_utc': datetime.datetime(2022, 6, 15, 15, 0), 'type': 'Hurricane', 'name': 'Blas', 'lat': 14.9, 'lon': -102.8, 'wind_mph': 75, 'wind_kph': 120, 'wind_kt': 65, 'mslp': 988, 'category': 1, 'motion_direction': 'WNW', 'motion_direction_degrees': 290, 'motion_mph': 5, 'motion_kph': 7, 'motion_kt': 4}
+    {'source': 'NHC Public Advisory', 'advisory_number': '7A', 'time_utc': datetime.datetime(2022, 9, 25, 0, 0), 'type': 'Tropical Storm', 'name': 'Ian', 'lat': 14.6, 'lon': -77.1, 'wind_mph': 45, 'wind_kph': 75, 'wind_kt': 40, 'mslp': 1002, 'category': 0, 'motion_direction': 'W', 'motion_direction_degrees': 275, 'motion_mph': 14, 'motion_kph': 22, 'motion_kt': 12}
 
 
 
@@ -436,14 +441,14 @@ The default argument is ``source='all'``, which returns the latest available dat
 
 Realtime Invests
 ----------------
-Invests are essentially RealtimeStorm objects, but without much of the functionality that comes with tropical cyclones (e.g., official forecast track, forecast discussion, etc.). Let's test this out for invest 93E:
+Invests are essentially RealtimeStorm objects, but without much of the functionality that comes with tropical cyclones (e.g., official forecast track, forecast discussion, etc.). Let's test this out for invest 99L:
 
 .. GENERATED FROM PYTHON SOURCE LINES 103-107
 
 .. code-block:: default
 
 
-    invest = realtime_obj.get_storm('EP932022')
+    invest = realtime_obj.get_storm('AL992022')
     invest
 
 
@@ -460,38 +465,39 @@ Invests are essentially RealtimeStorm objects, but without much of the functiona
     <tropycal.realtime.RealtimeStorm>
     Storm Summary:
         Maximum Wind:      25 knots
-        Minimum Pressure:  1007.0 hPa
-        Start Date:        1800 UTC 13 June 2022
-        End Date:          1200 UTC 15 June 2022
+        Minimum Pressure:  1009 hPa
+        Start Date:        1200 UTC 20 September 2022
+        End Date:          0000 UTC 25 September 2022
 
     Variables:
-        date        (datetime) [2022-06-13 18:00:00 .... 2022-06-15 12:00:00]
+        date        (datetime) [2022-09-20 12:00:00 .... 2022-09-25 00:00:00]
         extra_obs   (int32) [0 .... 0]
         special     (str) [ .... ]
-        type        (str) [DB .... DB]
-        lat         (float64) [12.0 .... 11.8]
-        lon         (float64) [-88.0 .... -90.7]
-        vmax        (int32) [15 .... 25]
-        mslp        (float64) [nan .... 1007.0]
-        wmo_basin   (str) [east_pacific .... east_pacific]
+        type        (str) [DB .... LO]
+        lat         (float64) [10.1 .... 12.9]
+        lon         (float64) [-30.1 .... -36.0]
+        vmax        (int32) [20 .... 25]
+        mslp        (int32) [1010 .... 1009]
+        wmo_basin   (str) [north_atlantic .... north_atlantic]
 
     More Information:
-        id:              EP932022
-        operational_id:  EP932022
-        name:            93E
+        id:              AL992022
+        operational_id:  AL992022
+        name:            99L
         year:            2022
         season:          2022
-        basin:           east_pacific
+        basin:           north_atlantic
         source_info:     NHC Hurricane Database
         invest:          True
         source_method:   NHC's Automated Tropical Cyclone Forecasting System (ATCF)
         source_url:      https://ftp.nhc.noaa.gov/atcf/btk/
         source:          hurdat
+        jtwc_source:     N/A
         ace:             0.0
-        prob_2day:       60%
-        prob_5day:       60%
-        risk_2day:       Medium
-        risk_5day:       Medium
+        prob_2day:       10%
+        prob_5day:       20%
+        risk_2day:       Low
+        risk_5day:       Low
         realtime:        True
 
 
@@ -517,14 +523,14 @@ As we can see above, the ``invest`` attribute of this object is True. For invest
  .. code-block:: none
 
 
-    {'prob_2day': '60%', 'risk_2day': 'Medium', 'prob_5day': '60%', 'risk_5day': 'Medium'}
+    {'prob_2day': '10%', 'risk_2day': 'Low', 'prob_5day': '20%', 'risk_5day': 'Low'}
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  20.253 seconds)
+   **Total running time of the script:** ( 0 minutes  48.238 seconds)
 
 
 .. _sphx_glr_download_examples_realtime.py:

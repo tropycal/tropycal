@@ -120,7 +120,7 @@ to download the full example code</p>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (4.67 seconds)
+--&gt; Completed reading in HURDAT2 data (7.33 seconds)
 </pre></div>
 </div>
 <p>We can quickly check to see what the dataset contains by printing the object:</p>
@@ -384,12 +384,18 @@ More Information:
 </div>
 <p>A new function added with Tropyal v0.4 is the ability to plot a summary of all ongoing tropical cyclone and NHC Tropical Weather Outlook (TWO) activity across the North Atlantic and East Pacific basins.</p>
 <p>Simply plug in a valid date and domain to plot over, and this plot will display all activity at the valid time. There are many customization options for this function detailed more thoroughly in the documentation.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">.</span><span class="n">plot_summary</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">domain</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.plot_summary.html#tropycal.tracks.TrackDataset.plot_summary" title="tropycal.tracks.TrackDataset.plot_summary" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">plot_summary</span></a><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">domain</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <img src="../_images/sphx_glr_tracks.TrackDataset_002.png" srcset="../_images/sphx_glr_tracks.TrackDataset_002.png" alt="Summary & NHC 5-Day Formation Outlook, Valid: 00 UTC 17 Sep 2020" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Reading storm data
 --&gt; Generating plot
+Possible issue encountered when converting Shape #0 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+Possible issue encountered when converting Shape #0 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+Possible issue encountered when converting Shape #1 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+Possible issue encountered when converting Shape #1 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+Possible issue encountered when converting Shape #2 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+Possible issue encountered when converting Shape #2 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
 
 &lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Summary &amp; NHC 5-Day Formation Outlook&#39;,&#39;right&#39;:&#39;Valid: 00 UTC 17 Sep 2020&#39;}&gt;
 </pre></div>
@@ -403,7 +409,7 @@ More Information:
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;all_storms&#39;: 16.4, &#39;named_storms&#39;: 14.6, &#39;hurricanes&#39;: 7.2, &#39;major_hurricanes&#39;: 3.3, &#39;ace&#39;: 123.3, &#39;start_time&#39;: datetime.datetime(2022, 6, 1, 2, 24), &#39;end_time&#39;: datetime.datetime(2022, 11, 13, 7, 12)}
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;all_storms&#39;: 16.4, &#39;named_storms&#39;: 14.6, &#39;hurricanes&#39;: 7.2, &#39;major_hurricanes&#39;: 3.3, &#39;ace&#39;: 123.2, &#39;start_time&#39;: datetime.datetime(2022, 6, 1, 2, 24), &#39;end_time&#39;: datetime.datetime(2022, 11, 13, 7, 12)}
 </pre></div>
 </div>
 <p>Another useful functionality for research or seasonal forecast purposes is to quickly composite multiple hurricane seasons. Simply plug in a list of years, and a year range for the climatology:</p>
@@ -411,7 +417,7 @@ More Information:
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;all_storms&#39;: {&#39;list&#39;: [16, 31, 17, 21, 18, 31], &#39;average&#39;: 22.3, &#39;composite_anomaly&#39;: 5.9, &#39;percentile_ranks&#39;: [50.0, 98.4, 61.3, 88.7, 67.7, 98.4]}, &#39;named_storms&#39;: {&#39;list&#39;: [15, 28, 16, 19, 17, 30], &#39;average&#39;: 20.8, &#39;composite_anomaly&#39;: 6.2, &#39;percentile_ranks&#39;: [56.5, 96.8, 69.4, 85.5, 74.2, 100.0]}, &#39;hurricanes&#39;: {&#39;list&#39;: [9, 15, 8, 12, 10, 14], &#39;average&#39;: 11.3, &#39;composite_anomaly&#39;: 4.1, &#39;percentile_ranks&#39;: [74.2, 100.0, 62.9, 93.5, 83.9, 96.8]}, &#39;major_hurricanes&#39;: {&#39;list&#39;: [6, 7, 5, 5, 6, 7], &#39;average&#39;: 6.0, &#39;composite_anomaly&#39;: 2.7, &#39;percentile_ranks&#39;: [90.3, 98.4, 79.0, 79.0, 90.3, 98.4]}, &#39;ace&#39;: {&#39;list&#39;: [226.7, 250.3, 145.8, 165.5, 224.8, 180.3], &#39;average&#39;: 198.9, &#39;composite_anomaly&#39;: 75.6, &#39;percentile_ranks&#39;: [93.5, 100.0, 67.7, 71.0, 90.3, 83.9]}}
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;all_storms&#39;: {&#39;list&#39;: [6, 6, 6, 6, 6, 6], &#39;average&#39;: 6.0, &#39;composite_anomaly&#39;: -10.4, &#39;percentile_ranks&#39;: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}, &#39;named_storms&#39;: {&#39;list&#39;: [15, 28, 16, 19, 17, 30], &#39;average&#39;: 20.8, &#39;composite_anomaly&#39;: 6.2, &#39;percentile_ranks&#39;: [56.5, 96.8, 69.4, 85.5, 74.2, 100.0]}, &#39;hurricanes&#39;: {&#39;list&#39;: [9, 15, 8, 12, 10, 14], &#39;average&#39;: 11.3, &#39;composite_anomaly&#39;: 4.1, &#39;percentile_ranks&#39;: [74.2, 100.0, 62.9, 93.5, 83.9, 96.8]}, &#39;major_hurricanes&#39;: {&#39;list&#39;: [6, 7, 5, 5, 6, 7], &#39;average&#39;: 6.0, &#39;composite_anomaly&#39;: 2.7, &#39;percentile_ranks&#39;: [90.3, 98.4, 79.0, 79.0, 90.3, 98.4]}, &#39;ace&#39;: {&#39;list&#39;: [226.7, 250.3, 145.8, 165.5, 224.8, 180.3], &#39;average&#39;: 198.9, &#39;composite_anomaly&#39;: 75.7, &#39;percentile_ranks&#39;: [93.5, 100.0, 67.7, 71.0, 90.3, 83.9]}}
 </pre></div>
 </div>
 <p>Next we’ll take a look at plotting functionality, starting off with doing simple Accumulated Cyclone Energy (ACE) analyses. Let’s look at the cumulative year-to-date accumulated cyclone energy, with 2018 highlighted and compared against 2017:</p>
@@ -490,7 +496,7 @@ average wind change in 24 hours
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in ibtracs data
---&gt; Completed reading in ibtracs data (107.07 seconds)
+--&gt; Completed reading in ibtracs data (64.56 seconds)
 </pre></div>
 </div>
 <p>In its current form, tropycal is not configured to support all types of analyses for global IBTrACS, particularly near the dateline. Future updates will work to improve this functionality.</p>
@@ -533,7 +539,7 @@ average wind change in 24 hours
 &lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Number of storms\n≥ 30kt / 24hr&#39;,&#39;right&#39;:&#39;Jan 01 – Dec 31 • 1851 – 2022&#39;}&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 7 minutes  58.847 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 9 minutes  6.523 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tracks-trackdataset-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/8e0af267200996c0b90c20030c99ca74/tracks.TrackDataset.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tracks.TrackDataset.py</span></code></a></p>

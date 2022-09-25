@@ -108,14 +108,14 @@
 <h1>RealtimeRecon.get_hdobs_realtime<a class="headerlink" href="#realtimerecon-get-hdobs-realtime" title="Permalink to this headline">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="tropycal.recon.RealtimeRecon.get_hdobs_realtime">
-<span class="sig-prename descclassname"><span class="pre">RealtimeRecon.</span></span><span class="sig-name descname"><span class="pre">get_hdobs_realtime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aircraft</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/realtime.html#RealtimeRecon.get_hdobs_realtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.recon.RealtimeRecon.get_hdobs_realtime" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">RealtimeRecon.</span></span><span class="sig-name descname"><span class="pre">get_hdobs_realtime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aircraft</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/recon/realtime.html#RealtimeRecon.get_hdobs_realtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.recon.RealtimeRecon.get_hdobs_realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve the latest 10-minute HDOBs directly from NHC.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>basin</strong> (<em>str</em>) – Basin for which to retrieve the latest HDOBs for. Available options are <code class="docutils literal notranslate"><span class="pre">&quot;north_atlantic&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;east_pacific&quot;</span></code>.</p></li>
 <li><p><strong>aircraft</strong> (<em>str</em>) – Type of aircraft for recon mission. Available options are <code class="docutils literal notranslate"><span class="pre">&quot;noaa&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;usaf&quot;</span></code> (US Air Force).</p></li>
-<li><p><strong>decoded</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False (default), returns a Pandas DataFrame of all HDOBs. If True, returns a dictionary with decoded HDOBs highlights.</p></li>
+<li><p><strong>decoded</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, returns a Pandas DataFrame of all HDOBs. If True (default), returns a dictionary with decoded HDOBs highlights.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

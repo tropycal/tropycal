@@ -772,40 +772,6 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
         ynew = f(target_times)
         return ynew
 
-    #Function for plugging small array into larger array
-    def plug_array(small,large,small_coords,large_coords):
-
-        small_lat = np.round(small_coords['lat'],2)
-        small_lon = np.round(small_coords['lon'],2)
-        large_lat = np.round(large_coords['lat'],2)
-        large_lon = np.round(large_coords['lon'],2)
-
-        small_minlat = min(small_lat)
-        small_maxlat = max(small_lat)
-        small_minlon = min(small_lon)
-        small_maxlon = max(small_lon)
-
-        if small_minlat in large_lat:
-            minlat = np.where(large_lat==small_minlat)[0][0]
-        else:
-            minlat = min(large_lat)
-        if small_maxlat in large_lat:
-            maxlat = np.where(large_lat==small_maxlat)[0][0]
-        else:
-            maxlat = max(large_lat)
-        if small_minlon in large_lon:
-            minlon = np.where(large_lon==small_minlon)[0][0]
-        else:
-            minlon = min(large_lon)
-        if small_maxlon in large_lon:
-            maxlon = np.where(large_lon==small_maxlon)[0][0]
-        else:
-            maxlon = max(large_lon)
-
-        large[minlat:maxlat+1,minlon:maxlon+1] = small
-
-        return large
-
     #Function for finding nearest value in an array
     def findNearest(array,val):
         return array[np.abs(array - val).argmin()]
@@ -1281,6 +1247,55 @@ def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y
 # Private utilities
 # These are primarily intended to be used internally. Do not add these to documentation.
 #===========================================================================================================
+
+#Function for plugging small array into larger array
+def plug_array(small,large,small_coords,large_coords):
+    
+    r"""
+    Plug small array into large array with matching coords.
+    
+    Parameters
+    ----------
+    small : numpy.ndarray
+        Small array to be plugged into the larger array.
+    large : numpy.ndarray
+        Large array for the small array to be plugged into.
+    small_coords : dict
+        Dictionary containing 'lat' and 'lon' keys, whose values are numpy.ndarrays of lat & lon for the small array.
+    large_coords : dict
+        Dictionary containing 'lat' and 'lon' keys, whose values are numpy.ndarrays of lat & lon for the large array.
+    """
+
+    small_lat = np.round(small_coords['lat'],2)
+    small_lon = np.round(small_coords['lon'],2)
+    large_lat = np.round(large_coords['lat'],2)
+    large_lon = np.round(large_coords['lon'],2)
+
+    small_minlat = np.nanmin(small_lat)
+    small_maxlat = np.nanmax(small_lat)
+    small_minlon = np.nanmin(small_lon)
+    small_maxlon = np.nanmax(small_lon)
+
+    if small_minlat in large_lat:
+        minlat = np.where(large_lat==small_minlat)[0][0]
+    else:
+        minlat = min(large_lat)
+    if small_maxlat in large_lat:
+        maxlat = np.where(large_lat==small_maxlat)[0][0]
+    else:
+        maxlat = max(large_lat)
+    if small_minlon in large_lon:
+        minlon = np.where(large_lon==small_minlon)[0][0]
+    else:
+        minlon = min(large_lon)
+    if small_maxlon in large_lon:
+        maxlon = np.where(large_lon==small_maxlon)[0][0]
+    else:
+        maxlon = max(large_lon)
+
+    large[minlat:maxlat+1,minlon:maxlon+1] = small
+
+    return large
 
 def all_nan(arr):
     

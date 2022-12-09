@@ -1189,12 +1189,18 @@ None,prop={},map_prop={}):
         #Plot density
         density_colorbar = False
         if prop_density['plot']:
+            
+            #Error check radius
+            if prop_density['radius'] > 500 or prop_density['radius'] < 50:
+                raise ValueError("Radius must be between 50 and 500 km.")
+            
             if hr == None or (hr != None and hr in ds['gefs']['fhr']):
 
-                #Create 0.5 degree grid for plotting
+                #Create 0.25 degree grid for plotting
                 gridlats = np.arange(0,90,0.25)
                 if np.nanmax(storm_dict['lat']) < 0: gridlats = np.arange(-90,0,0.25)
                 gridlons = np.arange(-180.0,180.1,0.25)
+                if self.proj.proj4_params['lon_0'] == 180.0: gridlons = np.arange(0.0,360.1,0.25)
                 gridlons2d,gridlats2d = np.meshgrid(gridlons,gridlats)
                 griddata = np.zeros((gridlons2d.shape))
 
@@ -1210,7 +1216,7 @@ None,prop={},map_prop={}):
                         #Proceed if hour is available
                         if hr in ds[f'gefs_{ens}']['fhr']:
                             idx = ds[f'gefs_{ens}']['fhr'].index(hr)
-                            griddata += add_radius(gridlats2d, gridlons2d, ds[f'gefs_{ens}']['lat'][idx],
+                            griddata += add_radius_quick(gridlats, gridlons, ds[f'gefs_{ens}']['lat'][idx],
                                                    ds[f'gefs_{ens}']['lon'][idx], prop_density['radius'])
                     
                     #Calculate for cumulative
@@ -1233,7 +1239,7 @@ None,prop={},map_prop={}):
 
                             #Iterate over all forecast hours
                             for i,(i_lon,i_lat) in enumerate(zip(new_lons,new_lats)):
-                                radius_grid = add_radius(gridlats2d, gridlons2d, i_lat, i_lon, prop_density['radius'])
+                                radius_grid = add_radius_quick(gridlats, gridlons, i_lat, i_lon, prop_density['radius'])
                                 temp_grid = np.maximum(temp_grid, radius_grid)
                         
                         #Otherwise don't interpolate

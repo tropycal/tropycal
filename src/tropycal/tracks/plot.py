@@ -1193,7 +1193,8 @@ None,prop={},map_prop={}):
 
                 #Create 0.5 degree grid for plotting
                 gridlats = np.arange(0,90,0.25)
-                gridlons = np.arange(180-360.0,180.1,0.25) #gridlons = np.arange(180-360.0,360-360.0,0.25)
+                if np.nanmax(storm_dict['lat']) < 0: gridlats = np.arange(-90,0,0.25)
+                gridlons = np.arange(-180.0,180.1,0.25)
                 gridlons2d,gridlats2d = np.meshgrid(gridlons,gridlats)
                 griddata = np.zeros((gridlons2d.shape))
 

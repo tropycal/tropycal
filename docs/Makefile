@@ -14,7 +14,7 @@ help:
 
 # Clean from gallery
 clean:
-	rm -rf $(BUILDDIR)/* $(SOURCEDIR)/examples $(SOURCEDIR)/tutorials $(SOURCEDIR)/api/generated
+	rm -rf $(BUILDDIR)/* $(SOURCEDIR)/tutorials $(SOURCEDIR)/api/generated
 
 .PHONY: help Makefile
 

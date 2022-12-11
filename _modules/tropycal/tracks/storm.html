@@ -20,7 +20,9 @@
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -1196,7 +1198,7 @@
         <span class="k">return</span> <span class="n">plot_ax</span></div>
     
     
-<div class="viewcode-block" id="Storm.plot_ensembles"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.plot_ensembles.html#tropycal.tracks.Storm.plot_ensembles">[docs]</a>    <span class="k">def</span> <span class="nf">plot_ensembles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">forecast</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">fhr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">interpolate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Storm.plot_ensembles"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.plot_ensembles.html#tropycal.tracks.Storm.plot_ensembles">[docs]</a>    <span class="k">def</span> <span class="nf">plot_ensembles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">forecast</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">fhr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a plot of individual GEFS ensemble tracks.</span>
@@ -1208,7 +1210,7 @@
 <span class="sd">        fhr : int, optional</span>
 <span class="sd">            Forecast hour to plot. If None (default), a cumulative plot of all forecast hours will be produced. If an integer, a single plot will be produced.</span>
 <span class="sd">        interpolate : bool, optional</span>
-<span class="sd">            If True, and fhr is None, track density data will be interpolated to hourly. Default is False (6-hourly track density data). Setting this to True greatly slows down the function.</span>
+<span class="sd">            If True, and fhr is None, track density data will be interpolated to hourly. Default is True (1-hourly track density data). False plots density using 6-hourly track data.</span>
 <span class="sd">        domain : str</span>
 <span class="sd">            Domain for the plot. Default is &quot;dynamic&quot;. Please refer to :ref:`options-domain` for available domain options.</span>
 <span class="sd">        ax : axes</span>

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TC Dataset Analysis &mdash; tropycal </title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -20,7 +21,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -103,15 +106,15 @@
 <p>Click <a class="reference internal" href="#sphx-glr-download-examples-tracks-trackdataset-py"><span class="std std-ref">here</span></a>
 to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="tc-dataset-analysis">
-<span id="sphx-glr-examples-tracks-trackdataset-py"></span><h1>TC Dataset Analysis<a class="headerlink" href="#tc-dataset-analysis" title="Permalink to this headline">¶</a></h1>
+<section class="sphx-glr-example-title" id="tc-dataset-analysis">
+<span id="sphx-glr-examples-tracks-trackdataset-py"></span><h1>TC Dataset Analysis<a class="headerlink" href="#tc-dataset-analysis" title="Permalink to this heading">¶</a></h1>
 <p>This sample script illustrates how to read in, visualize and analyze HURDAT2 and IBTrACS tropical cyclone databases.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="k">as</span> <span class="nn">tracks</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 </pre></div>
 </div>
-<div class="section" id="hurtdat2-dataset">
-<h2>HURTDAT2 Dataset<a class="headerlink" href="#hurtdat2-dataset" title="Permalink to this headline">¶</a></h2>
+<section id="hurtdat2-dataset">
+<h2>HURTDAT2 Dataset<a class="headerlink" href="#hurtdat2-dataset" title="Permalink to this heading">¶</a></h2>
 <p>Let’s start with the HURDAT2 dataset by loading it into memory. By default, this reads in the HURDAT dataset from the National Hurricane Center (NHC) website, unless you specify a local file path using either <code class="docutils literal notranslate"><span class="pre">atlantic_url</span></code> for the North Atlantic basin on <code class="docutils literal notranslate"><span class="pre">pacific_url</span></code> for the East &amp; Central Pacific basin.</p>
 <p>HURDAT data is not available for the most recent hurricane seasons. To include the latest data up through today, the “include_btk” flag would need to be set to True, which reads in preliminary best track data from the NHC website.</p>
 <p>Let’s create an instance of a TrackDataset object, which will store the North Atlantic HURDAT2 dataset in memory. Once we have this we can use its methods for various types of analyses.</p>
@@ -297,8 +300,8 @@ Dataset Summary:
 </div>
 </div>
 <br />
-<br /><div class="section" id="retrieving-storms-and-seasons">
-<h3>Retrieving storms and seasons<a class="headerlink" href="#retrieving-storms-and-seasons" title="Permalink to this headline">¶</a></h3>
+<br /><section id="retrieving-storms-and-seasons">
+<h3>Retrieving storms and seasons<a class="headerlink" href="#retrieving-storms-and-seasons" title="Permalink to this heading">¶</a></h3>
 <p>A TrackDataset object can be used to retrieve individual storms and seasons. To retrieve a Storm object, provide either a tuple of the storm name and year (e.g., <code class="docutils literal notranslate"><span class="pre">('michael',2018)</span></code>), or a string containing the ID of the storm (e.g., <code class="docutils literal notranslate"><span class="pre">'AL012020'</span></code>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Retrieve Hurricane Michael from 2018</span>
 <a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_storm.html#tropycal.tracks.TrackDataset.get_storm" title="tropycal.tracks.TrackDataset.get_storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
@@ -400,9 +403,9 @@ Possible issue encountered when converting Shape #2 to GeoJSON: Shapefile format
 &lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Summary &amp; NHC 5-Day Formation Outlook&#39;,&#39;right&#39;:&#39;Valid: 00 UTC 17 Sep 2020&#39;}&gt;
 </pre></div>
 </div>
-</div>
-<div class="section" id="climatological-analyses">
-<h3>Climatological analyses<a class="headerlink" href="#climatological-analyses" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="climatological-analyses">
+<h3>Climatological analyses<a class="headerlink" href="#climatological-analyses" title="Permalink to this heading">¶</a></h3>
 <p>A TrackDataset object can also be used to perform various climatological analyses. We’ll start off with basic data analysis, then shift gears to plotting functionality.</p>
 <p>First, let’s take a look at the climatology for the basin. The default period is 1991-2020, but this can be customized to any range.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.climatology.html#tropycal.tracks.TrackDataset.climatology" title="tropycal.tracks.TrackDataset.climatology" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">climatology</span></a><span class="p">(</span><span class="n">year_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1991</span><span class="p">,</span><span class="mi">2020</span><span class="p">))</span>
@@ -453,10 +456,10 @@ Possible issue encountered when converting Shape #2 to GeoJSON: Shapefile format
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:title={&#39;center&#39;:&#39;TC Pressure vs. Wind \n North Atlantic | 1851-2021&#39;}, xlabel=&#39;Maximum sustained winds (kt)&#39;, ylabel=&#39;Minimum central pressure (hPa)&#39;&gt;
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="gridded-analyses">
-<h2>Gridded Analyses<a class="headerlink" href="#gridded-analyses" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="gridded-analyses">
+<h2>Gridded Analyses<a class="headerlink" href="#gridded-analyses" title="Permalink to this heading">¶</a></h2>
 <p>Tropycal also offers the capability of gridding tropical cyclone data into a structured latitude / longitude grid. This is done via the <code class="docutils literal notranslate"><span class="pre">TrackDataset.gridded_stats()</span></code> method. This method accepts multiple input arguments for various types of analyses. This example will show some of these capabilities.</p>
 <p>Let’s construct a 1 degree grid and plot the maximum sustained wind recorded at each gridpoint:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.gridded_stats.html#tropycal.tracks.TrackDataset.gridded_stats" title="tropycal.tracks.TrackDataset.gridded_stats" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">gridded_stats</span></a><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s2">&quot;maximum wind&quot;</span><span class="p">)</span>
@@ -483,9 +486,9 @@ average wind change in 24 hours
 &lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Average wind (kt) change in 24 hours, middle\n≥ 5 storms/bin&#39;,&#39;right&#39;:&#39;Jan 01 – Dec 31 • 1851 – 2021&#39;}&gt;
 </pre></div>
 </div>
-</div>
-<div class="section" id="ibtracs-dataset">
-<h2>IBTrACS Dataset<a class="headerlink" href="#ibtracs-dataset" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="ibtracs-dataset">
+<h2>IBTrACS Dataset<a class="headerlink" href="#ibtracs-dataset" title="Permalink to this heading">¶</a></h2>
 <p>We can also read in IBTrACS data and use it the same way as we would use HURDAT2 data. There are caveats to using IBTrACS data, however, which are described more in depth in the <a class="reference internal" href="../data.html"><span class="doc">Data Sources</span></a> page. We’ll retrieve the global IBTrACS dataset, using the Joint Typhoon Warning Center (JTWC) data, modified with the Neumann reanalysis for southern hemisphere storms, and including a special reanalysis for Cyclone Catarina (2004) in Brazil.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -549,8 +552,8 @@ average wind change in 24 hours
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

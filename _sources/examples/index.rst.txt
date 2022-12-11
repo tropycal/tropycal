@@ -1,9 +1,5 @@
 :orphan:
 
-
-
-.. _sphx_glr_examples:
-
 .. _examples-index:
 
 Examples
@@ -15,14 +11,161 @@ Examples of using tropycal to generate images and text.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Individual Season Analysis">
 
 .. only:: html
 
- .. figure:: /examples/images/thumb/sphx_glr_tracks.season_thumb.png
-     :alt: Individual Season Analysis
+  .. image:: /examples/images/thumb/sphx_glr_tracks.season_thumb.png
+    :alt: Individual Season Analysis
 
-     :ref:`sphx_glr_examples_tracks.season.py`
+  :ref:`sphx_glr_examples_tracks.season.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Individual Season Analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Realtime Functionality">
+
+.. only:: html
+
+  .. image:: /examples/images/thumb/sphx_glr_realtime_thumb.png
+    :alt: Realtime Functionality
+
+  :ref:`sphx_glr_examples_realtime.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Realtime Functionality</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="For documentation generation purposes, return_ax must be set True for plotting functions. You d...">
+
+.. only:: html
+
+  .. image:: /examples/images/thumb/sphx_glr_tracks.tornado_thumb.png
+    :alt: Tornado Analyses
+
+  :ref:`sphx_glr_examples_tracks.tornado.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Tornado Analyses</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Individual Storm Analysis">
+
+.. only:: html
+
+  .. image:: /examples/images/thumb/sphx_glr_tracks.storm_thumb.png
+    :alt: Individual Storm Analysis
+
+  :ref:`sphx_glr_examples_tracks.storm.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Individual Storm Analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Tropical Cyclone Rainfall">
+
+.. only:: html
+
+  .. image:: /examples/images/thumb/sphx_glr_tc_rainfall_thumb.png
+    :alt: Tropical Cyclone Rainfall
+
+  :ref:`sphx_glr_examples_tc_rainfall.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Tropical Cyclone Rainfall</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Historical TC Track Analogs">
+
+.. only:: html
+
+  .. image:: /examples/images/thumb/sphx_glr_analogs_thumb.png
+    :alt: Historical TC Track Analogs
+
+  :ref:`sphx_glr_examples_analogs.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Historical TC Track Analogs</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Customizing Storm Plots">
+
+.. only:: html
+
+  .. image:: /examples/images/thumb/sphx_glr_customize_storm_thumb.png
+    :alt: Customizing Storm Plots
+
+  :ref:`sphx_glr_examples_customize_storm.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Customizing Storm Plots</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="TC Dataset Analysis">
+
+.. only:: html
+
+  .. image:: /examples/images/thumb/sphx_glr_tracks.TrackDataset_thumb.png
+    :alt: TC Dataset Analysis
+
+  :ref:`sphx_glr_examples_tracks.TrackDataset.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">TC Dataset Analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Aircraft Recon Data Analysis">
+
+.. only:: html
+
+  .. image:: /examples/images/thumb/sphx_glr_recon_thumb.png
+    :alt: Aircraft Recon Data Analysis
+
+  :ref:`sphx_glr_examples_recon.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Aircraft Recon Data Analysis</div>
+    </div>
+
 
 .. raw:: html
 
@@ -33,195 +176,27 @@ Examples of using tropycal to generate images and text.
    :hidden:
 
    /examples/tracks.season
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Realtime Functionality">
-
-.. only:: html
-
- .. figure:: /examples/images/thumb/sphx_glr_realtime_thumb.png
-     :alt: Realtime Functionality
-
-     :ref:`sphx_glr_examples_realtime.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
    /examples/realtime
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="For documentation generation purposes, return_ax must be set True for plotting functions. You d...">
-
-.. only:: html
-
- .. figure:: /examples/images/thumb/sphx_glr_tracks.tornado_thumb.png
-     :alt: Tornado Analyses
-
-     :ref:`sphx_glr_examples_tracks.tornado.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
    /examples/tracks.tornado
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Individual Storm Analysis">
-
-.. only:: html
-
- .. figure:: /examples/images/thumb/sphx_glr_tracks.storm_thumb.png
-     :alt: Individual Storm Analysis
-
-     :ref:`sphx_glr_examples_tracks.storm.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
    /examples/tracks.storm
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Tropical Cyclone Rainfall">
-
-.. only:: html
-
- .. figure:: /examples/images/thumb/sphx_glr_tc_rainfall_thumb.png
-     :alt: Tropical Cyclone Rainfall
-
-     :ref:`sphx_glr_examples_tc_rainfall.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
    /examples/tc_rainfall
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Historical TC Track Analogs">
-
-.. only:: html
-
- .. figure:: /examples/images/thumb/sphx_glr_analogs_thumb.png
-     :alt: Historical TC Track Analogs
-
-     :ref:`sphx_glr_examples_analogs.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
    /examples/analogs
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Customizing Storm Plots">
-
-.. only:: html
-
- .. figure:: /examples/images/thumb/sphx_glr_customize_storm_thumb.png
-     :alt: Customizing Storm Plots
-
-     :ref:`sphx_glr_examples_customize_storm.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
    /examples/customize_storm
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="TC Dataset Analysis">
-
-.. only:: html
-
- .. figure:: /examples/images/thumb/sphx_glr_tracks.TrackDataset_thumb.png
-     :alt: TC Dataset Analysis
-
-     :ref:`sphx_glr_examples_tracks.TrackDataset.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
    /examples/tracks.TrackDataset
+   /examples/recon
 
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Aircraft Recon Data Analysis">
 
 .. only:: html
 
- .. figure:: /examples/images/thumb/sphx_glr_recon_thumb.png
-     :alt: Aircraft Recon Data Analysis
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
 
-     :ref:`sphx_glr_examples_recon.py`
+    .. container:: sphx-glr-download sphx-glr-download-python
 
-.. raw:: html
+      :download:`Download all examples in Python source code: examples_python.zip </examples/examples_python.zip>`
 
-    </div>
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
-.. toctree::
-   :hidden:
-
-   /examples/recon
-.. raw:: html
-
-    <div class="sphx-glr-clear"></div>
-
-
-
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-gallery
-
-
-  .. container:: sphx-glr-download sphx-glr-download-python
-
-    :download:`Download all examples in Python source code: examples_python.zip </examples/examples_python.zip>`
-
-
-
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-    :download:`Download all examples in Jupyter notebooks: examples_jupyter.zip </examples/examples_jupyter.zip>`
+      :download:`Download all examples in Jupyter notebooks: examples_jupyter.zip </examples/examples_jupyter.zip>`
 
 
 .. only:: html

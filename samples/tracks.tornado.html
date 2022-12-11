@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tornado Analyses &mdash; tropycal </title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -20,7 +21,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -88,16 +91,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="tornado-analyses">
-<h1>Tornado Analyses<a class="headerlink" href="#tornado-analyses" title="Permalink to this headline">¶</a></h1>
+  <section id="tornado-analyses">
+<h1>Tornado Analyses<a class="headerlink" href="#tornado-analyses" title="Permalink to this heading">¶</a></h1>
 <p>This sample script illustrates how to retrieve and analyze the Storm Prediction Center (SPC) tornado database (1950-present), using both the tornado and tracks modules.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="k">as</span> <span class="nn">tracks</span>
 <span class="kn">import</span> <span class="nn">tropycal.tornado</span> <span class="k">as</span> <span class="nn">tornado</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 </pre></div>
 </div>
-<div class="section" id="using-tornadodataset">
-<h2>Using TornadoDataset<a class="headerlink" href="#using-tornadodataset" title="Permalink to this headline">¶</a></h2>
+<section id="using-tornadodataset">
+<h2>Using TornadoDataset<a class="headerlink" href="#using-tornadodataset" title="Permalink to this heading">¶</a></h2>
 <p>Let’s start by creating an instance of a TornadoDataset object. By default, this reads in the SPC tornado database from their website.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tor_data</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">TornadoDataset</span><span class="p">()</span>
 </pre></div>
@@ -107,9 +110,9 @@
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../_images/tornado_example_1.png"><img alt="../_images/tornado_example_1.png" class="align-center" src="../_images/tornado_example_1.png" style="width: 75%;" /></a>
-</div>
-<div class="section" id="using-trackdataset">
-<h2>Using TrackDataset<a class="headerlink" href="#using-trackdataset" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="using-trackdataset">
+<h2>Using TrackDataset<a class="headerlink" href="#using-trackdataset" title="Permalink to this heading">¶</a></h2>
 <p>We can also use TornadoDataset to assess tornadoes associated with tropical cyclones. First off let’s get an instance of TrackDataset for the North Atlantic HURDAT2 basin:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
@@ -131,9 +134,9 @@
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../_images/tornado_example_3.png"><img alt="../_images/tornado_example_3.png" class="align-center" src="../_images/tornado_example_3.png" style="width: 75%;" /></a>
-</div>
-<div class="section" id="using-a-storm-object">
-<h2>Using a Storm object<a class="headerlink" href="#using-a-storm-object" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="using-a-storm-object">
+<h2>Using a Storm object<a class="headerlink" href="#using-a-storm-object" title="Permalink to this heading">¶</a></h2>
 <p>Tropical cyclone tornado analyses can also be done via a Storm object. Let’s get the data for Hurricane Ivan from 2004, which produced a major tornado outbreak:</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -152,8 +155,8 @@
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../_images/tornado_example_5.png"><img alt="../_images/tornado_example_5.png" class="align-center" src="../_images/tornado_example_5.png" style="width: 75%;" /></a>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

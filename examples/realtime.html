@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Realtime Functionality &mdash; tropycal </title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -20,7 +21,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -100,14 +103,14 @@
 <p>Click <a class="reference internal" href="#sphx-glr-download-examples-realtime-py"><span class="std std-ref">here</span></a>
 to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="realtime-functionality">
-<span id="sphx-glr-examples-realtime-py"></span><h1>Realtime Functionality<a class="headerlink" href="#realtime-functionality" title="Permalink to this headline">¶</a></h1>
+<section class="sphx-glr-example-title" id="realtime-functionality">
+<span id="sphx-glr-examples-realtime-py"></span><h1>Realtime Functionality<a class="headerlink" href="#realtime-functionality" title="Permalink to this heading">¶</a></h1>
 <p>This sample script shows how to use Tropycal to retrieve and plot real time tropical cyclones and potential formation. As this script was written on 24 September 2022, the data below is valid for the time this script was written.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">realtime</span>
 </pre></div>
 </div>
-<div class="section" id="reading-in-realtime-dataset">
-<h2>Reading In Realtime Dataset<a class="headerlink" href="#reading-in-realtime-dataset" title="Permalink to this headline">¶</a></h2>
+<section id="reading-in-realtime-dataset">
+<h2>Reading In Realtime Dataset<a class="headerlink" href="#reading-in-realtime-dataset" title="Permalink to this heading">¶</a></h2>
 <p>Let’s start with the Realtime dataset by loading it into memory. By default, this reads in Best Track data from the National Hurricane Center (NHC) and filters for all active tropical cyclones and invests over the last 18 hours.</p>
 <p>The default is to not include global storms in the Joint Typhoon Warning Center (JTWC)’s area of responsibility. To read in invests and storms within JTWC’s domain, add a <code class="docutils literal notranslate"><span class="pre">jtwc=True</span></code> argument, followed by a <code class="docutils literal notranslate"><span class="pre">jtwc_source</span></code> argument which can be either “jtwc”, “noaa”, or “ucar”. Read through the documentation to see the limits and pros/cons of each method.</p>
 <p>To keep this demonstration simple, we’ll solely focus on the North Atlantic basin.</p>
@@ -119,9 +122,9 @@ to download the full example code</p>
 --&gt; Completed reading in current storm data (13.45 seconds)
 </pre></div>
 </div>
-</div>
-<div class="section" id="view-current-activity">
-<h2>View Current Activity<a class="headerlink" href="#view-current-activity" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="view-current-activity">
+<h2>View Current Activity<a class="headerlink" href="#view-current-activity" title="Permalink to this heading">¶</a></h2>
 <p>To quickly view the content of the Realtime object, we can simply print it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.Realtime.html#tropycal.realtime.Realtime" title="tropycal.realtime.Realtime" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">realtime_obj</span></a>
 </pre></div>
@@ -179,9 +182,9 @@ Possible issue encountered when converting Shape #0 to GeoJSON: Shapefile format
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Summary&#39;,&#39;right&#39;:&#39;Valid: 01 UTC 25 Sep 2022&#39;}&gt;
 </pre></div>
 </div>
-</div>
-<div class="section" id="realtime-storms">
-<h2>Realtime Storms<a class="headerlink" href="#realtime-storms" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="realtime-storms">
+<h2>Realtime Storms<a class="headerlink" href="#realtime-storms" title="Permalink to this heading">¶</a></h2>
 <p>To retrieve a storm from a Realtime object, simply use its <code class="docutils literal notranslate"><span class="pre">get_storm()</span></code> method and provide an ID as listed in <code class="docutils literal notranslate"><span class="pre">list_active_storms()</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm" title="tropycal.realtime.RealtimeStorm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.realtime.Realtime.get_storm.html#tropycal.realtime.Realtime.get_storm" title="tropycal.realtime.Realtime.get_storm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-method"><span class="n">realtime_obj</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">(</span><span class="s1">&#39;AL092022&#39;</span><span class="p">)</span>
 </pre></div>
@@ -273,9 +276,9 @@ More Information:
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{&#39;source&#39;: &#39;NHC Public Advisory&#39;, &#39;advisory_number&#39;: &#39;7A&#39;, &#39;time_utc&#39;: datetime.datetime(2022, 9, 25, 0, 0), &#39;type&#39;: &#39;Tropical Storm&#39;, &#39;name&#39;: &#39;Ian&#39;, &#39;lat&#39;: 14.6, &#39;lon&#39;: -77.1, &#39;wind_mph&#39;: 45, &#39;wind_kph&#39;: 75, &#39;wind_kt&#39;: 40, &#39;mslp&#39;: 1002, &#39;category&#39;: 0, &#39;motion_direction&#39;: &#39;W&#39;, &#39;motion_direction_degrees&#39;: 275, &#39;motion_mph&#39;: 14, &#39;motion_kph&#39;: 22, &#39;motion_kt&#39;: 12}
 </pre></div>
 </div>
-</div>
-<div class="section" id="realtime-invests">
-<h2>Realtime Invests<a class="headerlink" href="#realtime-invests" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="realtime-invests">
+<h2>Realtime Invests<a class="headerlink" href="#realtime-invests" title="Permalink to this heading">¶</a></h2>
 <p>Invests are essentially RealtimeStorm objects, but without much of the functionality that comes with tropical cyclones (e.g., official forecast track, forecast discussion, etc.). Let’s test this out for invest 99L:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm" title="tropycal.realtime.RealtimeStorm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">invest</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.realtime.Realtime.get_storm.html#tropycal.realtime.Realtime.get_storm" title="tropycal.realtime.Realtime.get_storm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-method"><span class="n">realtime_obj</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">(</span><span class="s1">&#39;AL992022&#39;</span><span class="p">)</span>
 <a href="../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm" title="tropycal.realtime.RealtimeStorm" class="sphx-glr-backref-module-tropycal-realtime sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">invest</span></a>
@@ -339,8 +342,8 @@ More Information:
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Individual Storm Analysis &mdash; tropycal </title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -20,7 +21,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -88,23 +91,23 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="individual-storm-analysis">
-<h1>Individual Storm Analysis<a class="headerlink" href="#individual-storm-analysis" title="Permalink to this headline">¶</a></h1>
+  <section id="individual-storm-analysis">
+<h1>Individual Storm Analysis<a class="headerlink" href="#individual-storm-analysis" title="Permalink to this heading">¶</a></h1>
 <p>This sample script illustrates how to retrieve a single storm from the HURDAT2 dataset, and make plots and analyses of this storm.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="k">as</span> <span class="nn">tracks</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 </pre></div>
 </div>
-<div class="section" id="hurtdat2-dataset">
-<h2>HURTDAT2 Dataset<a class="headerlink" href="#hurtdat2-dataset" title="Permalink to this headline">¶</a></h2>
+<section id="hurtdat2-dataset">
+<h2>HURTDAT2 Dataset<a class="headerlink" href="#hurtdat2-dataset" title="Permalink to this heading">¶</a></h2>
 <p>Let’s start by creating an instance of a TrackDataset object. By default, this reads in the HURDAT2 dataset from the National Hurricane Center (NHC) website. For this example we’ll be using the HURDAT2 dataset over the North Atlantic basin.</p>
 <p>HURDAT data is not available for the most recent hurricane seasons. To include the latest data up through today, the “include_btk” flag would need to be set to True, which reads in preliminary best track data from the NHC website.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hurdat_atl</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;hurdat&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="id1">
-<h2>Individual storm analysis<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="id1">
+<h2>Individual storm analysis<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
 <p>Individual storms can be retrieved from the dataset by calling the <code class="docutils literal notranslate"><span class="pre">get_storm()</span></code> function, which returns an instance of a Storm object. This can be done by either entering a tuple containing the storm name and year, or by the standard tropical cyclone ID (e.g., “AL012019”).</p>
 <p>Let’s retrieve an instance of Hurricane Michael from 2018:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span> <span class="o">=</span> <span class="n">hurdat_atl</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
@@ -225,9 +228,9 @@ NNNN
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../_images/michael_example_4.png"><img alt="../_images/michael_example_4.png" class="align-center" src="../_images/michael_example_4.png" style="width: 75%;" /></a>
-</div>
-<div class="section" id="ibtracs-dataset">
-<h2>IBTrACS Dataset<a class="headerlink" href="#ibtracs-dataset" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="ibtracs-dataset">
+<h2>IBTrACS Dataset<a class="headerlink" href="#ibtracs-dataset" title="Permalink to this heading">¶</a></h2>
 <p>We can also read in IBTrACS data and use it the same way as we would use HURDAT2 data. There are caveats to using IBTrACS data, however, which are described more in depth in the <a class="reference internal" href="../data.html"><span class="doc">Data Sources</span></a> page. We’ll retrieve the global IBTrACS dataset, using the Joint Typhoon Warning Center (JTWC) data, modified with the Neumann reanalysis for southern hemisphere storms, and including a special reanalysis for Cyclone Catarina (2004) in Brazil.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -255,8 +258,8 @@ NNNN
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../_images/storm_example_3.png"><img alt="../_images/storm_example_3.png" class="align-center" src="../_images/storm_example_3.png" style="width: 75%;" /></a>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Storm.sel &mdash; tropycal </title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -20,7 +21,9 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -52,6 +55,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.tracks.html">Tracks</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tropycal.tracks.Season.html">tropycal.tracks.Season</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.tracks.Storm.html">tropycal.tracks.Storm</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.html#tropycal.tracks.Storm"><code class="docutils literal notranslate"><span class="pre">Storm</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.download_tcr.html">Storm.download_tcr</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_archer.html">Storm.get_archer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_nhc_discussion.html">Storm.get_nhc_discussion</a></li>
@@ -115,8 +119,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="storm-sel">
-<h1>Storm.sel<a class="headerlink" href="#storm-sel" title="Permalink to this headline">¶</a></h1>
+  <section id="storm-sel">
+<h1>Storm.sel<a class="headerlink" href="#storm-sel" title="Permalink to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="tropycal.tracks.Storm.sel">
 <span class="sig-prename descclassname"><span class="pre">Storm.</span></span><span class="sig-name descname"><span class="pre">sel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mslp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dvmax_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmslp_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stormtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exact'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.sel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.tracks.Storm.sel" title="Permalink to this definition">¶</a></dt>
@@ -124,22 +128,22 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>time</strong> (<em>datetime.datetime</em><em> or </em><em>list/tuple of datetimes</em>) – Datetime object for single point, or list/tuple of start time and end time.
+<li><p><strong>time</strong> (<em>datetime.datetime</em><em> or </em><em>list/tuple</em><em> of </em><em>datetimes</em>) – Datetime object for single point, or list/tuple of start time and end time.
 Default is None, which returns all points</p></li>
-<li><p><strong>lat</strong> (<em>float/int</em><em> or </em><em>list/tuple of float/int</em>) – Float/int for single point, or list/tuple of latitude bounds (S,N).
+<li><p><strong>lat</strong> (<em>float/int</em><em> or </em><em>list/tuple</em><em> of </em><em>float/int</em>) – Float/int for single point, or list/tuple of latitude bounds (S,N).
 None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>lon</strong> (<em>float/int</em><em> or </em><em>list/tuple of float/int</em>) – Float/int for single point, or list/tuple of longitude bounds (W,E).
+<li><p><strong>lon</strong> (<em>float/int</em><em> or </em><em>list/tuple</em><em> of </em><em>float/int</em>) – Float/int for single point, or list/tuple of longitude bounds (W,E).
 If either lat or lon is a tuple, the other can be None for no bounds.
 If either is a tuple, the other canNOT be a float/int.</p></li>
-<li><p><strong>vmax</strong> (<em>list/tuple of float/int</em>) – list/tuple of vmax bounds (min,max).
+<li><p><strong>vmax</strong> (<em>list/tuple</em><em> of </em><em>float/int</em>) – list/tuple of vmax bounds (min,max).
 None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>mslp</strong> (<em>list/tuple of float/int</em>) – list/tuple of mslp bounds (min,max).
+<li><p><strong>mslp</strong> (<em>list/tuple</em><em> of </em><em>float/int</em>) – list/tuple of mslp bounds (min,max).
 None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>dvmax_dt</strong> (<em>list/tuple of float/int</em>) – list/tuple of vmax bounds (min,max). ONLY AVAILABLE AFTER INTERP.
+<li><p><strong>dvmax_dt</strong> (<em>list/tuple</em><em> of </em><em>float/int</em>) – list/tuple of vmax bounds (min,max). ONLY AVAILABLE AFTER INTERP.
 None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>dmslp_dt</strong> (<em>list/tuple of float/int</em>) – list/tuple of mslp bounds (min,max). ONLY AVAILABLE AFTER INTERP.
+<li><p><strong>dmslp_dt</strong> (<em>list/tuple</em><em> of </em><em>float/int</em>) – list/tuple of mslp bounds (min,max). ONLY AVAILABLE AFTER INTERP.
 None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>stormtype</strong> (<em>list/tuple of str</em>) – list/tuple of stormtypes (options: ‘LO’,’EX’,’TD’,’SD’,’TS’,’SS’,’HU’)</p></li>
+<li><p><strong>stormtype</strong> (<em>list/tuple</em><em> of </em><em>str</em>) – list/tuple of stormtypes (options: ‘LO’,’EX’,’TD’,’SD’,’TS’,’SS’,’HU’)</p></li>
 <li><p><strong>method</strong> (<em>str</em>) – Applies for single point selection in time and lat/lon.
 ‘exact’ requires a point to match exactly with the request. (default)
 ‘nearest’ returns the nearest point to the request
@@ -153,7 +157,7 @@ None in either position of a tuple means it is boundless on that side.</p></li>
 </dl>
 </dd></dl>
 
-<div style='clear:both'></div></div>
+<div style='clear:both'></div></section>
 
 
            </div>

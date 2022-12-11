@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Customizing Storm Plots &mdash; tropycal </title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -20,7 +21,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -100,15 +103,15 @@
 <p>Click <a class="reference internal" href="#sphx-glr-download-examples-customize-storm-py"><span class="std std-ref">here</span></a>
 to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="customizing-storm-plots">
-<span id="sphx-glr-examples-customize-storm-py"></span><h1>Customizing Storm Plots<a class="headerlink" href="#customizing-storm-plots" title="Permalink to this headline">¶</a></h1>
+<section class="sphx-glr-example-title" id="customizing-storm-plots">
+<span id="sphx-glr-examples-customize-storm-py"></span><h1>Customizing Storm Plots<a class="headerlink" href="#customizing-storm-plots" title="Permalink to this heading">¶</a></h1>
 <p>This sample script illustrates how to leverage Tropycal’s plotting functionality to customize storm track plots.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tropycal.tracks</span> <span class="k">as</span> <span class="nn">tracks</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 </pre></div>
 </div>
-<div class="section" id="reading-in-hurtdat2-dataset">
-<h2>Reading In HURTDAT2 Dataset<a class="headerlink" href="#reading-in-hurtdat2-dataset" title="Permalink to this headline">¶</a></h2>
+<section id="reading-in-hurtdat2-dataset">
+<h2>Reading In HURTDAT2 Dataset<a class="headerlink" href="#reading-in-hurtdat2-dataset" title="Permalink to this heading">¶</a></h2>
 <p>Let’s start with the HURDAT2 dataset by loading it into memory. By default, this reads in the HURDAT dataset from the National Hurricane Center (NHC) website, unless you specify a local file path using either <code class="docutils literal notranslate"><span class="pre">atlantic_url</span></code> for the North Atlantic basin on <code class="docutils literal notranslate"><span class="pre">pacific_url</span></code> for the East &amp; Central Pacific basin.</p>
 <p>HURDAT data is not available for the current year. To include the latest data up through today, the “include_btk” flag needs to be set to True, which reads in preliminary best track data from the NHC website. For this example, we’ll set this to False.</p>
 <p>Let’s create an instance of a TrackDataset object, which will store the North Atlantic HURDAT2 dataset in memory. Once we have this we can use its methods for various types of analyses.</p>
@@ -120,9 +123,9 @@ to download the full example code</p>
 --&gt; Completed reading in HURDAT2 data (6.36 seconds)
 </pre></div>
 </div>
-</div>
-<div class="section" id="methods-to-plot-storm-track">
-<h2>Methods to Plot Storm Track<a class="headerlink" href="#methods-to-plot-storm-track" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="methods-to-plot-storm-track">
+<h2>Methods to Plot Storm Track<a class="headerlink" href="#methods-to-plot-storm-track" title="Permalink to this heading">¶</a></h2>
 <p>There are two primary methods to plot an individual storm track. The first two will use our <code class="docutils literal notranslate"><span class="pre">TrackDataset</span></code> instance, which contains the entire HURDATv2 database.</p>
 <p>Let’s say we want to plot Hurricane Michael (2018). The first way we can do this is to use <code class="docutils literal notranslate"><span class="pre">basin.plot_storm()</span></code>, where the first argument is either a storm ID (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;AL142018&quot;</span></code>), or a storm tuple (e.g., <code class="docutils literal notranslate"><span class="pre">(&quot;michael&quot;,2018)</span></code>).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Plot Hurricane Michael&#39;s track directly from the TrackDataset instance</span>
@@ -145,9 +148,9 @@ to download the full example code</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane MICHAEL&#39;,&#39;right&#39;:&#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
 </pre></div>
 </div>
-</div>
-<div class="section" id="customizing-our-plot">
-<h2>Customizing Our Plot<a class="headerlink" href="#customizing-our-plot" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="customizing-our-plot">
+<h2>Customizing Our Plot<a class="headerlink" href="#customizing-our-plot" title="Permalink to this heading">¶</a></h2>
 <p>This seems easy enough so far, right? Now let’s say we want to customize our plot. There’s multiple way we can customize this plot, detailed more thoroughly in the documentation. The code below shows some of these methods.</p>
 <p>Hurricane Michael tracked quite far as an extratropical cyclone, but for this purpose we want to focus in on the portion where it was tropical. By default, plotting storms is set to <code class="docutils literal notranslate"><span class="pre">domain='dynamic'</span></code>, which zooms in on the entire track. Let’s change this to a bounded region from 15N to 40N latitude, and from 105W to 65W longitude:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Storm.plot.html#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">105</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">65</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span><span class="mi">40</span><span class="p">})</span>
@@ -210,9 +213,9 @@ to download the full example code</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane MICHAEL&#39;,&#39;right&#39;:&#39;07 Oct 2018 – 11 Oct 2018\n139 kt • 920 hPa • 12.5 ACE&#39;}&gt;
 </pre></div>
 </div>
-</div>
-<div class="section" id="plotting-multiple-storms">
-<h2>Plotting Multiple Storms<a class="headerlink" href="#plotting-multiple-storms" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="plotting-multiple-storms">
+<h2>Plotting Multiple Storms<a class="headerlink" href="#plotting-multiple-storms" title="Permalink to this heading">¶</a></h2>
 <p>We can also plot multiple storms in the same plot. For this, we’ll go back to our TrackDataset object, which has the ability to plot multiple storm tracks.</p>
 <p>Let’s plot the four Category 5 hurricanes in the 2005 Atlantic Hurricane Season: Emily, Katrina, Rita and Wilma.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.plot_storms.html#tropycal.tracks.TrackDataset.plot_storms" title="tropycal.tracks.TrackDataset.plot_storms" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">plot_storms</span></a><span class="p">([(</span><span class="s1">&#39;emily&#39;</span><span class="p">,</span><span class="mi">2005</span><span class="p">),(</span><span class="s1">&#39;katrina&#39;</span><span class="p">,</span><span class="mi">2005</span><span class="p">),(</span><span class="s1">&#39;rita&#39;</span><span class="p">,</span><span class="mi">2005</span><span class="p">),(</span><span class="s1">&#39;wilma&#39;</span><span class="p">,</span><span class="mi">2005</span><span class="p">)])</span>
@@ -241,8 +244,8 @@ to download the full example code</p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

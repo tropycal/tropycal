@@ -20,7 +20,9 @@
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -2659,11 +2661,11 @@
 <span class="sd">        thresh : dict</span>
 <span class="sd">            Keywords include:</span>
 <span class="sd">                </span>
-<span class="sd">            * **sample_min** - minimum number of storms in a grid box for the cmd_request to be applied. For the functions &#39;percentile&#39; and &#39;average&#39;, &#39;sample_min&#39; defaults to 5 and will override any value less than 5.</span>
-<span class="sd">            * **v_min** - minimum wind for a given point to be included in the cmd_request.</span>
-<span class="sd">            * **p_max** - maximum pressure for a given point to be included in the cmd_request.</span>
-<span class="sd">            * **dv_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.</span>
-<span class="sd">            * **dp_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.</span>
+<span class="sd">            * **sample_min** - minimum number of storms in a grid box for &quot;request&quot; to be applied. For the functions &#39;percentile&#39; and &#39;average&#39;, &#39;sample_min&#39; defaults to 5 and will override any value less than 5.</span>
+<span class="sd">            * **v_min** - minimum wind for a given point to be included in &quot;request&quot;.</span>
+<span class="sd">            * **p_max** - maximum pressure for a given point to be included in &quot;request&quot;.</span>
+<span class="sd">            * **dv_min** - minimum change in wind over dt_window for a given point to be included in &quot;request&quot;.</span>
+<span class="sd">            * **dp_max** - maximum change in pressure over dt_window for a given point to be included in &quot;request&quot;.</span>
 <span class="sd">            * **dt_window** - time window over which change variables are calculated (hours). Default is 24.</span>
 <span class="sd">            * **dt_align** - alignment of dt_window for change variables -- &#39;start&#39;,&#39;middle&#39;,&#39;end&#39; -- e.g. &#39;end&#39; for dt_window=24 associates a TC point with change over the past 24 hours. Default is middle.</span>
 <span class="sd">            </span>

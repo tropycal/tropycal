@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tropical Cyclone Rainfall &mdash; tropycal </title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -20,7 +21,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -99,14 +102,14 @@
 <p>Click <a class="reference internal" href="#sphx-glr-download-examples-tc-rainfall-py"><span class="std std-ref">here</span></a>
 to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="tropical-cyclone-rainfall">
-<span id="sphx-glr-examples-tc-rainfall-py"></span><h1>Tropical Cyclone Rainfall<a class="headerlink" href="#tropical-cyclone-rainfall" title="Permalink to this headline">¶</a></h1>
+<section class="sphx-glr-example-title" id="tropical-cyclone-rainfall">
+<span id="sphx-glr-examples-tc-rainfall-py"></span><h1>Tropical Cyclone Rainfall<a class="headerlink" href="#tropical-cyclone-rainfall" title="Permalink to this heading">¶</a></h1>
 <p>This sample script shows how to use Tropycal to retrieve and plot rainfall associated with U.S. tropical cyclones, from the Weather Prediction Center (WPC)’s database.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">tracks</span><span class="p">,</span> <span class="n">rain</span>
 </pre></div>
 </div>
-<div class="section" id="reading-in-hurtdat2-dataset">
-<h2>Reading In HURTDAT2 Dataset<a class="headerlink" href="#reading-in-hurtdat2-dataset" title="Permalink to this headline">¶</a></h2>
+<section id="reading-in-hurtdat2-dataset">
+<h2>Reading In HURTDAT2 Dataset<a class="headerlink" href="#reading-in-hurtdat2-dataset" title="Permalink to this heading">¶</a></h2>
 <p>Let’s start with the HURDAT2 dataset by loading it into memory. By default, this reads in the HURDAT dataset from the National Hurricane Center (NHC) website, unless you specify a local file path using either <code class="docutils literal notranslate"><span class="pre">atlantic_url</span></code> for the North Atlantic basin on <code class="docutils literal notranslate"><span class="pre">pacific_url</span></code> for the East &amp; Central Pacific basin.</p>
 <p>HURDAT data is not available for the current year. To include the latest data up through today, the “include_btk” flag needs to be set to True, which reads in preliminary best track data from the NHC website. For this example, we’ll set this to False.</p>
 <p>Let’s create an instance of a TrackDataset object, which will store the North Atlantic HURDAT2 dataset in memory. Once we have this we can use its methods for various types of analyses.</p>
@@ -118,9 +121,9 @@ to download the full example code</p>
 --&gt; Completed reading in HURDAT2 data (4.72 seconds)
 </pre></div>
 </div>
-</div>
-<div class="section" id="wpc-rainfall-dataset">
-<h2>WPC Rainfall Dataset<a class="headerlink" href="#wpc-rainfall-dataset" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="wpc-rainfall-dataset">
+<h2>WPC Rainfall Dataset<a class="headerlink" href="#wpc-rainfall-dataset" title="Permalink to this heading">¶</a></h2>
 <p>Next, we’ll read in rainfall associated with tropical cyclones. Tropical cyclones are known to produce heavy rainfall, with at times catastrophic flooding. The Weather Prediction Center (WPC) routinely issues advisories on tropical cyclones or their remnants inland, and maintains a database of rainfall associated with tropical cyclones in the US.</p>
 <p>This dataset is now available in CSV format, and can be easily read into Tropycal using the new Rain module:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.rain.RainDataset.html#tropycal.rain.RainDataset" title="tropycal.rain.RainDataset" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rain_obj</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.rain.RainDataset.html#tropycal.rain.RainDataset" title="tropycal.rain.RainDataset" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-class"><span class="n">rain</span><span class="o">.</span><span class="n">RainDataset</span></a><span class="p">()</span>
@@ -384,9 +387,9 @@ Latitude = 29.95
 Longitude = -94.01
 </pre></div>
 </div>
-</div>
-<div class="section" id="plotting-tc-rainfall">
-<h2>Plotting TC Rainfall<a class="headerlink" href="#plotting-tc-rainfall" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="plotting-tc-rainfall">
+<h2>Plotting TC Rainfall<a class="headerlink" href="#plotting-tc-rainfall" title="Permalink to this heading">¶</a></h2>
 <p>Tropycal provides two methods to plot tropical cyclone rainfall: by grid, or by individual observations.</p>
 <p>We’ll start off with plotting gridded rainfall. First we’ll need to interpolate to a cartesian grid using the <code class="docutils literal notranslate"><span class="pre">interpolate_to_grid()</span></code> method, and retrieve an xarray DataArray of the grid and its associated coordinates. Note that the default is to interpolate to a 0.1 degree grid - you can use the <code class="docutils literal notranslate"><span class="pre">grid_res</span></code> argument to provide a different resolution.</p>
 <p>Next we’ll use the <code class="docutils literal notranslate"><span class="pre">plot_rain_grid()</span></code> method to plot the output, and provide contour levels for plotting. As Hurricane Harvey was most damaging in Texas, we’ll provide a custom domain zoomed in over Texas.</p>
@@ -431,8 +434,8 @@ Longitude = -94.01
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

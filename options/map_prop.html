@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Map Plotting Options &mdash; tropycal </title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -20,7 +21,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
@@ -75,11 +78,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="map-plotting-options">
-<span id="options-prop-all"></span><h1>Map Plotting Options<a class="headerlink" href="#map-plotting-options" title="Permalink to this headline">¶</a></h1>
+  <section id="map-plotting-options">
+<span id="options-prop-all"></span><h1>Map Plotting Options<a class="headerlink" href="#map-plotting-options" title="Permalink to this heading">¶</a></h1>
 <p>Various plotting functions in Tropycal make use of properties to allow the user to customize the plots. These properties are listed below.</p>
-<div class="section" id="map-prop">
-<span id="options-map-prop"></span><h2>Map prop<a class="headerlink" href="#map-prop" title="Permalink to this headline">¶</a></h2>
+<section id="map-prop">
+<span id="options-map-prop"></span><h2>Map prop<a class="headerlink" href="#map-prop" title="Permalink to this heading">¶</a></h2>
 <p>The following table lists options that can be passed to the “map_prop” argument as a dictionary. A sample usage block is included below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">map_prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;figsize&#39;</span><span class="p">:(</span><span class="mi">14</span><span class="p">,</span><span class="mi">9</span><span class="p">),</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mf">1.0</span><span class="p">})</span>
 </pre></div>
@@ -124,15 +127,15 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="tracks-properties">
-<span id="options-prop"></span><h2>Tracks Properties<a class="headerlink" href="#tracks-properties" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="tracks-properties">
+<span id="options-prop"></span><h2>Tracks Properties<a class="headerlink" href="#tracks-properties" title="Permalink to this heading">¶</a></h2>
 <p>The following sections lists options that can be passed to the “prop” argument as a dictionary. A sample usage block is included below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dots&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span><span class="s1">&#39;linecolor&#39;</span><span class="p">:</span><span class="s1">&#39;k&#39;</span><span class="p">})</span>
 </pre></div>
 </div>
-<div class="section" id="generic-prop-options">
-<h3>Generic prop options<a class="headerlink" href="#generic-prop-options" title="Permalink to this headline">¶</a></h3>
+<section id="generic-prop-options">
+<h3>Generic prop options<a class="headerlink" href="#generic-prop-options" title="Permalink to this heading">¶</a></h3>
 <p>The following properties are available for any function that involves plotting storm tracks.</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -200,9 +203,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="plot-nhc-forecast">
-<span id="options-prop-nhc"></span><h3>plot_nhc_forecast<a class="headerlink" href="#plot-nhc-forecast" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="plot-nhc-forecast">
+<span id="options-prop-nhc"></span><h3>plot_nhc_forecast<a class="headerlink" href="#plot-nhc-forecast" title="Permalink to this heading">¶</a></h3>
 <p>The following properties are available only for the <code class="docutils literal notranslate"><span class="pre">tropycal.tracks.Storm.plot_nhc_forecast()</span></code> function.</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -223,9 +226,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="gridded-stats">
-<span id="options-prop-gridded"></span><h3>gridded_stats<a class="headerlink" href="#gridded-stats" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="gridded-stats">
+<span id="options-prop-gridded"></span><h3>gridded_stats<a class="headerlink" href="#gridded-stats" title="Permalink to this heading">¶</a></h3>
 <p>The following properties are available only for the <code class="docutils literal notranslate"><span class="pre">tropycal.tracks.TrackDataset.gridded_stats()</span></code> function.</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -258,13 +261,13 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="realtime-summary">
-<span id="options-summary"></span><h2>Realtime Summary<a class="headerlink" href="#realtime-summary" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="realtime-summary">
+<span id="options-summary"></span><h2>Realtime Summary<a class="headerlink" href="#realtime-summary" title="Permalink to this heading">¶</a></h2>
 <p>The following properties are available only for the <code class="docutils literal notranslate"><span class="pre">tropycal.realtime.Realtime.plot_summary()</span></code> function.</p>
-<div class="section" id="prop-two">
-<h3>prop_two<a class="headerlink" href="#prop-two" title="Permalink to this headline">¶</a></h3>
+<section id="prop-two">
+<h3>prop_two<a class="headerlink" href="#prop-two" title="Permalink to this heading">¶</a></h3>
 <p>The following properties are available for plotting NHC Tropical Weather Outlook (TWO).</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -288,9 +291,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="prop-invest">
-<h3>prop_invest<a class="headerlink" href="#prop-invest" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="prop-invest">
+<h3>prop_invest<a class="headerlink" href="#prop-invest" title="Permalink to this heading">¶</a></h3>
 <p>The following properties are available for plotting invests.</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -323,9 +326,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="prop-storm">
-<h3>prop_storm<a class="headerlink" href="#prop-storm" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="prop-storm">
+<h3>prop_storm<a class="headerlink" href="#prop-storm" title="Permalink to this heading">¶</a></h3>
 <p>The following properties are available for plotting storms.</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -364,9 +367,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="prop-cone">
-<h3>prop_cone<a class="headerlink" href="#prop-cone" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="prop-cone">
+<h3>prop_cone<a class="headerlink" href="#prop-cone" title="Permalink to this heading">¶</a></h3>
 <p>The following properties are available for plotting realtime cone of uncertainty.</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -402,12 +405,12 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="recon-properties">
-<span id="options-prop-recon-plot"></span><h2>Recon Properties<a class="headerlink" href="#recon-properties" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="plot-points">
-<h3>plot_points<a class="headerlink" href="#plot-points" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="recon-properties">
+<span id="options-prop-recon-plot"></span><h2>Recon Properties<a class="headerlink" href="#recon-properties" title="Permalink to this heading">¶</a></h2>
+<section id="plot-points">
+<h3>plot_points<a class="headerlink" href="#plot-points" title="Permalink to this heading">¶</a></h3>
 <p>The following properties are available only for the <code class="docutils literal notranslate"><span class="pre">tropycal.recon.ReconDataset.plot_points()</span></code> function.</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -434,9 +437,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="plot-swath-and-plot-map">
-<span id="options-prop-recon-swath"></span><h3>plot_swath and plot_map<a class="headerlink" href="#plot-swath-and-plot-map" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="plot-swath-and-plot-map">
+<span id="options-prop-recon-swath"></span><h3>plot_swath and plot_map<a class="headerlink" href="#plot-swath-and-plot-map" title="Permalink to this heading">¶</a></h3>
 <p>The following properties are available only for the <code class="docutils literal notranslate"><span class="pre">tropycal.recon.ReconDataset.plot_swath()</span></code> and <code class="docutils literal notranslate"><span class="pre">tropycal.recon.ReconDataset.plot_map()</span></code> functions.</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -466,9 +469,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="plot-hovmoller">
-<span id="options-prop-recon-hovmoller"></span><h3>plot_hovmoller<a class="headerlink" href="#plot-hovmoller" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="plot-hovmoller">
+<span id="options-prop-recon-hovmoller"></span><h3>plot_hovmoller<a class="headerlink" href="#plot-hovmoller" title="Permalink to this heading">¶</a></h3>
 <p>The following properties are available only for the <code class="docutils literal notranslate"><span class="pre">tropycal.recon.ReconDataset.plot_hovmoller()</span></code> function.</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -492,9 +495,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>

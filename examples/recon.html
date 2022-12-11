@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aircraft Recon Data Analysis &mdash; tropycal </title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -20,7 +21,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -104,16 +107,16 @@
 <p>Click <a class="reference internal" href="#sphx-glr-download-examples-recon-py"><span class="std std-ref">here</span></a>
 to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="aircraft-recon-data-analysis">
-<span id="sphx-glr-examples-recon-py"></span><h1>Aircraft Recon Data Analysis<a class="headerlink" href="#aircraft-recon-data-analysis" title="Permalink to this headline">¶</a></h1>
+<section class="sphx-glr-example-title" id="aircraft-recon-data-analysis">
+<span id="sphx-glr-examples-recon-py"></span><h1>Aircraft Recon Data Analysis<a class="headerlink" href="#aircraft-recon-data-analysis" title="Permalink to this heading">¶</a></h1>
 <p>This sample script shows how to use Tropycal to retrieve, analyze and plot aircraft reconnaissance missions.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">tracks</span><span class="p">,</span> <span class="n">recon</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 </pre></div>
 </div>
-<div class="section" id="reading-in-recon-dataset">
-<h2>Reading In Recon Dataset<a class="headerlink" href="#reading-in-recon-dataset" title="Permalink to this headline">¶</a></h2>
+<section id="reading-in-recon-dataset">
+<h2>Reading In Recon Dataset<a class="headerlink" href="#reading-in-recon-dataset" title="Permalink to this heading">¶</a></h2>
 <p>There are several ways of retrieving a ReconDataset object. The first step is to retrieve a TrackDataset object, which for this example we’ll use the HURDATv2 database for the North Atlantic basin.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">)</span>
 </pre></div>
@@ -134,8 +137,8 @@ to download the full example code</p>
 <li><p>The individual sub-classes (to be discussed later) can also be created individually of a ReconDataset object, providing the storm object as an argument (e.g., <code class="docutils literal notranslate"><span class="pre">dropsondes</span> <span class="pre">=</span> <span class="pre">recon.dropsondes(storm)</span></code>).</p></li>
 </ol>
 <p>For the rest of this script, we’ll be using the first method.</p>
-<div class="section" id="recon-sub-classes">
-<h3>Recon Sub-Classes<a class="headerlink" href="#recon-sub-classes" title="Permalink to this headline">¶</a></h3>
+<section id="recon-sub-classes">
+<h3>Recon Sub-Classes<a class="headerlink" href="#recon-sub-classes" title="Permalink to this heading">¶</a></h3>
 <p>The three primary sub-classes of the recon module are:</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -192,10 +195,10 @@ Unable to decode 0 files
 <span class="gp">&gt;&gt;&gt; </span><a href="../api/generated/tropycal.recon.ReconDataset.get_hdobs.html#tropycal.recon.ReconDataset.get_hdobs" title="tropycal.recon.ReconDataset.get_hdobs" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">get_hdobs</span></a><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">name</span><span class="si">}{</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s1">_hdobs.pickle&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="visualizing-recondataset">
-<h2>Visualizing ReconDataset<a class="headerlink" href="#visualizing-recondataset" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="visualizing-recondataset">
+<h2>Visualizing ReconDataset<a class="headerlink" href="#visualizing-recondataset" title="Permalink to this heading">¶</a></h2>
 <p>Print the recon object to see a summary of the data in recon from the three objects:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset" title="tropycal.recon.ReconDataset" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span></a>
 </pre></div>
@@ -253,9 +256,9 @@ Dataset Summary:
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane IRMA\nRecon summary for mission 17&#39;,&#39;right&#39;:&#39;Start ... 08:54 UTC 07 Sep 2017\nEnd ... 19:03 UTC 07 Sep 2017&#39;}&gt;
 </pre></div>
 </div>
-</div>
-<div class="section" id="high-density-observations-hdobs">
-<h2>High Density Observations (HDOBs)<a class="headerlink" href="#high-density-observations-hdobs" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="high-density-observations-hdobs">
+<h2>High Density Observations (HDOBs)<a class="headerlink" href="#high-density-observations-hdobs" title="Permalink to this heading">¶</a></h2>
 <p>The first class we’ll be reviewing is the HDOBs class, which is the largest containing the most data given the high frequency of observations. Let’s start by viewing the HDOB summary:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.hdobs.html#tropycal.recon.hdobs" title="tropycal.recon.hdobs" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">hdobs</span></a>
 </pre></div>
@@ -622,9 +625,9 @@ Dataset Summary:
 &lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane IRMA\nRecon: 10s FL wind speed (kt)&#39;,&#39;right&#39;:&#39;12:00 UTC 06 Sep 2017&#39;}&gt;
 </pre></div>
 </div>
-</div>
-<div class="section" id="dropsonde-data">
-<h2>Dropsonde Data<a class="headerlink" href="#dropsonde-data" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="dropsonde-data">
+<h2>Dropsonde Data<a class="headerlink" href="#dropsonde-data" title="Permalink to this heading">¶</a></h2>
 <p>Next we’ll take a look at the dropsonde data for Hurricane Irma. First, let’s take a look at the dropsonde summary:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.dropsondes.html#tropycal.recon.dropsondes" title="tropycal.recon.dropsondes" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">dropsondes</span></a>
 </pre></div>
@@ -711,9 +714,9 @@ Dataset Summary:
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane IRMA\nRecon: 300hPa wind speed (kt)&#39;,&#39;right&#39;:&#39;Start ... 17:58 UTC 04 Sep 2017\nEnd ... 01:04 UTC 10 Sep 2017&#39;}&gt;
 </pre></div>
 </div>
-</div>
-<div class="section" id="vortex-data-messages-vdms">
-<h2>Vortex Data Messages (VDMs)<a class="headerlink" href="#vortex-data-messages-vdms" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="vortex-data-messages-vdms">
+<h2>Vortex Data Messages (VDMs)<a class="headerlink" href="#vortex-data-messages-vdms" title="Permalink to this heading">¶</a></h2>
 <p>The last class we’ll look at is the VDM class. Let’s start off by viewing a summary of VDM data for Hurricane Irma:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.vdms.html#tropycal.recon.vdms" title="tropycal.recon.vdms" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">vdms</span></a>
 </pre></div>
@@ -754,8 +757,8 @@ Dataset Summary:
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

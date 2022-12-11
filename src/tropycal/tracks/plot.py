@@ -459,15 +459,25 @@ class TrackPlot(Plot):
             #Add left title
             type_array = np.array(storm_data['type'])
             idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
-            if str(storm_data['id'][2]) != "9" and (invest_bool == False or len(idx[0]) > 0):
+            
+            #Check if storm is an invest with a leading 9
+            add_ptc_flag = False
+            check_invest = False
+            if len(storm_data['id']) > 4 and str(storm_data['id'][2]) == "9":
+                check_invest = True
+            
+            if len(storm_data['id']) == 0 and len(idx[0]) == 0:
+                idx = np.array([True for i in type_array])
+                tropical_vmax = np.array(storm_data['vmax'])
+                self.ax.set_title(f"Cyclone {storm_data['name']}",loc='left',fontsize=17,fontweight='bold')
+            elif check_invest == False and (invest_bool == False or len(idx[0]) > 0):
                 tropical_vmax = np.array(storm_data['vmax'])[idx]
 
                 #Coerce to include non-TC points if storm hasn't been designated yet
-                add_ptc_flag = False
-                if len(tropical_vmax) == 0:
+                if len(tropical_vmax) == 0 and len(storm_data['id']) > 4:
                     add_ptc_flag = True
                     idx = np.where((type_array == 'LO') | (type_array == 'DB'))
-                tropical_vmax = np.array(storm_data['vmax'])[idx]
+                    tropical_vmax = np.array(storm_data['vmax'])[idx]
 
                 subtrop = classify_subtropical(np.array(storm_data['type']))
                 peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
@@ -478,7 +488,6 @@ class TrackPlot(Plot):
             else:
                 #Use all indices for invests
                 idx = np.array([True for i in type_array])
-                add_ptc_flag = False
                 tropical_vmax = np.array(storm_data['vmax'])
 
                 #Determine letter in front of invest

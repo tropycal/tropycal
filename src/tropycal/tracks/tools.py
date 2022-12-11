@@ -703,25 +703,6 @@ def num_to_text(number):
         msg = "Please choose a number less than 100."
         raise ValueError(msg)
 
-def add_radius(lats,lons,vlat,vlon,rad):
-    
-    #Define empty array
-    return_arr = np.zeros((lats.shape))
-    
-    #Calculate distance from vlat/vlon at each gridpoint
-    r_earth = 6.371 * 10**6
-    dlat = np.subtract(np.radians(lats),np.radians(vlat))
-    dlon = np.subtract(np.radians(lons),np.radians(vlon))
-
-    a = np.sin(dlat*0.5) * np.sin(dlat*0.5) + np.cos(np.radians(lats)) * np.cos(np.radians(vlat)) * np.sin(dlon*0.5) * np.sin(dlon*0.5)
-    c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a));
-    dist = (r_earth * c) * 0.001
-    
-    #Mask out values less than radius
-    return_arr[dist > rad] = 0
-    return_arr[dist <= rad] = 1
-    return return_arr
-
 def listify(x):
     if isinstance(x,(tuple,list,np.ndarray)):
         return [i for i in x]

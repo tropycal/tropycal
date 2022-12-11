@@ -1118,7 +1118,7 @@ class Storm:
         return plot_ax
     
     
-    def plot_ensembles(self,forecast=None,fhr=None,interpolate=False,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
+    def plot_ensembles(self,forecast=None,fhr=None,interpolate=True,domain="dynamic",ax=None,cartopy_proj=None,save_path=None,**kwargs):
         
         r"""
         Creates a plot of individual GEFS ensemble tracks.
@@ -1130,7 +1130,7 @@ class Storm:
         fhr : int, optional
             Forecast hour to plot. If None (default), a cumulative plot of all forecast hours will be produced. If an integer, a single plot will be produced.
         interpolate : bool, optional
-            If True, and fhr is None, track density data will be interpolated to hourly. Default is False (6-hourly track density data). Setting this to True greatly slows down the function.
+            If True, and fhr is None, track density data will be interpolated to hourly. Default is True (1-hourly track density data). False plots density using 6-hourly track data.
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes

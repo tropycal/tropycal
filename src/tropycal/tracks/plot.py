@@ -459,15 +459,25 @@ class TrackPlot(Plot):
             #Add left title
             type_array = np.array(storm_data['type'])
             idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
-            if invest_bool == False or len(idx[0]) > 0:
+            
+            #Check if storm is an invest with a leading 9
+            add_ptc_flag = False
+            check_invest = False
+            if len(storm_data['id']) > 4 and str(storm_data['id'][2]) == "9":
+                check_invest = True
+            
+            if len(storm_data['id']) == 0 and len(idx[0]) == 0:
+                idx = np.array([True for i in type_array])
+                tropical_vmax = np.array(storm_data['vmax'])
+                self.ax.set_title(f"Cyclone {storm_data['name']}",loc='left',fontsize=17,fontweight='bold')
+            elif check_invest == False and (invest_bool == False or len(idx[0]) > 0):
                 tropical_vmax = np.array(storm_data['vmax'])[idx]
 
                 #Coerce to include non-TC points if storm hasn't been designated yet
-                add_ptc_flag = False
-                if len(tropical_vmax) == 0:
+                if len(tropical_vmax) == 0 and len(storm_data['id']) > 4:
                     add_ptc_flag = True
                     idx = np.where((type_array == 'LO') | (type_array == 'DB'))
-                tropical_vmax = np.array(storm_data['vmax'])[idx]
+                    tropical_vmax = np.array(storm_data['vmax'])[idx]
 
                 subtrop = classify_subtropical(np.array(storm_data['type']))
                 peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
@@ -478,7 +488,6 @@ class TrackPlot(Plot):
             else:
                 #Use all indices for invests
                 idx = np.array([True for i in type_array])
-                add_ptc_flag = False
                 tropical_vmax = np.array(storm_data['vmax'])
 
                 #Determine letter in front of invest
@@ -1189,11 +1198,18 @@ None,prop={},map_prop={}):
         #Plot density
         density_colorbar = False
         if prop_density['plot']:
+            
+            #Error check radius
+            if prop_density['radius'] > 500 or prop_density['radius'] < 50:
+                raise ValueError("Radius must be between 50 and 500 km.")
+            
             if hr == None or (hr != None and hr in ds['gefs']['fhr']):
 
-                #Create 0.5 degree grid for plotting
+                #Create 0.25 degree grid for plotting
                 gridlats = np.arange(0,90,0.25)
-                gridlons = np.arange(180-360.0,180.1,0.25) #gridlons = np.arange(180-360.0,360-360.0,0.25)
+                if np.nanmax(storm_dict['lat']) < 0: gridlats = np.arange(-90,0,0.25)
+                gridlons = np.arange(-180.0,180.1,0.25)
+                if self.proj.proj4_params['lon_0'] == 180.0: gridlons = np.arange(0.0,360.1,0.25)
                 gridlons2d,gridlats2d = np.meshgrid(gridlons,gridlats)
                 griddata = np.zeros((gridlons2d.shape))
 
@@ -1209,7 +1225,7 @@ None,prop={},map_prop={}):
                         #Proceed if hour is available
                         if hr in ds[f'gefs_{ens}']['fhr']:
                             idx = ds[f'gefs_{ens}']['fhr'].index(hr)
-                            griddata += add_radius(gridlats2d, gridlons2d, ds[f'gefs_{ens}']['lat'][idx],
+                            griddata += add_radius_quick(gridlats, gridlons, ds[f'gefs_{ens}']['lat'][idx],
                                                    ds[f'gefs_{ens}']['lon'][idx], prop_density['radius'])
                     
                     #Calculate for cumulative
@@ -1232,7 +1248,7 @@ None,prop={},map_prop={}):
 
                             #Iterate over all forecast hours
                             for i,(i_lon,i_lat) in enumerate(zip(new_lons,new_lats)):
-                                radius_grid = add_radius(gridlats2d, gridlons2d, i_lat, i_lon, prop_density['radius'])
+                                radius_grid = add_radius_quick(gridlats, gridlons, i_lat, i_lon, prop_density['radius'])
                                 temp_grid = np.maximum(temp_grid, radius_grid)
                         
                         #Otherwise don't interpolate

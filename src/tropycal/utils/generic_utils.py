@@ -772,40 +772,6 @@ def generate_nhc_cone(forecast,basin,shift_lons=False,cone_days=5,cone_year=None
         ynew = f(target_times)
         return ynew
 
-    #Function for plugging small array into larger array
-    def plug_array(small,large,small_coords,large_coords):
-
-        small_lat = np.round(small_coords['lat'],2)
-        small_lon = np.round(small_coords['lon'],2)
-        large_lat = np.round(large_coords['lat'],2)
-        large_lon = np.round(large_coords['lon'],2)
-
-        small_minlat = min(small_lat)
-        small_maxlat = max(small_lat)
-        small_minlon = min(small_lon)
-        small_maxlon = max(small_lon)
-
-        if small_minlat in large_lat:
-            minlat = np.where(large_lat==small_minlat)[0][0]
-        else:
-            minlat = min(large_lat)
-        if small_maxlat in large_lat:
-            maxlat = np.where(large_lat==small_maxlat)[0][0]
-        else:
-            maxlat = max(large_lat)
-        if small_minlon in large_lon:
-            minlon = np.where(large_lon==small_minlon)[0][0]
-        else:
-            minlon = min(large_lon)
-        if small_maxlon in large_lon:
-            maxlon = np.where(large_lon==small_maxlon)[0][0]
-        else:
-            maxlon = max(large_lon)
-
-        large[minlat:maxlat+1,minlon:maxlon+1] = small
-
-        return large
-
     #Function for finding nearest value in an array
     def findNearest(array,val):
         return array[np.abs(array - val).argmin()]
@@ -1281,6 +1247,186 @@ def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y
 # Private utilities
 # These are primarily intended to be used internally. Do not add these to documentation.
 #===========================================================================================================
+
+#Function for plugging small array into larger array
+def plug_array(small,large,small_coords,large_coords):
+    
+    r"""
+    Plug small array into large array with matching coords.
+    
+    Parameters
+    ----------
+    small : numpy.ndarray
+        Small array to be plugged into the larger array.
+    large : numpy.ndarray
+        Large array for the small array to be plugged into.
+    small_coords : dict
+        Dictionary containing 'lat' and 'lon' keys, whose values are numpy.ndarrays of lat & lon for the small array.
+    large_coords : dict
+        Dictionary containing 'lat' and 'lon' keys, whose values are numpy.ndarrays of lat & lon for the large array.
+    
+    Returns
+    -------
+    numpy.ndarray
+        An array of the same dimensions as "large", with the small array plugged inside the large array.
+    """
+
+    small_lat = np.round(small_coords['lat'],2)
+    small_lon = np.round(small_coords['lon'],2)
+    large_lat = np.round(large_coords['lat'],2)
+    large_lon = np.round(large_coords['lon'],2)
+
+    small_minlat = np.nanmin(small_lat)
+    small_maxlat = np.nanmax(small_lat)
+    small_minlon = np.nanmin(small_lon)
+    small_maxlon = np.nanmax(small_lon)
+
+    if small_minlat in large_lat:
+        minlat = np.where(large_lat==small_minlat)[0][0]
+    else:
+        minlat = min(large_lat)
+    if small_maxlat in large_lat:
+        maxlat = np.where(large_lat==small_maxlat)[0][0]
+    else:
+        maxlat = max(large_lat)
+    if small_minlon in large_lon:
+        minlon = np.where(large_lon==small_minlon)[0][0]
+    else:
+        minlon = min(large_lon)
+    if small_maxlon in large_lon:
+        maxlon = np.where(large_lon==small_maxlon)[0][0]
+    else:
+        maxlon = max(large_lon)
+
+    large[minlat:maxlat+1,minlon:maxlon+1] = small
+
+    return large
+
+def calc_distance(lats2d,lons2d,lat,lon):
+    
+    r"""
+    Calculates distance (km) for each gridpoint in a 2D array from a provided coordinate.
+    
+    Parameters
+    ----------
+    lats2d : numpy.ndarray
+        2D array containing latitude in degrees
+    lons2d : numpy.ndarray
+        2D array containing longitude in degrees
+    lat : float or int
+        Latitude of requested coordinate
+    lon : float or int
+        Longitude of requested coordinate
+    
+    Returns
+    -------
+    list
+        First element returned is an empty 2D array of dimension (lons,lats). Second element returned is an array of the same shape containing the distance from the requested coordinate in km.
+    """
+    
+    #Define empty array
+    return_arr = np.zeros((lats2d.shape))
+    
+    #Calculate distance from lat/lon at each gridpoint
+    r_earth = 6.371 * 10**6
+    dlat = np.subtract(np.radians(lats2d),np.radians(lat))
+    dlon = np.subtract(np.radians(lons2d),np.radians(lon))
+    a = np.sin(dlat/2) * np.sin(dlat/2) + np.cos(np.radians(lats2d)) * np.cos(np.radians(lat)) * np.sin(dlon/2) * np.sin(dlon/2)
+    c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a));
+    dist = (r_earth * c)/1000.0
+    
+    return return_arr, dist
+
+def add_radius(lats2d,lons2d,lat,lon,rad):
+    
+    r"""
+    Determines whether a requested coordinate is within a specified radius in a 2D array.
+    
+    Parameters
+    ----------
+    lats : numpy.ndarray
+        2D array containing latitude in degrees
+    lons : numpy.ndarray
+        2D array containing longitude in degrees
+    lat : float or int
+        Latitude of requested coordinate
+    lon : float or int
+        Longitude of requested coordinate
+    rad : float or int
+        Requested radius in kilometers
+    res : float or int, optional
+        Resolution of grid to create. Default is 0.25 degrees.
+    
+    Returns
+    -------
+    numpy.ndarray
+        2D array containing 1 where the requested coordinate is within the requested radius, and 0 otherwise.
+    """
+    
+    #Define empty array
+    return_arr = np.zeros((lats2d.shape))
+    
+    #Calculate distance from lat/lon at each gridpoint
+    r_earth = 6.371 * 10**6
+    dlat = np.subtract(np.radians(lats2d),np.radians(lat))
+    dlon = np.subtract(np.radians(lons2d),np.radians(lon))
+
+    a = np.sin(dlat*0.5) * np.sin(dlat*0.5) + np.cos(np.radians(lats2d)) * np.cos(np.radians(lat)) * np.sin(dlon*0.5) * np.sin(dlon*0.5)
+    c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a));
+    dist = (r_earth * c) * 0.001
+    
+    #Mask out values less than radius
+    return_arr[dist > rad] = 0
+    return_arr[dist <= rad] = 1
+    return return_arr
+
+def add_radius_quick(lats,lons,lat,lon,rad,res=0.25):
+    
+    r"""
+    Determines whether a requested coordinate is within a specified radius in a 2D array. Performs a faster calculation than the default "add_radius" function that is a good approximation outside of the poles.
+    
+    Parameters
+    ----------
+    lats : numpy.ndarray
+        1D array containing latitude in degrees
+    lons : numpy.ndarray
+        1D array containing longitude in degrees
+    lat : float or int
+        Latitude of requested coordinate
+    lon : float or int
+        Longitude of requested coordinate
+    rad : float or int
+        Requested radius in kilometers
+    res : float or int, optional
+        Resolution of grid to create. Default is 0.25 degrees.
+    
+    Returns
+    -------
+    numpy.ndarray
+        2D array containing 1 where the requested coordinate is within the requested radius, and 0 otherwise.
+    """
+
+    lons2d, lats2d = np.meshgrid(lons, lats)
+    return_arr = np.zeros((lats2d.shape))
+    dist = np.zeros((lats2d.shape)) + 9999
+    if lon == None or lat == None: return return_arr
+
+    new_lats = np.arange(np.round(lat-5),np.round(lat+5+res),res)
+    if np.nanmin(lats) >= 0:
+        if np.nanmin(new_lats) < 0: new_lats = np.arange(0,np.round(lat+5+res),res)
+    else:
+        if np.nanmax(new_lats) > 0: new_lats = np.arange(np.round(lat-5),0+res,res)
+    new_lons = np.arange(np.round(lon-10),np.round(lon+10+res),res)
+    new_lons_2d, new_lats_2d = np.meshgrid(new_lons, new_lats)
+    new_arr, new_dist = calc_distance(new_lats_2d,new_lons_2d,lat,lon)
+
+    return_arr = plug_array(new_arr,return_arr,{'lat':new_lats,'lon':new_lons},{'lat':lats,'lon':lons})
+    return_dist = plug_array(new_dist,dist,{'lat':new_lats,'lon':new_lons},{'lat':lats,'lon':lons})	
+
+    #Mask out values less than radius
+    return_arr[dist > rad] = 0
+    return_arr[dist <= rad] = 1
+    return return_arr
 
 def all_nan(arr):
     

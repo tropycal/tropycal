@@ -2581,11 +2581,11 @@ class TrackDataset:
         thresh : dict
             Keywords include:
                 
-            * **sample_min** - minimum number of storms in a grid box for the cmd_request to be applied. For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
-            * **v_min** - minimum wind for a given point to be included in the cmd_request.
-            * **p_max** - maximum pressure for a given point to be included in the cmd_request.
-            * **dv_min** - minimum change in wind over dt_window for a given point to be included in the cmd_request.
-            * **dp_max** - maximum change in pressure over dt_window for a given point to be included in the cmd_request.
+            * **sample_min** - minimum number of storms in a grid box for "request" to be applied. For the functions 'percentile' and 'average', 'sample_min' defaults to 5 and will override any value less than 5.
+            * **v_min** - minimum wind for a given point to be included in "request".
+            * **p_max** - maximum pressure for a given point to be included in "request".
+            * **dv_min** - minimum change in wind over dt_window for a given point to be included in "request".
+            * **dp_max** - maximum change in pressure over dt_window for a given point to be included in "request".
             * **dt_window** - time window over which change variables are calculated (hours). Default is 24.
             * **dt_align** - alignment of dt_window for change variables -- 'start','middle','end' -- e.g. 'end' for dt_window=24 associates a TC point with change over the past 24 hours. Default is middle.
             

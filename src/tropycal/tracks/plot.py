@@ -34,7 +34,7 @@ try:
 except:
     warnings.warn("Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
-def plot_dot(ax,lon,lat,date,vmax,i_type,zorder,storm_data,prop,i):
+def plot_dot(ax,lon,lat,time,vmax,i_type,zorder,storm_data,prop,i):
 
     r"""
     Plot a dot on the map per user settings.
@@ -45,7 +45,7 @@ def plot_dot(ax,lon,lat,date,vmax,i_type,zorder,storm_data,prop,i):
         Longitude of the dot
     lat : int, float
         Latitude of the dot
-    date : datetime.datetime
+    time : datetime.datetime
         Datetime object corresponding to the time of the dot in UTC
     vmax : int, float
         Sustained wind in knots
@@ -197,7 +197,7 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
             cax2.tick_params('both', length=0, width=0, which='major')
             cax.yaxis.set_ticks_position('left')
             rect_offset = 0.7
-        if prop['fillcolor'] == 'date':
+        if prop['fillcolor'] == 'time':
             cax.set_yticklabels([f'{mdates.num2date(i):%b %-d}' for i in levels],fontsize=11.5)
 
     #Custom colormap without dots
@@ -240,7 +240,7 @@ def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
             cax2.tick_params('both', length=0, width=0, which='major')
             cax.yaxis.set_ticks_position('left')
             rect_offset = 0.7
-        if prop['linecolor'] == 'date':
+        if prop['linecolor'] == 'time':
             cax.set_yticklabels([f'{mdates.num2date(i):%b %-d}' for i in levels],fontsize=11.5)
 
     return ax,fig
@@ -312,7 +312,7 @@ class TrackPlot(Plot):
             lons = storm_data['lon']
             vmax = storm_data['vmax']
             styp = storm_data['type']
-            sdate = storm_data['date']
+            sdate = storm_data['time']
 
             #Account for cases crossing dateline
             if self.proj.proj4_params['lon_0'] == 180.0:
@@ -364,7 +364,7 @@ class TrackPlot(Plot):
             #Iterate over storm data to plot
             levels = None
             cmap = None
-            for i,(i_lat,i_lon,i_vmax,i_mslp,i_date,i_type) in enumerate(zip(storm_data['lat'],lons,storm_data['vmax'],storm_data['mslp'],storm_data['date'],storm_data['type'])):
+            for i,(i_lat,i_lon,i_vmax,i_mslp,i_time,i_type) in enumerate(zip(storm_data['lat'],lons,storm_data['vmax'],storm_data['mslp'],storm_data['time'],storm_data['type'])):
 
                 #Determine line color, with SSHWS scale used as default
                 if prop['linecolor'] == 'category':
@@ -416,8 +416,8 @@ class TrackPlot(Plot):
 
                 #Plot dots if requested
                 if prop['dots'] == True:
-                    if plot_all_dots == False and i_date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
-                    self.ax,segmented_colors,extra = plot_dot(self.ax,i_lon,i_lat,i_date,i_vmax,i_type,
+                    if plot_all_dots == False and i_time.strftime('%H%M') not in constants.STANDARD_HOURS: continue
+                    self.ax,segmented_colors,extra = plot_dot(self.ax,i_lon,i_lat,i_time,i_vmax,i_type,
                                                               zorder=5,storm_data=storm_data,prop=prop,i=i)
                     if 'cmap' in extra.keys(): cmap = extra['cmap']
                     if 'levels' in extra.keys(): levels = extra['levels']
@@ -521,11 +521,11 @@ class TrackPlot(Plot):
                 max_wind = "N/A"
             else:
                 max_wind = int(np.nan_to_num(np.nanmax(np.array(storm_data['vmax'])[idx])))
-            start_date = dt.strftime(np.array(storm_data['date'])[idx][0],'%d %b %Y')
-            end_date = dt.strftime(np.array(storm_data['date'])[idx][-1],'%d %b %Y')
+            start_time = dt.strftime(np.array(storm_data['time'])[idx][0],'%d %b %Y')
+            end_time = dt.strftime(np.array(storm_data['time'])[idx][-1],'%d %b %Y')
             endash = u"\u2013"
             dot = u"\u2022"
-            self.ax.set_title(f"{start_date} {endash} {end_date}\n{max_wind} kt {dot} {min_pres} hPa {dot} {ace:.1f} ACE",loc='right',fontsize=13)
+            self.ax.set_title(f"{start_time} {endash} {end_time}\n{max_wind} kt {dot} {min_pres} hPa {dot} {ace:.1f} ACE",loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
         
@@ -618,7 +618,7 @@ None,prop={},map_prop={}):
             lons = storm_data['lon']
             vmax = storm_data['vmax']
             styp = storm_data['type']
-            sdate = storm_data['date']
+            sdate = storm_data['time']
             
             #Check if there's enough data points to plot
             matching_times = [i for i in sdate if i <= forecast['init']]
@@ -632,7 +632,7 @@ None,prop={},map_prop={}):
                 lons = storm_data['lon'][:plot_idx]
                 vmax = storm_data['vmax'][:plot_idx]
                 styp = storm_data['type'][:plot_idx]
-                sdate = storm_data['date'][:plot_idx]
+                sdate = storm_data['time'][:plot_idx]
 
                 #Account for cases crossing dateline
                 if self.proj.proj4_params['lon_0'] == 180.0:
@@ -868,7 +868,7 @@ None,prop={},map_prop={}):
             storm_type = get_storm_classification(np.nan_to_num(cur_wind),subtrop,'north_atlantic')
         
         #Identify storm name (and storm type, if post-tropical or potential TC)
-        matching_times = [i for i in storm_data['date'] if i <= forecast['init']]
+        matching_times = [i for i in storm_data['time'] if i <= forecast['init']]
         if check_length < 2:
             if all_nan(first_fcst_wind) == True:
                 storm_name = storm_data['name']
@@ -1055,17 +1055,17 @@ None,prop={},map_prop={}):
             max_fhr = max([max(forecast_dict[model]['fhr']) for model in forecast_dict.keys()])
             
             #Determine range of forecast data in best track
-            idx_start = storm_dict['date'].index(forecast)
+            idx_start = storm_dict['time'].index(forecast)
             end_date = forecast + timedelta(hours=max_fhr)
-            if end_date in storm_dict['date']:
-                idx_end = storm_dict['date'].index(end_date)
+            if end_date in storm_dict['time']:
+                idx_end = storm_dict['time'].index(end_date)
             else:
-                idx_end = len(storm_dict['date'])
+                idx_end = len(storm_dict['time'])
             
             #Plot best track
             lons = use_lons[idx_start:idx_end+1]
             lats = storm_dict['lat'][idx_start:idx_end+1]
-            storm_dates = storm_dict['date'][idx_start:idx_end+1]
+            storm_times = storm_dict['time'][idx_start:idx_end+1]
             self.ax.plot(lons,lats,':',color='k',linewidth=prop['linewidth']*0.8,label='Best Track',transform=ccrs.PlateCarree())
             
             #Add to lat/lon extrema
@@ -1078,8 +1078,8 @@ None,prop={},map_prop={}):
             if prop['marker'] != None and len(prop['marker_hours']) >= 1:
                 for hour in prop['marker_hours']:
                     valid_date = forecast + timedelta(hours=hour)
-                    if valid_date not in storm_dates: continue
-                    idx = storm_dict['date'].index(valid_date)
+                    if valid_date not in storm_times: continue
+                    idx = storm_dict['time'].index(valid_date)
                     if prop['marker'] == 'label':
                         self.ax.text(use_lons[idx],storm_dict['lat'][idx],
                                      str(hour),ha='center',va='center',zorder=100,clip_on=True,transform=ccrs.PlateCarree())
@@ -1382,22 +1382,22 @@ None,prop={},map_prop={}):
             
             #Update coordinate bounds
             skip_bounds = False
-            idx_start = storm_dict['date'].index(forecast)
-            if valid_time in storm_dict['date']:
-                idx = storm_dict['date'].index(valid_time)
+            idx_start = storm_dict['time'].index(forecast)
+            if valid_time in storm_dict['time']:
+                idx = storm_dict['time'].index(valid_time)
                 
                 use_lats = storm_dict['lat'][idx_start:idx+1]
                 use_lons = new_lons[idx_start:idx+1]
             else:
                 idx = 0
                 if hr == None:
-                    if end_time in storm_dict['date']:
-                        idx = storm_dict['date'].index(end_time)
+                    if end_time in storm_dict['time']:
+                        idx = storm_dict['time'].index(end_time)
                     else:
                         idx = len(storm_dict['lat'])
                 else:
-                    for idx_date in storm_dict['date']:
-                        if idx_date <= valid_time: idx = storm_dict['date'].index(idx_date)
+                    for idx_date in storm_dict['time']:
+                        if idx_date <= valid_time: idx = storm_dict['time'].index(idx_date)
                 use_lats = storm_dict['lat'][idx_start:idx+1]
                 use_lons = new_lons[idx_start:idx+1]
 
@@ -1411,22 +1411,22 @@ None,prop={},map_prop={}):
             self.ax.plot(new_lons[:idx_start+1], storm_dict['lat'][:idx_start+1],
                          linewidth=1.5, color='k', linestyle=":", transform=ccrs.PlateCarree())
             
-            if valid_time in storm_dict['date']:
-                idx = storm_dict['date'].index(valid_time)
+            if valid_time in storm_dict['time']:
+                idx = storm_dict['time'].index(valid_time)
                 self.ax.plot(new_lons[idx_start:idx+1], storm_dict['lat'][idx_start:idx+1],
                              linewidth=prop_btk['linewidth'], color=prop_btk['linecolor'],transform=ccrs.PlateCarree())
                 self.ax.plot(new_lons[idx], storm_dict['lat'][idx], 'o', ms=12,
                              mfc=prop_btk['linecolor'],mec='k', transform=ccrs.PlateCarree())
-            elif len(storm_dict['date']) > 0:
+            elif len(storm_dict['time']) > 0:
                 idx = 0
                 if hr == None:
-                    if end_time in storm_dict['date']:
-                        idx = storm_dict['date'].index(end_time)
+                    if end_time in storm_dict['time']:
+                        idx = storm_dict['time'].index(end_time)
                     else:
                         idx = len(storm_dict['lat'])
                 else:
-                    for idx_date in storm_dict['date']:
-                        if idx_date <= valid_time: idx = storm_dict['date'].index(idx_date)
+                    for idx_date in storm_dict['time']:
+                        if idx_date <= valid_time: idx = storm_dict['time'].index(idx_date)
                 self.ax.plot(new_lons[idx_start:idx+1], storm_dict['lat'][idx_start:idx+1],
                              linewidth=prop_btk['linewidth'], color=prop_btk['linecolor'],transform=ccrs.PlateCarree())
 
@@ -1655,7 +1655,7 @@ None,prop={},map_prop={}):
             lons = storm['lon']
             vmax = storm['vmax']
             styp = storm['type']
-            sdate = storm['date']
+            sdate = storm['time']
 
             #Account for cases crossing dateline
             if self.proj.proj4_params['lon_0'] == 180.0:
@@ -1691,7 +1691,7 @@ None,prop={},map_prop={}):
             #Iterate over storm data to plot
             levels = None
             cmap = None
-            for i,(i_lat,i_lon,i_vmax,i_mslp,i_date,i_type) in enumerate(zip(storm['lat'],lons,storm['vmax'],storm['mslp'],storm['date'],storm['type'])):
+            for i,(i_lat,i_lon,i_vmax,i_mslp,i_time,i_type) in enumerate(zip(storm['lat'],lons,storm['vmax'],storm['mslp'],storm['time'],storm['type'])):
                     
                 #Determine line color, with SSHWS scale used as default
                 if prop['linecolor'] == 'category':
@@ -1743,7 +1743,7 @@ None,prop={},map_prop={}):
                 
                 #Plot dots if requested
                 if prop['dots'] == True:
-                    self.ax,segmented_colors,extra = plot_dot(self.ax,i_lon,i_lat,i_date,i_vmax,i_type,
+                    self.ax,segmented_colors,extra = plot_dot(self.ax,i_lon,i_lat,i_time,i_vmax,i_type,
                                                               zorder=900+i_vmax,storm_data=storm,prop=prop,i=i)
                     if 'cmap' in extra.keys(): cmap = extra['cmap']
                     if 'levels' in extra.keys(): levels = extra['levels']

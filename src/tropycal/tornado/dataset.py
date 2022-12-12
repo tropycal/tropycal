@@ -116,13 +116,13 @@ class TornadoDataset():
         #Get storm dict from object
         stormdict = storm.to_dict()
     
-        stormTors = self.Tors[(self.Tors['UTC_time']>=min(stormdict['date'])) & \
-                         (self.Tors['UTC_time']<=max(stormdict['date']))]
+        stormTors = self.Tors[(self.Tors['UTC_time']>=min(stormdict['time'])) & \
+                         (self.Tors['UTC_time']<=max(stormdict['time']))]
         
         #Interpolate storm track time to the time of each tornado
-        f = interp1d(mdates.date2num(stormdict['date']),stormdict['lon'])
+        f = interp1d(mdates.date2num(stormdict['time']),stormdict['lon'])
         interp_clon = f(mdates.date2num(stormTors['UTC_time']))
-        f = interp1d(mdates.date2num(stormdict['date']),stormdict['lat'])
+        f = interp1d(mdates.date2num(stormdict['time']),stormdict['lat'])
         interp_clat = f(mdates.date2num(stormTors['UTC_time']))
         
         #Retrieve x&y distance of each tornado from TC center
@@ -173,9 +173,9 @@ class TornadoDataset():
         dx = np.gradient(stormdict['lon'])
         dy = np.gradient(stormdict['lat'])
         
-        f = interp1d(mdates.date2num(stormdict['date']),dx)
+        f = interp1d(mdates.date2num(stormdict['time']),dx)
         interp_dx = f(mdates.date2num(stormTors['UTC_time']))
-        f = interp1d(mdates.date2num(stormdict['date']),dy)
+        f = interp1d(mdates.date2num(stormdict['time']),dy)
         interp_dy = f(mdates.date2num(stormTors['UTC_time']))
         
         ds = np.hypot(interp_dx,interp_dy)
@@ -288,7 +288,7 @@ class TornadoDataset():
             * **Pandas DataFrame** containing the requested tornadoes to plot.
             * **dict** entry containing the requested tornadoes to plot.
             * **datetime.datetime** object for a single day to plot tornadoes.
-            * **list** with 2 datetime.datetime entries, a start date and end date for plotting over a range of dates.
+            * **list** with 2 datetime.datetime entries, a start time and end time for plotting over a range of dates.
         domain : str
             Domain for the plot. Default is "conus". Please refer to :ref:`options-domain` for available domain options.
         plotPPH : bool or str

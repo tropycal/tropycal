@@ -226,7 +226,7 @@ class TrackDataset:
         keys = [k for k in self.data.keys()]
         for key in keys:
             if self.data[key]['name'].lower() == 'unnamed': continue
-            check_id = f"{self.data[key]['name']},{self.data[key]['year']},{self.data[key]['date'][0].month}"
+            check_id = f"{self.data[key]['name']},{self.data[key]['year']},{self.data[key]['time'][0].month}"
             if check_id not in check:
                 check.append(check_id)
                 check_ids.append(key)
@@ -245,8 +245,8 @@ class TrackDataset:
             for key in join_keys:
 
                 #Append East Pacific data to Atlantic data
-                for idx,i_time in enumerate(self.data[key[1]]['date']):
-                    if i_time in self.data[key[0]]['date']: continue
+                for idx,i_time in enumerate(self.data[key[1]]['time']):
+                    if i_time in self.data[key[0]]['time']: continue
                     for var in [i for i in self.data[key[1]].keys() if isinstance(self.data[key[1]][i],list)]:
                         self.data[key[0]][var].append(self.data[key[1]][var][idx])
                     if i_time.strftime('%H%M') in constants.STANDARD_HOURS and self.data[key[1]]['type'][idx] in constants.NAMED_TROPICAL_STORM_TYPES:
@@ -353,7 +353,7 @@ class TrackDataset:
                 current_id = line[0]
                 
                 #add empty lists
-                for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
+                for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
                     self.data[line[0]][val] = []
                 self.data[line[0]]['ace'] = 0.0
                 
@@ -363,12 +363,12 @@ class TrackDataset:
                 #Retrieve important info about storm
                 yyyymmdd,hhmm,special,storm_type,lat,lon,vmax,mslp = line[0:8]
                 
-                #Check date doesn't already exist in dict
-                date = dt.strptime(yyyymmdd+hhmm,'%Y%m%d%H%M')
-                if date in self.data[current_id]['date']:
+                #Check time doesn't already exist in dict
+                time = dt.strptime(yyyymmdd+hhmm,'%Y%m%d%H%M')
+                if time in self.data[current_id]['time']:
                     #Hard-code fix
                     if current_id == "AL151966" and yyyymmdd == "19661004":
-                        date = dt.strptime("19661006"+hhmm,'%Y%m%d%H%M')
+                        time = dt.strptime("19661006"+hhmm,'%Y%m%d%H%M')
                     else:
                         continue
                 
@@ -403,7 +403,7 @@ class TrackDataset:
                 storm_type = storm_type.replace("TY","HU")
                 
                 #Append into dict
-                self.data[current_id]['date'].append(date)
+                self.data[current_id]['time'].append(time)
                 self.data[current_id]['special'].append(special)
                 self.data[current_id]['type'].append(storm_type)
                 self.data[current_id]['lat'].append(lat)
@@ -559,7 +559,7 @@ class TrackDataset:
             self.data[stormid]['source'] = self.source
 
             #add empty lists
-            for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
+            for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
                 self.data[stormid][val] = []
             self.data[stormid]['ace'] = 0.0
 
@@ -577,13 +577,13 @@ class TrackDataset:
 
                 if len(line) < 28: continue
 
-                #Get date of obs
-                date = dt.strptime(line[2],'%Y%m%d%H')
-                date_hhmm = date.strftime('%H%M')
+                #Get time of obs
+                time = dt.strptime(line[2],'%Y%m%d%H')
+                date_hhmm = time.strftime('%H%M')
                 if date_hhmm not in constants.STANDARD_HOURS: continue
 
                 #Ensure obs aren't being repeated
-                if date in self.data[stormid]['date']: continue
+                if time in self.data[stormid]['time']: continue
 
                 #Get latitude into number
                 btk_lat_temp = line[6].split("N")[0]
@@ -611,7 +611,7 @@ class TrackDataset:
                 self.data[stormid]['extra_obs'].append(0)
 
                 #Append into dict
-                self.data[stormid]['date'].append(date)
+                self.data[stormid]['time'].append(time)
                 self.data[stormid]['special'].append('')
                 self.data[stormid]['type'].append(btk_type)
                 self.data[stormid]['lat'].append(round(btk_lat,1))
@@ -698,7 +698,7 @@ class TrackDataset:
             
             ibtracs_id, year, adv_number, basin, subbasin, name, time, wmo_type, wmo_lat, wmo_lon, wmo_vmax, wmo_mslp, agency, track_type, dist_land, dist_landfall, iflag, usa_agency, sid, lat, lon, special, stype, vmax, mslp = line[:25]
             
-            date = dt.strptime(time,'%Y-%m-%d%H:%M:00')
+            time = dt.strptime(time,'%Y-%m-%d%H:%M:00')
             
             #Fix name to be consistent with HURDAT
             if name == 'NOT_NAMED': name = 'UNNAMED'
@@ -708,13 +708,13 @@ class TrackDataset:
             if self.ibtracs_mode == 'wmo' and ibtracs_id not in self.data.keys():
 
                 #add empty entry into dict
-                self.data[ibtracs_id] = {'id':sid,'operational_id':'','name':name,'year':date.year,'season':int(year),'basin':self.basin}
+                self.data[ibtracs_id] = {'id':sid,'operational_id':'','name':name,'year':time.year,'season':int(year),'basin':self.basin}
                 self.data[ibtracs_id]['source'] = self.source
                 self.data[ibtracs_id]['source_info'] = 'World Meteorological Organization (official)'
                 self.data[ibtracs_id]['notes'] = "'vmax' = wind converted to 1-minute using the 0.88 conversion factor. 'vmax_orig' = original vmax as assessed by its respective WMO agency."
 
                 #add empty lists
-                for val in ['date','extra_obs','special','type','lat','lon','vmax','vmax_orig','mslp','wmo_basin']:
+                for val in ['time','extra_obs','special','type','lat','lon','vmax','vmax_orig','mslp','wmo_basin']:
                     self.data[ibtracs_id][val] = []
                 self.data[ibtracs_id]['ace'] = 0.0
                 
@@ -727,14 +727,14 @@ class TrackDataset:
                 map_all_id[ibtracs_id] = sid
 
                 #add empty entry into dict
-                self.data[use_id] = {'id':sid,'operational_id':'','name':name,'year':date.year,'season':int(year),'basin':self.basin}
+                self.data[use_id] = {'id':sid,'operational_id':'','name':name,'year':time.year,'season':int(year),'basin':self.basin}
                 self.data[use_id]['source'] = self.source
                 self.data[use_id]['source_info'] = 'Joint Typhoon Warning Center (unofficial)'
                 if self.neumann: self.data[use_id]['source_info'] += '& Charles Neumann reanalysis for South Hemisphere storms'
                 current_id = use_id
 
                 #add empty lists
-                for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp',
+                for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp',
                             'wmo_type','wmo_lat','wmo_lon','wmo_vmax','wmo_mslp','wmo_basin']:
                     self.data[use_id][val] = []
                 self.data[use_id]['ace'] = 0.0
@@ -746,15 +746,15 @@ class TrackDataset:
                     
                     #Add storm to list of keys
                     if ibtracs_id not in neumann.keys():
-                        neumann[ibtracs_id] = {'id':sid,'operational_id':'','name':name,'year':date.year,'season':int(year),'basin':self.basin}
+                        neumann[ibtracs_id] = {'id':sid,'operational_id':'','name':name,'year':time.year,'season':int(year),'basin':self.basin}
                         neumann[ibtracs_id]['source'] = self.source
                         neumann[ibtracs_id]['source_info'] = 'Joint Typhoon Warning Center (unofficial) & Charles Neumann reanalysis for South Hemisphere storms'
-                        for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
+                        for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
                             neumann[ibtracs_id][val] = []
                         neumann[ibtracs_id]['ace'] = 0.0
                     
                     #Retrieve data
-                    neumann_date = dt.strptime(time,'%Y-%m-%d%H:%M:00')
+                    neumann_time = dt.strptime(time,'%Y-%m-%d%H:%M:00')
                     neumann_lat = float(wmo_lat)
                     neumann_lon = float(wmo_lon)
                     neumann_vmax = np.nan if neumann_vmax == "" else int(neumann_vmax)
@@ -772,7 +772,7 @@ class TrackDataset:
                     elif neumann_type == 'MM' or neumann_type == '':
                         neumann_type = 'LO'
                     
-                    neumann[ibtracs_id]['date'].append(neumann_date)
+                    neumann[ibtracs_id]['time'].append(neumann_time)
                     neumann[ibtracs_id]['special'].append(special)
 
                     neumann[ibtracs_id]['type'].append(neumann_type)
@@ -781,7 +781,7 @@ class TrackDataset:
                     neumann[ibtracs_id]['vmax'].append(neumann_vmax)
                     neumann[ibtracs_id]['mslp'].append(neumann_mslp)
                     
-                    hhmm = neumann_date.strftime('%H%M')
+                    hhmm = neumann_time.strftime('%H%M')
                     if hhmm in constants.STANDARD_HOURS:
                         neumann[ibtracs_id]['extra_obs'].append(0)
                     else:
@@ -820,7 +820,7 @@ class TrackDataset:
             if self.ibtracs_mode == 'wmo':
                 
                 #Retrieve data
-                date = dt.strptime(time,'%Y-%m-%d%H:%M:00')
+                time = dt.strptime(time,'%Y-%m-%d%H:%M:00')
                 dist_land = int(dist_land)
 
                 #Properly format WMO variables
@@ -884,7 +884,7 @@ class TrackDataset:
                 if wmo_vmax < 0: wmo_vmax = np.nan
                 if wmo_mslp < 800: wmo_mslp = np.nan
 
-                self.data[ibtracs_id]['date'].append(date)
+                self.data[ibtracs_id]['time'].append(time)
                 self.data[ibtracs_id]['special'].append(special)
 
                 self.data[ibtracs_id]['type'].append(stype)
@@ -894,7 +894,7 @@ class TrackDataset:
                 self.data[ibtracs_id]['vmax_orig'].append(wmo_vmax)
                 self.data[ibtracs_id]['mslp'].append(wmo_mslp)
 
-                hhmm = date.strftime('%H%M')
+                hhmm = time.strftime('%H%M')
                 if hhmm in constants.STANDARD_HOURS:
                     self.data[ibtracs_id]['extra_obs'].append(0)
                 else:
@@ -912,7 +912,7 @@ class TrackDataset:
                 sid = map_all_id.get(ibtracs_id)
 
                 #Retrieve data
-                date = dt.strptime(time,'%Y-%m-%d%H:%M:00')
+                time = dt.strptime(time,'%Y-%m-%d%H:%M:00')
                 dist_land = int(dist_land)
 
                 #Properly format WMO variables
@@ -964,7 +964,7 @@ class TrackDataset:
                 if vmax < 0: vmax = np.nan
                 if mslp < 800: mslp = np.nan
 
-                self.data[sid]['date'].append(date)
+                self.data[sid]['time'].append(time)
                 self.data[sid]['special'].append(special)
 
                 self.data[sid]['wmo_type'].append(wmo_type)
@@ -987,7 +987,7 @@ class TrackDataset:
                 if sid == 'AL041932': wmo_basin = 'north_atlantic'
                 self.data[sid]['wmo_basin'].append(wmo_basin)
 
-                hhmm = date.strftime('%H%M')
+                hhmm = time.strftime('%H%M')
                 if hhmm in constants.STANDARD_HOURS:
                     self.data[sid]['extra_obs'].append(0)
                 else:
@@ -1455,7 +1455,7 @@ class TrackDataset:
             
             #Get year for 'all' (global data), otherwise get season
             if self.basin == 'all' and basin == 'all':
-                temp_year = int(year) if int(year) in [i.year for i in self.data[key]['date']] else 0
+                temp_year = int(year) if int(year) in [i.year for i in self.data[key]['time']] else 0
             else:
                 temp_year = self.data[key]['season']
             
@@ -1611,10 +1611,10 @@ class TrackDataset:
                 
                 #Get HURDAT data for this storm
                 storm_data = self.data[storm]
-                storm_date_y = np.array([int(i.strftime('%Y')) for i in storm_data['date']])
-                storm_date_h = np.array([i.strftime('%H%M') for i in storm_data['date']])
-                storm_date_m = [i.strftime('%m%d') for i in storm_data['date']]
-                storm_date = np.array(storm_data['date'])
+                storm_date_y = np.array([int(i.strftime('%Y')) for i in storm_data['time']])
+                storm_date_h = np.array([i.strftime('%H%M') for i in storm_data['time']])
+                storm_date_m = [i.strftime('%m%d') for i in storm_data['time']]
+                storm_date = np.array(storm_data['time'])
                 storm_type = np.array(storm_data['type'])
                 storm_vmax = np.array(storm_data['vmax'])
                 
@@ -1651,7 +1651,7 @@ class TrackDataset:
             
                 #Attach to dict
                 ace[str(year)] = {}
-                ace[str(year)]['date'] = year_dates
+                ace[str(year)]['time'] = year_dates
                 ace[str(year)]['ace'] = year_cum
                 ace[str(year)]['genesis_index'] = year_genesis
             else:
@@ -1660,7 +1660,7 @@ class TrackDataset:
                 
                 #Attach to dict
                 ace[str(year)] = {}
-                ace[str(year)]['date'] = year_dates[((rolling_sum*4)-1):]
+                ace[str(year)]['time'] = year_dates[((rolling_sum*4)-1):]
                 ace[str(year)]['ace'] = year_cum
                 ace[str(year)]['genesis_index'] = year_genesis
                  
@@ -1873,9 +1873,9 @@ class TrackDataset:
                 
                 #Get HURDAT data for this storm
                 storm_data = self.data[storm]
-                storm_date_y = np.array([int(i.strftime('%Y')) for i in storm_data['date']])
-                storm_date_h = np.array([i.strftime('%H%M') for i in storm_data['date']])
-                storm_date = np.array(storm_data['date'])
+                storm_date_y = np.array([int(i.strftime('%Y')) for i in storm_data['time']])
+                storm_date_h = np.array([i.strftime('%H%M') for i in storm_data['time']])
+                storm_date = np.array(storm_data['time'])
                 storm_type = np.array(storm_data['type'])
                 storm_vmax = np.array(storm_data['vmax'])
                 
@@ -1905,7 +1905,7 @@ class TrackDataset:
             
                 #Attach to dict
                 tc_days[str(year)] = {}
-                tc_days[str(year)]['date'] = year_dates
+                tc_days[str(year)]['time'] = year_dates
                 tc_days[str(year)]['genesis_index'] = year_genesis
                 
                 #Loop through all thresholds
@@ -1916,7 +1916,7 @@ class TrackDataset:
                 
                 #Attach to dict
                 tc_days[str(year)] = {}
-                tc_days[str(year)]['date'] = year_dates[((rolling_sum*4)-1):]
+                tc_days[str(year)]['time'] = year_dates[((rolling_sum*4)-1):]
                 tc_days[str(year)]['genesis_index'] = year_genesis
                 
                 #Loop through all thresholds
@@ -2318,11 +2318,11 @@ class TrackDataset:
                        'start_lon':{'output':['lon','lat','type'],'subset_type':'start'},
                        'end_lat':{'output':['lat','lon','type'],'subset_type':'end'},
                        'end_lon':{'output':['lon','lat','type'],'subset_type':'end'},
-                       'start_date':{'output':['date','lat','lon','type'],'subset_type':'start'},
-                       'start_date_indomain':{'output':['date','lat','lon','type'],'subset_type':'domain'},
+                       'start_date':{'output':['time','lat','lon','type'],'subset_type':'start'},
+                       'start_date_indomain':{'output':['time','lat','lon','type'],'subset_type':'domain'},
                        'max_wind':{'output':['vmax','mslp','lat','lon'],'subset_type':'domain'},
                        'min_mslp':{'output':['mslp','vmax','lat','lon'],'subset_type':'domain'},
-                       'wind_ge':{'output':['lat','lon','mslp','vmax','date'],'subset_type':'start'},
+                       'wind_ge':{'output':['lat','lon','mslp','vmax','time'],'subset_type':'start'},
                       }
         if metric not in metric_bank.keys():
             raise ValueError("Metric requested for sorting is not available. Please reference the documentation for acceptable entries for 'metric'.")
@@ -2363,7 +2363,7 @@ class TrackDataset:
             if len(idx[0]) == 0: continue
             lat_tropical = np.array(storm_data['lat'])[idx]
             lon_tropical = np.array(storm_data['lon'])[idx]
-            date_tropical = np.array(storm_data['date'])[idx]
+            time_tropical = np.array(storm_data['time'])[idx]
             type_tropical = np.array(storm_data['type'])[idx]
             vmax_tropical = np.array(storm_data['vmax'])[idx]
             mslp_tropical = np.array(storm_data['mslp'])[idx]
@@ -2395,7 +2395,7 @@ class TrackDataset:
                 if subset_type == 'domain':
                     lat_tropical = lat_tropical[idx]
                     lon_tropical = lon_tropical[idx]
-                    date_tropical = date_tropical[idx]
+                    time_tropical = time_tropical[idx]
                     type_tropical = type_tropical[idx]
                     vmax_tropical = vmax_tropical[idx]
                     mslp_tropical = mslp_tropical[idx]
@@ -2405,7 +2405,7 @@ class TrackDataset:
             if date_range is not None:
                 start_time = dt.strptime(f"{storm_data['year']}/{date_range[0]}",'%Y/%m/%d')
                 end_time = dt.strptime(f"{storm_data['year']}/{date_range[1]}",'%Y/%m/%d')
-                idx = np.array([i for i in range(len(lat_tropical)) if date_tropical[i] >= start_time and date_tropical[i] <= end_time])
+                idx = np.array([i for i in range(len(lat_tropical)) if time_tropical[i] >= start_time and time_tropical[i] <= end_time])
                 if len(idx) == 0: continue
                 
                 #Check for subset type
@@ -2413,7 +2413,7 @@ class TrackDataset:
                 if subset_type == 'domain':
                     lat_tropical = lat_tropical[idx]
                     lon_tropical = lon_tropical[idx]
-                    date_tropical = date_tropical[idx]
+                    time_tropical = time_tropical[idx]
                     type_tropical = type_tropical[idx]
                     vmax_tropical = vmax_tropical[idx]
                     mslp_tropical = mslp_tropical[idx]
@@ -2437,7 +2437,7 @@ class TrackDataset:
                 analyze_dict['lat'].append(lat_tropical[0])
                 analyze_dict['lon'].append(lon_tropical[0])
                 analyze_dict['type'].append(type_tropical[0])
-                analyze_dict['date'].append(date_tropical[0].replace(year=2016))
+                analyze_dict['time'].append(time_tropical[0].replace(year=2016))
                 
             elif metric in ['max_wind','min_mslp']:
                 
@@ -2461,7 +2461,7 @@ class TrackDataset:
                 
                 analyze_dict['lat'].append(lat_tropical[use_idx])
                 analyze_dict['lon'].append(lon_tropical[use_idx])
-                analyze_dict['date'].append(date_tropical[use_idx])
+                analyze_dict['time'].append(time_tropical[use_idx])
                 analyze_dict['mslp'].append(mslp_tropical[use_idx])
                 analyze_dict['vmax'].append(vmax_tropical[use_idx])
             
@@ -2486,8 +2486,8 @@ class TrackDataset:
         ranked_dict = {}
         for i in range(len(analyze_dict['id'])):
             ranked_dict[i+1] = {key:analyze_dict[key][i] for key in analyze_list}
-            if 'date' in ranked_dict[i+1].keys():
-                ranked_dict[i+1]['date'] = ranked_dict[i+1]['date'].replace(year=ranked_dict[i+1]['year'])
+            if 'time' in ranked_dict[i+1].keys():
+                ranked_dict[i+1]['time'] = ranked_dict[i+1]['time'].replace(year=ranked_dict[i+1]['year'])
             
         #Return ranked dictionary
         try:
@@ -2651,7 +2651,7 @@ class TrackDataset:
         
         #Create empty dictionary to store output in
         points = {}
-        for name in ['vmax','mslp','type','lat','lon','date','season','stormid','ace']+ \
+        for name in ['vmax','mslp','type','lat','lon','time','season','stormid','ace']+ \
                     ['dmslp_dt','dvmax_dt','acie','dx_dt','dy_dt','speed']*int(interpolate_data):
             points[name] = []
         
@@ -2673,7 +2673,7 @@ class TrackDataset:
             
             #Only interpolate storms within the provided temporal range
             if self.data[key]['year'] <= (year_range[0]-1) or self.data[key]['year'] >= (year_range[-1]+1): continue
-            subset_dates = np.array(self.data[key]['date'])[np.array([i in constants.TROPICAL_STORM_TYPES for i in self.data[key]['type']])]
+            subset_dates = np.array(self.data[key]['time'])[np.array([i in constants.TROPICAL_STORM_TYPES for i in self.data[key]['type']])]
             if len(subset_dates) == 0: continue
             verify_dates = [date_range_test(i,date_min,date_max) for i in subset_dates]
             if True not in verify_dates: continue
@@ -2691,13 +2691,13 @@ class TrackDataset:
                 timeres = 6
             
             #Iterate over every timestep of the storm
-            for i in range(len(istorm['date'])):
+            for i in range(len(istorm['time'])):
                 
                 #Filter to only tropical cyclones, and filter by dates & coordiates
                 if istorm['type'][i] in constants.TROPICAL_STORM_TYPES \
                 and lat_min<=istorm['lat'][i]<=lat_max and lon_min<=istorm['lon'][i]%360<=lon_max \
-                and year_min<=istorm['date'][i].year<=year_max \
-                and date_range_test(istorm['date'][i],date_min,date_max):
+                and year_min<=istorm['time'][i].year<=year_max \
+                and date_range_test(istorm['time'][i],date_min,date_max):
                     
                     #Append data points
                     points['vmax'].append(istorm['vmax'][i])
@@ -2705,7 +2705,7 @@ class TrackDataset:
                     points['type'].append(istorm['type'][i])
                     points['lat'].append(istorm['lat'][i])
                     points['lon'].append(istorm['lon'][i])
-                    points['date'].append(istorm['date'][i])
+                    points['time'].append(istorm['time'][i])
                     points['season'].append(istorm['season'])
                     points['stormid'].append(key)
                     if istorm['vmax'][i]>34:
@@ -3545,7 +3545,7 @@ class TrackDataset:
         data = {}
         for key in self.keys:
             if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year: continue
-            storm_data = [[great_circle(point,(self.data_interp[key]['lat'][i],self.data_interp[key]['lon'][i])).kilometers,self.data_interp[key]['vmax'][i],self.data_interp[key]['mslp'][i],self.data_interp[key]['date'][i]] for i in range(len(self.data_interp[key]['lat'])) if self.data_interp[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
+            storm_data = [[great_circle(point,(self.data_interp[key]['lat'][i],self.data_interp[key]['lon'][i])).kilometers,self.data_interp[key]['vmax'][i],self.data_interp[key]['mslp'][i],self.data_interp[key]['time'][i]] for i in range(len(self.data_interp[key]['lat'])) if self.data_interp[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
             storm_data = [i for i in storm_data if i[0] <= radius*unit_factor]
             storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= dt.strptime(date_range[1],'%m/%d').replace(year=i[3].year)]
             if len(storm_data) == 0: continue
@@ -3630,7 +3630,7 @@ class TrackDataset:
             lon_shift = self.data_interp[key]['lon'] + 0.0
             lon_shift[lon_shift > 180.0] = lon_shift[lon_shift > 180.0] - 360.0
             if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year: continue
-            storm_data = [[p.contains_point((self.data_interp[key]['lat'][i],lon_shift[i])),self.data_interp[key]['vmax'][i],self.data_interp[key]['mslp'][i],self.data_interp[key]['date'][i]] for i in range(len(self.data_interp[key]['lat'])) if self.data_interp[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
+            storm_data = [[p.contains_point((self.data_interp[key]['lat'][i],lon_shift[i])),self.data_interp[key]['vmax'][i],self.data_interp[key]['mslp'][i],self.data_interp[key]['time'][i]] for i in range(len(self.data_interp[key]['lat'])) if self.data_interp[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
             storm_data = [i for i in storm_data if i[0] == True]
             storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= dt.strptime(date_range[1],'%m/%d').replace(year=i[3].year)]
             if len(storm_data) == 0: continue
@@ -3971,11 +3971,11 @@ class TrackDataset:
         for key in self.keys:
             
             #First filter
-            if time < self.data[key]['date'][0]: continue
-            if self.data[key]['date'][-1] < time: continue
+            if time < self.data[key]['time'][0]: continue
+            if self.data[key]['time'][-1] < time: continue
            
             #Second filter
-            diff = [(time-i).total_seconds()/3600 for i in self.data[key]['date']]
+            diff = [(time-i).total_seconds()/3600 for i in self.data[key]['time']]
             diff_maxes = [i for i in diff if i >= 0]
             idx = diff.index(np.nanmin(diff_maxes))
             
@@ -4006,7 +4006,7 @@ class TrackDataset:
             if time_diff[closest_idx] > (9.0/24.0): continue
 
             #Get observed track as per NHC analyses
-            track_dict = {'lat':[],'lon':[],'vmax':[],'type':[],'mslp':[],'date':[],'extra_obs':[],'special':[],'ace':0.0}
+            track_dict = {'lat':[],'lon':[],'vmax':[],'type':[],'mslp':[],'time':[],'extra_obs':[],'special':[],'ace':0.0}
             use_carq = True
             for k in nhc_forecast_init:
                 if k not in carq_forecasts.keys(): continue
@@ -4024,7 +4024,7 @@ class TrackDataset:
                     track_dict['lon'].append(carq_forecasts[k]['lon'][hr_idx])
                     track_dict['vmax'].append(carq_forecasts[k]['vmax'][hr_idx])
                     track_dict['mslp'].append(np.nan)
-                    track_dict['date'].append(carq_forecasts[k]['init'])
+                    track_dict['time'].append(carq_forecasts[k]['init'])
 
                     itype = carq_forecasts[k]['type'][hr_idx]
                     if itype == "": itype = get_storm_type(carq_forecasts[k]['vmax'][0],False)
@@ -4047,7 +4047,7 @@ class TrackDataset:
                     track_dict['lon'].append(nhc_forecasts[k]['lon'][hr_idx])
                     track_dict['vmax'].append(nhc_forecasts[k]['vmax'][hr_idx])
                     track_dict['mslp'].append(np.nan)
-                    track_dict['date'].append(nhc_forecasts[k]['init']+timedelta(hours=hr_add))
+                    track_dict['time'].append(nhc_forecasts[k]['init']+timedelta(hours=hr_add))
 
                     itype = nhc_forecasts[k]['type'][hr_idx]
                     if itype == "": itype = get_storm_type(nhc_forecasts[k]['vmax'][0],False)
@@ -4062,8 +4062,8 @@ class TrackDataset:
                 track_dict[key] = storm.dict[key]
 
             #Add carq to forecast dict as hour 0, if available
-            if use_carq == True and forecast_dict['init'] in track_dict['date']:
-                insert_idx = track_dict['date'].index(forecast_dict['init'])
+            if use_carq == True and forecast_dict['init'] in track_dict['time']:
+                insert_idx = track_dict['time'].index(forecast_dict['init'])
                 if 0 in forecast_dict['fhr']:
                     forecast_dict['lat'][0] = track_dict['lat'][insert_idx]
                     forecast_dict['lon'][0] = track_dict['lon'][insert_idx]

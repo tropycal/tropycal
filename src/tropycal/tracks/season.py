@@ -164,8 +164,8 @@ class Season:
                 ds['vmax'].append(season_info['max_wspd'][sidx])
                 ds['mslp'].append(season_info['min_mslp'][sidx])
                 ds['category'].append(season_info['category'][sidx])
-                ds['start_time'].append(np.array(self.dict[key]['date'])[tropical_idx][0])
-                ds['end_time'].append(np.array(self.dict[key]['date'])[tropical_idx][-1])
+                ds['start_time'].append(np.array(self.dict[key]['time'])[tropical_idx][0])
+                ds['end_time'].append(np.array(self.dict[key]['time'])[tropical_idx][-1])
                 ds['start_lat'].append(np.array(self.dict[key]['lat'])[tropical_idx][0])
                 ds['start_lon'].append(np.array(self.dict[key]['lon'])[tropical_idx][0])
                 ds['ace'].append(np.round(season_info['ace'][sidx],1))
@@ -348,9 +348,9 @@ class Season:
                 temp_vmax = np.array(self.dict[key]['vmax'])
                 temp_mslp = np.array(self.dict[key]['mslp'])
                 temp_type = np.array(self.dict[key]['type'])
-                temp_time = np.array(self.dict[key]['date'])
+                temp_time = np.array(self.dict[key]['time'])
                 temp_basin = np.array(self.dict[key]['wmo_basin'])
-                temp_year = np.array([i.year for i in self.dict[key]['date']])
+                temp_year = np.array([i.year for i in self.dict[key]['time']])
                 
                 #Calculate ACE within basin
                 temp_ace = 0.0

@@ -546,7 +546,7 @@ def get_two_current():
 def get_two_archive(time):
     
     r"""
-    Retrieve an archived NHC Tropical Weather Outlook (TWO). If none available within 30 hours of the specified date, an empty dict is returned.
+    Retrieve an archived NHC Tropical Weather Outlook (TWO). If none available within 30 hours of the specified time, an empty dict is returned.
     
     Parameters
     ----------
@@ -1040,13 +1040,13 @@ def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y
     1. Rows that begin with a ``#`` or ``\`` are automatically ignored.
     2. The first non-commented row must be a header row.
     3. The header row must contain entries for time, latitude, longitude, maximum sustained wind (knots), and minimum MSLP (hPa). The order of these columns does not matter.
-    4. Preferred header names are "date", "lat", "lon", "vmax" and "mslp" for the main 5 categories, but custom header names can be provided. Refer to the "Other Parameters" section above.
+    4. Preferred header names are "time", "lat", "lon", "vmax" and "mslp" for the main 5 categories, but custom header names can be provided. Refer to the "Other Parameters" section above.
     5. Providing a "type" column (e.g., "TS", "HU", "EX") is not required, but is recommended especially if dealing with subtropical or non-tropical types.
     
     Below is an example file which we'll call ``data.txt``::
 
         # The row below is a header row. The order of the columns doesn't matter.
-        date,lat,lon,vmax,mslp,type
+        time,lat,lon,vmax,mslp,type
         2021080518,19.4,-59.9,25,1014,DB
         2021080600,19.7,-60.2,25,1014,DB
         2021080606,20.1,-60.5,30,1012,DB
@@ -1079,7 +1079,7 @@ def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y
      'name': 'Test',
      'source_info': 'Custom User Data',
      'source': 'custom',
-     'date': [datetime.datetime(2021, 8, 5, 18, 0),
+     'time': [datetime.datetime(2021, 8, 5, 18, 0),
               datetime.datetime(2021, 8, 6, 0, 0),
               ....
               datetime.datetime(2021, 8, 10, 12, 0),
@@ -1106,11 +1106,11 @@ def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y
     Storm Summary:
         Maximum Wind:      65 knots
         Minimum Pressure:  988 hPa
-        Start Date:        1200 UTC 06 August 2021
-        End Date:          0600 UTC 10 August 2021
+        Start Time:        1200 UTC 06 August 2021
+        End Time:          0600 UTC 10 August 2021
     .
     Variables:
-        date        (datetime) [2021-08-05 18:00:00 .... 2021-08-10 18:00:00]
+        time        (datetime) [2021-08-05 18:00:00 .... 2021-08-10 18:00:00]
         extra_obs   (int32) [0 .... 0]
         special     (str) [ .... ]
         type        (str) [DB .... EX]
@@ -1151,7 +1151,7 @@ def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y
             'name':storm_name,
             'source_info':'Custom User Data',
             'source':'custom',
-            'date':[],
+            'time':[],
             'extra_obs':[],
             'special':[],
             'type':[],
@@ -1187,7 +1187,7 @@ def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y
             if len(header) == 0:
                 for value in lineArray:
                     if value == time_header or value.lower() in ['time','date','valid_time','valid_date']:
-                        header['date'] = [value,lineArray.index(value)]
+                        header['time'] = [value,lineArray.index(value)]
                     elif value == lat_header or value.lower() in ['lat','latitude','lat_0']:
                         header['lat'] = [value,lineArray.index(value)]
                     elif value == lon_header or value.lower() in ['lon','longitude','lon_0']:
@@ -1198,14 +1198,14 @@ def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y
                         header['mslp'] = [value,lineArray.index(value)]
                     elif value == type_header or value.lower() in ['type','storm_type']:
                         header['type'] = [value,lineArray.index(value)]
-                found = [i in header.keys() for i in ['date','lat','lon','vmax','mslp']]
-                if False in found: raise ValueError("Data must have columns for 'date', 'lat', 'lon', 'vmax' and 'mslp'.")
+                found = [i in header.keys() for i in ['time','lat','lon','vmax','mslp']]
+                if False in found: raise ValueError("Data must have columns for 'time', 'lat', 'lon', 'vmax' and 'mslp'.")
                 continue
                 
             #Enter standard data into dict
-            enter_date = dt.strptime(lineArray[header.get('date')[1]],time_format)
-            if enter_date in data['date']: raise ValueError("Error: Multiple entries detected for the same valid time.")
-            data['date'].append(enter_date)
+            enter_date = dt.strptime(lineArray[header.get('time')[1]],time_format)
+            if enter_date in data['time']: raise ValueError("Error: Multiple entries detected for the same valid time.")
+            data['time'].append(enter_date)
             data['lat'].append(float(lineArray[header.get('lat')[1]]))
             data['lon'].append(float(lineArray[header.get('lon')[1]]))
             data['vmax'].append(float(lineArray[header.get('vmax')[1]]))
@@ -1220,7 +1220,7 @@ def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y
                 data['type'].append(get_storm_type(data['vmax'][-1],False))
             
             #Derive ACE
-            if data['date'][-1].strftime('%H%M') in constants.STANDARD_HOURS and data['type'][-1] in constants.NAMED_TROPICAL_STORM_TYPES:
+            if data['time'][-1].strftime('%H%M') in constants.STANDARD_HOURS and data['type'][-1] in constants.NAMED_TROPICAL_STORM_TYPES:
                 data['ace'] += accumulated_cyclone_energy(data['vmax'][-1])
             
             #Derive basin
@@ -1231,13 +1231,13 @@ def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y
                 data['wmo_basin'].append(get_basin(data['lat'][-1],data['lon'][-1],data['basin']))
             
             #Other entries
-            extra_obs = 0 if data['date'][-1].strftime('%H%M') in constants.STANDARD_HOURS else 1
+            extra_obs = 0 if data['time'][-1].strftime('%H%M') in constants.STANDARD_HOURS else 1
             data['extra_obs'].append(extra_obs)
             data['special'].append('')
         
         #Add other info
-        data['year'] = data['date'][0].year
-        data['season'] = data['date'][0].year
+        data['year'] = data['time'][0].year
+        data['season'] = data['time'][0].year
         
         #Return dict
         return data

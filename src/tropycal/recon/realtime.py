@@ -134,9 +134,9 @@ class RealtimeRecon():
 
             #Construct mission ID
             mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
-            date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
+            time = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
             try:
-                blank, data = decode_vdm(content,date)
+                blank, data = decode_vdm(content,time)
             except:
                 continue
             if mission_id in self.missions.keys(): self.missions[mission_id]['vdms'].append(data)
@@ -151,9 +151,9 @@ class RealtimeRecon():
 
             #Construct mission ID
             mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
-            date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
+            time = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
             try:
-                blank, data = decode_dropsonde(content,date)
+                blank, data = decode_dropsonde(content,time)
             except:
                 continue
             if mission_id in self.missions.keys(): self.missions[mission_id]['dropsondes'].append(data)
@@ -161,10 +161,10 @@ class RealtimeRecon():
         #Temporally filter missions
         keys = [k for k in self.missions.keys()]
         for key in keys:
-            end_date = pd.to_datetime(self.missions[key]['hdobs']['time'].values[-1])
-            if end_date < start_time_request: del self.missions[key]
+            end_time = pd.to_datetime(self.missions[key]['hdobs']['time'].values[-1])
+            if end_time < start_time_request: del self.missions[key]
         
-        #Sort each mission by date
+        #Sort each mission by time
         for key in self.missions.keys():
             self.missions[key]['hdobs'].sort_values(['time'],inplace=True)
         
@@ -241,8 +241,8 @@ class RealtimeRecon():
 
             #Construct mission ID
             mission_id = ['-'.join(i.split("U. ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:2] == "U."][0]
-            date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
-            blank, data = decode_vdm(content,date)
+            time = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
+            blank, data = decode_vdm(content,time)
             if mission_id in self.missions.keys(): self.missions[mission_id]['vdms'].append(data)
 
         #Retrieve dropsondes
@@ -255,18 +255,18 @@ class RealtimeRecon():
 
             #Construct mission ID
             mission_id = ['-'.join(i.split("61616 ")[1].replace("  "," ").split(" ")[:3]) for i in content_split if i[:5] == "61616"][0]
-            date = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
-            blank, data = decode_dropsonde(content,date)
+            time = dt.strptime((file.split('.')[-2])[:8],'%Y%m%d')
+            blank, data = decode_dropsonde(content,time)
             if mission_id in self.missions.keys(): self.missions[mission_id]['dropsondes'].append(data)
         
         #Temporally filter missions
         keys = [k for k in self.missions.keys()]
         for key in keys:
-            end_date = pd.to_datetime(self.missions[key]['hdobs']['time'].values[-1])
+            end_time = pd.to_datetime(self.missions[key]['hdobs']['time'].values[-1])
             start_time_request = dt.utcnow() - timedelta(hours=self.hours)
-            if end_date < start_time_request: del self.missions[key]
+            if end_time < start_time_request: del self.missions[key]
         
-        #Sort each mission by date
+        #Sort each mission by time
         for key in self.missions.keys():
             self.missions[key]['hdobs'].sort_values(['time'],inplace=True)
         

@@ -497,9 +497,9 @@ def hovmoller_plot_title(storm_obj,Hov,varname):
     #------- construct right title ---------
     
     #Determine start and end dates of hovmoller
-    start_date = dt.strftime(min(Hov['time']),'%H:%M UTC %d %b %Y')
-    end_date = dt.strftime(max(Hov['time']),'%H:%M UTC %d %b %Y')
-    title_right = f'Start ... {start_date}\nEnd ... {end_date}'
+    start_time = dt.strftime(min(Hov['time']),'%H:%M UTC %d %b %Y')
+    end_time = dt.strftime(max(Hov['time']),'%H:%M UTC %d %b %Y')
+    title_right = f'Start ... {start_time}\nEnd ... {end_time}'
     
     #Return both titles
     return title_left,title_right

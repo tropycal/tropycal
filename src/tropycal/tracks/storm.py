@@ -67,7 +67,7 @@ class Storm:
     
     Now Hurricane Michael's data is stored in the variable ``storm``, which is an instance of Storm and can access all of the methods and attributes of a Storm object.
     
-    All the variables associated with a Storm object (e.g., lat, lon, date, vmax) can be accessed in two ways. The first is directly from the Storm object:
+    All the variables associated with a Storm object (e.g., lat, lon, time, vmax) can be accessed in two ways. The first is directly from the Storm object:
     
     >>> storm.lat
     array([17.8, 18.1, 18.4, 18.8, 19.1, 19.7, 20.2, 20.9, 21.7, 22.7, 23.7,
@@ -81,7 +81,7 @@ class Storm:
     >>> lat = variable_dict['lat']
     >>> lon = variable_dict['lon']
     >>> print(variable_dict.keys())
-    dict_keys(['date', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin'])
+    dict_keys(['time', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin'])
     
     Storm objects also have numerous attributes with information about the storm. ``storm.attrs`` returns a dictionary of the attributes for this Storm object.
     
@@ -117,20 +117,20 @@ class Storm:
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))[0]
         if self.invest and len(idx) == 0: idx = np.array([True for i in type_array])
         if len(idx) == 0:
-            start_date = 'N/A'
-            end_date = 'N/A'
+            start_time = 'N/A'
+            end_time = 'N/A'
             max_wind = 'N/A'
             min_mslp = 'N/A'
         else:
-            time_tropical = np.array(self.dict['date'])[idx]
-            start_date = time_tropical[0].strftime("%H00 UTC %d %B %Y")
-            end_date = time_tropical[-1].strftime("%H00 UTC %d %B %Y")
+            time_tropical = np.array(self.dict['time'])[idx]
+            start_time = time_tropical[0].strftime("%H00 UTC %d %B %Y")
+            end_time = time_tropical[-1].strftime("%H00 UTC %d %B %Y")
             max_wind = 'N/A' if all_nan(np.array(self.dict['vmax'])[idx]) == True else int(np.nanmax(np.array(self.dict['vmax'])[idx]))
             min_mslp = 'N/A' if all_nan(np.array(self.dict['mslp'])[idx]) == True else int(np.nanmin(np.array(self.dict['mslp'])[idx]))
         summary_keys = {'Maximum Wind':f"{max_wind} knots",
                         'Minimum Pressure':f"{min_mslp} hPa",
-                        'Start Date':start_date,
-                        'End Date':end_date}
+                        'Start Time':start_time,
+                        'End Time':end_time}
         
         #Format keys for coordinates
         variable_keys = {}
@@ -267,14 +267,14 @@ class Storm:
         
         #create copy of storm object
         NEW_STORM = Storm(copy.deepcopy(self.dict))
-        idx_final = np.arange(len(self.date))
+        idx_final = np.arange(len(self.time))
         
         #apply time filter
         if time is None:
             idx = copy.copy(idx_final)
         
         elif isinstance(time,dt):
-            time_diff = np.array([(time-i).total_seconds() for i in NEW_STORM.date])
+            time_diff = np.array([(time-i).total_seconds() for i in NEW_STORM.time])
             idx = np.abs(time_diff).argmin()
             if time_diff[idx]!=0:
                 if method=='exact':
@@ -294,16 +294,16 @@ class Storm:
         elif isinstance(time,(tuple,list)) and len(time)==2:
             time0,time1 = time
             if time0 is None:
-                time0 = min(NEW_STORM.date)
+                time0 = min(NEW_STORM.time)
             elif not isinstance(time0,dt):
                 msg = 'time bounds must be of type datetime.datetime or None.'
                 raise TypeError(msg)
             if time1 is None:
-                time1 = max(NEW_STORM.date)
+                time1 = max(NEW_STORM.time)
             elif not isinstance(time1,dt):
                 msg = 'time bounds must be of type datetime.datetime or None.'
                 raise TypeError(msg)            
-            tmptimes = np.array(NEW_STORM.date)
+            tmptimes = np.array(NEW_STORM.time)
             idx = np.where((tmptimes>=time0) & (tmptimes<=time1))[0]
             if len(idx)==0:
                 msg = f'no points between {time}. Use different time bounds.'
@@ -603,12 +603,12 @@ class Storm:
             raise RuntimeError("Error: xarray is not available. Install xarray in order to use this function.") from e
             
         #Set up empty dict for dataset
-        time = self.dict['date']
+        time = self.dict['time']
         ds = {}
         attrs = {}
         
         #Add every key containing a list into the dict, otherwise add as an attribute
-        keys = [k for k in self.dict.keys() if k != 'date']
+        keys = [k for k in self.dict.keys() if k != 'time']
         for key in keys:
             if isinstance(self.dict[key], list):
                 ds[key] = xr.DataArray(self.dict[key],coords=[time],dims=['time'])
@@ -644,7 +644,7 @@ class Storm:
             raise RuntimeError("Error: pandas is not available. Install pandas in order to use this function.") from e
             
         #Set up empty dict for dataframe
-        time = self.dict['date']
+        time = self.dict['time']
         ds = {}
         
         #Add every key containing a list into the dict
@@ -726,7 +726,7 @@ class Storm:
         Parameters
         ----------
         forecast : int or datetime.datetime
-            Integer representing the forecast number, or datetime object for the closest issued forecast to this date.
+            Integer representing the forecast number, or datetime object for the closest issued forecast to this time.
         track_labels : str
             Label forecast hours with the following methods:
             
@@ -808,12 +808,12 @@ class Storm:
             forecast_dict = nhc_forecasts[nhc_forecast_init[closest_idx]]
             advisory_num = closest_idx+1
             if np.abs(time_diff[closest_idx]) >= 1.0:
-                warnings.warn(f"The date provided is outside of the duration of the storm. Returning the closest available NHC forecast.")
+                warnings.warn(f"The time provided is outside of the duration of the storm. Returning the closest available NHC forecast.")
         else:
             raise RuntimeError("Error: Input variable 'forecast' must be of type 'int' or 'datetime.datetime'")
 
         #Get observed track as per NHC analyses
-        track_dict = {'lat':[],'lon':[],'vmax':[],'type':[],'mslp':[],'date':[],'extra_obs':[],'special':[],'ace':0.0}
+        track_dict = {'lat':[],'lon':[],'vmax':[],'type':[],'mslp':[],'time':[],'extra_obs':[],'special':[],'ace':0.0}
         use_carq = True
         for k in nhc_forecast_init:
             hrs = nhc_forecasts[k]['fhr']
@@ -829,7 +829,7 @@ class Storm:
                 track_dict['lon'].append(carq_forecasts[k]['lon'][hr_idx])
                 track_dict['vmax'].append(carq_forecasts[k]['vmax'][hr_idx])
                 track_dict['mslp'].append(np.nan)
-                track_dict['date'].append(carq_forecasts[k]['init'])
+                track_dict['time'].append(carq_forecasts[k]['init'])
 
                 itype = carq_forecasts[k]['type'][hr_idx]
                 if itype == "": itype = get_storm_type(carq_forecasts[k]['vmax'][0],False)
@@ -851,7 +851,7 @@ class Storm:
                 track_dict['lon'].append(nhc_forecasts[k]['lon'][hr_idx])
                 track_dict['vmax'].append(nhc_forecasts[k]['vmax'][hr_idx])
                 track_dict['mslp'].append(np.nan)
-                track_dict['date'].append(nhc_forecasts[k]['init']+timedelta(hours=hr_add))
+                track_dict['time'].append(nhc_forecasts[k]['init']+timedelta(hours=hr_add))
 
                 itype = nhc_forecasts[k]['type'][hr_idx]
                 if itype == "": itype = get_storm_type(nhc_forecasts[k]['vmax'][0],False)
@@ -867,8 +867,8 @@ class Storm:
 
         
         #Add carq to forecast dict as hour 0, if available
-        if use_carq == True and forecast_dict['init'] in track_dict['date']:
-            insert_idx = track_dict['date'].index(forecast_dict['init'])
+        if use_carq == True and forecast_dict['init'] in track_dict['time']:
+            insert_idx = track_dict['time'].index(forecast_dict['init'])
             if 0 in forecast_dict['fhr']:
                 forecast_dict['lat'][0] = track_dict['lat'][insert_idx]
                 forecast_dict['lon'][0] = track_dict['lon'][insert_idx]
@@ -1027,8 +1027,8 @@ class Storm:
             inits = [dt.strptime([k for k in self.forecast_dict[key]][-1],'%Y%m%d%H') for key in check_keys]
             forecast = min(inits)
         
-        #Error check forecast date
-        if forecast < self.date[0] or forecast > self.date[-1]:
+        #Error check forecast time
+        if forecast < self.time[0] or forecast > self.time[-1]:
             raise ValueError("Requested forecast is outside of the storm's duration.")
         
         #Construct forecast dict
@@ -1336,8 +1336,8 @@ class Storm:
             print("--> Starting to calculate ellipse data")
             
             #Create dict to store all data in
-            ds = {'gfs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]},
-                  'gefs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[],
+            ds = {'gfs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'time':[]},
+                  'gefs':{'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'time':[],
                           'members':[],'ellipse_lat':[],'ellipse_lon':[]}
                   }
 
@@ -1360,13 +1360,13 @@ class Storm:
             ds['gfs']['lon'] = [np.round(i,1) for i in forecast_gfs['lon']]
             ds['gfs']['vmax'] = [float(i) for i in forecast_gfs['vmax']]
             ds['gfs']['mslp'] = forecast_gfs['mslp']
-            ds['gfs']['date'] = [forecast+timedelta(hours=i) for i in forecast_gfs['fhr']]
+            ds['gfs']['time'] = [forecast+timedelta(hours=i) for i in forecast_gfs['fhr']]
 
             #Retrieve GEFS ensemble data (30 members 2019-present, 20 members prior)
             for ens in range(0,nens):
 
                 #Create dict entry
-                ds[f'gefs_{ens}'] = {'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'date':[]}
+                ds[f'gefs_{ens}'] = {'fhr':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'time':[]}
 
                 #Retrieve ensemble member data
                 ens_str = str2(ens)
@@ -1380,7 +1380,7 @@ class Storm:
                 ds[f'gefs_{ens}']['lon'] = [np.round(i,1) for i in forecast_ens['lon']]
                 ds[f'gefs_{ens}']['vmax'] = [float(i) for i in forecast_ens['vmax']]
                 ds[f'gefs_{ens}']['mslp'] = forecast_ens['mslp']
-                ds[f'gefs_{ens}']['date'] = [forecast+timedelta(hours=i) for i in forecast_ens['fhr']]
+                ds[f'gefs_{ens}']['time'] = [forecast+timedelta(hours=i) for i in forecast_ens['fhr']]
 
             #Construct ensemble mean data
             #Iterate through all forecast hours
@@ -1389,7 +1389,7 @@ class Storm:
                 #Temporary data arrays
                 temp_data = {}
                 for key in ds['gfs'].keys():
-                    if key not in ['date','fhr']: temp_data[key] = []
+                    if key not in ['time','fhr']: temp_data[key] = []
 
                 #Iterate through ensemble member
                 for ens in range(nens):
@@ -1402,17 +1402,17 @@ class Storm:
 
                         #Append data
                         for key in ds['gfs'].keys():
-                            if key not in ['date','fhr']: temp_data[key].append(ds[f'gefs_{ens}'][key][idx])
+                            if key not in ['time','fhr']: temp_data[key].append(ds[f'gefs_{ens}'][key][idx])
 
                 #Proceed if 20 or more ensemble members
                 if len(temp_data['lat']) >= 10:
 
                     #Append data
                     for key in ds['gfs'].keys():
-                        if key not in ['date','fhr']:
+                        if key not in ['time','fhr']:
                             ds['gefs'][key].append(np.nanmean(temp_data[key]))
                     ds['gefs']['fhr'].append(iter_fhr)
-                    ds['gefs']['date'].append(forecast+timedelta(hours=iter_fhr))
+                    ds['gefs']['time'].append(forecast+timedelta(hours=iter_fhr))
                     ds['gefs']['members'].append(len(temp_data['lat']))
 
                     #Calculate ellipse data
@@ -1520,7 +1520,7 @@ class Storm:
                 out = ftp.quit()
             
             #Read in all NHC forecast discussions
-            discos = {'id':[],'utc_date':[],'url':[],'mode':0}
+            discos = {'id':[],'utc_time':[],'url':[],'mode':0}
             for file in files:
                 
                 #Get info about forecast
@@ -1542,7 +1542,7 @@ class Storm:
                 format_time = content[5].split(" ")[0]
                 if len(format_time) == 3: format_time = "0" + format_time
                 format_time = format_time + " " +  ' '.join(content[5].split(" ")[1:])
-                disco_date = dt.strptime(format_time,f'%I00 %p {zone} %a %b %d %Y')
+                disco_time = dt.strptime(format_time,f'%I00 %p {zone} %a %b %d %Y')
                 
                 time_zones = {
                 'ADT':-3,
@@ -1558,11 +1558,11 @@ class Storm:
                 'HDT':-9,
                 'HST':-10}
                 offset = time_zones.get(zone,0)
-                disco_date = disco_date + timedelta(hours=offset*-1)
+                disco_time = disco_time + timedelta(hours=offset*-1)
                 
                 #Add times issued
                 discos['id'].append(disco_number)
-                discos['utc_date'].append(disco_date)
+                discos['utc_time'].append(disco_time)
                 discos['url'].append(url_disco + file)
             
         elif storm_year < 1992:
@@ -1598,7 +1598,7 @@ class Storm:
                 if file not in files: files.append(file) #remove duplicates
             
             #Read in all NHC forecast discussions
-            discos = {'id':[],'utc_date':[],'url':[],'mode':4}
+            discos = {'id':[],'utc_time':[],'url':[],'mode':4}
             for file in files:
                 
                 #Get info about forecast
@@ -1620,10 +1620,10 @@ class Storm:
                         if 'NOON' in content[temp_idx]:
                             temp_line = content[temp_idx].replace("NOON","12 PM")
                             zone = temp_line.split(" ")[1]
-                            disco_date = dt.strptime(temp_line.rstrip(),f'%I %p {zone} %a %b %d %Y')
+                            disco_time = dt.strptime(temp_line.rstrip(),f'%I %p {zone} %a %b %d %Y')
                         else:
                             zone = content[temp_idx].split(" ")[2]
-                            disco_date = dt.strptime(content[temp_idx].rstrip(),f'%I %p {zone} %a %b %d %Y')
+                            disco_time = dt.strptime(content[temp_idx].rstrip(),f'%I %p {zone} %a %b %d %Y')
                     except:
                         pass
                 
@@ -1641,11 +1641,11 @@ class Storm:
                 'HDT':-9,
                 'HST':-10}
                 offset = time_zones.get(zone,0)
-                disco_date = disco_date + timedelta(hours=offset*-1)
+                disco_time = disco_time + timedelta(hours=offset*-1)
                 
                 #Add times issued
                 discos['id'].append(disco_number)
-                discos['utc_date'].append(disco_date)
+                discos['utc_time'].append(disco_time)
                 discos['url'].append(file)
                 
             response.close()
@@ -1682,7 +1682,7 @@ class Storm:
                 if file not in files: files.append(file) #remove duplicates
             
             #Read in all NHC forecast discussions
-            discos = {'id':[],'utc_date':[],'url':[],'mode':3}
+            discos = {'id':[],'utc_time':[],'url':[],'mode':3}
             for file in files:
 
                 #Get info about forecast
@@ -1702,7 +1702,7 @@ class Storm:
                 hr = content[4].split(" ")[0]
                 zone = content[4].split(" ")[2]
                 disco_time = num_to_str2(int(hr)) + ' '.join(content[4].split(" ")[1:])
-                disco_date = dt.strptime(content[4],f'%I %p {zone} %a %b %d %Y')
+                disco_time = dt.strptime(content[4],f'%I %p {zone} %a %b %d %Y')
                 
                 time_zones = {
                 'ADT':-3,
@@ -1718,11 +1718,11 @@ class Storm:
                 'HDT':-9,
                 'HST':-10}
                 offset = time_zones.get(zone,0)
-                disco_date = disco_date + timedelta(hours=offset*-1)
+                disco_time = disco_time + timedelta(hours=offset*-1)
                 
                 #Add times issued
                 discos['id'].append(disco_number)
-                discos['utc_date'].append(disco_date)
+                discos['utc_time'].append(disco_time)
                 discos['url'].append(file)
                 
             response.close()
@@ -1763,7 +1763,7 @@ class Storm:
             tar.close()
             
             #Read in all NHC forecast discussions
-            discos = {'id':[],'utc_date':[],'url':[],'mode':1}
+            discos = {'id':[],'utc_time':[],'url':[],'mode':1}
             for file in files:
 
                 #Get info about forecast
@@ -1773,10 +1773,10 @@ class Storm:
                 disco_year = storm_year
                 if disco_time[0:2] == "01" and int(storm_id[2:4]) > 3:
                     disco_year = storm_year + 1
-                disco_date = dt.strptime(str(disco_year)+disco_time,'%Y%m%d%H%M')
+                disco_time = dt.strptime(str(disco_year)+disco_time,'%Y%m%d%H%M')
 
                 discos['id'].append(disco_number)
-                discos['utc_date'].append(disco_date)
+                discos['utc_time'].append(disco_time)
                 discos['url'].append(file)
                 
             if storm_year < 2003: discos['mode'] = 2
@@ -1812,7 +1812,7 @@ class Storm:
                     raise RuntimeError("NHC discussion data is unavailable.")
 
             #Read in all NHC forecast discussions
-            discos = {'id':[],'utc_date':[],'url':[],'mode':0}
+            discos = {'id':[],'utc_time':[],'url':[],'mode':0}
             for file in files:
 
                 #Get info about forecast
@@ -1822,10 +1822,10 @@ class Storm:
                 disco_year = storm_year
                 if disco_time[0:2] == "01" and int(storm_id[2:4]) > 3:
                     disco_year = storm_year + 1
-                disco_date = dt.strptime(str(disco_year)+disco_time,'%Y%m%d%H%M')
+                disco_time = dt.strptime(str(disco_year)+disco_time,'%Y%m%d%H%M')
 
                 discos['id'].append(disco_number)
-                discos['utc_date'].append(disco_date)
+                discos['utc_time'].append(disco_time)
                 discos['url'].append(url_disco + file)
                 
         #Return dict entry
@@ -1884,7 +1884,7 @@ class Storm:
         
         if isinstance(forecast,dt):
             #Find closest discussion to the time provided
-            disco_times = disco_dict['utc_date']
+            disco_times = disco_dict['utc_time']
             disco_ids = [int(i) for i in disco_dict['id']]
             disco_diff = np.array([(i-forecast).days + (i-forecast).seconds/86400 for i in disco_times])
             closest_idx = np.abs(disco_diff).argmin()
@@ -1894,11 +1894,11 @@ class Storm:
         
             #Raise warning if difference is >=1 day
             if np.abs(closest_diff) >= 1.0:
-                warnings.warn(f"The date provided is unavailable or outside of the duration of the storm. Use the \"list_nhc_discussions()\" function to retrieve a list of available NHC discussions for this storm. Returning the closest available NHC discussion.")
+                warnings.warn(f"The time provided is unavailable or outside of the duration of the storm. Use the \"list_nhc_discussions()\" function to retrieve a list of available NHC discussions for this storm. Returning the closest available NHC discussion.")
                 
         if isinstance(forecast,int):
             #Find closest discussion ID to the one provided
-            disco_times = disco_dict['utc_date']
+            disco_times = disco_dict['utc_time']
             disco_ids = [int(i) for i in disco_dict['id']]
             if forecast == -1:
                 closest_idx = -1
@@ -2021,10 +2021,10 @@ class Storm:
         
         #Iterate over every entry to retrieve its discussion text
         output = []
-        for idx,forecast_date in enumerate(disco_dict['utc_date']):
+        for idx,forecast_time in enumerate(disco_dict['utc_time']):
             
             #Get forecast discussion
-            forecast = self.get_nhc_discussion(forecast=forecast_date)
+            forecast = self.get_nhc_discussion(forecast=forecast_time)
             
             #Get forecast text and query for word
             text = forecast['text'].lower()
@@ -2182,9 +2182,9 @@ class Storm:
                 basin,number,run_init,n_a,model,fhr,lat,lon,vmax,mslp,stype = lineArray[:11]
                 use_wind = False
             
-            #Check init date is within storm date range
+            #Check init time is within storm time range
             run_init_dt = dt.strptime(run_init,'%Y%m%d%H')
-            if run_init_dt < self.dict['date'][0]-timedelta(hours=6) or run_init_dt > self.dict['date'][-1]+timedelta(hours=6): continue
+            if run_init_dt < self.dict['time'][0]-timedelta(hours=6) or run_init_dt > self.dict['time'][-1]+timedelta(hours=6): continue
             
             #Enter into forecast dict
             if model not in forecasts.keys(): forecasts[model] = {}
@@ -2336,7 +2336,7 @@ class Storm:
         closest_idx = np.abs(time_diff).argmin()
         forecast_dict = nhc_forecasts[nhc_forecast_init[closest_idx]]
         if np.abs(time_diff[closest_idx]) >= 1.0:
-            warnings.warn(f"The date provided is outside of the duration of the storm. Returning the closest available NHC forecast.")
+            warnings.warn(f"The time provided is outside of the duration of the storm. Returning the closest available NHC forecast.")
         
         return forecast_dict
     

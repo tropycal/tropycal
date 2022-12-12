@@ -162,16 +162,16 @@ class Realtime():
         for key in all_keys:
             
             #Filter for storm duration
-            if len(self.data[key]['date']) == 0:
+            if len(self.data[key]['time']) == 0:
                 del self.data[key]
                 continue
             
-            #Get last date
-            last_date = self.data[key]['date'][-1]
-            current_date = dt.utcnow()
+            #Get last time
+            last_time = self.data[key]['time'][-1]
+            current_time = dt.utcnow()
             
             #Get time difference
-            hours_diff = (current_date - last_date).total_seconds() / 3600.0
+            hours_diff = (current_time - last_time).total_seconds() / 3600.0
             if hours_diff >= 15.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
                 del self.data[key]
             if hours_diff <= -48.0:
@@ -193,7 +193,7 @@ class Realtime():
                 if self.data[key_storm]['invest'] == True: continue
                 
                 #Check for overlap in lons
-                if self.data[key_storm]['lon'][0] == self.data[key]['lon'][0] and self.data[key_storm]['date'][0] == self.data[key]['date'][0]: match = True
+                if self.data[key_storm]['lon'][0] == self.data[key]['lon'][0] and self.data[key_storm]['time'][0] == self.data[key]['time'][0]: match = True
             
             if match == True: del self.data[key]
         
@@ -291,7 +291,7 @@ class Realtime():
             self.data[stormid]['jtwc_source'] = 'N/A'
 
             #add empty lists
-            for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
+            for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
                 self.data[stormid][val] = []
             self.data[stormid]['ace'] = 0.0
 
@@ -317,12 +317,12 @@ class Realtime():
 
                 if len(line) < 28: continue
 
-                #Get date of obs
-                date = dt.strptime(line[2],'%Y%m%d%H')
-                if date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
+                #Get time of obs
+                time = dt.strptime(line[2],'%Y%m%d%H')
+                if time.strftime('%H%M') not in constants.STANDARD_HOURS: continue
 
                 #Ensure obs aren't being repeated
-                if date in self.data[stormid]['date']: continue
+                if time in self.data[stormid]['time']: continue
 
                 #Get latitude into number
                 btk_lat_temp = line[6].split("N")[0]
@@ -342,9 +342,9 @@ class Realtime():
                 btk_type = line[10]
                 name = line[27]
                 
-                #Get last tropical date
+                #Get last tropical time
                 if btk_type in constants.TROPICAL_STORM_TYPES:
-                    last_tropical_date = date + timedelta(hours=0)
+                    last_tropical_time = time + timedelta(hours=0)
 
                 #Replace with NaNs
                 if btk_wind > 250 or btk_wind < 10: btk_wind = np.nan
@@ -354,7 +354,7 @@ class Realtime():
                 self.data[stormid]['extra_obs'].append(0)
 
                 #Append into dict
-                self.data[stormid]['date'].append(date)
+                self.data[stormid]['time'].append(time)
                 self.data[stormid]['special'].append('')
                 self.data[stormid]['type'].append(btk_type)
                 self.data[stormid]['lat'].append(round(btk_lat,1))
@@ -398,9 +398,9 @@ class Realtime():
             #Check if storm is still tropical, if not an invest.
             #Re-designate as an invest if has not been a TC for over 18 hours.
             if any(type in self.data[stormid]['type'] for type in constants.TROPICAL_STORM_TYPES):
-                current_date = dt.utcnow()
-                date_diff = (current_date - last_tropical_date).total_seconds() / 3600
-                if date_diff > 18:
+                current_time = dt.utcnow()
+                hour_diff = (current_time - last_tropical_time).total_seconds() / 3600
+                if hour_diff > 18:
                     self.data[stormid]['invest'] = True
         
         
@@ -491,7 +491,7 @@ class Realtime():
                 self.data[stormid]['source_url'] = f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/'
 
             #add empty lists
-            for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
+            for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
                 self.data[stormid][val] = []
             self.data[stormid]['ace'] = 0.0
 
@@ -517,12 +517,12 @@ class Realtime():
 
                 if len(line) < 28: continue
 
-                #Get date of obs
-                date = dt.strptime(line[2],'%Y%m%d%H')
-                if date.strftime('%H%M') not in constants.STANDARD_HOURS: continue
+                #Get time of obs
+                time = dt.strptime(line[2],'%Y%m%d%H')
+                if time.strftime('%H%M') not in constants.STANDARD_HOURS: continue
 
                 #Ensure obs aren't being repeated
-                if date in self.data[stormid]['date']: continue
+                if time in self.data[stormid]['time']: continue
 
                 #Get latitude into number
                 if "N" in line[6]:
@@ -563,7 +563,7 @@ class Realtime():
                 self.data[stormid]['extra_obs'].append(0)
 
                 #Append into dict
-                self.data[stormid]['date'].append(date)
+                self.data[stormid]['time'].append(time)
                 self.data[stormid]['special'].append('')
                 self.data[stormid]['type'].append(btk_type)
                 self.data[stormid]['lat'].append(btk_lat)

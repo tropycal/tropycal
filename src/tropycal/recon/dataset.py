@@ -336,7 +336,7 @@ class ReconDataset:
         """
                 
         if time is None or 'trackfunc' not in self.__dict__.keys():
-            btk = self.storm.to_dataframe()[['date','lon','lat']].rename(columns={'date':'time'})
+            btk = self.storm.to_dataframe()[['time','lon','lat']]
                       
             try:
                 if 'vdms' not in self.__dict__.keys():
@@ -646,11 +646,11 @@ class hdobs:
             try:
                 start_time = max(self.data['time'])
             except:
-                start_time = min(self.storm.dict['date'])-timedelta(hours=12)
-            end_time = max(self.storm.dict['date'])+timedelta(hours=12)
+                start_time = min(self.storm.dict['time'])-timedelta(hours=12)
+            end_time = max(self.storm.dict['time'])+timedelta(hours=12)
 
             timestr = [f'{start_time:%Y%m%d}']+\
-                      [f'{t:%Y%m%d}' for t in self.storm.dict['date'] if t>start_time]+\
+                      [f'{t:%Y%m%d}' for t in self.storm.dict['time'] if t>start_time]+\
                       [f'{end_time:%Y%m%d}']
 
             #Retrieve list of files in URL(s) and filter by storm dates
@@ -735,7 +735,7 @@ class hdobs:
                         elif self.format == 6:
                             #Check for date
                             day = int(content.split("\n")[row-1].split()[2][:2])
-                            for iter_date in storm.dict['date']:
+                            for iter_date in storm.dict['time']:
                                 found_date = False
                                 if iter_date.day == day:
                                     date = dt(iter_date.year,iter_date.month,iter_date.day)
@@ -1464,7 +1464,7 @@ class hdobs:
             
             #Error check for time dimension name
             if 'time' not in track_dict.keys():
-                track_dict['time'] = track_dict['date']
+                track_dict['time'] = track_dict['time']
          
         if ONE_MAP:
             f = interp1d(mdates.date2num(track_dict['time']),track_dict['lon'], fill_value='extrapolate')
@@ -1932,8 +1932,8 @@ class dropsondes:
             try:
                 start_time = max(self.data['time'])
             except:
-                start_time = min(self.storm.dict['date'])-timedelta(days=1)
-            end_time = max(self.storm.dict['date'])+timedelta(days=1)
+                start_time = min(self.storm.dict['time'])-timedelta(days=1)
+            end_time = max(self.storm.dict['time'])+timedelta(days=1)
 
             timeboundstrs = [f'{t:%Y%m%d%H%M}' for t in (start_time,end_time)]
             
@@ -1992,7 +1992,7 @@ class dropsondes:
                     #Check for date
                     try:
                         day = int(content.split("\n")[0].split()[2][:2])
-                        for iter_date in storm.dict['date']:
+                        for iter_date in storm.dict['time']:
                             found_date = False
                             if iter_date.day == day:
                                 date = dt(iter_date.year,iter_date.month,iter_date.day)
@@ -2480,7 +2480,7 @@ class vdms:
         else:
             raise RuntimeError("Recon data is not available prior to 1989.")
         
-        timestr = [f'{t:%Y%m%d}' for t in self.storm.dict['date']]
+        timestr = [f'{t:%Y%m%d}' for t in self.storm.dict['time']]
 
         #Retrieve list of files in URL and filter by storm dates
         page = requests.get(archive_url).text
@@ -2544,7 +2544,7 @@ class vdms:
                             #Check for date
                             for line in iter_split:
                                 if line[:2] == 'A.': day = int((line[3:].split('/'))[0])
-                            for iter_date in storm.dict['date']:
+                            for iter_date in storm.dict['time']:
                                 found_date = False
                                 if iter_date.day == day:
                                     date = dt(iter_date.year,iter_date.month,iter_date.day)
@@ -2730,10 +2730,10 @@ class vdms:
         #Retrieve & plot Best Track data
         if best_track:
             if time is not None:
-                times_btk = [i for i in storm_data['date'] if i >= time[0] and i <= time[1]]
-                mslp_btk = [storm_data['mslp'][i] for i in range(len(storm_data['mslp'])) if storm_data['date'][i] >= time[0] and storm_data['date'][i] <= time[1]]
+                times_btk = [i for i in storm_data['time'] if i >= time[0] and i <= time[1]]
+                mslp_btk = [storm_data['mslp'][i] for i in range(len(storm_data['mslp'])) if storm_data['time'][i] >= time[0] and storm_data['time'][i] <= time[1]]
             else:
-                times_btk = [i for i in storm_data['date']]
+                times_btk = [i for i in storm_data['time']]
                 mslp_btk = [i for i in storm_data['mslp']]
             ax.plot(times_btk,mslp_btk,color='r',alpha=0.25,label='Best Track MSLP (hPa)')
             if dots: ax.plot(times_btk,mslp_btk,'o',color='r',alpha=0.5)
@@ -2744,14 +2744,14 @@ class vdms:
 
         #Add time labels
         times_use = []
-        start_date = times[0].replace(hour=0)
-        total_days = (times[-1] - start_date).total_seconds() / 86400
+        start_time = times[0].replace(hour=0)
+        total_days = (times[-1] - start_time).total_seconds() / 86400
         increment_hour = 6
         if total_days > 3: increment_hour = 12
         if total_days > 6: increment_hour = 24
-        while start_date <= (times[-1] + timedelta(hours=increment_hour)):
-            times_use.append(start_date)
-            start_date += timedelta(hours=increment_hour)
+        while start_time <= (times[-1] + timedelta(hours=increment_hour)):
+            times_use.append(start_time)
+            start_time += timedelta(hours=increment_hour)
         ax.set_xticks(times_use)
         ax.set_xlim(times[0]-timedelta(hours=6),times[-1]+timedelta(hours=6))
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%H UTC\n%b %d'))

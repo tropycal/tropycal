@@ -158,7 +158,7 @@ class RainPlot(Plot):
         lons = storm_data['lon']
         vmax = storm_data['vmax']
         styp = storm_data['type']
-        sdate = storm_data['date']
+        sdate = storm_data['time']
                 
         #Account for cases crossing dateline
         if self.proj.proj4_params['lon_0'] == 180.0:
@@ -183,7 +183,7 @@ class RainPlot(Plot):
             use_lons = np.copy(lons).tolist()
 
         #Iterate over storm data to plot
-        for i,(i_lat,i_lon,i_vmax,i_mslp,i_date,i_type) in enumerate(zip(storm_data['lat'],lons,storm_data['vmax'],storm_data['mslp'],storm_data['date'],storm_data['type'])):
+        for i,(i_lat,i_lon,i_vmax,i_mslp,i_time,i_type) in enumerate(zip(storm_data['lat'],lons,storm_data['vmax'],storm_data['mslp'],storm_data['time'],storm_data['type'])):
 
             #Determine line color, with SSHWS scale used as default
             if prop['linecolor'] == 'category':
@@ -235,7 +235,7 @@ class RainPlot(Plot):
                 
                 #Skip if plot_all_dots == False and not in 0,6,12,18z
                 if plot_all_dots == False:
-                    if i_date.strftime('%H%M') not in ['0000','0600','1200','1800']: continue
+                    if i_time.strftime('%H%M') not in ['0000','0600','1200','1800']: continue
 
                 #Determine fill color, with SSHWS scale used as default
                 if prop['fillcolor'] == 'category':
@@ -356,11 +356,11 @@ class RainPlot(Plot):
             max_wind = "N/A"
         else:
             max_wind = int(np.nan_to_num(np.nanmax(np.array(storm_data['vmax'])[idx])))
-        start_date = dt.strftime(np.array(storm_data['date'])[idx][0],'%d %b %Y')
-        end_date = dt.strftime(np.array(storm_data['date'])[idx][-1],'%d %b %Y')
+        start_time = dt.strftime(np.array(storm_data['time'])[idx][0],'%d %b %Y')
+        end_time = dt.strftime(np.array(storm_data['time'])[idx][-1],'%d %b %Y')
         endash = u"\u2013"
         dot = u"\u2022"
-        self.ax.set_title(f"{start_date} {endash} {end_date}\n{max_wind} kt {dot} {min_pres} hPa {dot} {ace:.1f} ACE",loc='right',fontsize=13)
+        self.ax.set_title(f"{start_time} {endash} {end_time}\n{max_wind} kt {dot} {min_pres} hPa {dot} {ace:.1f} ACE",loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
         
@@ -456,7 +456,7 @@ class RainPlot(Plot):
                 cax2.tick_params('both', length=0, width=0, which='major')
                 cax.yaxis.set_ticks_position('left')
                 rect_offset = 0.7
-            if prop['fillcolor'] == 'date':
+            if prop['fillcolor'] == 'time':
                 cax.set_yticklabels([f'{mdates.num2date(i):%b %-d}' for i in clevs],fontsize=11.5)
                 
         else:
@@ -497,7 +497,7 @@ class RainPlot(Plot):
                 cax2.tick_params('both', length=0, width=0, which='major')
                 cax.yaxis.set_ticks_position('left')
                 rect_offset = 0.7
-            if prop['linecolor'] == 'date':
+            if prop['linecolor'] == 'time':
                 cax.set_yticklabels([f'{mdates.num2date(i):%b %-d}' for i in clevs],fontsize=11.5)
                 
         #-----------------------------------------------------------------------------------------

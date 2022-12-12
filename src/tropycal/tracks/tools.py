@@ -259,11 +259,11 @@ def interp_storm(storm_dict,hours=1,dt_window=24,dt_align='middle',method='linea
             new_storm[key] = storm_dict[key]
     
     #Create an empty list for entries
-    for name in ['date','vmax','mslp','lat','lon','type']:
+    for name in ['time','vmax','mslp','lat','lon','type']:
         new_storm[name] = []
     
-    #Convert dates to numbers for ease of calculation
-    times = mdates.date2num(storm_dict['date'])
+    #Convert times to numbers for ease of calculation
+    times = mdates.date2num(storm_dict['time'])
     
     #Convert lat & lons to arrays, and ensure lons are out of 360 degrees
     storm_dict['type'] = np.asarray(storm_dict['type'])
@@ -285,14 +285,14 @@ def interp_storm(storm_dict,hours=1,dt_window=24,dt_align='middle',method='linea
         targettimes = np.arange(times[0],times[-1]+hours/24.0,hours/24.0)
         targettimes = targettimes[targettimes<=times[-1]+0.001]
         
-        #Update dates
+        #Update times
         use_minutes = 10 if hours > (1.0/6.0) else hours * 60.0
-        new_storm['date'] = [round_datetime(t.replace(tzinfo=None),use_minutes) for t in mdates.num2date(targettimes)]
-        targettimes = mdates.date2num(np.array(new_storm['date']))
+        new_storm['time'] = [round_datetime(t.replace(tzinfo=None),use_minutes) for t in mdates.num2date(targettimes)]
+        targettimes = mdates.date2num(np.array(new_storm['time']))
         
         #Create same-length lists for other things
-        new_storm['special'] = ['']*len(new_storm['date'])
-        new_storm['extra_obs'] = [0]*len(new_storm['date'])
+        new_storm['special'] = ['']*len(new_storm['time'])
+        new_storm['extra_obs'] = [0]*len(new_storm['time'])
         
         #WMO basin. Simple linear interpolation.
         basinnum = np.cumsum([0]+[1 if storm_dict['wmo_basin'][i+1]!=j else 0\
@@ -321,9 +321,9 @@ def interp_storm(storm_dict,hours=1,dt_window=24,dt_align='middle',method='linea
             new_storm[name] = np.array([int(round(i)) if np.isnan(i) == False else np.nan for i in new_storm[name]])
         for name in ['lat','lon']:
             filtered_array = np.array(storm_dict[name])
-            new_times = np.array(storm_dict['date'])
+            new_times = np.array(storm_dict['time'])
             if 'linear' not in method:
-                converted_hours = np.array([1 if i.strftime('%H%M') in constants.STANDARD_HOURS else 0 for i in storm_dict['date']])
+                converted_hours = np.array([1 if i.strftime('%H%M') in constants.STANDARD_HOURS else 0 for i in storm_dict['time']])
                 filtered_array = filtered_array[converted_hours == 1]
                 new_times = new_times[converted_hours == 1]
             new_times = mdates.date2num(new_times)
@@ -431,7 +431,7 @@ def filter_storms_vp(trackdata,year_min=0,year_max=9999,subset_domain=None):
         
         #Iterate over every storm time step
         for i,(iwind,imslp,itype,ilat,ilon,itime) in \
-        enumerate(zip(istorm['vmax'],istorm['mslp'],istorm['type'],istorm['lat'],istorm['lon'],istorm['date'])):
+        enumerate(zip(istorm['vmax'],istorm['mslp'],istorm['type'],istorm['lat'],istorm['lon'],istorm['time'])):
             
             #Ensure both have data and are while the cyclone is tropical
             if np.nan not in [iwind,imslp] and itype in ['TD','TS','SS','HU','TY'] \
@@ -492,24 +492,24 @@ def rolling_window(a, window):
     strides = a.strides + (a.strides[-1],)
     return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
 
-def convert_to_julian(date):
+def convert_to_julian(time):
     
     r"""
-    Convert a date to Julian days. Referenced from ``TrackDataset.ace_climo()`` and ``TrackDataset.hurricane_days_climo()``. Internal function.
+    Convert a datetime object to Julian days. Referenced from ``TrackDataset.ace_climo()`` and ``TrackDataset.hurricane_days_climo()``. Internal function.
     
     Parameters
     ----------
-    date : datetime.datetime
-        Datetime object of the date to be converted to Julian days.
+    time : datetime.datetime
+        Datetime object of the time to be converted to Julian days.
     
     Returns
     -------
     int
-        Integer representing the Julian day of the requested date.
+        Integer representing the Julian day of the requested time.
     """
     
-    year = date.year
-    return ((date - dt(year,1,1,0)).days + (date - dt(year,1,1,0)).seconds/86400.0) + 1
+    year = time.year
+    return ((time - dt(year,1,1,0)).days + (time - dt(year,1,1,0)).seconds/86400.0) + 1
 
 def months_in_julian(year):
     
@@ -590,29 +590,29 @@ def pac_2006_cyclone():
     storm_dict['source_info'] = 'ERA5 Reanalysis'
 
     #add empty lists
-    for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
+    for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
         storm_dict[val] = []
     storm_dict['ace'] = 0.0
     
     #Add obs from reference
-    storm_dict['date'] = ['2006102812', '2006102815', '2006102818', '2006102821', '2006102900', '2006102903', '2006102906', '2006102909', '2006102912', '2006102915', '2006102918', '2006102921', '2006103000', '2006103003', '2006103006', '2006103009', '2006103012', '2006103015', '2006103018', '2006103021', '2006103100', '2006103103', '2006103106', '2006103109', '2006103112', '2006103115', '2006103118', '2006103121', '2006110100', '2006110103', '2006110106', '2006110109', '2006110112', '2006110115', '2006110118', '2006110121', '2006110200', '2006110203', '2006110206', '2006110209', '2006110212', '2006110215', '2006110218', '2006110221', '2006110300', '2006110303', '2006110306', '2006110309', '2006110312', '2006110315', '2006110318']
+    storm_dict['time'] = ['2006102812', '2006102815', '2006102818', '2006102821', '2006102900', '2006102903', '2006102906', '2006102909', '2006102912', '2006102915', '2006102918', '2006102921', '2006103000', '2006103003', '2006103006', '2006103009', '2006103012', '2006103015', '2006103018', '2006103021', '2006103100', '2006103103', '2006103106', '2006103109', '2006103112', '2006103115', '2006103118', '2006103121', '2006110100', '2006110103', '2006110106', '2006110109', '2006110112', '2006110115', '2006110118', '2006110121', '2006110200', '2006110203', '2006110206', '2006110209', '2006110212', '2006110215', '2006110218', '2006110221', '2006110300', '2006110303', '2006110306', '2006110309', '2006110312', '2006110315', '2006110318']
     storm_dict['lat'] = [36.0, 37.75, 38.25, 38.5, 39.5, 39.75, 40.0, 40.0, 39.25, 38.5, 37.5, 37.0, 36.75, 36.75, 36.25, 36.0, 36.0, 36.25, 36.75, 37.25, 37.75, 38.5, 38.75, 39.25, 39.75, 40.25, 40.75, 41.25, 42.0, 42.5, 42.75, 42.75, 42.75, 42.75, 42.5, 42.25, 42.25, 42.0, 42.0, 42.25, 42.5, 42.75, 43.0, 43.5, 44.0, 44.5, 45.5, 46.25, 46.75, 47.75, 48.5]
     storm_dict['lon'] = [-148.25, -147.75, -148.25, -148.25, -148.5, -148.75, -149.75, -150.5, -151.5, -151.75, -151.75, -151.0, -150.25, -150.0, -149.5, -148.5, -147.5, -146.5, -145.5, -144.75, -144.0, -143.5, -143.25, -143.0, -142.75, -142.5, -142.5, -143.0, -143.5, -144.0, -144.75, -145.5, -146.0, -146.25, -146.0, -145.75, -145.25, -144.25, -143.25, -142.25, -140.75, -139.5, -138.0, -136.5, -135.0, -133.5, -132.0, -130.5, -128.5, -126.75, -126.0]
     storm_dict['mslp'] = [1007, 1003, 999, 995, 992, 989, 990, 990, 991, 991, 992, 993, 993, 992, 994, 994, 994, 994, 995, 995, 993, 993, 994, 993, 993, 993, 993, 993, 990, 989, 989, 989, 988, 988, 989, 989, 988, 989, 990, 991, 991, 991, 993, 994, 993, 994, 995, 996, 996, 996, 997]
     storm_dict['vmax'] = [30, 40, 50, 45, 45, 45, 40, 40, 40, 40, 35, 35, 35, 35, 35, 35, 30, 30, 35, 35, 35, 40, 45, 45, 40, 40, 45, 45, 45, 45, 50, 50, 55, 55, 50, 50, 50, 50, 50, 50, 45, 40, 35, 35, 30, 30, 25, 25, 30, 30, 25]
     storm_dict['vmax_era5'] = [31, 38, 47, 46, 47, 45, 38, 42, 43, 40, 37, 36, 35, 33, 35, 35, 33, 31, 33, 32, 31, 29, 28, 30, 28, 28, 29, 29, 30, 32, 31, 29, 28, 26, 25, 26, 28, 27, 28, 29, 28, 27, 27, 27, 28, 26, 27, 27, 31, 30, 26]
     storm_dict['type'] = ['EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'SS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'TS', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX', 'EX']
-    storm_dict['date'] = [dt.strptime(i,'%Y%m%d%H') for i in storm_dict['date']]
+    storm_dict['time'] = [dt.strptime(i,'%Y%m%d%H') for i in storm_dict['time']]
     
     #Add other variables
-    storm_dict['extra_obs'] = [0 if i.hour in [0,6,12,18] else 1 for i in storm_dict['date']]
-    storm_dict['special'] = ['' for i in storm_dict['date']]
-    storm_dict['wmo_basin'] = ['east_pacific' for i in storm_dict['date']]
+    storm_dict['extra_obs'] = [0 if i.hour in [0,6,12,18] else 1 for i in storm_dict['time']]
+    storm_dict['special'] = ['' for i in storm_dict['time']]
+    storm_dict['wmo_basin'] = ['east_pacific' for i in storm_dict['time']]
     
     #Calculate ACE
-    for i,(vmax,storm_type,idate) in enumerate(zip(storm_dict['vmax'],storm_dict['type'],storm_dict['date'])):
+    for i,(vmax,storm_type,iitime) in enumerate(zip(storm_dict['vmax'],storm_dict['type'],storm_dict['time'])):
         ace = (10**-4) * (vmax**2)
-        hhmm = idate.strftime('%H%M')
+        hhmm = itime.strftime('%H%M')
         if hhmm in ['0000','0600','1200','1800'] and storm_type in ['SS','TS','HU']:
             storm_dict['ace'] += ace
     
@@ -634,28 +634,28 @@ def cyclone_catarina():
     storm_dict['source_info'] = 'McTaggart-Cowan et al. (2006): https://doi.org/10.1175/MWR3330.1'
 
     #add empty lists
-    for val in ['date','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
+    for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp','wmo_basin']:
         storm_dict[val] = []
     storm_dict['ace'] = 0.0
     
     #Add obs from reference
-    storm_dict['date'] = ['200403191800','200403200000','200403200600','200403201200','200403201800','200403210000','200403210600','200403211200','200403211800','200403220000','200403220600','200403221200','200403221800','200403230000','200403230600','200403231200','200403231800','200403240000','200403240600','200403241200','200403241800','200403250000','200403250600','200403251200','200403251800','200403260000','200403260600','200403261200','200403261800','200403270000','200403270600','200403271200','200403271800','200403280000','200403280600','200403281200','200403281800']
+    storm_dict['time'] = ['200403191800','200403200000','200403200600','200403201200','200403201800','200403210000','200403210600','200403211200','200403211800','200403220000','200403220600','200403221200','200403221800','200403230000','200403230600','200403231200','200403231800','200403240000','200403240600','200403241200','200403241800','200403250000','200403250600','200403251200','200403251800','200403260000','200403260600','200403261200','200403261800','200403270000','200403270600','200403271200','200403271800','200403280000','200403280600','200403281200','200403281800']
     storm_dict['lat'] = [-27.0,-26.5,-25.3,-25.5,-26.5,-26.8,-27.5,-28.7,-29.5,-30.9,-31.9,-32.3,-31.5,-30.7,-29.8,-29.5,-29.4,-29.3,-29.2,-29.1,-29.1,-29.0,-28.9,-28.7,-28.7,-28.7,-28.7,-28.8,-28.9,-29.1,-29.2,-29.5,-29.5,-29.3,-29.0,-28.5,-28.5]
     storm_dict['lon'] = [-49.0,-48.5,-48.0,-46.0,-44.5,-43.0,-42.0,-40.5,-39.5,-38.5,-37.0,-36.7,-36.5,-36.7,-37.0,-37.5,-38.1,-38.5,-38.8,-39.0,-39.4,-39.9,-40.4,-41.2,-41.9,-42.6,-43.1,-43.7,-44.2,-44.9,-45.6,-46.4,-47.5,-48.3,-49.7,-50.1,-51.0]
     storm_dict['mslp'] = [np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,np.nan,1002,990,991,993,992,990,990,993,993,994,994,989,989,982,975,974,974,972,972,972,np.nan,np.nan,np.nan]
     storm_dict['vmax'] = [25.0,25.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,35.0,35.0,35.0,35.0,40.0,40.0,45.0,50.0,55.0,60.0,65.0,70.0,70.0,70.0,75.0,75.0,80.0,80.0,85.0,60.0,45.0]
     storm_dict['type'] = ['EX','EX','EX','EX','EX','EX','EX','EX','EX','EX','EX','EX','EX','EX','EX','EX','EX','SS','SS','SS','SS','SS','TS','TS','TS','TS','HU','HU','HU','HU','HU','HU','HU','HU','HU','TS','TS']
-    storm_dict['date'] = [dt.strptime(i,'%Y%m%d%H%M') for i in storm_dict['date']]
+    storm_dict['time'] = [dt.strptime(i,'%Y%m%d%H%M') for i in storm_dict['time']]
     
     #Add other variables
-    storm_dict['extra_obs'] = [0 for i in storm_dict['date']]
-    storm_dict['special'] = ['' for i in storm_dict['date']]
-    storm_dict['wmo_basin'] = ['south_atlantic' for i in storm_dict['date']]
+    storm_dict['extra_obs'] = [0 for i in storm_dict['time']]
+    storm_dict['special'] = ['' for i in storm_dict['time']]
+    storm_dict['wmo_basin'] = ['south_atlantic' for i in storm_dict['time']]
     
     #Calculate ACE
-    for i,(vmax,storm_type,idate) in enumerate(zip(storm_dict['vmax'],storm_dict['type'],storm_dict['date'])):
+    for i,(vmax,storm_type,itime) in enumerate(zip(storm_dict['vmax'],storm_dict['type'],storm_dict['time'])):
         ace = (10**-4) * (vmax**2)
-        hhmm = idate.strftime('%H%M')
+        hhmm = itime.strftime('%H%M')
         if hhmm in ['0000','0600','1200','1800'] and storm_type in ['SS','TS','HU']:
             storm_dict['ace'] += ace
     

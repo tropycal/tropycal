@@ -62,7 +62,7 @@ class RealtimeStorm(Storm):
     
     Now this storm's data is stored in the variable ``storm``, which is an instance of RealtimeStorm and can access all of the methods and attributes of a RealtimeStorm object.
     
-    All the variables associated with a RealtimeStorm object (e.g., lat, lon, date, vmax) can be accessed in two ways. The first is directly from the RealtimeStorm object:
+    All the variables associated with a RealtimeStorm object (e.g., lat, lon, time, vmax) can be accessed in two ways. The first is directly from the RealtimeStorm object:
     
     >>> storm.lat
     array([ 9.8, 10.3, 10.8, 11.4, 11.9, 12.1, 12.2, 12.4, 12.6, 12.8, 13. ,
@@ -75,7 +75,7 @@ class RealtimeStorm(Storm):
     >>> lat = variable_dict['lat']
     >>> lon = variable_dict['lon']
     >>> print(variable_dict.keys())
-    dict_keys(['date', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin'])
+    dict_keys(['time', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin'])
     
     RealtimeStorm objects also have numerous attributes with information about the storm. ``storm.attrs`` returns a dictionary of the attributes for this RealtimeStorm object.
     
@@ -118,20 +118,20 @@ class RealtimeStorm(Storm):
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))[0]
         if self.invest and len(idx) == 0: idx = np.array([True for i in type_array])
         if len(idx) == 0:
-            start_date = 'N/A'
-            end_date = 'N/A'
+            start_time = 'N/A'
+            end_time = 'N/A'
             max_wind = 'N/A'
             min_mslp = 'N/A'
         else:
-            time_tropical = np.array(self.dict['date'])[idx]
-            start_date = time_tropical[0].strftime("%H00 UTC %d %B %Y")
-            end_date = time_tropical[-1].strftime("%H00 UTC %d %B %Y")
+            time_tropical = np.array(self.dict['time'])[idx]
+            start_time = time_tropical[0].strftime("%H00 UTC %d %B %Y")
+            end_time = time_tropical[-1].strftime("%H00 UTC %d %B %Y")
             max_wind = 'N/A' if all_nan(np.array(self.dict['vmax'])[idx]) == True else np.nanmax(np.array(self.dict['vmax'])[idx])
             min_mslp = 'N/A' if all_nan(np.array(self.dict['mslp'])[idx]) == True else np.nanmin(np.array(self.dict['mslp'])[idx])
         summary_keys = {'Maximum Wind':f"{max_wind} knots",
                         'Minimum Pressure':f"{min_mslp} hPa",
-                        'Start Date':start_date,
-                        'End Date':end_date}
+                        'Start Time':start_time,
+                        'End Time':end_time}
         
         #Format keys for coordinates
         variable_keys = {}
@@ -617,8 +617,8 @@ class RealtimeStorm(Storm):
                     
         #Determine ACE thus far (prior to initial forecast hour)
         ace = 0.0
-        for i in range(len(self.date)):
-            if self.date[i] >= forecasts['init']: continue
+        for i in range(len(self.time)):
+            if self.time[i] >= forecasts['init']: continue
             if self.type[i] not in constants.NAMED_TROPICAL_STORM_TYPES: continue
             ace += accumulated_cyclone_energy(self.vmax[i],hours=6)
         
@@ -787,7 +787,7 @@ class RealtimeStorm(Storm):
         if source == 'all':
             if self.source == 'hurdat':
                 #Check to see which is the latest advisory
-                latest_btk = self.date[-1]
+                latest_btk = self.time[-1]
                 
                 #Get latest available public advisory
                 try:
@@ -903,7 +903,7 @@ class RealtimeStorm(Storm):
             current_advisory['advisory_number'] = 'n/a'
 
             #Get UTC time of advisory
-            current_advisory['time_utc'] = self.date[-1]
+            current_advisory['time_utc'] = self.time[-1]
 
             #Get storm type
             subtrop_flag = self.type[-1] in constants.SUBTROPICAL_ONLY_STORM_TYPES
@@ -963,7 +963,7 @@ class RealtimeStorm(Storm):
                     end_point = (self.lat[-1],self.lon[-1])
                     
                     #Get time since last update
-                    hour_diff = (self.date[-1] - self.date[-2]).total_seconds() / 3600.0
+                    hour_diff = (self.time[-1] - self.time[-2]).total_seconds() / 3600.0
                     
                     #Calculate zonal and meridional position change in km
                     x = great_circle((self.lat[-2],self.lon[-2]), (self.lat[-2],self.lon[-1])).kilometers
@@ -1062,7 +1062,7 @@ class RealtimeStorm(Storm):
         format_time = content[6].split(" ")[0]
         if len(format_time) == 3: format_time = "0" + format_time
         format_time = format_time + " " +  ' '.join(content[6].split(" ")[1:])
-        disco_date = dt.strptime(format_time,f'%I00 %p {zone} %a %b %d %Y')
+        disco_time = dt.strptime(format_time,f'%I00 %p {zone} %a %b %d %Y')
 
         time_zones = {
         'ADT':-3,
@@ -1078,7 +1078,7 @@ class RealtimeStorm(Storm):
         'HDT':-9,
         'HST':-10}
         offset = time_zones.get(zone,0)
-        disco_date = disco_date + timedelta(hours=offset*-1)
+        disco_time = disco_time + timedelta(hours=offset*-1)
         
     def __get_ensembles_eps(self):
         #This function is currently not functioning. The path to retrieve EPS ensemble data is:

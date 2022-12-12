@@ -168,9 +168,9 @@ class TornadoPlot(Plot):
 
         #Add right title
         #max_PPH = max(PPH)
-        start_date = dt.strftime(min(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
-        end_date = dt.strftime(max(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
-        self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
+        start_time = dt.strftime(min(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
+        end_time = dt.strftime(max(tornado_data['UTC_time']),'%H:%M UTC %d %b %Y')
+        self.ax.set_title(f'Start ... {start_time}\nEnd ... {end_time}',loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
         

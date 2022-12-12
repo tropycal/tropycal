@@ -217,9 +217,9 @@ class ReconPlot(Plot):
             self.ax.set_title(f"Mission ID: {mission_id}\nRecon: " + ' '.join(vartitle),loc='left',fontsize=17,fontweight='bold')
 
         #Add right title
-        start_date = dt.strftime(min(recon_data['time']),'%H:%M UTC %d %b %Y')
-        end_date = dt.strftime(max(recon_data['time']),'%H:%M UTC %d %b %Y')
-        self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
+        start_time = dt.strftime(min(recon_data['time']),'%H:%M UTC %d %b %Y')
+        end_time = dt.strftime(max(recon_data['time']),'%H:%M UTC %d %b %Y')
+        self.ax.set_title(f'Start ... {start_time}\nEnd ... {end_time}',loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
         
@@ -405,9 +405,9 @@ class ReconPlot(Plot):
 
         #Add right title
         #max_ppf = max(PPF)
-        start_date = dt.strftime(min(Maps['time']),'%H:%M UTC %d %b %Y')
-        end_date = dt.strftime(max(Maps['time']),'%H:%M UTC %d %b %Y')
-        self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
+        start_time = dt.strftime(min(Maps['time']),'%H:%M UTC %d %b %Y')
+        end_time = dt.strftime(max(Maps['time']),'%H:%M UTC %d %b %Y')
+        self.ax.set_title(f'Start ... {start_time}\nEnd ... {end_time}',loc='right',fontsize=13)
 
         #--------------------------------------------------------------------------------------
         
@@ -513,9 +513,9 @@ class ReconPlot(Plot):
 
         #Add right title
         #max_ppf = max(PPF)
-        start_date = dt.strftime(min(dfRecon['time']),'%H:%M UTC %d %b %Y')
-        end_date = dt.strftime(max(dfRecon['time']),'%H:%M UTC %d %b %Y')
-        self.ax.set_title(f'Start ... {start_date}\nEnd ... {end_date}',loc='right',fontsize=13)
+        start_time = dt.strftime(min(dfRecon['time']),'%H:%M UTC %d %b %Y')
+        end_time = dt.strftime(max(dfRecon['time']),'%H:%M UTC %d %b %Y')
+        self.ax.set_title(f'Start ... {start_time}\nEnd ... {end_time}',loc='right',fontsize=13)
 
         #Add plot credit
         text = self.plot_credit()

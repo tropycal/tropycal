@@ -397,10 +397,6 @@ class TrackDataset:
                     self.data[current_id]['extra_obs'].append(0)
                 else:
                     self.data[current_id]['extra_obs'].append(1)
-                    
-                #Fix storm type for cross-dateline storms
-                storm_type = storm_type.replace("ST","HU")
-                storm_type = storm_type.replace("TY","HU")
                 
                 #Append into dict
                 self.data[current_id]['time'].append(time)
@@ -754,7 +750,7 @@ class TrackDataset:
                         neumann[ibtracs_id]['ace'] = 0.0
                     
                     #Retrieve data
-                    neumann_time = dt.strptime(time,'%Y-%m-%d%H:%M:00')
+                    neumann_time = time + timedelta(hours=0)
                     neumann_lat = float(wmo_lat)
                     neumann_lon = float(wmo_lon)
                     neumann_vmax = np.nan if neumann_vmax == "" else int(neumann_vmax)
@@ -762,13 +758,25 @@ class TrackDataset:
                     if np.isnan(neumann_vmax) == False:
                         if str(neumann_vmax)[-1] in ['4','9']: neumann_vmax += 1
                         if str(neumann_vmax)[-1] in ['1','6']: neumann_vmax = neumann_vmax - 1
+                    
+                    #Edit basin
+                    basin_reverse = {v: k for k, v in basin_convert.items()}
+                    wmo_basin = basin_reverse.get(basin,'')
+                    if subbasin in ['WA','EA']:
+                        wmo_basin = 'australia'
+                    neumann[ibtracs_id]['wmo_basin'].append(wmo_basin)
+                    
                     if neumann_type == 'TC':
                         if neumann_vmax < 34:
                             neumann_type = 'TD'
                         elif neumann_vmax < 64:
                             neumann_type = 'TS'
-                        else:
+                        elif wmo_basin in constants.NHC_BASINS:
                             neumann_type = 'HU'
+                        elif neumann_vmax < 130:
+                            neumann_type = 'TY'
+                        else:
+                            neumann_type = 'ST'
                     elif neumann_type == 'MM' or neumann_type == '':
                         neumann_type = 'LO'
                     
@@ -786,13 +794,6 @@ class TrackDataset:
                         neumann[ibtracs_id]['extra_obs'].append(0)
                     else:
                         neumann[ibtracs_id]['extra_obs'].append(1)
-                    
-                    #Edit basin
-                    basin_reverse = {v: k for k, v in basin_convert.items()}
-                    wmo_basin = basin_reverse.get(basin,'')
-                    if subbasin in ['WA','EA']:
-                        wmo_basin = 'australia'
-                    neumann[ibtracs_id]['wmo_basin'].append(wmo_basin)
                     
                     #Calculate ACE & append to storm total
                     if np.isnan(neumann_vmax) == False:
@@ -820,7 +821,6 @@ class TrackDataset:
             if self.ibtracs_mode == 'wmo':
                 
                 #Retrieve data
-                time = dt.strptime(time,'%Y-%m-%d%H:%M:00')
                 dist_land = int(dist_land)
 
                 #Properly format WMO variables
@@ -866,8 +866,12 @@ class TrackDataset:
                         stype = 'TD'
                     elif jtwc_vmax < 64:
                         stype = 'TS'
-                    else:
+                    elif wmo_basin in constants.NHC_BASINS:
                         stype = 'HU'
+                    elif jtwc_vmax < 130:
+                        stype = 'TY'
+                    else:
+                        stype = 'ST'
                 elif wmo_type == 'SS':
                     if np.isnan(jtwc_vmax):
                         stype = 'LO'
@@ -912,7 +916,6 @@ class TrackDataset:
                 sid = map_all_id.get(ibtracs_id)
 
                 #Retrieve data
-                time = dt.strptime(time,'%Y-%m-%d%H:%M:00')
                 dist_land = int(dist_land)
 
                 #Properly format WMO variables
@@ -929,18 +932,28 @@ class TrackDataset:
                 if np.isnan(vmax) == False:
                     if str(vmax)[-1] in ['4','9']: vmax += 1
                     if str(vmax)[-1] in ['1','6']: vmax = vmax - 1
+                
+                #Edit basin
+                basin_reverse = {v: k for k, v in basin_convert.items()}
+                wmo_basin = basin_reverse.get(basin,'')
+                if subbasin in ['WA','EA']:
+                    wmo_basin = 'australia'
+                if sid == 'AL041932': wmo_basin = 'north_atlantic'
+                self.data[sid]['wmo_basin'].append(wmo_basin)
 
                 #Convert storm type from ibtracs to hurdat style
-                if stype == "ST" or stype == "TY":
-                    stype = "HU"
-                elif stype == "":
+                if stype == "":
                     if wmo_type == 'TS':
                         if vmax < 34:
                             stype = 'TD'
                         elif vmax < 64:
                             stype = 'TS'
-                        else:
+                        elif wmo_basin in constants.NHC_BASINS:
                             stype = 'HU'
+                        elif vmax < 130:
+                            stype = 'TY'
+                        else:
+                            stype = 'ST'
                     elif wmo_type == 'SS':
                         if vmax < 34:
                             stype = 'SD'
@@ -957,8 +970,12 @@ class TrackDataset:
                             stype = 'TD'
                         elif vmax < 64:
                             stype = 'TS'
-                        else:
+                        elif wmo_basin in constants.NHC_BASINS:
                             stype = 'HU'
+                        elif vmax < 130:
+                            stype = 'TY'
+                        else:
+                            stype = 'ST'
 
                 #Handle missing data
                 if vmax < 0: vmax = np.nan
@@ -978,14 +995,6 @@ class TrackDataset:
                 self.data[sid]['lon'].append(lon)
                 self.data[sid]['vmax'].append(vmax)
                 self.data[sid]['mslp'].append(mslp)
-
-                #Edit basin
-                basin_reverse = {v: k for k, v in basin_convert.items()}
-                wmo_basin = basin_reverse.get(basin,'')
-                if subbasin in ['WA','EA']:
-                    wmo_basin = 'australia'
-                if sid == 'AL041932': wmo_basin = 'north_atlantic'
-                self.data[sid]['wmo_basin'].append(wmo_basin)
 
                 hhmm = time.strftime('%H%M')
                 if hhmm in constants.STANDARD_HOURS:
@@ -1619,7 +1628,7 @@ class TrackDataset:
                 storm_vmax = np.array(storm_data['vmax'])
                 
                 #Subset to remove obs not useful for ace
-                idx1 = ((storm_type == 'SS') | (storm_type == 'TS') | (storm_type == 'HU'))
+                idx1 = ((storm_type == 'SS') | (storm_type == 'TS') | (storm_type == 'HU') | (storm_type == 'TY') | (storm_type == 'ST'))
                 idx2 = ~np.isnan(storm_vmax)
                 idx3 = ((storm_date_h == '0000') | (storm_date_h == '0600') | (storm_date_h == '1200') | (storm_date_h == '1800'))
                 idx4 = storm_date_y == year
@@ -1880,7 +1889,7 @@ class TrackDataset:
                 storm_vmax = np.array(storm_data['vmax'])
                 
                 #Subset to remove obs not useful for calculation
-                idx1 = ((storm_type == 'SS') | (storm_type == 'TS') | (storm_type == 'HU'))
+                idx1 = ((storm_type == 'SS') | (storm_type == 'TS') | (storm_type == 'HU') | (storm_type == 'TY') | (storm_type == 'ST'))
                 idx2 = ~np.isnan(storm_vmax)
                 idx3 = ((storm_date_h == '0000') | (storm_date_h == '0600') | (storm_date_h == '1200') | (storm_date_h == '1800'))
                 idx4 = storm_date_y == year
@@ -2356,9 +2365,9 @@ class TrackDataset:
             #Filter for purely tropical/subtropical storm locations
             type_array = np.array(storm_data['type'])
             if subtropical:
-                idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+                idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (storm_type == 'ST'))
             else:
-                idx = np.where((type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+                idx = np.where((type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
             
             if len(idx[0]) == 0: continue
             lat_tropical = np.array(storm_data['lat'])[idx]

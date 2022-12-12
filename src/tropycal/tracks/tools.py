@@ -336,7 +336,7 @@ def interp_storm(storm_dict,hours=1,dt_window=24,dt_align='middle',method='linea
                 new_storm[name] = np.array([int(round(i)) if np.isnan(i) == False else np.nan for i in new_storm[name]])
         
         #Correct storm type by intensity
-        newtype[newtype=='TROP'] = [['TD','TS','HU'][int(i>34)+int(i>63)] for i in new_storm['vmax'][newtype=='TROP']]
+        newtype[newtype=='TROP'] = [['TD','TS','HU','TY','ST'][int(i>34)+int(i>63)] for i in new_storm['vmax'][newtype=='TROP']]
         newtype[newtype=='SUB'] = [['SD','SS'][int(i>34)] for i in new_storm['vmax'][newtype=='SUB']]
         new_storm['type'] = newtype
         
@@ -434,7 +434,7 @@ def filter_storms_vp(trackdata,year_min=0,year_max=9999,subset_domain=None):
         enumerate(zip(istorm['vmax'],istorm['mslp'],istorm['type'],istorm['lat'],istorm['lon'],istorm['time'])):
             
             #Ensure both have data and are while the cyclone is tropical
-            if np.nan not in [iwind,imslp] and itype in ['TD','TS','SS','HU','TY'] \
+            if np.nan not in [iwind,imslp] and itype in constants.TROPICAL_STORM_TYPES \
                    and lat_min<=ilat<=lat_max and lon_min<=ilon%360<=lon_max \
                    and year_min<=itime.year<=year_max:
                 vp.append([imslp,iwind])

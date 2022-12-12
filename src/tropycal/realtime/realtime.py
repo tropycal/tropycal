@@ -552,7 +552,6 @@ class Realtime():
                     btk_type = get_storm_type(btk_wind,False)
                 else:
                     btk_type = line[10]
-                    if btk_type == "TY" or btk_type == "ST": btk_type = "HU"
                 name = line[27]
 
                 #Replace with NaNs

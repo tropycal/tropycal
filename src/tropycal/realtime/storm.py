@@ -115,7 +115,7 @@ class RealtimeStorm(Storm):
         
         #Format keys for summary
         type_array = np.array(self.dict['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))[0]
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))[0]
         if self.invest and len(idx) == 0: idx = np.array([True for i in type_array])
         if len(idx) == 0:
             start_time = 'N/A'
@@ -608,8 +608,6 @@ class RealtimeStorm(Storm):
                             #Get storm type, if it can be determined
                             if stype in ['','DB'] and vmax != 0 and np.isnan(vmax) == False:
                                 stype = get_storm_type(vmax,False)
-                            if stype == 'TY': stype = 'HU'
-                            if stype == 'ST': stype = 'HU'
                             forecasts['type'].append(stype)
                     else:
                         ifhr = forecasts['fhr'].index(fhr)

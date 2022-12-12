@@ -168,7 +168,7 @@ def get_storm_classification(wind_speed,subtropical_flag,basin):
     """
     
     #North Atlantic and East Pacific basins
-    if basin in ['north_atlantic','east_pacific']:
+    if basin in constants.NHC_BASINS:
         if wind_speed == 0:
             return "Unknown"
         elif wind_speed < 34:
@@ -254,7 +254,7 @@ def get_storm_classification(wind_speed,subtropical_flag,basin):
     else:
         return "Cyclone"
 
-def get_storm_type(wind_speed,subtropical_flag):
+def get_storm_type(wind_speed,subtropical_flag,typhoon=False):
     
     r"""
     Retrieve the 2-character tropical cyclone type (e.g., "TD", "TS", "HU") given its subtropical status.
@@ -265,6 +265,8 @@ def get_storm_type(wind_speed,subtropical_flag):
         Integer denoting sustained wind speed in knots.
     subtropical_flag : bool
         Boolean denoting whether the cyclone is subtropical or not.
+    typhoon : bool, optional
+        Boolean denoting whether typhoon (True) or hurricane (False) classification should be used for wind speeds at or above 64 kt. Default is False.
     
     Returns
     -------
@@ -281,16 +283,20 @@ def get_storm_type(wind_speed,subtropical_flag):
 
        * - Property
          - Description
+       * - SD
+         - Subtropical Depression
+       * - SS
+         - Subtropical Storm
        * - TD
          - Tropical Depression
        * - TS
          - Tropical Storm
        * - HU
          - Hurricane
-       * - SD
-         - Subtropical Depression
-       * - SS
-         - Subtropical Storm
+       * - TY
+         - Typhoon
+       * - ST
+         - Super Typhoon
     """
     
     #Tropical depression
@@ -308,8 +314,16 @@ def get_storm_type(wind_speed,subtropical_flag):
             return "TS"
     
     #Hurricane
-    else:
+    elif typhoon == False:
         return "HU"
+    
+    #Typhoon
+    elif wind_speed < 130:
+        return "TY"
+    
+    #Super Typhoon
+    else:
+        return "ST"
 
 def get_basin(lat,lon,source_basin=""):
     
@@ -1214,7 +1228,6 @@ def create_storm_dict(filepath,storm_name,storm_id,delimiter=',',time_format='%Y
             #Derive storm type if needed
             if 'type' in header.keys():
                 temp_type = lineArray[header.get('type')[1]]
-                if temp_type in ['TY','ST']: temp_type = 'HU'
                 data['type'].append(temp_type)
             else:
                 data['type'].append(get_storm_type(data['vmax'][-1],False))

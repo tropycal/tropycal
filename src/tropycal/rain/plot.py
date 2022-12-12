@@ -10,6 +10,7 @@ from datetime import datetime as dt,timedelta
 from ..plot import Plot
 
 from ..utils import *
+from .. import constants
 
 try:
     import cartopy.feature as cfeature
@@ -175,7 +176,7 @@ class RainPlot(Plot):
         #Add to coordinate extrema
         if domain == 'dynamic_tropical':
             type_array = np.array(storm_data['type'])
-            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
             use_lats = (np.array(storm_data['lat'])[idx]).tolist()
             use_lons = (np.array(lons)[idx]).tolist()
         else:
@@ -206,7 +207,7 @@ class RainPlot(Plot):
 
             #For tropical/subtropical types, color-code if requested
             if i > 0:
-                if i_type in ['SD','TD','SS','TS','HU']:
+                if i_type in constants.TROPICAL_STORM_TYPES:
 
                     #Plot underlying black and overlying colored line
                     self.ax.plot([lons[i-1],lons[i]],[storm_data['lat'][i-1],storm_data['lat'][i]],'-',
@@ -258,9 +259,9 @@ class RainPlot(Plot):
 
                 #Determine dot type
                 marker_type = '^'
-                if i_type in ['SD','SS']:
+                if i_type in constants.SUBTROPICAL_ONLY_STORM_TYPES:
                     marker_type = 's'
-                elif i_type in ['TD','TS','HU']:
+                elif i_type in constants.TROPICAL_ONLY_STORM_TYPES:
                     marker_type = 'o'
 
                 #Plot marker
@@ -299,7 +300,7 @@ class RainPlot(Plot):
         #Add left title
         type_array = np.array(storm_data['type'])
         if invest_bool == False:
-            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
             tropical_vmax = np.array(storm_data['vmax'])[idx]
             
             #Coerce to include non-TC points if storm hasn't been designated yet

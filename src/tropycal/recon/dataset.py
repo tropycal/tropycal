@@ -1181,7 +1181,7 @@ class hdobs:
         #Add titles
         storm_data = self.storm.dict
         type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
         if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
             tropical_vmax = np.array(storm_data['vmax'])[idx]
 
@@ -2352,7 +2352,7 @@ class dropsondes:
         #Format storm name
         storm_data = self.storm.dict
         type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
         if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
             tropical_vmax = np.array(storm_data['vmax'])[idx]
 
@@ -2758,7 +2758,7 @@ class vdms:
 
         #Add titles
         type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
         if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
             tropical_vmax = np.array(storm_data['vmax'])[idx]
 

@@ -191,7 +191,7 @@ class ReconPlot(Plot):
         
         #Add left title
         type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
         tropical_vmax = np.array(storm_data['vmax'])[idx]
         
         #Coerce to include non-TC points if storm hasn't been designated yet
@@ -391,7 +391,7 @@ class ReconPlot(Plot):
                 
         #Add left title
         type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
         tropical_vmax = np.array(storm_data['vmax'])[idx]
             
         subtrop = classify_subtropical(np.array(storm_data['type']))
@@ -620,7 +620,7 @@ class ReconPlot(Plot):
         storm_data = storm.dict
         #Add left title
         type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
         tropical_vmax = np.array(storm_data['vmax'])[idx]
             
         subtrop = classify_subtropical(np.array(storm_data['type']))

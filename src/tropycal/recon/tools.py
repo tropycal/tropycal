@@ -470,7 +470,7 @@ def hovmoller_plot_title(storm_obj,Hov,varname):
     
     #Subset sustained wind array to when the storm was tropical
     type_array = np.array(storm_data['type'])
-    idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+    idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
     tropical_vmax = np.array(storm_data['vmax'])[idx]
     
     #Coerce to include non-TC points if storm hasn't been designated yet

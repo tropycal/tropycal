@@ -156,7 +156,7 @@ class Season:
         for key in keys:
             #Get tropical duration
             temp_type = np.array(self.dict[key]['type'])
-            tropical_idx = np.where((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU'))
+            tropical_idx = np.where((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU') | (temp_type == 'TY') | (temp_type == 'ST'))
             if key in season_info_keys:
                 sidx = season_info_keys.index(key)
                 ds['id'].append(key)
@@ -365,11 +365,11 @@ class Season:
 
                 #Get indices of all tropical/subtropical time steps
                 if self.basin == 'all':
-                    idx = np.where(((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU')) & (temp_year == self.year))
+                    idx = np.where(((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU') | (temp_type == 'TY') | (temp_type == 'ST')) & (temp_year == self.year))
                 elif self.basin == 'both':
-                    idx = np.where(((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU')))
+                    idx = np.where(((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU') | (temp_type == 'TY') | (temp_type == 'ST')))
                 else:
-                    idx = np.where(((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU')) & (temp_basin == self.basin))
+                    idx = np.where(((temp_type == 'SS') | (temp_type == 'SD') | (temp_type == 'TD') | (temp_type == 'TS') | (temp_type == 'HU') | (temp_type == 'TY') | (temp_type == 'ST')) & (temp_basin == self.basin))
                 
                 #Get times during existence of trop/subtrop storms
                 if len(idx[0]) == 0: continue

@@ -114,7 +114,7 @@ class Storm:
         
         #Format keys for summary
         type_array = np.array(self.dict['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))[0]
+        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))[0]
         if self.invest and len(idx) == 0: idx = np.array([True for i in type_array])
         if len(idx) == 0:
             start_time = 'N/A'

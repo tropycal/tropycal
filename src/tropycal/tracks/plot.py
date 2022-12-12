@@ -329,7 +329,7 @@ class TrackPlot(Plot):
             #Add to coordinate extrema
             if domain == 'dynamic_tropical':
                 type_array = np.array(storm_data['type'])
-                idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+                idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
                 use_lats = (np.array(storm_data['lat'])[idx]).tolist()
                 use_lons = (np.array(lons)[idx]).tolist()
             else:
@@ -458,7 +458,7 @@ class TrackPlot(Plot):
         else:
             #Add left title
             type_array = np.array(storm_data['type'])
-            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU'))
+            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
             
             #Check if storm is an invest with a leading 9
             add_ptc_flag = False
@@ -782,7 +782,7 @@ None,prop={},map_prop={}):
                 mtype = '^'
                 if itype in constants.SUBTROPICAL_ONLY_STORM_TYPES:
                     mtype = 's'
-                elif itype in ['TD','TS','HU','']:
+                elif itype in list(constants.TROPICAL_ONLY_STORM_TYPES) + ['']:
                     mtype = 'o'
                 if prop['fillcolor'] == 'category':
                     ncol = get_colors_sshws(np.nan_to_num(iwnd))

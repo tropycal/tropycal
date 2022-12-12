@@ -420,7 +420,7 @@ class TrackDataset:
                 
                 #Calculate ACE & append to storm total
                 if np.isnan(vmax) == False:
-                    ace = (10**-4) * (vmax**2)
+                    ace = accumulated_cyclone_energy(vmax)
                     if hhmm in constants.STANDARD_HOURS and storm_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[current_id]['ace'] += np.round(ace,4)
         
@@ -631,7 +631,7 @@ class TrackDataset:
 
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:
-                    ace = (10**-4) * (btk_wind**2)
+                    ace = accumulated_cyclone_energy(btk_wind)
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
@@ -796,7 +796,7 @@ class TrackDataset:
                     
                     #Calculate ACE & append to storm total
                     if np.isnan(neumann_vmax) == False:
-                        ace = (10**-4) * (neumann_vmax**2)
+                        ace = accumulated_cyclone_energy(neumann_vmax)
                         if hhmm in constants.STANDARD_HOURS and neumann_type in constants.NAMED_TROPICAL_STORM_TYPES and np.isnan(ace) == False:
                             neumann[ibtracs_id]['ace'] += np.round(ace,4)
                         
@@ -902,7 +902,7 @@ class TrackDataset:
 
                 #Calculate ACE & append to storm total
                 if np.isnan(jtwc_vmax) == False:
-                    ace = (10**-4) * (jtwc_vmax**2)
+                    ace = accumulated_cyclone_energy(jtwc_vmax)
                     if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES and np.isnan(ace) == False:
                         self.data[ibtracs_id]['ace'] += np.round(ace,4)
                 
@@ -995,7 +995,7 @@ class TrackDataset:
 
                 #Calculate ACE & append to storm total
                 if np.isnan(vmax) == False:
-                    ace = (10**-4) * (vmax**2)
+                    ace = accumulated_cyclone_energy(vmax)
                     if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES and np.isnan(ace) == False:
                         self.data[sid]['ace'] += np.round(ace,4)
                     
@@ -1627,7 +1627,7 @@ class TrackDataset:
                 storm_type = storm_type[(idx1) & (idx2) & (idx3) & (idx4)]
                 storm_vmax = storm_vmax[(idx1) & (idx2) & (idx3) & (idx4)]
                 if len(storm_vmax) == 0: continue #Continue if doesn't apply to this storm
-                storm_ace = (10**-4) * (storm_vmax**2)
+                storm_ace = accumulated_cyclone_energy(storm_vmax)
                 
                 #Account for storms on february 29th by pushing them forward 1 day
                 if '0229' in storm_date_m:

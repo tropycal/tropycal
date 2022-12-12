@@ -371,7 +371,7 @@ class Realtime():
 
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:
-                    ace = (10**-4) * (btk_wind**2)
+                    ace = accumulated_cyclone_energy(btk_wind)
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 
@@ -576,7 +576,7 @@ class Realtime():
 
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:
-                    ace = (10**-4) * (btk_wind**2)
+                    ace = accumulated_cyclone_energy(btk_wind)
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace,4)
 

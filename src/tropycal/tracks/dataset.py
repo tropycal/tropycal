@@ -3440,7 +3440,7 @@ class TrackDataset:
         if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
             julian_start = [i+365 if i < 100 else i for i in julian_start]
             julian_end = [i-365 if i > 300 else i for i in julian_end]
-        else:
+        elif self.basin != 'all':
             julian_end = [i+365 if i < 100 else i for i in julian_end]
         subset_climo = subset_climo.drop(columns=['start_time','end_time'])
         subset_climo['start_time'] = julian_start

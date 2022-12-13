@@ -1581,10 +1581,7 @@ class TrackDataset:
         
         if climo_year_range is None:
             climo_year_range = (1950,dt.now().year-1)
-        
-        if self.basin in ['south_indian','australia','south_pacific']:
-            warnings.warn("This function is not currently configured to work in the Southern Hemisphere.")
-        
+
         #Create empty dict
         ace = {}
         
@@ -1601,21 +1598,20 @@ class TrackDataset:
                 continue
             
             #Generate list of dates for this year
-            year_dates = np.array([dt.strptime(((pd.to_datetime(i)).strftime('%Y%m%d%H')),'%Y%m%d%H') for i in np.arange(dt(year,1,1),dt(year+1,1,1),timedelta(hours=6))])
+            if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
+                year_dates = np.array([dt.strptime(((pd.to_datetime(i)).strftime('%Y%m%d%H')),'%Y%m%d%H') for i in np.arange(dt(year-1,7,1),dt(year,7,1),timedelta(hours=6))])
+            else:
+                year_dates = np.array([dt.strptime(((pd.to_datetime(i)).strftime('%Y%m%d%H')),'%Y%m%d%H') for i in np.arange(dt(year,1,1),dt(year+1,1,1),timedelta(hours=6))])
             
             #Remove 2/29 from dates
             if calendar.isleap(year):
                 year_dates = year_dates[year_dates != dt(year,2,29,0)]
-                year_dates = year_dates[year_dates != dt(year,2,29,3)]
                 year_dates = year_dates[year_dates != dt(year,2,29,6)]
-                year_dates = year_dates[year_dates != dt(year,2,29,9)]
                 year_dates = year_dates[year_dates != dt(year,2,29,12)]
-                year_dates = year_dates[year_dates != dt(year,2,29,15)]
                 year_dates = year_dates[year_dates != dt(year,2,29,18)]
-                year_dates = year_dates[year_dates != dt(year,2,29,21)]
             
             #Additional empty arrays
-            year_cumace = np.zeros((year_dates.shape))
+            year_timestep_ace = np.zeros((year_dates.shape))
             year_genesis = []
             
             #Get list of storms for this year
@@ -1636,6 +1632,7 @@ class TrackDataset:
                 idx2 = ~np.isnan(storm_vmax)
                 idx3 = ((storm_date_h == '0000') | (storm_date_h == '0600') | (storm_date_h == '1200') | (storm_date_h == '1800'))
                 idx4 = storm_date_y == year
+                if self.basin in constants.SOUTH_HEMISPHERE_BASINS: idx4[idx4 == False] = True
                 storm_date = storm_date[(idx1) & (idx2) & (idx3) & (idx4)]
                 storm_type = storm_type[(idx1) & (idx2) & (idx3) & (idx4)]
                 storm_vmax = storm_vmax[(idx1) & (idx2) & (idx3) & (idx4)]
@@ -1654,33 +1651,36 @@ class TrackDataset:
                 
                 #Append ACE to cumulative sum
                 idx = np.nonzero(np.in1d(year_dates, storm_date))
-                year_cumace[idx] += storm_ace
+                year_timestep_ace[idx] += storm_ace
                 year_genesis.append(np.where(year_dates == storm_date[0])[0][0])
                 
             #Calculate cumulative sum of year
             if rolling_sum == 0:
-                year_cum = np.cumsum(year_cumace)
+                year_cumulative_ace = np.cumsum(year_timestep_ace)
                 year_genesis = np.array(year_genesis)
             
                 #Attach to dict
                 ace[str(year)] = {}
                 ace[str(year)]['time'] = year_dates
-                ace[str(year)]['ace'] = year_cum
+                ace[str(year)]['ace'] = year_cumulative_ace
                 ace[str(year)]['genesis_index'] = year_genesis
             else:
-                year_cum = np.sum(rolling_window(year_cumace,rolling_sum*4),axis=1)
+                year_cumulative_ace = np.sum(rolling_window(year_timestep_ace,rolling_sum*4),axis=1)
                 year_genesis = np.array(year_genesis) - ((rolling_sum*4)-1)
                 
                 #Attach to dict
                 ace[str(year)] = {}
                 ace[str(year)]['time'] = year_dates[((rolling_sum*4)-1):]
-                ace[str(year)]['ace'] = year_cum
+                ace[str(year)]['ace'] = year_cumulative_ace
                 ace[str(year)]['genesis_index'] = year_genesis
                  
         #------------------------------------------------------------------------------------------
         
         #Construct non-leap year julian day array
+        julian_x = np.arange(365*4.0) / 4.0
         julian = np.arange(365*4.0) / 4.0
+        if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
+            julian = list(julian[182*4:]) + list(julian[:182*4])
         if rolling_sum != 0:
             julian = julian[((rolling_sum*4)-1):]
           
@@ -1689,6 +1689,12 @@ class TrackDataset:
         julian_start = months_julian['start']
         julian_midpoint = months_julian['midpoint']
         julian_name = months_julian['name']
+        julian_months = [1,2,3,4,5,6,7,8,9,10,11,12]
+        if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
+            julian_start = list(np.array(julian_start[6:])-181) + list(np.array(julian_start[:6])+183)
+            julian_midpoint = list(np.array(julian_midpoint[6:])-181) + list(np.array(julian_midpoint[:6])+183)
+            julian_name = julian_name[6:] + julian_name[:6]
+            julian_months = [7,8,9,10,11,12,1,2,3,4,5,6]
         
         #Construct percentile arrays
         all_ace = np.ones((len(years),len(julian)))*np.nan
@@ -1717,22 +1723,26 @@ class TrackDataset:
         
         #Set x-axis bounds
         if month_range is None:
-            ax.set_xlim(julian_start[4],julian[-1])
+            ax.set_xlim(julian_start[4],julian_x[-1])
         else:
-            end_month = month_range[1]-1
-            end_julian = julian[-1] if end_month == 11 else julian_start[end_month]-1
-            ax.set_xlim(julian_start[month_range[0]-1],end_julian)
+            start_month = julian_months.index(int(month_range[0]))
+            end_month = julian_months.index(int(month_range[1]))
+            start_julian = julian_x[0] if start_month == 0 else julian_start[start_month]
+            end_julian = julian_x[-1] if end_month == len(julian_months)-1 else julian_start[end_month+1]
+            ax.set_xlim(start_julian,end_julian)
 
         #Add plot title
+        plot_year_title = ''
         if plot_year is None:
             title_string = f"{self.basin.title().replace('_',' ')} Accumulated Cyclone Energy Climatology"
         else:
+            plot_year_title = str(plot_year) if self.basin not in constants.SOUTH_HEMISPHERE_BASINS else f'{plot_year-1}-{plot_year}'
             cur_year = (dt.now()).year
             if plot_year == cur_year:
                 add_current = f"(through {dt.now().strftime('%m/%d')})"
             else:
                 add_current = ""
-            title_string = f"{plot_year} {self.basin.title().replace('_',' ')} Accumulated Cyclone Energy {add_current}"
+            title_string = f"{plot_year_title} {self.basin.title().replace('_',' ')} Accumulated Cyclone Energy {add_current}"
         if rolling_sum != 0:
             title_add = f"\n{rolling_sum}-Day Running Sum"
         else:
@@ -1742,7 +1752,7 @@ class TrackDataset:
         #Plot requested year
         if plot_year is not None:
             
-            year_julian = np.copy(julian)
+            year_julian_x = np.copy(julian_x)
             year_ace = ace[str(plot_year)]['ace']
             year_genesis = ace[str(plot_year)]['genesis_index']
             
@@ -1750,14 +1760,14 @@ class TrackDataset:
             cur_year = (dt.now()).year
             if plot_year == cur_year:
                 cur_julian = int(convert_to_julian( (dt.now()).replace(year=2019,minute=0,second=0) ))*4 - int(rolling_sum*4)
-                year_julian = year_julian[:cur_julian+1]
+                year_julian_x = year_julian_x[:cur_julian+1]
                 year_ace = year_ace[:cur_julian+1]
                 year_genesis = year_genesis[:cur_julian+1]
 
-            ax.plot(year_julian[-1],year_ace[-1],'o',color='k',ms=8,mec='w',mew=0.8,zorder=8)
-            ax.plot(year_julian,year_ace,'-',color='w',linewidth=2.8,zorder=6)
-            ax.plot(year_julian,year_ace,'-',color='k',linewidth=2.0,zorder=6,label=f'{plot_year} ACE ({np.max(year_ace):.1f})')
-            ax.plot(year_julian[year_genesis],year_ace[year_genesis],'D',color='k',ms=5,mec='w',mew=0.5,zorder=7,label='TC Genesis')
+            ax.plot(year_julian_x[-1],year_ace[-1],'o',color='k',ms=8,mec='w',mew=0.8,zorder=8)
+            ax.plot(year_julian_x,year_ace,'-',color='w',linewidth=2.8,zorder=6)
+            ax.plot(year_julian_x,year_ace,'-',color='k',linewidth=2.0,zorder=6,label=f'{plot_year_title} ACE ({np.max(year_ace):.1f})')
+            ax.plot(year_julian_x[year_genesis],year_ace[year_genesis],'D',color='k',ms=5,mec='w',mew=0.5,zorder=7,label='TC Genesis')
             
         #Plot comparison years
         if compare_years is not None:
@@ -1766,7 +1776,7 @@ class TrackDataset:
                 
             for year in compare_years:
                 
-                year_julian = np.copy(julian)
+                year_julian_x = np.copy(julian_x)
                 year_ace = ace[str(year)]['ace']
                 year_genesis = ace[str(year)]['genesis_index']
 
@@ -1774,27 +1784,29 @@ class TrackDataset:
                 cur_year = (dt.now()).year
                 if year == cur_year:
                     cur_julian = int(convert_to_julian( (dt.now()).replace(year=2019,minute=0,second=0) ))*4 - int(rolling_sum*4)
-                    year_julian = year_julian[:cur_julian+1]
+                    year_julian_x = year_julian_x[:cur_julian+1]
                     year_ace = year_ace[:cur_julian+1]
                     year_genesis = year_genesis[:cur_julian+1]
-                    ax.plot(year_julian[-1],year_ace[-1],'o',color='#333333',alpha=0.3,ms=6,zorder=5)
+                    ax.plot(year_julian_x[-1],year_ace[-1],'o',color='#333333',alpha=0.3,ms=6,zorder=5)
 
                 if len(compare_years) <= 5:
-                    ax.plot(year_julian,year_ace,'-',color='k',linewidth=1.0,alpha=0.5,zorder=3,label=f'{year} ACE ({np.max(year_ace):.1f})')
-                    ax.plot(year_julian[year_genesis],year_ace[year_genesis],'D',color='#333333',ms=3,alpha=0.3,zorder=4)
-                    ax.text(year_julian[-2],year_ace[-2]+2,str(year),fontsize=7,fontweight='bold',alpha=0.7,ha='right',va='bottom')
+                    label_year = str(year) if self.basin not in constants.SOUTH_HEMISPHERE_BASINS else f'{year-1}-{year}'
+                     
+                    ax.plot(year_julian_x,year_ace,'-',color='k',linewidth=1.0,alpha=0.5,zorder=3,label=f'{year} ACE ({np.max(year_ace):.1f})')
+                    ax.plot(year_julian_x[year_genesis],year_ace[year_genesis],'D',color='#333333',ms=3,alpha=0.3,zorder=4)
+                    ax.text(year_julian_x[-2],year_ace[-2]+2,str(year),fontsize=7,fontweight='bold',alpha=0.7,ha='right',va='bottom')
                 else:
-                    ax.plot(year_julian,year_ace,'-',color='k',linewidth=1.0,alpha=0.15,zorder=3)
+                    ax.plot(year_julian_x,year_ace,'-',color='k',linewidth=1.0,alpha=0.15,zorder=3)
             
         
         #Plot all climatological values
         pmin_masked = np.array(pmin)
         pmin_masked = np.ma.masked_where(pmin_masked==0,pmin_masked)
-        ax.plot(julian,pmax,'--',color='r',zorder=2,label=f'Max ({np.max(pmax):.1f})')
-        ax.plot(julian,pmin_masked,'--',color='b',zorder=2,label=f'Min ({np.max(pmin):.1f})')
-        ax.fill_between(julian,p10,p90,color='#60CE56',alpha=0.3,zorder=2,label='Climo 10-90%')
-        ax.fill_between(julian,p25,p75,color='#16A147',alpha=0.3,zorder=2,label='Climo 25-75%')
-        ax.fill_between(julian,p40,p60,color='#00782A',alpha=0.3,zorder=2,label='Climo 40-60%')
+        ax.plot(julian_x,pmax,'--',color='r',zorder=2,label=f'Max ({np.max(pmax):.1f})')
+        ax.plot(julian_x,pmin_masked,'--',color='b',zorder=2,label=f'Min ({np.max(pmin):.1f})')
+        ax.fill_between(julian_x,p10,p90,color='#60CE56',alpha=0.3,zorder=2,label='Climo 10-90%')
+        ax.fill_between(julian_x,p25,p75,color='#16A147',alpha=0.3,zorder=2,label='Climo 25-75%')
+        ax.fill_between(julian_x,p40,p60,color='#00782A',alpha=0.3,zorder=2,label='Climo 40-60%')
 
         #Add legend & plot credit
         ax.legend(loc=2)

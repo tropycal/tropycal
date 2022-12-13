@@ -49,9 +49,6 @@ class Season:
         if self.source != new.source:
             msg = 'Seasons can only be added from the same source.'
             raise ValueError(msg)
-        if self.source == 'ibtracs':
-            msg = 'Only hurdat data sources are currently supported for this functionality.'
-            raise RuntimeError(msg)
         
         #Retrieve old & new dict entries
         dict_original = self.dict.copy()
@@ -76,7 +73,7 @@ class Season:
         new_dict = {}
         for year in new_attrs['year']:
             for key in dict_original.keys():
-                if int(key[-4:]) == year:
+                if dict_original[key]['season'] == year:
                     new_dict[key] = dict_original[key]
         
         #Return new Season object
@@ -341,7 +338,7 @@ class Season:
             for key in self.dict.keys():
                 
                 #Skip if using multi-season object and storm is outside of this season
-                if multi_season == True and int(key[-4:]) != iter_season: continue
+                if multi_season == True and self.dict[key]['season'] != iter_season: continue
 
                 #Retrieve info about storm, only in this basin
                 temp_name = self.dict[key]['name']

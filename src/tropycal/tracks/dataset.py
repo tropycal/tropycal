@@ -1579,15 +1579,15 @@ class TrackDataset:
         #Retrieve current year
         cur_year = dt.now().year
         
-        if climo_year_range is None:
-            climo_year_range = (1950,dt.now().year-1)
+        if climo_bounds is None:
+            climo_bounds = (1950,dt.now().year-1)
 
         #Create empty dict
         ace = {}
         
         #Iterate over every year of HURDAT available
         end_year = self.data[self.keys[-1]]['year']
-        years = [yr for yr in range(1851,cur_year+1) if (min(climo_year_range)<=yr<=max(climo_year_range)) or yr==plot_year]
+        years = [yr for yr in range(1851,cur_year+1) if (min(climo_bounds)<=yr<=max(climo_bounds)) or yr==plot_year]
         for year in years:
             
             #Get info for this year
@@ -1700,7 +1700,7 @@ class TrackDataset:
         
         #Construct percentile arrays
         all_ace = np.ones((len(years),len(julian)))*np.nan
-        for year in range(min(climo_year_range),max(climo_year_range)+1):
+        for year in range(min(climo_bounds),max(climo_bounds)+1):
             all_ace[years.index(year)] = ace[str(year)]['ace']
         pmin,p10,p25,p40,p60,p75,p90,pmax = np.nanpercentile(all_ace,[0,10,25,40,60,75,90,100],axis=0)
         
@@ -1817,7 +1817,7 @@ class TrackDataset:
         
         credit_text = plot_credit()
         add_credit(ax,credit_text)
-        ax.text(0.99,0.99,f'Climatology from {climo_year_range[0]}{endash}{climo_year_range[-1]}',fontsize=9,color='k',alpha=0.7,
+        ax.text(0.99,0.99,f'Climatology from {climo_bounds[0]}{endash}{climo_bounds[-1]}',fontsize=9,color='k',alpha=0.7,
                 transform=ax.transAxes,ha='right',va='top',zorder=10)
         
         #Show/save plot and close

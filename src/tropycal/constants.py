@@ -22,6 +22,10 @@ ALL_BASINS = frozenset(['north_atlantic','east_pacific','west_pacific','north_in
 #Accepted NHC basins
 NHC_BASINS = frozenset(['north_atlantic','east_pacific'])
 
+#South Hemisphere basins
+SOUTH_HEMISPHERE_BASINS = frozenset(['south_atlantic','south_indian','australia','south_pacific'])
+
+
 #NHC Cone Radii, in nautical miles
 CONE_SIZE_ATL = {
     2022: [16,26,39,52,67,84,100,142,200],

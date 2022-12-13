@@ -1570,6 +1570,10 @@ class TrackDataset:
         -------
         axes or dict
             By default, the plot axes is returned. If return_dict is True, a dictionary containing the axes and data about the ACE climatology is returned.
+        
+        Notes
+        -----
+        If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
         """
         
         #Retrieve current year
@@ -1586,7 +1590,7 @@ class TrackDataset:
         
         #Iterate over every year of HURDAT available
         end_year = self.data[self.keys[-1]]['year']
-        years = [yr for yr in range(1851,dt.now().year+1) if (min(climo_year_range)<=yr<=max(climo_year_range)) or yr==plot_year]
+        years = [yr for yr in range(1851,cur_year+1) if (min(climo_year_range)<=yr<=max(climo_year_range)) or yr==plot_year]
         for year in years:
             
             #Get info for this year
@@ -1838,6 +1842,10 @@ class TrackDataset:
         -------
         axes or dict
             By default, the axes is returned. If return_dict is True, a dictionary containing the axes and data about the climatology is returned.
+        
+        Notes
+        -----
+        If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
         """
         
         #Create empty dict
@@ -3403,6 +3411,10 @@ class TrackDataset:
         -------
         dict
             Dictionary containing the climatology for this dataset.
+        
+        Notes
+        -----
+        If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
         """
 
         #Error check
@@ -3425,7 +3437,11 @@ class TrackDataset:
         #Convert dates to julian days
         julian_start = [convert_to_julian(pd.to_datetime(i)) for i in subset_climo['start_time'].values]
         julian_end = [convert_to_julian(pd.to_datetime(i)) for i in subset_climo['end_time'].values]
-        julian_end = [i+365 if i < 100 else i for i in julian_end]
+        if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
+            julian_start = [i+365 if i < 100 else i for i in julian_start]
+            julian_end = [i-365 if i > 300 else i for i in julian_end]
+        else:
+            julian_end = [i+365 if i < 100 else i for i in julian_end]
         subset_climo = subset_climo.drop(columns=['start_time','end_time'])
         subset_climo['start_time'] = julian_start
         subset_climo['end_time'] = julian_end
@@ -3448,7 +3464,7 @@ class TrackDataset:
         Parameters
         ----------
         seasons : list
-            List of seasons to create a composite of. For Southern Hemisphere, season is the start of the two-year period.
+            List of seasons to create a composite of.
         climo_bounds : list or tuple
             List or tuple of start and end years of climatology bounds. If none, defaults to (1991,2020).
         
@@ -3456,6 +3472,10 @@ class TrackDataset:
         -------
         dict
             Dictionary containing the composite of the requested seasons.
+        
+        Notes
+        -----
+        If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
         """
 
         if isinstance(seasons,list) == False:

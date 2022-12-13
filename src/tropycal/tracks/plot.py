@@ -1382,7 +1382,7 @@ None,prop={},map_prop={}):
             
             #Update coordinate bounds
             skip_bounds = False
-            idx_start = storm_dict['time'].index(forecast)
+            idx_start = storm_dict['time'].index(forecast) if forecast in storm_dict['time'] else 0
             if valid_time in storm_dict['time']:
                 idx = storm_dict['time'].index(valid_time)
                 

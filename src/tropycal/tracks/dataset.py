@@ -1542,7 +1542,7 @@ class TrackDataset:
                 return_season = return_season + self.__retrieve_season(i_year,basin)
             return return_season
     
-    def ace_climo(self,plot_year=None,compare_years=None,climo_year_range=None,month_range=None,rolling_sum=0,return_dict=False,plot=True,save_path=None):
+    def ace_climo(self,plot_year=None,compare_years=None,climo_bounds=None,month_range=None,rolling_sum=0,return_dict=False,plot=True,save_path=None):
         
         r"""
         Creates and plots a climatology of accumulated cyclone energy (ACE).
@@ -1553,7 +1553,7 @@ class TrackDataset:
             Year to highlight. If current year, plot will be drawn through today. If none, no year will be highlighted.
         compare_years : int or list
             Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).
-        climo_year_range : tuple
+        climo_bounds : tuple
             Start and end years to compute the climatology over. Default is from 1950 to last year.
         month_range : tuple
             Start and end months to plot (e.g., ``(5,10)``). Default is peak hurricane season by basin.
@@ -1829,7 +1829,7 @@ class TrackDataset:
         else:
             return ax
 
-    def hurricane_days_climo(self,plot_year=None,compare_years=None,start_year=1950,rolling_sum=0,category=None,return_dict=False,plot=True,save_path=None):
+    def hurricane_days_climo(self,plot_year=None,compare_years=None,climo_bounds=1950,rolling_sum=0,category=None,return_dict=False,plot=True,save_path=None):
         
         r"""
         Creates a climatology of tropical storm/hurricane/major hurricane days.
@@ -1840,7 +1840,7 @@ class TrackDataset:
             Year to highlight. If current year, plot will be drawn through today.
         compare_years : int or list
             Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).
-        start_year : int
+        climo_bounds : int
             Year to begin calculating the climatology over. Default is 1950.
         rolling_sum : int
             Days to calculate a rolling sum over. Default is 0 (annual running sum).
@@ -2143,7 +2143,7 @@ class TrackDataset:
         else:
             return ax
     
-    def wind_pres_relationship(self,storm=None,year_range=None,return_dict=False,plot=True,save_path=None):
+    def wind_pres_relationship(self,storm=None,climo_bounds=None,return_dict=False,plot=True,save_path=None):
         
         r"""
         Creates a climatology of maximum sustained wind speed vs minimum MSLP relationships.
@@ -2152,8 +2152,8 @@ class TrackDataset:
         ----------
         storm : str or tuple
             Storm to plot. Can be either string of storm ID (e.g., "AL052019"), or tuple with storm name and year (e.g., ("Matthew",2016)).
-        year_range : list or tuple
-            List or tuple representing the start and end years (e.g., (1950,2018)). Default is the start and end of dataset.
+        climo_bounds : list or tuple
+            List or tuple representing the start and end years (e.g., ``(1950,2018)``). Default is the start and end of dataset.
         return_dict : bool
             Determines whether to return data from this function. Default is False.
         plot : bool
@@ -3412,14 +3412,14 @@ class TrackDataset:
         #Return dataset
         return ds.set_index('season')
 
-    def climatology(self,year_range=(1991,2020)):
+    def climatology(self,climo_bounds=(1991,2020)):
 
         r"""
         Create a climatology for this dataset given start and end seasons. If none passed, defaults to 1991-2020.
         
         Parameters
         ----------
-        year_range : list or tuple, optional
+        climo_bounds : list or tuple, optional
             Start and end year for the climatology range. Default is (1991,2020).
         
         Returns

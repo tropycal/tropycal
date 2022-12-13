@@ -1591,11 +1591,14 @@ class TrackDataset:
         for year in years:
             
             #Get info for this year
-            try:
-                season = self.get_season(year)
-                year_info = season.summary()
-            except:
-                continue
+            if self.basin == 'all':
+                storm_ids = [key for key in self.data.keys() if year in [i.year for i in self.data[key]['time']]]
+            else:
+                try:
+                    season = self.get_season(year)
+                    storm_ids = season.summary()['id']
+                except:
+                    continue
             
             #Generate list of dates for this year
             if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
@@ -1615,7 +1618,6 @@ class TrackDataset:
             year_genesis = []
             
             #Get list of storms for this year
-            storm_ids = year_info['id']
             for storm in storm_ids:
                 
                 #Get HURDAT data for this storm
@@ -1732,9 +1734,10 @@ class TrackDataset:
             ax.set_xlim(start_julian,end_julian)
 
         #Add plot title
+        basin_title = self.basin.title().replace('_',' ') if self.basin != 'all' else 'Global'
         plot_year_title = ''
         if plot_year is None:
-            title_string = f"{self.basin.title().replace('_',' ')} Accumulated Cyclone Energy Climatology"
+            title_string = f"{basin_title} Accumulated Cyclone Energy Climatology"
         else:
             plot_year_title = str(plot_year) if self.basin not in constants.SOUTH_HEMISPHERE_BASINS else f'{plot_year-1}-{plot_year}'
             cur_year = (dt.now()).year
@@ -1742,7 +1745,7 @@ class TrackDataset:
                 add_current = f"(through {dt.now().strftime('%m/%d')})"
             else:
                 add_current = ""
-            title_string = f"{plot_year_title} {self.basin.title().replace('_',' ')} Accumulated Cyclone Energy {add_current}"
+            title_string = f"{plot_year_title} {basin_title} Accumulated Cyclone Energy {add_current}"
         if rolling_sum != 0:
             title_add = f"\n{rolling_sum}-Day Running Sum"
         else:

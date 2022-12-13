@@ -2576,17 +2576,19 @@ class TrackDataset:
                 
         return ace_rank
 
-    def filter_storms(self,storm=None,year_range=(0,9999),date_range=('1/1','12/31'),thresh={},domain=None,interpolate_data=False,return_keys=True):
+    def filter_storms(self,storm=None,year_range=None,date_range=None,thresh={},domain=None,interpolate_data=False,return_keys=True):
         
         r"""
         Filters all storms by various thresholds.
         
         Parameters
         ----------
+        storm : list or str
+            Single storm ID or list of storm IDs (e.g., ``'AL012022'``, ``['AL012022','AL022022']``) to search through. If None, defaults to searching through the entire dataset.
         year_range : list or tuple
-            List or tuple representing the start and end years (e.g., (1950,2018)). Default is start and end years of dataset.
+            List or tuple representing the start and end years (e.g., ``(1950,2018)``). Default is start and end years of dataset.
         date_range : list or tuple
-            List or tuple representing the start and end dates as a string in 'month/day' format (e.g., ('6/1','8/15')). Default is ('1/1','12/31') or full year.
+            List or tuple representing the start and end dates as a string in 'month/day' format (e.g., ``('6/1','8/15')``). Default is ``('1/1','12/31')`` or full year.
         thresh : dict
             Keywords include:
                 
@@ -2611,6 +2613,10 @@ class TrackDataset:
         list or pandas.DataFrame
             Check return_keys for more information.
         """
+        
+        #Add default year aned date ranges
+        if year_range is None: year_range = (0,9999)
+        if date_range is None: date_range = ('1/1','12/31')
         
         #Add interpolation automatically if requested threshold necessitates it
         check_keys = [True if i in thresh else False for i in ['dv_min','dv_max','dp_min','dp_max','speed_min','speed_max']]

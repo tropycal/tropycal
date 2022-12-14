@@ -1685,6 +1685,7 @@ class TrackDataset:
             julian = list(julian[182*4:]) + list(julian[:182*4])
         if rolling_sum != 0:
             julian = julian[((rolling_sum*4)-1):]
+            julian_x = julian_x[((rolling_sum*4)-1):]
           
         #Get julian days for a non-leap year
         months_julian = months_in_julian(2019)
@@ -1829,7 +1830,7 @@ class TrackDataset:
         else:
             return ax
 
-    def hurricane_days_climo(self,plot_year=None,compare_years=None,climo_bounds=1950,rolling_sum=0,category=None,return_dict=False,plot=True,save_path=None):
+    def hurricane_days_climo(self,plot_year=None,compare_years=None,climo_bounds=None,month_range=None,rolling_sum=0,category=None,return_dict=False,plot=True,save_path=None):
         
         r"""
         Creates a climatology of tropical storm/hurricane/major hurricane days.
@@ -1837,15 +1838,17 @@ class TrackDataset:
         Parameters
         ----------
         plot_year : int
-            Year to highlight. If current year, plot will be drawn through today.
+            Year to highlight. If current year, plot will be drawn through today. If none, no year will be highlighted.
         compare_years : int or list
             Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).
-        climo_bounds : int
-            Year to begin calculating the climatology over. Default is 1950.
+        climo_bounds : tuple
+            Start and end years to compute the climatology over. Default is from 1950 to last year.
+        month_range : tuple
+            Start and end months to plot (e.g., ``(5,10)``). Default is peak hurricane season by basin.
         rolling_sum : int
             Days to calculate a rolling sum over. Default is 0 (annual running sum).
         category : int
-            SSHWS Category to generate the data and plot for. Use 0 for tropical storm. If none (default), a plot will be generated for all categories.
+            SSHWS Category to generate the data and plot for. Use 0 for tropical storm. If None (default), a plot will be generated for all categories.
         return_dict : bool
             Determines whether to return data from this function. Default is False.
         plot : bool
@@ -1856,12 +1859,18 @@ class TrackDataset:
         Returns
         -------
         axes or dict
-            By default, the axes is returned. If return_dict is True, a dictionary containing the axes and data about the climatology is returned.
+            By default, the plot axes is returned. If return_dict is True, a dictionary containing the axes and data about the climatology is returned.
         
         Notes
         -----
         If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
         """
+        
+        #Retrieve current year
+        cur_year = dt.now().year
+        
+        if climo_bounds is None:
+            climo_bounds = (1950,dt.now().year-1)
         
         #Create empty dict
         tc_days = {}
@@ -1874,15 +1883,24 @@ class TrackDataset:
         
         #Iterate over every year of HURDAT available
         end_year = self.data[self.keys[-1]]['year']
-        years = range(start_year,end_year+1)
+        years = [yr for yr in range(1851,cur_year+1) if (min(climo_bounds)<=yr<=max(climo_bounds)) or yr==plot_year]
         for year in years:
             
             #Get info for this year
-            season = self.get_season(year)
-            year_info = season.summary()
+            if self.basin == 'all':
+                storm_ids = [key for key in self.data.keys() if year in [i.year for i in self.data[key]['time']]]
+            else:
+                try:
+                    season = self.get_season(year)
+                    storm_ids = season.summary()['id']
+                except:
+                    continue
             
             #Generate list of dates for this year
-            year_dates = np.array([dt.strptime(((pd.to_datetime(i)).strftime('%Y%m%d%H')),'%Y%m%d%H') for i in np.arange(dt(year,1,1),dt(year+1,1,1),timedelta(hours=6))])
+            if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
+                year_dates = np.array([dt.strptime(((pd.to_datetime(i)).strftime('%Y%m%d%H')),'%Y%m%d%H') for i in np.arange(dt(year-1,7,1),dt(year,7,1),timedelta(hours=6))])
+            else:
+                year_dates = np.array([dt.strptime(((pd.to_datetime(i)).strftime('%Y%m%d%H')),'%Y%m%d%H') for i in np.arange(dt(year,1,1),dt(year+1,1,1),timedelta(hours=6))])
             
             #Remove 2/29 from dates
             if calendar.isleap(year):
@@ -1900,13 +1918,13 @@ class TrackDataset:
             year_genesis = []
             
             #Get list of storms for this year
-            storm_ids = year_info['id']
             for storm in storm_ids:
                 
                 #Get HURDAT data for this storm
                 storm_data = self.data[storm]
                 storm_date_y = np.array([int(i.strftime('%Y')) for i in storm_data['time']])
                 storm_date_h = np.array([i.strftime('%H%M') for i in storm_data['time']])
+                storm_date_m = [i.strftime('%m%d') for i in storm_data['time']]
                 storm_date = np.array(storm_data['time'])
                 storm_type = np.array(storm_data['type'])
                 storm_vmax = np.array(storm_data['vmax'])
@@ -1916,10 +1934,21 @@ class TrackDataset:
                 idx2 = ~np.isnan(storm_vmax)
                 idx3 = ((storm_date_h == '0000') | (storm_date_h == '0600') | (storm_date_h == '1200') | (storm_date_h == '1800'))
                 idx4 = storm_date_y == year
+                if self.basin in constants.SOUTH_HEMISPHERE_BASINS: idx4[idx4 == False] = True
                 storm_date = storm_date[(idx1) & (idx2) & (idx3) & (idx4)]
                 storm_type = storm_type[(idx1) & (idx2) & (idx3) & (idx4)]
                 storm_vmax = storm_vmax[(idx1) & (idx2) & (idx3) & (idx4)]
                 if len(storm_vmax) == 0: continue #Continue if doesn't apply to this storm
+                
+                #Account for storms on february 29th by pushing them forward 1 day
+                if '0229' in storm_date_m:
+                    storm_date_temp = []
+                    for idate in storm_date:
+                        dt_date = pd.to_datetime(idate)
+                        if dt_date.strftime('%m%d') == '0229' or dt_date.strftime('%m') == '03':
+                            dt_date += timedelta(hours=24)
+                        storm_date_temp.append(dt_date)
+                    storm_date = storm_date_temp
                 
                 #Append storm days to cumulative sum
                 idx = np.nonzero(np.in1d(year_dates, storm_date))
@@ -1931,7 +1960,7 @@ class TrackDataset:
                 cumulative['c5'][idx] += duration_thres(storm_vmax,137.0)
                 year_genesis.append(np.where(year_dates == storm_date[0])[0][0])
                 
-            #Calculate cumulative sum of year
+            #Calculate cumulative sum of year monkey
             if rolling_sum == 0:
                 year_genesis = np.array(year_genesis)
             
@@ -1958,15 +1987,25 @@ class TrackDataset:
         #------------------------------------------------------------------------------------------
         
         #Construct non-leap year julian day array
+        julian_x = np.arange(365*4.0) / 4.0
         julian = np.arange(365*4.0) / 4.0
+        if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
+            julian = list(julian[182*4:]) + list(julian[:182*4])
         if rolling_sum != 0:
             julian = julian[((rolling_sum*4)-1):]
+            julian_x = julian_x[((rolling_sum*4)-1):]
           
         #Get julian days for a non-leap year
         months_julian = months_in_julian(2019)
         julian_start = months_julian['start']
         julian_midpoint = months_julian['midpoint']
         julian_name = months_julian['name']
+        julian_months = [1,2,3,4,5,6,7,8,9,10,11,12]
+        if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
+            julian_start = list(np.array(julian_start[6:])-181) + list(np.array(julian_start[:6])+183)
+            julian_midpoint = list(np.array(julian_midpoint[6:])-181) + list(np.array(julian_midpoint[:6])+183)
+            julian_name = julian_name[6:] + julian_name[:6]
+            julian_months = [7,8,9,10,11,12,1,2,3,4,5,6]
         
         #Determine type of plot to make
         category_match = {0:'ts',1:'c1',2:'c2',3:'c3',4:'c4',5:'c5'}
@@ -2009,8 +2048,15 @@ class TrackDataset:
         for i,(istart,iend) in enumerate(zip(julian_start[:-1][::2],julian_start[1:][::2])):
             ax.axvspan(istart,iend,color='#e4e4e4',alpha=0.5,zorder=0)
         
-        #Limit plot from May onward
-        ax.set_xlim(julian_start[4],julian[-1])
+        #Set x-axis bounds
+        if month_range is None:
+            ax.set_xlim(julian_start[4],julian_x[-1])
+        else:
+            start_month = julian_months.index(int(month_range[0]))
+            end_month = julian_months.index(int(month_range[1]))
+            start_julian = julian_x[0] if start_month == 0 else julian_start[start_month]
+            end_julian = julian_x[-1] if end_month == len(julian_months)-1 else julian_start[end_month+1]
+            ax.set_xlim(start_julian,end_julian)
         
         #Format plot title by category
         category_names = {'ts':'Tropical Storm','c1':'Category 1','c2':'Category 2','c3':'Category 3','c4':'Category 4','c5':'Category 5'}
@@ -2020,15 +2066,18 @@ class TrackDataset:
             add_str = category_names.get(cat)
         
         #Add plot title
+        basin_title = self.basin.title().replace('_',' ') if self.basin != 'all' else 'Global'
+        plot_year_title = ''
         if plot_year is None:
-            title_string = f"{self.basin.title().replace('_',' ')} Accumulated {add_str} Days"
+            title_string = f"{basin_title} Accumulated {add_str} Days"
         else:
+            plot_year_title = str(plot_year) if self.basin not in constants.SOUTH_HEMISPHERE_BASINS else f'{plot_year-1}-{plot_year}'
             cur_year = (dt.now()).year
             if plot_year == cur_year:
                 add_current = f" (through {(dt.now()).strftime('%b %d')})"
             else:
                 add_current = ""
-            title_string = f"{plot_year} {self.basin.title().replace('_',' ')} Accumulated {add_str} Days{add_current}"
+            title_string = f"{plot_year_title} {basin_title} Accumulated {add_str} Days{add_current}"
         if rolling_sum != 0:
             title_add = f"\n{rolling_sum}-Day Running Sum"
         else:
@@ -2041,25 +2090,25 @@ class TrackDataset:
             if cat == 0:
                 year_labels = []
                 for icat in all_thres[::-1]:
-                    year_julian = np.copy(julian)
+                    year_julian_x = np.copy(julian_x)
                     year_tc_days = tc_days[str(plot_year)][icat]
 
                     #Check to see if this is current year
                     cur_year = (dt.now()).year
                     if plot_year == cur_year:
                         cur_julian = int(convert_to_julian( (dt.now()).replace(year=2019,minute=0,second=0) ))*4 - int(rolling_sum*4)
-                        year_julian = year_julian[:cur_julian+1]
+                        year_julian_x = year_julian_x[:cur_julian+1]
                         year_tc_days = year_tc_days[:cur_julian+1]
-                        ax.plot(year_julian[-1],year_tc_days[-1],'o',color=get_colors_sshws(icat),ms=8,mec='k',mew=0.8,zorder=8)
+                        ax.plot(year_julian_x[-1],year_tc_days[-1],'o',color=get_colors_sshws(icat),ms=8,mec='k',mew=0.8,zorder=8)
 
                     year_tc_days_masked = np.array(year_tc_days)
                     year_tc_days_masked = np.ma.masked_where(year_tc_days_masked==0,year_tc_days_masked)
-                    ax.plot(year_julian,year_tc_days_masked,'-',color='k',linewidth=2.8,zorder=6)
-                    ax.plot(year_julian,year_tc_days_masked,'-',color=get_colors_sshws(icat),linewidth=2.0,zorder=6)
+                    ax.plot(year_julian_x,year_tc_days_masked,'-',color='k',linewidth=2.8,zorder=6)
+                    ax.plot(year_julian_x,year_tc_days_masked,'-',color=get_colors_sshws(icat),linewidth=2.0,zorder=6)
                     year_labels.append(f"{np.max(year_tc_days):.1f}")
                     
             else:
-                year_julian = np.copy(julian)
+                year_julian_x = np.copy(julian_x)
                 year_tc_days = tc_days[str(plot_year)][cat]
                 year_genesis = tc_days[str(plot_year)]['genesis_index']
 
@@ -2067,14 +2116,14 @@ class TrackDataset:
                 cur_year = (dt.now()).year
                 if plot_year == cur_year:
                     cur_julian = int(convert_to_julian( (dt.now()).replace(year=2019,minute=0,second=0) ))*4 - int(rolling_sum*4)
-                    year_julian = year_julian[:cur_julian+1]
+                    year_julian_x = year_julian_x[:cur_julian+1]
                     year_tc_days = year_tc_days[:cur_julian+1]
                     year_genesis = year_genesis[:cur_julian+1]
-                    ax.plot(year_julian[-1],year_tc_days[-1],'o',color='#FF7CFF',ms=8,mec='#750775',mew=0.8,zorder=8)
+                    ax.plot(year_julian_x[-1],year_tc_days[-1],'o',color='#FF7CFF',ms=8,mec='#750775',mew=0.8,zorder=8)
 
-                ax.plot(year_julian,year_tc_days,'-',color='#750775',linewidth=2.8,zorder=6)
-                ax.plot(year_julian,year_tc_days,'-',color='#FF7CFF',linewidth=2.0,zorder=6,label=f'{plot_year} ({np.max(year_tc_days):.1f} days)')
-                ax.plot(year_julian[year_genesis],year_tc_days[year_genesis],'D',color='#FF7CFF',ms=5,mec='#750775',mew=0.5,zorder=7,label='TC Genesis')
+                ax.plot(year_julian_x,year_tc_days,'-',color='#750775',linewidth=2.8,zorder=6)
+                ax.plot(year_julian_x,year_tc_days,'-',color='#FF7CFF',linewidth=2.0,zorder=6,label=f'{plot_year} ({np.max(year_tc_days):.1f} days)')
+                ax.plot(year_julian_x[year_genesis],year_tc_days[year_genesis],'D',color='#FF7CFF',ms=5,mec='#750775',mew=0.5,zorder=7,label='TC Genesis')
             
         #Plot comparison years
         if compare_years is not None and cat != 0:
@@ -2083,7 +2132,7 @@ class TrackDataset:
                 
             for year in compare_years:
                 
-                year_julian = np.copy(julian)
+                year_julian_x = np.copy(julian_x)
                 year_tc_days = tc_days[str(year)][cat]
                 year_genesis = tc_days[str(year)]['genesis_index']
 
@@ -2091,17 +2140,17 @@ class TrackDataset:
                 cur_year = (dt.now()).year
                 if year == cur_year:
                     cur_julian = int(convert_to_julian( (dt.now()).replace(year=2019,minute=0,second=0) ))*4 - int(rolling_sum*4)
-                    year_julian = year_julian[:cur_julian+1]
+                    year_julian_x = year_julian_x[:cur_julian+1]
                     year_tc_days = year_tc_days[:cur_julian+1]
                     year_genesis = year_genesis[:cur_julian+1]
-                    ax.plot(year_julian[-1],year_tc_days[-1],'o',color='#333333',alpha=0.3,ms=6,zorder=5)
+                    ax.plot(year_julian_x[-1],year_tc_days[-1],'o',color='#333333',alpha=0.3,ms=6,zorder=5)
 
                 if len(compare_years) <= 5:
-                    ax.plot(year_julian,year_tc_days,'-',color='k',linewidth=1.0,alpha=0.5,zorder=3,label=f'{year} ({np.max(year_tc_days):.1f} days)')
-                    ax.plot(year_julian[year_genesis],year_tc_days[year_genesis],'D',color='#333333',ms=3,alpha=0.3,zorder=4)
-                    ax.text(year_julian[-2],year_tc_days[-2]+2,str(year),fontsize=7,fontweight='bold',alpha=0.7,ha='right',va='bottom')
+                    ax.plot(year_julian_x,year_tc_days,'-',color='k',linewidth=1.0,alpha=0.5,zorder=3,label=f'{year} ({np.max(year_tc_days):.1f} days)')
+                    ax.plot(year_julian_x[year_genesis],year_tc_days[year_genesis],'D',color='#333333',ms=3,alpha=0.3,zorder=4)
+                    ax.text(year_julian_x[-2],year_tc_days[-2]+2,str(year),fontsize=7,fontweight='bold',alpha=0.7,ha='right',va='bottom')
                 else:
-                    ax.plot(year_julian,year_tc_days,'-',color='k',linewidth=1.0,alpha=0.15,zorder=3)
+                    ax.plot(year_julian_x,year_tc_days,'-',color='k',linewidth=1.0,alpha=0.15,zorder=3)
             
         
         #Plot all climatological values
@@ -2111,27 +2160,27 @@ class TrackDataset:
             else:
                 add_str = [f" | {plot_year}: {i}" for i in year_labels[::-1]]
             xnums = np.zeros((p50['ts'].shape))
-            ax.fill_between(julian,p50['c1'],p50['ts'],color=get_colors_sshws(34),alpha=0.3,zorder=2,label=f'TS (Avg: {np.max(p50["ts"]):.1f}{add_str[0]})')
-            ax.fill_between(julian,p50['c2'],p50['c1'],color=get_colors_sshws(64),alpha=0.3,zorder=2,label=f'C1 (Avg: {np.max(p50["c1"]):.1f}{add_str[1]})')
-            ax.fill_between(julian,p50['c3'],p50['c2'],color=get_colors_sshws(83),alpha=0.3,zorder=2,label=f'C2 (Avg: {np.max(p50["c2"]):.1f}{add_str[2]})')
-            ax.fill_between(julian,p50['c4'],p50['c3'],color=get_colors_sshws(96),alpha=0.3,zorder=2,label=f'C3 (Avg: {np.max(p50["c3"]):.1f}{add_str[3]})')
-            ax.fill_between(julian,p50['c5'],p50['c4'],color=get_colors_sshws(113),alpha=0.3,zorder=2,label=f'C4 (Avg: {np.max(p50["c4"]):.1f}{add_str[4]})')
-            ax.fill_between(julian,xnums,p50['c5'],color=get_colors_sshws(137),alpha=0.3,zorder=2,label=f'C5 (Avg: {np.max(p50["c5"]):.1f}{add_str[5]})')
+            ax.fill_between(julian_x,p50['c1'],p50['ts'],color=get_colors_sshws(34),alpha=0.3,zorder=2,label=f'TS (Avg: {np.max(p50["ts"]):.1f}{add_str[0]})')
+            ax.fill_between(julian_x,p50['c2'],p50['c1'],color=get_colors_sshws(64),alpha=0.3,zorder=2,label=f'C1 (Avg: {np.max(p50["c1"]):.1f}{add_str[1]})')
+            ax.fill_between(julian_x,p50['c3'],p50['c2'],color=get_colors_sshws(83),alpha=0.3,zorder=2,label=f'C2 (Avg: {np.max(p50["c2"]):.1f}{add_str[2]})')
+            ax.fill_between(julian_x,p50['c4'],p50['c3'],color=get_colors_sshws(96),alpha=0.3,zorder=2,label=f'C3 (Avg: {np.max(p50["c3"]):.1f}{add_str[3]})')
+            ax.fill_between(julian_x,p50['c5'],p50['c4'],color=get_colors_sshws(113),alpha=0.3,zorder=2,label=f'C4 (Avg: {np.max(p50["c4"]):.1f}{add_str[4]})')
+            ax.fill_between(julian_x,xnums,p50['c5'],color=get_colors_sshws(137),alpha=0.3,zorder=2,label=f'C5 (Avg: {np.max(p50["c5"]):.1f}{add_str[5]})')
         else:
             pmin_masked = np.array(pmin)
             pmin_masked = np.ma.masked_where(pmin_masked==0,pmin_masked)
-            ax.plot(julian,pmax,'--',color='r',zorder=2,label=f'Max ({np.max(pmax):.1f} days)')
-            ax.plot(julian,pmin_masked,'--',color='b',zorder=2,label=f'Min ({np.max(pmin):.1f} days)')
-            ax.fill_between(julian,p10,p90,color='#60CE56',alpha=0.3,zorder=2,label='Climo 10-90%')
-            ax.fill_between(julian,p25,p75,color='#16A147',alpha=0.3,zorder=2,label='Climo 25-75%')
-            ax.fill_between(julian,p40,p60,color='#00782A',alpha=0.3,zorder=2,label='Climo 40-60%')
+            ax.plot(julian_x,pmax,'--',color='r',zorder=2,label=f'Max ({np.max(pmax):.1f} days)')
+            ax.plot(julian_x,pmin_masked,'--',color='b',zorder=2,label=f'Min ({np.max(pmin):.1f} days)')
+            ax.fill_between(julian_x,p10,p90,color='#60CE56',alpha=0.3,zorder=2,label='Climo 10-90%')
+            ax.fill_between(julian_x,p25,p75,color='#16A147',alpha=0.3,zorder=2,label='Climo 25-75%')
+            ax.fill_between(julian_x,p40,p60,color='#00782A',alpha=0.3,zorder=2,label='Climo 40-60%')
 
         #Add legend & plot credit
         ax.legend(loc=2)
         endash = u"\u2013"
         ax.text(0.99,0.01,plot_credit(),fontsize=6,color='k',alpha=0.7,
                 transform=ax.transAxes,ha='right',va='bottom',zorder=10)
-        ax.text(0.99,0.99,f'Climatology from {start_year}{endash}{end_year}',fontsize=8,color='k',alpha=0.7,
+        ax.text(0.99,0.99,f'Climatology from {climo_bounds[0]}{endash}{climo_bounds[-1]}',fontsize=8,color='k',alpha=0.7,
                 transform=ax.transAxes,ha='right',va='top',zorder=10)
         
         #Show/save plot and close

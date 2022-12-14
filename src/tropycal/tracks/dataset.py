@@ -1542,7 +1542,7 @@ class TrackDataset:
                 return_season = return_season + self.__retrieve_season(i_year,basin)
             return return_season
     
-    def ace_climo(self,plot_year=None,compare_years=None,climo_bounds=None,month_range=None,rolling_sum=0,return_dict=False,plot=True,save_path=None):
+    def ace_climo(self,plot_year=None,compare_years=None,climo_bounds=None,month_range=None,rolling_sum=0,return_dict=False,save_path=None):
         
         r"""
         Creates and plots a climatology of accumulated cyclone energy (ACE).
@@ -1560,16 +1560,14 @@ class TrackDataset:
         rolling_sum : int
             Days to calculate a rolling sum over. Default is 0 (annual running sum).
         return_dict : bool
-            Determines whether to return data from this function. Default is False.
-        plot : bool
-            Determines whether to generate a plot or not. If False, function simply returns ace dictionary.
+            If False (default), plot axes will be returned. If True, a dictionary containing the raw data is returned.
         save_path : str
             Determines the file path to save the image to. If blank or none, image will be directly shown.
         
         Returns
         -------
         axes or dict
-            By default, the plot axes is returned. If return_dict is True, a dictionary containing the axes and data about the ACE climatology is returned.
+            By default, the plot axes is returned. If return_dict is True, a dictionary containing the raw ACE climatology data is returned.
         
         Notes
         -----
@@ -1706,11 +1704,8 @@ class TrackDataset:
         pmin,p10,p25,p40,p60,p75,p90,pmax = np.nanpercentile(all_ace,[0,10,25,40,60,75,90,100],axis=0)
         
         #Return if not plotting
-        if plot == False:
-            if return_dict:
-                return ace
-            else:
-                return
+        if return_dict == True:
+            return ace
         
         #------------------------------------------------------------------------------------------
         
@@ -1825,12 +1820,9 @@ class TrackDataset:
         if save_path is not None and isinstance(save_path,str):
             plt.savefig(save_path,bbox_inches='tight',facecolor='w')
         
-        if return_dict:
-            return {'ax':ax,'ace':ace}
-        else:
-            return ax
+        return ax
 
-    def hurricane_days_climo(self,plot_year=None,compare_years=None,climo_bounds=None,month_range=None,rolling_sum=0,category=None,return_dict=False,plot=True,save_path=None):
+    def hurricane_days_climo(self,plot_year=None,compare_years=None,climo_bounds=None,month_range=None,rolling_sum=0,category=None,return_dict=False,save_path=None):
         
         r"""
         Creates a climatology of tropical storm/hurricane/major hurricane days.
@@ -1850,16 +1842,14 @@ class TrackDataset:
         category : int
             SSHWS Category to generate the data and plot for. Use 0 for tropical storm. If None (default), a plot will be generated for all categories.
         return_dict : bool
-            Determines whether to return data from this function. Default is False.
-        plot : bool
-            Determines whether to generate a plot or not. If False, function simply returns data dictionary.
+            If False (default), plot axes will be returned. If True, a dictionary containing the raw data is returned.
         save_path : str
             Determines the file path to save the image to. If blank or none, image will be directly shown.
         
         Returns
         -------
         axes or dict
-            By default, the plot axes is returned. If return_dict is True, a dictionary containing the axes and data about the climatology is returned.
+            By default, the plot axes is returned. If return_dict is True, a dictionary containing the raw data is returned.
         
         Notes
         -----
@@ -2030,11 +2020,8 @@ class TrackDataset:
             pmin,p10,p25,p40,p60,p75,p90,pmax = np.percentile(all_tc_days,[0,10,25,40,60,75,90,100],axis=0)
         
         #Return if not plotting
-        if plot == False:
-            if return_dict:
-                return tc_days
-            else:
-                return
+        if return_dict == True:
+            return tc_days
         
         #------------------------------------------------------------------------------------------
         
@@ -2187,12 +2174,9 @@ class TrackDataset:
         if save_path is not None and isinstance(save_path,str):
             plt.savefig(save_path,bbox_inches='tight')
         
-        if return_dict:
-            return {'ax':ax,'data':tc_days}
-        else:
-            return ax
+        return ax
     
-    def wind_pres_relationship(self,storm=None,climo_bounds=None,return_dict=False,plot=True,save_path=None):
+    def wind_pres_relationship(self,storm=None,climo_bounds=None,return_dict=False,save_path=None):
         
         r"""
         Creates a climatology of maximum sustained wind speed vs minimum MSLP relationships.
@@ -2204,9 +2188,7 @@ class TrackDataset:
         climo_bounds : list or tuple
             List or tuple representing the start and end years (e.g., ``(1950,2018)``). Default is the start and end of dataset.
         return_dict : bool
-            Determines whether to return data from this function. Default is False.
-        plot : bool
-            Determines whether to generate a plot or not. If False, function simply returns ace dictionary.
+            If False (default), plot axes will be returned. If True, a dictionary containing the raw data is returned.
         save_path : str
             Determines the file path to save the image to. If blank or none, image will be directly shown.
         
@@ -2220,18 +2202,18 @@ class TrackDataset:
         relationship = {}
         
         #Determine year range of dataset
-        if year_range is None:
+        if climo_bounds is None:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
-        elif isinstance(year_range,(list,tuple)):
-            if len(year_range) != 2:
-                raise ValueError("year_range must be a tuple or list with 2 elements: (start_year, end_year)")
-            start_year = int(year_range[0])
+        elif isinstance(climo_bounds,(list,tuple)):
+            if len(climo_bounds) != 2:
+                raise ValueError("climo_bounds must be a tuple or list with 2 elements: (start_year, end_year)")
+            start_year = int(climo_bounds[0])
             if start_year < self.data[self.keys[0]]['year']: start_year = self.data[self.keys[0]]['year']
-            end_year = int(year_range[1])
+            end_year = int(climo_bounds[1])
             if end_year > self.data[self.keys[-1]]['year']: end_year = self.data[self.keys[-1]]['year']
         else:
-            raise TypeError("year_range must be of type tuple or list")
+            raise TypeError("climo_bounds must be of type tuple or list")
         
         #Get velocity & pressure pairs for all storms in dataset
         vp = filter_storms_vp(self,year_min=start_year,year_max=end_year)
@@ -2242,13 +2224,9 @@ class TrackDataset:
         relationship['counts'] = counts
         relationship['yedges'] = yedges
         relationship['xedges'] = xedges
-        
-        #Return if plot is not requested
-        if plot == False:
-            if return_dict:
-                return relationship
-            else:
-                return
+
+        if return_dict:
+            return relationship
         
         #Create figure
         fig,ax = plt.subplots(figsize=(12,9.5),dpi = 200)
@@ -2340,10 +2318,7 @@ class TrackDataset:
         if save_path is not None and isinstance(save_path,str):
             plt.savefig(save_path,bbox_inches='tight')
         
-        if return_dict:
-            return {'ax':ax,'data':relationship}
-        else:
-            return ax
+        return ax
     
     def rank_storm(self,metric,return_df=True,ascending=False,domain=None,year_range=None,date_range=None,subtropical=True):
         

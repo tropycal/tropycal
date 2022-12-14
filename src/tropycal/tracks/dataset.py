@@ -271,11 +271,37 @@ class TrackDataset:
         #Add dict to store all storm-specific tornado data in
         self.data_tors = {}
         
-        # If interpolate_data, interpolate each storm and save to dictionary.
+        #If interpolate_data, interpolate each storm and save to dictionary.
         self.data_interp = {}
         if interpolate_data:
             self.__interpolate_storms(self.keys)
-    
+        
+        #---------------------------------------------------------------
+        
+        #Find maximum wind and minimum pressure
+        max_wind = int(np.nanmax([x for stormid in self.keys for x in self.data[stormid]['vmax']]))
+        max_wind_name = ""
+        min_mslp = int(np.nanmin([x for stormid in self.keys for x in self.data[stormid]['mslp']]))
+        min_mslp_name = ""
+        for key in self.keys[::-1]:
+            array_vmax = np.array(self.data[key]['vmax'])
+            array_mslp = np.array(self.data[key]['mslp'])
+            if len(array_vmax[~np.isnan(array_vmax)]) > 0 and np.nanmax(array_vmax) == max_wind:
+                max_wind_tuple = (self.data[key]['name'],self.data[key]['year'])
+            if len(array_mslp[~np.isnan(array_mslp)]) > 0 and np.nanmin(array_mslp) == min_mslp:
+                min_mslp_tuple = (self.data[key]['name'],self.data[key]['year'])
+        
+        #Add attributes
+        self.attrs = {
+            'basin':self.basin,
+            'source':self.source,
+            'ibtracs_mode':self.ibtracs_mode if self.source == 'ibtracs' else '',
+            'start_year':self.data[self.keys[0]]['year'],
+            'end_year':self.data[self.keys[-1]]['year'],
+            'max_wind':max_wind_tuple,
+            'min_mslp':min_mslp_tuple,
+        }
+        
     def __read_hurdat(self,override_basin=False):
         
         r"""

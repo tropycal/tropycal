@@ -64,6 +64,8 @@ class TrackDataset:
              - IBTrACS
            * - "australia"
              - IBTrACS* (special case)
+           * - "south_pacific"
+             - IBTrACS
            * - "south_atlantic"
              - IBTrACS
            * - "all"

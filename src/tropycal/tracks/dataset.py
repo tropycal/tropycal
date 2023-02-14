@@ -2440,7 +2440,7 @@ class TrackDataset:
             #Filter for purely tropical/subtropical storm locations
             type_array = np.array(storm_data['type'])
             if subtropical:
-                idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (storm_type == 'ST'))
+                idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
             else:
                 idx = np.where((type_array == 'TD') | (type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
             

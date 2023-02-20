@@ -1564,7 +1564,7 @@ None,prop={},map_prop={}):
         #Plot title
         format_title = {'vmax':'Ensemble member sustained wind (knots)','mslp':'Ensemble member minimum MSLP (hPa)'}
         plot_title = f"GEFS Forecast Tracks for {storm_dict['name'].title()}"
-        if prop_density['plot']: plot_title += f"\nTrack Density ({np.int(prop_density['radius'])}-km radius)"
+        if prop_density['plot']: plot_title += f"\nTrack Density ({int(prop_density['radius'])}-km radius)"
         if prop_ensemble_members['color_var'] in ['vmax','mslp']: plot_title += f"\n{format_title.get(prop_ensemble_members['color_var'])}"
         self.ax.set_title(plot_title,fontsize=16,loc='left',fontweight='bold')
 

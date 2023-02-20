@@ -353,10 +353,10 @@ def get_basin(lat,lon,source_basin=""):
     """
     
     #Error check
-    if isinstance(lat,(int,np.int,np.integer,float,np.floating)) == False:
+    if isinstance(lat,(int,np.integer,float,np.floating)) == False:
         msg = "\"lat\" must be of type int or float."
         raise TypeError(msg)
-    if isinstance(lon,(int,np.int,np.integer,float,np.floating)) == False:
+    if isinstance(lon,(int,np.integer,float,np.floating)) == False:
         msg = "\"lon\" must be of type int or float."
         raise TypeError(msg)
     

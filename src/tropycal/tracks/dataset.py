@@ -1552,17 +1552,17 @@ class TrackDataset:
         """
         
         #Error checks
-        if isinstance(year,(int,np.int,np.integer,float,np.floating)) == False and isinstance(year,list) == False:
+        if isinstance(year,(int,np.integer,float,np.floating)) == False and isinstance(year,list) == False:
             msg = "'year' must be of type int or list."
             raise TypeError(msg)
         if isinstance(year,list):
             for i in year:
-                if isinstance(i,(int,np.int,np.integer,float,np.floating)) == False:
+                if isinstance(i,(int,np.integer,float,np.floating)) == False:
                     msg = "Elements of list 'year' must be of type int."
                     raise TypeError(msg)
         
         #Retrieve season object(s)
-        if isinstance(year,(int,np.int,np.integer,float,np.floating)):
+        if isinstance(year,(int,np.integer,float,np.floating)):
             return self.__retrieve_season(year,basin)
         else:
             return_season = self.__retrieve_season(year[0],basin)
@@ -3492,7 +3492,7 @@ class TrackDataset:
         start_season,end_season = year_range
         if start_season >= end_season:
             raise ValueError("start_season cannot be greater than end_season.")
-        if not isinstance(start_season,(int,np.int,np.integer,float,np.floating)) or not isinstance(end_season,(int,np.int,np.integer,float,np.floating)):
+        if not isinstance(start_season,(int,np.integer,float,np.floating)) or not isinstance(end_season,(int,np.integer,float,np.floating)):
             raise TypeError("start_season and end_season must be of type int.")
         if (end_season - start_season) < 5:
             raise ValueError("A minimum of 5 seasons is required for constructing a climatology.")

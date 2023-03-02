@@ -905,7 +905,7 @@ class RealtimeStorm(Storm):
 
             #Get storm type
             subtrop_flag = self.type[-1] in constants.SUBTROPICAL_ONLY_STORM_TYPES
-            current_advisory['type'] = get_storm_classification(self.vmax[-1],subtrop_flag,self.basin)
+            current_advisory['type'] = get_storm_classification(self.vmax[-1],subtrop_flag,self.wmo_basin[-1])
             
             #Check for non-tropical storm types
             if self.type[-1] not in constants.TROPICAL_STORM_TYPES:

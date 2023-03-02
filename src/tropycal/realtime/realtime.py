@@ -571,7 +571,7 @@ class Realtime():
                 self.data[stormid]['mslp'].append(btk_mslp)
                 
                 #Add basin
-                self.data[stormid]['wmo_basin'].append(add_basin)
+                self.data[stormid]['wmo_basin'].append(get_basin(btk_lat,btk_lon,add_basin))
 
                 #Calculate ACE & append to storm total
                 if np.isnan(btk_wind) == False:

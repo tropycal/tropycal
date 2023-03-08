@@ -1739,6 +1739,7 @@ class TrackDataset:
                 storm_date = np.array(storm_data['time'])
                 storm_type = np.array(storm_data['type'])
                 storm_vmax = np.array(storm_data['vmax'])
+                storm_basin = np.array(storm_data['wmo_basin'])
                 
                 #Subset to remove obs not useful for ace
                 idx1 = ((storm_type == 'SS') | (storm_type == 'TS') | (storm_type == 'HU') | (storm_type == 'TY') | (storm_type == 'ST'))
@@ -1746,6 +1747,7 @@ class TrackDataset:
                 idx3 = ((storm_date_h == '0000') | (storm_date_h == '0600') | (storm_date_h == '1200') | (storm_date_h == '1800'))
                 idx4 = storm_date_y == year
                 if self.basin in constants.SOUTH_HEMISPHERE_BASINS: idx4[idx4 == False] = True
+                if self.basin not in ['all','both']: idx4 = (idx4) & (storm_basin == self.basin)
                 storm_date = storm_date[(idx1) & (idx2) & (idx3) & (idx4)]
                 storm_type = storm_type[(idx1) & (idx2) & (idx3) & (idx4)]
                 storm_vmax = storm_vmax[(idx1) & (idx2) & (idx3) & (idx4)]
@@ -1871,10 +1873,19 @@ class TrackDataset:
             #Check to see if this is current year
             cur_year = (dt.now()).year
             if plot_year == cur_year:
-                cur_julian = int(convert_to_julian( (dt.now()).replace(year=2019,minute=0,second=0) ))*4 - int(rolling_sum*4)
+                
+                start_time = dt(2019,1,1)
+                if self.basin in constants.SOUTH_HEMISPHERE_BASINS: start_time = dt(2018,7,1)
+                end_time = (dt.now()).replace(year=2019,minute=0,second=0)
+                temp_julian = ((end_time - start_time).days + (end_time - start_time).seconds/86400.0) + 1
+                print(temp_julian)
+                cur_julian = int(temp_julian)*4 - int(rolling_sum*4)
+                print(cur_julian)
+                print(year_julian_x)
+                
                 year_julian_x = year_julian_x[:cur_julian+1]
                 year_ace = year_ace[:cur_julian+1]
-                year_genesis = year_genesis[:cur_julian+1]
+                year_genesis = year_genesis[year_genesis<=cur_julian]
 
             ax.plot(year_julian_x[-1],year_ace[-1],'o',color='k',ms=8,mec='w',mew=0.8,zorder=8)
             ax.plot(year_julian_x,year_ace,'-',color='w',linewidth=2.8,zorder=6)

@@ -786,6 +786,10 @@ class TrackDataset:
                     #Otherwise, add storm to entry
                     else:
                         map_all_id[ibtracs_id] = use_id
+                        
+                        #Clear any previous entry
+                        if use_id in self.data.keys():
+                            del self.data[use_id]
 
                         #Add empty entry into dict
                         self.data[use_id] = {'id':sid,'operational_id':'','name':name,'year':time.year,'season':int(year),'basin':self.basin}
@@ -810,6 +814,10 @@ class TrackDataset:
                         #Hard code fix for certain storms, and for early Atlantic entries
                         check_keys = ['IO022018']
                         if use_id in check_keys or (use_id[0:2] == old_id[0:2] and use_id[0:2] == 'AL'):
+                            
+                            #Clear any previous entry
+                            if use_id in self.data.keys():
+                                del self.data[use_id]
                             
                             #Add empty entry into dict
                             map_all_id[ibtracs_id] = use_id

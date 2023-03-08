@@ -478,12 +478,15 @@ class TrackPlot(Plot):
                     add_ptc_flag = True
                     idx = np.where((type_array == 'LO') | (type_array == 'DB'))
                     tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-                subtrop = classify_subtropical(np.array(storm_data['type']))
-                peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
-                peak_basin = storm_data['wmo_basin'][peak_idx]
-                storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
-                if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
+                
+                if all_nan(tropical_vmax):
+                    storm_type = 'Tropical Cyclone'
+                else:
+                    subtrop = classify_subtropical(np.array(storm_data['type']))
+                    peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
+                    peak_basin = storm_data['wmo_basin'][peak_idx]
+                    storm_type = get_storm_classification(np.nanmax(tropical_vmax),subtrop,peak_basin)
+                    if add_ptc_flag == True: storm_type = "Potential Tropical Cyclone"
                 self.ax.set_title(f"{storm_type} {storm_data['name']}",loc='left',fontsize=17,fontweight='bold')
             else:
                 #Use all indices for invests

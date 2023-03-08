@@ -713,8 +713,12 @@ class TrackDataset:
         neumann = {}
         
         #ibtracs ID to jtwc ID mapping
+        map_duplicate_id = {}
         map_all_id = {}
         map_id = {}
+        
+        #Blacklist of storm IDs not NOT merge
+        do_not_merge = ['WP371996','WP391996']
         
         for line in content[2:]:
             
@@ -727,6 +731,12 @@ class TrackDataset:
             #Fix name to be consistent with HURDAT
             if name == 'NOT_NAMED': name = 'UNNAMED'
             if name[-1] == '-': name = name[:-1]
+            
+            #Hard code fix for faulty IBTrACS data
+            if sid == 'EP121989' and name == 'HENRIETTE':
+                sid = 'EP111989'
+            if sid == 'WP391996':
+                name = 'UNNAMED'
 
             #Add storm to list of keys
             if self.ibtracs_mode == 'wmo' and ibtracs_id not in self.data.keys():
@@ -742,26 +752,81 @@ class TrackDataset:
                     self.data[ibtracs_id][val] = []
                 self.data[ibtracs_id]['ace'] = 0.0
                 
-            elif sid != '' and ibtracs_id not in map_all_id.keys():
+            elif sid != '':
                 
                 #ID entry method to use
                 use_id = sid
                 
-                #Add id to list
-                map_all_id[ibtracs_id] = sid
+                #Hard code problematic early Atlantic IDs
+                check_ids = ['AL041885', 'AL031870']
+                if use_id in check_ids and use_id in self.data.keys() and ibtracs_id in map_all_id.keys() and map_all_id[ibtracs_id] != use_id:
+                    map_all_id[ibtracs_id] = use_id
 
-                #add empty entry into dict
-                self.data[use_id] = {'id':sid,'operational_id':'','name':name,'year':time.year,'season':int(year),'basin':self.basin}
-                self.data[use_id]['source'] = self.source
-                self.data[use_id]['source_info'] = 'Joint Typhoon Warning Center (unofficial)'
-                if self.neumann: self.data[use_id]['source_info'] += '& Charles Neumann reanalysis for South Hemisphere storms'
-                current_id = use_id
+                if ibtracs_id not in map_all_id.keys():
+                    
+                    #Check for East Pacific case (overwrite prev entry if data is from 1982 backwards)
+                    east_pacific_case = False
+                    if use_id in self.data.keys() and use_id[0:2] in ['EP','CP']:
+                        if self.data[use_id]['year'] <= 1982: east_pacific_case = True
 
-                #add empty lists
-                for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp',
-                            'wmo_type','wmo_lat','wmo_lon','wmo_vmax','wmo_mslp','wmo_basin']:
-                    self.data[use_id][val] = []
-                self.data[use_id]['ace'] = 0.0
+                    #Check if this is an extension of an existing storm
+                    if use_id in self.data.keys() and east_pacific_case == False:
+
+                        #Add to list of duplicate keys
+                        if use_id not in map_duplicate_id:
+                            flipped_dict = dict([(v, k) for k, v in map_all_id.items()])
+                            map_duplicate_id[use_id] = [ibtracs_id]
+                        elif ibtracs_id not in map_duplicate_id[use_id]:
+                            map_duplicate_id[use_id].append(ibtracs_id)
+
+                        #Add name if previous one is unnamed
+                        if self.data[use_id]['name'] == 'UNNAMED' and name != 'UNNAMED':
+                            self.data[use_id]['name'] = name
+
+                    #Otherwise, add storm to entry
+                    else:
+                        map_all_id[ibtracs_id] = use_id
+
+                        #Add empty entry into dict
+                        self.data[use_id] = {'id':sid,'operational_id':'','name':name,'year':time.year,'season':int(year),'basin':self.basin}
+                        self.data[use_id]['source'] = self.source
+                        self.data[use_id]['source_info'] = 'Joint Typhoon Warning Center (unofficial)'
+                        if self.neumann: self.data[use_id]['source_info'] += '& Charles Neumann reanalysis for South Hemisphere storms'
+                        #add empty lists
+                        for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp',
+                                    'wmo_type','wmo_lat','wmo_lon','wmo_vmax','wmo_mslp','wmo_basin']:
+                            self.data[use_id][val] = []
+                        self.data[use_id]['ace'] = 0.0
+                
+                #Case if IBTrACS ID already exists but a separate JTWC ID exists for it
+                elif use_id not in self.data.keys():
+                    
+                    #Check for potential conflict match
+                    old_id = map_all_id[ibtracs_id]
+                    check_id_new = use_id[0:2] + use_id[4:]
+                    check_id_old = old_id[0:2] + old_id[4:]
+                    if check_id_new == check_id_old and use_id != old_id:
+                        
+                        #Hard code fix for certain storms, and for early Atlantic entries
+                        check_keys = ['IO022018']
+                        if use_id in check_keys or (use_id[0:2] == old_id[0:2] and use_id[0:2] == 'AL'):
+                            
+                            #Add empty entry into dict
+                            map_all_id[ibtracs_id] = use_id
+                            self.data[use_id] = {'id':sid,'operational_id':'','name':name,'year':time.year,'season':int(year),'basin':self.basin}
+                            self.data[use_id]['source'] = self.source
+                            self.data[use_id]['source_info'] = 'Joint Typhoon Warning Center (unofficial)'
+                            if self.neumann: self.data[use_id]['source_info'] += '& Charles Neumann reanalysis for South Hemisphere storms'
+                            #add empty lists
+                            for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp',
+                                        'wmo_type','wmo_lat','wmo_lon','wmo_vmax','wmo_mslp','wmo_basin']:
+                                self.data[use_id][val] = []
+                            self.data[use_id]['ace'] = 0.0
+                        
+                        #Special name fix for certain storms
+                        if use_id == 'IO022018':
+                            self.data['IO012018']['name'] = 'SAGAR'
+                            self.data['IO022018']['name'] = 'MEKUNU'
 
             #Get neumann data for storms containing it
             if self.neumann:
@@ -940,8 +1005,10 @@ class TrackDataset:
                 
             #Handle non-WMO mode
             else:
-                if sid == '': continue
-                sid = map_all_id.get(ibtracs_id)
+                if sid not in map_duplicate_id.keys() and sid not in do_not_merge:
+                    orig_sid = sid + ''
+                    sid = map_all_id.get(ibtracs_id,None)
+                    if sid == '' or sid == None: continue
 
                 #Retrieve data
                 dist_land = int(dist_land)
@@ -960,6 +1027,9 @@ class TrackDataset:
                 if np.isnan(vmax) == False:
                     if str(vmax)[-1] in ['4','9']: vmax += 1
                     if str(vmax)[-1] in ['1','6']: vmax = vmax - 1
+                
+                #Avoid duplicate entries
+                if time in self.data[sid]['time']: continue
                 
                 #Edit basin
                 basin_reverse = {v: k for k, v in basin_convert.items()}
@@ -1072,6 +1142,13 @@ class TrackDataset:
             self.data['2004086S29318'] = cyclone_catarina()
         elif 'AL502004' in all_keys and self.catarina:
             self.data['AL502004'] = cyclone_catarina()
+        
+        #Sort data temporally
+        for key in self.data.keys():
+            storm_times = self.data[key]['time']
+            for key2 in self.data[key].keys():
+                if isinstance(self.data[key][key2],list):
+                    self.data[key][key2] = [x for _, x in sorted(zip(storm_times, self.data[key][key2]))]
         
         #Determine time elapsed
         time_elapsed = dt.now() - start_time

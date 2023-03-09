@@ -795,7 +795,7 @@ class TrackDataset:
                         self.data[use_id] = {'id':sid,'operational_id':'','name':name,'year':time.year,'season':int(year),'basin':self.basin}
                         self.data[use_id]['source'] = self.source
                         self.data[use_id]['source_info'] = 'Joint Typhoon Warning Center (unofficial)'
-                        if self.neumann: self.data[use_id]['source_info'] += '& Charles Neumann reanalysis for South Hemisphere storms'
+                        if self.neumann: self.data[use_id]['source_info'] += ' & Charles Neumann reanalysis for South Hemisphere storms'
                         #add empty lists
                         for val in ['time','extra_obs','special','type','lat','lon','vmax','mslp',
                                     'wmo_type','wmo_lat','wmo_lon','wmo_vmax','wmo_mslp','wmo_basin']:

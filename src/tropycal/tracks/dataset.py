@@ -4341,3 +4341,57 @@ class TrackDataset:
                                         ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
         
         return ax
+
+    def search_time(self,time,extratropical=False,vmin=None,pmax=None):
+        
+        r"""
+        Searches for all storms active during the requested time.
+        
+        Parameters
+        ----------
+        time : datetime.datetime
+            Datetime object denoting the requested time.
+        extratropical : bool, optional
+            If False, search excludes extratropical cyclones during the requested time. Default is False.
+        vmin : int, optional
+            Minimum threshold for sustained wind (knots) to filter.
+        pmax : int, optional
+            Maximum threshold for cyclone minimum MSLP (hPa) to filter.
+        
+        Returns
+        -------
+        pandas.DataFrame
+            DataFrame containing the storm IDs found during the requested time and additional relevant storm attributes.
+        """
+
+        #Iterate over all keys
+        return_data = {'id':[],'name':[],'lat':[],'lon':[],'vmax':[],'mslp':[],'type':[],'wmo_basin':[]}
+        for key in self.keys:
+            
+            #First filter
+            if time < self.data[key]['time'][0]: continue
+            if self.data[key]['time'][-1] < time: continue
+            diff = [(time-i).total_seconds()/3600 for i in self.data[key]['time']]
+            diff_maxes = [i for i in diff if i >= 0]
+            if len(diff_maxes) == 0: continue
+            idx = diff.index(np.nanmin(diff_maxes))
+            if np.nanmin(diff) > 0: continue
+            if diff[idx] >= 6.0: continue
+            
+            #Second filter
+            if extratropical == False and self.data[key]['type'][idx] not in constants.TROPICAL_STORM_TYPES: continue
+            
+            #Third filter
+            if vmin != None:
+                if np.isnan(self.data[key]['vmax'][idx]) or self.data[key]['vmax'][idx] < vmin: continue
+            if pmax != None:
+                if np.isnan(self.data[key]['mslp'][idx]) or self.data[key]['mslp'][idx] > pmax: continue
+            
+            #Return data
+            return_data['id'].append(key)
+            return_data['name'].append(self.data[key]['name'])
+            for iter_key in [k for k in return_data.keys()][2:]:
+                return_data[iter_key].append(self.data[key][iter_key][idx])
+        
+        return pd.DataFrame(return_data)
+    

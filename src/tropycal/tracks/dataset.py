@@ -3589,11 +3589,11 @@ class TrackDataset:
         """
 
         #Error check
-        if not isinstance(year_range,(list,tuple)):
-            raise TypeError("year_range must be of type list or tuple.")
-        if len(year_range) != 2:
-            raise TypeError("year_range must have two elements, start and end year.")
-        start_season,end_season = year_range
+        if not isinstance(climo_bounds,(list,tuple)):
+            raise TypeError("climo_bounds must be of type list or tuple.")
+        if len(climo_bounds) != 2:
+            raise TypeError("climo_bounds must have two elements, start and end year.")
+        start_season,end_season = climo_bounds
         if start_season >= end_season:
             raise ValueError("start_season cannot be greater than end_season.")
         if not isinstance(start_season,(int,np.integer,float,np.floating)) or not isinstance(end_season,(int,np.integer,float,np.floating)):
@@ -4341,4 +4341,3 @@ class TrackDataset:
                                         ax,save_path,two_prop,invest_prop,storm_prop,cone_prop,map_prop)
         
         return ax
-        

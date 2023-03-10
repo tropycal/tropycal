@@ -2190,7 +2190,7 @@ class TrackDataset:
         else:
             title_add = ""
         ax.set_title(f"{title_string}{title_add}",fontsize=12,fontweight='bold',loc='left')
-        
+
         #Plot requested year
         if plot_year is not None:
             
@@ -2203,7 +2203,13 @@ class TrackDataset:
                     #Check to see if this is current year
                     cur_year = (dt.now()).year
                     if plot_year == cur_year:
-                        cur_julian = int(convert_to_julian( (dt.now()).replace(year=2019,minute=0,second=0) ))*4 - int(rolling_sum*4)
+                        
+                        start_time = dt(2019,1,1)
+                        if self.basin in constants.SOUTH_HEMISPHERE_BASINS: start_time = dt(2018,7,1)
+                        end_time = (dt.now()).replace(year=2019,minute=0,second=0)
+                        temp_julian = ((end_time - start_time).days + (end_time - start_time).seconds/86400.0) + 1
+                        cur_julian = int(temp_julian)*4 - int(rolling_sum*4)
+                        
                         year_julian_x = year_julian_x[:cur_julian+1]
                         year_tc_days = year_tc_days[:cur_julian+1]
                         ax.plot(year_julian_x[-1],year_tc_days[-1],'o',color=get_colors_sshws(icat),ms=8,mec='k',mew=0.8,zorder=8)
@@ -2222,10 +2228,16 @@ class TrackDataset:
                 #Check to see if this is current year
                 cur_year = (dt.now()).year
                 if plot_year == cur_year:
-                    cur_julian = int(convert_to_julian( (dt.now()).replace(year=2019,minute=0,second=0) ))*4 - int(rolling_sum*4)
+                    
+                    start_time = dt(2019,1,1)
+                    if self.basin in constants.SOUTH_HEMISPHERE_BASINS: start_time = dt(2018,7,1)
+                    end_time = (dt.now()).replace(year=2019,minute=0,second=0)
+                    temp_julian = ((end_time - start_time).days + (end_time - start_time).seconds/86400.0) + 1
+                    cur_julian = int(temp_julian)*4 - int(rolling_sum*4)
+
                     year_julian_x = year_julian_x[:cur_julian+1]
                     year_tc_days = year_tc_days[:cur_julian+1]
-                    year_genesis = year_genesis[:cur_julian+1]
+                    year_genesis = year_genesis[year_genesis<=cur_julian]
                     ax.plot(year_julian_x[-1],year_tc_days[-1],'o',color='#FF7CFF',ms=8,mec='#750775',mew=0.8,zorder=8)
 
                 ax.plot(year_julian_x,year_tc_days,'-',color='#750775',linewidth=2.8,zorder=6)

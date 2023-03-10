@@ -1877,10 +1877,7 @@ class TrackDataset:
                 if self.basin in constants.SOUTH_HEMISPHERE_BASINS: start_time = dt(2018,7,1)
                 end_time = (dt.now()).replace(year=2019,minute=0,second=0)
                 temp_julian = ((end_time - start_time).days + (end_time - start_time).seconds/86400.0) + 1
-                print(temp_julian)
                 cur_julian = int(temp_julian)*4 - int(rolling_sum*4)
-                print(cur_julian)
-                print(year_julian_x)
                 
                 year_julian_x = year_julian_x[:cur_julian+1]
                 year_ace = year_ace[:cur_julian+1]

@@ -480,7 +480,6 @@ class TrackDataset:
                 
             #Estimate operational storm ID (which sometimes differs from HURDAT2 ID)
             blocked_list = ['EP072020']
-            potential_tcs = ['AL102017']
             increment_but_pass = []
             
             if storm_name == 'UNNAMED' and max_wnd != np.nan and max_wnd >= 34 and storm_id not in blocked_list:
@@ -490,7 +489,7 @@ class TrackDataset:
                 self.data[key]['operational_id'] = storm_id + ''
             else:
                 #Skip potential TCs
-                if f"{storm_id[0:2]}{num_to_str2(current_year_id)}{storm_year}" in potential_tcs:
+                if f"{storm_id[0:2]}{num_to_str2(current_year_id)}{storm_year}" != storm_id and storm_year >= 2017:
                     current_year_id += 1
                 self.data[key]['operational_id'] = f"{storm_id[0:2]}{num_to_str2(current_year_id)}{storm_year}"
                 current_year_id += 1

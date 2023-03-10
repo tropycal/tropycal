@@ -1424,7 +1424,7 @@ class TrackDataset:
         #Create cartopy projection
         if cartopy_proj is not None:
             self.plot_obj.proj = cartopy_proj
-        elif max(storm_dict['lon']) > 150 or min(storm_dict['lon']) < -150:
+        elif max_lon > 150 or min_lon < -150:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
         else:
             self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)

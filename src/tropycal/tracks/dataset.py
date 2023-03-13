@@ -404,7 +404,7 @@ class TrackDataset:
                 if "N" in lat:
                     lat = round(float(lat.split("N")[0]),1)
                 elif "S" in lat:
-                    lat = round(float(lat.split("N")[0]),1) * -1.0
+                    lat = round(float(lat.split("S")[0]),1) * -1.0
                 if "W" in lon:
                     lon = round(float(lon.split("W")[0]),1) * -1.0
                 elif "E" in lon:
@@ -4154,11 +4154,7 @@ class TrackDataset:
            * - ms
              - Marker size for forecast dots. Default is 12.
         """
-        
-        #Error check
-        if self.source != 'hurdat':
-            raise RuntimeError("This function is only available for NHC's area of responsibility at this time.")
-        
+
         #Set basin
         if domain == None:
             domain = self.basin
@@ -4176,14 +4172,23 @@ class TrackDataset:
         forecasts = []
         for key in self.keys:
             
-            #First filter
+            #Temporal filter
             if time < self.data[key]['time'][0]: continue
             if self.data[key]['time'][-1] < time: continue
-           
-            #Second filter
-            diff = [(time-i).total_seconds()/3600 for i in self.data[key]['time']]
-            diff_maxes = [i for i in diff if i >= 0]
-            idx = diff.index(np.nanmin(diff_maxes))
+            
+            #Filter for ibtracs sources (use best track instead of operational track)
+            if self.source != 'hurdat':
+                diff = [(time-i).total_seconds()/3600 for i in self.data[key]['time']]
+                diff_maxes = [i for i in diff if i >= 0]
+                if len(diff_maxes) == 0: continue
+                idx = diff.index(np.nanmin(diff_maxes))
+                if np.nanmin(diff) > 0: continue
+                if diff[idx] < (-9.0/24.0): continue
+                if diff[idx] > (9.0/24.0): continue
+                storm = self.get_storm(key).sel(time=(self.data[key]['time'][0],time))
+                if True in np.isin(list(storm.type),list(constants.TROPICAL_STORM_TYPES)):
+                    storms.append(storm)
+                continue
             
             #Get forecast
             storm = self.get_storm(key)

@@ -2262,7 +2262,7 @@ None,prop={},map_prop={}):
             for storm_idx,storm in enumerate(storms):
                 
                 #Skip if it's already associated with a risk area, if TWO is being plotted
-                if storm.prob_2day != 'N/A' and two_prop['plot'] == True: continue
+                if storm.realtime and storm.prob_2day != 'N/A' and two_prop['plot'] == True: continue
                 
                 #Plot invests
                 if storm.invest and invest_prop['plot'] == True:
@@ -2287,8 +2287,6 @@ None,prop={},map_prop={}):
                 elif storm.invest == False and storm_prop['plot'] == True:
                     
                     #Label dot
-                    #self.ax.plot(storm.lon[-1],storm.lat[-1],'o',ms=14,color='none',mec='k',mew=3.0,transform=ccrs.PlateCarree(),zorder=5)
-                    #self.ax.plot(storm.lon[-1],storm.lat[-1],'o',ms=14,color='none',mec='r',mew=2.0,transform=ccrs.PlateCarree(),zorder=6)
                     category = str(wind_to_category(storm.vmax[-1]))
                     color = get_colors_sshws(storm.vmax[-1])
                     if category == "0": category = 'S'
@@ -2325,15 +2323,22 @@ None,prop={},map_prop={}):
                     
                     #Plot archive track
                     if storm_prop['linewidth'] > 0:
-                        self.ax.plot(storm.lon,storm.lat,color=storm_prop['linecolor'],linestyle=storm_prop['linestyle'],zorder=5,transform=ccrs.PlateCarree())
+                        
+                        #Fix longitudes for track if crossing dateline
+                        plot_lon = list(storm.lon)
+                        if np.nanmax(plot_lon) > 165 or np.nanmin(plot_lon) < -165:
+                            plot_lon = [i if i > 0 else i + 360.0 for i in plot_lon]
+                        self.ax.plot(plot_lon,storm.lat,color=storm_prop['linecolor'],linestyle=storm_prop['linestyle'],
+                                     zorder=5,transform=ccrs.PlateCarree())
                         
                     #Plot cone
                     if cone_prop['plot'] == True:
                         
-                        #Retrieve cone
-                        forecast_dict = forecasts[storm_idx]
-                        
                         try:
+                            
+                            #Retrieve cone
+                            forecast_dict = forecasts[storm_idx]
+                            
                             #Fix longitudes for cone if crossing dateline
                             if np.nanmax(forecast_dict['lon']) > 165 or np.nanmin(forecast_dict['lon']) < -165:
                                 forecast_dict['lon'] = [i if i > 0 else i + 360.0 for i in forecast_dict['lon']]

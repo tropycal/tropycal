@@ -171,8 +171,8 @@ class TrackDataset:
     def __init__(self,basin='north_atlantic',source='hurdat',include_btk=False,interpolate_data=False,**kwargs):
         
         #kwargs
-        atlantic_url = kwargs.pop('atlantic_url', 'https://www.aoml.noaa.gov/hrd/hurdat/hurdat2.html')
-        pacific_url = kwargs.pop('pacific_url', 'https://www.aoml.noaa.gov/hrd/hurdat/hurdat2-nepac.html')
+        atlantic_url = kwargs.pop('atlantic_url', 'fetch')
+        pacific_url = kwargs.pop('pacific_url', 'fetch')
         ibtracs_url = kwargs.pop('ibtracs_url', 'https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv')
         ibtracs_mode = kwargs.pop('ibtracs_mode', 'jtwc')
         catarina = kwargs.pop('catarina', False)
@@ -181,6 +181,16 @@ class TrackDataset:
         #Error check
         if ibtracs_mode not in ['wmo','jtwc','jtwc_neumann']:
             raise ValueError("ibtracs_mode must be either 'wmo', 'jtwc', or 'jtwc_neumann'")
+        
+        #Get latest HURDATv2 files if requested
+        if basin in constants.NHC_BASINS and source == 'hurdat':
+            condition_1 = basin == 'north_atlantic' and atlantic_url == 'fetch'
+            condition_2 = basin == 'east_pacific' and pacific_url == 'fetch'
+            condition_3 = basin == 'both' and (atlantic_url == 'fetch' or pacific_url == 'fetch')
+            if condition_1 or condition_2 or condition_3:
+                atlantic_url, pacific_url = find_latest_hurdat_files()
+        print(atlantic_url)
+        print(pacific_url)
         
         #Store input arguments
         self.proj = None #for plotting

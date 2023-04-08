@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime as dt,timedelta
 import requests
+import re
 import urllib
 import matplotlib.dates as mdates
 import matplotlib.colors as mcolors
@@ -13,6 +14,84 @@ import scipy.interpolate as interp
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from .. import constants
+
+def find_latest_hurdat_files():
+    
+    r"""
+    Identifies latest available HURDATv2 files from the NHC web server for the Atlantic and Pacific basins.
+    
+    Returns
+    -------
+    list
+        List containing URL strings for the latest available Best Track file for the Atlantic & Pacific basins.
+    """
+    
+    #Check if NHC website is up. If not, return HRD HURDATv2 URL
+    url_found = True
+    try:
+        check = urllib.request.urlopen("https://www.nhc.noaa.gov/data/hurdat/").getcode()
+        if check != 200:
+            url_found = False
+    except:
+        url_found = False
+    if url_found == False:
+        atlantic_url = 'https://www.aoml.noaa.gov/hrd/hurdat/hurdat2.html'
+        pacific_url = 'https://www.aoml.noaa.gov/hrd/hurdat/hurdat2-nepac.html'
+        return atlantic_url, pacific_url
+    
+    #Store data for iteration
+    atlantic_url = ''
+    pacific_url = ''
+    url_data = {
+        'url': {
+            'atl': [],
+            'pac': [],
+        },
+        'date': {
+            'atl': [],
+            'pac': [],
+        }
+    }
+
+    #Iterate over all HURDATv2 files available on NHC's website
+    nhc_directory = 'https://www.nhc.noaa.gov/data/hurdat/'
+    page = requests.get(nhc_directory).text
+    content = page.split("\n")
+    for line in content:
+        if ".txt" in line:
+            fname = (line.split('href="')[1]).split('">')[0]
+
+            #Identify Atlantic vs. Pacific
+            if 'nepac' in fname:
+                file_basin = 'pac'
+                fname_split = '-'.join(fname.split('-')[4:])
+            else:
+                file_basin = 'atl'
+                fname_split = '-'.join(fname.split('-')[3:])
+
+            #Try to identify date file was added
+            try:
+                strdate = fname_split.split(".txt")[0]
+                strdate = re.sub("[^0-9]", "", strdate)
+                if len(strdate) == 6:
+                    strdate = f'{strdate[0:4]}20{strdate[4:]}'
+                date_obj = dt.strptime(strdate,'%m%d%Y')
+
+                if file_basin == 'pac':
+                    url_data['url']['pac'].append(f'{nhc_directory}{fname}')
+                    url_data['date']['pac'].append(date_obj)
+                else:
+                    url_data['url']['atl'].append(f'{nhc_directory}{fname}')
+                    url_data['date']['atl'].append(date_obj)
+            except:
+                continue
+
+    min_date_atl = max(url_data['date']['atl'])
+    atlantic_url = url_data['url']['atl'][url_data['date']['atl'].index(min_date_atl)]
+    min_date_pac = max(url_data['date']['pac'])
+    pacific_url = url_data['url']['pac'][url_data['date']['pac'].index(min_date_pac)]
+
+    return atlantic_url, pacific_url
 
 def find_var(request,thresh):
     

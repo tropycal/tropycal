@@ -2078,7 +2078,7 @@ class TrackDataset:
                 cumulative['c5'][idx] += duration_thres(storm_vmax,137.0)
                 year_genesis.append(np.where(year_dates == storm_date[0])[0][0])
                 
-            #Calculate cumulative sum of year monkey
+            #Calculate cumulative sum of year
             if rolling_sum == 0:
                 year_genesis = np.array(year_genesis)
             
@@ -2336,6 +2336,10 @@ class TrackDataset:
         -------
         ax or dict
             By default, the plot axes is returned. If return_dict is True, a dictionary containing data about the wind vs. MSLP relationship climatology is returned.
+        
+        Notes
+        -----
+        Climatology is only valid for time steps during which cyclones were tropical or subtropical.
         """
         
         #Define empty dictionary

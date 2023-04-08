@@ -189,8 +189,6 @@ class TrackDataset:
             condition_3 = basin == 'both' and (atlantic_url == 'fetch' or pacific_url == 'fetch')
             if condition_1 or condition_2 or condition_3:
                 atlantic_url, pacific_url = find_latest_hurdat_files()
-        print(atlantic_url)
-        print(pacific_url)
         
         #Store input arguments
         self.proj = None #for plotting

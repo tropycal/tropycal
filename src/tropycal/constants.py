@@ -20,7 +20,7 @@ STANDARD_HOURS = frozenset(['0000','0600','1200','1800'])
 ALL_BASINS = frozenset(['north_atlantic','east_pacific','west_pacific','north_indian','south_atlantic','south_indian','australia','south_pacific'])
 
 #Accepted NHC basins
-NHC_BASINS = frozenset(['north_atlantic','east_pacific'])
+NHC_BASINS = frozenset(['north_atlantic','east_pacific','both'])
 
 #South Hemisphere basins
 SOUTH_HEMISPHERE_BASINS = frozenset(['south_atlantic','south_indian','australia','south_pacific'])

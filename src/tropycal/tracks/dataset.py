@@ -2446,8 +2446,8 @@ class TrackDataset:
         cbar=fig.colorbar(CS)
         cbar.ax.set_ylabel('Historical Frequency',fontsize=14)
         cbar.ax.tick_params(labelsize=14)
-        cbar.set_ticks(np.array([i for i in [0,5,50,200,500,1000,2000] if i<np.amax(counts)])**0.3, update_ticks=True)
-        cbar.set_ticklabels([i for i in [0,5,50,200,500,1000,2000] if i<np.amax(counts)], update_ticks=True)
+        cbar.set_ticks(np.array([i for i in [0,5,50,200,500,1000,2000] if i<np.amax(counts)])**0.3)
+        cbar.set_ticklabels([i for i in [0,5,50,200,500,1000,2000] if i<np.amax(counts)])
 
         #add credit
         credit_text = Plot().plot_credit()        

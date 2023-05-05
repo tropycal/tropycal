@@ -131,7 +131,7 @@ class RainPlot(Plot):
                 #Retrieve rain total and determine color
                 rain_value = row['Total']
                 if rain_value < minimum_threshold: continue
-                color = self.rgb(cmap(norm(rain_value),bytes=True)[:-1])
+                color = rgb_tuple_to_str(cmap(norm(rain_value),bytes=True)[:-1])
                 
                 #Specify additional kwargs
                 ms_kwargs = {}

@@ -237,6 +237,28 @@ def get_colors_pph(plot_type,colormap,levels=None):
 # These are primarily intended to be used internally. Do not add these to documentation.
 #===========================================================================================================
 
+def rgb_tuple_to_str(rgb_tuple):
+    
+    r"""
+    Convert an RGB tuple to hex string.
+    
+    Parameters
+    ----------
+    rgb_tuple : tuple
+        Tuple ordered in (r,g,b) containing integers from 0 to 255.
+    
+    Returns
+    -------
+    str
+        Hex string for RGB value.
+    """
+    
+    r,g,b = rgb_tuple
+    r = int(r)
+    g = int(g)
+    b = int(b)
+    return '#%02x%02x%02x' % (r, g, b)
+
 def get_cmap_levels(varname,colormap,levels,linear=False):
     
     r"""

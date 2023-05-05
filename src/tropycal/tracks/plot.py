@@ -104,13 +104,6 @@ def plot_dot(ax,lon,lat,time,vmax,i_type,zorder,storm_data,prop,i):
 
     return ax, segmented_colors, extra
 
-def rgb(self,rgb):
-    r,g,b = rgb
-    r = int(r)
-    g = int(g)
-    b = int(b)
-    return '#%02x%02x%02x' % (r, g, b)
-
 def add_legend(ax,fig,prop,segmented_colors,levels=None,cmap=None,storm=None):
 
     #Linecolor category with dots

@@ -2128,7 +2128,7 @@ None,prop={},map_prop={}):
         """
         
         #Set default properties
-        default_two_prop={'plot':True,'fontsize':12,'days':5,'ms':15}
+        default_two_prop={'plot':True,'fontsize':12,'days':7,'ms':15}
         default_invest_prop={'plot':True,'fontsize':12,'linewidth':0.8,'linecolor':'k','linestyle':'dotted','ms':14}
         default_storm_prop={'plot':True,'fontsize':12,'linewidth':0.8,'linecolor':'k','linestyle':'dotted','fillcolor':'category','label_category':True,'ms':14}
         default_cone_prop={'plot':True,'linewidth':1.5,'linecolor':'k','alpha':0.6,'days':5,'fillcolor':'category','label_category':True,'ms':12}
@@ -2151,8 +2151,10 @@ None,prop={},map_prop={}):
         if two_prop['plot'] == True:
             if two_prop['days'] == 2 or valid_date <= dt(2014,7,1):
                 add_title = " & NHC 2-Day Formation Outlook"
-            else:
+            elif valid_date <= dt(2023,5,1):
                 add_title = " & NHC 5-Day Formation Outlook"
+            else:
+                add_title = " & NHC 7-Day Formation Outlook"
         
         #--------------------------------------------------------------------------------------
         
@@ -2168,11 +2170,13 @@ None,prop={},map_prop={}):
                 for record, geom in zip(shapefiles['areas'].records(), shapefiles['areas'].geometries()):
 
                     #Read relevant data
-                    if 'RISK2DAY' in record.attributes.keys() or 'RISK5DAY' in record.attributes.keys():
+                    if 'RISK2DAY' in record.attributes.keys() or 'RISK5DAY' in record.attributes.keys() or 'RISK7DAY' in record.attributes.keys():
                         if two_prop['days'] == 2:
                             color = color_base.get(record.attributes['RISK2DAY'],'yellow')
-                        else:
+                        elif 'RISK5DAY' in record.attributes.keys():
                             color = color_base.get(record.attributes['RISK5DAY'],'yellow')
+                        else:
+                            color = color_base.get(record.attributes['RISK7DAY'],'yellow')
                     else:
                         color = color_base.get(record.attributes['GENCAT'],'yellow')
 
@@ -2203,8 +2207,10 @@ None,prop={},map_prop={}):
                             plot_coords.append(bounds[1]) #lat
                             if two_prop['days'] == 2:
                                 plot_coords.append(record.attributes['PROB2DAY'])
-                            else:
+                            elif 'PROB5DAY' in record.attributes.keys():
                                 plot_coords.append(record.attributes['PROB5DAY'])
+                            else:
+                                plot_coords.append(record.attributes['PROB7DAY'])
                     
                     if len(plot_coords) > 0:
                         #Transform coordinates for label
@@ -2221,13 +2227,18 @@ None,prop={},map_prop={}):
             if shapefiles['points'] != None:
                 for record, point in zip(shapefiles['points'].records(), shapefiles['points'].geometries()):
 
-                    #Read relevant data
                     lon = (list(point.coords)[0][0])
                     lat = (list(point.coords)[0][1])
+                    
+                    #Determine if 5 or 7 day outlook exists
                     prob_2day = record.attributes['PROB2DAY'].replace(" ","")
-                    prob_5day = record.attributes['PROB5DAY'].replace(" ","")
                     risk_2day = record.attributes['RISK2DAY'].replace(" ","")
-                    risk_5day = record.attributes['RISK5DAY'].replace(" ","")
+                    if 'PROB5DAY' in record.attributes.keys():
+                        prob_5day = record.attributes['PROB5DAY'].replace(" ","")
+                        risk_5day = record.attributes['RISK5DAY'].replace(" ","")
+                    else:
+                        prob_5day = record.attributes['PROB7DAY'].replace(" ","")
+                        risk_5day = record.attributes['RISK7DAY'].replace(" ","")
 
                     #Label area
                     if two_prop['days'] == 2:

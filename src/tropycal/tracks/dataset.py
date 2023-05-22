@@ -4315,8 +4315,8 @@ class TrackDataset:
             #Append to storms
             track_dict['prob_2day'] = 'N/A'
             track_dict['risk_2day'] = 'N/A'
-            track_dict['prob_5day'] = 'N/A'
-            track_dict['risk_5day'] = 'N/A'
+            track_dict['prob_7day'] = 'N/A'
+            track_dict['risk_7day'] = 'N/A'
             
             #Fill empty observed dicts (assuming storm just formed)
             if len(track_dict['lat']) == 0:

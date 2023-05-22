@@ -205,19 +205,19 @@ class Realtime():
             for key in self.data.keys():
                 if key[0:2] in ['AL','EP'] and 'prob_2day' not in self.data[key].keys():
                     self.data[key]['prob_2day'] = 'N/A'
-                    self.data[key]['prob_5day'] = 'N/A'
+                    self.data[key]['prob_7day'] = 'N/A'
                     self.data[key]['risk_2day'] = 'N/A'
-                    self.data[key]['risk_5day'] = 'N/A'
+                    self.data[key]['risk_7day'] = 'N/A'
                 if key[0:2] not in ['AL','EP']:
                     self.data[key]['prob_2day'] = 'N/A'
-                    self.data[key]['prob_5day'] = 'N/A'
+                    self.data[key]['prob_7day'] = 'N/A'
                     self.data[key]['risk_2day'] = 'N/A'
-                    self.data[key]['risk_5day'] = 'N/A'
+                    self.data[key]['risk_7day'] = 'N/A'
                 if self.data[key]['type'][-1] in constants.TROPICAL_STORM_TYPES:
                     self.data[key]['prob_2day'] = 'N/A'
-                    self.data[key]['prob_5day'] = 'N/A'
+                    self.data[key]['prob_7day'] = 'N/A'
                     self.data[key]['risk_2day'] = 'N/A'
-                    self.data[key]['risk_5day'] = 'N/A'
+                    self.data[key]['risk_7day'] = 'N/A'
                 self[key] = RealtimeStorm(self.data[key])
 
             #Delete data dict while retaining active storm keys
@@ -639,9 +639,9 @@ class Realtime():
                 lon = (list(point.coords)[0][0])
                 lat = (list(point.coords)[0][1])
                 prob_2day = record.attributes['PROB2DAY']
-                prob_5day = record.attributes['PROB5DAY']
+                prob_7day = record.attributes['PROB7DAY']
                 risk_2day = record.attributes['RISK2DAY']
-                risk_5day = record.attributes['RISK5DAY']
+                risk_7day = record.attributes['RISK7DAY']
                 
                 #Match to existing invests
                 distances = [great_circle((lat,lon),(self.data[storm_id]['lat'][-1],self.data[storm_id]['lon'][-1])).miles for storm_id in self.data.keys()]
@@ -650,9 +650,9 @@ class Realtime():
                 storm_id = [k for k in self.data.keys()][idx]
                 if min_distance <= 150:
                     self.data[storm_id]['prob_2day'] = prob_2day
-                    self.data[storm_id]['prob_5day'] = prob_5day
+                    self.data[storm_id]['prob_7day'] = prob_7day
                     self.data[storm_id]['risk_2day'] = risk_2day
-                    self.data[storm_id]['risk_5day'] = risk_5day
+                    self.data[storm_id]['risk_7day'] = risk_7day
             
         except:
             

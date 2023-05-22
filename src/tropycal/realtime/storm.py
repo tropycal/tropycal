@@ -219,8 +219,8 @@ class RealtimeStorm(Storm):
         return {
             'prob_2day': self.dict['prob_2day'],
             'risk_2day': self.dict['risk_2day'],
-            'prob_5day': self.dict['prob_5day'],
-            'risk_5day': self.dict['risk_5day']
+            'prob_7day': self.dict['prob_7day'],
+            'risk_7day': self.dict['risk_7day']
         }
     
     def download_graphic_realtime(self,save_path=""):

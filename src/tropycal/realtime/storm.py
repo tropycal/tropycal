@@ -445,13 +445,21 @@ class RealtimeStorm(Storm):
             content = content.decode("utf-8")
             content = content.split("\n")
             f.close()
+            
+            #Find starting index
+            start_idx = 0
+            for idx,line in enumerate(content):
+                lineArray = line.split(" ")
+                if 'WARNING' in lineArray[0] and len(lineArray) > 2:
+                    start_idx = idx
+                    break
 
             if self.jtwc_source in ['jtwc','ucar']:
                 #Iterate through every line in content:
-                run_init = content[2].split(" ")[0]
+                run_init = content[start_idx+2].split(" ")[0]
                 forecasts = {}
 
-                for line in content[3:]:
+                for line in content[start_idx+3:]:
 
                     #Exit once done retrieving forecast
                     if line == "AMP": break

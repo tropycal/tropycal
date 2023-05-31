@@ -579,17 +579,29 @@ def get_two_archive(time):
     TWO shapefiles are available courtesy of the National Hurricane Center beginning 28 July 2010.
     """
     
-    #Find closest NHC shapefile if within 24 hours
-    url = 'https://www.nhc.noaa.gov/gis/archive_gtwo.php'
-    page = requests.get(url).text
+    #Determine TWO URL and info based on requested time
+    if time >= dt(2023,5,1):
+        directory_url = 'https://www.nhc.noaa.gov/gis/gtwo/archive/'
+    elif time >= dt(2014,6,1):
+        directory_url = 'https://www.nhc.noaa.gov/gis/gtwo_5day/archive/'
+    elif time >= dt(2010,7,28):
+        directory_url = 'https://www.nhc.noaa.gov/gis/gtwo_2day/archive/'
+    else:
+        return {'areas':None,'lines':None,'points':None}
+        
+    #Fetch list of TWOs based on requested time
+    page = requests.get(directory_url).text
     content = page.split("\n")
     files = []
     for line in content:
-        if '<a href="gtwo/archive/2' in line:
+        if '<a href="' in line and 'zip">' in line:
             filename = line.split('zip">')[1]
             filename = filename.split("</a>")[0]
-            files.append(filename)
+            if '_' not in filename: continue
+            if 'gtwo' not in filename.split('_')[0]: files.append(filename)
     del content
+    
+    #Find closest NHC shapefile if within 24 hours
     dates = [dt.strptime(i.split("_")[0],'%Y%m%d%H%M') for i in files]
     diff = [(time-i).total_seconds()/3600 for i in dates]
     diff = [i for i in diff if i >= 0]
@@ -604,8 +616,8 @@ def get_two_archive(time):
 
             try:
                 #Read in shapefile zip from NHC
-                url = f'https://www.nhc.noaa.gov/gis/gtwo/archive/{two_date}_gtwo.zip'
-                request = urllib.request.Request(url)
+                file_url = f'{directory_url}{two_date}_gtwo.zip'
+                request = urllib.request.Request(file_url)
                 response = urllib.request.urlopen(request)
                 file_like_object = BytesIO(response.read())
                 tar = zipfile.ZipFile(file_like_object)
@@ -619,7 +631,7 @@ def get_two_archive(time):
                 files = []
                 for file in filelist:
                     if file not in files: files.append(file.split(".shp")[0]) #remove duplicates
-                
+
                 #Alternatively, check files for older format (generally 2014 and earlier)
                 if len(files) == 0:
                     if name in ['lines','points']:

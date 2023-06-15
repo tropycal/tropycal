@@ -3765,7 +3765,7 @@ class TrackDataset:
             if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year: continue
             storm_data = [[great_circle(point,(self.data_interp[key]['lat'][i],self.data_interp[key]['lon'][i])).kilometers,self.data_interp[key]['vmax'][i],self.data_interp[key]['mslp'][i],self.data_interp[key]['time'][i]] for i in range(len(self.data_interp[key]['lat'])) if self.data_interp[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
             storm_data = [i for i in storm_data if i[0] <= radius*unit_factor]
-            storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= dt.strptime(date_range[1],'%m/%d').replace(year=i[3].year)]
+            storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= (dt.strptime(date_range[1],'%m/%d')+timedelta(hours=23)).replace(year=i[3].year)]
             if len(storm_data) == 0: continue
             if 'v_min' in thresh.keys():
                 storm_data = [i for i in storm_data if i[1] >= thresh['v_min']]
@@ -3850,7 +3850,7 @@ class TrackDataset:
             if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year: continue
             storm_data = [[p.contains_point((self.data_interp[key]['lat'][i],lon_shift[i])),self.data_interp[key]['vmax'][i],self.data_interp[key]['mslp'][i],self.data_interp[key]['time'][i]] for i in range(len(self.data_interp[key]['lat'])) if self.data_interp[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
             storm_data = [i for i in storm_data if i[0] == True]
-            storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= dt.strptime(date_range[1],'%m/%d').replace(year=i[3].year)]
+            storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0],'%m/%d').replace(year=i[3].year) and i[3] <= (dt.strptime(date_range[1],'%m/%d')+timedelta(hours=23)).replace(year=i[3].year)]
             if len(storm_data) == 0: continue
             if 'v_min' in thresh.keys():
                 storm_data = [i for i in storm_data if i[1] >= thresh['v_min']]

@@ -2604,7 +2604,7 @@ class TrackDataset:
             #Filter by time
             if date_range is not None:
                 start_time = dt.strptime(f"{storm_data['year']}/{date_range[0]}",'%Y/%m/%d')
-                end_time = dt.strptime(f"{storm_data['year']}/{date_range[1]}",'%Y/%m/%d')
+                end_time = dt.strptime(f"{storm_data['year']}/{date_range[1]}",'%Y/%m/%d')+timedelta(hours=23)
                 idx = np.array([i for i in range(len(lat_tropical)) if time_tropical[i] >= start_time and time_tropical[i] <= end_time])
                 if len(idx) == 0: continue
                 
@@ -2623,7 +2623,11 @@ class TrackDataset:
             if metric == 'ace':
                 
                 if storm_data['ace'] == 0: continue
-                analyze_dict['ace'].append(np.round(storm_data['ace'],4))
+                storm_ace = 0.0
+                for i,(i_time,i_vmax) in enumerate(zip(time_tropical,vmax_tropical)):
+                    if i_time.strftime('%H%M') not in constants.STANDARD_HOURS: continue
+                    storm_ace += accumulated_cyclone_energy(i_vmax)
+                analyze_dict['ace'].append(round(storm_ace,4))
                 
             elif metric in ['start_lat','end_lat','start_lon','end_lon']:
                 

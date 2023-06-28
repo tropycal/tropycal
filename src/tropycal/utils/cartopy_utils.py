@@ -21,6 +21,47 @@ def add_tropycal(ax):
     -------
     ax
         The same axes instance is returned, with tropycal plotting functions from `tropycal.utils.cartopy_utils` added to it as methods.
+    
+    Notes
+    -----
+    This function appends Tropycal plotting capability to an existing axes with a Cartopy projection. Below is an example of how to use this functionality:
+    
+    .. code-block:: python
+    
+        #Import necessary packages
+        from tropycal import tracks, utils
+        import cartopy.crs as ccrs
+        import cartopy.feature as cfeature
+        import matplotlib.pyplot as plt
+        
+        #Retrieve North Atlantic HURDATv2 dataset and store in basin variable
+        basin = tracks.TrackDataset('north_atlantic')
+
+        #Create a PlateCarree Cartopy projection
+        proj = ccrs.PlateCarree()
+
+        #Create an instance of figure and axes
+        fig = plt.figure(figsize=(9,6),dpi=150)
+        ax = plt.axes(projection=proj)
+
+        #Plot coastlines and boundaries
+        states = ax.add_feature(cfeature.STATES.with_scale('50m'),linewidths=0.5,linestyle='solid',edgecolor='k')
+        countries = ax.add_feature(cfeature.BORDERS.with_scale('50m'),linewidths=1.0,linestyle='solid',edgecolor='k')
+        coastlines = ax.add_feature(cfeature.COASTLINE.with_scale('50m'),linewidths=1.0,linestyle='solid',edgecolor='k')
+
+        #Add Tropycal functionality to axes
+        ax = utils.add_tropycal(ax)
+
+        #Use the "plot_storm()" method to plot Hurricane Michael's track
+        storm = basin.get_storm(('michael',2018))
+        ax.plot_storm(storm,'-',color='k')
+
+        #Zoom in over the Gulf Coast
+        ax.set_extent([-100,-70,18,37])
+
+        #Show plot and close
+        plt.show()
+        plt.close()
     """
     
     ax.plot_storm = types.MethodType( plot_storm, ax )
@@ -79,6 +120,12 @@ def plot_two(self,two_dict,days=7,**kwargs):
         Opacity of TWO area fill. Default is 0.3.
     zorder : int, optional
         Optional display order on axes of TWO areas and labels.
+    
+    Notes
+    -----
+    It is not necessary to pass a "transform" keyword argument, as this is already assumed to be ccrs.PlateCarree().
+    
+    This function is already appended to an axes instance if ``ax = utils.add_tropycal(ax)`` is run beforehand. This allows this method to be called simply via ``ax.plot_two(...)``.
     """
     
     #Retrieve kwargs

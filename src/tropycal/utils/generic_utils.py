@@ -105,7 +105,7 @@ def category_to_wind(category):
 def classify_subtropical(storm_type):
     
     r"""
-    Determine whether a tropical cyclone was purely subtropical.
+    Check whether a tropical cyclone was purely subtropical.
     
     Parameters
     ----------

@@ -984,7 +984,9 @@ None,prop={},map_prop={}):
                          'cmc':'#1e90ff',
                          'ukm':'#00ff00',
                          'hmon':'#ff8c00',
-                         'hwrf':'#66cdaa'}
+                         'hwrf':'#66cdaa',
+                         'hafsa':'#C659F9',
+                         'hafsb':'#8915BB'}
         default_prop = {'linewidth':2.5,'marker':'label','marker_hours':[24,48,72,96,120,144,168]}
         
         #Initialize plot
@@ -1012,10 +1014,17 @@ None,prop={},map_prop={}):
         #Plot models
         for model in forecast_dict.keys():
             
+            #Fix label for HAFS
+            if 'hafs' in model:
+                idx = model.index('hafs')
+                model_label = f"HAFS-{model[idx + len('hafs'):].upper()}" 
+            else:
+                model_label = model.upper()
+            
             #Plot forecast track
             lons = forecast_dict[model]['lon']
             lats = forecast_dict[model]['lat']
-            self.ax.plot(lons,lats,color=model_prop[model],linewidth=prop['linewidth'],label=model.upper(),transform=ccrs.PlateCarree())
+            self.ax.plot(lons,lats,color=model_prop[model],linewidth=prop['linewidth'],label=model_label,transform=ccrs.PlateCarree())
             
             #Add labels if requested
             if prop['marker'] != None and len(prop['marker_hours']) >= 1:

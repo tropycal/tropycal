@@ -955,6 +955,10 @@ class Storm:
              - Hurricanes in a Multi-scale Ocean-coupled Non-hydrostatic Model (HMON)
            * - HWRF
              - Hurricane Weather Research and Forecast (HWRF)
+           * - HAFSA
+             - Hurricane Analysis and Forecast System A (HAFS-A)
+           * - HAFSB
+             - Hurricane Analysis and Forecast System B (HAFS-B)
            * - NHC
              - National Hurricane Center (NHC)
         
@@ -982,6 +986,8 @@ class Storm:
             'ecm':'ECO2',
             'hmon':'HMNI',
             'hwrf':'HWFI',
+            'hafsa':'HFAI',
+            'hafsb':'HFBI',
             'nhc':'OFCI',
         }
         backup_models = {
@@ -991,6 +997,8 @@ class Storm:
             'hmon':['GFDI','GFDL'],
             'nhc':['OFCL','JTWC'],
             'hwrf':['HWRF'],
+            'hafsa':['HFSA'],
+            'hafsb':['HFSB'],
         }
         
         #Pop kwargs
@@ -1014,7 +1022,7 @@ class Storm:
         
         #Fetch latest forecast if None
         if forecast == None:
-            check_keys = ['AVNI','OFCI','HWFI']
+            check_keys = ['AVNI','OFCI','HWFI','HFAI']
             if 'HWFI' not in self.forecast_dict.keys(): check_keys[2] = 'HWRF'
             if 'HWRF' not in self.forecast_dict.keys() and 'HWRF' in check_keys: check_keys.pop(check_keys.index('HWRF'))
             if 'OFCI' not in self.forecast_dict.keys(): check_keys[1] = 'OFCL'
@@ -1023,6 +1031,8 @@ class Storm:
             if 'AVNI' not in self.forecast_dict.keys(): check_keys[0] = 'AVNO'
             if 'AVNO' not in self.forecast_dict.keys(): check_keys[0] = 'AVNX'
             if 'AVNX' not in self.forecast_dict.keys() and 'AVNX' in check_keys: check_keys.pop(check_keys.index('AVNX'))
+            if 'HFAI' not in self.forecast_dict.keys(): check_keys[3] = 'HFSA'
+            if 'HFSA' not in self.forecast_dict.keys() and 'HWRF' in check_keys: check_keys.pop(check_keys.index('HFSA'))
             if len(check_keys) == 0: raise ValueError("No models are available for this storm.")
             inits = [dt.strptime([k for k in self.forecast_dict[key]][-1],'%Y%m%d%H') for key in check_keys]
             forecast = min(inits)

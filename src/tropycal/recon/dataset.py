@@ -10,7 +10,7 @@ import urllib3
 
 from scipy.interpolate import interp1d
 from scipy.ndimage import gaussian_filter as gfilt,gaussian_filter1d as gfilt1d
-from scipy.ndimage.filters import minimum_filter
+from scipy.ndimage import minimum_filter
 import matplotlib.dates as mdates
 
 try:

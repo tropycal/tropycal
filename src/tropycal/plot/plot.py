@@ -1,11 +1,5 @@
-import calendar
 import numpy as np
-import pandas as pd
-import re
-import scipy.interpolate as interp
-import urllib
 import warnings
-from datetime import datetime as dt, timedelta
 import pkg_resources
 
 from ..utils import *
@@ -20,11 +14,9 @@ except:
 
 try:
     import matplotlib as mlib
-    import matplotlib.lines as mlines
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
-    from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
 except:
     warnings.warn(
         "Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")

@@ -1,13 +1,8 @@
-import os
-import sys
 import numpy as np
 import pandas as pd
 from datetime import datetime as dt, timedelta
-from scipy.ndimage import gaussian_filter as gfilt, gaussian_filter1d as gfilt1d
-from scipy.interpolate import griddata, interp2d, interp1d, SmoothBivariateSpline
-import warnings
-import matplotlib as mlib
-import matplotlib.colors as mcolors
+from scipy.ndimage import gaussian_filter as gfilt
+from scipy.interpolate import griddata, interp1d
 import matplotlib.dates as mdates
 import copy
 

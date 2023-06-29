@@ -10,16 +10,6 @@ import warnings
 
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
-import matplotlib.colors as mcolors
-import matplotlib.patheffects as patheffects
-
-try:
-    import cartopy.feature as cfeature
-    from cartopy import crs as ccrs
-    from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-except:
-    warn_message = "Warning: Cartopy is not installed in your python environment. Plotting functions will not work."
-    warnings.warn(warn_message)
 
 from .plot import TornadoPlot
 

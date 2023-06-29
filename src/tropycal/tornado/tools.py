@@ -1,10 +1,7 @@
-import os
-import sys
 import numpy as np
 import pandas as pd
-from datetime import datetime as dt, timedelta
+from datetime import timedelta
 from scipy.ndimage import gaussian_filter as gfilt, maximum_filter
-import warnings
 
 
 def circle_filter(d):

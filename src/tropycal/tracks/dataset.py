@@ -4,7 +4,6 @@ import calendar
 import numpy as np
 import pandas as pd
 import re
-import scipy.interpolate as interp
 import scipy.stats as stats
 import urllib
 import warnings
@@ -27,9 +26,7 @@ from .. import constants
 # Import matplotlib
 try:
     import matplotlib.lines as mlines
-    import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
-    import matplotlib.ticker as mticker
     import matplotlib.dates as mdates
 except:
     warnings.warn(

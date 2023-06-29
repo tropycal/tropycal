@@ -2,23 +2,9 @@ r"""Functionality for reading and analyzing SPC tornado dataset."""
 
 import numpy as np
 import pandas as pd
-from datetime import datetime as dt, timedelta
+from datetime import datetime as dt
 from scipy.interpolate import griddata
-import matplotlib.dates as mdates
 import warnings
-
-import matplotlib.pyplot as plt
-import matplotlib.lines as mlines
-import matplotlib.colors as mcolors
-import matplotlib.patheffects as patheffects
-
-try:
-    import cartopy.feature as cfeature
-    from cartopy import crs as ccrs
-    from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-except:
-    warnings.warn(
-        "Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
 
 from .plot import RainPlot
 

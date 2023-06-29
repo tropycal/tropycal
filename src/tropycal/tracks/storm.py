@@ -3,7 +3,6 @@ r"""Functionality for storing and analyzing an individual storm."""
 import numpy as np
 import pandas as pd
 import re
-import scipy.interpolate as interp
 import urllib
 import warnings
 from datetime import datetime as dt, timedelta
@@ -22,7 +21,7 @@ from ..utils import *
 try:
     import zipfile
     import gzip
-    from io import StringIO, BytesIO
+    from io import BytesIO
     import tarfile
 except:
     warnings.warn(
@@ -30,9 +29,7 @@ except:
 
 try:
     import matplotlib.lines as mlines
-    import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
-    import matplotlib.ticker as mticker
 except:
     warnings.warn(
         "Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
@@ -652,13 +649,6 @@ class Storm:
         pandas.DataFrame
             A pandas DataFrame object containing information about the storm.
         """
-
-        # Try importing pandas
-        try:
-            import pandas as pd
-        except ImportError as e:
-            raise RuntimeError(
-                "Error: pandas is not available. Install pandas in order to use this function.") from e
 
         # Set up empty dict for dataframe
         time = self.dict['time']

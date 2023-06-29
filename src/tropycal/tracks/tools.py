@@ -1,16 +1,9 @@
-import os
-import sys
-import math
 import numpy as np
-import pandas as pd
 from datetime import datetime as dt, timedelta
 import requests
 import re
 import urllib
 import matplotlib.dates as mdates
-import matplotlib.colors as mcolors
-import matplotlib as mlib
-import warnings
 import scipy.interpolate as interp
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 

@@ -1,11 +1,5 @@
-import calendar
-import numpy as np
-import pandas as pd
-import re
-import scipy.interpolate as interp
-import urllib
 import warnings
-from datetime import datetime as dt, timedelta
+from datetime import datetime as dt
 
 from ..plot import Plot
 
@@ -14,19 +8,15 @@ from .tools import *
 from ..utils import *
 
 try:
-    import cartopy.feature as cfeature
     from cartopy import crs as ccrs
-    from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 except:
     warnings.warn(
         "Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
 
 try:
-    import matplotlib as mlib
     import matplotlib.lines as mlines
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
-    import matplotlib.ticker as mticker
     import matplotlib.patches as mpatches
 
 except:

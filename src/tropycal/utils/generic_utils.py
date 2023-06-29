@@ -6,24 +6,17 @@ add it in that file.
 Public utility functions should be added to documentation in the '/docs/_templates/overrides/tropycal.utils.rst' file."""
 
 import shapely.geometry as sgeom
-import os
-import sys
 import math
 import numpy as np
-import pandas as pd
-from datetime import datetime as dt, timedelta
+from datetime import datetime as dt
 import requests
 import urllib
-import matplotlib.dates as mdates
-import matplotlib.colors as mcolors
-import matplotlib as mlib
-from matplotlib import path
 import warnings
 import scipy.interpolate as interp
 import re
 import shapefile
 import zipfile
-from io import StringIO, BytesIO
+from io import BytesIO
 
 from .. import constants
 

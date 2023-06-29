@@ -1,5 +1,4 @@
 import os
-import sys
 import numpy as np
 from datetime import datetime as dt, timedelta
 import pandas as pd
@@ -9,17 +8,13 @@ import copy
 import urllib3
 
 from scipy.interpolate import interp1d
-from scipy.ndimage import gaussian_filter as gfilt, gaussian_filter1d as gfilt1d
+from scipy.ndimage import gaussian_filter1d as gfilt1d
 from scipy.ndimage import minimum_filter
 import matplotlib.dates as mdates
 
 try:
-    import matplotlib as mlib
-    import matplotlib.lines as mlines
     import matplotlib.colors as mcolors
-    import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
-    import matplotlib.ticker as mticker
     import cartopy.crs as ccrs
 except:
     warnings.warn(

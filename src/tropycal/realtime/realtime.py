@@ -1,10 +1,7 @@
 r"""Functionality for managing real-time tropical cyclone data."""
 
-import calendar
 import numpy as np
-import pandas as pd
 import re
-import scipy.interpolate as interp
 import urllib
 import warnings
 from datetime import datetime as dt, timedelta
@@ -12,17 +9,9 @@ from datetime import datetime as dt, timedelta
 try:
     import shapefile
     import zipfile
-    from io import StringIO, BytesIO
+    from io import BytesIO
 except:
     warn_message = "Warning: The libraries necessary for online NHC forecast retrieval aren't available (shapefile, gzip, io)."
-    warnings.warn(warn_message)
-
-try:
-    import cartopy.feature as cfeature
-    from cartopy import crs as ccrs
-    from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-except:
-    warn_message = "Warning: Cartopy is not installed in your python environment. Plotting functions will not work."
     warnings.warn(warn_message)
 
 # Internal imports

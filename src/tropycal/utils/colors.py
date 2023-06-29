@@ -2,14 +2,7 @@ r"""Utility functions that are used across modules for colors.
 
 Public utility functions should be added to documentation in the '/docs/_templates/overrides/tropycal.utils.rst' file."""
 
-import os
-import sys
 import numpy as np
-import pandas as pd
-from datetime import datetime as dt, timedelta
-import requests
-import urllib
-import matplotlib.dates as mdates
 import matplotlib.colors as mcolors
 import matplotlib as mlib
 import warnings

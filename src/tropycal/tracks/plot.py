@@ -1,13 +1,10 @@
 import os
-import sys
-import calendar
 import numpy as np
 import scipy.interpolate as interp
 import warnings
 from datetime import datetime as dt, timedelta
 import scipy.ndimage as ndimage
 import networkx as nx
-from scipy.ndimage import gaussian_filter as gfilt
 
 # Import internal scripts
 from ..plot import Plot
@@ -20,7 +17,6 @@ from .. import constants
 try:
     import cartopy.feature as cfeature
     from cartopy import crs as ccrs
-    from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 except:
     warnings.warn(
         "Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
@@ -30,9 +26,7 @@ try:
     import matplotlib.lines as mlines
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
-    import matplotlib.ticker as mticker
     import matplotlib.patches as mpatches
-    from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
 except:
     warnings.warn(
         "Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
@@ -1276,8 +1270,6 @@ class TrackPlot(Plot):
         # ================================================================================================
 
         # Add legend
-        import matplotlib.patches as mpatches
-        import matplotlib.lines as mlines
         l = self.ax.legend(loc=1, prop={'size': 12})
         l.set_zorder(1001)
 
@@ -1369,8 +1361,6 @@ class TrackPlot(Plot):
         # ================================================================================================
 
         # Function for temporal interpolation
-        import scipy.interpolate as interp
-
         def temporal_interpolation(value, orig_times, target_times):
             f = interp.interp1d(orig_times, value)
             ynew = f(target_times)
@@ -1749,8 +1739,6 @@ class TrackPlot(Plot):
         # ================================================================================================
 
         # Add legend
-        import matplotlib.patches as mpatches
-        import matplotlib.lines as mlines
         p1 = mlines.Line2D([], [], color=prop_btk['linecolor'],
                            linewidth=prop_btk['linewidth'], label='Best Track')
         p2 = mlines.Line2D([], [], color=prop_gfs['linecolor'],

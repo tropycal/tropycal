@@ -1,7 +1,6 @@
 """Tests for the `tracks` module"""
 
 import os
-import numpy as np
 import datetime as dt
 import tropycal.tracks as tracks
 

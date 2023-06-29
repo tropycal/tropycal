@@ -1,9 +1,6 @@
 r"""Functionality for storing and analyzing an individual realtime storm."""
 
-import calendar
 import numpy as np
-import pandas as pd
-import re
 import scipy.interpolate as interp
 import urllib
 import warnings
@@ -17,25 +14,6 @@ from ..tracks.plot import TrackPlot
 from ..utils import *
 from .. import constants
 from ..recon import ReconDataset
-
-try:
-    import zipfile
-    import gzip
-    from io import StringIO, BytesIO
-    import tarfile
-except:
-    warnings.warn(
-        "Warning: The libraries necessary for online NHC forecast retrieval aren't available (gzip, io, tarfile).")
-
-try:
-    import matplotlib.lines as mlines
-    import matplotlib.dates as mdates
-    import matplotlib.patheffects as path_effects
-    import matplotlib.pyplot as plt
-    import matplotlib.ticker as mticker
-except:
-    warnings.warn(
-        "Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
 
 class RealtimeStorm(Storm):

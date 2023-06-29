@@ -1,10 +1,6 @@
 r"""Functionality for storing and analyzing a year/season of cyclones."""
 
 import numpy as np
-import pandas as pd
-import warnings
-from datetime import datetime as dt, timedelta
-from copy import copy
 
 # Import internal scripts
 from .plot import TrackPlot

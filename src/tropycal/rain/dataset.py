@@ -2,7 +2,7 @@ r"""Functionality for reading and analyzing SPC tornado dataset."""
 
 import numpy as np
 import pandas as pd
-from datetime import datetime as dt,timedelta
+from datetime import datetime as dt, timedelta
 from scipy.interpolate import griddata
 import matplotlib.dates as mdates
 import warnings
@@ -17,14 +17,16 @@ try:
     from cartopy import crs as ccrs
     from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 except:
-    warnings.warn("Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
+    warnings.warn(
+        "Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
 
 from .plot import RainPlot
 
 from ..utils import *
 
+
 class RainDataset():
-    
+
     r"""
     Creates an instance of a RainDataset object containing tropical cyclone rainfall data, courtesy of the Weather Prediction Center (WPC).
 
@@ -41,23 +43,23 @@ class RainDataset():
 
     def __init__(self, data_path='wpc'):
 
-        #Start timer
+        # Start timer
         timer_start = dt.now()
         print(f'--> Starting to read in rainfall data')
-        
-        #Read in storm rainfall dataset
+
+        # Read in storm rainfall dataset
         if data_path == 'wpc':
             data_path = "https://www.wpc.ncep.noaa.gov/tropical/rain/CONUS_rainfall_obs_1900-2020.csv"
         self.rain_df = pd.read_csv(data_path)
 
-        #Update user on duration
-        print(f'--> Completed reading in rainfall data (%.2f seconds)' % (dt.now()-timer_start).total_seconds())
-        
-    def get_storm_rainfall(self,storm):
-        
+        # Update user on duration
+        print(f'--> Completed reading in rainfall data (%.2f seconds)' %
+              (dt.now()-timer_start).total_seconds())
+
+    def get_storm_rainfall(self, storm):
         r"""
         Retrieves all rainfall observations in inches associated with a tropical cyclone.
-        
+
         Parameters
         ----------
         storm : tropycal.tracks.Storm
@@ -68,32 +70,33 @@ class RainDataset():
         pandas.DataFrame
             Pandas DataFrame object containing rainfall data associated with this tropical cyclone, in inches.
         """
-        
-        #Filter dataset to this specific storm
+
+        # Filter dataset to this specific storm
         name_1 = f"{storm.name.title()} {storm.year}"
         name_2 = f"{storm.id} {storm.year}"
-        df_storm = self.rain_df.loc[(self.rain_df['Storm'] == name_1) | (self.rain_df['Storm'] == name_2)]
+        df_storm = self.rain_df.loc[(self.rain_df['Storm'] == name_1) | (
+            self.rain_df['Storm'] == name_2)]
 
-        #Drop Storm and Year column, no longer necessary
-        df_storm = df_storm.drop(columns=['Storm','Year'])
-        
-        #Remove NaN entries
-        df_storm = df_storm.loc[~np.isnan(df_storm['Lat']) & ~np.isnan(df_storm['Lon']) & ~np.isnan(df_storm['Total'])]
-        
-        #Check if data is empty
+        # Drop Storm and Year column, no longer necessary
+        df_storm = df_storm.drop(columns=['Storm', 'Year'])
+
+        # Remove NaN entries
+        df_storm = df_storm.loc[~np.isnan(df_storm['Lat']) & ~np.isnan(
+            df_storm['Lon']) & ~np.isnan(df_storm['Total'])]
+
+        # Check if data is empty
         if len(df_storm) == 0:
             raise RuntimeError("No rainfall data is available for this storm.")
-        
-        #Return dataframe
+
+        # Return dataframe
         return df_storm
-    
-    def interpolate_to_grid(self,storm,grid_res=0.1,method='linear',return_xarray=False):
-        
+
+    def interpolate_to_grid(self, storm, grid_res=0.1, method='linear', return_xarray=False):
         r"""
         Interpolates storm rainfall data to a horizontal grid.
-        
+
         Interpolation is performed using Scipy's `scipy.interpolate.griddata()` interpolation function.
-        
+
         Parameters
         ----------
         storm : tropycal.tracks.Storm
@@ -104,51 +107,51 @@ class RainDataset():
             Method for interpolation to pass to scipy's interpolation function. Default is "linear".
         return_xarray : bool
             If True, output is returned as an xarray DataArray with coordinates included. Default is false.
-            
+
         Returns
         -------
         dict or xarray.DataArray
             If return_xarray is True, an xarray DataArray is returned. Otherwise, a dict including the grid lat, lon and grid values is returned.
         """
-        
-        #Check if xarray is installed
+
+        # Check if xarray is installed
         try:
             import xarray as xr
         except ImportError as e:
             return_xarray = False
             msg = "xarray is not installed in your python environment. Defaulting to return_xarray=False."
             warnings.warn(msg)
-        
-        #Check if Storm object contains rainfall data
+
+        # Check if Storm object contains rainfall data
         try:
             storm.rain
         except:
             storm.rain = self.get_storm_rainfall(storm)
-        
-        #Create grid to interpolate observations to
-        grid_lon = np.arange(-140,-60+grid_res,grid_res)
-        grid_lat = np.arange(20,50+grid_res,grid_res)
-        
-        #Retrieve data for interpolation
+
+        # Create grid to interpolate observations to
+        grid_lon = np.arange(-140, -60+grid_res, grid_res)
+        grid_lat = np.arange(20, 50+grid_res, grid_res)
+
+        # Retrieve data for interpolation
         rainfall = storm.rain['Total'].values
         lat = storm.rain['Lat'].values
         lon = storm.rain['Lon'].values
 
-        #Perform the interpolation
-        grid = griddata((lat, lon), rainfall, (grid_lat[None,:], grid_lon[:,None]), method=method)
+        # Perform the interpolation
+        grid = griddata((lat, lon), rainfall,
+                        (grid_lat[None, :], grid_lon[:, None]), method=method)
         grid = np.transpose(grid)
 
-        #Return data
+        # Return data
         if return_xarray:
-            return xr.DataArray(grid,coords=[grid_lat,grid_lon],dims=['lat','lon'])
+            return xr.DataArray(grid, coords=[grid_lat, grid_lon], dims=['lat', 'lon'])
         else:
-            return {'grid':grid,'lat':grid_lat,'lon':grid_lon}
+            return {'grid': grid, 'lat': grid_lat, 'lon': grid_lon}
 
-    def plot_rain_grid(self,storm,grid,levels=None,cmap=None,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,prop={},map_prop={}):
-        
+    def plot_rain_grid(self, storm, grid, levels=None, cmap=None, domain="dynamic", plot_all_dots=False, ax=None, cartopy_proj=None, save_path=None, prop={}, map_prop={}):
         r"""
         Creates a plot of a storm track and its associated rainfall (gridded).
-        
+
         Parameters
         ----------
         storm : tropycal.tracks.Storm
@@ -169,51 +172,53 @@ class RainDataset():
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
             Relative or full path of directory to save the image in. If none, image will not be saved.
-        
+
         Other Parameters
         ----------------
         prop : dict
             Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
-        
+
         Returns
         -------
         ax
             Instance of axes containing the plot is returned.
         """
-        
-        #Check if Storm object contains rainfall data
+
+        # Check if Storm object contains rainfall data
         try:
             storm.rain
         except:
             storm.rain = self.get_storm_rainfall(storm)
-        
-        #Create instance of plot object
+
+        # Create instance of plot object
         try:
             self.plot_obj
         except:
             self.plot_obj = RainPlot()
-        
-        #Create cartopy projection
+
+        # Create cartopy projection
         if cartopy_proj is not None:
             self.plot_obj.proj = cartopy_proj
         elif max(storm['lon']) > 150 or min(storm['lon']) < -150:
-            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+            self.plot_obj.create_cartopy(
+                proj='PlateCarree', central_longitude=180.0)
         else:
-            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-            
-        #Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm,grid,levels,cmap,domain,plot_all_dots,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
-        
-        #Return axis
+            self.plot_obj.create_cartopy(
+                proj='PlateCarree', central_longitude=0.0)
+
+        # Plot storm
+        plot_ax = self.plot_obj.plot_storm(
+            storm, grid, levels, cmap, domain, plot_all_dots, ax=ax, save_path=save_path, prop=prop, map_prop=map_prop)
+
+        # Return axis
         return plot_ax
 
-    def plot_rain(self,storm,ms=7.5,mec=None,mew=0.5,minimum_threshold=1.0,levels=None,cmap=None,domain="dynamic",plot_all_dots=False,ax=None,cartopy_proj=None,save_path=None,**kwargs):
-        
+    def plot_rain(self, storm, ms=7.5, mec=None, mew=0.5, minimum_threshold=1.0, levels=None, cmap=None, domain="dynamic", plot_all_dots=False, ax=None, cartopy_proj=None, save_path=None, **kwargs):
         r"""
         Creates a plot of a storm track and its associated rainfall (individual dots).
-        
+
         Parameters
         ----------
         storm : tropycal.tracks.Storm
@@ -240,45 +245,48 @@ class RainDataset():
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str
             Relative or full path of directory to save the image in. If none, image will not be saved.
-        
+
         Other Parameters
         ----------------
         prop : dict
             Customization properties of storm track lines. Please refer to :ref:`options-prop` for available options.
         map_prop : dict
             Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
-        
+
         Returns
         -------
         ax
             Instance of axes containing the plot is returned.
         """
-        
-        prop = kwargs.pop('prop',{})
-        map_prop = kwargs.pop('map_prop',{})
-        
-        #Check if Storm object contains rainfall data
+
+        prop = kwargs.pop('prop', {})
+        map_prop = kwargs.pop('map_prop', {})
+
+        # Check if Storm object contains rainfall data
         try:
             storm.rain
         except:
             storm.rain = self.get_storm_rainfall(storm)
-        
-        #Create instance of plot object
+
+        # Create instance of plot object
         try:
             self.plot_obj
         except:
             self.plot_obj = RainPlot()
-        
-        #Create cartopy projection
+
+        # Create cartopy projection
         if cartopy_proj is not None:
             self.plot_obj.proj = cartopy_proj
         elif max(storm['lon']) > 150 or min(storm['lon']) < -150:
-            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=180.0)
+            self.plot_obj.create_cartopy(
+                proj='PlateCarree', central_longitude=180.0)
         else:
-            self.plot_obj.create_cartopy(proj='PlateCarree',central_longitude=0.0)
-            
-        #Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm,{'ms':ms,'minimum_threshold':minimum_threshold,'mew':mew,'mec':mec},levels,cmap,domain,plot_all_dots,ax=ax,save_path=save_path,prop=prop,map_prop=map_prop)
-        
-        #Return axis
+            self.plot_obj.create_cartopy(
+                proj='PlateCarree', central_longitude=0.0)
+
+        # Plot storm
+        plot_ax = self.plot_obj.plot_storm(storm, {'ms': ms, 'minimum_threshold': minimum_threshold, 'mew': mew, 'mec': mec},
+                                           levels, cmap, domain, plot_all_dots, ax=ax, save_path=save_path, prop=prop, map_prop=map_prop)
+
+        # Return axis
         return plot_ax

@@ -136,7 +136,7 @@ def test_create_storm_dict():
     #Check mslp extrem
     np.testing.assert_almost_equal(min(storm.mslp), 988, decimal=2)
     assert min(storm.mslp) 
-    
+
 def test_dropsonde_mslp_estimate():
     """Test estimate of MSLP from dropsonde"""
     
@@ -182,7 +182,7 @@ def test_generate_nhc_cone():
     #Check center line was properly generated
     np.testing.assert_almost_equal(np.max(cone['center_lat']), 24.5032, decimal=4)
     np.testing.assert_almost_equal(np.max(cone['center_lon']), -84.4, decimal=2)
-    
+
 def test_get_basin():
     """Test determining basin from coordinates"""
     
@@ -361,7 +361,7 @@ def test_knots_to_mph():
     #Assert all values
     for i,(mph,knot) in enumerate(zip(mphs,kts)):
         assert utils.knots_to_mph(knot) == mph
-    
+
 def test_nhc_cone_radii():
     """Test obtaining NHC cone radii by year"""
     
@@ -399,8 +399,8 @@ def test_calc_distance():
     """Test calculating gridded distance from a coordinate"""
     
     #Create sample coordinate data
-    lats = np.array([30,35,40,45,50])
-    lons = np.array([-70,-65,-60,-55,-50])
+    lats = np.array([30, 35, 40, 45, 50])
+    lons = np.array([-70, -65, -60, -55, -50])
 
     #Create 2D arrays
     lons2d, lats2d = np.meshgrid(lons, lats)
@@ -426,8 +426,8 @@ def test_add_radius():
     """Test calculating whether a point is in a specified radius"""
     
     #Create sample coordinate data
-    lats = np.array([38,39,40,41,42])
-    lons = np.array([-62,-61,-60,-59,-58])
+    lats = np.array([38, 39, 40, 41, 42])
+    lons = np.array([-62, -61, -60, -59, -58])
 
     #Create 2D arrays
     lons2d, lats2d = np.meshgrid(lons, lats)

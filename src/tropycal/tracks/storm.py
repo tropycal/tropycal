@@ -1890,11 +1890,16 @@ class Storm:
         disco_dict = self.list_nhc_discussions()
         
         if isinstance(forecast,dt):
-            #Find closest discussion to the time provided
+            #Find all discussion times
             disco_times = disco_dict['utc_time']
             disco_ids = [int(i) for i in disco_dict['id']]
             disco_diff = np.array([(i-forecast).days + (i-forecast).seconds/86400 for i in disco_times])
-            closest_idx = np.abs(disco_diff).argmin()
+            #Find most recent discussion
+            indices = np.argwhere(disco_diff <= 0)
+            if len(indices) > 0:
+                closest_idx = indices[-1][0]
+            else:
+                closest_idx = 0
             closest_diff = disco_diff[closest_idx]
             closest_id = disco_ids[closest_idx]
             closest_time = disco_times[closest_idx]

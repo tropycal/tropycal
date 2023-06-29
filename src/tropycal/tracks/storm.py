@@ -328,15 +328,12 @@ class Storm:
                     msg = f'no exact match for {lat}/{lon}. Use different location or method.'
                     raise ValueError(msg)
                 elif method in ('floor','ceil'):
-                    print('floor and ceil do not apply to lat/lon filtering. Using nearest instead.')
+                    warnings.warn('floor and ceil do not apply to lat/lon filtering. Using nearest instead.')
 
-        elif (isinstance(lat,(tuple,list)) and len(lat)==2) \
-            or (isinstance(lon,(tuple,list)) and len(lon)==2):
+        elif (isinstance(lat,(tuple,list)) and len(lat)==2) or (isinstance(lon,(tuple,list)) and len(lon)==2):
             if not isinstance(lat,(tuple,list)):
-                print('Using no lat bounds')
                 lat = (None,None)
             if not isinstance(lon,(tuple,list)):
-                print('Using no lon bounds')
                 lon = (None,None)
             lat0,lat1 = lat
             lon0,lon1 = lon

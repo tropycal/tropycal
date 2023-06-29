@@ -286,6 +286,10 @@ class TrackDataset:
         if interpolate_data:
             self.__interpolate_storms(self.keys)
         
+        #Round ACE for all entries
+        for key in self.keys:
+            self.data[key]['ace'] = round(self.data[key]['ace'],4)
+        
         #---------------------------------------------------------------
         
         #Find maximum wind and minimum pressure

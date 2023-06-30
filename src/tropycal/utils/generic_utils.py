@@ -1759,33 +1759,22 @@ class great_circle(Distance):
 
 
 r"""
-This is a modified version of Cartopy's shapereader functionality, specified to directly read in an already-existing
-Shapely object as opposed to expecting a local shapefile to be read in.
+The two classes below are a modified version of Cartopy's shapereader functionality, specified to directly read in an already-existing Shapely object as opposed to expecting a local shapefile to be read in.
 """
-
 
 class Record:
     """
-    A single logical entry from a shapefile, combining the attributes with
-    their associated geometry.
-
+    A single logical entry from a shapefile, combining the attributes with their associated geometry. Adapted from Cartopy's Record class.
     """
 
     def __init__(self, shape, attributes, fields):
         self._shape = shape
-
         self._bounds = None
-        # if the record defines a bbox, then use that for the shape's bounds,
-        # rather than using the full geometry in the bounds property
         if hasattr(shape, 'bbox'):
             self._bounds = tuple(shape.bbox)
 
         self._geometry = None
-        """The cached geometry instance for this Record."""
-
         self.attributes = attributes
-        """A dictionary mapping attribute names to attribute values."""
-
         self._fields = fields
 
     def __repr__(self):
@@ -1820,19 +1809,14 @@ class Record:
 
 class BasicReader:
     """
-    Provide an interface for accessing the contents of a shapefile.
-
-    The primary methods used on a Reader instance are
-    :meth:`~Reader.records` and :meth:`~Reader.geometries`.
-
+    This is a modified version of Cartopy's BasicReader class. This allows to read in a shapefile fetched online without it being stored as a file locally.
     """
 
     def __init__(self, reader):
         # Validate the filename/shapefile
         self._reader = reader
         if reader.shp is None or reader.shx is None or reader.dbf is None:
-            raise ValueError("Incomplete shapefile definition "
-                             "in '%s'." % filename)
+            raise ValueError("Unable to open shapefile")
 
         self._fields = self._reader.fields
 
@@ -1845,14 +1829,6 @@ class BasicReader:
     def geometries(self):
         """
         Return an iterator of shapely geometries from the shapefile.
-
-        This interface is useful for accessing the geometries of the
-        shapefile where knowledge of the associated metadata is not necessary.
-        In the case where further metadata is needed use the
-        :meth:`~Reader.records`
-        interface instead, extracting the geometry from the record with the
-        :meth:`~Record.geometry` method.
-
         """
         to_return = []
         for shape in self._reader.iterShapes():
@@ -1864,7 +1840,6 @@ class BasicReader:
     def records(self):
         """
         Return an iterator of :class:`~Record` instances.
-
         """
         # Ignore the "DeletionFlag" field which always comes first
         to_return = []

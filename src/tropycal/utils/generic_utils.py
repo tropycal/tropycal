@@ -121,11 +121,11 @@ def classify_subtropical(storm_type):
 
     # Check for subtropical depression status
     if 'SD' in storm_type_check:
-        if 'SD' in storm_type_check and True not in np.isin(storm_type_check, ['TD', 'TS', 'HU']):
+        if 'SD' in storm_type_check and True not in np.isin(storm_track_check, ['TD', 'TS', 'HU']):
             return True
 
     # Check for subtropical storm status
-    if 'SS' in storm_type_check and True not in np.isin(storm_type_check, ['TD', 'TS', 'HU']):
+    if 'SS' in storm_type_check and True not in np.isin(storm_track_check, ['TD', 'TS', 'HU']):
         return True
 
     # Otherwise, it was a tropical cyclone at some point in its life cycle

@@ -17,7 +17,7 @@ from .. import constants
 try:
     import cartopy.feature as cfeature
     from cartopy import crs as ccrs
-except:
+except ImportError:
     warnings.warn(
         "Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
 
@@ -27,7 +27,7 @@ try:
     import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
     import matplotlib.patches as mpatches
-except:
+except ImportError:
     warnings.warn(
         "Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 

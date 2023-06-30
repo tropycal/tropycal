@@ -733,7 +733,7 @@ def nhc_cone_radii(year, basin, forecast_hour=None):
     elif year not in constants.CONE_SIZE_ATL.keys():
         year = 2008
         warnings.warn(
-            f"No cone information is available for the requested year. Defaulting to 2008 cone.")
+            "No cone information is available for the requested year. Defaulting to 2008 cone.")
 
     # Retrieve data
     cone_radii = {}
@@ -797,7 +797,7 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
     elif cone_year not in constants.CONE_SIZE_ATL.keys():
         cone_year = 2008
         warnings.warn(
-            f"No cone information is available for the requested year. Defaulting to 2008 cone.")
+            "No cone information is available for the requested year. Defaulting to 2008 cone.")
 
     # Retrieve cone size and hours for given year
     if basin in ['north_atlantic', 'east_pacific']:
@@ -1039,7 +1039,6 @@ def calc_ensemble_ellipse(member_lons, member_lats):
         for rdistance in np.arange(0., 2400.):
             xloc = xstart * rdistance/80.0
             yloc = ystart * rdistance/80.0
-            dist = np.sqrt(xloc * xloc + yloc * yloc)
             prob = np.exp(-1.0 * fac * ((xloc/sigmax)**2 + (yloc/sigmay)
                           ** 2 - 2.0 * rho * (xloc/sigmax)*(yloc/sigmay)))
             if prob < 0.256:
@@ -1492,8 +1491,6 @@ def add_radius_quick(lats, lons, lat, lon, rad, res=0.25):
 
     return_arr = plug_array(new_arr, return_arr, {
                             'lat': new_lats, 'lon': new_lons}, {'lat': lats, 'lon': lons})
-    return_dist = plug_array(new_dist, dist, {'lat': new_lats, 'lon': new_lons}, {
-                             'lat': lats, 'lon': lons})
 
     # Mask out values less than radius
     return_arr[dist > rad] = 0

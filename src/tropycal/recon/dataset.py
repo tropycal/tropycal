@@ -16,7 +16,7 @@ try:
     import matplotlib.colors as mcolors
     import matplotlib.pyplot as plt
     import cartopy.crs as ccrs
-except:
+except ImportError:
     warnings.warn(
         "Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 

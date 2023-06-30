@@ -1,9 +1,10 @@
 r"""Functionality for storing and analyzing an entire cyclone dataset."""
 
+import re
 import calendar
 import numpy as np
+import xarray as xr
 import pandas as pd
-import re
 import scipy.stats as stats
 import urllib
 import warnings
@@ -28,7 +29,7 @@ try:
     import matplotlib.lines as mlines
     import matplotlib.pyplot as plt
     import matplotlib.dates as mdates
-except:
+except ImportError:
     warnings.warn(
         "Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
@@ -772,7 +773,7 @@ class TrackDataset:
             if len(line) < 150:
                 continue
 
-            ibtracs_id, year, adv_number, basin, subbasin, name, time, wmo_type, wmo_lat, wmo_lon, wmo_vmax, wmo_mslp, agency, track_type, dist_land, dist_landfall, iflag, usa_agency, sid, lat, lon, special, stype, vmax, mslp = line[
+            ibtracs_id, year, adv_number, basin, subbasin, name, time, wmo_type, wmo_lat, wmo_lon, wmo_vmax, wmo_mslp, agency, track_type, dist_land, dist_landfall, iflag, usa_agency, storm_id, lat, lon, special, storm_type, vmax, mslp = line[
                 :25]
 
             time = dt.strptime(time, '%Y-%m-%d%H:%M:00')
@@ -784,16 +785,16 @@ class TrackDataset:
                 name = name[:-1]
 
             # Hard code fix for faulty IBTrACS data
-            if sid == 'EP121989' and name == 'HENRIETTE':
-                sid = 'EP111989'
-            if sid == 'WP391996':
+            if storm_id == 'EP121989' and name == 'HENRIETTE':
+                storm_id = 'EP111989'
+            if storm_id == 'WP391996':
                 name = 'UNNAMED'
 
             # Add storm to list of keys
             if self.ibtracs_mode == 'wmo' and ibtracs_id not in self.data.keys():
 
                 # add empty entry into dict
-                self.data[ibtracs_id] = {'id': sid, 'operational_id': '', 'name': name,
+                self.data[ibtracs_id] = {'id': storm_id, 'operational_id': '', 'name': name,
                                          'year': time.year, 'season': int(year), 'basin': self.basin}
                 self.data[ibtracs_id]['source'] = self.source
                 self.data[ibtracs_id][
@@ -805,10 +806,10 @@ class TrackDataset:
                     self.data[ibtracs_id][val] = []
                 self.data[ibtracs_id]['ace'] = 0.0
 
-            elif sid != '':
+            elif storm_id != '':
 
                 # ID entry method to use
-                use_id = sid
+                use_id = storm_id
 
                 # Hard code problematic early Atlantic IDs
                 check_ids = ['AL041885', 'AL031870']
@@ -847,7 +848,7 @@ class TrackDataset:
                             del self.data[use_id]
 
                         # Add empty entry into dict
-                        self.data[use_id] = {'id': sid, 'operational_id': '', 'name': name,
+                        self.data[use_id] = {'id': storm_id, 'operational_id': '', 'name': name,
                                              'year': time.year, 'season': int(year), 'basin': self.basin}
                         self.data[use_id]['source'] = self.source
                         self.data[use_id][
@@ -879,7 +880,7 @@ class TrackDataset:
 
                             # Add empty entry into dict
                             map_all_id[ibtracs_id] = use_id
-                            self.data[use_id] = {'id': sid, 'operational_id': '', 'name': name,
+                            self.data[use_id] = {'id': storm_id, 'operational_id': '', 'name': name,
                                                  'year': time.year, 'season': int(year), 'basin': self.basin}
                             self.data[use_id]['source'] = self.source
                             self.data[use_id][
@@ -905,7 +906,7 @@ class TrackDataset:
 
                     # Add storm to list of keys
                     if ibtracs_id not in neumann.keys():
-                        neumann[ibtracs_id] = {'id': sid, 'operational_id': '', 'name': name,
+                        neumann[ibtracs_id] = {'id': storm_id, 'operational_id': '', 'name': name,
                                                'year': time.year, 'season': int(year), 'basin': self.basin}
                         neumann[ibtracs_id]['source'] = self.source
                         neumann[ibtracs_id][
@@ -985,7 +986,7 @@ class TrackDataset:
             # map JTWC to ibtracs ID (for neumann replacement)
             if self.neumann:
                 if ibtracs_id not in map_id.keys():
-                    map_id[ibtracs_id] = sid
+                    map_id[ibtracs_id] = storm_id
 
             # Handle WMO mode
             if self.ibtracs_mode == 'wmo':
@@ -1030,31 +1031,31 @@ class TrackDataset:
                 MX - Mixture (contradicting nature reports from different agencies)
                 """
                 if wmo_type == "DS":
-                    stype = "LO"
+                    storm_type = "LO"
                 elif wmo_type == "TS":
                     if np.isnan(jtwc_vmax):
-                        stype = 'LO'
+                        storm_type = 'LO'
                     elif jtwc_vmax < 34:
-                        stype = 'TD'
+                        storm_type = 'TD'
                     elif jtwc_vmax < 64:
-                        stype = 'TS'
+                        storm_type = 'TS'
                     elif wmo_basin in constants.NHC_BASINS:
-                        stype = 'HU'
+                        storm_type = 'HU'
                     elif jtwc_vmax < 130:
-                        stype = 'TY'
+                        storm_type = 'TY'
                     else:
-                        stype = 'ST'
+                        storm_type = 'ST'
                 elif wmo_type == 'SS':
                     if np.isnan(jtwc_vmax):
-                        stype = 'LO'
+                        storm_type = 'LO'
                     elif jtwc_vmax < 34:
-                        stype = 'SD'
+                        storm_type = 'SD'
                     else:
-                        stype = 'SS'
+                        storm_type = 'SS'
                 elif wmo_type in ['ET', 'MX']:
                     wmo_type = 'EX'
                 else:
-                    stype = 'LO'
+                    storm_type = 'LO'
 
                 # Handle missing data
                 if wmo_vmax < 0:
@@ -1065,7 +1066,7 @@ class TrackDataset:
                 self.data[ibtracs_id]['time'].append(time)
                 self.data[ibtracs_id]['special'].append(special)
 
-                self.data[ibtracs_id]['type'].append(stype)
+                self.data[ibtracs_id]['type'].append(storm_type)
                 self.data[ibtracs_id]['lat'].append(wmo_lat)
                 self.data[ibtracs_id]['lon'].append(wmo_lon)
                 self.data[ibtracs_id]['vmax'].append(jtwc_vmax)
@@ -1081,15 +1082,15 @@ class TrackDataset:
                 # Calculate ACE & append to storm total
                 if not np.isnan(jtwc_vmax):
                     ace = accumulated_cyclone_energy(jtwc_vmax)
-                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES and not np.isnan(ace):
+                    if hhmm in constants.STANDARD_HOURS and storm_type in constants.NAMED_TROPICAL_STORM_TYPES and not np.isnan(ace):
                         self.data[ibtracs_id]['ace'] += np.round(ace, 4)
 
             # Handle non-WMO mode
             else:
-                if sid not in map_duplicate_id.keys() and sid not in do_not_merge:
-                    orig_sid = sid + ''
-                    sid = map_all_id.get(ibtracs_id, None)
-                    if sid == '' or sid is None:
+                if storm_id not in map_duplicate_id.keys() and storm_id not in do_not_merge:
+                    orig_storm_id = storm_id + ''
+                    storm_id = map_all_id.get(ibtracs_id, None)
+                    if storm_id == '' or storm_id is None:
                         continue
 
                 # Retrieve data
@@ -1113,7 +1114,7 @@ class TrackDataset:
                         vmax = vmax - 1
 
                 # Avoid duplicate entries
-                if time in self.data[sid]['time']:
+                if time in self.data[storm_id]['time']:
                     continue
 
                 # Edit basin
@@ -1121,45 +1122,45 @@ class TrackDataset:
                 wmo_basin = basin_reverse.get(basin, '')
                 if subbasin in ['WA', 'EA']:
                     wmo_basin = 'australia'
-                if sid == 'AL041932':
+                if storm_id == 'AL041932':
                     wmo_basin = 'north_atlantic'
-                self.data[sid]['wmo_basin'].append(wmo_basin)
+                self.data[storm_id]['wmo_basin'].append(wmo_basin)
 
                 # Convert storm type from ibtracs to hurdat style
-                if stype == "":
+                if storm_type == "":
                     if wmo_type == 'TS':
                         if vmax < 34:
-                            stype = 'TD'
+                            storm_type = 'TD'
                         elif vmax < 64:
-                            stype = 'TS'
+                            storm_type = 'TS'
                         elif wmo_basin in constants.NHC_BASINS:
-                            stype = 'HU'
+                            storm_type = 'HU'
                         elif vmax < 130:
-                            stype = 'TY'
+                            storm_type = 'TY'
                         else:
-                            stype = 'ST'
+                            storm_type = 'ST'
                     elif wmo_type == 'SS':
                         if vmax < 34:
-                            stype = 'SD'
+                            storm_type = 'SD'
                         else:
-                            stype = 'SS'
+                            storm_type = 'SS'
                     elif wmo_type in ['ET', 'MX']:
                         wmo_type = 'EX'
-                    elif stype == 'DS':
-                        stype = 'LO'
+                    elif storm_type == 'DS':
+                        storm_type = 'LO'
                     else:
                         if np.isnan(vmax):
-                            stype = 'LO'
+                            storm_type = 'LO'
                         elif vmax < 34:
-                            stype = 'TD'
+                            storm_type = 'TD'
                         elif vmax < 64:
-                            stype = 'TS'
+                            storm_type = 'TS'
                         elif wmo_basin in constants.NHC_BASINS:
-                            stype = 'HU'
+                            storm_type = 'HU'
                         elif vmax < 130:
-                            stype = 'TY'
+                            storm_type = 'TY'
                         else:
-                            stype = 'ST'
+                            storm_type = 'ST'
 
                 # Handle missing data
                 if vmax < 0:
@@ -1167,32 +1168,32 @@ class TrackDataset:
                 if mslp < 800:
                     mslp = np.nan
 
-                self.data[sid]['time'].append(time)
-                self.data[sid]['special'].append(special)
+                self.data[storm_id]['time'].append(time)
+                self.data[storm_id]['special'].append(special)
 
-                self.data[sid]['wmo_type'].append(wmo_type)
-                self.data[sid]['wmo_lat'].append(wmo_lat)
-                self.data[sid]['wmo_lon'].append(wmo_lon)
-                self.data[sid]['wmo_vmax'].append(wmo_vmax)
-                self.data[sid]['wmo_mslp'].append(wmo_mslp)
+                self.data[storm_id]['wmo_type'].append(wmo_type)
+                self.data[storm_id]['wmo_lat'].append(wmo_lat)
+                self.data[storm_id]['wmo_lon'].append(wmo_lon)
+                self.data[storm_id]['wmo_vmax'].append(wmo_vmax)
+                self.data[storm_id]['wmo_mslp'].append(wmo_mslp)
 
-                self.data[sid]['type'].append(stype)
-                self.data[sid]['lat'].append(lat)
-                self.data[sid]['lon'].append(lon)
-                self.data[sid]['vmax'].append(vmax)
-                self.data[sid]['mslp'].append(mslp)
+                self.data[storm_id]['type'].append(storm_type)
+                self.data[storm_id]['lat'].append(lat)
+                self.data[storm_id]['lon'].append(lon)
+                self.data[storm_id]['vmax'].append(vmax)
+                self.data[storm_id]['mslp'].append(mslp)
 
                 hhmm = time.strftime('%H%M')
                 if hhmm in constants.STANDARD_HOURS:
-                    self.data[sid]['extra_obs'].append(0)
+                    self.data[storm_id]['extra_obs'].append(0)
                 else:
-                    self.data[sid]['extra_obs'].append(1)
+                    self.data[storm_id]['extra_obs'].append(1)
 
                 # Calculate ACE & append to storm total
                 if not np.isnan(vmax):
                     ace = accumulated_cyclone_energy(vmax)
-                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES and not np.isnan(ace):
-                        self.data[sid]['ace'] += np.round(ace, 4)
+                    if hhmm in constants.STANDARD_HOURS and storm_type in constants.NAMED_TROPICAL_STORM_TYPES and not np.isnan(ace):
+                        self.data[storm_id]['ace'] += np.round(ace, 4)
 
         # Remove empty entries
         all_keys = [k for k in self.data.keys()]
@@ -2915,11 +2916,7 @@ class TrackDataset:
                                                          1]['time'].replace(year=ranked_dict[i + 1]['year'])
 
         # Return ranked dictionary
-        try:
-            import pandas as pd
-            return (pd.DataFrame(ranked_dict).transpose())[analyze_list]
-        except:
-            return ranked_dict
+        return (pd.DataFrame(ranked_dict).transpose())[analyze_list]
 
     def storm_ace_vs_season(self, storm, year_range=None):
         r"""
@@ -3484,49 +3481,42 @@ class TrackDataset:
 
         # Calculate difference between plots, if specified
         if len(grid_z_years) == 2:
-            try:
-                # Import xarray and construct DataArray
-                import xarray as xr
+            # Determine whether to use averages
+            if year_average:
+                years_listed = len(range(year_range[0], year_range[1] + 1))
+                grid_z_years[0] = grid_z_years[0] / years_listed
+                years_listed = len(
+                    range(year_range_subtract[0], year_range_subtract[1] + 1))
+                grid_z_years[1] = grid_z_years[1] / years_listed
 
-                # Determine whether to use averages
-                if year_average:
-                    years_listed = len(range(year_range[0], year_range[1] + 1))
-                    grid_z_years[0] = grid_z_years[0] / years_listed
-                    years_listed = len(
-                        range(year_range_subtract[0], year_range_subtract[1] + 1))
-                    grid_z_years[1] = grid_z_years[1] / years_listed
+            # Construct DataArrays
+            grid_z_1 = xr.DataArray(np.nan_to_num(grid_z_years[0]), coords=[
+                                    grid_y_years[0].T[0], grid_x_years[0][0]], dims=['lat', 'lon'])
+            grid_z_2 = xr.DataArray(np.nan_to_num(grid_z_years[1]), coords=[
+                                    grid_y_years[1].T[0], grid_x_years[1][0]], dims=['lat', 'lon'])
 
-                # Construct DataArrays
-                grid_z_1 = xr.DataArray(np.nan_to_num(grid_z_years[0]), coords=[
-                                        grid_y_years[0].T[0], grid_x_years[0][0]], dims=['lat', 'lon'])
-                grid_z_2 = xr.DataArray(np.nan_to_num(grid_z_years[1]), coords=[
-                                        grid_y_years[1].T[0], grid_x_years[1][0]], dims=['lat', 'lon'])
+            # Compute difference grid
+            grid_z = grid_z_1 - grid_z_2
 
-                # Compute difference grid
-                grid_z = grid_z_1 - grid_z_2
+            # Reconstruct lat & lon grids
+            xi = grid_z.lon.values
+            yi = grid_z.lat.values
+            grid_z = grid_z.values
+            grid_x, grid_y = np.meshgrid(xi, yi)
 
-                # Reconstruct lat & lon grids
-                xi = grid_z.lon.values
-                yi = grid_z.lat.values
-                grid_z = grid_z.values
-                grid_x, grid_y = np.meshgrid(xi, yi)
+            # Determine NaNs
+            grid_z_years[0][np.isnan(grid_z_years[0])] = -9999
+            grid_z_years[1][np.isnan(grid_z_years[1])] = -8999
+            grid_z_years[0][grid_z_years[0] != -9999] = 0
+            grid_z_years[1][grid_z_years[1] != -8999] = 0
+            grid_z_1 = xr.DataArray(np.nan_to_num(grid_z_years[0]), coords=[
+                                    grid_y_years[0].T[0], grid_x_years[0][0]], dims=['lat', 'lon'])
+            grid_z_2 = xr.DataArray(np.nan_to_num(grid_z_years[1]), coords=[
+                                    grid_y_years[1].T[0], grid_x_years[1][0]], dims=['lat', 'lon'])
+            grid_z_check = (grid_z_1 - grid_z_2).values
+            grid_z[grid_z_check == -1000] = np.nan
+            print(np.nanmin(grid_z))
 
-                # Determine NaNs
-                grid_z_years[0][np.isnan(grid_z_years[0])] = -9999
-                grid_z_years[1][np.isnan(grid_z_years[1])] = -8999
-                grid_z_years[0][grid_z_years[0] != -9999] = 0
-                grid_z_years[1][grid_z_years[1] != -8999] = 0
-                grid_z_1 = xr.DataArray(np.nan_to_num(grid_z_years[0]), coords=[
-                                        grid_y_years[0].T[0], grid_x_years[0][0]], dims=['lat', 'lon'])
-                grid_z_2 = xr.DataArray(np.nan_to_num(grid_z_years[1]), coords=[
-                                        grid_y_years[1].T[0], grid_x_years[1][0]], dims=['lat', 'lon'])
-                grid_z_check = (grid_z_1 - grid_z_2).values
-                grid_z[grid_z_check == -1000] = np.nan
-                print(np.nanmin(grid_z))
-
-            except ImportError as e:
-                raise RuntimeError(
-                    "Error: xarray is not available. Install xarray in order to use the subtract year functionality.") from e
         else:
             # Determine whether to use averages
             if year_average:
@@ -3632,16 +3622,10 @@ class TrackDataset:
 
         # Format grid into xarray if specified
         if return_array:
-            try:
-                # Import xarray and construct DataArray, replacing NaNs with zeros
-                import xarray as xr
-                arr = xr.DataArray(np.nan_to_num(grid_z), coords=[
-                                   grid_y.T[0], grid_x[0]], dims=['lat', 'lon'])
-                return arr
-            except ImportError as e:
-                raise RuntimeError(
-                    "Error: xarray is not available. Install xarray in order to use the 'return_array' flag.") from e
-
+            arr = xr.DataArray(np.nan_to_num(grid_z), coords=[
+                               grid_y.T[0], grid_x[0]], dims=['lat', 'lon'])
+            return arr
+        
         # Return axis
         if return_array:
             return {'ax': plot_ax, 'array': arr}

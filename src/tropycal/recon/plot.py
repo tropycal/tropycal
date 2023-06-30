@@ -13,7 +13,7 @@ from ..utils import *
 
 try:
     from cartopy import crs as ccrs
-except:
+except ImportError:
     warnings.warn(
         "Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
 
@@ -24,7 +24,7 @@ try:
     import matplotlib.pyplot as plt
     import matplotlib.patches as mpatches
     import matplotlib.gridspec as gridspec
-except:
+except ImportError:
     warnings.warn(
         "Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 

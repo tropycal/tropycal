@@ -1,8 +1,9 @@
 r"""Functionality for storing and analyzing an individual storm."""
 
-import numpy as np
-import pandas as pd
 import re
+import numpy as np
+import xarray as xr
+import pandas as pd
 import urllib
 import warnings
 from datetime import datetime as dt, timedelta
@@ -23,14 +24,14 @@ try:
     import gzip
     from io import BytesIO
     import tarfile
-except:
+except ImportError:
     warnings.warn(
         "Warning: The libraries necessary for online NHC forecast retrieval aren't available (gzip, io, tarfile).")
 
 try:
     import matplotlib.lines as mlines
     import matplotlib.pyplot as plt
-except:
+except ImportError:
     warnings.warn(
         "Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
@@ -249,13 +250,13 @@ class Storm:
             If either is a tuple, the other canNOT be a float/int.
         vmax : list/tuple of float/int
             list/tuple of vmax bounds (min,max).
-            None in either position of a tuple means it is boundless on that side. 
+            None in either position of a tuple means it is boundless on that side.
         mslp : list/tuple of float/int
             list/tuple of mslp bounds (min,max).
-            None in either position of a tuple means it is boundless on that side. 
+            None in either position of a tuple means it is boundless on that side.
         dvmax_dt : list/tuple of float/int
             list/tuple of vmax bounds (min,max). ONLY AVAILABLE AFTER INTERP.
-            None in either position of a tuple means it is boundless on that side. 
+            None in either position of a tuple means it is boundless on that side.
         dmslp_dt : list/tuple of float/int
             list/tuple of mslp bounds (min,max). ONLY AVAILABLE AFTER INTERP.
             None in either position of a tuple means it is boundless on that side.
@@ -448,7 +449,7 @@ class Storm:
             idx = copy.copy(idx_final)
 
         elif 'dvmax_dt' not in NEW_STORM.dict.keys():
-            msg = f'dvmax_dt not in storm data. Create new object with interp first.'
+            msg = 'dvmax_dt not in storm data. Create new object with interp first.'
             raise KeyError(msg)
 
         elif isinstance(dvmax_dt, (tuple, list)) and len(dvmax_dt) == 2:
@@ -478,7 +479,7 @@ class Storm:
             idx = copy.copy(idx_final)
 
         elif 'dmslp_dt' not in NEW_STORM.dict.keys():
-            msg = f'dmslp_dt not in storm data. Create new object with interp first.'
+            msg = 'dmslp_dt not in storm data. Create new object with interp first.'
             raise KeyError(msg)
 
         elif isinstance(dmslp_dt, (tuple, list)) and len(dmslp_dt) == 2:
@@ -608,13 +609,6 @@ class Storm:
             An xarray Dataset object containing information about the storm.
         """
 
-        # Try importing xarray
-        try:
-            import xarray as xr
-        except ImportError as e:
-            raise RuntimeError(
-                "Error: xarray is not available. Install xarray in order to use this function.") from e
-
         # Set up empty dict for dataset
         time = self.dict['time']
         ds = {}
@@ -651,7 +645,6 @@ class Storm:
         """
 
         # Set up empty dict for dataframe
-        time = self.dict['time']
         ds = {}
 
         # Add every key containing a list into the dict
@@ -823,7 +816,7 @@ class Storm:
             advisory_num = closest_idx + 1
             if np.abs(time_diff[closest_idx]) >= 1.0:
                 warnings.warn(
-                    f"The time provided is outside of the duration of the storm. Returning the closest available NHC forecast.")
+                    "The time provided is outside of the duration of the storm. Returning the closest available NHC forecast.")
         else:
             raise RuntimeError(
                 "Error: Input variable 'forecast' must be of type 'int' or 'datetime.datetime'")
@@ -1602,7 +1595,7 @@ class Storm:
                 files = ftp.nlst()
                 files = [
                     i for i in files if ".discus." in i and self.id.lower() in i]
-                out = ftp.quit()
+                ftp.quit()
 
             # Read in all NHC forecast discussions
             discos = {'id': [], 'utc_time': [], 'url': [], 'mode': 0}
@@ -2004,7 +1997,7 @@ class Storm:
 
             # Raise warning if difference is >=1 day
             if np.abs(closest_diff) >= 1.0:
-                warnings.warn(f"The time provided is unavailable or outside of the duration of the storm. Use the \"list_nhc_discussions()\" function to retrieve a list of available NHC discussions for this storm. Returning the closest available NHC discussion.")
+                warnings.warn("The time provided is unavailable or outside of the duration of the storm. Use the \"list_nhc_discussions()\" function to retrieve a list of available NHC discussions for this storm. Returning the closest available NHC discussion.")
 
         if isinstance(forecast, int):
             # Find closest discussion ID to the one provided
@@ -2019,7 +2012,7 @@ class Storm:
 
                 # Raise warning if difference is >=1 ids
                 if np.abs(closest_diff) >= 2.0:
-                    msg = f"The ID provided is unavailable or outside of the duration of the storm. Use the \"list_nhc_discussions()\" function to retrieve a list of available NHC discussions for this storm. Returning the closest available NHC discussion."
+                    msg = "The ID provided is unavailable or outside of the duration of the storm. Use the \"list_nhc_discussions()\" function to retrieve a list of available NHC discussions for this storm. Returning the closest available NHC discussion."
                     warnings.warn(msg)
 
             closest_id = disco_ids[closest_idx]
@@ -2113,7 +2106,6 @@ class Storm:
 
         # Get storm ID & corresponding data URL
         storm_id = self.dict['operational_id']
-        storm_year = self.dict['year']
 
         # Error check
         if storm_id == '':

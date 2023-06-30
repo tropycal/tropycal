@@ -1,7 +1,8 @@
 r"""Functionality for managing real-time tropical cyclone data."""
 
-import numpy as np
 import re
+import ssl
+import numpy as np
 import urllib
 import warnings
 from datetime import datetime as dt, timedelta
@@ -10,7 +11,7 @@ try:
     import shapefile
     import zipfile
     from io import BytesIO
-except:
+except ImportError:
     warn_message = "Warning: The libraries necessary for online NHC forecast retrieval aren't available (shapefile, gzip, io)."
     warnings.warn(warn_message)
 
@@ -426,7 +427,6 @@ class Realtime():
         if source == 'ucar':
             url = f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/'
         if not ssl_certificate and source in ['jtwc', 'noaa']:
-            import ssl
             urlpath = urllib.request.urlopen(
                 url, context=ssl._create_unverified_context())
         else:

@@ -348,10 +348,10 @@ def get_basin(lat, lon, source_basin=""):
     """
 
     # Error check
-    if not isinstance(lat, (int, np.integer, float, np.floating)):
+    if not is_number(lat):
         msg = "\"lat\" must be of type int or float."
         raise TypeError(msg)
-    if not isinstance(lon, (int, np.integer, float, np.floating)):
+    if not is_number(lon):
         msg = "\"lon\" must be of type int or float."
         raise TypeError(msg)
 
@@ -1525,6 +1525,22 @@ def all_nan(arr):
     else:
         return False
 
+def is_number(value):
+    r"""
+    Determine whether the provided value is a number.
+    
+    Parameters
+    ----------
+    value
+        A value to check the type of.
+    
+    Returns
+    -------
+    bool
+        Returns True if the value is a number, otherwise False.
+    """
+    
+    return isinstance(value, (int, np.integer, float, np.floating))
 
 def category_label_to_wind(category):
     r"""

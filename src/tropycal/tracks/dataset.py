@@ -1724,17 +1724,17 @@ class TrackDataset:
         """
 
         # Error checks
-        if not isinstance(year, (int, np.integer, float, np.floating)) and not isinstance(year, list):
+        if not is_number(year) and not isinstance(year, list):
             msg = "'year' must be of type int or list."
             raise TypeError(msg)
         if isinstance(year, list):
             for i in year:
-                if not isinstance(i, (int, np.integer, float, np.floating)):
+                if not is_number(i):
                     msg = "Elements of list 'year' must be of type int."
                     raise TypeError(msg)
 
         # Retrieve season object(s)
-        if isinstance(year, (int, np.integer, float, np.floating)):
+        if is_number(year):
             return self.__retrieve_season(year, basin)
         else:
             return_season = self.__retrieve_season(year[0], basin)
@@ -3898,7 +3898,7 @@ class TrackDataset:
         start_season, end_season = climo_bounds
         if start_season >= end_season:
             raise ValueError("start_season cannot be greater than end_season.")
-        if not isinstance(start_season, (int, np.integer, float, np.floating)) or not isinstance(end_season, (int, np.integer, float, np.floating)):
+        if not is_number(start_season) or not is_number(end_season):
             raise TypeError("start_season and end_season must be of type int.")
         if (end_season - start_season) < 5:
             raise ValueError(

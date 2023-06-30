@@ -383,7 +383,7 @@ class Plot:
         else:
 
             # Error check
-            if isinstance(domain, dict) == False:
+            if not isinstance(domain, dict):
                 msg = "Custom domains must be of type dict."
                 raise TypeError(msg)
 

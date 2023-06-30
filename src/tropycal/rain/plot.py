@@ -197,7 +197,7 @@ class RainPlot(Plot):
                 line_color = get_colors_sshws(np.nan_to_num(i_vmax))
 
             # Use user-defined colormap if another storm variable
-            elif isinstance(prop['linecolor'], str) == True and prop['linecolor'] in ['vmax', 'mslp']:
+            elif isinstance(prop['linecolor'], str) and prop['linecolor'] in ['vmax', 'mslp']:
                 segmented_colors = True
                 color_variable = storm_data[prop['linecolor']]
                 if prop['levels'] is None:  # Auto-determine color levels if needed
@@ -241,10 +241,10 @@ class RainPlot(Plot):
                                                path_effects.Normal()])
 
             # Plot dots if requested
-            if prop['dots'] == True:
+            if prop['dots']:
 
-                # Skip if plot_all_dots == False and not in 0,6,12,18z
-                if plot_all_dots == False:
+                # Skip if plot_all_dots is False and not in 0,6,12,18z
+                if not plot_all_dots:
                     if i_time.strftime('%H%M') not in ['0000', '0600', '1200', '1800']:
                         continue
 
@@ -254,7 +254,7 @@ class RainPlot(Plot):
                     fill_color = get_colors_sshws(np.nan_to_num(i_vmax))
 
                 # Use user-defined colormap if another storm variable
-                elif isinstance(prop['fillcolor'], str) == True and prop['fillcolor'] in ['vmax', 'mslp']:
+                elif isinstance(prop['fillcolor'], str) and prop['fillcolor'] in ['vmax', 'mslp']:
                     segmented_colors = True
                     color_variable = storm_data[prop['fillcolor']]
                     if prop['levels'] is None:  # Auto-determine color levels if needed
@@ -317,7 +317,7 @@ class RainPlot(Plot):
 
         # Add left title
         type_array = np.array(storm_data['type'])
-        if invest_bool == False:
+        if not invest_bool:
             idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
                 type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
             tropical_vmax = np.array(storm_data['vmax'])[idx]
@@ -334,7 +334,7 @@ class RainPlot(Plot):
             peak_basin = storm_data['wmo_basin'][peak_idx]
             storm_type = get_storm_classification(
                 np.nanmax(tropical_vmax), subtrop, peak_basin)
-            if add_ptc_flag == True:
+            if add_ptc_flag:
                 storm_type = "Potential Tropical Cyclone"
             left_title_string = f"{storm_type} {storm_data['name']}"
         else:
@@ -354,7 +354,7 @@ class RainPlot(Plot):
             left_title_string = f"INVEST {storm_data['id'][2:4]}{add_letter}"
 
         # Add left title
-        if plot_grid == True:
+        if plot_grid:
             left_title_string += "\nInterpolated WPC Storm Rainfall (in)"
         else:
             if minimum_threshold > 1:
@@ -366,18 +366,18 @@ class RainPlot(Plot):
 
         # Add right title
         ace = storm_data['ace']
-        if add_ptc_flag == True:
+        if add_ptc_flag:
             ace = 0.0
         type_array = np.array(storm_data['type'])
 
         # Get storm extrema for display
         mslp_key = 'mslp' if 'wmo_mslp' not in storm_data.keys() else 'wmo_mslp'
-        if all_nan(np.array(storm_data[mslp_key])[idx]) == True:
+        if all_nan(np.array(storm_data[mslp_key])[idx]):
             min_pres = "N/A"
         else:
             min_pres = int(np.nan_to_num(
                 np.nanmin(np.array(storm_data[mslp_key])[idx])))
-        if all_nan(np.array(storm_data['vmax'])[idx]) == True:
+        if all_nan(np.array(storm_data['vmax'])[idx]):
             max_wind = "N/A"
         else:
             max_wind = int(np.nan_to_num(
@@ -411,7 +411,7 @@ class RainPlot(Plot):
         # --------------------------------------------------------------------------------------
 
         # Add legend
-        if prop['fillcolor'] == 'category' and prop['dots'] == True:
+        if prop['fillcolor'] == 'category' and prop['dots']:
             ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
                                mec='k', mew=0.5, label='Non-Tropical', marker='^', color='w')
             sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
@@ -433,7 +433,7 @@ class RainPlot(Plot):
             self.ax.legend(handles=[ex, sb, td, ts, c1,
                            c2, c3, c4, c5], prop={'size': 11.5})
 
-        elif prop['linecolor'] == 'category' and prop['dots'] == False:
+        elif prop['linecolor'] == 'category' and not prop['dots']:
             ex = mlines.Line2D([], [], linestyle='dotted',
                                label='Non-Tropical', color='k')
             td = mlines.Line2D([], [], linestyle='solid',
@@ -453,7 +453,7 @@ class RainPlot(Plot):
             self.ax.legend(handles=[ex, td, ts, c1, c2, c3, c4, c5], prop={
                            'size': 11.5}).set_zorder(10)
 
-        elif prop['dots'] and segmented_colors == False:
+        elif prop['dots'] and not segmented_colors:
             ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',
                                mew=0.5, label='Non-Tropical', marker='^', color=prop['fillcolor'])
             sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',
@@ -463,7 +463,7 @@ class RainPlot(Plot):
             handles = [ex, sb, td]
             self.ax.legend(handles=handles, fontsize=11.5).set_zorder(10)
 
-        elif prop['dots'] == False and segmented_colors == False:
+        elif not prop['dots'] and not segmented_colors:
             ex = mlines.Line2D([], [], linestyle='dotted',
                                label='Non-Tropical', color=prop['linecolor'])
             td = mlines.Line2D([], [], linestyle='solid',
@@ -471,7 +471,7 @@ class RainPlot(Plot):
             handles = [ex, td]
             self.ax.legend(handles=handles, fontsize=11.5).set_zorder(10)
 
-        elif prop['dots'] == True:
+        elif prop['dots']:
             ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
                                mec='k', mew=0.5, label='Non-Tropical', marker='^', color='w')
             sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
@@ -573,7 +573,7 @@ class RainPlot(Plot):
         # -----------------------------------------------------------------------------------------
 
         # Save image if specified
-        if save_path is not None and isinstance(save_path, str) == True:
+        if save_path is not None and isinstance(save_path, str):
             plt.savefig(save_path, bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure

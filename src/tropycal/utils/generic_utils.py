@@ -167,12 +167,12 @@ def get_storm_classification(wind_speed, subtropical_flag, basin):
         if wind_speed == 0:
             return "Unknown"
         elif wind_speed < 34:
-            if subtropical_flag == True:
+            if subtropical_flag:
                 return "Subtropical Depression"
             else:
                 return "Tropical Depression"
         elif wind_speed < 63:
-            if subtropical_flag == True:
+            if subtropical_flag:
                 return "Subtropical Storm"
             else:
                 return "Tropical Storm"
@@ -184,12 +184,12 @@ def get_storm_classification(wind_speed, subtropical_flag, basin):
         if wind_speed == 0:
             return "Unknown"
         elif wind_speed < 34:
-            if subtropical_flag == True:
+            if subtropical_flag:
                 return "Subtropical Depression"
             else:
                 return "Tropical Depression"
         elif wind_speed < 63:
-            if subtropical_flag == True:
+            if subtropical_flag:
                 return "Subtropical Storm"
             else:
                 return "Tropical Storm"
@@ -296,20 +296,20 @@ def get_storm_type(wind_speed, subtropical_flag, typhoon=False):
 
     # Tropical depression
     if wind_speed < 34:
-        if subtropical_flag == True:
+        if subtropical_flag:
             return "SD"
         else:
             return "TD"
 
     # Tropical storm
     elif wind_speed < 63:
-        if subtropical_flag == True:
+        if subtropical_flag:
             return "SS"
         else:
             return "TS"
 
     # Hurricane
-    elif typhoon == False:
+    elif not typhoon:
         return "HU"
 
     # Typhoon
@@ -348,10 +348,10 @@ def get_basin(lat, lon, source_basin=""):
     """
 
     # Error check
-    if isinstance(lat, (int, np.integer, float, np.floating)) == False:
+    if not isinstance(lat, (int, np.integer, float, np.floating)):
         msg = "\"lat\" must be of type int or float."
         raise TypeError(msg)
-    if isinstance(lon, (int, np.integer, float, np.floating)) == False:
+    if not isinstance(lon, (int, np.integer, float, np.floating)):
         msg = "\"lon\" must be of type int or float."
         raise TypeError(msg)
 
@@ -711,13 +711,13 @@ def nhc_cone_radii(year, basin, forecast_hour=None):
     # Forecast hour check
     if forecast_hour is None:
         forecast_hour = cone_climo_hr
-    elif isinstance(forecast_hour, int) == True:
+    elif isinstance(forecast_hour, int):
         if forecast_hour not in cone_climo_hr:
             raise ValueError(
                 f"Forecast hour {forecast_hour} is invalid. Available forecast hours for {year} are: {cone_climo_hr}")
         else:
             forecast_hour = [forecast_hour]
-    elif isinstance(forecast_hour, list) == True:
+    elif isinstance(forecast_hour, list):
         forecast_hour = [i for i in forecast_hour if i in cone_climo_hr]
         if len(forecast_hour) == 0:
             raise ValueError(
@@ -908,7 +908,7 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
         cone_day_cap = len(fhr)
 
     # Account for dateline
-    if shift_lons == True:
+    if shift_lons:
         temp_lon = np.array(fcst_lon)
         temp_lon[temp_lon < 0] = temp_lon[temp_lon < 0]+360.0
         fcst_lon = temp_lon.tolist()
@@ -1218,7 +1218,7 @@ def create_storm_dict(filepath, storm_name, storm_id, delimiter=',', time_format
             'ace': 0.0}
 
     # Parse text file
-    if netcdf == False:
+    if not netcdf:
 
         # Store header data
         header = {}

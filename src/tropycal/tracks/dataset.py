@@ -232,7 +232,7 @@ class TrackDataset:
                 self.basin = 'all'
 
         # Read in best track data
-        if include_btk == True and basin in ['north_atlantic', 'east_pacific', 'both']:
+        if include_btk and basin in ['north_atlantic', 'east_pacific', 'both']:
             self.__read_btk()
 
         # Delete duplicate entries
@@ -478,7 +478,7 @@ class TrackDataset:
                     get_basin(lat, lon, origin_basin))
 
                 # Calculate ACE & append to storm total
-                if np.isnan(vmax) == False:
+                if not np.isnan(vmax):
                     ace = accumulated_cyclone_energy(vmax)
                     if hhmm in constants.STANDARD_HOURS and storm_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[current_id]['ace'] += np.round(ace, 4)
@@ -703,7 +703,7 @@ class TrackDataset:
                     get_basin(btk_lat, btk_lon, origin_basin))
 
                 # Calculate ACE & append to storm total
-                if np.isnan(btk_wind) == False:
+                if not np.isnan(btk_wind):
                     ace = accumulated_cyclone_energy(btk_wind)
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace, 4)
@@ -824,7 +824,7 @@ class TrackDataset:
                             east_pacific_case = True
 
                     # Check if this is an extension of an existing storm
-                    if use_id in self.data.keys() and east_pacific_case == False:
+                    if use_id in self.data.keys() and not east_pacific_case:
 
                         # Add to list of duplicate keys
                         if use_id not in map_duplicate_id:
@@ -922,7 +922,7 @@ class TrackDataset:
                         neumann_vmax)
                     neumann_mslp = np.nan if neumann_mslp == "" else int(
                         neumann_mslp)
-                    if np.isnan(neumann_vmax) == False:
+                    if not np.isnan(neumann_vmax):
                         if str(neumann_vmax)[-1] in ['4', '9']:
                             neumann_vmax += 1
                         if str(neumann_vmax)[-1] in ['1', '6']:
@@ -965,9 +965,9 @@ class TrackDataset:
                         neumann[ibtracs_id]['extra_obs'].append(1)
 
                     # Calculate ACE & append to storm total
-                    if np.isnan(neumann_vmax) == False:
+                    if not np.isnan(neumann_vmax):
                         ace = accumulated_cyclone_energy(neumann_vmax)
-                        if hhmm in constants.STANDARD_HOURS and neumann_type in constants.NAMED_TROPICAL_STORM_TYPES and np.isnan(ace) == False:
+                        if hhmm in constants.STANDARD_HOURS and neumann_type in constants.NAMED_TROPICAL_STORM_TYPES and not np.isnan(ace):
                             neumann[ibtracs_id]['ace'] += np.round(ace, 4)
 
             # Skip missing entries
@@ -1007,14 +1007,14 @@ class TrackDataset:
                 self.data[ibtracs_id]['wmo_basin'].append(wmo_basin)
 
                 # Account for wind discrepancy
-                if wmo_basin not in ['north_atlantic', 'east_pacific'] and np.isnan(wmo_vmax) == False:
+                if wmo_basin not in ['north_atlantic', 'east_pacific'] and not np.isnan(wmo_vmax):
                     jtwc_vmax = int(wmo_vmax / 0.88)
                 else:
-                    if np.isnan(wmo_vmax) == False:
+                    if not np.isnan(wmo_vmax):
                         jtwc_vmax = int(wmo_vmax + 0.0)
                     else:
                         jtwc_vmax = np.nan
-                if np.isnan(jtwc_vmax) == False:
+                if not np.isnan(jtwc_vmax):
                     if str(jtwc_vmax)[-1] in ['4', '9']:
                         jtwc_vmax += 1
                     if str(jtwc_vmax)[-1] in ['1', '6']:
@@ -1079,9 +1079,9 @@ class TrackDataset:
                     self.data[ibtracs_id]['extra_obs'].append(1)
 
                 # Calculate ACE & append to storm total
-                if np.isnan(jtwc_vmax) == False:
+                if not np.isnan(jtwc_vmax):
                     ace = accumulated_cyclone_energy(jtwc_vmax)
-                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES and np.isnan(ace) == False:
+                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES and not np.isnan(ace):
                         self.data[ibtracs_id]['ace'] += np.round(ace, 4)
 
             # Handle non-WMO mode
@@ -1106,7 +1106,7 @@ class TrackDataset:
                 lon = float(lon)
                 vmax = np.nan if vmax == "" else int(vmax)
                 mslp = np.nan if mslp == "" else int(mslp)
-                if np.isnan(vmax) == False:
+                if not np.isnan(vmax):
                     if str(vmax)[-1] in ['4', '9']:
                         vmax += 1
                     if str(vmax)[-1] in ['1', '6']:
@@ -1189,9 +1189,9 @@ class TrackDataset:
                     self.data[sid]['extra_obs'].append(1)
 
                 # Calculate ACE & append to storm total
-                if np.isnan(vmax) == False:
+                if not np.isnan(vmax):
                     ace = accumulated_cyclone_energy(vmax)
-                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES and np.isnan(ace) == False:
+                    if hhmm in constants.STANDARD_HOURS and stype in constants.NAMED_TROPICAL_STORM_TYPES and not np.isnan(ace):
                         self.data[sid]['ace'] += np.round(ace, 4)
 
         # Remove empty entries
@@ -1292,7 +1292,7 @@ class TrackDataset:
         """
 
         # Error check
-        if isinstance(storm, tuple) == False:
+        if not isinstance(storm, tuple):
             raise TypeError("storm must be of type tuple.")
         if len(storm) != 2:
             raise ValueError(
@@ -1331,7 +1331,7 @@ class TrackDataset:
         """
 
         # Error check
-        if isinstance(storm, str) == False:
+        if not isinstance(storm, str):
             raise TypeError("storm must be of type string.")
         try:
             name = self.data[storm]['name']
@@ -1417,7 +1417,7 @@ class TrackDataset:
         map_prop = kwargs.pop('map_prop', {})
 
         # Retrieve requested storm
-        if isinstance(storm, dict) == False:
+        if not isinstance(storm, dict):
             storm_dict = self.get_storm(storm).dict
         else:
             storm_dict = storm
@@ -1496,7 +1496,7 @@ class TrackDataset:
         for storm in storms:
 
             # Retrieve requested storm
-            if isinstance(storm, dict) == False:
+            if not isinstance(storm, dict):
                 storm_dict = self.get_storm(storm).dict
             else:
                 storm_dict = storm
@@ -1619,7 +1619,7 @@ class TrackDataset:
         """
 
         # Retrieve requested storm
-        if isinstance(storm, dict) == False:
+        if not isinstance(storm, dict):
             storm_dict = self.get_storm(storm)
         else:
             storm_dict = self.get_storm(storm.id)
@@ -1631,7 +1631,7 @@ class TrackDataset:
         if self.year < 1995:
             msg = "Tropical Cyclone Reports are unavailable prior to 1995."
             raise RuntimeError(msg)
-        if isinstance(save_path, str) == False:
+        if not isinstance(save_path, str):
             msg = "'save_path' must be of type str."
             raise TypeError(msg)
 
@@ -1724,12 +1724,12 @@ class TrackDataset:
         """
 
         # Error checks
-        if isinstance(year, (int, np.integer, float, np.floating)) == False and isinstance(year, list) == False:
+        if not isinstance(year, (int, np.integer, float, np.floating)) and not isinstance(year, list):
             msg = "'year' must be of type int or list."
             raise TypeError(msg)
         if isinstance(year, list):
             for i in year:
-                if isinstance(i, (int, np.integer, float, np.floating)) == False:
+                if not isinstance(i, (int, np.integer, float, np.floating)):
                     msg = "Elements of list 'year' must be of type int."
                     raise TypeError(msg)
 
@@ -1922,7 +1922,7 @@ class TrackDataset:
             all_ace, [0, 10, 25, 40, 60, 75, 90, 100], axis=0)
 
         # Return if not plotting
-        if return_dict == True:
+        if return_dict:
             return ace
 
         # ------------------------------------------------------------------------------------------
@@ -2282,7 +2282,7 @@ class TrackDataset:
                 all_tc_days, [0, 10, 25, 40, 60, 75, 90, 100], axis=0)
 
         # Return if not plotting
-        if return_dict == True:
+        if return_dict:
             return tc_days
 
         # ------------------------------------------------------------------------------------------
@@ -2592,18 +2592,18 @@ class TrackDataset:
             tr_label = False
             for i, (iv, ip, it) in enumerate(zip(V[:-1], P[:-1], T[:-1])):
                 check = False
-                if it in constants.TROPICAL_STORM_TYPES and tr_label == True:
+                if it in constants.TROPICAL_STORM_TYPES and tr_label:
                     check = True
-                if not it in constants.TROPICAL_STORM_TYPES and xt_label == True:
+                if not it in constants.TROPICAL_STORM_TYPES and xt_label:
                     check = True
                 if check:
                     plt.scatter(iv, ip, marker='o', s=80, color=get_color(
                         it)[0], edgecolor='k', zorder=9)
                 else:
-                    if it in constants.TROPICAL_STORM_TYPES and tr_label == False:
+                    if it in constants.TROPICAL_STORM_TYPES and not tr_label:
                         tr_label = True
                         label_content = f"{storm_data['name'].title()} {storm_data['year']} (Tropical)"
-                    if it not in constants.TROPICAL_STORM_TYPES and xt_label == False:
+                    if it not in constants.TROPICAL_STORM_TYPES and not xt_label:
                         xt_label = True
                         label_content = f"{storm_data['name'].title()} {storm_data['year']} (Non-Tropical)"
                     plt.scatter(iv, ip, marker='o', s=80, color=get_color(
@@ -2856,9 +2856,9 @@ class TrackDataset:
             elif metric in ['max_wind', 'min_mslp']:
 
                 # Find max wind or min MSLP
-                if metric == 'max_wind' and all_nan(vmax_tropical) == True:
+                if metric == 'max_wind' and all_nan(vmax_tropical):
                     continue
-                if metric == 'min_mslp' and all_nan(mslp_tropical) == True:
+                if metric == 'min_mslp' and all_nan(mslp_tropical):
                     continue
                 use_idx = np.where(
                     vmax_tropical == np.nanmax(vmax_tropical))[0][0]
@@ -2874,7 +2874,7 @@ class TrackDataset:
             elif metric in ['wind_ge']:
 
                 # Find max wind or min MSLP
-                if metric == 'wind_ge' and all_nan(vmax_tropical) == True:
+                if metric == 'wind_ge' and all_nan(vmax_tropical):
                     continue
                 if metric == 'wind_ge' and np.nanmax(vmax_tropical) < thresh:
                     continue
@@ -2898,7 +2898,7 @@ class TrackDataset:
 
         # Sort in requested order
         arg_idx = np.argsort(analyze_dict[analyze_list[0]])
-        if ascending == False:
+        if not ascending:
             arg_idx = arg_idx[::-1]
 
         # Sort all variables in requested order
@@ -3346,7 +3346,7 @@ class TrackDataset:
             if y_r is None:
                 new_y_r = (start_year, end_year)
             else:
-                if isinstance(y_r, (list, tuple)) == False:
+                if not isinstance(y_r, (list, tuple)):
                     msg = "\"year_range\" and \"year_range_subtract\" must be of type list or tuple."
                     raise ValueError(msg)
                 if year_range_subtract is not None and len(year_range_subtract) != 2:
@@ -3583,7 +3583,7 @@ class TrackDataset:
                 y_r_title = f'{year_range[0]}'
             else:
                 y_r_title = f'{year_range[0]} {endash} {year_range[1]}'
-            add_avg = ' year-avg' if year_average == True else ''
+            add_avg = ' year-avg' if year_average else ''
             if year_range_subtract is None:
                 title_R = f'{date_range[0].replace("/"," ")} {endash} {date_range[1].replace("/"," ")} {dot} {y_r_title}{add_avg}'
             else:
@@ -3730,7 +3730,7 @@ class TrackDataset:
                 "No tornado data has been attributed to this dataset. Please run \"TrackDataset.assign_storm_tornadoes()\" first.")
 
         # Error check
-        if isinstance(mag_thresh, int) == False:
+        if not isinstance(mag_thresh, int):
             raise TypeError("mag_thresh must be of type int.")
         elif mag_thresh not in [0, 1, 2, 3, 4, 5]:
             raise ValueError("mag_thresh must be between 0 and 5.")
@@ -3743,8 +3743,7 @@ class TrackDataset:
             if len(storms) == 2 and isinstance(storms[-1], int):
                 use_storms = [self.get_storm_id(storms)]
             else:
-                use_storms = [i if isinstance(
-                    i, str) == True else self.get_storm_id(i) for i in storms]
+                use_storms = [i if isinstance(i, str) else self.get_storm_id(i) for i in storms]
             storms = [
                 i for i in use_storms if i in self.keys and self.keys_tors[self.keys.index(i)] == 1]
 
@@ -3955,7 +3954,7 @@ class TrackDataset:
         If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).
         """
 
-        if isinstance(seasons, list) == False:
+        if not isinstance(seasons, list):
             raise TypeError("'seasons' must be of type list.")
 
         if climo_bounds is None:
@@ -4645,7 +4644,7 @@ class TrackDataset:
                 track_dict[key] = storm.dict[key]
 
             # Add carq to forecast dict as hour 0, if available
-            if use_carq == True and forecast_dict['init'] in track_dict['time']:
+            if use_carq and forecast_dict['init'] in track_dict['time']:
                 insert_idx = track_dict['time'].index(forecast_dict['init'])
                 if 0 in forecast_dict['fhr']:
                     forecast_dict['lat'][0] = track_dict['lat'][insert_idx]
@@ -4667,7 +4666,7 @@ class TrackDataset:
                         0, track_dict['type'][insert_idx])
 
             # Fix forecast dict if hour 3 is available
-            if use_carq == False and 3 in forecast_dict['fhr']:
+            if not use_carq and 3 in forecast_dict['fhr']:
                 idx_3 = forecast_dict['fhr'].index(3)
                 for iter_key in ['fhr', 'lat', 'lon', 'vmax', 'mslp', 'type']:
                     forecast_dict[iter_key] = forecast_dict[iter_key][idx_3:]
@@ -4770,7 +4769,7 @@ class TrackDataset:
                 continue
 
             # Second filter
-            if extratropical == False and self.data[key]['type'][idx] not in constants.TROPICAL_STORM_TYPES:
+            if not extratropical and self.data[key]['type'][idx] not in constants.TROPICAL_STORM_TYPES:
                 continue
 
             # Third filter

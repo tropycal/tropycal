@@ -73,7 +73,7 @@ def plot_dot(ax, lon, lat, time, vmax, i_type, zorder, storm_data, prop, i):
         fill_color = get_colors_sshws(np.nan_to_num(vmax))
 
     # Use user-defined colormap if another storm variable
-    elif isinstance(prop['fillcolor'], str) == True and prop['fillcolor'] in ['vmax', 'mslp', 'dvmax_dt', 'speed']:
+    elif isinstance(prop['fillcolor'], str) and prop['fillcolor'] in ['vmax', 'mslp', 'dvmax_dt', 'speed']:
         segmented_colors = True
         color_variable = storm_data[prop['fillcolor']]
         if prop['levels'] is None:  # Auto-determine color levels if needed
@@ -108,7 +108,7 @@ def plot_dot(ax, lon, lat, time, vmax, i_type, zorder, storm_data, prop, i):
 def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=None):
 
     # Linecolor category with dots
-    if prop['fillcolor'] == 'category' and prop['dots'] == True:
+    if prop['fillcolor'] == 'category' and prop['dots']:
         ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
                            mec='k', mew=0.5, label='Non-Tropical', marker='^', color='w')
         sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
@@ -132,7 +132,7 @@ def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=No
         l.set_zorder(1001)
 
     # Linecolor category without dots
-    elif prop['linecolor'] == 'category' and prop['dots'] == False:
+    elif prop['linecolor'] == 'category' and not prop['dots']:
         ex = mlines.Line2D([], [], linestyle='dotted',
                            label='Non-Tropical', color='k')
         td = mlines.Line2D([], [], linestyle='solid',
@@ -154,7 +154,7 @@ def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=No
         l.set_zorder(1001)
 
     # Non-segmented custom colormap with dots
-    elif prop['dots'] == True and segmented_colors == False:
+    elif prop['dots'] and not segmented_colors:
         ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',
                            mew=0.5, label='Non-Tropical', marker='^', color=prop['fillcolor'])
         sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',
@@ -167,7 +167,7 @@ def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=No
         l.set_zorder(1001)
 
     # Non-segmented custom colormap without dots
-    elif prop['dots'] == False and segmented_colors == False:
+    elif not prop['dots'] and not segmented_colors:
         ex = mlines.Line2D([], [], linestyle='dotted',
                            label='Non-Tropical', color=prop['linecolor'])
         td = mlines.Line2D([], [], linestyle='solid',
@@ -178,7 +178,7 @@ def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=No
         l.set_zorder(1001)
 
     # Custom colormap with dots
-    elif prop['dots'] == True and segmented_colors == True:
+    elif prop['dots'] and segmented_colors:
         ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
                            mec='k', mew=0.5, label='Non-Tropical', marker='^', color='w')
         sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
@@ -336,12 +336,12 @@ class TrackPlot(Plot):
         for storm in storms:
 
             # Check for storm type, then get data for storm
-            if isinstance(storm, str) == True:
+            if isinstance(storm, str):
                 storm_data = self.data[storm]
-            elif isinstance(storm, tuple) == True:
+            elif isinstance(storm, tuple):
                 storm = self.get_storm_id(storm[0], storm[1])
                 storm_data = self.data[storm]
-            elif isinstance(storm, dict) == True:
+            elif isinstance(storm, dict):
                 storm_data = storm
             else:
                 raise RuntimeError(
@@ -362,7 +362,7 @@ class TrackPlot(Plot):
 
             # Force dynamic_tropical to tropical if an invest
             invest_bool = False
-            if 'invest' in storm_data.keys() and storm_data['invest'] == True:
+            if 'invest' in storm_data.keys() and storm_data['invest']:
                 invest_bool = True
                 if domain == 'dynamic_tropical':
                     domain = 'dynamic'
@@ -401,7 +401,7 @@ class TrackPlot(Plot):
                     min_lon = min(use_lons)
 
             # Add storm label at start and end points
-            if prop['plot_names'] == True:
+            if prop['plot_names']:
                 self.ax.text(lons[0] + 0.0, storm_data['lat'][0] + 1.0, f"{storm_data['name'].upper()} {storm_data['year']}",
                              fontsize=9, clip_on=True, zorder=1000, alpha=0.7, ha='center', va='center', transform=ccrs.PlateCarree())
                 self.ax.text(lons[-1] + 0.0, storm_data['lat'][-1] + 1.0, f"{storm_data['name'].upper()} {storm_data['year']}",
@@ -418,7 +418,7 @@ class TrackPlot(Plot):
                     line_color = get_colors_sshws(np.nan_to_num(i_vmax))
 
                 # Use user-defined colormap if another storm variable
-                elif isinstance(prop['linecolor'], str) == True and prop['linecolor'] in ['vmax', 'mslp', 'dvmax_dt', 'speed']:
+                elif isinstance(prop['linecolor'], str) and prop['linecolor'] in ['vmax', 'mslp', 'dvmax_dt', 'speed']:
                     segmented_colors = True
                     try:
                         color_variable = storm_data[prop['linecolor']]
@@ -466,8 +466,8 @@ class TrackPlot(Plot):
                                                    path_effects.Normal()])
 
                 # Plot dots if requested
-                if prop['dots'] == True:
-                    if plot_all_dots == False and i_time.strftime('%H%M') not in constants.STANDARD_HOURS:
+                if prop['dots']:
+                    if not plot_all_dots and i_time.strftime('%H%M') not in constants.STANDARD_HOURS:
                         continue
                     self.ax, segmented_colors, extra = plot_dot(self.ax, i_lon, i_lat, i_time, i_vmax, i_type,
                                                                 zorder=5, storm_data=storm_data, prop=prop, i=i)
@@ -532,7 +532,7 @@ class TrackPlot(Plot):
                 tropical_vmax = np.array(storm_data['vmax'])
                 self.ax.set_title(
                     f"Cyclone {storm_data['name']}", loc='left', fontsize=17, fontweight='bold')
-            elif check_invest == False and (invest_bool == False or len(idx[0]) > 0):
+            elif not check_invest and (invest_bool == False or len(idx[0]) > 0):
                 tropical_vmax = np.array(storm_data['vmax'])[idx]
 
                 # Coerce to include non-TC points if storm hasn't been designated yet
@@ -551,7 +551,7 @@ class TrackPlot(Plot):
                     peak_basin = storm_data['wmo_basin'][peak_idx]
                     storm_type = get_storm_classification(
                         np.nanmax(tropical_vmax), subtrop, peak_basin)
-                    if add_ptc_flag == True:
+                    if add_ptc_flag:
                         storm_type = "Potential Tropical Cyclone"
                 self.ax.set_title(
                     f"{storm_type} {storm_data['name']}", loc='left', fontsize=17, fontweight='bold')
@@ -579,18 +579,18 @@ class TrackPlot(Plot):
 
             # Add right title
             ace = storm_data['ace']
-            if add_ptc_flag == True:
+            if add_ptc_flag:
                 ace = 0.0
             type_array = np.array(storm_data['type'])
 
             # Get storm extrema for display
             mslp_key = 'mslp' if 'wmo_mslp' not in storm_data.keys() else 'wmo_mslp'
-            if all_nan(np.array(storm_data[mslp_key])[idx]) == True:
+            if all_nan(np.array(storm_data[mslp_key])[idx]):
                 min_pres = "N/A"
             else:
                 min_pres = int(np.nan_to_num(
                     np.nanmin(np.array(storm_data[mslp_key])[idx])))
-            if all_nan(np.array(storm_data['vmax'])[idx]) == True:
+            if all_nan(np.array(storm_data['vmax'])[idx]):
                 max_wind = "N/A"
             else:
                 max_wind = int(np.nan_to_num(
@@ -626,7 +626,7 @@ class TrackPlot(Plot):
         # -----------------------------------------------------------------------------------------
 
         # Save image if specified
-        if save_path is not None and isinstance(save_path, str) == True:
+        if save_path is not None and isinstance(save_path, str):
             plt.savefig(save_path, bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure
@@ -686,7 +686,7 @@ class TrackPlot(Plot):
         if track != "":
 
             # Check for storm type, then get data for storm
-            if isinstance(track, dict) == True:
+            if isinstance(track, dict):
                 storm_data = track
             else:
                 raise RuntimeError("Error: track must be of type dict.")
@@ -785,7 +785,7 @@ class TrackPlot(Plot):
                         lons, lats, '-', color=prop['linecolor'], linewidth=prop['linewidth'], transform=ccrs.PlateCarree())
 
                 # Plot storm dots as specified
-                if prop['dots'] == True:
+                if prop['dots']:
                     for i, (ilon, ilat, iwnd, itype) in enumerate(zip(lons, lats, vmax, styp)):
                         mtype = '^'
                         if itype in constants.SUBTROPICAL_ONLY_STORM_TYPES:
@@ -802,14 +802,14 @@ class TrackPlot(Plot):
         # --------------------------------------------------------------------------------------
 
         # Error check cone days
-        if isinstance(cone_days, int) == False:
+        if not isinstance(cone_days, int):
             raise TypeError("Error: cone_days must be of type int")
         if cone_days not in [5, 4, 3, 2]:
             raise ValueError(
                 "Error: cone_days must be an int between 2 and 5.")
 
         # Error check forecast dict
-        if isinstance(forecast, dict) == False:
+        if not isinstance(forecast, dict):
             raise RuntimeError("Error: Forecast must be of type dict")
 
         # Determine first forecast index
@@ -831,7 +831,7 @@ class TrackPlot(Plot):
                 forecast, forecast['basin'], dateline, cone_days)
 
             # Contour fill cone & account for dateline crossing
-            if 'cone' in forecast.keys() and forecast['cone'] == False:
+            if 'cone' in forecast.keys() and not forecast['cone']:
                 pass
             else:
                 cone_lon = cone['lon']
@@ -923,7 +923,7 @@ class TrackPlot(Plot):
                     self.ax, fcst_lon, fcst_lat, labels, k=1.2)
 
             # Add cone coordinates to coordinate extrema
-            if 'cone' in forecast.keys() and forecast['cone'] == False:
+            if 'cone' in forecast.keys() and not forecast['cone']:
                 if domain == "dynamic_forecast" or max_lat is None:
                     max_lat = max(center_lat)
                     min_lat = min(center_lat)
@@ -982,7 +982,7 @@ class TrackPlot(Plot):
         first_fcst_wind = np.array(forecast['vmax'])[fcst_hr >= start_slice][0]
         first_fcst_mslp = np.array(forecast['mslp'])[fcst_hr >= start_slice][0]
         first_fcst_type = np.array(forecast['type'])[fcst_hr >= start_slice][0]
-        if all_nan(first_fcst_wind) == True:
+        if all_nan(first_fcst_wind):
             storm_type = 'Unknown'
         else:
             subtrop = first_fcst_type in constants.SUBTROPICAL_ONLY_STORM_TYPES
@@ -994,7 +994,7 @@ class TrackPlot(Plot):
         matching_times = [i for i in storm_data['time']
                           if i <= forecast['init']]
         if check_length < 2:
-            if all_nan(first_fcst_wind) == True:
+            if all_nan(first_fcst_wind):
                 storm_name = storm_data['name']
             else:
                 storm_name = num_to_text(int(storm_data['id'][2:4])).upper()
@@ -1006,7 +1006,7 @@ class TrackPlot(Plot):
             storm_name = num_to_text(int(storm_data['id'][2:4])).upper()
             storm_type = 'Potential Tropical Cyclone'
             storm_tropical = False
-            if all_nan(vmax) == True:
+            if all_nan(vmax):
                 storm_type = 'Unknown'
                 storm_name = storm_data['name']
             else:
@@ -1016,10 +1016,10 @@ class TrackPlot(Plot):
                         subtrop = ityp in constants.SUBTROPICAL_ONLY_STORM_TYPES
                         storm_type = get_storm_classification(
                             np.nan_to_num(iwnd), subtrop, 'north_atlantic')
-                        if np.isnan(iwnd) == True:
+                        if np.isnan(iwnd):
                             storm_type = 'Unknown'
                     else:
-                        if storm_tropical == True:
+                        if storm_tropical:
                             storm_type = 'Post Tropical Cyclone'
                     if ityp in constants.NAMED_TROPICAL_STORM_TYPES:
                         storm_name = storm_data['name']
@@ -1037,10 +1037,8 @@ class TrackPlot(Plot):
         dot = u"\u2022"
 
         # Get current advisory information
-        first_fcst_wind = "N/A" if np.isnan(
-            first_fcst_wind) == True else int(first_fcst_wind)
-        first_fcst_mslp = "N/A" if np.isnan(
-            first_fcst_mslp) == True else int(first_fcst_mslp)
+        first_fcst_wind = "N/A" if np.isnan(first_fcst_wind) else int(first_fcst_wind)
+        first_fcst_mslp = "N/A" if np.isnan(first_fcst_mslp) else int(first_fcst_mslp)
 
         # Get time of advisory
         fcst_hr = forecast['fhr']
@@ -1053,7 +1051,7 @@ class TrackPlot(Plot):
 
         if forecast_id == -1:
             title_text = f"Current Intensity: {knots_to_mph(first_fcst_wind)} mph {dot} {first_fcst_mslp} hPa"
-            if 'cone' in forecast.keys() and forecast['cone'] == False:
+            if 'cone' in forecast.keys() and not forecast['cone']:
                 title_text += f"\nJTWC Issued: {forecast_date}"
             else:
                 title_text += f"\nNHC Issued: {forecast_date}"
@@ -1096,7 +1094,7 @@ class TrackPlot(Plot):
 
         # Add forecast label warning
         try:
-            if edt_warning == True:
+            if edt_warning:
                 warning_text = "All times displayed are in EDT\n\n"
             else:
                 warning_text = ""
@@ -1114,7 +1112,7 @@ class TrackPlot(Plot):
         self.add_credit(credit_text)
 
         # Save image if specified
-        if save_path is not None and isinstance(save_path, str) == True:
+        if save_path is not None and isinstance(save_path, str):
             plt.savefig(os.path.join(
                 save_path, f"{storm_data['name']}_{storm_data['year']}_track.png"), bbox_inches='tight')
 
@@ -1309,7 +1307,7 @@ class TrackPlot(Plot):
         self.add_credit(credit_text)
 
         # Save image if specified
-        if save_path is not None and isinstance(save_path, str) == True:
+        if save_path is not None and isinstance(save_path, str):
             plt.savefig(os.path.join(save_path), bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure
@@ -1504,7 +1502,7 @@ class TrackPlot(Plot):
             else:
                 skip_bounds = True
 
-            if skip_bounds == False:
+            if not skip_bounds:
                 lat_max_extrema.append(np.nanmax(use_lats))
                 lat_min_extrema.append(np.nanmin(use_lats))
                 lon_max_extrema.append(np.nanmax(use_lons))
@@ -1534,7 +1532,7 @@ class TrackPlot(Plot):
                                          color=color, transform=ccrs.PlateCarree())
 
                         # Add colorbar
-                        if density_colorbar == False:
+                        if not density_colorbar:
                             cs = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
                             cs.set_array([])
                             cbar = add_colorbar(
@@ -1591,7 +1589,7 @@ class TrackPlot(Plot):
                 use_lats = storm_dict['lat'][idx_start:idx + 1]
                 use_lons = new_lons[idx_start:idx + 1]
 
-            if skip_bounds == False:
+            if not skip_bounds:
                 lat_max_extrema.append(np.nanmax(use_lats))
                 lat_min_extrema.append(np.nanmin(use_lats))
                 lon_max_extrema.append(np.nanmax(use_lons))
@@ -1644,7 +1642,7 @@ class TrackPlot(Plot):
             else:
                 skip_bounds = True
 
-            if skip_bounds == False:
+            if not skip_bounds:
                 lat_max_extrema.append(np.nanmax(use_lats))
                 lat_min_extrema.append(np.nanmin(use_lats))
                 lon_max_extrema.append(np.nanmax(use_lons))
@@ -1692,7 +1690,7 @@ class TrackPlot(Plot):
             else:
                 skip_bounds = True
 
-            if skip_bounds == False:
+            if not skip_bounds:
                 lat_max_extrema.append(np.nanmax(use_lats))
                 lat_min_extrema.append(np.nanmin(use_lats))
                 lon_max_extrema.append(np.nanmax(use_lons))
@@ -1810,7 +1808,7 @@ class TrackPlot(Plot):
         self.add_credit(credit_text)
 
         # Save image if specified
-        if save_path is not None and isinstance(save_path, str) == True:
+        if save_path is not None and isinstance(save_path, str):
             plt.savefig(os.path.join(save_path), bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure
@@ -1895,7 +1893,7 @@ class TrackPlot(Plot):
                     min_lon = min(lons)
 
             # Add storm label at start and end points
-            if prop['plot_names'] == True:
+            if prop['plot_names']:
                 self.ax.text(lons[0] + 0.0, storm['lat'][0] + 1.0, storm['name'].upper(),
                              fontsize=9, clip_on=True, zorder=1000, alpha=0.7, ha='center', va='center', transform=ccrs.PlateCarree())
                 self.ax.text(lons[-1] + 0.0, storm['lat'][-1] + 1.0, storm['name'].upper(),
@@ -1912,7 +1910,7 @@ class TrackPlot(Plot):
                     line_color = get_colors_sshws(np.nan_to_num(i_vmax))
 
                 # Use user-defined colormap if another storm variable
-                elif isinstance(prop['linecolor'], str) == True and prop['linecolor'] in ['vmax', 'mslp', 'dvmax_dt', 'speed']:
+                elif isinstance(prop['linecolor'], str) and prop['linecolor'] in ['vmax', 'mslp', 'dvmax_dt', 'speed']:
                     segmented_colors = True
                     try:
                         color_variable = storm[prop['linecolor']]
@@ -1962,7 +1960,7 @@ class TrackPlot(Plot):
                                                    path_effects.Normal()])
 
                 # Plot dots if requested
-                if prop['dots'] == True:
+                if prop['dots']:
                     self.ax, segmented_colors, extra = plot_dot(self.ax, i_lon, i_lat, i_time, i_vmax, i_type,
                                                                 zorder=900 + i_vmax, storm_data=storm, prop=prop, i=i)
                     if 'cmap' in extra.keys():
@@ -2012,7 +2010,7 @@ class TrackPlot(Plot):
         count_hurricane = sinfo['season_hurricane']
         count_major = sinfo['season_major']
         count_ace = sinfo['season_ace']
-        if isinstance(season.year, list) == True:
+        if isinstance(season.year, list):
             count_named = np.sum(sinfo['season_named'])
             count_hurricane = np.sum(sinfo['season_hurricane'])
             count_major = np.sum(sinfo['season_major'])
@@ -2042,7 +2040,7 @@ class TrackPlot(Plot):
         # --------------------------------------------------------------------------------------
 
         # Save image if specified
-        if save_path is not None and isinstance(save_path, str) == True:
+        if save_path is not None and isinstance(save_path, str):
             plt.savefig(save_path, bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure
@@ -2125,7 +2123,7 @@ class TrackPlot(Plot):
 
         start = False
         for label, data_str in G.edges():
-            if start == False:
+            if not start:
                 start = True
                 continue
             self.ax.annotate(label,  # xycoords="data"
@@ -2217,7 +2215,7 @@ class TrackPlot(Plot):
             vmax = max(prop['levels'])
 
         # For difference/change plots with automatically generated contour levels, ensure that 0 is in the middle
-        if auto_levels == True:
+        if auto_levels:
             if varname in ['dvmax_dt', 'dmslp_dt'] or '\n' in prop['title_R']:
                 max_val = np.max([np.abs(vmin), vmax])
                 vmin = np.round(max_val * -1.0, 2)
@@ -2393,7 +2391,7 @@ class TrackPlot(Plot):
 
         # Format title
         add_title = ""
-        if two_prop['plot'] == True:
+        if two_prop['plot']:
             if two_prop['days'] == 2 or valid_date <= dt(2014, 7, 1):
                 add_title = " & NHC 2-Day Formation Outlook"
             elif valid_date <= dt(2023, 5, 1):
@@ -2406,7 +2404,7 @@ class TrackPlot(Plot):
         bbox_prop = {'facecolor': 'white', 'alpha': 0.5,
                      'edgecolor': 'black', 'boxstyle': 'round,pad=0.3'}
 
-        if two_prop['plot'] == True:
+        if two_prop['plot']:
 
             # Store color
             color_base = {'Low': 'yellow', 'Medium': 'orange', 'High': 'red'}
@@ -2526,17 +2524,17 @@ class TrackPlot(Plot):
 
         # --------------------------------------------------------------------------------------
 
-        if invest_prop['plot'] == True or storm_prop['plot'] == True:
+        if invest_prop['plot'] or storm_prop['plot']:
 
             # Iterate over all storms
             for storm_idx, storm in enumerate(storms):
 
                 # Skip if it's already associated with a risk area, if TWO is being plotted
-                if storm.realtime and storm.prob_2day != 'N/A' and two_prop['plot'] == True:
+                if storm.realtime and storm.prob_2day != 'N/A' and two_prop['plot']:
                     continue
 
                 # Plot invests
-                if storm.invest and invest_prop['plot'] == True:
+                if storm.invest and invest_prop['plot']:
 
                     # Test
                     self.ax.plot(storm.lon[-1], storm.lat[-1], 'X', ms=invest_prop['ms'],
@@ -2560,7 +2558,7 @@ class TrackPlot(Plot):
                             storm.lon, storm.lat, color=invest_prop['linecolor'], linestyle=invest_prop['linestyle'], zorder=5, transform=ccrs.PlateCarree())
 
                 # Plot TCs
-                elif storm.invest == False and storm_prop['plot'] == True:
+                elif not storm.invest and storm_prop['plot']:
 
                     # Label dot
                     category = str(wind_to_category(storm.vmax[-1]))
@@ -2587,7 +2585,7 @@ class TrackPlot(Plot):
                         self.ax.plot(storm.lon[-1], storm.lat[-1], 'o', ms=storm_prop['ms'],
                                      color=color, transform=ccrs.PlateCarree(), zorder=21)
 
-                        if storm_prop['label_category'] == True:
+                        if storm_prop['label_category']:
                             color = mcolors.to_rgb(color)
                             red, green, blue = color
                             textcolor = 'w'
@@ -2620,7 +2618,7 @@ class TrackPlot(Plot):
                                      zorder=5, transform=ccrs.PlateCarree())
 
                     # Plot cone
-                    if cone_prop['plot'] == True:
+                    if cone_prop['plot']:
 
                         try:
 
@@ -2672,7 +2670,7 @@ class TrackPlot(Plot):
                                 self.ax.plot(forecast_dict['lon'][idx], forecast_dict['lat'][idx], marker, ms=cone_prop['ms'],
                                              mfc=color, mec='k', zorder=7, transform=ccrs.PlateCarree(), clip_on=True)
 
-                                if cone_prop['label_category'] == True and marker == 'o':
+                                if cone_prop['label_category'] and marker == 'o':
                                     category = str(wind_to_category(
                                         forecast_dict['vmax'][idx]))
                                     if category == "0":
@@ -2728,7 +2726,7 @@ class TrackPlot(Plot):
         # -----------------------------------------------------------------------------------------
 
         # Save image if specified
-        if save_path is not None and isinstance(save_path, str) == True:
+        if save_path is not None and isinstance(save_path, str):
             plt.savefig(save_path, bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure

@@ -748,7 +748,7 @@ class hdobs:
                     check = True
 
                 # Read HDOBs if this file matches the requested storm
-                if check == True:
+                if check:
                     filecount += 1
 
                     try:
@@ -772,7 +772,7 @@ class hdobs:
                                     strdate = date.strftime('%Y%m%d')
                                     found_date = True
                                     break
-                            if found_date == False:
+                            if not found_date:
                                 continue
                             iter_hdob = decode_hdob_2006(
                                 content, strdate, mission_row=row)
@@ -1265,7 +1265,7 @@ class hdobs:
         type_array = np.array(storm_data['type'])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
             type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
-        if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
+        if ('invest' in storm_data.keys() and not storm_data['invest']) or len(idx[0]) > 0:
             tropical_vmax = np.array(storm_data['vmax'])[idx]
 
             add_ptc_flag = False
@@ -1279,7 +1279,7 @@ class hdobs:
             peak_basin = storm_data['wmo_basin'][peak_idx]
             storm_type = get_storm_classification(
                 np.nanmax(tropical_vmax), subtrop, peak_basin)
-            if add_ptc_flag == True:
+            if add_ptc_flag:
                 storm_type = "Potential Tropical Cyclone"
 
         # Plot title
@@ -1455,7 +1455,7 @@ class hdobs:
                              levels=clevs, cmap=cmap, norm=norm)
 
         # Multiple clevels or without smooth contouring
-        elif len(prop['levels']) > 2 or prop['smooth_contourf'] == False:
+        elif len(prop['levels']) > 2 or not prop['smooth_contourf']:
             cf = ax.contourf(radius, time, gfilt1d(vardata, sigma=3, axis=1),
                              levels=clevs, cmap=cmap)
 
@@ -2125,7 +2125,7 @@ class dropsondes:
                                           iter_date.month, iter_date.day)
                                 found_date = True
                                 break
-                        if found_date == False:
+                        if not found_date:
                             continue
                         missionname, tmp = decode_dropsonde(
                             content.replace(";", ""), date=date)
@@ -2173,7 +2173,7 @@ class dropsondes:
                                     date_string[2:4]), minute=int(date_string[4:6]))
 
                         # Decode dropsondes
-                        if found_date == False:
+                        if not found_date:
                             continue
                         try:
                             missionname, tmp = decode_dropsonde(
@@ -2452,7 +2452,7 @@ class dropsondes:
 
         # Make sure data doesn't have NaNs
         check_data = [m['BOTTOMlat']
-                      for m in self.data if np.isnan(m['BOTTOMlat']) == False]
+                      for m in self.data if not np.isnan(m['BOTTOMlat'])]
         if len(check_data) == 0:
             dfRecon = pd.DataFrame.from_dict({'time': [m['TOPtime'] for m in self.data],
                                               'lat': [m['TOPlat'] for m in self.data],
@@ -2506,7 +2506,7 @@ class dropsondes:
         type_array = np.array(storm_data['type'])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
             type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
-        if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
+        if ('invest' in storm_data.keys() and not storm_data['invest']) or len(idx[0]) > 0:
             tropical_vmax = np.array(storm_data['vmax'])[idx]
 
             add_ptc_flag = False
@@ -2520,7 +2520,7 @@ class dropsondes:
             peak_basin = storm_data['wmo_basin'][peak_idx]
             storm_type = get_storm_classification(
                 np.nanmax(tropical_vmax), subtrop, peak_basin)
-            if add_ptc_flag == True:
+            if add_ptc_flag:
                 storm_type = "Potential Tropical Cyclone"
         title_string = f'{storm_type} {storm_data["name"]}\nDropsonde DDD, Mission MMM'
 
@@ -2718,7 +2718,7 @@ class vdms:
                                               iter_date.month, iter_date.day)
                                     found_date = True
                                     break
-                            if found_date == False:
+                            if not found_date:
                                 continue
 
                             # Decode VDMs
@@ -2939,7 +2939,7 @@ class vdms:
         type_array = np.array(storm_data['type'])
         idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
             type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
-        if ('invest' in storm_data.keys() and storm_data['invest'] == False) or len(idx[0]) > 0:
+        if ('invest' in storm_data.keys() and not storm_data['invest']) or len(idx[0]) > 0:
             tropical_vmax = np.array(storm_data['vmax'])[idx]
 
             add_ptc_flag = False
@@ -2953,7 +2953,7 @@ class vdms:
             peak_basin = storm_data['wmo_basin'][peak_idx]
             storm_type = get_storm_classification(
                 np.nanmax(tropical_vmax), subtrop, peak_basin)
-            if add_ptc_flag == True:
+            if add_ptc_flag:
                 storm_type = "Potential Tropical Cyclone"
 
         if best_track:

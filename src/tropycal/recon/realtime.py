@@ -363,23 +363,23 @@ class RealtimeRecon():
             # Parse data
             array = [val for i, val in enumerate(
                 sub_df['sfmr']) if 'sfmr' not in sub_df['flag'].values[i]]
-            max_sfmr = np.nanmax(array) if all_nan(array) == False else np.nan
+            max_sfmr = np.nanmax(array) if not all_nan(array) else np.nan
 
             array = [val for i, val in enumerate(
                 sub_df['p_sfc']) if 'p_sfc' not in sub_df['flag'].values[i]]
-            min_p_sfc = np.nanmin(array) if all_nan(array) == False else np.nan
+            min_p_sfc = np.nanmin(array) if not all_nan(array) else np.nan
 
             array = [val for i, val in enumerate(
                 sub_df['wspd']) if 'wspd' not in sub_df['flag'].values[i]]
-            max_wspd = np.nanmax(array) if all_nan(array) == False else np.nan
+            max_wspd = np.nanmax(array) if not all_nan(array) else np.nan
 
             array = [val for i, val in enumerate(
                 sub_df['temp']) if 'temp' not in sub_df['flag'].values[i]]
-            max_temp = np.nanmax(array) if all_nan(array) == False else np.nan
+            max_temp = np.nanmax(array) if not all_nan(array) else np.nan
 
             array = [val for i, val in enumerate(
                 sub_df['dwpt']) if 'dwpt' not in sub_df['flag'].values[i]]
-            max_dwpt = np.nanmax(array) if all_nan(array) == False else np.nan
+            max_dwpt = np.nanmax(array) if not all_nan(array) else np.nan
 
             data[mission_id] = {
                 'min_mslp': min_p_sfc,
@@ -457,29 +457,29 @@ class RealtimeRecon():
                 break
         df = decode_hdob('\n'.join(hdob_content), mission_row=2)
 
-        if decoded == False:
+        if not decoded:
             return df
 
         # Parse data
         array = [val for i, val in enumerate(
             df['sfmr']) if 'sfmr' not in df['flag'].values[i]]
-        max_sfmr = np.nanmax(array) if all_nan(array) == False else np.nan
+        max_sfmr = np.nanmax(array) if not all_nan(array) else np.nan
 
         array = [val for i, val in enumerate(
             df['p_sfc']) if 'p_sfc' not in df['flag'].values[i]]
-        min_p_sfc = np.nanmin(array) if all_nan(array) == False else np.nan
+        min_p_sfc = np.nanmin(array) if not all_nan(array) else np.nan
 
         array = [val for i, val in enumerate(
             df['wspd']) if 'wspd' not in df['flag'].values[i]]
-        max_wspd = np.nanmax(array) if all_nan(array) == False else np.nan
+        max_wspd = np.nanmax(array) if not all_nan(array) else np.nan
 
         array = [val for i, val in enumerate(
             df['temp']) if 'temp' not in df['flag'].values[i]]
-        max_temp = np.nanmax(array) if all_nan(array) == False else np.nan
+        max_temp = np.nanmax(array) if not all_nan(array) else np.nan
 
         array = [val for i, val in enumerate(
             df['dwpt']) if 'dwpt' not in df['flag'].values[i]]
-        max_dwpt = np.nanmax(array) if all_nan(array) == False else np.nan
+        max_dwpt = np.nanmax(array) if not all_nan(array) else np.nan
 
         data = {
             'mission_id': df['mission_id'].values[0],
@@ -563,16 +563,16 @@ class Mission():
         # Find maximum wind and minimum pressure
         array = [val for i, val in enumerate(
             self.hdobs['sfmr']) if 'sfmr' not in self.hdobs['flag'].values[i]]
-        max_sfmr = np.nanmax(array) if all_nan(array) == False else np.nan
+        max_sfmr = np.nanmax(array) if not all_nan(array) else np.nan
         array = [val for i, val in enumerate(
             self.hdobs['p_sfc']) if 'p_sfc' not in self.hdobs['flag'].values[i]]
-        min_psfc = np.nanmin(array) if all_nan(array) == False else np.nan
+        min_psfc = np.nanmin(array) if not all_nan(array) else np.nan
         array = [val for i, val in enumerate(
             self.hdobs['wspd']) if 'wspd' not in self.hdobs['flag'].values[i]]
-        max_wspd = np.nanmax(array) if all_nan(array) == False else np.nan
+        max_wspd = np.nanmax(array) if not all_nan(array) else np.nan
         array = [val for i, val in enumerate(
             self.hdobs['pkwnd']) if 'pkwnd' not in self.hdobs['flag'].values[i]]
-        max_pkwnd = np.nanmax(array) if all_nan(array) == False else np.nan
+        max_pkwnd = np.nanmax(array) if not all_nan(array) else np.nan
         time_range = [pd.to_datetime(t) for t in (
             np.nanmin(self.hdobs['time']), np.nanmax(self.hdobs['time']))]
 

@@ -30,7 +30,7 @@ def find_latest_hurdat_files():
             url_found = False
     except:
         url_found = False
-    if url_found == False:
+    if not url_found:
         atlantic_url = 'https://www.aoml.noaa.gov/hrd/hurdat/hurdat2.html'
         pacific_url = 'https://www.aoml.noaa.gov/hrd/hurdat/hurdat2-nepac.html'
         return atlantic_url, pacific_url
@@ -337,7 +337,7 @@ def interp_storm(storm_dict, hours=1, dt_window=24, dt_align='middle', method='l
 
     # Copy over non-list attributes
     for key in storm_dict.keys():
-        if isinstance(storm_dict[key], list) == False:
+        if not isinstance(storm_dict[key], list):
             new_storm[key] = storm_dict[key]
 
     # Create an empty list for entries
@@ -408,8 +408,7 @@ def interp_storm(storm_dict, hours=1, dt_window=24, dt_align='middle', method='l
         # Interpolate and fill in other variables
         for name in ['vmax', 'mslp']:
             new_storm[name] = np.interp(targettimes, times, storm_dict[name])
-            new_storm[name] = np.array([int(round(i)) if np.isnan(
-                i) == False else np.nan for i in new_storm[name]])
+            new_storm[name] = np.array([int(round(i)) if not np.isnan(i) else np.nan for i in new_storm[name]])
         for name in ['lat', 'lon']:
             filtered_array = np.array(storm_dict[name])
             new_times = np.array(storm_dict['time'])
@@ -422,13 +421,11 @@ def interp_storm(storm_dict, hours=1, dt_window=24, dt_align='middle', method='l
             if len(filtered_array) >= 3:
                 func = interp.interp1d(new_times, filtered_array, kind=method)
                 new_storm[name] = func(targettimes)
-                new_storm[name] = np.array([round(i, 2) if np.isnan(
-                    i) == False else np.nan for i in new_storm[name]])
+                new_storm[name] = np.array([round(i, 2) if not np.isnan(i) else np.nan for i in new_storm[name]])
             else:
                 new_storm[name] = np.interp(
                     targettimes, times, storm_dict[name])
-                new_storm[name] = np.array([int(round(i)) if np.isnan(
-                    i) == False else np.nan for i in new_storm[name]])
+                new_storm[name] = np.array([int(round(i)) if not np.isnan(i) else np.nan for i in new_storm[name]])
 
         # Correct storm type by intensity
         newtype[newtype == 'TROP'] = [['TD', 'TS', 'HU', 'TY', 'ST'][int(

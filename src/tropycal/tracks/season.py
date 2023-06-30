@@ -115,10 +115,10 @@ class Season:
         keys = info.keys()
         self.attrs = {}
         for key in keys:
-            if isinstance(info[key], list) == False and isinstance(info[key], dict) == False:
+            if not isinstance(info[key], list) and not isinstance(info[key], dict):
                 self[key] = info[key]
                 self.attrs[key] = info[key]
-            if isinstance(info[key], list) == True and key == 'year':
+            if isinstance(info[key], list) and key == 'year':
                 self[key] = info[key]
                 self.attrs[key] = info[key]
 
@@ -193,7 +193,7 @@ class Season:
         """
 
         # Error check
-        if isinstance(storm, tuple) == False:
+        if not isinstance(storm, tuple):
             raise TypeError("storm must be of type tuple.")
         if len(storm) != 2:
             raise ValueError(
@@ -311,7 +311,7 @@ class Season:
         multi_season = isinstance(self.year, list)
 
         # Initialize dict with info about all of year's storms
-        if multi_season == False:
+        if not multi_season:
             summary_dict = {'id': [], 'operational_id': [], 'name': [
             ], 'max_wspd': [], 'min_mslp': [], 'category': [], 'ace': []}
         else:
@@ -336,7 +336,7 @@ class Season:
                             }
 
         # Iterate over season(s)
-        list_seasons = [self.year] if multi_season == False else self.year + []
+        list_seasons = [self.year] if not multi_season else self.year + []
         for season_idx, iter_season in enumerate(list_seasons):
 
             # Search for corresponding entry in keys
@@ -346,7 +346,7 @@ class Season:
             for key in self.dict.keys():
 
                 # Skip if using multi-season object and storm is outside of this season
-                if multi_season == True and self.dict[key]['season'] != iter_season:
+                if multi_season and self.dict[key]['season'] != iter_season:
                     continue
 
                 # Retrieve info about storm, only in this basin
@@ -390,7 +390,7 @@ class Season:
                     continue
                 trop_time = temp_time[idx]
 
-                if multi_season == False:
+                if not multi_season:
                     if 'season_start' not in summary_dict.keys():
                         summary_dict['season_start'] = trop_time[0]
                     else:
@@ -428,7 +428,7 @@ class Season:
                     min_slp = int(np.nanmin(temp_mslp[idx]))
 
                 # Append to dict
-                if multi_season == False:
+                if not multi_season:
                     summary_dict['id'].append(key)
                     summary_dict['name'].append(temp_name)
                     summary_dict['max_wspd'].append(max_wnd)
@@ -458,7 +458,7 @@ class Season:
                     count_ss_partial += 1
 
             # Add generic season info
-            if multi_season == False:
+            if not multi_season:
                 narray = np.array(summary_dict['max_wspd'])
                 narray = narray[~np.isnan(narray)]
                 summary_dict['season_storms'] = len(narray[narray >= 0])

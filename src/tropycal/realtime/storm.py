@@ -109,10 +109,8 @@ class RealtimeStorm(Storm):
             time_tropical = np.array(self.dict['time'])[idx]
             start_time = time_tropical[0].strftime("%H00 UTC %d %B %Y")
             end_time = time_tropical[-1].strftime("%H00 UTC %d %B %Y")
-            max_wind = 'N/A' if all_nan(np.array(self.dict['vmax'])[
-                                        idx]) == True else np.nanmax(np.array(self.dict['vmax'])[idx])
-            min_mslp = 'N/A' if all_nan(np.array(self.dict['mslp'])[
-                                        idx]) == True else np.nanmin(np.array(self.dict['mslp'])[idx])
+            max_wind = 'N/A' if all_nan(np.array(self.dict['vmax'])[idx]) else np.nanmax(np.array(self.dict['vmax'])[idx])
+            min_mslp = 'N/A' if all_nan(np.array(self.dict['mslp'])[idx]) else np.nanmin(np.array(self.dict['mslp'])[idx])
         summary_keys = {'Maximum Wind': f"{max_wind} knots",
                         'Minimum Pressure': f"{min_mslp} hPa",
                         'Start Time': start_time,
@@ -164,10 +162,10 @@ class RealtimeStorm(Storm):
         for key in keys:
             if key == 'realtime':
                 continue
-            if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
+            if not isinstance(self.dict[key], list) and not isinstance(self.dict[key], dict):
                 self[key] = self.dict[key]
                 self.attrs[key] = self.dict[key]
-            if isinstance(self.dict[key], list) == True and isinstance(self.dict[key], dict) == False:
+            if isinstance(self.dict[key], list) and not isinstance(self.dict[key], dict):
                 self.vars[key] = np.array(self.dict[key])
                 self[key] = np.array(self.dict[key])
 
@@ -413,7 +411,7 @@ class RealtimeStorm(Storm):
                             {rad: [neq, seq, swq, nwq]})
 
                         # Get storm type, if it can be determined
-                        if stype in ['', 'DB'] and vmax != 0 and np.isnan(vmax) == False:
+                        if stype in ['', 'DB'] and vmax != 0 and not np.isnan(vmax):
                             stype = get_storm_type(vmax, False)
                         forecasts['type'].append(stype)
                 else:
@@ -428,7 +426,7 @@ class RealtimeStorm(Storm):
                 url = f"https://www.nrlmry.navy.mil/atcf_web/docs/current_storms/{self.id.lower()}.sum"
             else:
                 url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{self.id.lower()}.fst"
-            if ssl_certificate == False and self.jtwc_source in ['jtwc', 'ucar']:
+            if not ssl_certificate and self.jtwc_source in ['jtwc', 'ucar']:
                 import ssl
                 if requests.get(url, verify=False).status_code != 200:
                     raise RuntimeError(
@@ -439,7 +437,7 @@ class RealtimeStorm(Storm):
                         "JTWC forecast data is unavailable for this storm.")
 
             # Read file content
-            if ssl_certificate == False and self.jtwc_source in ['jtwc', 'ucar']:
+            if not ssl_certificate and self.jtwc_source in ['jtwc', 'ucar']:
                 import ssl
                 f = urllib.request.urlopen(
                     url, context=ssl._create_unverified_context())
@@ -635,7 +633,7 @@ class RealtimeStorm(Storm):
                                 {rad: [neq, seq, swq, nwq]})
 
                             # Get storm type, if it can be determined
-                            if stype in ['', 'DB'] and vmax != 0 and np.isnan(vmax) == False:
+                            if stype in ['', 'DB'] and vmax != 0 and not np.isnan(vmax):
                                 stype = get_storm_type(vmax, False)
                             forecasts['type'].append(stype)
                     else:
@@ -800,7 +798,7 @@ class RealtimeStorm(Storm):
         """
 
         # Error check
-        if isinstance(source, str) == False:
+        if not isinstance(source, str):
             msg = "\"source\" must be of type str."
             raise TypeError(msg)
         if source not in ['all', 'public_advisory', 'best_track']:

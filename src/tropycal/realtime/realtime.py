@@ -108,12 +108,12 @@ class Realtime():
         if len(self.storms) > 0:
             summary.append("\nActive Storms:")
             for key in self.storms:
-                if self[key]['invest'] == False:
+                if not self[key]['invest']:
                     summary.append(f'{" "*4}{key}')
 
             summary.append("\nActive Invests:")
             for key in self.storms:
-                if self[key]['invest'] == True:
+                if self[key]['invest']:
                     summary.append(f'{" "*4}{key}')
 
         return "\n".join(summary)
@@ -175,7 +175,7 @@ class Realtime():
 
             # Only keep invests
             try:
-                if self.data[key]['invest'] == False:
+                if not self.data[key]['invest']:
                     continue
             except:
                 continue
@@ -183,14 +183,14 @@ class Realtime():
             # Iterate through all storms
             match = False
             for key_storm in self.data.keys():
-                if self.data[key_storm]['invest'] == True:
+                if self.data[key_storm]['invest']:
                     continue
 
                 # Check for overlap in lons
                 if self.data[key_storm]['lon'][0] == self.data[key]['lon'][0] and self.data[key_storm]['time'][0] == self.data[key]['time'][0]:
                     match = True
 
-            if match == True:
+            if match:
                 del self.data[key]
 
         # For each storm remaining, create a Storm object
@@ -307,7 +307,7 @@ class Realtime():
             f.close()
 
             # Check if transition is in keywords for invests
-            if invest_bool == True and 'TRANSITION' in content_full:
+            if invest_bool and 'TRANSITION' in content_full:
                 del self.data[stormid]
                 continue
 
@@ -377,13 +377,13 @@ class Realtime():
                     get_basin(btk_lat, btk_lon, origin_basin))
 
                 # Calculate ACE & append to storm total
-                if np.isnan(btk_wind) == False:
+                if not np.isnan(btk_wind):
                     ace = accumulated_cyclone_energy(btk_wind)
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace, 4)
 
             # Determine storm name for invests
-            if invest_bool == True:
+            if invest_bool:
 
                 # Determine letter in front of invest
                 add_letter = 'L'
@@ -425,7 +425,7 @@ class Realtime():
             url = f'https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/'
         if source == 'ucar':
             url = f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/'
-        if ssl_certificate == False and source in ['jtwc', 'noaa']:
+        if not ssl_certificate and source in ['jtwc', 'noaa']:
             import ssl
             urlpath = urllib.request.urlopen(
                 url, context=ssl._create_unverified_context())
@@ -454,7 +454,7 @@ class Realtime():
 
         if source in ['jtwc', 'ucar', 'noaa']:
             try:
-                if ssl_certificate == False and source in ['jtwc', 'noaa']:
+                if not ssl_certificate and source in ['jtwc', 'noaa']:
                     urlpath_nextyear = urllib.request.urlopen(url.replace(str(current_year), str(
                         current_year+1)), context=ssl._create_unverified_context())
                     string_nextyear = urlpath_nextyear.read().decode('utf-8')
@@ -521,7 +521,7 @@ class Realtime():
             if f"{current_year+1}.dat" in url:
                 url = url.replace(str(current_year), str(current_year+1))
 
-            if ssl_certificate == False and source in ['jtwc', 'noaa']:
+            if not ssl_certificate and source in ['jtwc', 'noaa']:
                 f = urllib.request.urlopen(
                     url, context=ssl._create_unverified_context())
                 content = f.read()
@@ -601,13 +601,13 @@ class Realtime():
                     get_basin(btk_lat, btk_lon, add_basin))
 
                 # Calculate ACE & append to storm total
-                if np.isnan(btk_wind) == False:
+                if not np.isnan(btk_wind):
                     ace = accumulated_cyclone_energy(btk_wind)
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace, 4)
 
             # Determine storm name for invests
-            if invest_bool == True:
+            if invest_bool:
 
                 # Determine letter in front of invest
                 add_letter = 'L'
@@ -741,7 +741,7 @@ class Realtime():
         """
 
         # Check to see if storm is available
-        if isinstance(storm, str) == False:
+        if not isinstance(storm, str):
             msg = "\"storm\" must be of type str."
             raise TypeError(msg)
         if storm not in self.storms:
@@ -902,7 +902,7 @@ class Realtime():
         # Get realtime forecasts
         forecasts = []
         for key in self.storms:
-            if self[key].invest == False:
+            if not self[key].invest:
                 try:
                     forecasts.append(self.get_storm(
                         key).get_forecast_realtime(ssl_certificate))

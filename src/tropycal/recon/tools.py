@@ -503,7 +503,7 @@ def hovmoller_plot_title(storm_obj, Hov, varname):
     peak_basin = storm_data['wmo_basin'][peak_idx]
     storm_type = get_storm_classification(
         np.nanmax(tropical_vmax), subtrop, peak_basin)
-    if add_ptc_flag == True:
+    if add_ptc_flag:
         storm_type = "Potential Tropical Cyclone"
 
     # Get title descriptor based on variable
@@ -623,7 +623,7 @@ def decode_hdob_2005_noaa(content, strdate, mission_row=0):
             break  # avoid reading in extra set of HDOBs
         if j <= mission_row:
             if len(i[0]) >= 4 and i[0][:3] in ["URN", "URP"]:
-                if found_sxxx == False:
+                if not found_sxxx:
                     found_sxxx = True
                     items.append(i)
             else:
@@ -681,8 +681,8 @@ def decode_hdob_2005_noaa(content, strdate, mission_row=0):
     orig_lat = np.copy(data['lat'])
     orig_lon = np.copy(data['lon'])
     for key in data.keys():
-        data[key] = [data[key][i] for i in range(len(orig_lat)) if orig_lat[i] != 0 and orig_lon[i] != 0 and np.isnan(
-            orig_lat[i]) == False and np.isnan(orig_lat[i]) == False]
+        data[key] = [data[key][i] for i in range(len(orig_lat)) if orig_lat[i] != 0 and orig_lon[i] != 0 and not np.isnan(
+            orig_lat[i]) and not np.isnan(orig_lat[i])]
 
     # Identify mission number and ID
     content_split = content.split("\n")
@@ -725,7 +725,7 @@ def decode_hdob_2006(content, strdate, mission_row=3):
             break  # avoid reading in extra set of HDOBs
         if j <= mission_row:
             if len(i[0]) >= 4 and i[0][:4] == "SXXX":
-                if found_sxxx == False:
+                if not found_sxxx:
                     found_sxxx = True
                     items.append(i)
             else:
@@ -792,8 +792,8 @@ def decode_hdob_2006(content, strdate, mission_row=3):
     orig_lat = np.copy(data['lat'])
     orig_lon = np.copy(data['lon'])
     for key in data.keys():
-        data[key] = [data[key][i] for i in range(len(orig_lat)) if orig_lat[i] != 0 and orig_lon[i] != 0 and np.isnan(
-            orig_lat[i]) == False and np.isnan(orig_lat[i]) == False]
+        data[key] = [data[key][i] for i in range(len(orig_lat)) if orig_lat[i] != 0 and orig_lon[i] != 0 and not np.isnan(
+            orig_lat[i]) and not np.isnan(orig_lat[i])]
 
     # Identify mission number and ID
     content_split = content.split("\n")
@@ -1506,7 +1506,7 @@ def get_status(plane_p, use_z=False):
             continue
 
         # Use default pressure method
-        if use_z == False:
+        if not use_z:
             if np.nanmin(plane_p[:idx + 1]) >= 850:
                 status.append('En Route')
                 continue
@@ -1519,19 +1519,19 @@ def get_status(plane_p, use_z=False):
                             status.append('Finished')
                     else:
                         status.append('Finished')
-                if finished == False:
+                if not finished:
                     if pres < 650:
                         status.append('En Route')
                     else:
                         in_storm = True
                         status.append('In Storm')
             else:
-                if in_storm == False:
+                if not in_storm:
                     status.append('En Route')
                 else:
                     if pres < 650:
                         finished = True
-                    if finished == True:
+                    if finished:
                         status.append('Finished')
                     else:
                         status.append('In Storm')
@@ -1550,19 +1550,19 @@ def get_status(plane_p, use_z=False):
                             status.append('Finished')
                     else:
                         status.append('Finished')
-                if finished == False:
+                if not finished:
                     if pres > 3820:
                         status.append('En Route')
                     else:
                         in_storm = True
                         status.append('In Storm')
             else:
-                if in_storm == False:
+                if not in_storm:
                     status.append('En Route')
                 else:
                     if pres > 3820:
                         finished = True
-                    if finished == True:
+                    if finished:
                         status.append('Finished')
                     else:
                         status.append('In Storm')

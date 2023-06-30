@@ -127,9 +127,9 @@ class Storm:
             time_tropical = np.array(self.dict['time'])[idx]
             start_time = time_tropical[0].strftime("%H00 UTC %d %B %Y")
             end_time = time_tropical[-1].strftime("%H00 UTC %d %B %Y")
-            max_wind = 'N/A' if all_nan(np.array(self.dict['vmax'])[idx]) == True else int(
+            max_wind = 'N/A' if all_nan(np.array(self.dict['vmax'])[idx]) else int(
                 np.nanmax(np.array(self.dict['vmax'])[idx]))
-            min_mslp = 'N/A' if all_nan(np.array(self.dict['mslp'])[idx]) == True else int(
+            min_mslp = 'N/A' if all_nan(np.array(self.dict['mslp'])[idx]) else int(
                 np.nanmin(np.array(self.dict['mslp'])[idx]))
         summary_keys = {'Maximum Wind': f"{max_wind} knots",
                         'Minimum Pressure': f"{min_mslp} hPa",
@@ -172,7 +172,7 @@ class Storm:
 
     def __init__(self, storm, stormTors=None, read_path=""):
 
-        if read_path == "" or os.path.isfile(read_path) == False:
+        if read_path == "" or not os.path.isfile(read_path):
 
             # Save the dict entry of the storm
             self.dict = storm
@@ -186,10 +186,10 @@ class Storm:
                     continue
                 if key == 'invest':
                     continue
-                if isinstance(self.dict[key], list) == False and isinstance(self.dict[key], dict) == False:
+                if not isinstance(self.dict[key], list) and not isinstance(self.dict[key], dict):
                     self[key] = self.dict[key]
                     self.attrs[key] = self.dict[key]
-                if isinstance(self.dict[key], list) == True and isinstance(self.dict[key], dict) == False:
+                if isinstance(self.dict[key], list) and not isinstance(self.dict[key], dict):
                     self.vars[key] = np.array(self.dict[key])
                     self[key] = np.array(self.dict[key])
 
@@ -531,10 +531,10 @@ class Storm:
             # Add other attributes to new storm object
             if key == 'realtime':
                 continue
-            if isinstance(NEW_STORM.dict[key], list) == False and isinstance(NEW_STORM.dict[key], dict) == False:
+            if not isinstance(NEW_STORM.dict[key], list) and not isinstance(NEW_STORM.dict[key], dict):
                 NEW_STORM[key] = NEW_STORM.dict[key]
                 NEW_STORM.attrs[key] = NEW_STORM.dict[key]
-            if isinstance(NEW_STORM.dict[key], list) == True and isinstance(NEW_STORM.dict[key], dict) == False:
+            if isinstance(NEW_STORM.dict[key], list) and not isinstance(NEW_STORM.dict[key], dict):
                 NEW_STORM.vars[key] = np.array(NEW_STORM.dict[key])
                 NEW_STORM[key] = np.array(NEW_STORM.dict[key])
 
@@ -575,10 +575,10 @@ class Storm:
         for key in NEW_STORM.dict.keys():
             if key == 'realtime':
                 continue
-            if isinstance(NEW_STORM.dict[key], (np.ndarray, list)) == False and isinstance(NEW_STORM.dict[key], dict) == False:
+            if not isinstance(NEW_STORM.dict[key], (np.ndarray, list)) and not isinstance(NEW_STORM.dict[key], dict):
                 NEW_STORM[key] = NEW_STORM.dict[key]
                 NEW_STORM.attrs[key] = NEW_STORM.dict[key]
-            if isinstance(NEW_STORM.dict[key], (np.ndarray, list)) == True and isinstance(NEW_STORM.dict[key], dict) == False:
+            if isinstance(NEW_STORM.dict[key], (np.ndarray, list)) and not isinstance(NEW_STORM.dict[key], dict):
                 NEW_STORM.dict[key] = list(NEW_STORM.dict[key])
                 NEW_STORM.vars[key] = np.array(NEW_STORM.dict[key])
                 NEW_STORM[key] = np.array(NEW_STORM.dict[key])
@@ -889,7 +889,7 @@ class Storm:
             track_dict[key] = self.dict[key]
 
         # Add carq to forecast dict as hour 0, if available
-        if use_carq == True and forecast_dict['init'] in track_dict['time']:
+        if use_carq and forecast_dict['init'] in track_dict['time']:
             insert_idx = track_dict['time'].index(forecast_dict['init'])
             if 0 in forecast_dict['fhr']:
                 forecast_dict['lat'][0] = track_dict['lat'][insert_idx]
@@ -1103,7 +1103,7 @@ class Storm:
                 found = True
 
             # Check for 2 vs. I if needed
-            if found == False or forecast_str not in self.forecast_dict[official_key].keys():
+            if not found or forecast_str not in self.forecast_dict[official_key].keys():
                 if '2' in official_key:
                     official_key = dict_models[key].replace('2', 'I')
                     if official_key not in self.forecast_dict.keys():
@@ -1115,7 +1115,7 @@ class Storm:
                                     official_key = backup_key
                                     found = True
                                     break
-                            if found == False:
+                            if not found:
                                 continue
                         else:
                             continue
@@ -1388,7 +1388,7 @@ class Storm:
             pass
 
         # Only calculate if needed to
-        if init_used == False:
+        if not init_used:
 
             print("--> Starting to calculate ellipse data")
 
@@ -1979,7 +1979,7 @@ class Storm:
             raise RuntimeError(msg)
 
         # Error check
-        if isinstance(forecast, int) == False and isinstance(forecast, dt) == False:
+        if not isinstance(forecast, int) and not isinstance(forecast, dt):
             msg = "forecast must be of type int or datetime.datetime"
             raise TypeError(msg)
 
@@ -2119,12 +2119,12 @@ class Storm:
         if storm_id == '':
             msg = "No NHC operational data is available for this storm."
             raise RuntimeError(msg)
-        if isinstance(query, str) == False and isinstance(query, list) == False:
+        if not isinstance(query, str) and not isinstance(query, list):
             msg = "'query' must be of type str or list."
             raise TypeError(msg)
         if isinstance(query, list):
             for i in query:
-                if isinstance(i, str) == False:
+                if not isinstance(i, str):
                     msg = "Entries of list 'query' must be of type str."
                     raise TypeError(msg)
 
@@ -2382,7 +2382,7 @@ class Storm:
                         {rad: [neq, seq, swq, nwq]})
 
                     # Get storm type, if it can be determined
-                    if stype in ['', 'DB'] and vmax != 0 and np.isnan(vmax) == False:
+                    if stype in ['', 'DB'] and vmax != 0 and not np.isnan(vmax):
                         stype = get_storm_type(vmax, False)
                     forecasts[model][run_init]['type'].append(stype)
             else:
@@ -2492,7 +2492,7 @@ class Storm:
         if self.year < 1995:
             msg = "Tropical Cyclone Reports are unavailable prior to 1995."
             raise RuntimeError(msg)
-        if isinstance(save_path, str) == False:
+        if not isinstance(save_path, str):
             msg = "'save_path' must be of type str."
             raise TypeError(msg)
 

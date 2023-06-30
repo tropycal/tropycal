@@ -138,7 +138,7 @@ def plot_two(self, two_dict, days=7, **kwargs):
 
     # Format kwargs for zorder functions
     kwargs = {}
-    if zorder != None:
+    if zorder is not None:
         kwargs = {'zorder': zorder}
 
     # Consistency check
@@ -153,7 +153,7 @@ def plot_two(self, two_dict, days=7, **kwargs):
                  'edgecolor': 'black', 'boxstyle': 'round,pad=0.3'}
 
     # Plot areas
-    if two_dict['areas'] != None:
+    if two_dict['areas'] is not None:
         for record, geom in zip(two_dict['areas'].records(), two_dict['areas'].geometries()):
 
             # Read relevant data
@@ -182,7 +182,7 @@ def plot_two(self, two_dict, days=7, **kwargs):
 
             # Add label if needed
             plot_coords = []
-            if 'GENCAT' in record.attributes.keys() or two_dict['points'] == None:
+            if 'GENCAT' in record.attributes.keys() or two_dict['points'] is None:
                 bounds = record.geometry.bounds
                 plot_coords.append((bounds[0] + bounds[2]) * 0.5)  # lon
                 plot_coords.append(bounds[1])  # lat
@@ -217,7 +217,7 @@ def plot_two(self, two_dict, days=7, **kwargs):
                     linewidth=0.5, foreground='w'), path_effects.Normal()])
 
     # Plot points
-    if two_dict['points'] != None:
+    if two_dict['points'] is not None:
         for record, point in zip(two_dict['points'].records(), two_dict['points'].geometries()):
 
             lon = (list(point.coords)[0][0])

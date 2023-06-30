@@ -31,7 +31,7 @@ def get_colors_sshws(wind_speed):
     """
 
     # If category string passed, convert to wind
-    if isinstance(wind_speed, str) == True:
+    if isinstance(wind_speed, str):
         wind_speed = category_label_to_wind(wind_speed)
 
     # Return default SSHWS category color scale
@@ -73,7 +73,7 @@ def get_colors_sshws_recon(wind_speed):
     """
 
     # If category string passed, convert to wind
-    if isinstance(wind_speed, str) == True:
+    if isinstance(wind_speed, str):
         wind_speed = category_label_to_wind(wind_speed)
 
     # Return default SSHWS category color scale
@@ -292,7 +292,7 @@ def get_cmap_levels(varname, colormap, levels, linear=False):
             levels = [category_to_wind(c) for c in range(-1, 6)]+[200]
 
             # Linear category increments
-            if linear == True:
+            if linear:
                 colors = [mcolors.to_rgba(get_colors_sshws(lev))
                           for c, lev in enumerate(levels[:-1]) for _ in range(levels[c+1]-levels[c])]
 

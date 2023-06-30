@@ -1390,7 +1390,7 @@ def decode_dropsonde(content, date):
                 data['TOPlon'] = round(
                     float(tmp[5:10]) * .01 * [-1, 1][tmp[10] == 'E'], 2)
                 tmp = items[items.index('REL') + 2]
-                if data['TOPtime'] == None:
+                if data['TOPtime'] is None:
                     data['TOPtime'] = _time(tmp)
             if 'SPG' in items:
                 tmp = items[items.index('SPG') + 1]
@@ -1399,7 +1399,7 @@ def decode_dropsonde(content, date):
                 data['BOTTOMlon'] = round(
                     float(tmp[5:10]) * .01 * [-1, 1][tmp[10] == 'E'], 2)
                 tmp = items[items.index('SPG') + 2]
-                if data['BOTTOMtime'] == None:
+                if data['BOTTOMtime'] is None:
                     data['BOTTOMtime'] = _time(tmp)
             elif 'SPL' in items:
                 tmp = items[items.index('SPL') + 1]
@@ -1408,7 +1408,7 @@ def decode_dropsonde(content, date):
                 data['BOTTOMlon'] = round(
                     float(tmp[5:10]) * .01 * [-1, 1][tmp[10] == 'E'], 2)
                 tmp = items[items.index('SPL') + 2]
-                if data['BOTTOMtime'] == None:
+                if data['BOTTOMtime'] is None:
                     data['BOTTOMtime'] = _time(tmp)
             if 'MBL' in items:
                 tmp = items[items.index('MBL') + 2]
@@ -1484,9 +1484,9 @@ def decode_dropsonde(content, date):
     data['mission_id'] = mission_id
 
     # Fix NaNs
-    if data['BOTTOMtime'] == None:
+    if data['BOTTOMtime'] is None:
         data['BOTTOMtime'] = np.nan
-    if data['TOPtime'] == None:
+    if data['TOPtime'] is None:
         data['TOPtime'] = np.nan
 
     return missionname, data

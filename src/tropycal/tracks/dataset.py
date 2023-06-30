@@ -1089,7 +1089,7 @@ class TrackDataset:
                 if sid not in map_duplicate_id.keys() and sid not in do_not_merge:
                     orig_sid = sid + ''
                     sid = map_all_id.get(ibtracs_id, None)
-                    if sid == '' or sid == None:
+                    if sid == '' or sid is None:
                         continue
 
                 # Retrieve data
@@ -4027,7 +4027,7 @@ class TrackDataset:
         """
 
         # Determine year range of dataset
-        if year_range == None:
+        if year_range is None:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
         elif isinstance(year_range, (list, tuple)):
@@ -4044,7 +4044,7 @@ class TrackDataset:
             raise TypeError("year_range must be of type tuple or list")
 
         # Determine date range
-        if date_range == None:
+        if date_range is None:
             date_range = ('1/1', '12/31')
 
         # Units error check
@@ -4116,7 +4116,7 @@ class TrackDataset:
         """
 
         # Determine year range of dataset
-        if year_range == None:
+        if year_range is None:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
         elif isinstance(year_range, (list, tuple)):
@@ -4133,7 +4133,7 @@ class TrackDataset:
             raise TypeError("year_range must be of type tuple or list")
 
         # Determine date range
-        if date_range == None:
+        if date_range is None:
             date_range = ('1/1', '12/31')
 
         # Interpolate all storm data, if hasn't been done already
@@ -4219,7 +4219,7 @@ class TrackDataset:
         """
 
         # Determine year range of dataset
-        if year_range == None:
+        if year_range is None:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
         elif isinstance(year_range, (list, tuple)):
@@ -4236,7 +4236,7 @@ class TrackDataset:
             raise TypeError("year_range must be of type tuple or list")
 
         # Determine date range
-        if date_range == None:
+        if date_range is None:
             date_range = ('1/1', '12/31')
 
         # Reconfigure domain to be centered around circle
@@ -4245,7 +4245,7 @@ class TrackDataset:
         circle_points = geodesic.Geodesic().circle(
             lon=point[1], lat=point[0], radius=radius * 1000 * unit_factor, n_samples=360, endpoint=False)
         domain = kwargs.pop('domain', None)
-        if domain == None:
+        if domain is None:
             lons = [i[0] for i in circle_points]
             lats = [i[1] for i in circle_points]
             bounds = dynamic_map_extent(np.nanmin(lons), np.nanmax(
@@ -4337,7 +4337,7 @@ class TrackDataset:
         """
 
         # Determine year range of dataset
-        if year_range == None:
+        if year_range is None:
             start_year = self.data[self.keys[0]]['year']
             end_year = self.data[self.keys[-1]]['year']
         elif isinstance(year_range, (list, tuple)):
@@ -4354,12 +4354,12 @@ class TrackDataset:
             raise TypeError("year_range must be of type tuple or list")
 
         # Determine date range
-        if date_range == None:
+        if date_range is None:
             date_range = ('1/1', '12/31')
 
         # Reconfigure domain to be centered around circle
         domain = kwargs.pop('domain', None)
-        if domain == None:
+        if domain is None:
             lons = [i[1] for i in points]
             lats = [i[0] for i in points]
             bounds = dynamic_map_extent(np.nanmin(lons), np.nanmax(
@@ -4500,12 +4500,12 @@ class TrackDataset:
         """
 
         # Set basin
-        if domain == None:
+        if domain is None:
             domain = self.basin
 
         # Find closest NHC shapefile
         shapefiles = get_two_archive(time)
-        if shapefiles['areas'] == None:
+        if shapefiles['areas'] is None:
             two_prop = {'plot': False}
         else:
             two_prop = kwargs.pop('two_prop', {})
@@ -4773,10 +4773,10 @@ class TrackDataset:
                 continue
 
             # Third filter
-            if vmin != None:
+            if vmin is not None:
                 if np.isnan(self.data[key]['vmax'][idx]) or self.data[key]['vmax'][idx] < vmin:
                     continue
-            if pmax != None:
+            if pmax is not None:
                 if np.isnan(self.data[key]['mslp'][idx]) or self.data[key]['mslp'][idx] > pmax:
                     continue
 

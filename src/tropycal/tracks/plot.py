@@ -1178,7 +1178,7 @@ class TrackPlot(Plot):
                 lons, lats, color=model_prop[model], linewidth=prop['linewidth'], label=model_label, transform=ccrs.PlateCarree())
 
             # Add labels if requested
-            if prop['marker'] != None and len(prop['marker_hours']) >= 1:
+            if prop['marker'] is not None and len(prop['marker_hours']) >= 1:
                 for hour in prop['marker_hours']:
                     if hour not in forecast_dict[model]['fhr']:
                         continue
@@ -1236,7 +1236,7 @@ class TrackPlot(Plot):
             lon_min_extrema.append(np.nanmin(lons))
 
             # Add labels if requested
-            if prop['marker'] != None and len(prop['marker_hours']) >= 1:
+            if prop['marker'] is not None and len(prop['marker_hours']) >= 1:
                 for hour in prop['marker_hours']:
                     valid_date = forecast + timedelta(hours=hour)
                     if valid_date not in storm_times:
@@ -1372,7 +1372,7 @@ class TrackPlot(Plot):
             if prop_density['radius'] > 500 or prop_density['radius'] < 50:
                 raise ValueError("Radius must be between 50 and 500 km.")
 
-            if hr == None or (hr != None and hr in ds['gefs']['fhr']):
+            if hr is None or (hr is not None and hr in ds['gefs']['fhr']):
 
                 # Create 0.25 degree grid for plotting
                 gridlats = np.arange(0, 90, 0.25)
@@ -1385,13 +1385,13 @@ class TrackPlot(Plot):
                 griddata = np.zeros((gridlons2d.shape))
 
                 # Iterate over all ensemble members
-                if hr == None:
+                if hr is None:
                     start_time = dt.now()
                     print("--> Starting to calculate track density")
                 for ens in range(nens):
 
                     # Calculate for one hour
-                    if hr != None:
+                    if hr is not None:
 
                         # Proceed if hour is available
                         if hr in ds[f'gefs_{ens}']['fhr']:
@@ -1439,7 +1439,7 @@ class TrackPlot(Plot):
                         griddata += temp_grid
 
                 # Convert density to percent
-                if hr == None:
+                if hr is None:
                     time_elapsed = dt.now() - start_time
                     tsec = str(round(time_elapsed.total_seconds(), 2))
                     print(
@@ -1458,7 +1458,7 @@ class TrackPlot(Plot):
 
         # -------------------------------------------------------------------
         # Plot ellipse
-        if hr != None and hr in ds['gefs']['fhr'] and prop_ellipse['plot']:
+        if hr is not None and hr in ds['gefs']['fhr'] and prop_ellipse['plot']:
             idx = ds['gefs']['fhr'].index(hr)
 
             # Account for cases crossing dateline
@@ -1491,7 +1491,7 @@ class TrackPlot(Plot):
                 use_lons = ds[f'gefs_{i}']['lon'][:idx + 1]
             elif len(ds[f'gefs_{i}']['fhr']) > 0:
                 idx = 0
-                if hr == None:
+                if hr is None:
                     idx = len(ds[f'gefs_{i}']['lon'])
                 else:
                     for idx_hr in ds[f'gefs_{i}']['fhr']:
@@ -1560,11 +1560,8 @@ class TrackPlot(Plot):
                 new_lons = storm_dict['lon']
 
             # Get valid time
-            valid_time = np.nan if hr == None else forecast + \
-                timedelta(hours=hr)
-            end_time = forecast + \
-                timedelta(
-                    hours=240) if storm_dict['year'] >= 2015 else forecast + timedelta(hours=240)
+            valid_time = np.nan if hr is None else forecast + timedelta(hours=hr)
+            end_time = forecast + timedelta(hours=240) if storm_dict['year'] >= 2015 else forecast + timedelta(hours=240)
 
             # Update coordinate bounds
             skip_bounds = False
@@ -1577,7 +1574,7 @@ class TrackPlot(Plot):
                 use_lons = new_lons[idx_start:idx + 1]
             else:
                 idx = 0
-                if hr == None:
+                if hr is None:
                     if end_time in storm_dict['time']:
                         idx = storm_dict['time'].index(end_time)
                     else:
@@ -1607,7 +1604,7 @@ class TrackPlot(Plot):
                              mfc=prop_btk['linecolor'], mec='k', transform=ccrs.PlateCarree())
             elif len(storm_dict['time']) > 0:
                 idx = 0
-                if hr == None:
+                if hr is None:
                     if end_time in storm_dict['time']:
                         idx = storm_dict['time'].index(end_time)
                     else:
@@ -1631,7 +1628,7 @@ class TrackPlot(Plot):
                 use_lons = ds['gfs']['lon'][:idx + 1]
             elif len(ds['gfs']['fhr']) > 0:
                 idx = 0
-                if hr == None:
+                if hr is None:
                     idx = len(ds['gfs']['lon'])
                 else:
                     for idx_hr in ds['gfs']['fhr']:
@@ -1658,7 +1655,7 @@ class TrackPlot(Plot):
 
             elif len(ds['gfs']['fhr']) > 0:
                 idx = 0
-                if hr == None:
+                if hr is None:
                     idx = len(ds['gfs']['lon'])
                 else:
                     for idx_hr in ds['gfs']['fhr']:
@@ -1679,7 +1676,7 @@ class TrackPlot(Plot):
                 use_lons = ds['gefs']['lon'][:idx + 1]
             elif len(ds['gefs']['fhr']) > 0:
                 idx = 0
-                if hr == None:
+                if hr is None:
                     idx = len(ds['gefs']['lon'])
                 else:
                     for idx_hr in ds['gefs']['fhr']:
@@ -1705,7 +1702,7 @@ class TrackPlot(Plot):
                              mfc=prop_ensemble_mean['linecolor'], mec='k', transform=ccrs.PlateCarree())
             elif len(ds['gefs']['fhr']) > 0:
                 idx = 0
-                if hr == None:
+                if hr is None:
                     idx = len(ds['gefs']['lon'])
                 else:
                     for idx_hr in ds['gefs']['fhr']:
@@ -1723,7 +1720,7 @@ class TrackPlot(Plot):
         lon_max_extrema = np.sort(lon_max_extrema)
         lon_min_extrema = np.sort(lon_min_extrema)
 
-        if hr == None:
+        if hr is None:
             max_lat = np.nanpercentile(lat_max_extrema, 95)
             min_lat = np.nanpercentile(lat_min_extrema, 5)
             max_lon = np.nanpercentile(lon_max_extrema, 95)
@@ -1756,7 +1753,7 @@ class TrackPlot(Plot):
             handles_list.append(p3)
         if prop_ensemble_members['plot']:
             handles_list.append(p4)
-        if hr != None and prop_ellipse['plot']:
+        if hr is not None and prop_ellipse['plot']:
             handles_list.append(p5)
         if len(handles_list) > 0:
             l = self.ax.legend(handles=handles_list, loc=1, prop={'size': 12})
@@ -1773,7 +1770,7 @@ class TrackPlot(Plot):
         self.ax.set_title(plot_title, fontsize=16,
                           loc='left', fontweight='bold')
 
-        if hr == None:
+        if hr is None:
             title_str = f"Initialized {forecast.strftime('%H%M UTC %d %B %Y')}"
         else:
             title_str = f"Hour {hr} | Valid {(forecast+timedelta(hours=hr)).strftime('%H%M UTC %d %B %Y')}\n"
@@ -2410,7 +2407,7 @@ class TrackPlot(Plot):
             color_base = {'Low': 'yellow', 'Medium': 'orange', 'High': 'red'}
 
             # Plot areas
-            if shapefiles['areas'] != None:
+            if shapefiles['areas'] is not None:
                 for record, geom in zip(shapefiles['areas'].records(), shapefiles['areas'].geometries()):
 
                     # Read relevant data
@@ -2440,7 +2437,7 @@ class TrackPlot(Plot):
 
                     # Add label if needed
                     plot_coords = []
-                    if 'GENCAT' in record.attributes.keys() or shapefiles['points'] == None:
+                    if 'GENCAT' in record.attributes.keys() or shapefiles['points'] is None:
                         bounds = record.geometry.bounds
                         plot_coords.append(
                             (bounds[0] + bounds[2]) * 0.5)  # lon
@@ -2480,7 +2477,7 @@ class TrackPlot(Plot):
                             linewidth=0.5, foreground='w'), path_effects.Normal()])
 
             # Plot points
-            if shapefiles['points'] != None:
+            if shapefiles['points'] is not None:
                 for record, point in zip(shapefiles['points'].records(), shapefiles['points'].geometries()):
 
                     lon = (list(point.coords)[0][0])

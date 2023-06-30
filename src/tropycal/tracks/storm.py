@@ -1042,7 +1042,7 @@ class Storm:
             self.get_operational_forecasts()
 
         # Fetch latest forecast if None
-        if forecast == None:
+        if forecast is None:
             check_keys = ['AVNI', 'OFCI', 'HWFI', 'HFAI']
             if 'HWFI' not in self.forecast_dict.keys():
                 check_keys[2] = 'HWRF'
@@ -1086,7 +1086,7 @@ class Storm:
             # Only proceed if model isn't not requested
             if key in input_keys_lower:
                 idx = input_keys_lower.index(key)
-                if models[input_keys[idx]] == None:
+                if models[input_keys[idx]] is None:
                     continue
 
             # Find official key
@@ -1358,7 +1358,7 @@ class Storm:
             self.get_operational_forecasts()
 
         # Fetch latest forecast if None
-        if forecast == None:
+        if forecast is None:
             inits = []
             for key in ['AC00', 'AP01', 'AP02', 'AP03', 'AP04', 'AP05']:
                 if key in self.forecast_dict.keys():
@@ -1516,7 +1516,7 @@ class Storm:
         proj_lons = []
         for key in self.ds.keys():
             proj_lons += self.ds[key]['lon']
-        if fhr != None and fhr in self.ds['gefs']['fhr']:
+        if fhr is not None and fhr in self.ds['gefs']['fhr']:
             fhr_idx = self.ds['gefs']['fhr'].index(fhr)
             proj_lons += self.ds['gefs']['ellipse_lon'][fhr_idx]
 

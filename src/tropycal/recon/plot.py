@@ -100,7 +100,7 @@ class ReconPlot(Plot):
             raise RuntimeError("Error: recon_data must be dataframe")
 
         # Retrieve storm data
-        if radlim == None:
+        if radlim is None:
             lats = recon_data['lat']
             lons = recon_data['lon']
         else:

@@ -1476,7 +1476,7 @@ def add_radius_quick(lats, lons, lat, lon, rad, res=0.25):
     lons2d, lats2d = np.meshgrid(lons, lats)
     return_arr = np.zeros((lats2d.shape))
     dist = np.zeros((lats2d.shape)) + 9999
-    if lon == None or lat == None:
+    if lon is None or lat is None:
         return return_arr
 
     new_lats = np.arange(np.round(lat-5), np.round(lat+5+res), res)

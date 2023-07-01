@@ -5,8 +5,6 @@ import numpy as np
 import scipy.ndimage as ndimage
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-import matplotlib.patheffects as path_effects
-
 
 def add_tropycal(ax):
     r"""

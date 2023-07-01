@@ -173,65 +173,57 @@ class Storm:
 
         return "\n".join(summary)
 
-    def __init__(self, storm, stormTors=None, read_path=""):
+    def __init__(self, storm, stormTors=None):
 
-        if read_path == "" or not os.path.isfile(read_path):
+        # Save the dict entry of the storm
+        self.dict = storm
 
-            # Save the dict entry of the storm
-            self.dict = storm
+        # Add other attributes about the storm
+        keys = self.dict.keys()
+        self.attrs = {}
+        self.vars = {}
+        for key in keys:
+            if key == 'realtime':
+                continue
+            if key == 'invest':
+                continue
+            if not isinstance(self.dict[key], list) and not isinstance(self.dict[key], dict):
+                self[key] = self.dict[key]
+                self.attrs[key] = self.dict[key]
+            if isinstance(self.dict[key], list) and not isinstance(self.dict[key], dict):
+                self.vars[key] = np.array(self.dict[key])
+                self[key] = np.array(self.dict[key])
 
-            # Add other attributes about the storm
-            keys = self.dict.keys()
-            self.attrs = {}
-            self.vars = {}
-            for key in keys:
-                if key == 'realtime':
-                    continue
-                if key == 'invest':
-                    continue
-                if not isinstance(self.dict[key], list) and not isinstance(self.dict[key], dict):
-                    self[key] = self.dict[key]
-                    self.attrs[key] = self.dict[key]
-                if isinstance(self.dict[key], list) and not isinstance(self.dict[key], dict):
-                    self.vars[key] = np.array(self.dict[key])
-                    self[key] = np.array(self.dict[key])
+        # Assign tornado data
+        if stormTors is not None and isinstance(stormTors, dict):
+            self.stormTors = stormTors['data']
+            self.tornado_dist_thresh = stormTors['dist_thresh']
+            self.attrs['Tornado Count'] = len(stormTors['data'])
 
-            # Assign tornado data
-            if stormTors is not None and isinstance(stormTors, dict):
-                self.stormTors = stormTors['data']
-                self.tornado_dist_thresh = stormTors['dist_thresh']
-                self.attrs['Tornado Count'] = len(stormTors['data'])
+        # Get Archer track data for this storm, if it exists
+        try:
+            self.get_archer()
+        except:
+            pass
 
-            # Get Archer track data for this storm, if it exists
-            try:
-                self.get_archer()
-            except:
-                pass
+        # Initialize recon dataset instance
+        self.recon = ReconDataset(storm=self)
 
-            # Initialize recon dataset instance
-            self.recon = ReconDataset(storm=self)
-
-            # Determine if storm object was retrieved via realtime object
-            if 'realtime' in keys and self.dict['realtime']:
-                self.realtime = True
-                self.attrs['realtime'] = True
-            else:
-                self.realtime = False
-                self.attrs['realtime'] = False
-
-            # Determine if storm object is an invest
-            if 'invest' in keys and self.dict['invest']:
-                self.invest = True
-                self.attrs['invest'] = True
-            else:
-                self.invest = False
-                self.attrs['invest'] = False
-
+        # Determine if storm object was retrieved via realtime object
+        if 'realtime' in keys and self.dict['realtime']:
+            self.realtime = True
+            self.attrs['realtime'] = True
         else:
+            self.realtime = False
+            self.attrs['realtime'] = False
 
-            # This functionality currently does not exist
-            raise ExceptionError(
-                "This functionality has not been implemented yet.")
+        # Determine if storm object is an invest
+        if 'invest' in keys and self.dict['invest']:
+            self.invest = True
+            self.attrs['invest'] = True
+        else:
+            self.invest = False
+            self.attrs['invest'] = False
 
     def sel(self, time=None, lat=None, lon=None, vmax=None, mslp=None,
             dvmax_dt=None, dmslp_dt=None, stormtype=None, method='exact'):

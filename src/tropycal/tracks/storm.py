@@ -183,9 +183,7 @@ class Storm:
         self.attrs = {}
         self.vars = {}
         for key in keys:
-            if key == 'realtime':
-                continue
-            if key == 'invest':
+            if key in ['realtime', 'invest', 'subset']:
                 continue
             if not isinstance(self.dict[key], list) and not isinstance(self.dict[key], dict):
                 self[key] = self.dict[key]
@@ -224,6 +222,14 @@ class Storm:
         else:
             self.invest = False
             self.attrs['invest'] = False
+        
+        # Determine if storm object is subset
+        if 'subset' in keys and self.dict['subset']:
+            self.subset = True
+            self.attrs['subset'] = True
+        else:
+            self.subset = False
+            self.attrs['subset'] = False
 
     def sel(self, time=None, lat=None, lon=None, vmax=None, mslp=None,
             dvmax_dt=None, dmslp_dt=None, stormtype=None, method='exact'):
@@ -270,7 +276,9 @@ class Storm:
         """
 
         # create copy of storm object
-        NEW_STORM = Storm(copy.deepcopy(self.dict))
+        new_dict = copy.deepcopy(self.dict)
+        new_dict['subset'] = True
+        NEW_STORM = Storm(new_dict)
         idx_final = np.arange(len(self.time))
 
         # apply time filter

@@ -1555,8 +1555,9 @@ class Storm:
                     iter_hr)] for ens in range(nens) if iter_hr in ds[f'gefs_{ens}']['fhr']])
 
         # Plot storm
-        plot_ax = self.plot_obj.plot_ensembles(forecast, self.dict, fhr, interpolate, prop_members, prop_mean, prop_gfs,
-                                               prop_btk, prop_ellipse, prop_density, nens, domain, ds, ax=ax, map_prop=map_prop, save_path=save_path)
+        plot_ax = self.plot_obj.plot_ensembles(forecast, self.dict, fhr, interpolate, prop_members, prop_mean,
+                                               prop_gfs, prop_btk, prop_ellipse, prop_density, nens, domain,
+                                               ds, ax=ax, map_prop=map_prop, save_path=save_path)
 
         # Return axis
         return plot_ax

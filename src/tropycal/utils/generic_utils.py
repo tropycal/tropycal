@@ -815,7 +815,7 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
         return ynew
 
     # Function for finding nearest value in an array
-    def findNearest(array, val):
+    def find_nearest(array, val):
         return array[np.abs(array - val).argmin()]
 
     # Function for adding a radius surrounding a point
@@ -826,10 +826,10 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
         grid_fac = (rad*4)/111.0
 
         # Make grid surrounding position coordinate & radius of circle
-        nlon = np.arange(findNearest(lons, vlon-grid_fac),
-                         findNearest(lons, vlon+grid_fac+grid_res), grid_res)
-        nlat = np.arange(findNearest(lats, vlat-grid_fac),
-                         findNearest(lats, vlat+grid_fac+grid_res), grid_res)
+        nlon = np.arange(find_nearest(lons, vlon-grid_fac),
+                         find_nearest(lons, vlon+grid_fac+grid_res), grid_res)
+        nlat = np.arange(find_nearest(lats, vlat-grid_fac),
+                         find_nearest(lats, vlat+grid_fac+grid_res), grid_res)
         lons, lats = np.meshgrid(nlon, nlat)
         return_arr = np.zeros((lons.shape))
 

@@ -157,18 +157,16 @@ def plot_two(self, two_dict, days=7, **kwargs):
     # Plot areas
     if two_dict['areas'] is not None:
         for record, geom in zip(two_dict['areas'].records(), two_dict['areas'].geometries()):
+            keys = record.attributes.keys()
 
             # Read relevant data
-            if 'RISK2DAY' in record.attributes.keys() or 'RISK5DAY' in record.attributes.keys() or 'RISK7DAY' in record.attributes.keys():
+            if 'RISK2DAY' in keys or 'RISK5DAY' in keys or 'RISK7DAY' in keys:
                 if days == 2:
-                    color = color_base.get(
-                        record.attributes['RISK2DAY'], 'yellow')
+                    color = color_base.get(record.attributes['RISK2DAY'], 'yellow')
                 elif 'RISK5DAY' in record.attributes.keys():
-                    color = color_base.get(
-                        record.attributes['RISK5DAY'], 'yellow')
+                    color = color_base.get(record.attributes['RISK5DAY'], 'yellow')
                 else:
-                    color = color_base.get(
-                        record.attributes['RISK7DAY'], 'yellow')
+                    color = color_base.get(record.attributes['RISK7DAY'], 'yellow')
             else:
                 color = color_base.get(record.attributes['GENCAT'], 'yellow')
 
@@ -254,20 +252,19 @@ def plot_two(self, two_dict, days=7, **kwargs):
             # plot same point but using axes coordinates
             a = self.text(x, y-0.03, text, ha='center', va='top', transform=self.transAxes,
                           fontweight='bold', fontsize=fontsize, clip_on=True, bbox=bbox_prop, **kwargs)
-            a.set_path_effects([path_effects.Stroke(
-                linewidth=0.5, foreground='w'), path_effects.Normal()])
+            a.set_path_effects([path_effects.Stroke(linewidth=0.5, foreground='w'), path_effects.Normal()])
 
 def plot_cone(self, cone, plot_center_line=False, **kwargs):
     r"""
     Plots a Tropycal derived National Hurricane Center (NHC) cone of uncertainty.
-    
+
     Parameters
     ----------
     cone : dict or xarray.Dataset
         Cone of uncertainty generated from ``utils.generate_nhc_cone()``.
     plot_center_line : bool
         Determine whether to plot cone center line. Default is False.
-    
+
     Other Parameters
     ----------------
     fillcolor : str
@@ -279,21 +276,21 @@ def plot_cone(self, cone, plot_center_line=False, **kwargs):
     alpha : int or float
         Fill opacity of cone. Default is 0.6.
     zorder : int or float
-        Optional display order on axes of TWO areas and labels.
+        Optional display order on axes of the cone and center line.
     center_linecolor : str
         Color of center line. Default is 'black'. Ignored if plot_center_line is False.
     center_linewidth : int or float
-        Linewidth of center line. Default is 1.5. Ignored if plot_center_line is False.
+        Linewidth of center line. Default is 2.0. Ignored if plot_center_line is False.
     center_linestyle : str
         Linestyle of center line. Default is 'solid'. Ignored if plot_center_line is False.
-    
+
     Notes
     -----
     It is not necessary to pass a "transform" keyword argument, as this is already assumed to be ccrs.PlateCarree().
 
     This function is already appended to an axes instance if ``ax = utils.add_tropycal(ax)`` is run beforehand. This allows this method to be called simply via ``ax.plot_cone(...)``.
     """
-    
+
     # Retrieve kwargs
     fillcolor = kwargs.pop('fillcolor', 'w')
     linecolor = kwargs.pop('linecolor', 'k')
@@ -301,14 +298,14 @@ def plot_cone(self, cone, plot_center_line=False, **kwargs):
     alpha = kwargs.pop('alpha', 0.6)
     zorder = kwargs.pop('zorder', None)
     center_linecolor = kwargs.pop('center_linecolor', 'k')
-    center_linewidth = kwargs.pop('center_linewidth', 1.5)
+    center_linewidth = kwargs.pop('center_linewidth', 2.0)
     center_linestyle = kwargs.pop('center_linestyle', 'solid')
-    
+
     # Format kwargs for zorder functions
     kwargs = {}
     if zorder is not None:
         kwargs = {'zorder': zorder}
-    
+
     # Contour fill cone
     cone_lon_2d = cone['lon2d'] if 'lon2d' in cone.keys() else cone['grid_lon']
     cone_lat_2d = cone['lat2d'] if 'lat2d' in cone.keys() else cone['grid_lat']

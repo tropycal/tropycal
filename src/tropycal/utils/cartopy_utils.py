@@ -91,14 +91,9 @@ def plot_storm(self, storm, *args, **kwargs):
     This function is already appended to an axes instance if ``ax = utils.add_tropycal(ax)`` is run beforehand. This allows this method to be called simply via ``ax.plot_storm(...)`` the same way one would call ``ax.plot(...)``.
     """
 
-    # Filter to only tropical points if requested
-    if 'stormtype' in kwargs.keys():
-        stormtype = kwargs.pop('stormtype')
-        storm = storm.sel(stormtype=stormtype)
-
     # Pass arguments to ax plot method
-    self.plot(storm.lon, storm.lat, *args, **
-              kwargs, transform=ccrs.PlateCarree())
+    self.plot(storm.lon, storm.lat, transform=ccrs.PlateCarree(),
+              *args, **kwargs)
 
 def plot_two(self, two_dict, days=7, **kwargs):
     r"""
@@ -113,8 +108,6 @@ def plot_two(self, two_dict, days=7, **kwargs):
 
     Other Parameters
     ----------------
-    fontsize : int or float, optional
-        Font size for formation probability labels. Default is 12.
     ms : int or float, optional
         Marker size label for invest areas. Default is 15.
     linewidth : int or float, optional
@@ -132,7 +125,6 @@ def plot_two(self, two_dict, days=7, **kwargs):
     """
 
     # Retrieve kwargs
-    fontsize = kwargs.pop('fontsize', 12)
     ms = kwargs.pop('ms', 15)
     alpha = kwargs.pop('alpha', 0.3)
     linewidth = kwargs.pop('linewidth', 1.5)
@@ -149,10 +141,6 @@ def plot_two(self, two_dict, days=7, **kwargs):
 
     # Store TWO colors for reference
     color_base = {'Low': 'yellow', 'Medium': 'orange', 'High': 'red'}
-
-    # Store bbox properties
-    bbox_prop = {'facecolor': 'white', 'alpha': 0.5,
-                 'edgecolor': 'black', 'boxstyle': 'round,pad=0.3'}
 
     # Plot areas
     if two_dict['areas'] is not None:
@@ -180,42 +168,6 @@ def plot_two(self, two_dict, days=7, **kwargs):
             self.add_feature(cfeature.ShapelyFeature([geom], ccrs.PlateCarree()),
                              facecolor='none', edgecolor=color, linewidth=linewidth, **kwargs)
 
-            # Add label if needed
-            plot_coords = []
-            if 'GENCAT' in record.attributes.keys() or two_dict['points'] is None:
-                bounds = record.geometry.bounds
-                plot_coords.append((bounds[0] + bounds[2]) * 0.5)  # lon
-                plot_coords.append(bounds[1])  # lat
-                plot_coords.append(record.attributes['GENPROB'])
-            else:
-                found_areas = []
-                for i_record, i_point in zip(two_dict['points'].records(), two_dict['points'].geometries()):
-                    found_areas.append(i_record.attributes['AREA'])
-                if 'AREA' in record.attributes.keys() and record.attributes['AREA'] not in found_areas:
-                    bounds = record.geometry.bounds
-                    plot_coords.append((bounds[0] + bounds[2]) * 0.5)  # lon
-                    plot_coords.append(bounds[1])  # lat
-                    if days == 2:
-                        plot_coords.append(record.attributes['PROB2DAY'])
-                    elif 'PROB5DAY' in record.attributes.keys():
-                        plot_coords.append(record.attributes['PROB5DAY'])
-                    else:
-                        plot_coords.append(record.attributes['PROB7DAY'])
-
-            if len(plot_coords) > 0:
-                # Transform coordinates for label
-                x1, y1 = self.projection.transform_point(
-                    plot_coords[0], plot_coords[1], ccrs.PlateCarree())
-                x2, y2 = self.transData.transform((x1, y1))
-                x, y = self.transAxes.inverted().transform((x2, y2))
-
-                # plot same point but using axes coordinates
-                text = plot_coords[2]
-                a = self.text(x, y-0.02, text, ha='center', va='top', transform=self.transAxes,
-                              fontweight='bold', fontsize=fontsize, clip_on=True, bbox=bbox_prop, **kwargs)
-                a.set_path_effects([path_effects.Stroke(
-                    linewidth=0.5, foreground='w'), path_effects.Normal()])
-
     # Plot points
     if two_dict['points'] is not None:
         for record, point in zip(two_dict['points'].records(), two_dict['points'].geometries()):
@@ -242,17 +194,6 @@ def plot_two(self, two_dict, days=7, **kwargs):
                 text = prob_5day
             self.plot(lon, lat, 'X', ms=ms, color=color, mec='k',
                       mew=1.5*(ms/15.0), transform=ccrs.PlateCarree(), **kwargs)
-
-            # Transform coordinates for label
-            x1, y1 = self.projection.transform_point(
-                lon, lat, ccrs.PlateCarree())
-            x2, y2 = self.transData.transform((x1, y1))
-            x, y = self.transAxes.inverted().transform((x2, y2))
-
-            # plot same point but using axes coordinates
-            a = self.text(x, y-0.03, text, ha='center', va='top', transform=self.transAxes,
-                          fontweight='bold', fontsize=fontsize, clip_on=True, bbox=bbox_prop, **kwargs)
-            a.set_path_effects([path_effects.Stroke(linewidth=0.5, foreground='w'), path_effects.Normal()])
 
 def plot_cone(self, cone, plot_center_line=False, **kwargs):
     r"""

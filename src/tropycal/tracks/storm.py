@@ -13,7 +13,7 @@ import copy
 # Import internal scripts
 from .plot import TrackPlot
 from ..tornado import *
-from ..recon import *
+from ..recon import ReconDataset
 
 # Import tools
 from .tools import *

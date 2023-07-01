@@ -834,33 +834,14 @@ class TrackPlot(Plot):
             if 'cone' in forecast.keys() and not forecast['cone']:
                 pass
             else:
-                cone_lon = cone['lon']
-                cone_lat = cone['lat']
-                cone_lon_2d = cone['lon2d']
-                cone_lat_2d = cone['lat2d']
                 if self.proj.proj4_params['lon_0'] == 180.0:
-                    new_lons = np.array(cone_lon_2d)
+                    new_lons = np.array(cone['lon2d'])
                     new_lons[new_lons < 0] = new_lons[new_lons < 0] + 360.0
-                    cone_lon_2d = new_lons.tolist()
-                    new_lons = np.array(cone_lon)
-                    new_lons[new_lons < 0] = new_lons[new_lons < 0] + 360.0
-                    cone_lon = new_lons.tolist()
-                cone_2d = cone['cone']
-                cone_2d = ndimage.gaussian_filter(cone_2d, sigma=0.5, order=0)
-                self.ax.contourf(cone_lon_2d, cone_lat_2d, cone_2d, [0.9, 1.1], colors=[
-                                 '#ffffff', '#ffffff'], alpha=prop['cone_alpha'], zorder=2, transform=ccrs.PlateCarree())
-                self.ax.contour(cone_lon_2d, cone_lat_2d, cone_2d, [
-                                0.9], linewidths=prop['cone_lw'], colors=['k'], zorder=3, transform=ccrs.PlateCarree())
-
-            # Plot center line & account for dateline crossing
-            center_lon = cone['center_lon']
-            center_lat = cone['center_lat']
-            if self.proj.proj4_params['lon_0'] == 180.0:
-                new_lons = np.array(center_lon)
-                new_lons[new_lons < 0] = new_lons[new_lons < 0] + 360.0
-                center_lon = new_lons.tolist()
-            self.ax.plot(center_lon, center_lat, color='k',
-                         linewidth=2.0, zorder=4, transform=ccrs.PlateCarree())
+                    cone['lon2d'] = new_lons
+                    center_lon = np.array(cone['center_lon'])
+                    center_lon[center_lon < 0] = center_lon[center_lon < 0] + 360.0
+                    cone['center_lon'] = center_lon
+                plot_cone(self.ax,cone,plot_center_line=True,center_linewidth=2.0,zorder=3)
 
             # Retrieve forecast dots
             iter_hr = np.array(forecast['fhr'])[

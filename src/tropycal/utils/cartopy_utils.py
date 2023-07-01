@@ -1,6 +1,8 @@
 r"""Adds Tropycal functionality to Cartopy GeoAxes."""
 
 import types
+import numpy as np
+import scipy.ndimage as ndimage
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.patheffects as path_effects
@@ -66,6 +68,7 @@ def add_tropycal(ax):
 
     ax.plot_storm = types.MethodType(plot_storm, ax)
     ax.plot_two = types.MethodType(plot_two, ax)
+    ax.plot_cone = types.MethodType(plot_cone, ax)
 
     return ax
 
@@ -96,7 +99,6 @@ def plot_storm(self, storm, *args, **kwargs):
     # Pass arguments to ax plot method
     self.plot(storm.lon, storm.lat, *args, **
               kwargs, transform=ccrs.PlateCarree())
-
 
 def plot_two(self, two_dict, days=7, **kwargs):
     r"""
@@ -254,3 +256,71 @@ def plot_two(self, two_dict, days=7, **kwargs):
                           fontweight='bold', fontsize=fontsize, clip_on=True, bbox=bbox_prop, **kwargs)
             a.set_path_effects([path_effects.Stroke(
                 linewidth=0.5, foreground='w'), path_effects.Normal()])
+
+def plot_cone(self, cone, plot_center_line=False, **kwargs):
+    r"""
+    Plots a Tropycal derived National Hurricane Center (NHC) cone of uncertainty.
+    
+    Parameters
+    ----------
+    cone : dict or xarray.Dataset
+        Cone of uncertainty generated from ``utils.generate_nhc_cone()``.
+    plot_center_line : bool
+        Determine whether to plot cone center line. Default is False.
+    
+    Other Parameters
+    ----------------
+    fillcolor : str
+        Color to fill the cone in. Default is 'white'.
+    linecolor : str
+        Color of outer edge of cone. Default is 'black'.
+    linewidth : int or float
+        Linewidth of outer edge of cone. Default is 1.0.
+    alpha : int or float
+        Fill opacity of cone. Default is 0.6.
+    zorder : int or float
+        Optional display order on axes of TWO areas and labels.
+    center_linecolor : str
+        Color of center line. Default is 'black'. Ignored if plot_center_line is False.
+    center_linewidth : int or float
+        Linewidth of center line. Default is 1.5. Ignored if plot_center_line is False.
+    center_linestyle : str
+        Linestyle of center line. Default is 'solid'. Ignored if plot_center_line is False.
+    
+    Notes
+    -----
+    It is not necessary to pass a "transform" keyword argument, as this is already assumed to be ccrs.PlateCarree().
+
+    This function is already appended to an axes instance if ``ax = utils.add_tropycal(ax)`` is run beforehand. This allows this method to be called simply via ``ax.plot_cone(...)``.
+    """
+    
+    # Retrieve kwargs
+    fillcolor = kwargs.pop('fillcolor', 'w')
+    linecolor = kwargs.pop('linecolor', 'k')
+    linewidth = kwargs.pop('linewidth', 1.0)
+    alpha = kwargs.pop('alpha', 0.6)
+    zorder = kwargs.pop('zorder', None)
+    center_linecolor = kwargs.pop('center_linecolor', 'k')
+    center_linewidth = kwargs.pop('center_linewidth', 1.5)
+    center_linestyle = kwargs.pop('center_linestyle', 'solid')
+    
+    # Format kwargs for zorder functions
+    kwargs = {}
+    if zorder is not None:
+        kwargs = {'zorder': zorder}
+    
+    # Contour fill cone
+    cone_lon_2d = cone['lon2d'] if 'lon2d' in cone.keys() else cone['grid_lon']
+    cone_lat_2d = cone['lat2d'] if 'lat2d' in cone.keys() else cone['grid_lat']
+    cone_2d = cone['cone']
+    cone_2d = ndimage.gaussian_filter(cone_2d, sigma=0.5, order=0)
+    self.contourf(cone_lon_2d, cone_lat_2d, cone_2d, [0.99, 1.1],
+                  colors=[fillcolor, fillcolor], alpha=alpha, transform=ccrs.PlateCarree(), **kwargs)
+    self.contour(cone_lon_2d, cone_lat_2d, cone_2d, [0.99],
+                 linewidths=linewidth, colors=linecolor, transform=ccrs.PlateCarree(), **kwargs)
+
+    # Plot center line
+    if plot_center_line:
+        self.plot(cone['center_lon'], cone['center_lat'], color=center_linecolor,
+                  linewidth=center_linewidth, transform=ccrs.PlateCarree(),
+                  linestyle=center_linestyle,**kwargs)

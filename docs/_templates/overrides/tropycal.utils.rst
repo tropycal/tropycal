@@ -36,6 +36,7 @@ Cartopy Utilities
       add_tropycal
       plot_storm
       plot_two
+      plot_cone
 
 
 Colors

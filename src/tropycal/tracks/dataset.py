@@ -153,12 +153,14 @@ class TrackDataset:
 
         # Add general summary
         emdash = '\u2014'
-        summary_keys = {'Basin': self.basin,
-                        'Source': self.source + [', ' + self.ibtracs_mode, ''][self.source == 'hurdat'],
-                        'Number of storms': len(self.keys),
-                        'Maximum wind': f"{max_wind} knots ({max_wind_name})",
-                        'Minimum pressure': f"{min_mslp} hPa ({min_mslp_name})",
-                        'Year range': f"{self.data[self.keys[0]]['year']} {emdash} {self.data[self.keys[-1]]['year']}"}
+        summary_keys = {
+            'Basin': self.basin,
+            'Source': self.source + [', ' + self.ibtracs_mode, ''][self.source == 'hurdat'],
+            'Number of storms': len(self.keys),
+            'Maximum wind': f"{max_wind} knots ({max_wind_name})",
+            'Minimum pressure': f"{min_mslp} hPa ({min_mslp_name})",
+            'Year range': f"{self.data[self.keys[0]]['year']} {emdash} {self.data[self.keys[-1]]['year']}",
+        }
 
         # Add dataset summary
         summary.append("Dataset Summary:")

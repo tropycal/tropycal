@@ -1,6 +1,7 @@
 r"""Functionality for reading and analyzing SPC tornado dataset."""
 
 import numpy as np
+import xarray as xr
 import pandas as pd
 from datetime import datetime as dt
 from scipy.interpolate import griddata
@@ -100,14 +101,6 @@ class RainDataset():
             If return_xarray is True, an xarray DataArray is returned. Otherwise, a dict including the grid lat, lon and grid values is returned.
         """
 
-        # Check if xarray is installed
-        try:
-            import xarray as xr
-        except ImportError as e:
-            return_xarray = False
-            msg = "xarray is not installed in your python environment. Defaulting to return_xarray=False."
-            warnings.warn(msg)
-
         # Check if Storm object contains rainfall data
         try:
             storm.rain
@@ -132,7 +125,11 @@ class RainDataset():
         if return_xarray:
             return xr.DataArray(grid, coords=[grid_lat, grid_lon], dims=['lat', 'lon'])
         else:
-            return {'grid': grid, 'lat': grid_lat, 'lon': grid_lon}
+            return {
+                'grid': grid,
+                'lat': grid_lat,
+                'lon': grid_lon
+            }
 
     def plot_rain_grid(self, storm, grid, levels=None, cmap=None, domain="dynamic", plot_all_dots=False, ax=None, cartopy_proj=None, save_path=None, prop={}, map_prop={}):
         r"""
@@ -195,8 +192,9 @@ class RainDataset():
                 proj='PlateCarree', central_longitude=0.0)
 
         # Plot storm
-        plot_ax = self.plot_obj.plot_storm(
-            storm, grid, levels, cmap, domain, plot_all_dots, ax=ax, save_path=save_path, prop=prop, map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(storm, grid, levels, cmap,
+                                           domain, plot_all_dots, ax=ax,
+                                           save_path=save_path, prop=prop, map_prop=map_prop)
 
         # Return axis
         return plot_ax
@@ -270,9 +268,19 @@ class RainDataset():
             self.plot_obj.create_cartopy(
                 proj='PlateCarree', central_longitude=0.0)
 
+        # Format plot settings
+        plot_settings = {
+            'ms': ms,
+            'minimum_threshold': minimum_threshold,
+            'mew': mew,
+            'mec': mec
+        }
+
         # Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm, {'ms': ms, 'minimum_threshold': minimum_threshold, 'mew': mew, 'mec': mec},
-                                           levels, cmap, domain, plot_all_dots, ax=ax, save_path=save_path, prop=prop, map_prop=map_prop)
+        plot_ax = self.plot_obj.plot_storm(storm, plot_settings, levels,
+                                           cmap, domain, plot_all_dots,
+                                           ax=ax, save_path=save_path,
+                                           prop=prop, map_prop=map_prop)
 
         # Return axis
         return plot_ax

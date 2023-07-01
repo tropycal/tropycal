@@ -132,10 +132,12 @@ class Storm:
                 np.nanmax(np.array(self.dict['vmax'])[idx]))
             min_mslp = 'N/A' if all_nan(np.array(self.dict['mslp'])[idx]) else int(
                 np.nanmin(np.array(self.dict['mslp'])[idx]))
-        summary_keys = {'Maximum Wind': f"{max_wind} knots",
-                        'Minimum Pressure': f"{min_mslp} hPa",
-                        'Start Time': start_time,
-                        'End Time': end_time}
+        summary_keys = {
+            'Maximum Wind': f"{max_wind} knots",
+            'Minimum Pressure': f"{min_mslp} hPa",
+            'Start Time': start_time,
+            'End Time': end_time,
+        }
 
         # Format keys for coordinates
         variable_keys = {}
@@ -822,8 +824,17 @@ class Storm:
                 "Error: Input variable 'forecast' must be of type 'int' or 'datetime.datetime'")
 
         # Get observed track as per NHC analyses
-        track_dict = {'lat': [], 'lon': [], 'vmax': [], 'type': [], 'mslp': [
-        ], 'time': [], 'extra_obs': [], 'special': [], 'ace': 0.0}
+        track_dict = {
+            'lat': [],
+            'lon': [],
+            'vmax': [],
+            'type': [],
+            'mslp': [],
+            'time': [],
+            'extra_obs': [],
+            'special': [],
+            'ace': 0.0,
+        }
         use_carq = True
         for k in nhc_forecast_init:
             hrs = nhc_forecasts[k]['fhr']
@@ -1421,8 +1432,14 @@ class Storm:
             for ens in range(0, nens):
 
                 # Create dict entry
-                ds[f'gefs_{ens}'] = {'fhr': [], 'lat': [],
-                                     'lon': [], 'vmax': [], 'mslp': [], 'time': []}
+                ds[f'gefs_{ens}'] = {
+                    'fhr': [],
+                    'lat': [],
+                    'lon': [],
+                    'vmax': [],
+                    'mslp': [],
+                    'time': [],
+                }
 
                 # Retrieve ensemble member data
                 ens_str = str2(ens)
@@ -1598,7 +1615,12 @@ class Storm:
                 ftp.quit()
 
             # Read in all NHC forecast discussions
-            discos = {'id': [], 'utc_time': [], 'url': [], 'mode': 0}
+            discos = {
+                'id': [],
+                'utc_time': [],
+                'url': [],
+                'mode': 0,
+            }
             for file in files:
 
                 # Get info about forecast
@@ -1681,7 +1703,12 @@ class Storm:
                     files.append(file)  # remove duplicates
 
             # Read in all NHC forecast discussions
-            discos = {'id': [], 'utc_time': [], 'url': [], 'mode': 4}
+            discos = {
+                'id': [],
+                'utc_time': [],
+                'url': [],
+                'mode': 4,
+            }
             for file in files:
 
                 # Get info about forecast
@@ -1769,7 +1796,12 @@ class Storm:
                     files.append(file)  # remove duplicates
 
             # Read in all NHC forecast discussions
-            discos = {'id': [], 'utc_time': [], 'url': [], 'mode': 3}
+            discos = {
+                'id': [],
+                'utc_time': [],
+                'url': [],
+                'mode': 3,
+            }
             for file in files:
 
                 # Get info about forecast
@@ -1855,7 +1887,12 @@ class Storm:
             tar.close()
 
             # Read in all NHC forecast discussions
-            discos = {'id': [], 'utc_time': [], 'url': [], 'mode': 1}
+            discos = {
+                'id': [],
+                'utc_time': [],
+                'url': [],
+                'mode': 1,
+            }
             for file in files:
 
                 # Get info about forecast
@@ -1908,7 +1945,12 @@ class Storm:
                     raise RuntimeError("NHC discussion data is unavailable.")
 
             # Read in all NHC forecast discussions
-            discos = {'id': [], 'utc_time': [], 'url': [], 'mode': 0}
+            discos = {
+                'id': [],
+                'utc_time': [],
+                'url': [],
+                'mode': 0,
+            }
             for file in files:
 
                 # Get info about forecast

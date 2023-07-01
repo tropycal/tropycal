@@ -470,9 +470,11 @@ class ReconDataset:
             raise RuntimeError(
                 "hdobs needs to be read into the 'recon' object first. Use the 'ReconDataset.get_hdobs()' method to read in HDOBs data.")
 
-        prop = {'hdobs': {'ms': 5, 'marker': 'o'},
-                'dropsondes': {'ms': 25, 'marker': 'v'},
-                'vdms': {'ms': 100, 'marker': 's'}}
+        prop = {
+            'hdobs': {'ms': 5, 'marker': 'o'},
+            'dropsondes': {'ms': 25, 'marker': 'v'},
+            'vdms': {'ms': 100, 'marker': 's'}
+        }
 
         hdobs = self.hdobs.sel(mission=mission)
         ax = hdobs.plot_points('pkwnd', prop={'cmap': {
@@ -586,14 +588,16 @@ class hdobs:
 
         # Add general summary
         emdash = '\u2014'
-        summary_keys = {'Storm': f'{self.storm.name} {self.storm.year}',
-                        'Missions': len(set(self.data['mission'])),
-                        'Time range': f"{time_range[0]:%b-%d %H:%M} {emdash} {time_range[1]:%b-%d %H:%M}",
-                        'Max 30sec flight level wind': f"{max_wspd} knots",
-                        'Max 10sec flight level wind': f"{max_pkwnd} knots",
-                        'Max SFMR wind': f"{max_sfmr} knots",
-                        'Min surface pressure': f"{min_psfc} hPa",
-                        'Source': self.source}
+        summary_keys = {
+            'Storm': f'{self.storm.name} {self.storm.year}',
+            'Missions': len(set(self.data['mission'])),
+            'Time range': f"{time_range[0]:%b-%d %H:%M} {emdash} {time_range[1]:%b-%d %H:%M}",
+            'Max 30sec flight level wind': f"{max_wspd} knots",
+            'Max 10sec flight level wind': f"{max_pkwnd} knots",
+            'Max SFMR wind': f"{max_sfmr} knots",
+            'Min surface pressure': f"{min_psfc} hPa",
+            'Source': self.source
+        }
 
         # Add dataset summary
         summary.append("Dataset Summary:")
@@ -1174,13 +1178,19 @@ class hdobs:
 
         # Filter by default kwargs
         left_prop_default = {
-            'ms': 0, 'color': varname_info['color'], 'linewidth': 1}
+            'ms': 0,
+            'color': varname_info['color'],
+            'linewidth': 1
+        }
         for key in left_prop.keys():
             left_prop_default[key] = left_prop[key]
         left_prop = left_prop_default
         if twin_ax:
             right_prop_default = {
-                'ms': 0, 'color': varname_right_info['color'], 'linewidth': 1}
+                'ms': 0,
+                'color': varname_right_info['color'],
+                'linewidth': 1
+            }
             for key in right_prop.keys():
                 right_prop_default[key] = right_prop[key]
             right_prop = right_prop_default
@@ -1406,8 +1416,11 @@ class hdobs:
         # Pop kwargs
         track_dict = kwargs.pop('track_dict', None)
         prop = kwargs.pop('prop', {})
-        default_prop = {'cmap': 'category',
-                        'levels': None, 'smooth_contourf': False}
+        default_prop = {
+            'cmap': 'category',
+            'levels': None,
+            'smooth_contourf': False
+        }
         for key in default_prop.keys():
             if key not in prop.keys():
                 prop[key] = default_prop[key]
@@ -1568,7 +1581,11 @@ class hdobs:
 
             # clon = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lon'])
             # clat = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lat'])
-            track_dict = {'time': time, 'lon': clon, 'lat': clat}
+            track_dict = {
+                'time': time,
+                'lon': clon,
+                'lat': clat
+            }
 
         if MULTIVAR:
             Maps = []
@@ -1605,8 +1622,15 @@ class hdobs:
 
             figs = []
             for i, t in enumerate(Maps['time']):
-                Maps_sub = {'time': t, 'grid_x': Maps['grid_x'], 'grid_y': Maps['grid_y'], 'maps': Maps['maps'][i],
-                            'center_lon': Maps['center_lon'][i], 'center_lat': Maps['center_lat'][i], 'stats': Maps['stats']}
+                Maps_sub = {
+                    'time': t,
+                    'grid_x': Maps['grid_x'],
+                    'grid_y': Maps['grid_y'],
+                    'maps': Maps['maps'][i],
+                    'center_lon': Maps['center_lon'][i],
+                    'center_lat': Maps['center_lat'][i],
+                    'stats': Maps['stats']
+                }
 
                 # Create instance of plot object
                 self.plot_obj = ReconPlot()
@@ -1619,10 +1643,12 @@ class hdobs:
                 # Maintain the same lat / lon dimensions for all dynamic maps
                 # Determined by the dynamic domain from the first map
                 if i > 0 and domain == 'dynamic':
-                    d1 = {'n': Maps_sub['center_lat'] + dlat,
-                          's': Maps_sub['center_lat'] - dlat,
-                          'e': Maps_sub['center_lon'] + dlon,
-                          'w': Maps_sub['center_lon'] - dlon}
+                    d1 = {
+                        'n': Maps_sub['center_lat'] + dlat,
+                        's': Maps_sub['center_lat'] - dlat,
+                        'e': Maps_sub['center_lon'] + dlon,
+                        'w': Maps_sub['center_lon'] - dlon
+                    }
                 else:
                     d1 = domain
 
@@ -1802,14 +1828,25 @@ class hdobs:
         By default, the plot axes is returned. If "return_array" are set to True, a dictionary is returned containing both the axes and data array.
         """
 
-        default_prop = {'smooth': None}
+        default_prop = {
+            'smooth': None
+        }
         for key in prop.keys():
             default_prop[key] = prop[key]
         prop = default_prop
 
         # Update thresh based on input
-        default_thresh = {'sample_min': 1, 'p_max': np.nan, 'v_min': np.nan, 'dv_min': np.nan,
-                          'dp_max': np.nan, 'dv_max': np.nan, 'dp_min': np.nan, 'dt_window': 24, 'dt_align': 'middle'}
+        default_thresh = {
+            'sample_min': 1,
+            'p_max': np.nan,
+            'v_min': np.nan,
+            'dv_min': np.nan,
+            'dp_max': np.nan,
+            'dv_max': np.nan,
+            'dp_min': np.nan,
+            'dt_window': 24,
+            'dt_align': 'middle'
+        }
         for key in thresh:
             default_thresh[key] = thresh[key]
         thresh = default_thresh
@@ -1834,7 +1871,11 @@ class hdobs:
 
         # Loops through groups, and apply stat func to obs
         # Constructs a new dataframe containing the lat/lon bins and plotting variable
-        new_df = {'latbin': [], 'lonbin': [], varname: []}
+        new_df = {
+            'latbin': [],
+            'lonbin': [],
+            'varname': []
+        }
         for g in groups:
             new_df[varname].append(func(g[1][varname].values))
             new_df['latbin'].append(g[0][0])
@@ -1892,8 +1933,12 @@ class hdobs:
         prop['title_L'], prop['title_R'] = self.storm.name, 'things'
 
         if domain == "dynamic":
-            domain = {'W': min(self.data['lon']), 'E': max(self.data['lon']), 'S': min(
-                self.data['lat']), 'N': max(self.data['lat'])}
+            domain = {
+                'W': min(self.data['lon']),
+                'E': max(self.data['lon']),
+                'S': min(self.data['lat']),
+                'N': max(self.data['lat'])
+            }
 
         # Plot gridded field
         plot_ax = plot_obj.plot_gridded(
@@ -1999,13 +2044,15 @@ class dropsondes:
 
         # Add general summary
         emdash = '\u2014'
-        summary_keys = {'Storm': f'{self.storm.name} {self.storm.year}',
-                        'Missions': len(missions),
-                        'Dropsondes': len(self.data),
-                        'Max 500m-avg wind': max_MBLspd,
-                        'Max 150m-avg wind': max_WL150spd,
-                        'Min sea level pressure': min_slp,
-                        'Source': self.source}
+        summary_keys = {
+            'Storm': f'{self.storm.name} {self.storm.year}',
+            'Missions': len(missions),
+            'Dropsondes': len(self.data),
+            'Max 500m-avg wind': max_MBLspd,
+            'Max 150m-avg wind': max_WL150spd,
+            'Min sea level pressure': min_slp,
+            'Source': self.source
+        }
 
         # Add dataset summary
         summary.append("Dataset Summary:")
@@ -2606,11 +2653,13 @@ class vdms:
 
         # Add general summary
         emdash = '\u2014'
-        summary_keys = {'Storm': f'{self.storm.name} {self.storm.year}',
-                        'Missions': len(missions),
-                        'VDMs': len(self.data),
-                        'Min sea level pressure': f"{min_slp} hPa",
-                        'Source': self.source}
+        summary_keys = {
+            'Storm': f'{self.storm.name} {self.storm.year}',
+            'Missions': len(missions),
+            'VDMs': len(self.data),
+            'Min sea level pressure': f"{min_slp} hPa",
+            'Source': self.source
+        }
 
         # Add dataset summary
         summary.append("Dataset Summary:")

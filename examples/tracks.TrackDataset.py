@@ -77,7 +77,7 @@ basin.plot_summary(dt.datetime(2020,9,17,0),domain='north_atlantic')
 #
 # First, let's take a look at the climatology for the basin. The default period is 1991-2020, but this can be customized to any range.
 
-basin.climatology(year_range=(1991,2020))
+basin.climatology(climo_bounds=(1991,2020))
 
 ###########################################
 # Another useful functionality for research or seasonal forecast purposes is to quickly composite multiple hurricane seasons. Simply plug in a list of years, and a year range for the climatology:

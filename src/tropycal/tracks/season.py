@@ -83,11 +83,13 @@ class Season:
 
         # Format keys for summary
         season_summary = self.summary()
-        summary_keys = {'Total Storms': season_summary['season_storms'],
-                        'Named Storms': season_summary['season_named'],
-                        'Hurricanes': season_summary['season_hurricane'],
-                        'Major Hurricanes': season_summary['season_major'],
-                        'Season ACE': season_summary['season_ace']}
+        summary_keys = {
+            'Total Storms': season_summary['season_storms'],
+            'Named Storms': season_summary['season_named'],
+            'Hurricanes': season_summary['season_hurricane'],
+            'Major Hurricanes': season_summary['season_major'],
+            'Season ACE': season_summary['season_ace'],
+        }
 
         # Add season summary
         summary.append("Season Summary:")
@@ -144,8 +146,18 @@ class Season:
         season_info_keys = season_info['id']
 
         # Set up empty dict for dataframe
-        ds = {'id': [], 'name': [], 'vmax': [], 'mslp': [], 'category': [], 'ace': [
-        ], 'start_time': [], 'end_time': [], 'start_lat': [], 'start_lon': []}
+        ds = {
+            'id': [],
+            'name': [],
+            'vmax': [],
+            'mslp': [],
+            'category': [],
+            'ace': [],
+            'start_time': [],
+            'end_time': [],
+            'start_lat': [],
+            'start_lon': [],
+        }
 
         # Add every key containing a list into the dict
         keys = [k for k in self.dict.keys()]
@@ -312,28 +324,35 @@ class Season:
 
         # Initialize dict with info about all of year's storms
         if not multi_season:
-            summary_dict = {'id': [], 'operational_id': [], 'name': [
-            ], 'max_wspd': [], 'min_mslp': [], 'category': [], 'ace': []}
+            summary_dict = {
+                'id': [],
+                'operational_id': [],
+                'name': [],
+                'max_wspd': [],
+                'min_mslp': [],
+                'category': [],
+                'ace': [],
+            }
         else:
-            summary_dict = {'id': [[] for i in range(len(self.year))],
-                            'operational_id': [[] for i in range(len(self.year))],
-                            'name': [[] for i in range(len(self.year))],
-                            'max_wspd': [[] for i in range(len(self.year))],
-                            'min_mslp': [[] for i in range(len(self.year))],
-                            'category': [[] for i in range(len(self.year))],
-                            'ace': [[] for i in range(len(self.year))],
-
-                            'seasons': self.year + [],
-                            'season_start': [0 for i in range(len(self.year))],
-                            'season_end': [0 for i in range(len(self.year))],
-                            'season_storms': [0 for i in range(len(self.year))],
-                            'season_named': [0 for i in range(len(self.year))],
-                            'season_hurricane': [0 for i in range(len(self.year))],
-                            'season_major': [0 for i in range(len(self.year))],
-                            'season_ace': [0 for i in range(len(self.year))],
-                            'season_subtrop_pure': [0 for i in range(len(self.year))],
-                            'season_subtrop_partial': [0 for i in range(len(self.year))],
-                            }
+            summary_dict = {
+                'id': [[] for i in range(len(self.year))],
+                'operational_id': [[] for i in range(len(self.year))],
+                'name': [[] for i in range(len(self.year))],
+                'max_wspd': [[] for i in range(len(self.year))],
+                'min_mslp': [[] for i in range(len(self.year))],
+                'category': [[] for i in range(len(self.year))],
+                'ace': [[] for i in range(len(self.year))],
+                'seasons': self.year + [],
+                'season_start': [0 for i in range(len(self.year))],
+                'season_end': [0 for i in range(len(self.year))],
+                'season_storms': [0 for i in range(len(self.year))],
+                'season_named': [0 for i in range(len(self.year))],
+                'season_hurricane': [0 for i in range(len(self.year))],
+                'season_major': [0 for i in range(len(self.year))],
+                'season_ace': [0 for i in range(len(self.year))],
+                'season_subtrop_pure': [0 for i in range(len(self.year))],
+                'season_subtrop_partial': [0 for i in range(len(self.year))],
+            }
 
         # Iterate over season(s)
         list_seasons = [self.year] if not multi_season else self.year + []

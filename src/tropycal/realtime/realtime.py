@@ -285,8 +285,19 @@ class Realtime():
                 add_basin = 'east_pacific'
 
             # add empty entry into dict
-            self.data[stormid] = {'id': stormid, 'operational_id': stormid, 'name': '', 'year': int(stormid[4:8]), 'season': int(
-                stormid[4:8]), 'basin': add_basin, 'source_info': 'NHC Hurricane Database', 'realtime': True, 'invest': invest_bool, 'source_method': "NHC's Automated Tropical Cyclone Forecasting System (ATCF)", 'source_url': "https://ftp.nhc.noaa.gov/atcf/btk/"}
+            self.data[stormid] = {
+                'id': stormid,
+                'operational_id': stormid,
+                'name': '',
+                'year': int(stormid[4:8]),
+                'season': int(stormid[4:8]),
+                'basin': add_basin,
+                'source_info': 'NHC Hurricane Database',
+                'realtime': True,
+                'invest': invest_bool,
+                'source_method': "NHC's Automated Tropical Cyclone Forecasting System (ATCF)",
+                'source_url': "https://ftp.nhc.noaa.gov/atcf/btk/",
+            }
             self.data[stormid]['source'] = 'hurdat'
             self.data[stormid]['jtwc_source'] = 'N/A'
 
@@ -490,8 +501,17 @@ class Realtime():
                 add_basin = ''
 
             # add empty entry into dict
-            self.data[stormid] = {'id': stormid, 'operational_id': stormid, 'name': '', 'year': int(stormid[4:8]), 'season': int(
-                stormid[4:8]), 'basin': add_basin, 'source_info': 'Joint Typhoon Warning Center', 'realtime': True, 'invest': invest_bool}
+            self.data[stormid] = {
+                'id': stormid,
+                'operational_id': stormid,
+                'name': '',
+                'year': int(stormid[4:8]),
+                'season': int(stormid[4:8]),
+                'basin': add_basin,
+                'source_info': 'Joint Typhoon Warning Center',
+                'realtime': True,
+                'invest': invest_bool,
+            }
             self.data[stormid]['source'] = 'jtwc'
             self.data[stormid]['jtwc_source'] = source
 
@@ -651,7 +671,12 @@ class Realtime():
             # Retrieve necessary components for shapefile
             members = tar.namelist()
             members_names = [i for i in members]
-            data = {'shp': 0, 'dbf': 0, 'prj': 0, 'shx': 0}
+            data = {
+                'shp': 0,
+                'dbf': 0,
+                'prj': 0,
+                'shx': 0,
+            }
             for key in data.keys():
                 idx = members_names.index(files[0]+"."+key)
                 data[key] = BytesIO(tar.read(members[idx]))

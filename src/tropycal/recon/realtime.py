@@ -88,7 +88,11 @@ class RealtimeRecon():
         self.start_time_request = start_time_request
 
         # Retrieve list of files in URL and filter by storm dates
-        files = {'hdobs': [], 'dropsondes': [], 'vdms': []}
+        files = {
+            'hdobs': [],
+            'dropsondes': [],
+            'vdms': []
+        }
         for key in files.keys():
             page = requests.get(self.urls[key]).text
             content = page.split("\n")
@@ -119,12 +123,13 @@ class RealtimeRecon():
                 mission_id = '-'.join(
                     (content_split[3].replace("  ", " ")).split(" ")[:3])
                 if mission_id not in self.missions:
-                    self.missions[mission_id] = {'hdobs': decode_hdob(content),
-                                                 'vdms': [],
-                                                 'dropsondes': [],
-                                                 'aircraft': mission_id.split("-")[0],
-                                                 'storm_name': mission_id.split("-")[2]
-                                                 }
+                    self.missions[mission_id] = {
+                        'hdobs': decode_hdob(content),
+                        'vdms': [],
+                        'dropsondes': [],
+                        'aircraft': mission_id.split("-")[0],
+                        'storm_name': mission_id.split("-")[2]
+                    }
                 else:
                     self.missions[mission_id]['hdobs'] = pd.concat(
                         [self.missions[mission_id]['hdobs'], decode_hdob(content)])
@@ -211,7 +216,11 @@ class RealtimeRecon():
             start_time = self.start_time_request
 
         # Retrieve list of files in URL and filter by storm dates
-        files = {'hdobs': [], 'dropsondes': [], 'vdms': []}
+        files = {
+            'hdobs': [],
+            'dropsondes': [],
+            'vdms': []
+        }
         for key in files.keys():
             page = requests.get(self.urls[key]).text
             content = page.split("\n")
@@ -241,12 +250,13 @@ class RealtimeRecon():
             mission_id = '-'.join(
                 (content_split[3].replace("  ", " ")).split(" ")[:3])
             if mission_id not in self.missions:
-                self.missions[mission_id] = {'hdobs': decode_hdob(content),
-                                             'vdms': [],
-                                             'dropsondes': [],
-                                             'aircraft': mission_id.split("-")[0],
-                                             'storm_name': mission_id.split("-")[2]
-                                             }
+                self.missions[mission_id] = {
+                    'hdobs': decode_hdob(content),
+                    'vdms': [],
+                    'dropsondes': [],
+                    'aircraft': mission_id.split("-")[0],
+                    'storm_name': mission_id.split("-")[2]
+                }
             else:
                 self.missions[mission_id]['hdobs'] = pd.concat(
                     [self.missions[mission_id]['hdobs'], decode_hdob(content)])
@@ -494,7 +504,6 @@ class RealtimeRecon():
 
         return data
 
-
 class PseudoStorm():
 
     r"""
@@ -503,9 +512,12 @@ class PseudoStorm():
 
     def __init__(self):
 
-        self.dict = {'type': ['TS'], 'vmax': [50],
-                     'wmo_basin': 'north_atlantic', 'name': 'Test'}
-
+        self.dict = {
+            'type': ['TS'],
+            'vmax': [50],
+            'wmo_basin': 'north_atlantic',
+            'name': 'Test'
+        }
 
 class Mission():
 
@@ -578,12 +590,14 @@ class Mission():
 
         # Add summary text
         emdash = '\u2014'
-        summary_keys = {'Dropsondes': len(self.dropsondes),
-                        'VDMs': len(self.vdms),
-                        'Max 30sec flight level wind': f"{max_wspd} knots",
-                        'Max 10sec flight level wind': f"{max_pkwnd} knots",
-                        'Max SFMR wind': f"{max_sfmr} knots",
-                        'Min surface pressure': f"{min_psfc} hPa"}
+        summary_keys = {
+            'Dropsondes': len(self.dropsondes),
+            'VDMs': len(self.vdms),
+            'Max 30sec flight level wind': f"{max_wspd} knots",
+            'Max 10sec flight level wind': f"{max_pkwnd} knots",
+            'Max SFMR wind': f"{max_sfmr} knots",
+            'Min surface pressure': f"{min_psfc} hPa"
+        }
 
         # Add text to output
         summary.append("Mission Summary:")
@@ -921,13 +935,19 @@ class Mission():
 
         # Filter by default kwargs
         left_prop_default = {
-            'ms': 0, 'color': varname_info['color'], 'linewidth': 1}
+            'ms': 0,
+            'color': varname_info['color'],
+            'linewidth': 1
+        }
         for key in left_prop.keys():
             left_prop_default[key] = left_prop[key]
         left_prop = left_prop_default
         if twin_ax:
             right_prop_default = {
-                'ms': 0, 'color': varname_right_info['color'], 'linewidth': 1}
+                'ms': 0,
+                'color': varname_right_info['color'],
+                'linewidth': 1
+            }
             for key in right_prop.keys():
                 right_prop_default[key] = right_prop[key]
             right_prop = right_prop_default

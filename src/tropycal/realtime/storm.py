@@ -111,10 +111,12 @@ class RealtimeStorm(Storm):
             end_time = time_tropical[-1].strftime("%H00 UTC %d %B %Y")
             max_wind = 'N/A' if all_nan(np.array(self.dict['vmax'])[idx]) else np.nanmax(np.array(self.dict['vmax'])[idx])
             min_mslp = 'N/A' if all_nan(np.array(self.dict['mslp'])[idx]) else np.nanmin(np.array(self.dict['mslp'])[idx])
-        summary_keys = {'Maximum Wind': f"{max_wind} knots",
-                        'Minimum Pressure': f"{min_mslp} hPa",
-                        'Start Time': start_time,
-                        'End Time': end_time}
+        summary_keys = {
+            'Maximum Wind': f"{max_wind} knots",
+            'Minimum Pressure': f"{min_mslp} hPa",
+            'Start Time': start_time,
+            'End Time': end_time,
+        }
 
         # Format keys for coordinates
         variable_keys = {}
@@ -327,20 +329,26 @@ class RealtimeStorm(Storm):
                 if len(lineArray) < 11:
                     continue
                 try:
-                    basin, number, run_init, n_a, model, fhr, lat, lon, vmax, mslp, stype, rad, windcode, neq, seq, swq, nwq = lineArray[
-                        :17]
+                    basin, number, run_init, n_a, model, fhr, lat, lon, vmax, mslp, stype, rad, windcode, neq, seq, swq, nwq = lineArray[:17]
                     use_wind = True
                 except:
-                    basin, number, run_init, n_a, model, fhr, lat, lon, vmax, mslp, stype = lineArray[
-                        :11]
+                    basin, number, run_init, n_a, model, fhr, lat, lon, vmax, mslp, stype = lineArray[:11]
                     use_wind = False
                 if model not in ["OFCL", "OFCI"]:
                     continue
 
                 if len(forecasts) == 0:
                     forecasts = {
-                        'init': dt.strptime(run_init, '%Y%m%d%H'), 'fhr': [], 'lat': [], 'lon': [], 'vmax': [], 'mslp': [], 'type': [],
-                        'windrad': [], 'cumulative_ace': [], 'cumulative_ace_fhr': []
+                        'init': dt.strptime(run_init, '%Y%m%d%H'),
+                        'fhr': [],
+                        'lat': [],
+                        'lon': [],
+                        'vmax': [],
+                        'mslp': [],
+                        'type': [],
+                        'windrad': [],
+                        'cumulative_ace': [],
+                        'cumulative_ace_fhr': [],
                     }
 
                 # Format lat & lon
@@ -478,8 +486,16 @@ class RealtimeStorm(Storm):
 
                     if len(forecasts) == 0:
                         forecasts = {
-                            'init': dt.strptime(run_init, '%Y%m%d%H'), 'fhr': [], 'lat': [], 'lon': [], 'vmax': [], 'mslp': [],
-                            'windrad': [], 'cumulative_ace': [], 'cumulative_ace_fhr': [], 'type': []
+                            'init': dt.strptime(run_init, '%Y%m%d%H'),
+                            'fhr': [],
+                            'lat': [],
+                            'lon': [],
+                            'vmax': [],
+                            'mslp': [],
+                            'windrad': [],
+                            'cumulative_ace': [],
+                            'cumulative_ace_fhr': [],
+                            'type': []
                         }
 
                     # Forecast hour
@@ -546,20 +562,26 @@ class RealtimeStorm(Storm):
                     if len(lineArray) < 11:
                         continue
                     try:
-                        basin, number, run_init, n_a, model, fhr, lat, lon, vmax, mslp, stype, rad, windcode, neq, seq, swq, nwq = lineArray[
-                            :17]
+                        basin, number, run_init, n_a, model, fhr, lat, lon, vmax, mslp, stype, rad, windcode, neq, seq, swq, nwq = lineArray[ :17]
                         use_wind = True
                     except:
-                        basin, number, run_init, n_a, model, fhr, lat, lon, vmax, mslp, stype = lineArray[
-                            :11]
+                        basin, number, run_init, n_a, model, fhr, lat, lon, vmax, mslp, stype = lineArray[:11]
                         use_wind = False
                     if model not in ["JTWC"]:
                         continue
 
                     if len(forecasts) == 0:
                         forecasts = {
-                            'init': dt.strptime(run_init, '%Y%m%d%H'), 'fhr': [], 'lat': [], 'lon': [], 'vmax': [], 'mslp': [], 'type': [],
-                            'windrad': [], 'cumulative_ace': [], 'cumulative_ace_fhr': []
+                            'init': dt.strptime(run_init, '%Y%m%d%H'),
+                            'fhr': [],
+                            'lat': [],
+                            'lon': [],
+                            'vmax': [],
+                            'mslp': [],
+                            'type': [],
+                            'windrad': [],
+                            'cumulative_ace': [],
+                            'cumulative_ace_fhr': []
                         }
 
                     # Format lat & lon
@@ -1129,7 +1151,8 @@ class RealtimeStorm(Storm):
             'PDT': -7,
             'PST': -8,
             'HDT': -9,
-            'HST': -10}
+            'HST': -10
+        }
         offset = time_zones.get(zone, 0)
         disco_time = disco_time + timedelta(hours=offset*-1)
 

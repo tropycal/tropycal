@@ -2826,12 +2826,21 @@ class Storm:
             raise ValueError('SHIPS data is unavailable prior to 2011.')
 
         # Format basin name and ID
-        basin_name = 'northatlantic' if self.basin == 'north_atlantic' else 'northeastpacific'
+        basin_dict = {
+            'north_atlantic':'northatlantic',
+            'east_pacific':'northeastpacific',
+            'west_pacific':'northwestpacific',
+            'north_indian':'northindian'
+        }
+        basin_name = basin_dict.get(self.basin,'southernhemisphere')
         reformatted_id = f'{self.id[:-4]}{self.id[-2:]}'
 
         # Format URL from RAL and retrieve file list
         url = f'http://hurricanes.ral.ucar.edu/realtime/plots/{basin_name}/{self.year}/{self.id.lower()}/stext/'
-        page = requests.get(url).text
+        try:
+            page = requests.get(url).text
+        except:
+            raise ValueError('SHIPS data is unavailable for the requested storm.')
         content = page.split("\n")
         files = []
         for line in content:
@@ -2865,13 +2874,21 @@ class Storm:
 
         Notes
         -----
+        SHIPS data is available courtesy of the UCAR Research Applications Laboratory (RAL).
+
         1. A list of available times for SHIPS data can be retrieved using ``Storm.search_ships()``.
 
-        2. On rare occasions, SHIPS timestamps have empty data associated with them. In these cases, a value of None is returned.
+        2. On rare occasions, SHIPS data files from UCAR have empty data associated with them. In these cases, a value of None is returned.
         """
 
         # Format URL
-        basin_name = 'northatlantic' if self.basin == 'north_atlantic' else 'northeastpacific'
+        basin_dict = {
+            'north_atlantic':'northatlantic',
+            'east_pacific':'northeastpacific',
+            'west_pacific':'northwestpacific',
+            'north_indian':'northindian'
+        }
+        basin_name = basin_dict.get(self.basin,'southernhemisphere')
         url = f'http://hurricanes.ral.ucar.edu/realtime/plots/{basin_name}/{self.year}/{self.id.lower()}/stext/'
         url += f'{time.strftime("%y%m%d%H")}{self.id[:-4]}{self.id[-2:]}_ships.txt'
 
@@ -2882,7 +2899,7 @@ class Storm:
                 warnings.warn('Improper SHIPS entry for this time. Returning a value of None.')
                 return None
         except:
-            raise ValueError('SHIPS data is unavailable for the requested time.')
+            raise ValueError('SHIPS data is unavailable for the requested storm or time.')
 
         return Ships(content, storm_name=self.name)
 

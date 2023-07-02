@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>plot_two &mdash; tropycal </title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="plot_cone" href="tropycal.utils.plot_cone.html" />
+    <link rel="prev" title="plot_storm" href="tropycal.utils.plot_storm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../support.html">Support</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Example Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tracks.html">Tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.tornado.html">Tornado</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.ships.html">Ships</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tropycal.utils.html">utils</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tropycal.utils.html#generic-utilities">Generic Utilities</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="tropycal.utils.html#cartopy-utilities">Cartopy Utilities</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.add_tropycal.html">add_tropycal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.plot_storm.html">plot_storm</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">plot_two</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.plot_cone.html">plot_cone</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tropycal.utils.html#colors">Colors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data.html">Data Sources</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tropycal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.utils.html">utils</a></li>
+      <li class="breadcrumb-item active">plot_two</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/generated/tropycal.utils.plot_two.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="plot-two">
+<h1>plot_two<a class="headerlink" href="#plot-two" title="Permalink to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="tropycal.utils.plot_two">
+<span class="sig-prename descclassname"><span class="pre">tropycal.utils.</span></span><span class="sig-name descname"><span class="pre">plot_two</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/cartopy_utils.html#plot_two"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.utils.plot_two" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a NHC Tropical Weather Outlook (TWO) on the axes instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>two_dict</strong> (<em>dict</em>) – Dictionary containing TWO areas and points. This dictionary can be retrieved from <code class="docutils literal notranslate"><span class="pre">utils.get_two_current()</span></code> or <code class="docutils literal notranslate"><span class="pre">utils.get_two_archive()</span></code>.</p></li>
+<li><p><strong>days</strong> (<em>int</em>) – Forecast range of TWO. Can be 2, 5 or 7 days. Default is 7.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ms</strong> (<em>int or float, optional</em>) – Marker size label for invest areas. Default is 15.</p></li>
+<li><p><strong>linewidth</strong> (<em>int or float, optional</em>) – Linewidth of TWO area. Default is 1.5.</p></li>
+<li><p><strong>alpha</strong> (<em>int or float, optional</em>) – Opacity of TWO area fill. Default is 0.3.</p></li>
+<li><p><strong>zorder</strong> (<em>int, optional</em>) – Optional display order on axes of TWO areas and labels.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>It is not necessary to pass a “transform” keyword argument, as this is already assumed to be ccrs.PlateCarree().</p>
+<p>This function is already appended to an axes instance if <code class="docutils literal notranslate"><span class="pre">ax</span> <span class="pre">=</span> <span class="pre">utils.add_tropycal(ax)</span></code> is run beforehand. This allows this method to be called simply via <code class="docutils literal notranslate"><span class="pre">ax.plot_two(...)</span></code>.</p>
+</dd></dl>
+
+<div style='clear:both'></div></section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tropycal.utils.plot_storm.html" class="btn btn-neutral float-left" title="plot_storm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.utils.plot_cone.html" class="btn btn-neutral float-right" title="plot_cone" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

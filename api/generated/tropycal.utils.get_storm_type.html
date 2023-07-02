@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> tropycal
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -57,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.ships.html">Ships</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.utils.html">utils</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.utils.html#generic-utilities">Generic Utilities</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.accumulated_cyclone_energy.html">accumulated_cyclone_energy</a></li>
@@ -74,6 +79,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.get_two_archive.html">get_two_archive</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.knots_to_mph.html">knots_to_mph</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.nhc_cone_radii.html">nhc_cone_radii</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.ships_parser.html">ships_parser</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.utils.html#cartopy-utilities">Cartopy Utilities</a></li>
@@ -100,10 +106,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-          <li><a href="tropycal.utils.html">utils</a> &raquo;</li>
-      <li>get_storm_type</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.utils.html">utils</a></li>
+      <li class="breadcrumb-item active">get_storm_type</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/generated/tropycal.utils.get_storm_type.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -117,13 +123,14 @@
 <h1>get_storm_type<a class="headerlink" href="#get-storm-type" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="tropycal.utils.get_storm_type">
-<span class="sig-prename descclassname"><span class="pre">tropycal.utils.</span></span><span class="sig-name descname"><span class="pre">get_storm_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtropical_flag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/generic_utils.html#get_storm_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.utils.get_storm_type" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tropycal.utils.</span></span><span class="sig-name descname"><span class="pre">get_storm_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wind_speed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtropical_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">typhoon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/utils/generic_utils.html#get_storm_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.utils.get_storm_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve the 2-character tropical cyclone type (e.g., “TD”, “TS”, “HU”) given its subtropical status.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wind_speed</strong> (<em>int</em>) – Integer denoting sustained wind speed in knots.</p></li>
 <li><p><strong>subtropical_flag</strong> (<em>bool</em>) – Boolean denoting whether the cyclone is subtropical or not.</p></li>
+<li><p><strong>typhoon</strong> (<em>bool</em><em>, </em><em>optional</em>) – Boolean denoting whether typhoon (True) or hurricane (False) classification should be used for wind speeds at or above 64 kt. Default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -143,6 +150,12 @@
 </tr>
 </thead>
 <tbody>
+<tr class="row-even"><td><p>SD</p></td>
+<td><p>Subtropical Depression</p></td>
+</tr>
+<tr class="row-odd"><td><p>SS</p></td>
+<td><p>Subtropical Storm</p></td>
+</tr>
 <tr class="row-even"><td><p>TD</p></td>
 <td><p>Tropical Depression</p></td>
 </tr>
@@ -152,11 +165,11 @@
 <tr class="row-even"><td><p>HU</p></td>
 <td><p>Hurricane</p></td>
 </tr>
-<tr class="row-odd"><td><p>SD</p></td>
-<td><p>Subtropical Depression</p></td>
+<tr class="row-odd"><td><p>TY</p></td>
+<td><p>Typhoon</p></td>
 </tr>
-<tr class="row-even"><td><p>SS</p></td>
-<td><p>Subtropical Storm</p></td>
+<tr class="row-even"><td><p>ST</p></td>
+<td><p>Super Typhoon</p></td>
 </tr>
 </tbody>
 </table>
@@ -175,7 +188,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

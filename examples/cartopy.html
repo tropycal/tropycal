@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Standalone Cartopy Functionality &mdash; tropycal </title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../api/index.html" />
+    <link rel="prev" title="Aircraft Recon Data Analysis" href="recon.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            tropycal
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Example Scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tracks.season.html">Individual Season Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">Realtime Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.tornado.html">Tornado Analyses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.storm.html">Individual Storm Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tc_rainfall.html">Tropical Cyclone Rainfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analogs.html">Historical TC Track Analogs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ships.html">Reading SHIPS Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customize_storm.html">Customizing Storm Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.TrackDataset.html">TC Dataset Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recon.html">Aircraft Recon Data Analysis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Standalone Cartopy Functionality</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reading-in-hurtdat2-dataset">Reading In HURTDAT2 Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reading-in-storm-data">Reading in storm data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#basic-cartopy-plot">Basic Cartopy plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#applying-tropycal-standalone-cartopy-utility">Applying Tropycal standalone Cartopy utility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-storm-objects">Plotting Storm objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-tropical-weather-outlooks">Plotting Tropical Weather Outlooks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-cone-of-uncertainty">Plotting Cone of Uncertainty</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data.html">Data Sources</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">tropycal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Standalone Cartopy Functionality</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/cartopy.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-cartopy-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="standalone-cartopy-functionality">
+<span id="sphx-glr-examples-cartopy-py"></span><h1>Standalone Cartopy Functionality<a class="headerlink" href="#standalone-cartopy-functionality" title="Permalink to this heading">¶</a></h1>
+<p>This sample script illustrates how to leverage Tropycal’s standalone Cartopy functionality alongside its existing data structures to make custom plots and analyses.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">tracks</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<section id="reading-in-hurtdat2-dataset">
+<h2>Reading In HURTDAT2 Dataset<a class="headerlink" href="#reading-in-hurtdat2-dataset" title="Permalink to this heading">¶</a></h2>
+<p>Let’s start with the HURDAT2 dataset by loading it into memory. By default, this reads in the HURDAT dataset from the National Hurricane Center (NHC) website, unless you specify a local file path using either <code class="docutils literal notranslate"><span class="pre">atlantic_url</span></code> for the North Atlantic basin on <code class="docutils literal notranslate"><span class="pre">pacific_url</span></code> for the East &amp; Central Pacific basin.</p>
+<p>HURDAT data is not available for the current year. To include the latest data up through today, the “include_btk” flag needs to be set to True, which reads in preliminary best track data from the NHC website. For this example, we’ll set this to False.</p>
+<p>Let’s create an instance of a TrackDataset object, which will store the North Atlantic HURDAT2 dataset in memory. Once we have this we can use its methods for various types of analyses.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
+--&gt; Completed reading in HURDAT2 data (24.38 seconds)
+</pre></div>
+</div>
+</section>
+<section id="reading-in-storm-data">
+<h2>Reading in storm data<a class="headerlink" href="#reading-in-storm-data" title="Permalink to this heading">¶</a></h2>
+<p>Individual storms can be retrieved from the dataset by calling the <code class="docutils literal notranslate"><span class="pre">get_storm()</span></code> function, which returns an instance of a Storm object. This can be done by either entering a tuple containing the storm name and year, or by the standard tropical cyclone ID (e.g., “AL012019”).</p>
+<p>Let’s retrieve an instance of Hurricane Michael from 2018:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_storm.html#tropycal.tracks.TrackDataset.get_storm" title="tropycal.tracks.TrackDataset.get_storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>We now have a Storm object, containing information about its track and intensity data, as well as various methods for subsetting and analyzing it.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.tracks.Storm&gt;
+Storm Summary:
+    Maximum Wind:      140 knots
+    Minimum Pressure:  919 hPa
+    Start Time:        0600 UTC 07 October 2018
+    End Time:          1800 UTC 11 October 2018
+
+Variables:
+    time        (datetime) [2018-10-06 18:00:00 .... 2018-10-15 18:00:00]
+    extra_obs   (int64) [0 .... 0]
+    special     (str) [ .... ]
+    type        (str) [LO .... EX]
+    lat         (float64) [17.8 .... 41.2]
+    lon         (float64) [-86.6 .... -10.0]
+    vmax        (int64) [25 .... 35]
+    mslp        (int64) [1006 .... 1001]
+    wmo_basin   (str) [north_atlantic .... north_atlantic]
+
+More Information:
+    id:              AL142018
+    operational_id:  AL142018
+    name:            MICHAEL
+    year:            2018
+    season:          2018
+    basin:           north_atlantic
+    source_info:     NHC Hurricane Database
+    source:          hurdat
+    ace:             12.5
+    realtime:        False
+    invest:          False
+    subset:          False
+</pre></div>
+</div>
+</section>
+<section id="basic-cartopy-plot">
+<h2>Basic Cartopy plot<a class="headerlink" href="#basic-cartopy-plot" title="Permalink to this heading">¶</a></h2>
+<p>Let’s make a basic Cartopy map focused over the Gulf of Mexico, with geographic boundaries denoted and land filled in light gray. We’ll add Cartopy utility to this plot in later steps.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a PlateCarree Cartopy projection</span>
+<span class="n">proj</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">()</span>
+
+<span class="c1"># Create an instance of figure and axes</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">proj</span><span class="p">)</span>
+
+<span class="c1"># Plot coastlines and political boundaries</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">STATES</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s1">&#39;50m&#39;</span><span class="p">),</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">BORDERS</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s1">&#39;50m&#39;</span><span class="p">),</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">COASTLINE</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s1">&#39;50m&#39;</span><span class="p">),</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+
+<span class="c1"># Fill in continents in light gray</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">LAND</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s1">&#39;50m&#39;</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;#EEEEEE&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;face&#39;</span><span class="p">)</span>
+
+<span class="c1"># Zoom in over the Gulf Coast</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">([</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span><span class="o">-</span><span class="mi">70</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">37</span><span class="p">])</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_cartopy_001.png" srcset="../_images/sphx_glr_cartopy_001.png" alt="cartopy" class = "sphx-glr-single-img"/></section>
+<section id="applying-tropycal-standalone-cartopy-utility">
+<h2>Applying Tropycal standalone Cartopy utility<a class="headerlink" href="#applying-tropycal-standalone-cartopy-utility" title="Permalink to this heading">¶</a></h2>
+<p>In order to apply Tropycal’s standalone Cartopy plotting utility to an existing matplotlib axes with a Cartopy projection appended to it, simply use the function <code class="docutils literal notranslate"><span class="pre">ax</span> <span class="pre">=</span> <span class="pre">utils.add_tropycal(ax)</span></code>, which appends the following functions to a Cartopy axes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ax.plot_storm()</span></code> - Plot a Storm object on an existing axes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ax.plot_two()</span></code> - Plot a Tropical Weather Outlook (TWO) on an existing axes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ax.plot_cone()</span></code> - Plot a Tropycal generated cone of uncertainty on an existing axes</p></li>
+</ul>
+<p>The next few sections will walk through examples for these functions.</p>
+</section>
+<section id="plotting-storm-objects">
+<h2>Plotting Storm objects<a class="headerlink" href="#plotting-storm-objects" title="Permalink to this heading">¶</a></h2>
+<p>Let’s go back to the Storm object for Hurricane Michael that we previously retrieved. Let’s make a simple plot of it using <code class="docutils literal notranslate"><span class="pre">plot_storm()</span></code>. This function behaaves identically to matplotlib’s standard <code class="docutils literal notranslate"><span class="pre">ax.plot()</span></code> function, except that instead of longitude and latitude coordinates (i.e., x and y), we provide the Storm object.</p>
+<p>Before we make any new plots, let’s define a function to plot boundaries so we don’t have to repeatedly type the same lines each time:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_boundaries</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function plots geographic and political boundaries on the provided axes.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Plot coastlines and political boundaries</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">STATES</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s1">&#39;50m&#39;</span><span class="p">),</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">BORDERS</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s1">&#39;50m&#39;</span><span class="p">),</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">COASTLINE</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s1">&#39;50m&#39;</span><span class="p">),</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Fill in continents in light gray</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">LAND</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s1">&#39;50m&#39;</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;#EEEEEE&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;face&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Return axes instance</span>
+    <span class="k">return</span> <span class="n">ax</span>
+</pre></div>
+</div>
+<p>Now let’s make another plot of the Gulf of Mexico, with Hurricane Michael’s track colored in a solid black line, and individual observations plotted in blue dots:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an instance of figure and axes</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">proj</span><span class="p">)</span> <span class="c1"># We already defined &quot;proj&quot; earlier, so no need to redefine it</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plot_boundaries</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+<span class="c1"># Append Tropycal functionality to this axes</span>
+<span class="n">ax</span> <span class="o">=</span> <a href="../api/generated/tropycal.utils.add_tropycal.html#tropycal.utils.add_tropycal" title="tropycal.utils.add_tropycal" class="sphx-glr-backref-module-tropycal-utils sphx-glr-backref-type-py-function"><span class="n">utils</span><span class="o">.</span><span class="n">add_tropycal</span></a><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+<span class="c1"># Plot Hurricane Michael&#39;s track line</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+
+<span class="c1"># Plot storm dots in blue</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+
+<span class="c1"># Zoom in over the Gulf Coast</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">([</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span><span class="o">-</span><span class="mi">70</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">37</span><span class="p">])</span>
+
+<span class="c1"># Add title</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Hurricane Michael (2018) Track&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_cartopy_002.png" srcset="../_images/sphx_glr_cartopy_002.png" alt="Hurricane Michael (2018) Track" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Hurricane Michael (2018) Track&#39;)
+</pre></div>
+</div>
+<p>Let’s say we want to plot the portion where Michael was a hurricane in a different color, and where it was a non-tropical cyclone in a dashed black line. We can use subsetted Storm objects to accomplish this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an instance of figure and axes</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">proj</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plot_boundaries</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+<span class="c1"># Append Tropycal functionality to this axes</span>
+<span class="n">ax</span> <span class="o">=</span> <a href="../api/generated/tropycal.utils.add_tropycal.html#tropycal.utils.add_tropycal" title="tropycal.utils.add_tropycal" class="sphx-glr-backref-module-tropycal-utils sphx-glr-backref-type-py-function"><span class="n">utils</span><span class="o">.</span><span class="n">add_tropycal</span></a><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+<span class="c1"># Plot Hurricane Michael&#39;s track line</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+
+<span class="c1"># ------------------------------------------------------------------</span>
+
+<span class="c1"># Find all segments where Michael was a hurricane</span>
+<span class="k">def</span> <span class="nf">find_hurricane_segments</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">):</span>
+
+    <span class="c1"># Create empty list to store data</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Loop over all times</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">i_time</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">time</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">continue</span>
+
+        <span class="c1"># Find where hurricane segment began</span>
+        <span class="k">if</span> <a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">64</span> <span class="ow">and</span> <a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">64</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">i_time</span><span class="p">])</span>
+
+        <span class="c1"># Find where hurricane segment ended</span>
+        <span class="k">elif</span> <a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">64</span> <span class="ow">and</span> <a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">64</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1">#Return output</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="n">segments</span> <span class="o">=</span> <span class="n">find_hurricane_segments</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">)</span>
+
+<span class="c1"># Subset the storm for each segment it was a hurricane, and plot a red line</span>
+<span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">:</span>
+
+    <span class="c1"># Subset storm object</span>
+    <a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm_subset</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.Storm.sel.html#tropycal.tracks.Storm.sel" title="tropycal.tracks.Storm.sel" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">sel</span></a><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">(</span><span class="n">segment</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">segment</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="c1"># Plot segment in red</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm_subset</span></a><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="c1"># ------------------------------------------------------------------</span>
+
+<span class="c1"># Subset storm to the portion where it was a tropical cyclone</span>
+<a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm_tc</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.Storm.sel.html#tropycal.tracks.Storm.sel" title="tropycal.tracks.Storm.sel" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">sel</span></a><span class="p">(</span><span class="n">stormtype</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SD&#39;</span><span class="p">,</span><span class="s1">&#39;SS&#39;</span><span class="p">,</span><span class="s1">&#39;TD&#39;</span><span class="p">,</span><span class="s1">&#39;TS&#39;</span><span class="p">,</span><span class="s1">&#39;HU&#39;</span><span class="p">])</span>
+
+<span class="c1"># Plot storm dots only where Michael was a tropical cyclone</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm_tc</span></a><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+
+<span class="c1"># ------------------------------------------------------------------</span>
+
+<span class="c1"># Zoom in over the Gulf Coast</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">([</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span><span class="o">-</span><span class="mi">70</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">37</span><span class="p">])</span>
+
+<span class="c1"># Add title</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Hurricane Michael (2018) Track&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_cartopy_003.png" srcset="../_images/sphx_glr_cartopy_003.png" alt="Hurricane Michael (2018) Track" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Hurricane Michael (2018) Track&#39;)
+</pre></div>
+</div>
+</section>
+<section id="plotting-tropical-weather-outlooks">
+<h2>Plotting Tropical Weather Outlooks<a class="headerlink" href="#plotting-tropical-weather-outlooks" title="Permalink to this heading">¶</a></h2>
+<p>We can also use Tropycal’s standalone plotting functionality to plot Tropical Weather Outlooks (TWOs) on an existing axes. First, let’s retrieve a TWO from a past date (e.g., 0600 UTC 19 June 2023):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">requested_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="n">two</span> <span class="o">=</span> <a href="../api/generated/tropycal.utils.get_two_archive.html#tropycal.utils.get_two_archive" title="tropycal.utils.get_two_archive" class="sphx-glr-backref-module-tropycal-utils sphx-glr-backref-type-py-function"><span class="n">utils</span><span class="o">.</span><span class="n">get_two_archive</span></a><span class="p">(</span><span class="n">time</span> <span class="o">=</span> <span class="n">requested_time</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we can plot this TWO on the axes with a North Atlantic projection. For this example we’ll use the default configuration, but the documentation offers more information on how to vary transparency, linewidth and zorder on the plot.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an instance of figure and axes</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">proj</span><span class="p">)</span> <span class="c1"># We already defined &quot;proj&quot; earlier, so no need to redefine it</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plot_boundaries</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+<span class="c1"># Append Tropycal functionality to this axes</span>
+<span class="n">ax</span> <span class="o">=</span> <a href="../api/generated/tropycal.utils.add_tropycal.html#tropycal.utils.add_tropycal" title="tropycal.utils.add_tropycal" class="sphx-glr-backref-module-tropycal-utils sphx-glr-backref-type-py-function"><span class="n">utils</span><span class="o">.</span><span class="n">add_tropycal</span></a><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+<span class="c1"># Plot TWO on this axes</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_two</span><span class="p">(</span><span class="n">two</span><span class="p">)</span>
+
+<span class="c1"># Zoom in over the North Atlantic basin</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">([</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">])</span>
+
+<span class="c1"># Add title</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">requested_time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M UTC </span><span class="si">%d</span><span class="s1"> %b %Y&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> NHC Tropical Weather Outlook&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_cartopy_004.png" srcset="../_images/sphx_glr_cartopy_004.png" alt="0600 UTC 19 Jun 2023 NHC Tropical Weather Outlook" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Possible issue encountered when converting Shape #0 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+Possible issue encountered when converting Shape #0 to GeoJSON: Shapefile format requires that polygons contain at least one exterior ring, but the Shape was entirely made up of interior holes (defined by counter-clockwise orientation in the shapefile format). The rings were still included but were encoded as GeoJSON exterior rings instead of holes.
+
+Text(0.5, 1.0, &#39;0600 UTC 19 Jun 2023 NHC Tropical Weather Outlook&#39;)
+</pre></div>
+</div>
+</section>
+<section id="plotting-cone-of-uncertainty">
+<h2>Plotting Cone of Uncertainty<a class="headerlink" href="#plotting-cone-of-uncertainty" title="Permalink to this heading">¶</a></h2>
+<p>We can use this functionality to plot a cone of uncertainty generated from <code class="docutils literal notranslate"><span class="pre">utils.generate_nhc_cone()</span></code>. Let’s generate a cone of uncertainty for Hurricane Ian from 2022:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Retrieve Hurricane Ian</span>
+<a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_storm.html#tropycal.tracks.TrackDataset.get_storm" title="tropycal.tracks.TrackDataset.get_storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">((</span><span class="s1">&#39;ian&#39;</span><span class="p">,</span><span class="mi">2022</span><span class="p">))</span>
+
+<span class="c1"># Retrieve desired forecast</span>
+<span class="n">requested_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2022</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">#Create cone dict using default settings</span>
+<span class="n">cone</span> <span class="o">=</span> <a href="../api/generated/tropycal.utils.generate_nhc_cone.html#tropycal.utils.generate_nhc_cone" title="tropycal.utils.generate_nhc_cone" class="sphx-glr-backref-module-tropycal-utils sphx-glr-backref-type-py-function"><span class="n">utils</span><span class="o">.</span><span class="n">generate_nhc_cone</span></a><span class="p">(</span>
+    <span class="n">forecast</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.Storm.get_nhc_forecast_dict.html#tropycal.tracks.Storm.get_nhc_forecast_dict" title="tropycal.tracks.Storm.get_nhc_forecast_dict" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">get_nhc_forecast_dict</span></a><span class="p">(</span><span class="n">requested_time</span><span class="p">),</span>
+    <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a> <span class="o">=</span> <span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span>
+    <span class="n">cone_days</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">return_xarray</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>We can now plot its track leading up to the requested time, and its cone of uncertainty and associated center line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an instance of figure and axes</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">proj</span><span class="p">)</span> <span class="c1"># We already defined &quot;proj&quot; earlier, so no need to redefine it</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plot_boundaries</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+<span class="c1"># Append Tropycal functionality to this axes</span>
+<span class="n">ax</span> <span class="o">=</span> <a href="../api/generated/tropycal.utils.add_tropycal.html#tropycal.utils.add_tropycal" title="tropycal.utils.add_tropycal" class="sphx-glr-backref-module-tropycal-utils sphx-glr-backref-type-py-function"><span class="n">utils</span><span class="o">.</span><span class="n">add_tropycal</span></a><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+<span class="c1"># Plot observed storm track up to the requested time</span>
+<a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm_subset</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.Storm.sel.html#tropycal.tracks.Storm.sel" title="tropycal.tracks.Storm.sel" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">sel</span></a><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">requested_time</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm_subset</span></a><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dotted&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot Hurricane Ian&#39;s forecast</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_cone</span><span class="p">(</span><span class="n">cone</span> <span class="o">=</span> <span class="n">cone</span><span class="p">,</span>
+             <span class="n">fillcolor</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+             <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+             <span class="n">plot_center_line</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+             <span class="n">center_linecolor</span> <span class="o">=</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+             <span class="n">center_linestyle</span> <span class="o">=</span> <span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot dot over Ian&#39;s location at this time</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm_subset</span></a><span class="o">.</span><span class="n">lon</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm_subset</span></a><span class="o">.</span><span class="n">lat</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span>
+        <span class="n">mfc</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+
+<span class="c1"># Zoom in over the Gulf Coast</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">([</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span><span class="o">-</span><span class="mi">70</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">37</span><span class="p">])</span>
+
+<span class="c1"># Add title</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Hurricane Ian (2022) NHC Forecast Cone&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Forecast Issued: </span><span class="si">{</span><span class="n">requested_time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M UTC </span><span class="si">%d</span><span class="s1"> %b %Y&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_cartopy_005.png" srcset="../_images/sphx_glr_cartopy_005.png" alt="Hurricane Ian (2022) NHC Forecast Cone, Forecast Issued: 0000 UTC 27 Sep 2022" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Text(1.0, 1.0, &#39;Forecast Issued: 0000 UTC 27 Sep 2022&#39;)
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  6.787 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-cartopy-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/95f83286288ea4a5146a6d7e1ac5f54e/cartopy.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">cartopy.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/393785223e6cca46cc32d77cac733024/cartopy.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">cartopy.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="recon.html" class="btn btn-neutral float-left" title="Aircraft Recon Data Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

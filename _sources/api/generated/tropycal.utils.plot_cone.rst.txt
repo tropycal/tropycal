@@ -1,0 +1,12 @@
+plot_cone
+========================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: plot_cone
+
+.. include:: tropycal.utils.plot_cone
+
+.. raw:: html
+
+      <div style='clear:both'></div>

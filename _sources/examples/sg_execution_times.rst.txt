@@ -3,22 +3,27 @@
 
 .. _sphx_glr_examples_sg_execution_times:
 
+
 Computation times
 =================
-**18:42.035** total execution time for **examples** files:
+**00:19.346** total execution time for **examples** files:
 
 +------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_examples_tracks.TrackDataset.py` (``tracks.TrackDataset.py``) | 09:06.523 | 0.0 MB |
+| :ref:`sphx_glr_examples_ships.py` (``ships.py``)                             | 00:19.346 | 0.0 MB |
 +------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_examples_recon.py` (``recon.py``)                             | 07:54.202 | 0.0 MB |
+| :ref:`sphx_glr_examples_analogs.py` (``analogs.py``)                         | 00:00.000 | 0.0 MB |
 +------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_examples_analogs.py` (``analogs.py``)                         | 01:05.434 | 0.0 MB |
+| :ref:`sphx_glr_examples_cartopy.py` (``cartopy.py``)                         | 00:00.000 | 0.0 MB |
 +------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_examples_customize_storm.py` (``customize_storm.py``)         | 00:35.876 | 0.0 MB |
+| :ref:`sphx_glr_examples_customize_storm.py` (``customize_storm.py``)         | 00:00.000 | 0.0 MB |
 +------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_examples_realtime.py` (``realtime.py``)                       | 00:00.000 | 0.0 MB |
 +------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_examples_recon.py` (``recon.py``)                             | 00:00.000 | 0.0 MB |
++------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_examples_tc_rainfall.py` (``tc_rainfall.py``)                 | 00:00.000 | 0.0 MB |
++------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_examples_tracks.TrackDataset.py` (``tracks.TrackDataset.py``) | 00:00.000 | 0.0 MB |
 +------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_examples_tracks.season.py` (``tracks.season.py``)             | 00:00.000 | 0.0 MB |
 +------------------------------------------------------------------------------+-----------+--------+

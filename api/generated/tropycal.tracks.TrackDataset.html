@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> tropycal
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -79,6 +83,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.plot_summary.html">TrackDataset.plot_summary</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.rank_storm.html">TrackDataset.rank_storm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.search_name.html">TrackDataset.search_name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.search_time.html">TrackDataset.search_time</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.season_composite.html">TrackDataset.season_composite</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html">TrackDataset.storm_ace_vs_season</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.to_dataframe.html">TrackDataset.to_dataframe</a></li>
@@ -91,6 +96,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.ships.html">Ships</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
@@ -112,10 +118,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-          <li><a href="tropycal.tracks.html">Tracks</a> &raquo;</li>
-      <li>tropycal.tracks.TrackDataset</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.tracks.html">Tracks</a></li>
+      <li class="breadcrumb-item active">tropycal.tracks.TrackDataset</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/generated/tropycal.tracks.TrackDataset.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -167,10 +173,13 @@
 <tr class="row-even"><td><p>”australia”</p></td>
 <td><p>IBTrACS* (special case)</p></td>
 </tr>
-<tr class="row-odd"><td><p>”south_atlantic”</p></td>
+<tr class="row-odd"><td><p>”south_pacific”</p></td>
 <td><p>IBTrACS</p></td>
 </tr>
-<tr class="row-even"><td><p>”all”</p></td>
+<tr class="row-even"><td><p>”south_atlantic”</p></td>
+<td><p>IBTrACS</p></td>
+</tr>
+<tr class="row-odd"><td><p>”all”</p></td>
 <td><p>IBTrACS</p></td>
 </tr>
 </tbody>
@@ -245,7 +254,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.assign_storm_tornadoes.html#tropycal.tracks.TrackDataset.assign_storm_tornadoes" title="tropycal.tracks.TrackDataset.assign_storm_tornadoes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.assign_storm_tornadoes</span></code></a>([...])</p></td>
 <td><p>Assigns tornadoes to all North Atlantic tropical cyclones from TornadoDataset.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.climatology.html#tropycal.tracks.TrackDataset.climatology" title="tropycal.tracks.TrackDataset.climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.climatology</span></code></a>([year_range])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.climatology.html#tropycal.tracks.TrackDataset.climatology" title="tropycal.tracks.TrackDataset.climatology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.climatology</span></code></a>([climo_bounds])</p></td>
 <td><p>Create a climatology for this dataset given start and end seasons.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.download_tcr.html#tropycal.tracks.TrackDataset.download_tcr" title="tropycal.tracks.TrackDataset.download_tcr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.download_tcr</span></code></a>(storm[, save_path])</p></td>
@@ -299,16 +308,19 @@
 <tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.search_name.html#tropycal.tracks.TrackDataset.search_name" title="tropycal.tracks.TrackDataset.search_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.search_name</span></code></a>(name)</p></td>
 <td><p>Searches for hurricane seasons containing a storm of the requested name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.season_composite.html#tropycal.tracks.TrackDataset.season_composite" title="tropycal.tracks.TrackDataset.season_composite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.season_composite</span></code></a>(seasons[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.search_time.html#tropycal.tracks.TrackDataset.search_time" title="tropycal.tracks.TrackDataset.search_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.search_time</span></code></a>(time[, ...])</p></td>
+<td><p>Searches for all storms active during the requested time.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.season_composite.html#tropycal.tracks.TrackDataset.season_composite" title="tropycal.tracks.TrackDataset.season_composite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.season_composite</span></code></a>(seasons[, ...])</p></td>
 <td><p>Create composite statistics for a list of seasons.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html#tropycal.tracks.TrackDataset.storm_ace_vs_season" title="tropycal.tracks.TrackDataset.storm_ace_vs_season"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.storm_ace_vs_season</span></code></a>(storm[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html#tropycal.tracks.TrackDataset.storm_ace_vs_season" title="tropycal.tracks.TrackDataset.storm_ace_vs_season"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.storm_ace_vs_season</span></code></a>(storm[, ...])</p></td>
 <td><p>Retrives a list of entire hurricane seasons with lower ACE than the storm provided.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.to_dataframe.html#tropycal.tracks.TrackDataset.to_dataframe" title="tropycal.tracks.TrackDataset.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.to_dataframe</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.to_dataframe.html#tropycal.tracks.TrackDataset.to_dataframe" title="tropycal.tracks.TrackDataset.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.to_dataframe</span></code></a>()</p></td>
 <td><p>Retrieve a Pandas DataFrame for all seasons within TrackDataset.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.wind_pres_relationship.html#tropycal.tracks.TrackDataset.wind_pres_relationship" title="tropycal.tracks.TrackDataset.wind_pres_relationship"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.wind_pres_relationship</span></code></a>([storm, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.TrackDataset.wind_pres_relationship.html#tropycal.tracks.TrackDataset.wind_pres_relationship" title="tropycal.tracks.TrackDataset.wind_pres_relationship"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrackDataset.wind_pres_relationship</span></code></a>([storm, ...])</p></td>
 <td><p>Creates a climatology of maximum sustained wind speed vs minimum MSLP relationships.</p></td>
 </tr>
 </tbody>
@@ -329,7 +341,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

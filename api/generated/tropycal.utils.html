@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="accumulated_cyclone_energy" href="tropycal.utils.accumulated_cyclone_energy.html" />
-    <link rel="prev" title="RealtimeStorm.to_xarray" href="tropycal.realtime.RealtimeStorm.to_xarray.html" /> 
+    <link rel="prev" title="Ships.to_xarray" href="tropycal.ships.Ships.to_xarray.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> tropycal
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -57,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.ships.html">Ships</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">utils</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#generic-utilities">Generic Utilities</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.accumulated_cyclone_energy.html">accumulated_cyclone_energy</a></li>
@@ -74,11 +79,14 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.get_two_archive.html">get_two_archive</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.knots_to_mph.html">knots_to_mph</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.nhc_cone_radii.html">nhc_cone_radii</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.ships_parser.html">ships_parser</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#cartopy-utilities">Cartopy Utilities</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.add_tropycal.html">add_tropycal</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.plot_storm.html">plot_storm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.plot_two.html">plot_two</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.plot_cone.html">plot_cone</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#colors">Colors</a><ul>
@@ -109,9 +117,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-      <li>utils</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+      <li class="breadcrumb-item active">utils</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/generated/tropycal.utils.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -146,7 +154,7 @@
 <td><p>Calculate an ellipse representing ensemble member location spread.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.classify_subtropical.html#tropycal.utils.classify_subtropical" title="tropycal.utils.classify_subtropical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">classify_subtropical</span></code></a>(storm_type)</p></td>
-<td><p>Determine whether a tropical cyclone was purely subtropical.</p></td>
+<td><p>Check whether a tropical cyclone was purely subtropical.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.create_storm_dict.html#tropycal.utils.create_storm_dict" title="tropycal.utils.create_storm_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_storm_dict</span></code></a>(filepath, storm_name, storm_id)</p></td>
 <td><p>Creates a storm dict from custom user-provided data.</p></td>
@@ -178,6 +186,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.nhc_cone_radii.html#tropycal.utils.nhc_cone_radii" title="tropycal.utils.nhc_cone_radii"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nhc_cone_radii</span></code></a>(year, basin[, forecast_hour])</p></td>
 <td><p>Retrieve the official NHC Cone of Uncertainty radii by basin, year and forecast hour(s).</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.ships_parser.html#tropycal.utils.ships_parser" title="tropycal.utils.ships_parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ships_parser</span></code></a>(content)</p></td>
+<td><p>Parses SHIPS text data into multiple sorted dictionaries.</p></td>
+</tr>
 </tbody>
 </table>
 </div></blockquote>
@@ -196,6 +207,12 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.plot_storm.html#tropycal.utils.plot_storm" title="tropycal.utils.plot_storm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_storm</span></code></a>(self, storm, *args, **kwargs)</p></td>
 <td><p>Plot a Storm object on the axes instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.utils.plot_two.html#tropycal.utils.plot_two" title="tropycal.utils.plot_two"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_two</span></code></a>(self, two_dict[, days])</p></td>
+<td><p>Plot a NHC Tropical Weather Outlook (TWO) on the axes instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.utils.plot_cone.html#tropycal.utils.plot_cone" title="tropycal.utils.plot_cone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_cone</span></code></a>(self, cone[, plot_center_line])</p></td>
+<td><p>Plots a Tropycal derived National Hurricane Center (NHC) cone of uncertainty.</p></td>
 </tr>
 </tbody>
 </table>
@@ -229,14 +246,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="tropycal.realtime.RealtimeStorm.to_xarray.html" class="btn btn-neutral float-left" title="RealtimeStorm.to_xarray" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.ships.Ships.to_xarray.html" class="btn btn-neutral float-left" title="Ships.to_xarray" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="tropycal.utils.accumulated_cyclone_energy.html" class="btn btn-neutral float-right" title="accumulated_cyclone_energy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

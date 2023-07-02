@@ -27,7 +27,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="API Reference" href="../api/index.html" />
+    <link rel="next" title="Standalone Cartopy Functionality" href="cartopy.html" />
     <link rel="prev" title="TC Dataset Analysis" href="tracks.TrackDataset.html" /> 
 </head>
 
@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> tropycal
-            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            tropycal
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -57,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tracks.storm.html">Individual Storm Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tc_rainfall.html">Tropical Cyclone Rainfall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analogs.html">Historical TC Track Analogs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ships.html">Reading SHIPS Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="customize_storm.html">Customizing Storm Plots</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tracks.TrackDataset.html">TC Dataset Analysis</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Aircraft Recon Data Analysis</a><ul>
@@ -70,6 +75,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#vortex-data-messages-vdms">Vortex Data Messages (VDMs)</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="cartopy.html">Standalone Cartopy Functionality</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
@@ -90,9 +96,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Examples</a> &raquo;</li>
-      <li>Aircraft Recon Data Analysis</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Aircraft Recon Data Analysis</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/examples/recon.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -104,7 +110,7 @@
              
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-examples-recon-py"><span class="std std-ref">here</span></a>
+<p><a class="reference internal" href="#sphx-glr-download-examples-recon-py"><span class="std std-ref">Go to the end</span></a>
 to download the full example code</p>
 </div>
 <section class="sphx-glr-example-title" id="aircraft-recon-data-analysis">
@@ -121,9 +127,8 @@ to download the full example code</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (5.73 seconds)
+--&gt; Completed reading in HURDAT2 data (1.99 seconds)
 </pre></div>
 </div>
 <p>We’ll now retrieve a Storm object for Hurricane Irma (2017), which will be used for this example code.</p>
@@ -176,15 +181,14 @@ to download the full example code</p>
 <a href="../api/generated/tropycal.recon.hdobs.to_pickle.html#tropycal.recon.hdobs.to_pickle" title="tropycal.recon.hdobs.to_pickle" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">hdobs</span><span class="o">.</span><span class="n">to_pickle</span></a><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">name</span><span class="si">}{</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s1">_hdobs.pickle&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Searching through recon VDM files between 20170830 and 20170913 ...
---&gt; Completed reading in recon VDM files (16.4 seconds)
+--&gt; Completed reading in recon VDM files (17.0 seconds)
 Read 82 files
 Searching through recon dropsonde files between 201708290000 and 201709141200 ...
---&gt; Completed reading in recon dropsonde files (76.8 seconds)
+--&gt; Completed reading in recon dropsonde files (85.4 seconds)
 Read 460 files
 Searching through recon HDOB files between 20170829 and 20170914 ...
---&gt; Completed reading in recon HDOB files (298.9 seconds)
+--&gt; Completed reading in recon HDOB files (325.7 seconds)
 Read 1491 files
 Unable to decode 0 files
 </pre></div>
@@ -203,7 +207,6 @@ Unable to decode 0 files
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.ReconDataset.html#tropycal.recon.ReconDataset" title="tropycal.recon.ReconDataset" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span></a>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.recon.hdobs&gt;
 Dataset Summary:
     Storm:                        IRMA 2017
@@ -236,15 +239,13 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.ReconDataset.plot_summary.html#tropycal.recon.ReconDataset.plot_summary" title="tropycal.recon.ReconDataset.plot_summary" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">plot_summary</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_recon_001.png" srcset="../_images/sphx_glr_recon_001.png" alt="Hurricane IRMA Recon summary, Start ... 19:11 UTC 03 Sep 2017 End ... 22:37 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane IRMA\nRecon summary&#39;,&#39;right&#39;:&#39;Start ... 19:11 UTC 03 Sep 2017\nEnd ... 22:37 UTC 10 Sep 2017&#39;}&gt;
+<img src="../_images/sphx_glr_recon_001.png" srcset="../_images/sphx_glr_recon_001.png" alt="Hurricane IRMA Recon summary, Start ... 19:11 UTC 03 Sep 2017 End ... 22:37 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane IRMA\nRecon summary&#39;, &#39;right&#39;: &#39;Start ... 19:11 UTC 03 Sep 2017\nEnd ... 22:37 UTC 10 Sep 2017&#39;}&gt;
 </pre></div>
 </div>
 <p>Find the mission numbers that were active during a given time, within a distance (in km) from the storm:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.ReconDataset.find_mission.html#tropycal.recon.ReconDataset.find_mission" title="tropycal.recon.ReconDataset.find_mission" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">find_mission</span></a><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">12</span><span class="p">),</span> <span class="n">distance</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[&#39;17&#39;]
 </pre></div>
 </div>
@@ -252,8 +253,7 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.ReconDataset.plot_summary.html#tropycal.recon.ReconDataset.plot_summary" title="tropycal.recon.ReconDataset.plot_summary" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">plot_summary</span></a><span class="p">(</span><span class="n">mission</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_recon_002.png" srcset="../_images/sphx_glr_recon_002.png" alt="Hurricane IRMA Recon summary for mission 17, Start ... 08:54 UTC 07 Sep 2017 End ... 19:03 UTC 07 Sep 2017" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane IRMA\nRecon summary for mission 17&#39;,&#39;right&#39;:&#39;Start ... 08:54 UTC 07 Sep 2017\nEnd ... 19:03 UTC 07 Sep 2017&#39;}&gt;
+<img src="../_images/sphx_glr_recon_002.png" srcset="../_images/sphx_glr_recon_002.png" alt="Hurricane IRMA Recon summary for mission 17, Start ... 08:54 UTC 07 Sep 2017 End ... 19:03 UTC 07 Sep 2017" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane IRMA\nRecon summary for mission 17&#39;, &#39;right&#39;: &#39;Start ... 08:54 UTC 07 Sep 2017\nEnd ... 19:03 UTC 07 Sep 2017&#39;}&gt;
 </pre></div>
 </div>
 </section>
@@ -263,7 +263,6 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.hdobs.html#tropycal.recon.hdobs" title="tropycal.recon.hdobs" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">hdobs</span></a>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.recon.hdobs&gt;
 Dataset Summary:
     Storm:                        IRMA 2017
@@ -597,19 +596,17 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.hdobs.plot_points.html#tropycal.recon.hdobs.plot_points" title="tropycal.recon.hdobs.plot_points" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">hdobs</span><span class="o">.</span><span class="n">plot_points</span></a><span class="p">(</span><span class="s1">&#39;pkwnd&#39;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:{</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s1">&#39;gold&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">:</span><span class="s1">&#39;firebrick&#39;</span><span class="p">},</span><span class="s1">&#39;levels&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">161</span><span class="p">,</span><span class="mi">10</span><span class="p">)})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_recon_003.png" srcset="../_images/sphx_glr_recon_003.png" alt="Hurricane IRMA Recon: 10s FL wind speed (kt), Start ... 19:11 UTC 03 Sep 2017 End ... 22:37 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane IRMA\nRecon: 10s FL wind speed (kt)&#39;,&#39;right&#39;:&#39;Start ... 19:11 UTC 03 Sep 2017\nEnd ... 22:37 UTC 10 Sep 2017&#39;}&gt;
+<img src="../_images/sphx_glr_recon_003.png" srcset="../_images/sphx_glr_recon_003.png" alt="Hurricane IRMA Recon: 10s FL wind speed (kt), Start ... 19:11 UTC 03 Sep 2017 End ... 22:37 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane IRMA\nRecon: 10s FL wind speed (kt)&#39;, &#39;right&#39;: &#39;Start ... 19:11 UTC 03 Sep 2017\nEnd ... 22:37 UTC 10 Sep 2017&#39;}&gt;
 </pre></div>
 </div>
 <p>Plot a hovmoller from recon data interpolated to time and radius - note the eyewall replacement cycles:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.hdobs.plot_hovmoller.html#tropycal.recon.hdobs.plot_hovmoller" title="tropycal.recon.hdobs.plot_hovmoller" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">hdobs</span><span class="o">.</span><span class="n">plot_hovmoller</span></a><span class="p">(</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;pkwnd&#39;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:{</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s1">&#39;gold&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">:</span><span class="s1">&#39;firebrick&#39;</span><span class="p">},</span><span class="s1">&#39;levels&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">161</span><span class="p">,</span><span class="mi">10</span><span class="p">)})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_recon_004.png" srcset="../_images/sphx_glr_recon_004.png" alt="Hurricane IRMA Recon: 10s FL wind speed (kt), Start ... 06:00 UTC 04 Sep 2017 End ... 19:29 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting interpolation
---&gt; Completed interpolation (6.71 seconds)
+<img src="../_images/sphx_glr_recon_004.png" srcset="../_images/sphx_glr_recon_004.png" alt="Hurricane IRMA Recon: 10s FL wind speed (kt), Start ... 06:00 UTC 04 Sep 2017 End ... 19:29 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting interpolation
+--&gt; Completed interpolation (34.38 seconds)
 
-&lt;AxesSubplot:title={&#39;left&#39;:&#39;Hurricane IRMA\nRecon: 10s FL wind speed (kt)&#39;,&#39;right&#39;:&#39;Start ... 06:00 UTC 04 Sep 2017\nEnd ... 19:29 UTC 10 Sep 2017&#39;}, xlabel=&#39;Radius (km)&#39;, ylabel=&#39;UTC Time (MM-DD HH)&#39;&gt;
+&lt;Axes: title={&#39;left&#39;: &#39;Hurricane IRMA\nRecon: 10s FL wind speed (kt)&#39;, &#39;right&#39;: &#39;Start ... 06:00 UTC 04 Sep 2017\nEnd ... 19:29 UTC 10 Sep 2017&#39;}, xlabel=&#39;Radius (km)&#39;, ylabel=&#39;UTC Time (MM-DD HH)&#39;&gt;
 </pre></div>
 </div>
 <p>Plot a map valid at 1200 UTC 6 September 2017 interpolated to time and space:</p>
@@ -617,12 +614,11 @@ Dataset Summary:
 <a href="../api/generated/tropycal.recon.hdobs.plot_maps.html#tropycal.recon.hdobs.plot_maps" title="tropycal.recon.hdobs.plot_maps" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">hdobs</span><span class="o">.</span><span class="n">plot_maps</span></a><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span><span class="n">varname</span><span class="o">=</span><span class="s1">&#39;pkwnd&#39;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:{</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s1">&#39;gold&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">:</span><span class="s1">&#39;firebrick&#39;</span><span class="p">},</span><span class="s1">&#39;levels&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">161</span><span class="p">,</span><span class="mi">10</span><span class="p">)})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_recon_005.png" srcset="../_images/sphx_glr_recon_005.png" alt="Hurricane IRMA Recon: 10s FL wind speed (kt), 12:00 UTC 06 Sep 2017" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting interpolation
+<img src="../_images/sphx_glr_recon_005.png" srcset="../_images/sphx_glr_recon_005.png" alt="Hurricane IRMA Recon: 10s FL wind speed (kt), 12:00 UTC 06 Sep 2017" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting interpolation
 2017-09-06 12:00:00
---&gt; Completed interpolation (8.51 seconds)
+--&gt; Completed interpolation (11.83 seconds)
 
-&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane IRMA\nRecon: 10s FL wind speed (kt)&#39;,&#39;right&#39;:&#39;12:00 UTC 06 Sep 2017&#39;}&gt;
+&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane IRMA\nRecon: 10s FL wind speed (kt)&#39;, &#39;right&#39;: &#39;12:00 UTC 06 Sep 2017&#39;}&gt;
 </pre></div>
 </div>
 </section>
@@ -632,7 +628,6 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.dropsondes.html#tropycal.recon.dropsondes" title="tropycal.recon.dropsondes" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">dropsondes</span></a>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.recon.dropsondes&gt;
 Dataset Summary:
     Storm:                   IRMA 2017
@@ -648,7 +643,6 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.dropsondes.sel.html#tropycal.recon.dropsondes.sel" title="tropycal.recon.dropsondes.sel" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">dropsondes</span><span class="o">.</span><span class="n">sel</span></a><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s1">&#39;eyewall&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.recon.dropsondes&gt;
 Dataset Summary:
     Storm:                   IRMA 2017
@@ -664,7 +658,6 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.dropsondes.sel.html#tropycal.recon.dropsondes.sel" title="tropycal.recon.dropsondes.sel" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">dropsondes</span><span class="o">.</span><span class="n">sel</span></a><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s1">&#39;eyewall&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[{&#39;lat&#39;: 17.6, &#39;lon&#39;: -61.3, &#39;slp&#39;: 948.0, &#39;TOPlat&#39;: 17.61, &#39;TOPlon&#39;: -61.32, &#39;TOPtime&#39;: Timestamp(&#39;2017-09-06 03:07:00&#39;), &#39;BOTTOMlat&#39;: 17.49, &#39;BOTTOMlon&#39;: -61.4, &#39;BOTTOMtime&#39;: Timestamp(&#39;2017-09-06 03:10:00&#39;), &#39;MBLdir&#39;: nan, &#39;MBLspd&#39;: nan, &#39;DLMdir&#39;: 25.0, &#39;DLMspd&#39;: 139.0, &#39;WL150dir&#39;: 345.0, &#39;WL150spd&#39;: 133.0, &#39;top&#39;: 696.0, &#39;LSThgt&#39;: 13.0, &#39;software&#39;: &#39;AEV 33304&#39;, &#39;levels&#39;:       pres     hgt  temp  dwpt   wdir   wspd
 0   1000.0     NaN   NaN   NaN    NaN    NaN
 1    948.0     0.0  24.6  23.9    NaN    NaN
@@ -694,7 +687,6 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.dropsondes.sel.html#tropycal.recon.dropsondes.sel" title="tropycal.recon.dropsondes.sel" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">dropsondes</span><span class="o">.</span><span class="n">sel</span></a><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s1">&#39;eyewall&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span><span class="o">.</span><span class="n">plot_skewt</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 1700x1100 with 4 Axes&gt;
 </pre></div>
 </div>
@@ -702,16 +694,14 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.dropsondes.plot_points.html#tropycal.recon.dropsondes.plot_points" title="tropycal.recon.dropsondes.plot_points" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">dropsondes</span><span class="o">.</span><span class="n">plot_points</span></a><span class="p">(</span><span class="s1">&#39;temp&#39;</span><span class="p">,</span><span class="n">level</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:{</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s1">&#39;gold&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">:</span><span class="s1">&#39;firebrick&#39;</span><span class="p">},</span><span class="s1">&#39;ms&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_recon_006.png" srcset="../_images/sphx_glr_recon_006.png" alt="Hurricane IRMA Recon: 850hPa temperature (deg C), Start ... 21:05 UTC 03 Sep 2017 End ... 21:33 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane IRMA\nRecon: 850hPa temperature (deg C)&#39;,&#39;right&#39;:&#39;Start ... 21:05 UTC 03 Sep 2017\nEnd ... 21:33 UTC 10 Sep 2017&#39;}&gt;
+<img src="../_images/sphx_glr_recon_006.png" srcset="../_images/sphx_glr_recon_006.png" alt="Hurricane IRMA Recon: 850hPa temperature (deg C), Start ... 21:05 UTC 03 Sep 2017 End ... 21:33 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane IRMA\nRecon: 850hPa temperature (deg C)&#39;, &#39;right&#39;: &#39;Start ... 21:05 UTC 03 Sep 2017\nEnd ... 21:33 UTC 10 Sep 2017&#39;}&gt;
 </pre></div>
 </div>
 <p>Plot a map of only upper-air dropsondes released at 300mb and above, colored by wind speed at 300mb:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.dropsondes.sel.html#tropycal.recon.dropsondes.sel" title="tropycal.recon.dropsondes.sel" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">dropsondes</span><span class="o">.</span><span class="n">sel</span></a><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="mi">300</span><span class="p">))</span><span class="o">.</span><span class="n">plot_points</span><span class="p">(</span><span class="s1">&#39;wspd&#39;</span><span class="p">,</span><span class="n">level</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:{</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s1">&#39;gold&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">:</span><span class="s1">&#39;firebrick&#39;</span><span class="p">},</span><span class="s1">&#39;ms&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_recon_007.png" srcset="../_images/sphx_glr_recon_007.png" alt="Hurricane IRMA Recon: 300hPa wind speed (kt), Start ... 17:58 UTC 04 Sep 2017 End ... 01:04 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane IRMA\nRecon: 300hPa wind speed (kt)&#39;,&#39;right&#39;:&#39;Start ... 17:58 UTC 04 Sep 2017\nEnd ... 01:04 UTC 10 Sep 2017&#39;}&gt;
+<img src="../_images/sphx_glr_recon_007.png" srcset="../_images/sphx_glr_recon_007.png" alt="Hurricane IRMA Recon: 300hPa wind speed (kt), Start ... 17:58 UTC 04 Sep 2017 End ... 01:04 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane IRMA\nRecon: 300hPa wind speed (kt)&#39;, &#39;right&#39;: &#39;Start ... 17:58 UTC 04 Sep 2017\nEnd ... 01:04 UTC 10 Sep 2017&#39;}&gt;
 </pre></div>
 </div>
 </section>
@@ -721,7 +711,6 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.vdms.html#tropycal.recon.vdms" title="tropycal.recon.vdms" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">vdms</span></a>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.recon.vdms&gt;
 Dataset Summary:
     Storm:                   IRMA 2017
@@ -735,7 +724,6 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.vdms.isel.html#tropycal.recon.vdms.isel" title="tropycal.recon.vdms.isel" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">vdms</span><span class="o">.</span><span class="n">isel</span></a><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[{&#39;time&#39;: datetime.datetime(2017, 9, 4, 23, 7, 5), &#39;lat&#39;: 16.68, &#39;lon&#39;: -54.87, &#39;Standard Level (hPa)&#39;: nan, &#39;Minimum Height at Standard Level (m)&#39;: nan, &#39;Estimated Maximum Surface Wind Inbound (kt)&#39;: 97.0, &#39;Dropsonde Surface Wind Speed at Center (kt)&#39;: 13.0, &#39;Dropsonde Surface Wind Direction at Center (deg)&#39;: 263.0, &#39;Maximum Flight Level Wind Inbound&#39;: &#39;353 deg 110 kt&#39;, &#39;Location of the Maximum Flight Level Wind Inbound&#39;: &#39;264 deg 15 nm&#39;, &#39;Minimum Sea Level Pressure (hPa)&#39;: 945.0, &#39;Maximum Flight Level Temp Outside Eye (C)&#39;: 13.0, &#39;Maximum Flight Level Temp Inside Eye (C)&#39;: 19.0, &#39;Dew Point Inside Eye (C)&#39;: 18.0, &#39;Eye character&#39;: &#39;closed&#39;, &#39;Eye Shape&#39;: &#39;circular&#39;, &#39;Eye Diameter (nmi)&#39;: 25.0, &#39;Aircraft&#39;: &#39;NOAA2&#39;, &#39;mission&#39;: &#39;05&#39;, &#39;Remarks&#39;: &#39; MAX FL WIND 130 KT 001 / 22 NM 21:45:54Z MAX FL TEMP 19 C 108 / 6 NM FROM FL CNTR CNTR DROPSONDE SFC WIND 130 / 06 KTS  &#39;, &#39;mission_id&#39;: &#39;NOAA2-0511A-IRMA&#39;}]
 </pre></div>
 </div>
@@ -743,12 +731,11 @@ Dataset Summary:
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.recon.vdms.plot_points.html#tropycal.recon.vdms.plot_points" title="tropycal.recon.vdms.plot_points" class="sphx-glr-backref-module-tropycal-recon sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">recon</span><span class="o">.</span><span class="n">vdms</span><span class="o">.</span><span class="n">plot_points</span></a><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cmap&#39;</span><span class="p">:{</span><span class="mi">3</span><span class="p">:</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s1">&#39;gold&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;firebrick&#39;</span><span class="p">},</span><span class="s1">&#39;ms&#39;</span><span class="p">:</span><span class="mi">40</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_recon_008.png" srcset="../_images/sphx_glr_recon_008.png" alt="Hurricane IRMA Recon: Minimum Sea Level Pressure (hPa), Start ... 21:26 UTC 03 Sep 2017 End ... 20:38 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane IRMA\nRecon: Minimum Sea Level Pressure (hPa)&#39;,&#39;right&#39;:&#39;Start ... 21:26 UTC 03 Sep 2017\nEnd ... 20:38 UTC 10 Sep 2017&#39;}&gt;
+<img src="../_images/sphx_glr_recon_008.png" srcset="../_images/sphx_glr_recon_008.png" alt="Hurricane IRMA Recon: Minimum Sea Level Pressure (hPa), Start ... 21:26 UTC 03 Sep 2017 End ... 20:38 UTC 10 Sep 2017" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane IRMA\nRecon: Minimum Sea Level Pressure (hPa)&#39;, &#39;right&#39;: &#39;Start ... 21:26 UTC 03 Sep 2017\nEnd ... 20:38 UTC 10 Sep 2017&#39;}&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 7 minutes  54.202 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-recon-py">
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 8 minutes  37.605 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-recon-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/daa5d54f4e433805d59c2a1b942e143f/recon.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">recon.py</span></code></a></p>
 </div>
@@ -765,13 +752,13 @@ Dataset Summary:
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="tracks.TrackDataset.html" class="btn btn-neutral float-left" title="TC Dataset Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../api/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cartopy.html" class="btn btn-neutral float-right" title="Standalone Cartopy Functionality" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

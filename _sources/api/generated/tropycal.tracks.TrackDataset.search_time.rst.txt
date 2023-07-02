@@ -1,0 +1,12 @@
+TrackDataset.search_time
+========================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: TrackDataset.search_time
+
+.. include:: tropycal.tracks.TrackDataset.search_time
+
+.. raw:: html
+
+      <div style='clear:both'></div>

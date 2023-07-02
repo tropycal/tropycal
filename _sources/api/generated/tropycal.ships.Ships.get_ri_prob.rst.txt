@@ -1,0 +1,12 @@
+Ships.get_ri_prob
+================================
+
+.. currentmodule:: tropycal.ships
+
+.. automethod:: Ships.get_ri_prob
+
+.. include:: tropycal.ships.Ships.get_ri_prob
+
+.. raw:: html
+
+      <div style='clear:both'></div>

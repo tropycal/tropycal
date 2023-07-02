@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> tropycal
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -71,6 +75,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_realtime_formation_prob.html">RealtimeStorm.get_realtime_formation_prob</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_realtime_info.html">RealtimeStorm.get_realtime_info</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_recon.html">RealtimeStorm.get_recon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_ships.html">RealtimeStorm.get_ships</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.interp.html">RealtimeStorm.interp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.list_nhc_discussions.html">RealtimeStorm.list_nhc_discussions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot.html">RealtimeStorm.plot</a></li>
@@ -81,6 +86,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_nhc_forecast.html">RealtimeStorm.plot_nhc_forecast</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_tors.html">RealtimeStorm.plot_tors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.query_nhc_discussions.html">RealtimeStorm.query_nhc_discussions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.search_ships.html">RealtimeStorm.search_ships</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.sel.html">RealtimeStorm.sel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.to_dataframe.html">RealtimeStorm.to_dataframe</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.to_dict.html">RealtimeStorm.to_dict</a></li>
@@ -89,6 +95,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.ships.html">Ships</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
@@ -110,10 +117,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-          <li><a href="tropycal.realtime.html">Realtime</a> &raquo;</li>
-      <li>tropycal.realtime.RealtimeStorm</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.realtime.html">Realtime</a></li>
+      <li class="breadcrumb-item active">tropycal.realtime.RealtimeStorm</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/generated/tropycal.realtime.RealtimeStorm.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -145,7 +152,7 @@
 </pre></div>
 </div>
 <p>Now this storm’s data is stored in the variable <code class="docutils literal notranslate"><span class="pre">storm</span></code>, which is an instance of RealtimeStorm and can access all of the methods and attributes of a RealtimeStorm object.</p>
-<p>All the variables associated with a RealtimeStorm object (e.g., lat, lon, date, vmax) can be accessed in two ways. The first is directly from the RealtimeStorm object:</p>
+<p>All the variables associated with a RealtimeStorm object (e.g., lat, lon, time, vmax) can be accessed in two ways. The first is directly from the RealtimeStorm object:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">storm</span><span class="o">.</span><span class="n">lat</span>
 <span class="go">array([ 9.8, 10.3, 10.8, 11.4, 11.9, 12.1, 12.2, 12.4, 12.6, 12.8, 13. ,</span>
 <span class="go">       12.9, 12.8, 12.9, 13.2, 13.6, 13.8, 13.9, 14. , 14. , 14.3, 14.6,</span>
@@ -157,7 +164,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span> <span class="o">=</span> <span class="n">variable_dict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="n">variable_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">variable_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-<span class="go">dict_keys([&#39;date&#39;, &#39;extra_obs&#39;, &#39;special&#39;, &#39;type&#39;, &#39;lat&#39;, &#39;lon&#39;, &#39;vmax&#39;, &#39;mslp&#39;, &#39;wmo_basin&#39;])</span>
+<span class="go">dict_keys([&#39;time&#39;, &#39;extra_obs&#39;, &#39;special&#39;, &#39;type&#39;, &#39;lat&#39;, &#39;lon&#39;, &#39;vmax&#39;, &#39;mslp&#39;, &#39;wmo_basin&#39;])</span>
 </pre></div>
 </div>
 <p>RealtimeStorm objects also have numerous attributes with information about the storm. <code class="docutils literal notranslate"><span class="pre">storm.attrs</span></code> returns a dictionary of the attributes for this RealtimeStorm object.</p>
@@ -223,35 +230,41 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_recon.html#tropycal.realtime.RealtimeStorm.get_recon" title="tropycal.realtime.RealtimeStorm.get_recon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.get_recon</span></code></a>([path_vdm, ...])</p></td>
 <td><p>Retrieves all aircraft reconnaissance data for this storm.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.interp.html#tropycal.realtime.RealtimeStorm.interp" title="tropycal.realtime.RealtimeStorm.interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.interp</span></code></a>([hours, dt_window, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_ships.html#tropycal.realtime.RealtimeStorm.get_ships" title="tropycal.realtime.RealtimeStorm.get_ships"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.get_ships</span></code></a>(time)</p></td>
+<td><p>Retrieves a Ships object containing SHIPS data for a requested time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.interp.html#tropycal.realtime.RealtimeStorm.interp" title="tropycal.realtime.RealtimeStorm.interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.interp</span></code></a>([hours, dt_window, ...])</p></td>
 <td><p>Interpolate a storm temporally to a specified time resolution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.list_nhc_discussions.html#tropycal.realtime.RealtimeStorm.list_nhc_discussions" title="tropycal.realtime.RealtimeStorm.list_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.list_nhc_discussions</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.list_nhc_discussions.html#tropycal.realtime.RealtimeStorm.list_nhc_discussions" title="tropycal.realtime.RealtimeStorm.list_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.list_nhc_discussions</span></code></a>()</p></td>
 <td><p>Retrieves a list of NHC forecast discussions for this storm, archived on <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/archive/">https://ftp.nhc.noaa.gov/atcf/archive/</a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot.html#tropycal.realtime.RealtimeStorm.plot" title="tropycal.realtime.RealtimeStorm.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot</span></code></a>([domain, plot_all_dots, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot.html#tropycal.realtime.RealtimeStorm.plot" title="tropycal.realtime.RealtimeStorm.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot</span></code></a>([domain, plot_all_dots, ...])</p></td>
 <td><p>Creates a plot of the observed track of the storm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_TCtors_rotated.html#tropycal.realtime.RealtimeStorm.plot_TCtors_rotated" title="tropycal.realtime.RealtimeStorm.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_TCtors_rotated</span></code></a>([...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_TCtors_rotated.html#tropycal.realtime.RealtimeStorm.plot_TCtors_rotated" title="tropycal.realtime.RealtimeStorm.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_TCtors_rotated</span></code></a>([...])</p></td>
 <td><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_ensembles.html#tropycal.realtime.RealtimeStorm.plot_ensembles" title="tropycal.realtime.RealtimeStorm.plot_ensembles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_ensembles</span></code></a>([forecast, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_ensembles.html#tropycal.realtime.RealtimeStorm.plot_ensembles" title="tropycal.realtime.RealtimeStorm.plot_ensembles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_ensembles</span></code></a>([forecast, ...])</p></td>
 <td><p>Creates a plot of individual GEFS ensemble tracks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_forecast_realtime.html#tropycal.realtime.RealtimeStorm.plot_forecast_realtime" title="tropycal.realtime.RealtimeStorm.plot_forecast_realtime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_forecast_realtime</span></code></a>([...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_forecast_realtime.html#tropycal.realtime.RealtimeStorm.plot_forecast_realtime" title="tropycal.realtime.RealtimeStorm.plot_forecast_realtime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_forecast_realtime</span></code></a>([...])</p></td>
 <td><p>Plots the latest available official forecast.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_models.html#tropycal.realtime.RealtimeStorm.plot_models" title="tropycal.realtime.RealtimeStorm.plot_models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_models</span></code></a>([forecast, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_models.html#tropycal.realtime.RealtimeStorm.plot_models" title="tropycal.realtime.RealtimeStorm.plot_models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_models</span></code></a>([forecast, ...])</p></td>
 <td><p>Creates a plot of operational model forecast tracks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_nhc_forecast.html#tropycal.realtime.RealtimeStorm.plot_nhc_forecast" title="tropycal.realtime.RealtimeStorm.plot_nhc_forecast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_nhc_forecast</span></code></a>(forecast[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_nhc_forecast.html#tropycal.realtime.RealtimeStorm.plot_nhc_forecast" title="tropycal.realtime.RealtimeStorm.plot_nhc_forecast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_nhc_forecast</span></code></a>(forecast[, ...])</p></td>
 <td><p>Creates a plot of the operational NHC forecast track along with observed track data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_tors.html#tropycal.realtime.RealtimeStorm.plot_tors" title="tropycal.realtime.RealtimeStorm.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_tors</span></code></a>([dist_thresh, Tors, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_tors.html#tropycal.realtime.RealtimeStorm.plot_tors" title="tropycal.realtime.RealtimeStorm.plot_tors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.plot_tors</span></code></a>([dist_thresh, Tors, ...])</p></td>
 <td><p>Creates a plot of the storm and associated tornado tracks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.query_nhc_discussions.html#tropycal.realtime.RealtimeStorm.query_nhc_discussions" title="tropycal.realtime.RealtimeStorm.query_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.query_nhc_discussions</span></code></a>(query)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.query_nhc_discussions.html#tropycal.realtime.RealtimeStorm.query_nhc_discussions" title="tropycal.realtime.RealtimeStorm.query_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.query_nhc_discussions</span></code></a>(query)</p></td>
 <td><p>Searches for the given word or phrase through all NHC forecast discussions for this storm.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.search_ships.html#tropycal.realtime.RealtimeStorm.search_ships" title="tropycal.realtime.RealtimeStorm.search_ships"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.search_ships</span></code></a>()</p></td>
+<td><p>Searches for available SHIPS files for this storm, if available.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="tropycal.realtime.RealtimeStorm.sel.html#tropycal.realtime.RealtimeStorm.sel" title="tropycal.realtime.RealtimeStorm.sel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RealtimeStorm.sel</span></code></a>([time, lat, lon, vmax, ...])</p></td>
 <td><p>Subset this storm by any of its parameters and return a new storm object.</p></td>
@@ -283,7 +296,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

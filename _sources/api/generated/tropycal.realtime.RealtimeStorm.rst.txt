@@ -27,6 +27,7 @@ tropycal.realtime.RealtimeStorm
          RealtimeStorm.get_realtime_formation_prob
          RealtimeStorm.get_realtime_info
          RealtimeStorm.get_recon
+         RealtimeStorm.get_ships
          RealtimeStorm.interp
          RealtimeStorm.list_nhc_discussions
          RealtimeStorm.plot
@@ -37,6 +38,7 @@ tropycal.realtime.RealtimeStorm
          RealtimeStorm.plot_nhc_forecast
          RealtimeStorm.plot_tors
          RealtimeStorm.query_nhc_discussions
+         RealtimeStorm.search_ships
          RealtimeStorm.sel
          RealtimeStorm.to_dataframe
          RealtimeStorm.to_dict

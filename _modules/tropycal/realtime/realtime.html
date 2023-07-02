@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> tropycal
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -66,9 +70,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>tropycal.realtime.realtime</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tropycal.realtime.realtime</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -80,48 +84,39 @@
   <h1>Source code for tropycal.realtime.realtime</h1><div class="highlight"><pre>
 <span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Functionality for managing real-time tropical cyclone data.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">calendar</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">interp</span>
+<span class="kn">import</span> <span class="nn">ssl</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">urllib</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span><span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span><span class="p">,</span> <span class="n">timedelta</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">shapefile</span>
     <span class="kn">import</span> <span class="nn">zipfile</span>
-    <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span><span class="p">,</span> <span class="n">BytesIO</span>
-<span class="k">except</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">warn_message</span> <span class="o">=</span> <span class="s2">&quot;Warning: The libraries necessary for online NHC forecast retrieval aren&#39;t available (shapefile, gzip, io).&quot;</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn_message</span><span class="p">)</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
-    <span class="kn">from</span> <span class="nn">cartopy</span> <span class="kn">import</span> <span class="n">crs</span> <span class="k">as</span> <span class="n">ccrs</span>
-    <span class="kn">from</span> <span class="nn">cartopy.mpl.gridliner</span> <span class="kn">import</span> <span class="n">LONGITUDE_FORMATTER</span><span class="p">,</span> <span class="n">LATITUDE_FORMATTER</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="n">warn_message</span> <span class="o">=</span> <span class="s2">&quot;Warning: Cartopy is not installed in your python environment. Plotting functions will not work.&quot;</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn_message</span><span class="p">)</span>
-
-<span class="c1">#Internal imports</span>
+<span class="c1"># Internal imports</span>
 <span class="kn">from</span> <span class="nn">.storm</span> <span class="kn">import</span> <span class="n">RealtimeStorm</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span> <span class="nn">..tracks.plot</span> <span class="kn">import</span> <span class="n">TrackPlot</span>
 
+
 <div class="viewcode-block" id="Realtime"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.Realtime.html#tropycal.realtime.Realtime">[docs]</a><span class="k">class</span> <span class="nc">Realtime</span><span class="p">():</span>
-    
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates an instance of a Realtime object containing currently active tropical cyclones and invests.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Realtime objects are used to retrieve RealtimeStorm objects, which are created for every active tropical cyclone globally upon creating an instance of Realtime.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Data sources are as follows:</span>
 <span class="sd">    National Hurricane Center (NHC): https://ftp.nhc.noaa.gov/atcf/btk/</span>
 <span class="sd">    Joint Typhoon Warning Center (JTWC): (read notes for more details)</span>
-<span class="sd">    </span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    jtwc : bool, optional</span>
@@ -130,252 +125,272 @@
 <span class="sd">        If jtwc is set to True, this specifies the JTWC data source to read from. Available options are &quot;noaa&quot;, &quot;ucar&quot; or &quot;jtwc&quot;. Default is &quot;jtwc&quot;. Read the notes for more details.</span>
 <span class="sd">    ssl_certificate : boolean, optional</span>
 <span class="sd">        If jtwc is set to True, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    tropycal.realtime.Realtime</span>
 <span class="sd">        An instance of Realtime.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    During 2021, the multiple sources offering a Best Track archive of raw JTWC tropical cyclone data experienced frequent outages and/or severe slowdowns, hampering the ability to easily retrieve this data. As such, JTWC data has been optional in Realtime objects since v0.2.7. There are three JTWC sources available:</span>
-<span class="sd">    </span>
+
 <span class="sd">    * **jtwc** - This is currently the default JTWC source if JTWC data is read in. As of June 2022, this source is working, but reading data is somewhat slow (can take up to 2 minutes).</span>
 <span class="sd">    * **ucar** - As of September 2021, this source is available and fairly quick to read in, but offers a less compherensive storm history than the &quot;jtwc&quot; source. Between July and September 2021, this source did not update any active tropical cyclones outside of NHC&#39;s domain. If using this source, check to make sure it is in fact retrieving current global tropical cyclones.</span>
 <span class="sd">    * **noaa** - This source was inactive from July 2021 through early 2022, and appears to be back online again. The code retains the ability to read in data from this source should it go back offline then return online again.</span>
-<span class="sd">    </span>
+
 <span class="sd">    .. warning::</span>
 
 <span class="sd">        JTWC&#39;s SSL certificate appears to have expired sometime in early 2022. If using JTWC data with the ``jtwc=True`` argument, this will result in Realtime functionality crashing by default. To avoid this, add a ``ssl_certificate=False`` argument to both creating an instance of Realtime and to any method that retrieves JTWC forecast.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Affected functions include ``Realtime.plot_summary()``, ``RealtimeStorm.get_forecast_realtime()``, and ``RealtimeStorm.plot_forecast_realtime()``.</span>
-<span class="sd">    </span>
+
 <span class="sd">    The following block of code creates an instance of a Realtime() object and stores it in a variable called &quot;realtime_obj&quot;:</span>
-<span class="sd">    </span>
+
 <span class="sd">    .. code-block:: python</span>
-<span class="sd">    </span>
+
 <span class="sd">        from tropycal import realtime</span>
 <span class="sd">        realtime_obj = realtime.Realtime()</span>
-<span class="sd">        </span>
+
 <span class="sd">    With an instance of Realtime created, any of the methods listed below can be accessed via the &quot;realtime_obj&quot; variable. All active storms and invests are stored as attributes of this instance, and can be simply retrieved:</span>
-<span class="sd">    </span>
+
 <span class="sd">    .. code-block:: python</span>
-<span class="sd">        </span>
+
 <span class="sd">        #This stores an instance of a RealtimeStorm object for AL012021 in the &quot;storm&quot; variable.</span>
 <span class="sd">        storm = realtime_obj.AL012021</span>
-<span class="sd">        </span>
+
 <span class="sd">        #From there, you can use any method of a Storm object:</span>
 <span class="sd">        storm.plot()</span>
-<span class="sd">    </span>
+
 <span class="sd">    RealtimeStorm objects contain all the methods of Storm objects, in addition to special methods available only for storms retrieved via a Realtime object. As of Tropycal v0.3, this now includes invests, though Storm and RealtimeStorm objects retrieved for invests are blocked from performing functionality that does not apply to invests operationally (e.g., forecast discussions, official NHC/JTWC track forecasts).</span>
-<span class="sd">    </span>
+
 <span class="sd">    To check whether a RealtimeStorm object contains an invest, check the &quot;invest&quot; boolean stored in it:</span>
-<span class="sd">    </span>
+
 <span class="sd">    .. code-block:: python</span>
-<span class="sd">        </span>
+
 <span class="sd">        if storm.invest == True:</span>
 <span class="sd">            print(&quot;This is an invest!&quot;)</span>
 <span class="sd">        else:</span>
 <span class="sd">            print(&quot;This is not an invest!&quot;)</span>
-<span class="sd">    </span>
+
 <span class="sd">    Realtime objects have several attributes, including the time the object was last updated, which can be accessed in dictionary format as follows:</span>
-<span class="sd">    </span>
+
 <span class="sd">    &gt;&gt;&gt; realtime_obj.attrs</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-         
+
         <span class="n">summary</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&lt;tropycal.realtime.Realtime&gt;&quot;</span><span class="p">]</span>
 
-        <span class="c1">#Add general summary</span>
-        
-        <span class="c1">#Add dataset summary</span>
+        <span class="c1"># Add general summary</span>
+
+        <span class="c1"># Add dataset summary</span>
         <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Dataset Summary:&quot;</span><span class="p">)</span>
         <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s1">Numbers of active storms: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s1">Time Updated: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H%M UTC </span><span class="si">%d</span><span class="s2"> %B %Y&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        
+        <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="mi">4</span><span class="si">}</span><span class="s1">Time Updated: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H%M UTC </span><span class="si">%d</span><span class="s2"> %B %Y&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Active Storms:&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]:</span>
                     <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="mi">4</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-            
+
             <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Active Invests:&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]:</span>
                     <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="mi">4</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        
+
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-        
+
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-    
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">jtwc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">jtwc_source</span><span class="o">=</span><span class="s1">&#39;ucar&#39;</span><span class="p">,</span><span class="n">ssl_certificate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        
-        <span class="c1">#Define empty dict to store track data in</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jtwc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">jtwc_source</span><span class="o">=</span><span class="s1">&#39;ucar&#39;</span><span class="p">,</span> <span class="n">ssl_certificate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+        <span class="c1"># Define empty dict to store track data in</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">jtwc</span> <span class="o">=</span> <span class="n">jtwc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">jtwc_source</span> <span class="o">=</span> <span class="n">jtwc_source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ssl_certificate</span> <span class="o">=</span> <span class="n">ssl_certificate</span>
-        
-        <span class="c1">#Time data reading</span>
+
+        <span class="c1"># Time data reading</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--&gt; Starting to read in current storm data&quot;</span><span class="p">)</span>
-        
-        <span class="c1">#Read in best track data</span>
+
+        <span class="c1"># Read in best track data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__read_btk</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">jtwc_source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ucar&#39;</span><span class="p">,</span><span class="s1">&#39;noaa&#39;</span><span class="p">,</span><span class="s1">&#39;jtwc&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">jtwc_source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ucar&#39;</span><span class="p">,</span> <span class="s1">&#39;noaa&#39;</span><span class="p">,</span> <span class="s1">&#39;jtwc&#39;</span><span class="p">]:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">jtwc_source</span><span class="se">\&quot;</span><span class="s2"> must be either </span><span class="se">\&quot;</span><span class="s2">ucar</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">noaa</span><span class="se">\&quot;</span><span class="s2">, or </span><span class="se">\&quot;</span><span class="s2">jtwc</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">jtwc</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_btk_jtwc</span><span class="p">(</span><span class="n">jtwc_source</span><span class="p">,</span><span class="n">ssl_certificate</span><span class="p">)</span>
-        
-        <span class="c1">#Determine time elapsed</span>
+        <span class="k">if</span> <span class="n">jtwc</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__read_btk_jtwc</span><span class="p">(</span><span class="n">jtwc_source</span><span class="p">,</span> <span class="n">ssl_certificate</span><span class="p">)</span>
+
+        <span class="c1"># Determine time elapsed</span>
         <span class="n">time_elapsed</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
-        <span class="n">tsec</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">time_elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">(),</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">tsec</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">time_elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">(),</span> <span class="mi">2</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--&gt; Completed reading in current storm data (</span><span class="si">{</span><span class="n">tsec</span><span class="si">}</span><span class="s2"> seconds)&quot;</span><span class="p">)</span>
-        
-        <span class="c1">#Remove storms that haven&#39;t been active in 18 hours</span>
+
+        <span class="c1"># Remove storms that haven&#39;t been active in 18 hours</span>
         <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
-            
-            <span class="c1">#Filter for storm duration</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="c1"># Filter for storm duration</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
                 <span class="k">continue</span>
-            
-            <span class="c1">#Get last date</span>
-            <span class="n">last_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">current_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
-            
-            <span class="c1">#Get time difference</span>
-            <span class="n">hours_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_date</span> <span class="o">-</span> <span class="n">last_date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span>
+
+            <span class="c1"># Get last time</span>
+            <span class="n">last_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">current_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+
+            <span class="c1"># Get time difference</span>
+            <span class="n">hours_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_time</span> <span class="o">-</span> <span class="n">last_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span>
             <span class="k">if</span> <span class="n">hours_diff</span> <span class="o">&gt;=</span> <span class="mf">15.0</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">hours_diff</span> <span class="o">&gt;=</span> <span class="mf">9.0</span><span class="p">):</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">hours_diff</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">48.0</span><span class="p">:</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        
-        <span class="c1">#Remove invests that have been classified as TCs</span>
+
+        <span class="c1"># Remove invests that have been classified as TCs</span>
         <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
-            
-            <span class="c1">#Only keep invests</span>
+
+            <span class="c1"># Only keep invests</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> <span class="k">continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]:</span>
+                    <span class="k">continue</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">continue</span>
-            
-            <span class="c1">#Iterate through all storms</span>
+
+            <span class="c1"># Iterate through all storms</span>
             <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">for</span> <span class="n">key_storm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">continue</span>
-                
-                <span class="c1">#Check for overlap in lons</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span> <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
-            
-            <span class="k">if</span> <span class="n">match</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        
-        <span class="c1">#For each storm remaining, create a Storm object</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Check for overlap in lons</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="c1"># For each storm remaining, create a Storm object</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__read_nhc_shapefile</span><span class="p">()</span>
-            
-            <span class="c1">#Add probability attributes for storms where it&#39;s unavailable</span>
+
+            <span class="c1"># Add probability attributes for storms where it&#39;s unavailable</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span><span class="s1">&#39;EP&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">&#39;prob_2day&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span> <span class="s1">&#39;EP&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">&#39;prob_2day&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;prob_2day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;prob_5day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;prob_7day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;risk_2day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;risk_5day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
-                <span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span><span class="s1">&#39;EP&#39;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;risk_7day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
+                <span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;AL&#39;</span><span class="p">,</span> <span class="s1">&#39;EP&#39;</span><span class="p">]:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;prob_2day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;prob_5day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;prob_7day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;risk_2day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;risk_5day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;risk_7day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">TROPICAL_STORM_TYPES</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;prob_2day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;prob_5day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;prob_7day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;risk_2day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;risk_5day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;risk_7day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
                 <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">RealtimeStorm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
-            <span class="c1">#Delete data dict while retaining active storm keys</span>
+            <span class="c1"># Delete data dict while retaining active storm keys</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">storms</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
-            
-            <span class="c1">#Create an empty list signaling no active storms</span>
+
+            <span class="c1"># Create an empty list signaling no active storms</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">storms</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
-        
-        <span class="c1">#Save current time</span>
+
+        <span class="c1"># Save current time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-        
-        <span class="c1">#Set attributes</span>
+
+        <span class="c1"># Set attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;jtwc&#39;</span><span class="p">:</span><span class="n">jtwc</span><span class="p">,</span>
-            <span class="s1">&#39;jtwc_source&#39;</span><span class="p">:</span><span class="n">jtwc_source</span><span class="p">,</span>
-            <span class="s1">&#39;time&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span>
+            <span class="s1">&#39;jtwc&#39;</span><span class="p">:</span> <span class="n">jtwc</span><span class="p">,</span>
+            <span class="s1">&#39;jtwc_source&#39;</span><span class="p">:</span> <span class="n">jtwc_source</span><span class="p">,</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span>
         <span class="p">}</span>
-    
+
     <span class="k">def</span> <span class="nf">__read_btk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads in best track data into the Dataset object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="c1">#Get current year</span>
+
+        <span class="c1"># Get current year</span>
         <span class="n">current_year</span> <span class="o">=</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="o">.</span><span class="n">year</span>
 
-        <span class="c1">#Get list of files in online directory</span>
+        <span class="c1"># Get list of files in online directory</span>
         <span class="n">use_ftp</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">urlpath</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s1">&#39;https://ftp.nhc.noaa.gov/atcf/btk/&#39;</span><span class="p">)</span>
+            <span class="n">urlpath</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span>
+                <span class="s1">&#39;https://ftp.nhc.noaa.gov/atcf/btk/&#39;</span><span class="p">)</span>
             <span class="n">string</span> <span class="o">=</span> <span class="n">urlpath</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">use_ftp</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">urlpath</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s1">&#39;ftp://ftp.nhc.noaa.gov/atcf/btk/&#39;</span><span class="p">)</span>
+            <span class="n">urlpath</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span>
+                <span class="s1">&#39;ftp://ftp.nhc.noaa.gov/atcf/btk/&#39;</span><span class="p">)</span>
             <span class="n">string</span> <span class="o">=</span> <span class="n">urlpath</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 
-        <span class="c1">#Get relevant filenames from directory</span>
+        <span class="c1"># Get relevant filenames from directory</span>
         <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;b[aec][lp][012349][0123456789]</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">.dat&#39;</span>
 
         <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">search_pattern</span><span class="p">)</span>
         <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">filename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">filename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
-        <span class="c1">#For each file, read in file content and add to hurdat dict</span>
+        <span class="c1"># For each file, read in file content and add to hurdat dict</span>
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
 
-            <span class="c1">#Get file ID</span>
+            <span class="c1"># Get file ID</span>
             <span class="n">stormid</span> <span class="o">=</span> <span class="p">((</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.dat&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-            
-            <span class="c1">#Check for invest status</span>
+
+            <span class="c1"># Check for invest status</span>
             <span class="n">invest_bool</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
                 <span class="n">invest_bool</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="c1">#Determine basin</span>
+            <span class="c1"># Determine basin</span>
             <span class="n">add_basin</span> <span class="o">=</span> <span class="s1">&#39;north_atlantic&#39;</span>
             <span class="k">if</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span>
                 <span class="n">add_basin</span> <span class="o">=</span> <span class="s1">&#39;east_pacific&#39;</span>
             <span class="k">elif</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span>
                 <span class="n">add_basin</span> <span class="o">=</span> <span class="s1">&#39;east_pacific&#39;</span>
 
-            <span class="c1">#add empty entry into dict</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span><span class="n">stormid</span><span class="p">,</span><span class="s1">&#39;operational_id&#39;</span><span class="p">:</span><span class="n">stormid</span><span class="p">,</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;year&#39;</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]),</span><span class="s1">&#39;season&#39;</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]),</span><span class="s1">&#39;basin&#39;</span><span class="p">:</span><span class="n">add_basin</span><span class="p">,</span><span class="s1">&#39;source_info&#39;</span><span class="p">:</span><span class="s1">&#39;NHC Hurricane Database&#39;</span><span class="p">,</span><span class="s1">&#39;realtime&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span><span class="s1">&#39;invest&#39;</span><span class="p">:</span><span class="n">invest_bool</span><span class="p">,</span><span class="s1">&#39;source_method&#39;</span><span class="p">:</span><span class="s2">&quot;NHC&#39;s Automated Tropical Cyclone Forecasting System (ATCF)&quot;</span><span class="p">,</span><span class="s1">&#39;source_url&#39;</span><span class="p">:</span><span class="s2">&quot;https://ftp.nhc.noaa.gov/atcf/btk/&quot;</span><span class="p">}</span>
+            <span class="c1"># add empty entry into dict</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">stormid</span><span class="p">,</span>
+                <span class="s1">&#39;operational_id&#39;</span><span class="p">:</span> <span class="n">stormid</span><span class="p">,</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]),</span>
+                <span class="s1">&#39;season&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]),</span>
+                <span class="s1">&#39;basin&#39;</span><span class="p">:</span> <span class="n">add_basin</span><span class="p">,</span>
+                <span class="s1">&#39;source_info&#39;</span><span class="p">:</span> <span class="s1">&#39;NHC Hurricane Database&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;realtime&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;invest&#39;</span><span class="p">:</span> <span class="n">invest_bool</span><span class="p">,</span>
+                <span class="s1">&#39;source_method&#39;</span><span class="p">:</span> <span class="s2">&quot;NHC&#39;s Automated Tropical Cyclone Forecasting System (ATCF)&quot;</span><span class="p">,</span>
+                <span class="s1">&#39;source_url&#39;</span><span class="p">:</span> <span class="s2">&quot;https://ftp.nhc.noaa.gov/atcf/btk/&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;hurdat&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;jtwc_source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
 
-            <span class="c1">#add empty lists</span>
-            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;extra_obs&#39;</span><span class="p">,</span><span class="s1">&#39;special&#39;</span><span class="p">,</span><span class="s1">&#39;type&#39;</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;mslp&#39;</span><span class="p">,</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]:</span>
+            <span class="c1"># add empty lists</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;extra_obs&#39;</span><span class="p">,</span> <span class="s1">&#39;special&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;vmax&#39;</span><span class="p">,</span> <span class="s1">&#39;mslp&#39;</span><span class="p">,</span> <span class="s1">&#39;wmo_basin&#39;</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-            <span class="c1">#Read in file</span>
+            <span class="c1"># Read in file</span>
             <span class="k">if</span> <span class="n">use_ftp</span><span class="p">:</span>
                 <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ftp://ftp.nhc.noaa.gov/atcf/btk/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
@@ -384,81 +399,89 @@
             <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
             <span class="n">content_full</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">content_full</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">content</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span><span class="p">]</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span><span class="p">]</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            
-            <span class="c1">#Check if transition is in keywords for invests</span>
-            <span class="k">if</span> <span class="n">invest_bool</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="s1">&#39;TRANSITION&#39;</span> <span class="ow">in</span> <span class="n">content_full</span><span class="p">:</span>
+
+            <span class="c1"># Check if transition is in keywords for invests</span>
+            <span class="k">if</span> <span class="n">invest_bool</span> <span class="ow">and</span> <span class="s1">&#39;TRANSITION&#39;</span> <span class="ow">in</span> <span class="n">content_full</span><span class="p">:</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">]</span>
                 <span class="k">continue</span>
 
-            <span class="c1">#iterate through file lines</span>
+            <span class="c1"># iterate through file lines</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
 
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">28</span><span class="p">:</span> <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">28</span><span class="p">:</span>
+                    <span class="k">continue</span>
 
-                <span class="c1">#Get date of obs</span>
-                <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M&#39;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">STANDARD_HOURS</span><span class="p">:</span> <span class="k">continue</span>
+                <span class="c1"># Get time of obs</span>
+                <span class="n">time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M&#39;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">STANDARD_HOURS</span><span class="p">:</span>
+                    <span class="k">continue</span>
 
-                <span class="c1">#Ensure obs aren&#39;t being repeated</span>
-                <span class="k">if</span> <span class="n">date</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]:</span> <span class="k">continue</span>
+                <span class="c1"># Ensure obs aren&#39;t being repeated</span>
+                <span class="k">if</span> <span class="n">time</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]:</span>
+                    <span class="k">continue</span>
 
-                <span class="c1">#Get latitude into number</span>
+                <span class="c1"># Get latitude into number</span>
                 <span class="n">btk_lat_temp</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">btk_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">btk_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-                <span class="c1">#Get longitude into number</span>
+                <span class="c1"># Get longitude into number</span>
                 <span class="k">if</span> <span class="s2">&quot;W&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span>
                     <span class="n">btk_lon_temp</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;W&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">btk_lon</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">btk_lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span>
                 <span class="k">elif</span> <span class="s2">&quot;E&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span>
                     <span class="n">btk_lon_temp</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">btk_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">btk_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-                <span class="c1">#Get other relevant variables</span>
+                <span class="c1"># Get other relevant variables</span>
                 <span class="n">btk_wind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span>
                 <span class="n">btk_mslp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span>
                 <span class="n">btk_type</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span>
-                
-                <span class="c1">#Get last tropical date</span>
+
+                <span class="c1"># Get last tropical time</span>
                 <span class="k">if</span> <span class="n">btk_type</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">TROPICAL_STORM_TYPES</span><span class="p">:</span>
-                    <span class="n">last_tropical_date</span> <span class="o">=</span> <span class="n">date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">last_tropical_time</span> <span class="o">=</span> <span class="n">time</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-                <span class="c1">#Replace with NaNs</span>
-                <span class="k">if</span> <span class="n">btk_wind</span> <span class="o">&gt;</span> <span class="mi">250</span> <span class="ow">or</span> <span class="n">btk_wind</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span> <span class="n">btk_wind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                <span class="k">if</span> <span class="n">btk_mslp</span> <span class="o">&gt;</span> <span class="mi">1040</span> <span class="ow">or</span> <span class="n">btk_mslp</span> <span class="o">&lt;</span> <span class="mi">800</span><span class="p">:</span> <span class="n">btk_mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="c1"># Replace with NaNs</span>
+                <span class="k">if</span> <span class="n">btk_wind</span> <span class="o">&gt;</span> <span class="mi">250</span> <span class="ow">or</span> <span class="n">btk_wind</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+                    <span class="n">btk_wind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="k">if</span> <span class="n">btk_mslp</span> <span class="o">&gt;</span> <span class="mi">1040</span> <span class="ow">or</span> <span class="n">btk_mslp</span> <span class="o">&lt;</span> <span class="mi">800</span><span class="p">:</span>
+                    <span class="n">btk_mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
-                <span class="c1">#Add extra obs</span>
+                <span class="c1"># Add extra obs</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;extra_obs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-                <span class="c1">#Append into dict</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+                <span class="c1"># Append into dict</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;special&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btk_type</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">btk_lon</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">btk_lon</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btk_mslp</span><span class="p">)</span>
-                
-                <span class="c1">#Add basin</span>
+
+                <span class="c1"># Add basin</span>
                 <span class="n">origin_basin</span> <span class="o">=</span> <span class="n">add_basin</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span>
                 <span class="k">if</span> <span class="n">add_basin</span> <span class="o">==</span> <span class="s1">&#39;east_pacific&#39;</span><span class="p">:</span>
-                    <span class="n">check_basin</span> <span class="o">=</span> <span class="n">get_basin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">add_basin</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">check_basin</span> <span class="o">!=</span> <span class="n">add_basin</span><span class="p">:</span> <span class="n">origin_basin</span> <span class="o">=</span> <span class="s1">&#39;north_atlantic&#39;</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_basin</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">,</span><span class="n">btk_lon</span><span class="p">,</span><span class="n">origin_basin</span><span class="p">))</span>
+                    <span class="n">check_basin</span> <span class="o">=</span> <span class="n">get_basin</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">add_basin</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">check_basin</span> <span class="o">!=</span> <span class="n">add_basin</span><span class="p">:</span>
+                        <span class="n">origin_basin</span> <span class="o">=</span> <span class="s1">&#39;north_atlantic&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">get_basin</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">,</span> <span class="n">btk_lon</span><span class="p">,</span> <span class="n">origin_basin</span><span class="p">))</span>
 
-                <span class="c1">#Calculate ACE &amp; append to storm total</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-                    <span class="n">ace</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">btk_wind</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                <span class="c1"># Calculate ACE &amp; append to storm total</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">):</span>
+                    <span class="n">ace</span> <span class="o">=</span> <span class="n">accumulated_cyclone_energy</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">btk_type</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">NAMED_TROPICAL_STORM_TYPES</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">ace</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">ace</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 
-            <span class="c1">#Determine storm name for invests</span>
-            <span class="k">if</span> <span class="n">invest_bool</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-                
-                <span class="c1">#Determine letter in front of invest</span>
+            <span class="c1"># Determine storm name for invests</span>
+            <span class="k">if</span> <span class="n">invest_bool</span><span class="p">:</span>
+
+                <span class="c1"># Determine letter in front of invest</span>
                 <span class="n">add_letter</span> <span class="o">=</span> <span class="s1">&#39;L&#39;</span>
                 <span class="k">if</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span>
                     <span class="n">add_letter</span> <span class="o">=</span> <span class="s1">&#39;C&#39;</span>
@@ -471,199 +494,226 @@
                 <span class="k">elif</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span>
                     <span class="n">add_letter</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="n">add_letter</span>
-            
-            <span class="c1">#Add storm name</span>
+
+            <span class="c1"># Add storm name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
-            
-            <span class="c1">#Check if storm is still tropical, if not an invest.</span>
-            <span class="c1">#Re-designate as an invest if has not been a TC for over 18 hours.</span>
+
+            <span class="c1"># Check if storm is still tropical, if not an invest.</span>
+            <span class="c1"># Re-designate as an invest if has not been a TC for over 18 hours.</span>
             <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">TROPICAL_STORM_TYPES</span><span class="p">):</span>
-                <span class="n">current_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
-                <span class="n">date_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_date</span> <span class="o">-</span> <span class="n">last_tropical_date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">3600</span>
-                <span class="k">if</span> <span class="n">date_diff</span> <span class="o">&gt;</span> <span class="mi">18</span><span class="p">:</span>
+                <span class="n">current_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+                <span class="n">hour_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_time</span> <span class="o">-</span>
+                             <span class="n">last_tropical_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">3600</span>
+                <span class="k">if</span> <span class="n">hour_diff</span> <span class="o">&gt;</span> <span class="mi">18</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-        
-        
-    <span class="k">def</span> <span class="nf">__read_btk_jtwc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">source</span><span class="p">,</span><span class="n">ssl_certificate</span><span class="p">):</span>
-        
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__read_btk_jtwc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">ssl_certificate</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads in b-deck data from the Tropical Cyclone Guidance Project (TCGP) into the Dataset object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#Get current year</span>
+        <span class="c1"># Get current year</span>
         <span class="n">current_year</span> <span class="o">=</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="o">.</span><span class="n">year</span>
 
-        <span class="c1">#Get list of files in online directory</span>
+        <span class="c1"># Get list of files in online directory</span>
         <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.nrlmry.navy.mil/atcf_web/docs/tracks/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">/&#39;</span>
-        <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;noaa&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/&#39;</span>
-        <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ucar&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">/&#39;</span>
-        <span class="k">if</span> <span class="n">ssl_certificate</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span><span class="s1">&#39;noaa&#39;</span><span class="p">]:</span>
-            <span class="kn">import</span> <span class="nn">ssl</span>
-            <span class="n">urlpath</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">context</span><span class="o">=</span><span class="n">ssl</span><span class="o">.</span><span class="n">_create_unverified_context</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;noaa&#39;</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/&#39;</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ucar&#39;</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">/&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ssl_certificate</span> <span class="ow">and</span> <span class="n">source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span> <span class="s1">&#39;noaa&#39;</span><span class="p">]:</span>
+            <span class="n">urlpath</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span>
+                <span class="n">url</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ssl</span><span class="o">.</span><span class="n">_create_unverified_context</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">urlpath</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="n">string</span> <span class="o">=</span> <span class="n">urlpath</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 
-        <span class="c1">#Get relevant filenames from directory</span>
+        <span class="c1"># Get relevant filenames from directory</span>
         <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;b[isw][ohp][012349][0123456789]</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">.dat&#39;</span>
 
         <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">search_pattern</span><span class="p">)</span>
         <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">filename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        
-        <span class="c1">#Search for following year (for SH storms)</span>
+            <span class="k">if</span> <span class="n">filename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c1"># Search for following year (for SH storms)</span>
         <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;b[isw][ohp][012349][0123456789]</span><span class="si">{</span><span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">.dat&#39;</span>
 
         <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">search_pattern</span><span class="p">)</span>
         <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">filename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        
-        <span class="k">if</span> <span class="n">source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span><span class="s1">&#39;ucar&#39;</span><span class="p">,</span><span class="s1">&#39;noaa&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">filename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span> <span class="s1">&#39;ucar&#39;</span><span class="p">,</span> <span class="s1">&#39;noaa&#39;</span><span class="p">]:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">ssl_certificate</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span><span class="s1">&#39;noaa&#39;</span><span class="p">]:</span>
-                    <span class="n">urlpath_nextyear</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">current_year</span><span class="p">),</span><span class="nb">str</span><span class="p">(</span><span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="p">)),</span><span class="n">context</span><span class="o">=</span><span class="n">ssl</span><span class="o">.</span><span class="n">_create_unverified_context</span><span class="p">())</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ssl_certificate</span> <span class="ow">and</span> <span class="n">source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span> <span class="s1">&#39;noaa&#39;</span><span class="p">]:</span>
+                    <span class="n">urlpath_nextyear</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">current_year</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span>
+                        <span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="p">)),</span> <span class="n">context</span><span class="o">=</span><span class="n">ssl</span><span class="o">.</span><span class="n">_create_unverified_context</span><span class="p">())</span>
                     <span class="n">string_nextyear</span> <span class="o">=</span> <span class="n">urlpath_nextyear</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">urlpath_nextyear</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">current_year</span><span class="p">),</span><span class="nb">str</span><span class="p">(</span><span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+                    <span class="n">urlpath_nextyear</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span>
+                        <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">current_year</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
                     <span class="n">string_nextyear</span> <span class="o">=</span> <span class="n">urlpath_nextyear</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 
                 <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">search_pattern</span><span class="p">)</span>
                 <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">string_nextyear</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">filename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">filename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                        <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="k">pass</span>
 
-        <span class="c1">#For each file, read in file content and add to hurdat dict</span>
+        <span class="c1"># For each file, read in file content and add to hurdat dict</span>
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
 
-            <span class="c1">#Get file ID</span>
+            <span class="c1"># Get file ID</span>
             <span class="n">stormid</span> <span class="o">=</span> <span class="p">((</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.dat&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-            
-            <span class="c1">#Check for invest status</span>
+
+            <span class="c1"># Check for invest status</span>
             <span class="n">invest_bool</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
                 <span class="n">invest_bool</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="c1">#Determine basin based on where storm developed</span>
+            <span class="c1"># Determine basin based on where storm developed</span>
             <span class="n">add_basin</span> <span class="o">=</span> <span class="s1">&#39;west_pacific&#39;</span>
             <span class="k">if</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span>
                 <span class="n">add_basin</span> <span class="o">=</span> <span class="s1">&#39;north_indian&#39;</span>
             <span class="k">elif</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span>
                 <span class="n">add_basin</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
-            <span class="c1">#add empty entry into dict</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span><span class="n">stormid</span><span class="p">,</span><span class="s1">&#39;operational_id&#39;</span><span class="p">:</span><span class="n">stormid</span><span class="p">,</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;year&#39;</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]),</span><span class="s1">&#39;season&#39;</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]),</span><span class="s1">&#39;basin&#39;</span><span class="p">:</span><span class="n">add_basin</span><span class="p">,</span><span class="s1">&#39;source_info&#39;</span><span class="p">:</span><span class="s1">&#39;Joint Typhoon Warning Center&#39;</span><span class="p">,</span><span class="s1">&#39;realtime&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span><span class="s1">&#39;invest&#39;</span><span class="p">:</span><span class="n">invest_bool</span><span class="p">}</span>
+            <span class="c1"># add empty entry into dict</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">stormid</span><span class="p">,</span>
+                <span class="s1">&#39;operational_id&#39;</span><span class="p">:</span> <span class="n">stormid</span><span class="p">,</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]),</span>
+                <span class="s1">&#39;season&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]),</span>
+                <span class="s1">&#39;basin&#39;</span><span class="p">:</span> <span class="n">add_basin</span><span class="p">,</span>
+                <span class="s1">&#39;source_info&#39;</span><span class="p">:</span> <span class="s1">&#39;Joint Typhoon Warning Center&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;realtime&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s1">&#39;invest&#39;</span><span class="p">:</span> <span class="n">invest_bool</span><span class="p">,</span>
+            <span class="p">}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;jtwc&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;jtwc_source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span>
-            
-            <span class="c1">#Add source info</span>
+
+            <span class="c1"># Add source info</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;JTWC ATCF&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.nrlmry.navy.mil/atcf_web/docs/tracks/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">/&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span>
+                <span class="s1">&#39;source_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.nrlmry.navy.mil/atcf_web/docs/tracks/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">/&#39;</span>
             <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;noaa&#39;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;NOAA SSD&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/&#39;</span>
             <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ucar&#39;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;UCAR&#39;s Tropical Cyclone Guidance Project (TCGP)&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span>
+                    <span class="s1">&#39;source_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;UCAR&#39;s Tropical Cyclone Guidance Project (TCGP)&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;source_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/&#39;</span>
 
-            <span class="c1">#add empty lists</span>
-            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;extra_obs&#39;</span><span class="p">,</span><span class="s1">&#39;special&#39;</span><span class="p">,</span><span class="s1">&#39;type&#39;</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;mslp&#39;</span><span class="p">,</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]:</span>
+            <span class="c1"># add empty lists</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;extra_obs&#39;</span><span class="p">,</span> <span class="s1">&#39;special&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;vmax&#39;</span><span class="p">,</span> <span class="s1">&#39;mslp&#39;</span><span class="p">,</span> <span class="s1">&#39;wmo_basin&#39;</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-            <span class="c1">#Read in file</span>
+            <span class="c1"># Read in file</span>
             <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.nrlmry.navy.mil/atcf_web/docs/tracks/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;noaa&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ucar&#39;</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">.dat&quot;</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span> <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">current_year</span><span class="p">),</span><span class="nb">str</span><span class="p">(</span><span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-            
-            <span class="k">if</span> <span class="n">ssl_certificate</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span><span class="s1">&#39;noaa&#39;</span><span class="p">]:</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">context</span><span class="o">=</span><span class="n">ssl</span><span class="o">.</span><span class="n">_create_unverified_context</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;noaa&#39;</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ucar&#39;</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">.dat&quot;</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">current_year</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_year</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ssl_certificate</span> <span class="ow">and</span> <span class="n">source</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">,</span> <span class="s1">&#39;noaa&#39;</span><span class="p">]:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span>
+                    <span class="n">url</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">ssl</span><span class="o">.</span><span class="n">_create_unverified_context</span><span class="p">())</span>
                 <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
                 <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
                 <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">content</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span><span class="p">]</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span><span class="p">]</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">f</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
                 <span class="n">content</span> <span class="o">=</span> <span class="n">read_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
-            <span class="c1">#iterate through file lines</span>
+            <span class="c1"># iterate through file lines</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
 
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">28</span><span class="p">:</span> <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">28</span><span class="p">:</span>
+                    <span class="k">continue</span>
 
-                <span class="c1">#Get date of obs</span>
-                <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M&#39;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">STANDARD_HOURS</span><span class="p">:</span> <span class="k">continue</span>
+                <span class="c1"># Get time of obs</span>
+                <span class="n">time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M&#39;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">STANDARD_HOURS</span><span class="p">:</span>
+                    <span class="k">continue</span>
 
-                <span class="c1">#Ensure obs aren&#39;t being repeated</span>
-                <span class="k">if</span> <span class="n">date</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]:</span> <span class="k">continue</span>
+                <span class="c1"># Ensure obs aren&#39;t being repeated</span>
+                <span class="k">if</span> <span class="n">time</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]:</span>
+                    <span class="k">continue</span>
 
-                <span class="c1">#Get latitude into number</span>
+                <span class="c1"># Get latitude into number</span>
                 <span class="k">if</span> <span class="s2">&quot;N&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">]:</span>
                     <span class="n">btk_lat_temp</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">btk_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">btk_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="s2">&quot;S&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">]:</span>
                     <span class="n">btk_lat_temp</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">btk_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-                
-                <span class="c1">#Get longitude into number</span>
+                    <span class="n">btk_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lat_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+                <span class="c1"># Get longitude into number</span>
                 <span class="k">if</span> <span class="s2">&quot;W&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span>
                     <span class="n">btk_lon_temp</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;W&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">btk_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">btk_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="s2">&quot;E&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span>
                     <span class="n">btk_lon_temp</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">btk_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">btk_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-                <span class="c1">#Determine basin if unknown</span>
+                <span class="c1"># Determine basin if unknown</span>
                 <span class="k">if</span> <span class="n">add_basin</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-                    <span class="n">add_basin</span> <span class="o">=</span> <span class="n">get_basin</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">,</span><span class="n">btk_lon</span><span class="p">)</span>
+                    <span class="n">add_basin</span> <span class="o">=</span> <span class="n">get_basin</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">,</span> <span class="n">btk_lon</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;basin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">add_basin</span>
-                
-                <span class="c1">#Get other relevant variables</span>
+
+                <span class="c1"># Get other relevant variables</span>
                 <span class="n">btk_wind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span>
                 <span class="n">btk_mslp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span>
                 <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;ucar&#39;</span><span class="p">:</span>
-                    <span class="n">btk_type</span> <span class="o">=</span> <span class="n">get_storm_type</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">btk_type</span> <span class="o">=</span> <span class="n">get_storm_type</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">btk_type</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">btk_type</span> <span class="o">==</span> <span class="s2">&quot;TY&quot;</span> <span class="ow">or</span> <span class="n">btk_type</span> <span class="o">==</span> <span class="s2">&quot;ST&quot;</span><span class="p">:</span> <span class="n">btk_type</span> <span class="o">=</span> <span class="s2">&quot;HU&quot;</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">27</span><span class="p">]</span>
 
-                <span class="c1">#Replace with NaNs</span>
-                <span class="k">if</span> <span class="n">btk_wind</span> <span class="o">&gt;</span> <span class="mi">250</span> <span class="ow">or</span> <span class="n">btk_wind</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span> <span class="n">btk_wind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                <span class="k">if</span> <span class="n">btk_mslp</span> <span class="o">&gt;</span> <span class="mi">1040</span> <span class="ow">or</span> <span class="n">btk_mslp</span> <span class="o">&lt;</span> <span class="mi">800</span><span class="p">:</span> <span class="n">btk_mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="c1"># Replace with NaNs</span>
+                <span class="k">if</span> <span class="n">btk_wind</span> <span class="o">&gt;</span> <span class="mi">250</span> <span class="ow">or</span> <span class="n">btk_wind</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+                    <span class="n">btk_wind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="k">if</span> <span class="n">btk_mslp</span> <span class="o">&gt;</span> <span class="mi">1040</span> <span class="ow">or</span> <span class="n">btk_mslp</span> <span class="o">&lt;</span> <span class="mi">800</span><span class="p">:</span>
+                    <span class="n">btk_mslp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
-                <span class="c1">#Add extra obs</span>
+                <span class="c1"># Add extra obs</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;extra_obs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-                <span class="c1">#Append into dict</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+                <span class="c1"># Append into dict</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;special&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btk_type</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btk_lon</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btk_mslp</span><span class="p">)</span>
-                
-                <span class="c1">#Add basin</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">add_basin</span><span class="p">)</span>
 
-                <span class="c1">#Calculate ACE &amp; append to storm total</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-                    <span class="n">ace</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">btk_wind</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                <span class="c1"># Add basin</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">get_basin</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">,</span> <span class="n">btk_lon</span><span class="p">,</span> <span class="n">add_basin</span><span class="p">))</span>
+
+                <span class="c1"># Calculate ACE &amp; append to storm total</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">):</span>
+                    <span class="n">ace</span> <span class="o">=</span> <span class="n">accumulated_cyclone_energy</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">btk_type</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">NAMED_TROPICAL_STORM_TYPES</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">ace</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">ace</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 
-            <span class="c1">#Determine storm name for invests</span>
-            <span class="k">if</span> <span class="n">invest_bool</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-                
-                <span class="c1">#Determine letter in front of invest</span>
+            <span class="c1"># Determine storm name for invests</span>
+            <span class="k">if</span> <span class="n">invest_bool</span><span class="p">:</span>
+
+                <span class="c1"># Determine letter in front of invest</span>
                 <span class="n">add_letter</span> <span class="o">=</span> <span class="s1">&#39;L&#39;</span>
                 <span class="k">if</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span>
                     <span class="n">add_letter</span> <span class="o">=</span> <span class="s1">&#39;C&#39;</span>
@@ -676,22 +726,22 @@
                 <span class="k">elif</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span>
                     <span class="n">add_letter</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="n">add_letter</span>
-            
-            <span class="c1">#Add storm name</span>
+
+            <span class="c1"># Add storm name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
-            
+
     <span class="k">def</span> <span class="nf">__read_nhc_shapefile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        
+
         <span class="k">try</span><span class="p">:</span>
-            
-            <span class="c1">#Read in shapefile zip from NHC</span>
+
+            <span class="c1"># Read in shapefile zip from NHC</span>
             <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://www.nhc.noaa.gov/xgtwo/gtwo_shapefiles.zip&#39;</span>
             <span class="n">request</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
             <span class="n">file_like_object</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
             <span class="n">tar</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">file_like_object</span><span class="p">)</span>
 
-            <span class="c1">#Get file list (points, areas)</span>
+            <span class="c1"># Get file list (points, areas)</span>
             <span class="n">members</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tar</span><span class="o">.</span><span class="n">namelist</span><span class="p">()])</span>
             <span class="n">nums</span> <span class="o">=</span> <span class="s2">&quot;[0123456789]&quot;</span>
             <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;gtwo_points_202</span><span class="si">{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}{</span><span class="n">nums</span><span class="si">}</span><span class="s1">.shp&#39;</span>
@@ -699,116 +749,121 @@
             <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">members</span><span class="p">)</span>
             <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filelist</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#remove duplicates</span>
+                <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                    <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.shp&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># remove duplicates</span>
 
-            <span class="c1">#Retrieve necessary components for shapefile</span>
+            <span class="c1"># Retrieve necessary components for shapefile</span>
             <span class="n">members</span> <span class="o">=</span> <span class="n">tar</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
             <span class="n">members_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">members</span><span class="p">]</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;shp&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;dbf&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;prj&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;shx&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">}</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;shp&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;dbf&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;prj&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;shx&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="p">}</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">idx</span> <span class="o">=</span> <span class="n">members_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.&quot;</span><span class="o">+</span><span class="n">key</span><span class="p">)</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">tar</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">members</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
 
-            <span class="c1">#Read in shapefile</span>
-            <span class="n">orig_reader</span> <span class="o">=</span> <span class="n">shapefile</span><span class="o">.</span><span class="n">Reader</span><span class="p">(</span><span class="n">shp</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;shp&#39;</span><span class="p">],</span> <span class="n">dbf</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;dbf&#39;</span><span class="p">],</span> <span class="n">prj</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;prj&#39;</span><span class="p">],</span> <span class="n">shx</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;shx&#39;</span><span class="p">])</span>
+            <span class="c1"># Read in shapefile</span>
+            <span class="n">orig_reader</span> <span class="o">=</span> <span class="n">shapefile</span><span class="o">.</span><span class="n">Reader</span><span class="p">(</span>
+                <span class="n">shp</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;shp&#39;</span><span class="p">],</span> <span class="n">dbf</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;dbf&#39;</span><span class="p">],</span> <span class="n">prj</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;prj&#39;</span><span class="p">],</span> <span class="n">shx</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;shx&#39;</span><span class="p">])</span>
             <span class="n">shp</span> <span class="o">=</span> <span class="n">BasicReader</span><span class="p">(</span><span class="n">orig_reader</span><span class="p">)</span>
 
-            <span class="c1">#Iterate through all areas to match to existing invests</span>
+            <span class="c1"># Iterate through all areas to match to existing invests</span>
             <span class="k">for</span> <span class="n">record</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">shp</span><span class="o">.</span><span class="n">records</span><span class="p">(),</span> <span class="n">shp</span><span class="o">.</span><span class="n">geometries</span><span class="p">()):</span>
 
-                <span class="c1">#Read relevant data</span>
+                <span class="c1"># Read relevant data</span>
                 <span class="n">lon</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">coords</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
                 <span class="n">lat</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">coords</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
                 <span class="n">prob_2day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;PROB2DAY&#39;</span><span class="p">]</span>
-                <span class="n">prob_5day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;PROB5DAY&#39;</span><span class="p">]</span>
+                <span class="n">prob_7day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;PROB7DAY&#39;</span><span class="p">]</span>
                 <span class="n">risk_2day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;RISK2DAY&#39;</span><span class="p">]</span>
-                <span class="n">risk_5day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;RISK5DAY&#39;</span><span class="p">]</span>
-                
-                <span class="c1">#Match to existing invests</span>
-                <span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">great_circle</span><span class="p">((</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">),(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">storm_id</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">storm_id</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">miles</span> <span class="k">for</span> <span class="n">storm_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+                <span class="n">risk_7day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;RISK7DAY&#39;</span><span class="p">]</span>
+
+                <span class="c1"># Match to existing invests</span>
+                <span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">great_circle</span><span class="p">((</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">storm_id</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">storm_id</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">miles</span> <span class="k">for</span> <span class="n">storm_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
                 <span class="n">min_distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
                 <span class="n">idx</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">min_distance</span><span class="p">)</span>
                 <span class="n">storm_id</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="n">idx</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">min_distance</span> <span class="o">&lt;=</span> <span class="mi">150</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">storm_id</span><span class="p">][</span><span class="s1">&#39;prob_2day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob_2day</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">storm_id</span><span class="p">][</span><span class="s1">&#39;prob_5day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob_5day</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">storm_id</span><span class="p">][</span><span class="s1">&#39;prob_7day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob_7day</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">storm_id</span><span class="p">][</span><span class="s1">&#39;risk_2day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">risk_2day</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">storm_id</span><span class="p">][</span><span class="s1">&#39;risk_5day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">risk_5day</span>
-            
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">storm_id</span><span class="p">][</span><span class="s1">&#39;risk_7day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">risk_7day</span>
+
         <span class="k">except</span><span class="p">:</span>
-            
+
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Error in retrieving NHC invest data.&quot;</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    
+
 <div class="viewcode-block" id="Realtime.update"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.Realtime.update.html#tropycal.realtime.Realtime.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update with the latest realtime data.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        This function has no return value, but simply updates the Realtime object with the latest data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jtwc</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">jtwc_source</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ssl_certificate</span><span class="p">)</span></div>
-    
-<div class="viewcode-block" id="Realtime.list_active_storms"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.Realtime.list_active_storms.html#tropycal.realtime.Realtime.list_active_storms">[docs]</a>    <span class="k">def</span> <span class="nf">list_active_storms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">basin</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
-        
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jtwc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">jtwc_source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ssl_certificate</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Realtime.list_active_storms"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.Realtime.list_active_storms.html#tropycal.realtime.Realtime.list_active_storms">[docs]</a>    <span class="k">def</span> <span class="nf">list_active_storms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basin</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces a list of storms currently stored in Realtime.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        basin : str</span>
 <span class="sd">            Basin for which to return active storms for. Default is &#39;all&#39;.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list</span>
 <span class="sd">            List containing the storm IDs for currently active storms in the requested basin. Each ID has a Storm object stored as an attribute of Realtime.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
         <span class="k">if</span> <span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span>
-        
+
         <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">basin</span> <span class="o">==</span> <span class="n">basin</span><span class="p">:</span> <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+            <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">basin</span> <span class="o">==</span> <span class="n">basin</span><span class="p">:</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">keys</span></div>
-    
-<div class="viewcode-block" id="Realtime.get_storm"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.Realtime.get_storm.html#tropycal.realtime.Realtime.get_storm">[docs]</a>    <span class="k">def</span> <span class="nf">get_storm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">):</span>
-        
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Realtime.get_storm"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.Realtime.get_storm.html#tropycal.realtime.Realtime.get_storm">[docs]</a>    <span class="k">def</span> <span class="nf">get_storm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storm</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a RealtimeStorm object for the requested storm ID.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        storm : str</span>
 <span class="sd">            Storm ID for the requested storm (e.g., &quot;AL012020&quot;).</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        tropycal.realtime.RealtimeStorm</span>
 <span class="sd">            An instance of RealtimeStorm.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="c1">#Check to see if storm is available</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">storm</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+
+        <span class="c1"># Check to see if storm is available</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">storm</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">storm</span><span class="se">\&quot;</span><span class="s2"> must be of type str.&quot;</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">storm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Requested storm ID is not contained in this object.&quot;</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        
-        <span class="c1">#Return RealtimeStorm object</span>
+
+        <span class="c1"># Return RealtimeStorm object</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">storm</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Realtime.plot_summary"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.Realtime.plot_summary.html#tropycal.realtime.Realtime.plot_summary">[docs]</a>    <span class="k">def</span> <span class="nf">plot_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ssl_certificate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Realtime.plot_summary"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.Realtime.plot_summary.html#tropycal.realtime.Realtime.plot_summary">[docs]</a>    <span class="k">def</span> <span class="nf">plot_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ssl_certificate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot a summary map of ongoing tropical cyclone and potential development activity.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        domain : str</span>
@@ -821,7 +876,7 @@
 <span class="sd">            Relative or full path of directory to save the image in. If none, image will not be saved.</span>
 <span class="sd">        ssl_certificate : boolean, optional</span>
 <span class="sd">            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Other Parameters</span>
 <span class="sd">        ----------------</span>
 <span class="sd">        two_prop : dict</span>
@@ -834,12 +889,12 @@
 <span class="sd">            Customization properties of cone of uncertainty. Please refer to :ref:`options-summary` for available options.</span>
 <span class="sd">        map_prop : dict</span>
 <span class="sd">            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ax</span>
 <span class="sd">            Instance of axes containing the plot is returned.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 
@@ -929,47 +984,49 @@
 <span class="sd">           * - ms</span>
 <span class="sd">             - Marker size for forecast dots. Default is 12.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="c1">#Retrieve NHC shapefiles for development areas</span>
+
+        <span class="c1"># Retrieve NHC shapefiles for development areas</span>
         <span class="n">shapefiles</span> <span class="o">=</span> <span class="n">get_two_current</span><span class="p">()</span>
-        
-        <span class="c1">#Retrieve kwargs</span>
-        <span class="n">two_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;two_prop&#39;</span><span class="p">,{})</span>
-        <span class="n">invest_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;invest_prop&#39;</span><span class="p">,{})</span>
-        <span class="n">storm_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;storm_prop&#39;</span><span class="p">,{})</span>
-        <span class="n">cone_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;cone_prop&#39;</span><span class="p">,{})</span>
-        <span class="n">map_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;map_prop&#39;</span><span class="p">,{})</span>
-        
-        <span class="c1">#Create instance of plot object</span>
+
+        <span class="c1"># Retrieve kwargs</span>
+        <span class="n">two_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;two_prop&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">invest_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;invest_prop&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">storm_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;storm_prop&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">cone_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;cone_prop&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">map_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;map_prop&#39;</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="c1"># Create instance of plot object</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
-        
-        <span class="c1">#Create cartopy projection</span>
+
+        <span class="c1"># Create cartopy projection</span>
         <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">proj</span> <span class="o">=</span> <span class="n">cartopy_proj</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span><span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span> <span class="c1">#0.0</span>
-        
-        <span class="c1">#Get realtime forecasts</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span>
+                <span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span> <span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span>  <span class="c1"># 0.0</span>
+
+        <span class="c1"># Get realtime forecasts</span>
         <span class="n">forecasts</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">invest</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">invest</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_storm</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">get_forecast_realtime</span><span class="p">(</span><span class="n">ssl_certificate</span><span class="p">))</span>
+                    <span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_storm</span><span class="p">(</span>
+                        <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">get_forecast_realtime</span><span class="p">(</span><span class="n">ssl_certificate</span><span class="p">))</span>
                 <span class="k">except</span><span class="p">:</span>
                     <span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
-        <span class="n">forecasts</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span> <span class="k">if</span> <span class="s1">&#39;init&#39;</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> <span class="o">-</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;init&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span> <span class="o">&lt;=</span> <span class="mi">12</span> <span class="k">else</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="p">]</span>
-        
-        <span class="c1">#Plot</span>
-        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_summary</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">get_storm</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">],</span><span class="n">forecasts</span><span class="p">,</span>
-                                        <span class="n">shapefiles</span><span class="p">,</span><span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span><span class="n">domain</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">save_path</span><span class="p">,</span><span class="n">two_prop</span><span class="p">,</span><span class="n">invest_prop</span><span class="p">,</span><span class="n">storm_prop</span><span class="p">,</span><span class="n">cone_prop</span><span class="p">,</span><span class="n">map_prop</span><span class="p">)</span>
-        
+        <span class="n">forecasts</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span> <span class="k">if</span> <span class="s1">&#39;init&#39;</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(</span>
+        <span class="p">)</span> <span class="o">-</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;init&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span> <span class="o">&lt;=</span> <span class="mi">12</span> <span class="k">else</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="p">]</span>
+
+        <span class="c1"># Plot</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_summary</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">get_storm</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">],</span> <span class="n">forecasts</span><span class="p">,</span>
+                                        <span class="n">shapefiles</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span> <span class="n">domain</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">two_prop</span><span class="p">,</span> <span class="n">invest_prop</span><span class="p">,</span> <span class="n">storm_prop</span><span class="p">,</span> <span class="n">cone_prop</span><span class="p">,</span> <span class="n">map_prop</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">ax</span></div></div>
-        
 </pre></div>
 
            </div>
@@ -979,7 +1036,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

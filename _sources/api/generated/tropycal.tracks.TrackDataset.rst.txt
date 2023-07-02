@@ -38,6 +38,7 @@ tropycal.tracks.TrackDataset
          TrackDataset.plot_summary
          TrackDataset.rank_storm
          TrackDataset.search_name
+         TrackDataset.search_time
          TrackDataset.season_composite
          TrackDataset.storm_ace_vs_season
          TrackDataset.to_dataframe

@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> tropycal
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -57,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.ships.html">Ships</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.utils.html">utils</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.utils.html#generic-utilities">Generic Utilities</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.accumulated_cyclone_energy.html">accumulated_cyclone_energy</a></li>
@@ -74,6 +79,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.get_two_archive.html">get_two_archive</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.knots_to_mph.html">knots_to_mph</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.nhc_cone_radii.html">nhc_cone_radii</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.ships_parser.html">ships_parser</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.utils.html#cartopy-utilities">Cartopy Utilities</a></li>
@@ -100,10 +106,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-          <li><a href="tropycal.utils.html">utils</a> &raquo;</li>
-      <li>calc_ensemble_ellipse</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.utils.html">utils</a></li>
+      <li class="breadcrumb-item active">calc_ensemble_ellipse</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/generated/tropycal.utils.calc_ensemble_ellipse.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -137,6 +143,14 @@
 <li><p><strong>Across-track variability</strong> - if the major axis of the ellipse is normal to the ensemble mean motion vector.</p></li>
 </ul>
 <p>This code is adapted from NCAR Command Language (NCL) code courtesy of Ryan Torn and Thomas Hamill.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lons</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">60</span><span class="p">,</span> <span class="o">-</span><span class="mi">59</span><span class="p">,</span> <span class="o">-</span><span class="mi">59</span><span class="p">,</span> <span class="o">-</span><span class="mi">61</span><span class="p">,</span> <span class="o">-</span><span class="mi">67</span><span class="p">,</span> <span class="o">-</span><span class="mi">58</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="p">,</span> <span class="o">-</span><span class="mi">57</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lats</span> <span class="o">=</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">39</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">41</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ellipse</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">calc_ensemble_ellipse</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ellipse</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="go">dict_keys([&#39;ellipse_lon&#39;, &#39;ellipse_lat&#39;])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <div style='clear:both'></div></section>
@@ -152,7 +166,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

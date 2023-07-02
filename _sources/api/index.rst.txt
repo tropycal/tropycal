@@ -13,6 +13,7 @@ API Reference
    tropycal.rain
    tropycal.recon
    tropycal.realtime
+   tropycal.ships
    tropycal.utils
    
 ===============

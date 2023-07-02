@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> tropycal
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -79,6 +83,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.plot_summary.html">TrackDataset.plot_summary</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.rank_storm.html">TrackDataset.rank_storm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.search_name.html">TrackDataset.search_name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.search_time.html">TrackDataset.search_time</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.season_composite.html">TrackDataset.season_composite</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html">TrackDataset.storm_ace_vs_season</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.to_dataframe.html">TrackDataset.to_dataframe</a></li>
@@ -91,6 +96,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.ships.html">Ships</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
@@ -112,11 +118,11 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-          <li><a href="tropycal.tracks.html">Tracks</a> &raquo;</li>
-          <li><a href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a> &raquo;</li>
-      <li>TrackDataset.wind_pres_relationship</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.tracks.html">Tracks</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a></li>
+      <li class="breadcrumb-item active">TrackDataset.wind_pres_relationship</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/generated/tropycal.tracks.TrackDataset.wind_pres_relationship.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -130,15 +136,14 @@
 <h1>TrackDataset.wind_pres_relationship<a class="headerlink" href="#trackdataset-wind-pres-relationship" title="Permalink to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="tropycal.tracks.TrackDataset.wind_pres_relationship">
-<span class="sig-prename descclassname"><span class="pre">TrackDataset.</span></span><span class="sig-name descname"><span class="pre">wind_pres_relationship</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.wind_pres_relationship"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.wind_pres_relationship" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">TrackDataset.</span></span><span class="sig-name descname"><span class="pre">wind_pres_relationship</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">climo_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/dataset.html#TrackDataset.wind_pres_relationship"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.tracks.TrackDataset.wind_pres_relationship" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a climatology of maximum sustained wind speed vs minimum MSLP relationships.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>storm</strong> (<em>str</em><em> or </em><em>tuple</em>) – Storm to plot. Can be either string of storm ID (e.g., “AL052019”), or tuple with storm name and year (e.g., (“Matthew”,2016)).</p></li>
-<li><p><strong>year_range</strong> (<em>list</em><em> or </em><em>tuple</em>) – List or tuple representing the start and end years (e.g., (1950,2018)). Default is the start and end of dataset.</p></li>
-<li><p><strong>return_dict</strong> (<em>bool</em>) – Determines whether to return data from this function. Default is False.</p></li>
-<li><p><strong>plot</strong> (<em>bool</em>) – Determines whether to generate a plot or not. If False, function simply returns ace dictionary.</p></li>
+<li><p><strong>climo_bounds</strong> (<em>list</em><em> or </em><em>tuple</em>) – List or tuple representing the start and end years (e.g., <code class="docutils literal notranslate"><span class="pre">(1950,2018)</span></code>). Default is the start and end of dataset.</p></li>
+<li><p><strong>return_dict</strong> (<em>bool</em>) – If False (default), plot axes will be returned. If True, a dictionary containing the raw data is returned.</p></li>
 <li><p><strong>save_path</strong> (<em>str</em>) – Determines the file path to save the image to. If blank or none, image will be directly shown.</p></li>
 </ul>
 </dd>
@@ -146,6 +151,8 @@
 <dd class="field-even"><p><em>ax or dict</em> – By default, the plot axes is returned. If return_dict is True, a dictionary containing data about the wind vs. MSLP relationship climatology is returned.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Climatology is only valid for time steps during which cyclones were tropical or subtropical.</p>
 </dd></dl>
 
 <div style='clear:both'></div></section>
@@ -161,7 +168,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

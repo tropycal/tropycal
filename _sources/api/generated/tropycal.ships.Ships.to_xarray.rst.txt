@@ -1,0 +1,12 @@
+Ships.to_xarray
+==============================
+
+.. currentmodule:: tropycal.ships
+
+.. automethod:: Ships.to_xarray
+
+.. include:: tropycal.ships.Ships.to_xarray
+
+.. raw:: html
+
+      <div style='clear:both'></div>

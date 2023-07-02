@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="TrackDataset.storm_ace_vs_season" href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html" />
-    <link rel="prev" title="TrackDataset.search_name" href="tropycal.tracks.TrackDataset.search_name.html" /> 
+    <link rel="prev" title="TrackDataset.search_time" href="tropycal.tracks.TrackDataset.search_time.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> tropycal
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -79,6 +83,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.plot_summary.html">TrackDataset.plot_summary</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.rank_storm.html">TrackDataset.rank_storm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.search_name.html">TrackDataset.search_name</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.search_time.html">TrackDataset.search_time</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">TrackDataset.season_composite</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html">TrackDataset.storm_ace_vs_season</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.TrackDataset.to_dataframe.html">TrackDataset.to_dataframe</a></li>
@@ -91,6 +96,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.ships.html">Ships</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
@@ -112,11 +118,11 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-          <li><a href="tropycal.tracks.html">Tracks</a> &raquo;</li>
-          <li><a href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a> &raquo;</li>
-      <li>TrackDataset.season_composite</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.tracks.html">Tracks</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.tracks.TrackDataset.html">tropycal.tracks.TrackDataset</a></li>
+      <li class="breadcrumb-item active">TrackDataset.season_composite</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/generated/tropycal.tracks.TrackDataset.season_composite.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -135,7 +141,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>seasons</strong> (<em>list</em>) – List of seasons to create a composite of. For Southern Hemisphere, season is the start of the two-year period.</p></li>
+<li><p><strong>seasons</strong> (<em>list</em>) – List of seasons to create a composite of.</p></li>
 <li><p><strong>climo_bounds</strong> (<em>list</em><em> or </em><em>tuple</em>) – List or tuple of start and end years of climatology bounds. If none, defaults to (1991,2020).</p></li>
 </ul>
 </dd>
@@ -143,6 +149,8 @@
 <dd class="field-even"><p><em>dict</em> – Dictionary containing the composite of the requested seasons.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If in southern hemisphere, year is the 2nd year of the season (e.g., 1975 for 1974-1975).</p>
 </dd></dl>
 
 <div style='clear:both'></div></section>
@@ -151,14 +159,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="tropycal.tracks.TrackDataset.search_name.html" class="btn btn-neutral float-left" title="TrackDataset.search_name" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.tracks.TrackDataset.search_time.html" class="btn btn-neutral float-left" title="TrackDataset.search_time" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="tropycal.tracks.TrackDataset.storm_ace_vs_season.html" class="btn btn-neutral float-right" title="TrackDataset.storm_ace_vs_season" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

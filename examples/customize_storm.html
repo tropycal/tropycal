@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="TC Dataset Analysis" href="tracks.TrackDataset.html" />
-    <link rel="prev" title="Historical TC Track Analogs" href="analogs.html" /> 
+    <link rel="prev" title="Reading SHIPS Data" href="ships.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> tropycal
-            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            tropycal
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -57,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tracks.storm.html">Individual Storm Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tc_rainfall.html">Tropical Cyclone Rainfall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analogs.html">Historical TC Track Analogs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ships.html">Reading SHIPS Data</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Customizing Storm Plots</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#reading-in-hurtdat2-dataset">Reading In HURTDAT2 Dataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#methods-to-plot-storm-track">Methods to Plot Storm Track</a></li>
@@ -66,6 +71,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="tracks.TrackDataset.html">TC Dataset Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="recon.html">Aircraft Recon Data Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartopy.html">Standalone Cartopy Functionality</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
@@ -86,9 +92,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Examples</a> &raquo;</li>
-      <li>Customizing Storm Plots</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Customizing Storm Plots</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/examples/customize_storm.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -100,7 +106,7 @@
              
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-examples-customize-storm-py"><span class="std std-ref">here</span></a>
+<p><a class="reference internal" href="#sphx-glr-download-examples-customize-storm-py"><span class="std std-ref">Go to the end</span></a>
 to download the full example code</p>
 </div>
 <section class="sphx-glr-example-title" id="customizing-storm-plots">
@@ -118,9 +124,8 @@ to download the full example code</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (6.36 seconds)
+--&gt; Completed reading in HURDAT2 data (2.07 seconds)
 </pre></div>
 </div>
 </section>
@@ -132,8 +137,7 @@ to download the full example code</p>
 <a href="../api/generated/tropycal.tracks.TrackDataset.plot_storm.html#tropycal.tracks.TrackDataset.plot_storm" title="tropycal.tracks.TrackDataset.plot_storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">plot_storm</span></a><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_customize_storm_001.png" srcset="../_images/sphx_glr_customize_storm_001.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane MICHAEL&#39;,&#39;right&#39;:&#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
+<img src="../_images/sphx_glr_customize_storm_001.png" srcset="../_images/sphx_glr_customize_storm_001.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane MICHAEL&#39;, &#39;right&#39;: &#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
 </pre></div>
 </div>
 <p>The second method is to retrieve a Storm object from basin, and then plot from the Storm instance we just retrieved.</p>
@@ -144,8 +148,7 @@ to download the full example code</p>
 <a href="../api/generated/tropycal.tracks.Storm.plot.html#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">plot</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_customize_storm_002.png" srcset="../_images/sphx_glr_customize_storm_002.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane MICHAEL&#39;,&#39;right&#39;:&#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
+<img src="../_images/sphx_glr_customize_storm_002.png" srcset="../_images/sphx_glr_customize_storm_002.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane MICHAEL&#39;, &#39;right&#39;: &#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
 </pre></div>
 </div>
 </section>
@@ -156,40 +159,35 @@ to download the full example code</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Storm.plot.html#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">105</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">65</span><span class="p">,</span><span class="s1">&#39;s&#39;</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span><span class="mi">40</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_customize_storm_003.png" srcset="../_images/sphx_glr_customize_storm_003.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane MICHAEL&#39;,&#39;right&#39;:&#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
+<img src="../_images/sphx_glr_customize_storm_003.png" srcset="../_images/sphx_glr_customize_storm_003.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane MICHAEL&#39;, &#39;right&#39;: &#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
 </pre></div>
 </div>
 <p>This works for Michael, but it can get quite burdensome if we constantly have to hard-code this for every storm. Fortunately, we can simply use <code class="docutils literal notranslate"><span class="pre">domain=&quot;dynamic_tropical&quot;</span></code>, which zooms in only where the system was a tropical cyclone:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Storm.plot.html#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s1">&#39;dynamic_tropical&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_customize_storm_004.png" srcset="../_images/sphx_glr_customize_storm_004.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane MICHAEL&#39;,&#39;right&#39;:&#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
+<img src="../_images/sphx_glr_customize_storm_004.png" srcset="../_images/sphx_glr_customize_storm_004.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane MICHAEL&#39;, &#39;right&#39;: &#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
 </pre></div>
 </div>
 <p>Now let’s start to experiment with different coloring and line properties. Say we want to start off simple and color all dots blue with a larger marker size, and all lines red with a line width of 2.0. We can modify the <code class="docutils literal notranslate"><span class="pre">prop</span></code> keyword argument:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Storm.plot.html#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s1">&#39;dynamic_tropical&#39;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;ms&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span><span class="s1">&#39;fillcolor&#39;</span><span class="p">:</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span><span class="s1">&#39;linecolor&#39;</span><span class="p">:</span><span class="s1">&#39;red&#39;</span><span class="p">,</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mf">2.0</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_customize_storm_005.png" srcset="../_images/sphx_glr_customize_storm_005.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane MICHAEL&#39;,&#39;right&#39;:&#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
+<img src="../_images/sphx_glr_customize_storm_005.png" srcset="../_images/sphx_glr_customize_storm_005.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane MICHAEL&#39;, &#39;right&#39;: &#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
 </pre></div>
 </div>
 <p>By default, the dots are colored by the Saffir-Simpson Hurricane Wind Scale (SSHWS) category. This is because the default value for <code class="docutils literal notranslate"><span class="pre">fillcolor</span></code> is “category”. If we want to color the track line by category, and to not plot dots, we can do the following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Storm.plot.html#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s1">&#39;dynamic_tropical&#39;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dots&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;linecolor&#39;</span><span class="p">:</span><span class="s1">&#39;category&#39;</span><span class="p">,</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mf">3.0</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_customize_storm_006.png" srcset="../_images/sphx_glr_customize_storm_006.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane MICHAEL&#39;,&#39;right&#39;:&#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
+<img src="../_images/sphx_glr_customize_storm_006.png" srcset="../_images/sphx_glr_customize_storm_006.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane MICHAEL&#39;, &#39;right&#39;: &#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
 </pre></div>
 </div>
 <p>We can also use other coloring options for the plot. For example, say we want to color the track line by maximum sustained wind (in knots) - we simply plug in “vmax” for linecolor. While not shown below, we can do the same for “mslp”.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Storm.plot.html#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">storm</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s1">&#39;dynamic_tropical&#39;</span><span class="p">,</span><span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dots&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;linecolor&#39;</span><span class="p">:</span><span class="s1">&#39;vmax&#39;</span><span class="p">,</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mf">3.0</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_customize_storm_007.png" srcset="../_images/sphx_glr_customize_storm_007.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane MICHAEL&#39;,&#39;right&#39;:&#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
+<img src="../_images/sphx_glr_customize_storm_007.png" srcset="../_images/sphx_glr_customize_storm_007.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 140 kt • 919 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane MICHAEL&#39;, &#39;right&#39;: &#39;07 Oct 2018 – 11 Oct 2018\n140 kt • 919 hPa • 12.5 ACE&#39;}&gt;
 </pre></div>
 </div>
 <p>Moving on to more complicated colorings, we can also color the line by change in sustained wind speed (“dvmax_dt”), and the forward motion of the cyclone (“speed”). For this, we have to use an interpolated Storm object, interpolating the data to hourly:</p>
@@ -209,8 +207,7 @@ to download the full example code</p>
 <span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_customize_storm_008.png" srcset="../_images/sphx_glr_customize_storm_008.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 139 kt • 920 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane MICHAEL&#39;,&#39;right&#39;:&#39;07 Oct 2018 – 11 Oct 2018\n139 kt • 920 hPa • 12.5 ACE&#39;}&gt;
+<img src="../_images/sphx_glr_customize_storm_008.png" srcset="../_images/sphx_glr_customize_storm_008.png" alt="Hurricane MICHAEL, 07 Oct 2018 – 11 Oct 2018 139 kt • 920 hPa • 12.5 ACE" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane MICHAEL&#39;, &#39;right&#39;: &#39;07 Oct 2018 – 11 Oct 2018\n139 kt • 920 hPa • 12.5 ACE&#39;}&gt;
 </pre></div>
 </div>
 </section>
@@ -221,8 +218,7 @@ to download the full example code</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.plot_storms.html#tropycal.tracks.TrackDataset.plot_storms" title="tropycal.tracks.TrackDataset.plot_storms" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">plot_storms</span></a><span class="p">([(</span><span class="s1">&#39;emily&#39;</span><span class="p">,</span><span class="mi">2005</span><span class="p">),(</span><span class="s1">&#39;katrina&#39;</span><span class="p">,</span><span class="mi">2005</span><span class="p">),(</span><span class="s1">&#39;rita&#39;</span><span class="p">,</span><span class="mi">2005</span><span class="p">),(</span><span class="s1">&#39;wilma&#39;</span><span class="p">,</span><span class="mi">2005</span><span class="p">)])</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_customize_storm_009.png" srcset="../_images/sphx_glr_customize_storm_009.png" alt="TC Track Composite" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;TC Track Composite&#39;}&gt;
+<img src="../_images/sphx_glr_customize_storm_009.png" srcset="../_images/sphx_glr_customize_storm_009.png" alt="TC Track Composite" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;TC Track Composite&#39;}&gt;
 </pre></div>
 </div>
 <p>Using what we did earlier, let’s customize the plot to (1) not plot dots, (2) color lines by SSHWS category, (3) set linewidth to 3, and additionally label the storm names using <code class="docutils literal notranslate"><span class="pre">'plot_names':True</span></code>.</p>
@@ -230,12 +226,11 @@ to download the full example code</p>
                   <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;dots&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;linecolor&#39;</span><span class="p">:</span><span class="s1">&#39;category&#39;</span><span class="p">,</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;plot_names&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_customize_storm_010.png" srcset="../_images/sphx_glr_customize_storm_010.png" alt="TC Track Composite" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;TC Track Composite&#39;}&gt;
+<img src="../_images/sphx_glr_customize_storm_010.png" srcset="../_images/sphx_glr_customize_storm_010.png" alt="TC Track Composite" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;TC Track Composite&#39;}&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  35.876 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-customize-storm-py">
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  9.750 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-customize-storm-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/7b3e6b8184b1b974c438ed74f58a9189/customize_storm.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">customize_storm.py</span></code></a></p>
 </div>
@@ -251,14 +246,14 @@ to download the full example code</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="analogs.html" class="btn btn-neutral float-left" title="Historical TC Track Analogs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ships.html" class="btn btn-neutral float-left" title="Reading SHIPS Data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="tracks.TrackDataset.html" class="btn btn-neutral float-right" title="TC Dataset Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

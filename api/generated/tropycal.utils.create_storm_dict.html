@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> tropycal
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -57,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.ships.html">Ships</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.utils.html">utils</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.utils.html#generic-utilities">Generic Utilities</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.accumulated_cyclone_energy.html">accumulated_cyclone_energy</a></li>
@@ -74,6 +79,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.get_two_archive.html">get_two_archive</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.knots_to_mph.html">knots_to_mph</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.nhc_cone_radii.html">nhc_cone_radii</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.ships_parser.html">ships_parser</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.utils.html#cartopy-utilities">Cartopy Utilities</a></li>
@@ -100,10 +106,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-          <li><a href="tropycal.utils.html">utils</a> &raquo;</li>
-      <li>create_storm_dict</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.utils.html">utils</a></li>
+      <li class="breadcrumb-item active">create_storm_dict</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/generated/tropycal.utils.create_storm_dict.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -149,12 +155,12 @@
 <li><p>Rows that begin with a <code class="docutils literal notranslate"><span class="pre">#</span></code> or <code class="docutils literal notranslate"><span class="pre">\</span></code> are automatically ignored.</p></li>
 <li><p>The first non-commented row must be a header row.</p></li>
 <li><p>The header row must contain entries for time, latitude, longitude, maximum sustained wind (knots), and minimum MSLP (hPa). The order of these columns does not matter.</p></li>
-<li><p>Preferred header names are “date”, “lat”, “lon”, “vmax” and “mslp” for the main 5 categories, but custom header names can be provided. Refer to the “Other Parameters” section above.</p></li>
+<li><p>Preferred header names are “time”, “lat”, “lon”, “vmax” and “mslp” for the main 5 categories, but custom header names can be provided. Refer to the “Other Parameters” section above.</p></li>
 <li><p>Providing a “type” column (e.g., “TS”, “HU”, “EX”) is not required, but is recommended especially if dealing with subtropical or non-tropical types.</p></li>
 </ol>
 <p>Below is an example file which we’ll call <code class="docutils literal notranslate"><span class="pre">data.txt</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># The row below is a header row. The order of the columns doesn&#39;t matter.</span>
-<span class="n">date</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">mslp</span><span class="p">,</span><span class="nb">type</span>
+<span class="n">time</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">vmax</span><span class="p">,</span><span class="n">mslp</span><span class="p">,</span><span class="nb">type</span>
 <span class="mi">2021080518</span><span class="p">,</span><span class="mf">19.4</span><span class="p">,</span><span class="o">-</span><span class="mf">59.9</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">1014</span><span class="p">,</span><span class="n">DB</span>
 <span class="mi">2021080600</span><span class="p">,</span><span class="mf">19.7</span><span class="p">,</span><span class="o">-</span><span class="mf">60.2</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">1014</span><span class="p">,</span><span class="n">DB</span>
 <span class="mi">2021080606</span><span class="p">,</span><span class="mf">20.1</span><span class="p">,</span><span class="o">-</span><span class="mf">60.5</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">1012</span><span class="p">,</span><span class="n">DB</span>
@@ -187,7 +193,7 @@
 <span class="go"> &#39;name&#39;: &#39;Test&#39;,</span>
 <span class="go"> &#39;source_info&#39;: &#39;Custom User Data&#39;,</span>
 <span class="go"> &#39;source&#39;: &#39;custom&#39;,</span>
-<span class="go"> &#39;date&#39;: [datetime.datetime(2021, 8, 5, 18, 0),</span>
+<span class="go"> &#39;time&#39;: [datetime.datetime(2021, 8, 5, 18, 0),</span>
 <span class="go">          datetime.datetime(2021, 8, 6, 0, 0),</span>
 <span class="go">          ....</span>
 <span class="go">          datetime.datetime(2021, 8, 10, 12, 0),</span>
@@ -214,11 +220,11 @@
 <span class="go">Storm Summary:</span>
 <span class="go">    Maximum Wind:      65 knots</span>
 <span class="go">    Minimum Pressure:  988 hPa</span>
-<span class="go">    Start Date:        1200 UTC 06 August 2021</span>
-<span class="go">    End Date:          0600 UTC 10 August 2021</span>
+<span class="go">    Start Time:        1200 UTC 06 August 2021</span>
+<span class="go">    End Time:          0600 UTC 10 August 2021</span>
 <span class="go">.</span>
 <span class="go">Variables:</span>
-<span class="go">    date        (datetime) [2021-08-05 18:00:00 .... 2021-08-10 18:00:00]</span>
+<span class="go">    time        (datetime) [2021-08-05 18:00:00 .... 2021-08-10 18:00:00]</span>
 <span class="go">    extra_obs   (int32) [0 .... 0]</span>
 <span class="go">    special     (str) [ .... ]</span>
 <span class="go">    type        (str) [DB .... EX]</span>
@@ -257,7 +263,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

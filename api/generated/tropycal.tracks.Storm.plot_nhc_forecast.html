@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> tropycal
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -62,6 +66,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_nhc_forecast_dict.html">Storm.get_nhc_forecast_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_operational_forecasts.html">Storm.get_operational_forecasts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_recon.html">Storm.get_recon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_ships.html">Storm.get_ships</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.interp.html">Storm.interp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.list_nhc_discussions.html">Storm.list_nhc_discussions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot.html">Storm.plot</a></li>
@@ -71,6 +76,7 @@
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Storm.plot_nhc_forecast</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_tors.html">Storm.plot_tors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.query_nhc_discussions.html">Storm.query_nhc_discussions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.search_ships.html">Storm.search_ships</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.sel.html">Storm.sel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.to_dataframe.html">Storm.to_dataframe</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.to_dict.html">Storm.to_dict</a></li>
@@ -84,6 +90,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.ships.html">Ships</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.utils.html">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#keyword-options">Keyword Options</a></li>
 </ul>
@@ -105,11 +112,11 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-          <li><a href="tropycal.tracks.html">Tracks</a> &raquo;</li>
-          <li><a href="tropycal.tracks.Storm.html">tropycal.tracks.Storm</a> &raquo;</li>
-      <li>Storm.plot_nhc_forecast</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.tracks.html">Tracks</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.tracks.Storm.html">tropycal.tracks.Storm</a></li>
+      <li class="breadcrumb-item active">Storm.plot_nhc_forecast</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/generated/tropycal.tracks.Storm.plot_nhc_forecast.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -128,7 +135,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>forecast</strong> (<em>int</em><em> or </em><em>datetime.datetime</em>) – Integer representing the forecast number, or datetime object for the closest issued forecast to this date.</p></li>
+<li><p><strong>forecast</strong> (<em>int</em><em> or </em><em>datetime.datetime</em>) – Integer representing the forecast number, or datetime object for the closest issued forecast to this time.</p></li>
 <li><p><strong>track_labels</strong> (<em>str</em>) – <p>Label forecast hours with the following methods:</p>
 <ul>
 <li><p><strong>””</strong> = no label</p></li>
@@ -169,7 +176,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

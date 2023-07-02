@@ -1,0 +1,12 @@
+Ships.to_dataframe
+=================================
+
+.. currentmodule:: tropycal.ships
+
+.. automethod:: Ships.to_dataframe
+
+.. include:: tropycal.ships.Ships.to_dataframe
+
+.. raw:: html
+
+      <div style='clear:both'></div>

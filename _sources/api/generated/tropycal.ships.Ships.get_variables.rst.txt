@@ -1,0 +1,12 @@
+Ships.get_variables
+==================================
+
+.. currentmodule:: tropycal.ships
+
+.. automethod:: Ships.get_variables
+
+.. include:: tropycal.ships.Ships.get_variables
+
+.. raw:: html
+
+      <div style='clear:both'></div>

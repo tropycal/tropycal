@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="plot_storm" href="tropycal.utils.plot_storm.html" />
-    <link rel="prev" title="nhc_cone_radii" href="tropycal.utils.nhc_cone_radii.html" /> 
+    <link rel="prev" title="ships_parser" href="tropycal.utils.ships_parser.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> tropycal
-            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -57,11 +61,14 @@
 <li class="toctree-l2"><a class="reference internal" href="tropycal.rain.html">Rain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.recon.html">Recon</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tropycal.realtime.html">Realtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tropycal.ships.html">Ships</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="tropycal.utils.html">utils</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tropycal.utils.html#generic-utilities">Generic Utilities</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="tropycal.utils.html#cartopy-utilities">Cartopy Utilities</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">add_tropycal</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.utils.plot_storm.html">plot_storm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.plot_two.html">plot_two</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.utils.plot_cone.html">plot_cone</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="tropycal.utils.html#colors">Colors</a></li>
@@ -87,10 +94,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-          <li><a href="tropycal.utils.html">utils</a> &raquo;</li>
-      <li>add_tropycal</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="tropycal.utils.html">utils</a></li>
+      <li class="breadcrumb-item active">add_tropycal</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/generated/tropycal.utils.add_tropycal.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -115,6 +122,44 @@
 <dd class="field-even"><p><em>ax</em> – The same axes instance is returned, with tropycal plotting functions from <cite>tropycal.utils.cartopy_utils</cite> added to it as methods.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>This function appends Tropycal plotting capability to an existing axes with a Cartopy projection. Below is an example of how to use this functionality:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Import necessary packages</span>
+<span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">tracks</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1">#Retrieve North Atlantic HURDATv2 dataset and store in basin variable</span>
+<span class="n">basin</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span><span class="p">(</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">)</span>
+
+<span class="c1">#Create a PlateCarree Cartopy projection</span>
+<span class="n">proj</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">()</span>
+
+<span class="c1">#Create an instance of figure and axes</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span><span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">proj</span><span class="p">)</span>
+
+<span class="c1">#Plot coastlines and boundaries</span>
+<span class="n">states</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">STATES</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s1">&#39;50m&#39;</span><span class="p">),</span><span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span><span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">countries</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">BORDERS</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s1">&#39;50m&#39;</span><span class="p">),</span><span class="n">linewidths</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span><span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">coastlines</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">COASTLINE</span><span class="o">.</span><span class="n">with_scale</span><span class="p">(</span><span class="s1">&#39;50m&#39;</span><span class="p">),</span><span class="n">linewidths</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span><span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+
+<span class="c1">#Add Tropycal functionality to axes</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">add_tropycal</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+<span class="c1">#Use the &quot;plot_storm()&quot; method to plot Hurricane Michael&#39;s track</span>
+<span class="n">storm</span> <span class="o">=</span> <span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span><span class="p">((</span><span class="s1">&#39;michael&#39;</span><span class="p">,</span><span class="mi">2018</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_storm</span><span class="p">(</span><span class="n">storm</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+
+<span class="c1">#Zoom in over the Gulf Coast</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">([</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span><span class="o">-</span><span class="mi">70</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">37</span><span class="p">])</span>
+
+<span class="c1">#Show plot and close</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <div style='clear:both'></div></section>
@@ -123,14 +168,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="tropycal.utils.nhc_cone_radii.html" class="btn btn-neutral float-left" title="nhc_cone_radii" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.utils.ships_parser.html" class="btn btn-neutral float-left" title="ships_parser" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="tropycal.utils.plot_storm.html" class="btn btn-neutral float-right" title="plot_storm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

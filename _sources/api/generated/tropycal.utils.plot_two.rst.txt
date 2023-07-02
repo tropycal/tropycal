@@ -1,0 +1,12 @@
+plot_two
+=======================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: plot_two
+
+.. include:: tropycal.utils.plot_two
+
+.. raw:: html
+
+      <div style='clear:both'></div>

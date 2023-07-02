@@ -33,12 +33,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> tropycal
-            <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            tropycal
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -66,9 +70,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>tropycal.utils.cartopy_utils</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tropycal.utils.cartopy_utils</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -81,56 +85,265 @@
 <span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Adds Tropycal functionality to Cartopy GeoAxes.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.ndimage</span> <span class="k">as</span> <span class="nn">ndimage</span>
 <span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
 
 <div class="viewcode-block" id="add_tropycal"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.add_tropycal.html#tropycal.utils.add_tropycal">[docs]</a><span class="k">def</span> <span class="nf">add_tropycal</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>
-    
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Adds Tropycal plotting capability to a matplotlib.pyplot axes instance with a Cartopy projection.</span>
-<span class="sd">    </span>
+
 <span class="sd">    This axes instance must have already had a Cartopy projection added (e.g., ``projection=ccrs.PlateCarree()``).</span>
-<span class="sd">    </span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    ax : cartopy.mpl.geoaxes.GeoAxes</span>
 <span class="sd">        Instance of a matplotlib axes with a Cartopy projection added.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    ax</span>
 <span class="sd">        The same axes instance is returned, with tropycal plotting functions from `tropycal.utils.cartopy_utils` added to it as methods.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function appends Tropycal plotting capability to an existing axes with a Cartopy projection. Below is an example of how to use this functionality:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        #Import necessary packages</span>
+<span class="sd">        from tropycal import tracks, utils</span>
+<span class="sd">        import cartopy.crs as ccrs</span>
+<span class="sd">        import cartopy.feature as cfeature</span>
+<span class="sd">        import matplotlib.pyplot as plt</span>
+
+<span class="sd">        #Retrieve North Atlantic HURDATv2 dataset and store in basin variable</span>
+<span class="sd">        basin = tracks.TrackDataset(&#39;north_atlantic&#39;)</span>
+
+<span class="sd">        #Create a PlateCarree Cartopy projection</span>
+<span class="sd">        proj = ccrs.PlateCarree()</span>
+
+<span class="sd">        #Create an instance of figure and axes</span>
+<span class="sd">        fig = plt.figure(figsize=(9,6),dpi=150)</span>
+<span class="sd">        ax = plt.axes(projection=proj)</span>
+
+<span class="sd">        #Plot coastlines and boundaries</span>
+<span class="sd">        states = ax.add_feature(cfeature.STATES.with_scale(&#39;50m&#39;),linewidths=0.5,linestyle=&#39;solid&#39;,edgecolor=&#39;k&#39;)</span>
+<span class="sd">        countries = ax.add_feature(cfeature.BORDERS.with_scale(&#39;50m&#39;),linewidths=1.0,linestyle=&#39;solid&#39;,edgecolor=&#39;k&#39;)</span>
+<span class="sd">        coastlines = ax.add_feature(cfeature.COASTLINE.with_scale(&#39;50m&#39;),linewidths=1.0,linestyle=&#39;solid&#39;,edgecolor=&#39;k&#39;)</span>
+
+<span class="sd">        #Add Tropycal functionality to axes</span>
+<span class="sd">        ax = utils.add_tropycal(ax)</span>
+
+<span class="sd">        #Use the &quot;plot_storm()&quot; method to plot Hurricane Michael&#39;s track</span>
+<span class="sd">        storm = basin.get_storm((&#39;michael&#39;,2018))</span>
+<span class="sd">        ax.plot_storm(storm,&#39;-&#39;,color=&#39;k&#39;)</span>
+
+<span class="sd">        #Zoom in over the Gulf Coast</span>
+<span class="sd">        ax.set_extent([-100,-70,18,37])</span>
+
+<span class="sd">        #Show plot and close</span>
+<span class="sd">        plt.show()</span>
+<span class="sd">        plt.close()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot_storm</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">(</span> <span class="n">plot_storm</span><span class="p">,</span> <span class="n">ax</span> <span class="p">)</span>
-    
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_storm</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">(</span><span class="n">plot_storm</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_two</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">(</span><span class="n">plot_two</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_cone</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">(</span><span class="n">plot_cone</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">ax</span></div>
-    
-<div class="viewcode-block" id="plot_storm"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.plot_storm.html#tropycal.utils.plot_storm">[docs]</a><span class="k">def</span> <span class="nf">plot_storm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">storm</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="plot_storm"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.plot_storm.html#tropycal.utils.plot_storm">[docs]</a><span class="k">def</span> <span class="nf">plot_storm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">storm</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a Storm object on the axes instance.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    storm : tropycal.tracks.Storm</span>
 <span class="sd">        Instance of a Storm object to be plotted.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    Besides the parameters listed above, this function behaves identically to matplotlib&#39;s default `plot()` function.</span>
-<span class="sd">    </span>
+
 <span class="sd">    It is not necessary to pass a &quot;transform&quot; keyword argument, as this is already assumed to be ccrs.PlateCarree().</span>
-<span class="sd">    </span>
+
 <span class="sd">    This function is already appended to an axes instance if ``ax = utils.add_tropycal(ax)`` is run beforehand. This allows this method to be called simply via ``ax.plot_storm(...)`` the same way one would call ``ax.plot(...)``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="c1">#Filter to only tropical points if requested</span>
-    <span class="k">if</span> <span class="s1">&#39;stormtype&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">stormtype</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;stormtype&#39;</span><span class="p">)</span>
-        <span class="n">storm</span> <span class="o">=</span> <span class="n">storm</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">stormtype</span><span class="o">=</span><span class="n">stormtype</span><span class="p">)</span>
-    
-    <span class="c1">#Pass arguments to ax plot method</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">storm</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span><span class="n">storm</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span><span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span></div>
+
+    <span class="c1"># Pass arguments to ax plot method</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">storm</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">storm</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
+              <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="plot_two"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.plot_two.html#tropycal.utils.plot_two">[docs]</a><span class="k">def</span> <span class="nf">plot_two</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">two_dict</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot a NHC Tropical Weather Outlook (TWO) on the axes instance.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    two_dict : dict</span>
+<span class="sd">        Dictionary containing TWO areas and points. This dictionary can be retrieved from ``utils.get_two_current()`` or ``utils.get_two_archive()``.</span>
+<span class="sd">    days : int</span>
+<span class="sd">        Forecast range of TWO. Can be 2, 5 or 7 days. Default is 7.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    ms : int or float, optional</span>
+<span class="sd">        Marker size label for invest areas. Default is 15.</span>
+<span class="sd">    linewidth : int or float, optional</span>
+<span class="sd">        Linewidth of TWO area. Default is 1.5.</span>
+<span class="sd">    alpha : int or float, optional</span>
+<span class="sd">        Opacity of TWO area fill. Default is 0.3.</span>
+<span class="sd">    zorder : int, optional</span>
+<span class="sd">        Optional display order on axes of TWO areas and labels.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    It is not necessary to pass a &quot;transform&quot; keyword argument, as this is already assumed to be ccrs.PlateCarree().</span>
+
+<span class="sd">    This function is already appended to an axes instance if ``ax = utils.add_tropycal(ax)`` is run beforehand. This allows this method to be called simply via ``ax.plot_two(...)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Retrieve kwargs</span>
+    <span class="n">ms</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ms&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">linewidth</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;linewidth&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+    <span class="n">zorder</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;zorder&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Format kwargs for zorder functions</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">zorder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="n">zorder</span><span class="p">}</span>
+
+    <span class="c1"># Consistency check</span>
+    <span class="k">if</span> <span class="n">days</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;days&#39; must have a value of 2, 5 or 7&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Store TWO colors for reference</span>
+    <span class="n">color_base</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Low&#39;</span><span class="p">:</span> <span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="s1">&#39;Medium&#39;</span><span class="p">:</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;High&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">}</span>
+
+    <span class="c1"># Plot areas</span>
+    <span class="k">if</span> <span class="n">two_dict</span><span class="p">[</span><span class="s1">&#39;areas&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">record</span><span class="p">,</span> <span class="n">geom</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">two_dict</span><span class="p">[</span><span class="s1">&#39;areas&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">records</span><span class="p">(),</span> <span class="n">two_dict</span><span class="p">[</span><span class="s1">&#39;areas&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">geometries</span><span class="p">()):</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+            <span class="c1"># Read relevant data</span>
+            <span class="k">if</span> <span class="s1">&#39;RISK2DAY&#39;</span> <span class="ow">in</span> <span class="n">keys</span> <span class="ow">or</span> <span class="s1">&#39;RISK5DAY&#39;</span> <span class="ow">in</span> <span class="n">keys</span> <span class="ow">or</span> <span class="s1">&#39;RISK7DAY&#39;</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">days</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">color_base</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;RISK2DAY&#39;</span><span class="p">],</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="s1">&#39;RISK5DAY&#39;</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">color_base</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;RISK5DAY&#39;</span><span class="p">],</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">color_base</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;RISK7DAY&#39;</span><span class="p">],</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">color_base</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;GENCAT&#39;</span><span class="p">],</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Plot area</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">ShapelyFeature</span><span class="p">([</span><span class="n">geom</span><span class="p">],</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">()),</span>
+                             <span class="n">facecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="c1"># Plot hatching</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">ShapelyFeature</span><span class="p">([</span><span class="n">geom</span><span class="p">],</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">()),</span>
+                             <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="o">*</span><span class="mf">1.5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">cfeature</span><span class="o">.</span><span class="n">ShapelyFeature</span><span class="p">([</span><span class="n">geom</span><span class="p">],</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">()),</span>
+                             <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Plot points</span>
+    <span class="k">if</span> <span class="n">two_dict</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">record</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">two_dict</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">records</span><span class="p">(),</span> <span class="n">two_dict</span><span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">geometries</span><span class="p">()):</span>
+
+            <span class="n">lon</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">coords</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">lat</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">coords</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="c1"># Determine if 5 or 7 day outlook exists</span>
+            <span class="n">prob_2day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;PROB2DAY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">risk_2day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;RISK2DAY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;PROB5DAY&#39;</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">prob_5day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;PROB5DAY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">risk_5day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;RISK5DAY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prob_5day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;PROB7DAY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">risk_5day</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;RISK7DAY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Label area</span>
+            <span class="k">if</span> <span class="n">days</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">color_base</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">risk_2day</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">prob_2day</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">color_base</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">risk_5day</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">prob_5day</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="n">ms</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span>
+                      <span class="n">mew</span><span class="o">=</span><span class="mf">1.5</span><span class="o">*</span><span class="p">(</span><span class="n">ms</span><span class="o">/</span><span class="mf">15.0</span><span class="p">),</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="plot_cone"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.plot_cone.html#tropycal.utils.plot_cone">[docs]</a><span class="k">def</span> <span class="nf">plot_cone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cone</span><span class="p">,</span> <span class="n">plot_center_line</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots a Tropycal derived National Hurricane Center (NHC) cone of uncertainty.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cone : dict or xarray.Dataset</span>
+<span class="sd">        Cone of uncertainty generated from ``utils.generate_nhc_cone()``.</span>
+<span class="sd">    plot_center_line : bool</span>
+<span class="sd">        Determine whether to plot cone center line. Default is False.</span>
+
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    fillcolor : str</span>
+<span class="sd">        Color to fill the cone in. Default is &#39;white&#39;.</span>
+<span class="sd">    linecolor : str</span>
+<span class="sd">        Color of outer edge of cone. Default is &#39;black&#39;.</span>
+<span class="sd">    linewidth : int or float</span>
+<span class="sd">        Linewidth of outer edge of cone. Default is 1.0.</span>
+<span class="sd">    alpha : int or float</span>
+<span class="sd">        Fill opacity of cone. Default is 0.6.</span>
+<span class="sd">    zorder : int or float</span>
+<span class="sd">        Optional display order on axes of the cone and center line.</span>
+<span class="sd">    center_linecolor : str</span>
+<span class="sd">        Color of center line. Default is &#39;black&#39;. Ignored if plot_center_line is False.</span>
+<span class="sd">    center_linewidth : int or float</span>
+<span class="sd">        Linewidth of center line. Default is 2.0. Ignored if plot_center_line is False.</span>
+<span class="sd">    center_linestyle : str</span>
+<span class="sd">        Linestyle of center line. Default is &#39;solid&#39;. Ignored if plot_center_line is False.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    It is not necessary to pass a &quot;transform&quot; keyword argument, as this is already assumed to be ccrs.PlateCarree().</span>
+
+<span class="sd">    This function is already appended to an axes instance if ``ax = utils.add_tropycal(ax)`` is run beforehand. This allows this method to be called simply via ``ax.plot_cone(...)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Retrieve kwargs</span>
+    <span class="n">fillcolor</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;fillcolor&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">linecolor</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;linecolor&#39;</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">linewidth</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;linewidth&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">zorder</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;zorder&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">center_linecolor</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;center_linecolor&#39;</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">center_linewidth</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;center_linewidth&#39;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+    <span class="n">center_linestyle</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;center_linestyle&#39;</span><span class="p">,</span> <span class="s1">&#39;solid&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Format kwargs for zorder functions</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">zorder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;zorder&#39;</span><span class="p">:</span> <span class="n">zorder</span><span class="p">}</span>
+
+    <span class="c1"># Contour fill cone</span>
+    <span class="n">cone_lon_2d</span> <span class="o">=</span> <span class="n">cone</span><span class="p">[</span><span class="s1">&#39;lon2d&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;lon2d&#39;</span> <span class="ow">in</span> <span class="n">cone</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">cone</span><span class="p">[</span><span class="s1">&#39;grid_lon&#39;</span><span class="p">]</span>
+    <span class="n">cone_lat_2d</span> <span class="o">=</span> <span class="n">cone</span><span class="p">[</span><span class="s1">&#39;lat2d&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;lat2d&#39;</span> <span class="ow">in</span> <span class="n">cone</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">cone</span><span class="p">[</span><span class="s1">&#39;grid_lat&#39;</span><span class="p">]</span>
+    <span class="n">cone_2d</span> <span class="o">=</span> <span class="n">cone</span><span class="p">[</span><span class="s1">&#39;cone&#39;</span><span class="p">]</span>
+    <span class="n">cone_2d</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">cone_2d</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">cone_lon_2d</span><span class="p">,</span> <span class="n">cone_lat_2d</span><span class="p">,</span> <span class="n">cone_2d</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">],</span>
+                  <span class="n">colors</span><span class="o">=</span><span class="p">[</span><span class="n">fillcolor</span><span class="p">,</span> <span class="n">fillcolor</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">cone_lon_2d</span><span class="p">,</span> <span class="n">cone_lat_2d</span><span class="p">,</span> <span class="n">cone_2d</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.99</span><span class="p">],</span>
+                 <span class="n">linewidths</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">linecolor</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Plot center line</span>
+    <span class="k">if</span> <span class="n">plot_center_line</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cone</span><span class="p">[</span><span class="s1">&#39;center_lon&#39;</span><span class="p">],</span> <span class="n">cone</span><span class="p">[</span><span class="s1">&#39;center_lat&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">center_linecolor</span><span class="p">,</span>
+                  <span class="n">linewidth</span><span class="o">=</span><span class="n">center_linewidth</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
+                  <span class="n">linestyle</span><span class="o">=</span><span class="n">center_linestyle</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -140,7 +353,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

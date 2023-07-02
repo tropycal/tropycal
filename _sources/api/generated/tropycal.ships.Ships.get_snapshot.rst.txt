@@ -1,0 +1,12 @@
+Ships.get_snapshot
+=================================
+
+.. currentmodule:: tropycal.ships
+
+.. automethod:: Ships.get_snapshot
+
+.. include:: tropycal.ships.Ships.get_snapshot
+
+.. raw:: html
+
+      <div style='clear:both'></div>

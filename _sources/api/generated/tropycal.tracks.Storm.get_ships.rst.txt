@@ -1,0 +1,12 @@
+Storm.get_ships
+===============================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Storm.get_ships
+
+.. include:: tropycal.tracks.Storm.get_ships
+
+.. raw:: html
+
+      <div style='clear:both'></div>

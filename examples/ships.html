@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reading SHIPS Data &mdash; tropycal </title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-dataframe.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sg_gallery-rendered-html.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo_32.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Customizing Storm Plots" href="customize_storm.html" />
+    <link rel="prev" title="Historical TC Track Analogs" href="analogs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            tropycal
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Example Scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tracks.season.html">Individual Season Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="realtime.html">Realtime Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.tornado.html">Tornado Analyses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.storm.html">Individual Storm Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tc_rainfall.html">Tropical Cyclone Rainfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analogs.html">Historical TC Track Analogs</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Reading SHIPS Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reading-in-hurtdat2-dataset">Reading In HURTDAT2 Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reading-in-ships-data">Reading in SHIPS data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retrieving-data">Retrieving Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualizing-data">Visualizing Data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="customize_storm.html">Customizing Storm Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracks.TrackDataset.html">TC Dataset Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recon.html">Aircraft Recon Data Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartopy.html">Standalone Cartopy Functionality</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sample_usage.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data.html">Data Sources</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">tropycal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Reading SHIPS Data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/ships.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-ships-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code</p>
+</div>
+<section class="sphx-glr-example-title" id="reading-ships-data">
+<span id="sphx-glr-examples-ships-py"></span><h1>Reading SHIPS Data<a class="headerlink" href="#reading-ships-data" title="Permalink to this heading">¶</a></h1>
+<p>This sample script illustrates how to leverage Tropycal’s SHIPS reading capability.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">tropycal</span> <span class="kn">import</span> <span class="n">tracks</span>
+</pre></div>
+</div>
+<section id="reading-in-hurtdat2-dataset">
+<h2>Reading In HURTDAT2 Dataset<a class="headerlink" href="#reading-in-hurtdat2-dataset" title="Permalink to this heading">¶</a></h2>
+<p>Let’s start with the HURDAT2 dataset by loading it into memory. By default, this reads in the HURDAT dataset from the National Hurricane Center (NHC) website, unless you specify a local file path using either <code class="docutils literal notranslate"><span class="pre">atlantic_url</span></code> for the North Atlantic basin on <code class="docutils literal notranslate"><span class="pre">pacific_url</span></code> for the East &amp; Central Pacific basin.</p>
+<p>HURDAT data is not available for the current year. To include the latest data up through today, the “include_btk” flag needs to be set to True, which reads in preliminary best track data from the NHC website. For this example, we’ll set this to False.</p>
+<p>Let’s create an instance of a TrackDataset object, which will store the North Atlantic HURDAT2 dataset in memory. Once we have this we can use its methods for various types of analyses.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
+--&gt; Completed reading in HURDAT2 data (16.38 seconds)
+</pre></div>
+</div>
+</section>
+<section id="reading-in-ships-data">
+<h2>Reading in SHIPS data<a class="headerlink" href="#reading-in-ships-data" title="Permalink to this heading">¶</a></h2>
+<p>SHIPS data can be read either using the standalone <code class="docutils literal notranslate"><span class="pre">ships.Ships</span></code> class by providing the SHIPS text data, or via Storm objects. The more conventional method is via Storm objects, as this automatically locates the SHIPS text files from UCAR’s online archive dating back to 2011.</p>
+<p>Let’s retrieve an instance of Hurricane Ida from 2021 for our example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.get_storm.html#tropycal.tracks.TrackDataset.get_storm" title="tropycal.tracks.TrackDataset.get_storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-method"><span class="n">basin</span><span class="o">.</span><span class="n">get_storm</span></a><span class="p">((</span><span class="s1">&#39;ida&#39;</span><span class="p">,</span><span class="mi">2021</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Next, let’s search for times where SHIPS forecasts are available:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">available_times</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">search_ships</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">available_times</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2021-08-26 12:00:00
+2021-08-26 18:00:00
+2021-08-27 00:00:00
+2021-08-27 06:00:00
+2021-08-27 12:00:00
+2021-08-27 18:00:00
+2021-08-28 00:00:00
+2021-08-28 06:00:00
+2021-08-28 12:00:00
+2021-08-28 18:00:00
+2021-08-29 00:00:00
+2021-08-29 06:00:00
+2021-08-29 12:00:00
+2021-08-29 18:00:00
+2021-08-30 00:00:00
+2021-08-30 06:00:00
+2021-08-30 12:00:00
+2021-08-30 18:00:00
+</pre></div>
+</div>
+<p>Now that we know what times are available, let’s use the SHIPS forecast from 1800 UTC 27 August 2021. The following line retrieves an instance of a Ships object and stores it in the variable <code class="docutils literal notranslate"><span class="pre">ships</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ships</span> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="o">.</span><span class="n">get_ships</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">18</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>We now have a Ships object containing the forecast initialized at this time. Let’s peek at our Ships object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">ships</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;tropycal.ships.Ships&gt;
+
+Variables:
+    fhr               (int) [0 .... 168]
+    vmax_noland_kt    (int) [70 .... 55]
+    vmax_land_kt      (int) [70 .... 27]
+    vmax_lgem_kt      (int) [70 .... 27]
+    storm_type        (str) [TROP .... TROP]
+    shear_kt          (int) [11 .... 16]
+    shear_adj_kt      (int) [-1 .... 0]
+    shear_dir         (int) [216 .... 348]
+    sst_c             (float) [29.5 .... 29.3]
+    vmax_pot_kt       (int) [162 .... 156]
+    200mb_temp_c      (float) [-52.8 .... -54.1]
+    thetae_dev_c      (int) [9 .... 1]
+    700_500_rh        (int) [64 .... 45]
+    model_vortex_kt   (int) [17 .... 7]
+    850mb_env_vort    (int) [47 .... 16]
+    200mb_div         (int) [86 .... -35]
+    700_850_tadv      (int) [8 .... -8]
+    dist_land_km      (int) [98 .... -32]
+    lat               (float) [21.6 .... nan]
+    lon               (float) [-82.7 .... nan]
+    storm_speed_kt    (int) [14 .... 7]
+    heat_content      (int) [71 .... 4]
+
+RI Probabilities:
+    20kt/12hr:  61% (12.4x climo mean)
+    25kt/24hr:  82% (7.5x climo mean)
+    30kt/24hr:  76% (11.1x climo mean)
+    35kt/24hr:  70% (17.9x climo mean)
+    40kt/24hr:  53% (22.2x climo mean)
+    45kt/36hr:  73% (15.8x climo mean)
+    55kt/48hr:  47% (10.0x climo mean)
+    65kt/72hr:  31% (5.9x climo mean)
+
+Attributes:
+    storm_bearing_deg:             325
+    storm_motion_kt:               14
+    max_wind_t-12_kt:              45
+    steering_level_pres_hpa:       518
+    steering_level_pres_mean_hpa:  620
+    brightness_temp_stdev:         4.8
+    brightness_temp_stdev_mean:    14.5
+    pixels_below_-20c:             99.0
+    pixels_below_-20c_mean:        65.0
+    lat:                           21.6
+    lon:                           -82.7
+    storm_name:                    IDA
+    forecast_init:                 2021-08-27 18:00:00
+</pre></div>
+</div>
+</section>
+<section id="retrieving-data">
+<h2>Retrieving Data<a class="headerlink" href="#retrieving-data" title="Permalink to this heading">¶</a></h2>
+<p>There’s a lot of data in this object, as SHIPS files provide a lot of variables over many forecast hours. If we want data only valid at a specific forecast hour, we can use the following method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output_dict</span> <span class="o">=</span> <span class="n">ships</span><span class="o">.</span><span class="n">get_snapshot</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">48</span><span class="p">)</span>
+
+<span class="c1"># Format nicely for documentation purposes</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">output_dict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{
+    &quot;fhr&quot;: 48,
+    &quot;vmax_noland_kt&quot;: 121,
+    &quot;vmax_land_kt&quot;: 116,
+    &quot;vmax_lgem_kt&quot;: 127,
+    &quot;storm_type&quot;: &quot;TROP&quot;,
+    &quot;shear_kt&quot;: 9,
+    &quot;shear_adj_kt&quot;: -5,
+    &quot;shear_dir&quot;: 263,
+    &quot;sst_c&quot;: 30.7,
+    &quot;vmax_pot_kt&quot;: 171,
+    &quot;200mb_temp_c&quot;: -51.8,
+    &quot;thetae_dev_c&quot;: 7,
+    &quot;700_500_rh&quot;: 73,
+    &quot;model_vortex_kt&quot;: 29,
+    &quot;850mb_env_vort&quot;: -8,
+    &quot;200mb_div&quot;: 41,
+    &quot;700_850_tadv&quot;: 6,
+    &quot;dist_land_km&quot;: 62,
+    &quot;lat&quot;: 28.6,
+    &quot;lon&quot;: -90.5,
+    &quot;storm_speed_kt&quot;: 8,
+    &quot;heat_content&quot;: 42
+}
+</pre></div>
+</div>
+<p>We can also fetch the rapid intensification probabilities that SHIPS provides:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output_dict</span> <span class="o">=</span> <span class="n">ships</span><span class="o">.</span><span class="n">get_ri_prob</span><span class="p">()</span>
+
+<span class="c1"># Format nicely for documentation purposes</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">output_dict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{
+    &quot;20kt/12hr&quot;: {
+        &quot;probability&quot;: 61,
+        &quot;climo_mean&quot;: 4.9,
+        &quot;prob / climo&quot;: 12.4
+    },
+    &quot;25kt/24hr&quot;: {
+        &quot;probability&quot;: 82,
+        &quot;climo_mean&quot;: 10.9,
+        &quot;prob / climo&quot;: 7.5
+    },
+    &quot;30kt/24hr&quot;: {
+        &quot;probability&quot;: 76,
+        &quot;climo_mean&quot;: 6.8,
+        &quot;prob / climo&quot;: 11.1
+    },
+    &quot;35kt/24hr&quot;: {
+        &quot;probability&quot;: 70,
+        &quot;climo_mean&quot;: 3.9,
+        &quot;prob / climo&quot;: 17.9
+    },
+    &quot;40kt/24hr&quot;: {
+        &quot;probability&quot;: 53,
+        &quot;climo_mean&quot;: 2.4,
+        &quot;prob / climo&quot;: 22.2
+    },
+    &quot;45kt/36hr&quot;: {
+        &quot;probability&quot;: 73,
+        &quot;climo_mean&quot;: 4.6,
+        &quot;prob / climo&quot;: 15.8
+    },
+    &quot;55kt/48hr&quot;: {
+        &quot;probability&quot;: 47,
+        &quot;climo_mean&quot;: 4.7,
+        &quot;prob / climo&quot;: 10.0
+    },
+    &quot;65kt/72hr&quot;: {
+        &quot;probability&quot;: 31,
+        &quot;climo_mean&quot;: 5.3,
+        &quot;prob / climo&quot;: 5.9
+    }
+}
+</pre></div>
+</div>
+<p>Ships objects also allow us to convert data to other formats, such as xarray Datasets:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">ships</span><span class="o">.</span><span class="n">to_xarray</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;xarray.Dataset&gt;
+Dimensions:          (fhr: 17)
+Coordinates:
+  * fhr              (fhr) int64 0 6 12 18 24 36 48 ... 108 120 132 144 156 168
+Data variables: (12/21)
+    vmax_noland_kt   (fhr) int64 70 80 89 98 106 112 121 ... 74 66 61 58 57 55
+    vmax_land_kt     (fhr) int64 70 67 83 92 100 107 116 ... 27 27 27 27 27 27
+    vmax_lgem_kt     (fhr) int64 70 70 85 94 102 120 127 ... 27 27 27 27 27 27
+    storm_type       (fhr) &lt;U4 &#39;TROP&#39; &#39;TROP&#39; &#39;TROP&#39; ... &#39;TROP&#39; &#39;TROP&#39; &#39;TROP&#39;
+    shear_kt         (fhr) int64 11 13 11 8 7 17 9 16 11 19 12 25 20 24 12 18 16
+    shear_adj_kt     (fhr) int64 -1 1 0 -3 -5 1 -5 5 1 1 3 0 3 -3 0 2 0
+    ...               ...
+    700_850_tadv     (fhr) int64 8 7 0 2 4 13 6 10 16 15 9 0 -3 -5 0 -10 -8
+    dist_land_km     (fhr) int64 98 -18 126 268 410 ... -563 -461 -334 -200 -32
+    lat              (fhr) float64 21.6 22.5 23.4 24.4 25.3 ... nan nan nan nan
+    lon              (fhr) float64 -82.7 -83.8 -84.9 -85.8 ... nan nan nan nan
+    storm_speed_kt   (fhr) int64 14 14 13 13 13 12 8 7 8 8 9 8 8 9 10 9 7
+    heat_content     (fhr) int64 71 92 122 97 105 133 42 16 7 7 6 6 5 4 4 3 4
+Attributes: (12/13)
+    storm_bearing_deg:             325
+    storm_motion_kt:               14
+    max_wind_t-12_kt:              45
+    steering_level_pres_hpa:       518
+    steering_level_pres_mean_hpa:  620
+    brightness_temp_stdev:         4.8
+    ...                            ...
+    pixels_below_-20c:             99.0
+    pixels_below_-20c_mean:        65.0
+    lat:                           21.6
+    lon:                           -82.7
+    storm_name:                    IDA
+    forecast_init:                 2021-08-27 18:00:00
+</pre></div>
+</div>
+</section>
+<section id="visualizing-data">
+<h2>Visualizing Data<a class="headerlink" href="#visualizing-data" title="Permalink to this heading">¶</a></h2>
+<p>Tropycal’s Ships class comes with a built-in function to plot a basic summary of the SHIPS forecast and key diagnostics. We can use it as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ships</span><span class="o">.</span><span class="n">plot_summary</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_ships_001.png" srcset="../_images/sphx_glr_ships_001.png" alt="ships" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 1800x1200 with 8 Axes&gt;
+</pre></div>
+</div>
+<p>Let’s say we want to make a plot of several metrics that affect a storm’s intensity:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create figure</span>
+<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;#f6f6f6&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+<span class="c1"># Plot variables</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ships</span><span class="o">.</span><span class="n">fhr</span><span class="p">,</span> <span class="n">ships</span><span class="o">.</span><span class="n">shear_kt</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Shear (kt)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ships</span><span class="o">.</span><span class="n">fhr</span><span class="p">,</span> <span class="n">ships</span><span class="o">.</span><span class="n">sst_c</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;SSTs (C)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ships</span><span class="o">.</span><span class="n">fhr</span><span class="p">,</span> <span class="n">ships</span><span class="p">[</span><span class="s1">&#39;700_500_rh&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;700-500mb RH (%)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Shear, SST, RH&#39;</span><span class="p">)</span>
+
+<span class="c1"># Add twin axes for wind speed</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ships</span><span class="o">.</span><span class="n">fhr</span><span class="p">,</span> <span class="n">ships</span><span class="o">.</span><span class="n">vmax_land_kt</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Wind Speed (kt)&#39;</span><span class="p">)</span>
+
+<span class="c1"># Format and label x-axis</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">ships</span><span class="o">.</span><span class="n">fhr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">24</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Forecast Hour&#39;</span><span class="p">)</span>
+
+<span class="c1"># Add legend and title</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SHIPS Forecast for </span><span class="si">{</span><span class="n">ships</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;storm_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+             <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialized: </span><span class="si">{</span><span class="n">ships</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;forecast_init&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M UTC </span><span class="si">%d</span><span class="s1"> %b %Y&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+             <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_ships_002.png" srcset="../_images/sphx_glr_ships_002.png" alt="SHIPS Forecast for IDA, Initialized: 1800 UTC 27 Aug 2021" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Text(1.0, 1.0, &#39;Initialized: 1800 UTC 27 Aug 2021&#39;)
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  19.346 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-ships-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/665f4852398dcbe1b2b92ac6ed572909/ships.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">ships.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/f66605fc182434441f2490ee45c877d5/ships.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">ships.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="analogs.html" class="btn btn-neutral float-left" title="Historical TC Track Analogs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="customize_storm.html" class="btn btn-neutral float-right" title="Customizing Storm Plots" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -36,12 +36,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> tropycal
-            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            tropycal
+              <img src="../_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -62,9 +66,11 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="analogs.html">Historical TC Track Analogs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ships.html">Reading SHIPS Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="customize_storm.html">Customizing Storm Plots</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tracks.TrackDataset.html">TC Dataset Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="recon.html">Aircraft Recon Data Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartopy.html">Standalone Cartopy Functionality</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
@@ -85,9 +91,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Examples</a> &raquo;</li>
-      <li>Tropical Cyclone Rainfall</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Tropical Cyclone Rainfall</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/examples/tc_rainfall.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -99,7 +105,7 @@
              
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-examples-tc-rainfall-py"><span class="std std-ref">here</span></a>
+<p><a class="reference internal" href="#sphx-glr-download-examples-tc-rainfall-py"><span class="std std-ref">Go to the end</span></a>
 to download the full example code</p>
 </div>
 <section class="sphx-glr-example-title" id="tropical-cyclone-rainfall">
@@ -116,9 +122,8 @@ to download the full example code</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class"><span class="n">tracks</span><span class="o">.</span><span class="n">TrackDataset</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.TrackDataset.html#tropycal.tracks.TrackDataset" title="tropycal.tracks.TrackDataset" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">basin</span></a><span class="o">=</span><span class="s1">&#39;north_atlantic&#39;</span><span class="p">,</span><span class="n">include_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in HURDAT2 data
---&gt; Completed reading in HURDAT2 data (4.72 seconds)
+--&gt; Completed reading in HURDAT2 data (2.16 seconds)
 </pre></div>
 </div>
 </section>
@@ -129,9 +134,8 @@ to download the full example code</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="../api/generated/tropycal.rain.RainDataset.html#tropycal.rain.RainDataset" title="tropycal.rain.RainDataset" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rain_obj</span></a> <span class="o">=</span> <a href="../api/generated/tropycal.rain.RainDataset.html#tropycal.rain.RainDataset" title="tropycal.rain.RainDataset" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-class"><span class="n">rain</span><span class="o">.</span><span class="n">RainDataset</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>--&gt; Starting to read in rainfall data
---&gt; Completed reading in rainfall data (3.96 seconds)
+--&gt; Completed reading in rainfall data (8.87 seconds)
 </pre></div>
 </div>
 <p>Hurricane Harvey (2017) produced catastrophic flooding over Texas. Let’s pull its rain observations to take a deeper look.</p>
@@ -380,7 +384,6 @@ to download the full example code</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Longitude = </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Max Rainfall = 60.58 Inches
 Location = Nederland 1.5 SW
 Latitude = 29.95
@@ -400,8 +403,7 @@ Longitude = -94.01
 <a href="../api/generated/tropycal.rain.RainDataset.plot_rain_grid.html#tropycal.rain.RainDataset.plot_rain_grid" title="tropycal.rain.RainDataset.plot_rain_grid" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-method"><span class="n">rain_obj</span><span class="o">.</span><span class="n">plot_rain_grid</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">,</span><span class="n">grid</span><span class="p">,</span><span class="n">levels</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span><span class="mi">26</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span><span class="mi">39</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">103</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">82</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_tc_rainfall_001.png" srcset="../_images/sphx_glr_tc_rainfall_001.png" alt="Hurricane HARVEY Interpolated WPC Storm Rainfall (in), 17 Aug 2017 – 01 Sep 2017 115 kt • 937 hPa • 11.4 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane HARVEY\nInterpolated WPC Storm Rainfall (in)&#39;,&#39;right&#39;:&#39;17 Aug 2017 – 01 Sep 2017\n115 kt • 937 hPa • 11.4 ACE&#39;}&gt;
+<img src="../_images/sphx_glr_tc_rainfall_001.png" srcset="../_images/sphx_glr_tc_rainfall_001.png" alt="Hurricane HARVEY Interpolated WPC Storm Rainfall (in), 17 Aug 2017 – 01 Sep 2017 115 kt • 937 hPa • 11.4 ACE" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane HARVEY\nInterpolated WPC Storm Rainfall (in)&#39;, &#39;right&#39;: &#39;17 Aug 2017 – 01 Sep 2017\n115 kt • 937 hPa • 11.4 ACE&#39;}&gt;
 </pre></div>
 </div>
 <p>Linear interpolation isn’t perfect of course, especially considering that some observations in this dataset aren’t perfectly quality controlled.</p>
@@ -410,8 +412,7 @@ Longitude = -94.01
 <a href="../api/generated/tropycal.rain.RainDataset.plot_rain.html#tropycal.rain.RainDataset.plot_rain" title="tropycal.rain.RainDataset.plot_rain" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-method"><span class="n">rain_obj</span><span class="o">.</span><span class="n">plot_rain</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span><span class="mi">26</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span><span class="mi">39</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">103</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">82</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_tc_rainfall_002.png" srcset="../_images/sphx_glr_tc_rainfall_002.png" alt="Hurricane HARVEY WPC Storm Rainfall (inch), 17 Aug 2017 – 01 Sep 2017 115 kt • 937 hPa • 11.4 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane HARVEY\nWPC Storm Rainfall (inch)&#39;,&#39;right&#39;:&#39;17 Aug 2017 – 01 Sep 2017\n115 kt • 937 hPa • 11.4 ACE&#39;}&gt;
+<img src="../_images/sphx_glr_tc_rainfall_002.png" srcset="../_images/sphx_glr_tc_rainfall_002.png" alt="Hurricane HARVEY WPC Storm Rainfall (inch), 17 Aug 2017 – 01 Sep 2017 115 kt • 937 hPa • 11.4 ACE" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane HARVEY\nWPC Storm Rainfall (inch)&#39;, &#39;right&#39;: &#39;17 Aug 2017 – 01 Sep 2017\n115 kt • 937 hPa • 11.4 ACE&#39;}&gt;
 </pre></div>
 </div>
 <p>The Houston, Texas metro was particularly hard-hit by Hurricane Harvey, with rain totals over 30 inches in many locations.</p>
@@ -420,12 +421,11 @@ Longitude = -94.01
 <a href="../api/generated/tropycal.rain.RainDataset.plot_rain.html#tropycal.rain.RainDataset.plot_rain" title="tropycal.rain.RainDataset.plot_rain" class="sphx-glr-backref-module-tropycal-rain sphx-glr-backref-type-py-method"><span class="n">rain_obj</span><span class="o">.</span><span class="n">plot_rain</span></a><span class="p">(</span><a href="../api/generated/tropycal.tracks.Storm.html#tropycal.tracks.Storm" title="tropycal.tracks.Storm" class="sphx-glr-backref-module-tropycal-tracks sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">storm</span></a><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span><span class="n">minimum_threshold</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">domain</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;s&#39;</span><span class="p">:</span><span class="mi">27</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">99</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">92</span><span class="p">})</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_tc_rainfall_003.png" srcset="../_images/sphx_glr_tc_rainfall_003.png" alt="Hurricane HARVEY WPC Storm Rainfall (>30 inch), 17 Aug 2017 – 01 Sep 2017 115 kt • 937 hPa • 11.4 ACE" class = "sphx-glr-single-img"/><p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxesSubplot:title={&#39;left&#39;:&#39;Hurricane HARVEY\nWPC Storm Rainfall (&gt;30 inch)&#39;,&#39;right&#39;:&#39;17 Aug 2017 – 01 Sep 2017\n115 kt • 937 hPa • 11.4 ACE&#39;}&gt;
+<img src="../_images/sphx_glr_tc_rainfall_003.png" srcset="../_images/sphx_glr_tc_rainfall_003.png" alt="Hurricane HARVEY WPC Storm Rainfall (>30 inch), 17 Aug 2017 – 01 Sep 2017 115 kt • 937 hPa • 11.4 ACE" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;GeoAxes: title={&#39;left&#39;: &#39;Hurricane HARVEY\nWPC Storm Rainfall (&gt;30 inch)&#39;, &#39;right&#39;: &#39;17 Aug 2017 – 01 Sep 2017\n115 kt • 937 hPa • 11.4 ACE&#39;}&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  28.124 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tc-rainfall-py">
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  18.383 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tc-rainfall-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/2cdbea61d51b59b7dea97c3b41a78666/tc_rainfall.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tc_rainfall.py</span></code></a></p>
 </div>
@@ -448,7 +448,7 @@ Longitude = -94.01
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Tropycal Developers.</p>
+    <p>&#169; Copyright 2023, Tropycal Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

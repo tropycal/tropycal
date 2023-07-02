@@ -1,0 +1,26 @@
+tropycal.ships.Ships
+====================
+
+.. currentmodule:: tropycal.ships
+
+.. autoclass:: Ships
+
+   
+   
+   
+   
+   
+   Methods Summary
+
+   
+      .. autosummary::
+         :toctree:
+      
+         Ships.get_ri_prob
+         Ships.get_snapshot
+         Ships.get_variables
+         Ships.plot_summary
+         Ships.to_dataframe
+         Ships.to_xarray
+   
+   

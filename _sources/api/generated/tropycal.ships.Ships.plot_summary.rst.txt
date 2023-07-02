@@ -1,0 +1,12 @@
+Ships.plot_summary
+=================================
+
+.. currentmodule:: tropycal.ships
+
+.. automethod:: Ships.plot_summary
+
+.. include:: tropycal.ships.Ships.plot_summary
+
+.. raw:: html
+
+      <div style='clear:both'></div>

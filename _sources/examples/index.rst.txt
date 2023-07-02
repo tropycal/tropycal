@@ -21,7 +21,7 @@ Examples of using tropycal to generate images and text.
 .. only:: html
 
   .. image:: /examples/images/thumb/sphx_glr_tracks.season_thumb.png
-    :alt: Individual Season Analysis
+    :alt:
 
   :ref:`sphx_glr_examples_tracks.season.py`
 
@@ -38,7 +38,7 @@ Examples of using tropycal to generate images and text.
 .. only:: html
 
   .. image:: /examples/images/thumb/sphx_glr_realtime_thumb.png
-    :alt: Realtime Functionality
+    :alt:
 
   :ref:`sphx_glr_examples_realtime.py`
 
@@ -55,7 +55,7 @@ Examples of using tropycal to generate images and text.
 .. only:: html
 
   .. image:: /examples/images/thumb/sphx_glr_tracks.tornado_thumb.png
-    :alt: Tornado Analyses
+    :alt:
 
   :ref:`sphx_glr_examples_tracks.tornado.py`
 
@@ -72,7 +72,7 @@ Examples of using tropycal to generate images and text.
 .. only:: html
 
   .. image:: /examples/images/thumb/sphx_glr_tracks.storm_thumb.png
-    :alt: Individual Storm Analysis
+    :alt:
 
   :ref:`sphx_glr_examples_tracks.storm.py`
 
@@ -89,7 +89,7 @@ Examples of using tropycal to generate images and text.
 .. only:: html
 
   .. image:: /examples/images/thumb/sphx_glr_tc_rainfall_thumb.png
-    :alt: Tropical Cyclone Rainfall
+    :alt:
 
   :ref:`sphx_glr_examples_tc_rainfall.py`
 
@@ -106,7 +106,7 @@ Examples of using tropycal to generate images and text.
 .. only:: html
 
   .. image:: /examples/images/thumb/sphx_glr_analogs_thumb.png
-    :alt: Historical TC Track Analogs
+    :alt:
 
   :ref:`sphx_glr_examples_analogs.py`
 
@@ -118,12 +118,29 @@ Examples of using tropycal to generate images and text.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Reading SHIPS Data">
+
+.. only:: html
+
+  .. image:: /examples/images/thumb/sphx_glr_ships_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_ships.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Reading SHIPS Data</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Customizing Storm Plots">
 
 .. only:: html
 
   .. image:: /examples/images/thumb/sphx_glr_customize_storm_thumb.png
-    :alt: Customizing Storm Plots
+    :alt:
 
   :ref:`sphx_glr_examples_customize_storm.py`
 
@@ -140,7 +157,7 @@ Examples of using tropycal to generate images and text.
 .. only:: html
 
   .. image:: /examples/images/thumb/sphx_glr_tracks.TrackDataset_thumb.png
-    :alt: TC Dataset Analysis
+    :alt:
 
   :ref:`sphx_glr_examples_tracks.TrackDataset.py`
 
@@ -157,13 +174,30 @@ Examples of using tropycal to generate images and text.
 .. only:: html
 
   .. image:: /examples/images/thumb/sphx_glr_recon_thumb.png
-    :alt: Aircraft Recon Data Analysis
+    :alt:
 
   :ref:`sphx_glr_examples_recon.py`
 
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Aircraft Recon Data Analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Standalone Cartopy Functionality">
+
+.. only:: html
+
+  .. image:: /examples/images/thumb/sphx_glr_cartopy_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_cartopy.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Standalone Cartopy Functionality</div>
     </div>
 
 
@@ -181,9 +215,11 @@ Examples of using tropycal to generate images and text.
    /examples/tracks.storm
    /examples/tc_rainfall
    /examples/analogs
+   /examples/ships
    /examples/customize_storm
    /examples/tracks.TrackDataset
    /examples/recon
+   /examples/cartopy
 
 
 .. only:: html

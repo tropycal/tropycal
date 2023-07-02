@@ -1,0 +1,12 @@
+ships_parser
+===========================
+
+.. currentmodule:: tropycal.utils
+
+.. autofunction:: ships_parser
+
+.. include:: tropycal.utils.ships_parser
+
+.. raw:: html
+
+      <div style='clear:both'></div>

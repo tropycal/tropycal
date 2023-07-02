@@ -1,0 +1,12 @@
+RealtimeStorm.search_ships
+============================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.search_ships
+
+.. include:: tropycal.realtime.RealtimeStorm.search_ships
+
+.. raw:: html
+
+      <div style='clear:both'></div>

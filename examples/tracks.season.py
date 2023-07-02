@@ -38,7 +38,7 @@ season.to_dataframe()
 ###########################################
 # A more detailed summary of the season can be retrieved using the `summary()` method:
 
-print(season.summary())
+season.summary()
 
 ###########################################
 # Plot Season
@@ -70,4 +70,4 @@ combined.plot()
 ###########################################
 # The summary method also generates summaries for all seasons in this object:
 
-print(combined.summary())
+combined.summary()

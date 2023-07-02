@@ -27,13 +27,13 @@ sys.path.insert(0, os.path.abspath('../plot'))
 # -- Project information -----------------------------------------------------
 
 project = 'tropycal'
-copyright = '2022, Tropycal Developers'
+copyright = '2023, Tropycal Developers'
 author = 'Tropycal Developers'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.6.1'
+release = '1.0'
 
 
 # -- General configuration ---------------------------------------------------

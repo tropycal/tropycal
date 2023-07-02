@@ -12,7 +12,7 @@ class Ships():
     Parameters
     ----------
     content : str
-        SHIPS file content. If initialized via a tropycal.tracks.Storm object, this does not need to be provided.
+        SHIPS file content. If initialized via a ``tropycal.tracks.Storm`` object, this does not need to be provided.
     storm_name : str, optional
         Storm name to associate with this SHIPS data. If initialized via a ``tropycal.tracks.Storm`` object, this does not need to be provided.
     
@@ -82,7 +82,7 @@ class Ships():
 
         return "\n".join(summary)
     
-    def __init__(self, content, storm_name=None):
+    def __init__(self, content, storm_name=None, forecast_init=None):
         
         ships = ships_parser(content)
         self.dict = ships['data']
@@ -90,9 +90,13 @@ class Ships():
         self.attrs = ships['data_attrs']
         
         # Add storm name if provided
-        self.attrs['name'] = 'UNKNOWN'
-        if storm_name is not None: self.attrs['name'] = storm_name
-        
+        self.attrs['storm_name'] = 'UNKNOWN'
+        if storm_name is not None: self.attrs['storm_name'] = storm_name
+
+        # Add forecast initialization if provided
+        self.attrs['forecast_init'] = np.nan
+        if forecast_init is not None: self.attrs['forecast_init'] = forecast_init
+
         # Set data variables as attributes of this object
         for key in self.dict:
             self[key] = np.array(self.dict[key])

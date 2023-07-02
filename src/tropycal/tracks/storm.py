@@ -2901,7 +2901,7 @@ class Storm:
         except:
             raise ValueError('SHIPS data is unavailable for the requested storm or time.')
 
-        return Ships(content, storm_name=self.name)
+        return Ships(content, storm_name=self.name, forecast_init=time)
 
     def get_archer(self):
         r"""

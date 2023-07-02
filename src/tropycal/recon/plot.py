@@ -924,7 +924,7 @@ def plot_skewt(dict_list, storm_name_title):
             ax2.text(0, .05, f'\nDeep Layer Mean Wind: N/A',
                      va='top', fontsize=12)
 
-        ax2.set_title('Generated using Tropycal \n', fontsize=12,
+        ax2.set_title('Generated using Tropycal\nInspired by Tropical Tidbits', fontsize=12,
                       fontweight='bold', color='0.7', loc='right')
 
         cellText = np.array([[f'{int(i)} hPa' for i, j in zip(dfwind['pres'], dfwind['wspd']) if not np.isnan(j)],

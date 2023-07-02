@@ -40,7 +40,8 @@ def test_get_ships():
         'pixels_below_-20c_mean': 65.0,
         'lat': 18.0,
         'lon': -80.1,
-        'name': 'IDA'
+        'storm_name': 'IDA',
+        'forecast_init': dt.datetime(2021, 8, 27, 0, 0),
     }
     assert ships.attrs == expected_output
 
@@ -92,7 +93,7 @@ def test_get_ri_prob():
         '40kt/24hr': {'probability': 6, 'climo_mean': 2.4, 'prob / climo': 2.6},
         '45kt/36hr': {'probability': 11, 'climo_mean': 4.6, 'prob / climo': 2.3},
         '55kt/48hr': {'probability': 20, 'climo_mean': 4.7, 'prob / climo': 4.3},
-        '48kt/72hr': {'probability': 44, 'climo_mean': 5.3, 'prob / climo': 8.4}
+        '65kt/72hr': {'probability': 44, 'climo_mean': 5.3, 'prob / climo': 8.4}
     }
     assert output == expected_output
 

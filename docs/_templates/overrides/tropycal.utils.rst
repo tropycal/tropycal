@@ -25,6 +25,7 @@ Generic Utilities
       get_two_archive
       knots_to_mph
       nhc_cone_radii
+      ships_parser
 
 
 Cartopy Utilities

@@ -1006,6 +1006,16 @@ def calc_ensemble_ellipse(member_lons, member_lats):
     .. _Hamill et al. (2011): https://doi.org/10.1175/2010MWR3456.1
 
     This code is adapted from NCAR Command Language (NCL) code courtesy of Ryan Torn and Thomas Hamill.
+    
+    Examples
+    --------
+    
+    >>> lons = [-60, -59, -59, -61, -67, -58, -60, -57]
+    >>> lats = [40, 40, 41, 39, 37, 42, 40, 41]
+    >>> ellipse = utils.calc_ensemble_ellipse(lons, lats)
+    >>> print(ellipse.keys())
+    dict_keys(['ellipse_lon', 'ellipse_lat'])
+    
     """
 
     # Compute ensemble mean lon & lat
@@ -1307,6 +1317,136 @@ def create_storm_dict(filepath, storm_name, storm_id, delimiter=',', time_format
         # Return dict
         return data
 
+def ships_parser(content):
+    r"""
+    Parses SHIPS text data into multiple sorted dictionaries.
+    
+    Parameters
+    ----------
+    content : str
+        SHIPS file content.
+    
+    Returns
+    -------
+    dict
+        Dictionary containing parsed SHIPS data.
+    
+    Notes
+    -----
+    This function is referenced internally when creating SHIPS objects, but can also be used as a standalone function.
+    """
+
+    data = {}
+    data_ri = {}
+    data_attrs = {}
+
+    def split_first_group(line):
+        subset_line = line[15:]
+        chunk_size = 6
+        return [(subset_line[i:i+chunk_size]).replace(' ','') for i in range(0, len(subset_line), chunk_size)]
+
+    def split_prob(line):
+        line_subset_1 = int((line.split('threshold=')[1]).split('%')[0])
+        line_subset_2 = float((line.split('% is')[1]).split('times')[0])
+        if 'mean (' in line:
+            line_subset_3 = float((line.split('mean (')[1]).split('%')[0])
+        else:
+            line_subset_3 = float((line.split('mean(')[1]).split('%')[0])
+        return line_subset_1, line_subset_2, line_subset_3
+
+    content = content.split('\n')
+    for line in content:
+
+        # Parse first group into dict
+        first_group = {
+            'TIME (HR)': ['fhr',int],
+            'LAT (DEG N)': ['lat',float],
+            'LONG(DEG W)': ['lon',float],
+            'V (KT) NO LAND': ['vmax_noland_kt',int],
+            'V (KT) LAND': ['vmax_land_kt',int],
+            'V (KT) LGEM': ['vmax_lgem_kt',int],
+            'Storm Type': ['storm_type',str],
+            'SHEAR (KT)': ['shear_kt',int],
+            'SHEAR ADJ (KT)': ['shear_adj_kt',int],
+            'SHEAR DIR': ['shear_dir',int],
+            'SST (C)': ['sst_c',float],
+            'POT. INT. (KT)': ['vmax_pot_kt',int],
+            '200 MB T (C)': ['200mb_temp_c',float],
+            'TH_E DEV (C)': ['thetae_dev_c',int],
+            '700-500 MB RH': ['700_500_rh',int],
+            'MODEL VTX (KT)': ['model_vortex_kt',int],
+            '850 MB ENV VOR': ['850mb_env_vort',int],
+            '200 MB DIV': ['200mb_div',int],
+            '700-850 TADV': ['700_850_tadv',int],
+            'LAND (KM)': ['dist_land_km',int],
+            'STM SPEED (KT)': ['storm_speed_kt',int],
+            'HEAT CONTENT': ['heat_content',int]
+        }
+        checks = ['N/A','LOST','XX.X','XXX.X','DIS']
+        for key in first_group.keys():
+            if line.startswith(key):
+                data[first_group[key][0]] = [first_group[key][1](i) if i.upper() not in checks
+                                             else np.nan for i in split_first_group(line)]
+                if key == 'LONG(DEG W)':
+                    data[first_group[key][0]] = [i*-1 if i < 180 else (i - 360) * -1
+                                                 for i in data[first_group[key][0]]]
+
+        # Parse attributes
+        if 'INITIAL HEADING/SPEED (DEG/KT)' in line:
+            line_subset = line.split('INITIAL HEADING/SPEED (DEG/KT):')[1][:10]
+            data_attrs['storm_bearing_deg'] = int(line_subset.split('/')[0])
+            data_attrs['storm_motion_kt'] = int(line_subset.split('/')[1])
+        if 'T-12 MAX WIND' in line:
+            data_attrs['max_wind_t-12_kt'] = int(line.split('T-12 MAX WIND:')[1][:10])
+        if 'PRESSURE OF STEERING LEVEL (MB)' in line:
+            line_subset = line.split('PRESSURE OF STEERING LEVEL (MB):')[1]
+            line_subset_mean = (line_subset.split('MEAN=')[1]).split(')')[0]
+            data_attrs['steering_level_pres_hpa'] = int(line_subset.split('(')[0])
+            data_attrs['steering_level_pres_mean_hpa'] = int(line_subset_mean)
+        if 'GOES IR BRIGHTNESS TEMP. STD DEV.' in line:
+            line_subset = line.split('50-200 KM RAD:')[1]
+            line_subset_mean = (line_subset.split('MEAN=')[1]).split(')')[0]
+            data_attrs['brightness_temp_stdev'] = float(line_subset.split('(')[0])
+            data_attrs['brightness_temp_stdev_mean'] = float(line_subset_mean)
+        if 'GOES IR PIXELS WITH T' in line:
+            line_subset = line.split('50-200 KM RAD:')[1]
+            line_subset_mean = (line_subset.split('MEAN=')[1]).split(')')[0]
+            data_attrs['pixels_below_-20c'] = float(line_subset.split('(')[0])
+            data_attrs['pixels_below_-20c_mean'] = float(line_subset_mean)
+
+        # Rapid intensification probabilities
+        ri_group = {
+            'Prob RI for 20kt/ 12hr RI': '20kt/12hr',
+            'Prob RI for 25kt/ 24hr RI': '25kt/24hr',
+            'Prob RI for 30kt/ 24hr RI': '30kt/24hr',
+            'Prob RI for 35kt/ 24hr RI': '35kt/24hr',
+            'Prob RI for 40kt/ 24hr RI': '40kt/24hr',
+            'Prob RI for 45kt/ 36hr RI': '45kt/36hr',
+            'Prob RI for 55kt/ 48hr RI': '55kt/48hr',
+            'Prob RI for 65kt/ 72hr RI': '48kt/72hr',
+            'RI for 25 kt RI': '25kt/24hr',
+            'RI for 30 kt RI': '30kt/24hr',
+            'RI for 35 kt RI': '35kt/24hr',
+            'RI for 40 kt RI': '40kt/24hr',
+        }
+        for key in ri_group.keys():
+            if key in line:
+                prob, times, climo = split_prob(line)
+                data_ri[ri_group[key]] = {
+                    'probability': prob,
+                    'climo_mean': climo,
+                    'prob / climo': times,
+                }
+
+    # Add current location to attributes
+    data_attrs['lat'] = data['lat'][0]
+    data_attrs['lon'] = data['lon'][0]
+
+    return {
+        'data': data,
+        'data_ri': data_ri,
+        'data_attrs': data_attrs,
+    }
 
 # ===========================================================================================================
 # Private utilities

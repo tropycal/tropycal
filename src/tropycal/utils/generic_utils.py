@@ -1423,7 +1423,7 @@ def ships_parser(content):
             'Prob RI for 40kt/ 24hr RI': '40kt/24hr',
             'Prob RI for 45kt/ 36hr RI': '45kt/36hr',
             'Prob RI for 55kt/ 48hr RI': '55kt/48hr',
-            'Prob RI for 65kt/ 72hr RI': '48kt/72hr',
+            'Prob RI for 65kt/ 72hr RI': '65kt/72hr',
             'RI for 25 kt RI': '25kt/24hr',
             'RI for 30 kt RI': '30kt/24hr',
             'RI for 35 kt RI': '35kt/24hr',

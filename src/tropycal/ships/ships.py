@@ -23,18 +23,20 @@ class Ships():
     
     Notes
     -----
-    A Ships object is best retrieved from a Storm object's ``get_ships()`` method. For example, if the dataset read in is the default North Atlantic and the desired storm is Hurricane Michael (2018), it would be retrieved as follows:
+    A Ships object is best retrieved from a Storm object's ``get_ships()`` method. For example, if the dataset read in is the default North Atlantic and the desired storm is Hurricane Michael (2018), SHIPS data would be retrieved as follows:
     
     .. code-block:: python
 
         from tropycal import tracks
         import datetime as dt
         
+        # Retrieve storm object for Hurricane Michael
         basin = tracks.TrackDataset()
         storm = basin.get_storm(('michael',2018))
         
-        requested_time = dt.datetime(
-        ships = storm.get_ships(time)
+        # Retrieve instance of a Ships object
+        ships = storm.get_ships(dt.datetime(2018, 10, 8, 0))
+
     """
     
     def __setitem__(self, key, value):

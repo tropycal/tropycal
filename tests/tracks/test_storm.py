@@ -52,6 +52,7 @@ def test_storm_reading():
         'ace': 54.0075,
         'realtime': False,
         'invest': False,
+        'subset': False,
     }
     assert storm.attrs == expected_output
 

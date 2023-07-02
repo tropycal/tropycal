@@ -14,6 +14,7 @@ import copy
 from .plot import TrackPlot
 from ..tornado import *
 from ..recon import ReconDataset
+from ..ships import Ships
 
 # Import tools
 from .tools import *
@@ -2803,6 +2804,87 @@ class Storm:
         self.recon.get_hdobs(data=path_hdobs)
         self.recon.get_dropsondes(data=path_dropsondes)
         return self.recon
+    
+    def search_ships(self):
+        r"""
+        Searches for available SHIPS files for this storm, if available.
+
+        Returns
+        -------
+        list
+            List of available SHIPS times.
+
+        Notes
+        -----
+        SHIPS data is available courtesy of the UCAR Research Applications Laboratory (RAL).
+        
+        These available times can be plugged into ``Storm.get_ships()`` to get an object containing SHIPS data initialized at this time.
+        """
+
+        # Error check
+        if self.year <= 2010:
+            raise ValueError('SHIPS data is unavailable prior to 2011.')
+
+        # Format basin name and ID
+        basin_name = 'northatlantic' if self.basin == 'north_atlantic' else 'northeastpacific'
+        reformatted_id = f'{self.id[:-4]}{self.id[-2:]}'
+
+        # Format URL from RAL and retrieve file list
+        url = f'http://hurricanes.ral.ucar.edu/realtime/plots/{basin_name}/{self.year}/{self.id.lower()}/stext/'
+        page = requests.get(url).text
+        content = page.split("\n")
+        files = []
+        for line in content:
+            if '<a href="' in line and '_ships.txt' in line:
+                filename = (line.split('<a href="')[1]).split('">')[0]
+
+                # Remove entries outside of duration of storm
+                time = dt.strptime(filename[:8],'%y%m%d%H')
+                if time < self.time[0] or time > self.time[-1]: continue
+
+                # Add entries definitely associated with this storm
+                if reformatted_id == filename.split('_ships')[0][-6:]:
+                    files.append(filename)
+
+        # Organize by date and format for printing
+        return sorted([dt.strptime(i[:8],'%y%m%d%H') for i in files])
+    
+    def get_ships(self, time):
+        r"""
+        Retrieves a Ships object containing SHIPS data for a requested time.
+
+        Parameters
+        ----------
+        time : datetime.datetime
+            Requested time of SHIPS forecast.
+
+        Returns
+        -------
+        tropycal.ships.Ships
+            Instance of a Ships object containing SHIPS data for the requested time.
+
+        Notes
+        -----
+        1. A list of available times for SHIPS data can be retrieved using ``Storm.search_ships()``.
+
+        2. On rare occasions, SHIPS timestamps have empty data associated with them. In these cases, a value of None is returned.
+        """
+
+        # Format URL
+        basin_name = 'northatlantic' if self.basin == 'north_atlantic' else 'northeastpacific'
+        url = f'http://hurricanes.ral.ucar.edu/realtime/plots/{basin_name}/{self.year}/{self.id.lower()}/stext/'
+        url += f'{time.strftime("%y%m%d%H")}{self.id[:-4]}{self.id[-2:]}_ships.txt'
+
+        # Fetch SHIPS content
+        try:
+            content = read_url(url, split=False, subsplit=False)
+            if len(content) < 10:
+                warnings.warn('Improper SHIPS entry for this time. Returning a value of None.')
+                return None
+        except:
+            raise ValueError('SHIPS data is unavailable for the requested time.')
+
+        return Ships(content, storm_name=self.name)
 
     def get_archer(self):
         r"""

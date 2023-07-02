@@ -75,6 +75,14 @@ ds = ships.to_xarray()
 print(ds)
 
 ###########################################
+# Visualizing Data
+# ----------------
+#
+# Tropycal's Ships class comes with a built-in function to plot a basic summary of the SHIPS forecast and key diagnostics. We can use it as follows:
+
+ships.plot_summary()
+
+###########################################
 # Let's say we want to make a plot of several metrics that affect a storm's intensity:
 
 # Create figure

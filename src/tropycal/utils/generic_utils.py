@@ -1433,9 +1433,9 @@ def ships_parser(content):
             if key in line:
                 prob, times, climo = split_prob(line)
                 data_ri[ri_group[key]] = {
-                    'probability': prob,
+                    'probability': prob if prob != 999 else np.nan,
                     'climo_mean': climo,
-                    'prob / climo': times,
+                    'prob / climo': times if times != 999 else np.nan,
                 }
 
     # Add current location to attributes

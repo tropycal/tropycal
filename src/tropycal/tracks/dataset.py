@@ -673,6 +673,8 @@ class TrackDataset:
                 btk_mslp = int(line[9])
                 btk_type = line[10]
                 name = line[27]
+                if name.upper() == 'INVEST':
+                    name = 'UNNAMED'
 
                 # Replace with NaNs
                 if btk_wind > 250 or btk_wind < 10:

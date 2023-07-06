@@ -673,8 +673,6 @@ class TrackDataset:
                 btk_mslp = int(line[9])
                 btk_type = line[10]
                 name = line[27]
-                if name.upper() == 'INVEST':
-                    name = 'UNNAMED'
 
                 # Replace with NaNs
                 if btk_wind > 250 or btk_wind < 10:
@@ -713,6 +711,10 @@ class TrackDataset:
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace, 4)
 
+            # Fix name for unnamed storms
+            if name.upper() == 'INVEST' and True in np.isin(self.data[stormid]['type'], list(constants.TROPICAL_STORM_TYPES)):
+                name = 'UNNAMED'
+            
             # Add storm name
             self.data[stormid]['name'] = name
 

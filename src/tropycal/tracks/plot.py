@@ -2427,8 +2427,9 @@ class TrackPlot(Plot):
                     else:
                         found_areas = []
                         for i_record, i_point in zip(shapefiles['points'].records(), shapefiles['points'].geometries()):
-                            found_areas.append(i_record.attributes['AREA'])
-                        if 'AREA' in record.attributes.keys() and record.attributes['AREA'] not in found_areas:
+                            found_areas.append([i_record.attributes['BASIN'],i_record.attributes['AREA']])
+                        check_area = [record.attributes['BASIN'],record.attributes['AREA']]
+                        if 'AREA' in record.attributes.keys() and check_area not in found_areas:
                             bounds = record.geometry.bounds
                             plot_coords.append(
                                 (bounds[0] + bounds[2]) * 0.5)  # lon

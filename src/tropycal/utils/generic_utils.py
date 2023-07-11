@@ -1363,7 +1363,12 @@ def ships_parser(content):
             data_attrs['forecast_init'] = dt.strptime(f'{line_array[3]} {line_array[4]}','%m/%d/%y %H')
             storm_name = line_array[1]
             if storm_name.upper() in ['UNNAMED', 'INVEST', 'UNKNOWN']:
-                storm_name = (line_array[2])[:4]
+                # Determine suffix
+                storm_id = line_array[2]
+                storm_suffix = storm_id[1]
+                if storm_id[0] in ['C', 'E', 'W', 'I', 'S']:
+                    storm_suffix = storm_id[0]
+                storm_name = f'{(line_array[2])[2:4]}{storm_suffix}'
             data_attrs['storm_name'] = storm_name
 
         # Parse first group into dict

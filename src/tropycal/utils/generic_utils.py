@@ -1356,6 +1356,15 @@ def ships_parser(content):
 
     content = content.split('\n')
     for line in content:
+        
+        # Attempt to retrieve storm name and forecast init
+        if len(line.strip()) > 5 and line.strip()[0] == '*' and 'UTC' in line and 'storm_name' not in data_attrs:
+            line_array = line.split()
+            data_attrs['forecast_init'] = dt.strptime(f'{line_array[3]} {line_array[4]}','%m/%d/%y %H')
+            storm_name = line_array[1]
+            if storm_name.upper() in ['UNNAMED', 'INVEST', 'UNKNOWN']:
+                storm_name = (line_array[2])[:4]
+            data_attrs['storm_name'] = storm_name
 
         # Parse first group into dict
         first_group = {

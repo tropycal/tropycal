@@ -18,8 +18,11 @@ class Ships():
     ----------
     content : str
         SHIPS file content. If initialized via a ``tropycal.tracks.Storm`` object, this does not need to be provided.
+    
+    Other Parameters
+    ----------------
     storm_name : str, optional
-        Storm name to associate with this SHIPS data. If initialized via a ``tropycal.tracks.Storm`` object, this does not need to be provided.
+        If provided, overrides storm name from SHIPS text data with the provided storm name.
     
     Returns
     -------
@@ -94,13 +97,8 @@ class Ships():
         self.dict_ri = ships['data_ri']
         self.attrs = ships['data_attrs']
         
-        # Add storm name if provided
-        self.attrs['storm_name'] = 'UNKNOWN'
+        # Override storm name if requested
         if storm_name is not None: self.attrs['storm_name'] = storm_name
-
-        # Add forecast initialization if provided
-        self.attrs['forecast_init'] = np.nan
-        if forecast_init is not None: self.attrs['forecast_init'] = forecast_init
 
         # Set data variables as attributes of this object
         for key in self.dict:

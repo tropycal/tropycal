@@ -240,8 +240,13 @@ class Ships():
         fig = plt.figure(figsize=(9,6),dpi=200)
         gs = gridspec.GridSpec(6, 32)
 
-        # Left column
-        proj = ccrs.PlateCarree()
+        # Left column & format Cartopy projection
+        plot_lon = np.copy(self.lon)
+        if np.nanmax(self.lon) > 150 or np.nanmin(self.lon) < -150:
+            proj = ccrs.PlateCarree(central_longitude = 180.0)
+            plot_lon[plot_lon < 0] += 360.0
+        else:
+            proj = ccrs.PlateCarree()
         ax1 = plt.subplot(gs[:3, :14])
         ax2 = plt.subplot(gs[3:, :14], projection=proj)
 
@@ -317,8 +322,8 @@ class Ships():
         # ================================================================================================
 
         # Plot forecast
-        ax2.plot(self.lon, self.lat, color='k', linewidth=1.5, transform=ccrs.PlateCarree())
-        for i_lon, i_lat, i_vmax, i_type in zip(self.lon, self.lat, self.vmax_land_kt, self.storm_type):
+        ax2.plot(plot_lon, self.lat, color='k', linewidth=1.5, transform=ccrs.PlateCarree())
+        for i_lon, i_lat, i_vmax, i_type in zip(plot_lon, self.lat, self.vmax_land_kt, self.storm_type):
             if True in [np.isnan(i) for i in [i_lon, i_lat, i_vmax]]: continue
             marker_type = 'o' if i_type == 'TROP' else '^'
             marker_size = 9 if i_type == 'TROP' else 8
@@ -338,8 +343,8 @@ class Ships():
         ax2.add_feature(cfeature.COASTLINE.with_scale('50m'), linewidths=0.5, linestyle='solid', edgecolor='#444')
         ax2.add_feature(cfeature.LAND.with_scale('50m'), facecolor='#EEEEEE', edgecolor='face')
 
-        plot_domain = dynamic_map_extent(np.nanmin(self.lon),
-                                         np.nanmax(self.lon),
+        plot_domain = dynamic_map_extent(np.nanmin(plot_lon),
+                                         np.nanmax(plot_lon),
                                          np.nanmin(self.lat),
                                          np.nanmax(self.lat))
         ax2.set_extent(plot_domain)

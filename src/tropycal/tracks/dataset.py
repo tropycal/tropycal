@@ -471,14 +471,11 @@ class TrackDataset:
                 self.data[current_id]['mslp'].append(mslp)
 
                 # Add basin
-                origin_basin = add_basin + ''
-                if add_basin == 'east_pacific':
-                    check_basin = get_basin(
-                        self.data[current_id]['lat'][0], self.data[current_id]['lon'][0], add_basin)
-                    if check_basin != add_basin:
-                        origin_basin = 'north_atlantic'
-                self.data[current_id]['wmo_basin'].append(
-                    get_basin(lat, lon, origin_basin))
+                previous_basin = add_basin + ''
+                if len(self.data[current_id]['wmo_basin']) > 0:
+                    previous_basin = self.data[current_id]['wmo_basin'][-1]
+                if previous_basin not in constants.NHC_BASINS: previous_basin = 'east_pacific'
+                self.data[current_id]['wmo_basin'].append(get_basin(lat, lon, previous_basin))
 
                 # Calculate ACE & append to storm total
                 if not np.isnan(vmax):
@@ -711,6 +708,10 @@ class TrackDataset:
                     if btk_type in constants.NAMED_TROPICAL_STORM_TYPES:
                         self.data[stormid]['ace'] += np.round(ace, 4)
 
+            # Fix name for unnamed storms
+            if name.upper() == 'INVEST' and True in np.isin(self.data[stormid]['type'], list(constants.TROPICAL_STORM_TYPES)):
+                name = 'UNNAMED'
+            
             # Add storm name
             self.data[stormid]['name'] = name
 

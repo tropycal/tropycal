@@ -703,7 +703,7 @@ class Realtime():
                 min_distance = np.min(distances)
                 idx = distances.index(min_distance)
                 storm_id = [k for k in self.data.keys()][idx]
-                if min_distance <= 150:
+                if min_distance <= 400:
                     self.data[storm_id]['prob_2day'] = prob_2day
                     self.data[storm_id]['prob_7day'] = prob_7day
                     self.data[storm_id]['risk_2day'] = risk_2day

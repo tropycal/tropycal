@@ -1356,6 +1356,20 @@ def ships_parser(content):
 
     content = content.split('\n')
     for line in content:
+        
+        # Attempt to retrieve storm name and forecast init
+        if len(line.strip()) > 5 and line.strip()[0] == '*' and 'UTC' in line and 'storm_name' not in data_attrs:
+            line_array = line.split()
+            data_attrs['forecast_init'] = dt.strptime(f'{line_array[3]} {line_array[4]}','%m/%d/%y %H')
+            storm_name = line_array[1]
+            if storm_name.upper() in ['UNNAMED', 'INVEST', 'UNKNOWN']:
+                # Determine suffix
+                storm_id = line_array[2]
+                storm_suffix = storm_id[1]
+                if storm_id[0] in ['C', 'E', 'W', 'I', 'S']:
+                    storm_suffix = storm_id[0]
+                storm_name = f'{(line_array[2])[2:4]}{storm_suffix}'
+            data_attrs['storm_name'] = storm_name
 
         # Parse first group into dict
         first_group = {
@@ -1535,8 +1549,7 @@ def calc_distance(lats2d, lons2d, lat, lon):
     r_earth = 6.371 * 10**6
     dlat = np.subtract(np.radians(lats2d), np.radians(lat))
     dlon = np.subtract(np.radians(lons2d), np.radians(lon))
-    a = np.sin(dlat/2) * np.sin(dlat/2) + np.cos(np.radians(lats2d)) * \
-        np.cos(np.radians(lat)) * np.sin(dlon/2) * np.sin(dlon/2)
+    a = np.sin(dlat/2) * np.sin(dlat/2) + np.cos(np.radians(lats2d)) * np.cos(np.radians(lat)) * np.sin(dlon/2) * np.sin(dlon/2)
     c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a))
     dist = (r_earth * c)/1000.0
 
@@ -1576,8 +1589,7 @@ def add_radius(lats2d, lons2d, lat, lon, rad):
     dlat = np.subtract(np.radians(lats2d), np.radians(lat))
     dlon = np.subtract(np.radians(lons2d), np.radians(lon))
 
-    a = np.sin(dlat*0.5) * np.sin(dlat*0.5) + np.cos(np.radians(lats2d)) * \
-        np.cos(np.radians(lat)) * np.sin(dlon*0.5) * np.sin(dlon*0.5)
+    a = np.sin(dlat*0.5) * np.sin(dlat*0.5) + np.cos(np.radians(lats2d)) * np.cos(np.radians(lat)) * np.sin(dlon*0.5) * np.sin(dlon*0.5)
     c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a))
     dist = (r_earth * c) * 0.001
 
@@ -1631,10 +1643,12 @@ def add_radius_quick(lats, lons, lat, lon, rad, res=0.25):
 
     return_arr = plug_array(new_arr, return_arr, {
                             'lat': new_lats, 'lon': new_lons}, {'lat': lats, 'lon': lons})
+    return_dist = plug_array(new_dist, dist, {'lat': new_lats, 'lon': new_lons}, {
+                             'lat': lats, 'lon': lons})
 
     # Mask out values less than radius
-    return_arr[dist > rad] = 0
-    return_arr[dist <= rad] = 1
+    return_arr[return_dist > rad] = 0
+    return_arr[return_dist <= rad] = 1
     return return_arr
 
 

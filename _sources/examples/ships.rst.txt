@@ -67,7 +67,7 @@ Let's create an instance of a TrackDataset object, which will store the North At
  .. code-block:: none
 
     --> Starting to read in HURDAT2 data
-    --> Completed reading in HURDAT2 data (16.38 seconds)
+    --> Completed reading in HURDAT2 data (1.66 seconds)
 
 
 
@@ -212,6 +212,8 @@ We now have a Ships object containing the forecast initialized at this time. Let
         65kt/72hr:  31% (5.9x climo mean)
 
     Attributes:
+        forecast_init:                 2021-08-27 18:00:00
+        storm_name:                    IDA
         storm_bearing_deg:             325
         storm_motion_kt:               14
         max_wind_t-12_kt:              45
@@ -223,8 +225,6 @@ We now have a Ships object containing the forecast initialized at this time. Let
         pixels_below_-20c_mean:        65.0
         lat:                           21.6
         lon:                           -82.7
-        storm_name:                    IDA
-        forecast_init:                 2021-08-27 18:00:00
 
 
 
@@ -389,19 +389,19 @@ Ships objects also allow us to convert data to other formats, such as xarray Dat
         storm_speed_kt   (fhr) int64 14 14 13 13 13 12 8 7 8 8 9 8 8 9 10 9 7
         heat_content     (fhr) int64 71 92 122 97 105 133 42 16 7 7 6 6 5 4 4 3 4
     Attributes: (12/13)
+        forecast_init:                 2021-08-27 18:00:00
+        storm_name:                    IDA
         storm_bearing_deg:             325
         storm_motion_kt:               14
         max_wind_t-12_kt:              45
         steering_level_pres_hpa:       518
-        steering_level_pres_mean_hpa:  620
-        brightness_temp_stdev:         4.8
         ...                            ...
+        brightness_temp_stdev:         4.8
+        brightness_temp_stdev_mean:    14.5
         pixels_below_-20c:             99.0
         pixels_below_-20c_mean:        65.0
         lat:                           21.6
         lon:                           -82.7
-        storm_name:                    IDA
-        forecast_init:                 2021-08-27 18:00:00
 
 
 
@@ -494,7 +494,7 @@ Let's say we want to make a plot of several metrics that affect a storm's intens
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  19.346 seconds)
+   **Total running time of the script:** ( 0 minutes  3.759 seconds)
 
 
 .. _sphx_glr_download_examples_ships.py:

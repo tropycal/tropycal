@@ -827,10 +827,11 @@ class TrackPlot(Plot):
             dateline = False
             if self.proj.proj4_params['lon_0'] == 180.0:
                 dateline = True
-            cone = generate_nhc_cone(
-                forecast, forecast['basin'], dateline, cone_days)
+            cone = generate_nhc_cone(forecast, forecast['basin'], dateline, cone_days)
 
             # Contour fill cone & account for dateline crossing
+            cone_lon = cone['lon']
+            cone_lat = cone['lat']
             if 'cone' in forecast.keys() and not forecast['cone']:
                 pass
             else:
@@ -841,7 +842,7 @@ class TrackPlot(Plot):
                     center_lon = np.array(cone['center_lon'])
                     center_lon[center_lon < 0] = center_lon[center_lon < 0] + 360.0
                     cone['center_lon'] = center_lon
-                plot_cone(self.ax,cone,plot_center_line=True,center_linewidth=2.0,zorder=3)
+                plot_cone(self.ax, cone, plot_center_line=True, center_linewidth=2.0, zorder=3)
 
             # Retrieve forecast dots
             iter_hr = np.array(forecast['fhr'])[

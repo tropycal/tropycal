@@ -430,7 +430,7 @@ class Ships():
         ax8.set_xlim(0,max(self.fhr))
 
         # Plot heat potential
-        ax8.plot(self.fhr, self.heat_content, color='purple', label='Heat Content')
+        ax8.plot(self.fhr, self.heat_content, color='purple', label=r'Heat Content (KJ/cm$^2$)')
         ax8.legend(fontsize=7)
 
         return fig

@@ -105,7 +105,7 @@ The following special options are available for ``linecolor`` or ``fillcolor``:
 plot_nhc_forecast
 -----------------
 
-The following properties are available only for the ``tropycal.tracks.Storm.plot_nhc_forecast()`` function.
+The following properties are available only for the ``tropycal.tracks.Storm.plot_nhc_forecast()`` and ``tropycal.realtime.RealtimeStorm.plot_forecast_realtime()`` functions.
 
 .. list-table:: 
    :widths: 25 75
@@ -117,6 +117,8 @@ The following properties are available only for the ``tropycal.tracks.Storm.plot
      - Line width for the cone of uncertainty. Default is 1.0.
    * - cone_alpha
      - Transparency for the cone of uncertainty. Default is 0.6.
+   * - cone_res
+     - Grid resolution for the cone of uncertainty in degrees. Default is 0.05.
 
 .. _options-prop-gridded:
 

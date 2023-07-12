@@ -665,7 +665,7 @@ class TrackPlot(Plot):
 
         # Set default properties
         default_prop = {'dots': True, 'fillcolor': 'category', 'linecolor': 'k',
-                        'linewidth': 1.0, 'ms': 7.5, 'cone_lw': 1.0, 'cone_alpha': 0.6}
+                        'linewidth': 1.0, 'ms': 7.5, 'cone_lw': 1.0, 'cone_alpha': 0.6, 'cone_res': 0.05}
         default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
                             'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
@@ -773,13 +773,17 @@ class TrackPlot(Plot):
                 if prop['linecolor'] == 'category':
                     type6 = np.array(styp)
                     for i in (np.arange(len(lats[1:])) + 1):
-                        ltype = 'solid'
+                        line_type = 'solid'
                         if type6[i] not in constants.TROPICAL_STORM_TYPES:
-                            ltype = 'dotted'
-                        self.ax.plot([lons[i - 1], lons[i]], [lats[i - 1], lats[i]],
-                                     '-', color=get_colors_sshws(np.nan_to_num(vmax[i])), linewidth=prop['linewidth'], linestyle=ltype,
-                                     transform=ccrs.PlateCarree(),
-                                     path_effects=[path_effects.Stroke(linewidth=prop['linewidth'] * 1.25, foreground='k'), path_effects.Normal()])
+                            line_type = 'dotted'
+                        add_effect = [path_effects.Stroke(linewidth=prop['linewidth'] * 1.25, foreground='k'),
+                                      path_effects.Normal()]
+                        self.ax.plot([lons[i - 1], lons[i]], [lats[i - 1], lats[i]], '-',
+                                     color = get_colors_sshws(np.nan_to_num(vmax[i])),
+                                     linewidth = prop['linewidth'],
+                                     linestyle = line_type,
+                                     transform = ccrs.PlateCarree(),
+                                     path_effects = add_effect)
                 else:
                     self.ax.plot(
                         lons, lats, '-', color=prop['linecolor'], linewidth=prop['linewidth'], transform=ccrs.PlateCarree())
@@ -827,7 +831,8 @@ class TrackPlot(Plot):
             dateline = False
             if self.proj.proj4_params['lon_0'] == 180.0:
                 dateline = True
-            cone = generate_nhc_cone(forecast, forecast['basin'], dateline, cone_days)
+            cone = generate_nhc_cone(forecast,forecast['basin'], dateline,
+                                     cone_days, grid_res=prop['cone_res'])
 
             # Contour fill cone & account for dateline crossing
             cone_lon = cone['lon']

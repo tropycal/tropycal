@@ -2902,6 +2902,97 @@ class Storm:
             raise ValueError('SHIPS data is unavailable for the requested storm or time.')
 
         return Ships(content)
+    
+    def get_ships_analysis(self):
+        r"""
+        Creates a custom Storm object consisting of SHIPS initialized analyses. This includes the various diagnostics SHIPS provides, such as sea surface temperatures and ocean heat content, as variables of this object.
+        
+        Returns
+        -------
+        tropycal.tracks.Storm
+            Custom Storm object containing SHIPS analysis data.
+        
+        Notes
+        -----
+        1. SHIPS does not include MSLP data. As such, all MSLP data for this Storm object is set to NaN.
+        2. Track and intensity data are based off operational analyses, and as such may differ from the storm's HURDATv2 entry.
+        3. Storm type may erroneously reflect a tropical cyclone during times when the storm was extratropical, especially towards the end of its lifetime.
+        """
+        
+        # Get SHIPS times
+        times = self.search_ships()
+        if len(times) <= 1:
+            raise RuntimeError('SHIPS data is unavailable for the requested storm.')
+        
+        # Declare dict
+        new_dict = {
+            'time': [],
+            'mslp': [],
+            'type': [],
+            'vmax': [],
+            'wmo_basin': [],
+        }
+        for attr in ['name', 'id', 'operational_id', 'year', 'season', 'basin', 'realtime']:
+            new_dict[attr] = self[attr]
+        new_dict['ace'] = 0.0
+        
+        # Construct data
+        for time in times:
+            ships = self.get_ships(time)
+            if ships is None: continue
+            if np.isnan(ships.lat[0]) or np.isnan(ships.lon[0]): continue
+
+            # Add relevant variables
+            new_dict['time'].append(time)
+            new_dict['mslp'].append(np.nan)
+            for key in ships.dict.keys():
+                if key in ['fhr', 'vmax_noland_kt', 'vmax_lgem_kt']: continue
+
+                # Special handling for storm type
+                if key == 'storm_type':
+                    subtropical_flag = False
+                    derived_type = 'EX'
+                    try:
+                        if ships.dict['storm_type'][0] == 'SUBT':
+                            subtropical_flag = True
+                        derived_type = get_storm_type(ships.dict['vmax_land_kt'][0], subtropical_flag)
+                        if ships.dict['storm_type'][0] not in ['TROP', 'SUBT']:
+                            derived_type = 'EX'
+                    except:
+                        pass
+                    new_dict['type'].append(derived_type)
+
+                # vmax handling
+                elif key == 'vmax_land_kt':
+                    new_dict['vmax'].append(ships.dict[key][0])
+
+                # Normal handling
+                elif key in new_dict:
+                    new_dict[key].append(ships.dict[key][0])
+                else:
+                    new_dict[key] = [ships.dict[key][0]]
+            
+            # Derive ACE
+            if not np.isnan(new_dict['vmax'][-1]):
+                new_dict['ace'] += accumulated_cyclone_energy(new_dict['vmax'][-1])
+
+            # Derive basin
+            new_dict['wmo_basin'].append(get_basin(new_dict['lat'][-1],
+                                                   new_dict['lon'][-1],
+                                                   self.basin))
+
+        # Add other attributes
+        new_dict['source_info'] = 'SHIPS Analysis'
+        new_dict['source_method'] = 'UCAR SHIPS Archive'
+        new_dict['source_url'] = 'https://hurricanes.ral.ucar.edu/'
+        new_dict['invest'] = False
+        new_dict['source'] = 'ships'
+        new_dict['prob_2day'] = 'N/A'
+        new_dict['prob_7day'] = 'N/A'
+        new_dict['risk_2day'] = 'N/A'
+        new_dict['risk_7day'] = 'N/A'
+        
+        return Storm(new_dict)
 
     def get_archer(self):
         r"""

@@ -14,6 +14,7 @@ from ..tracks.plot import TrackPlot
 from ..utils import *
 from .. import constants
 from ..recon import ReconDataset
+from ..ships import Ships
 
 
 class RealtimeStorm(Storm):
@@ -1155,6 +1156,53 @@ class RealtimeStorm(Storm):
         }
         offset = time_zones.get(zone, 0)
         disco_time = disco_time + timedelta(hours=offset*-1)
+
+    def get_ships_realtime(self):
+        r"""
+        Retrieves a Ships object containing the latest SHIPS data.
+
+        Returns
+        -------
+        tropycal.ships.Ships
+            Instance of a Ships object containing the latest SHIPS data.
+
+        Notes
+        -----
+        1. While the SHIPS data source used for ``Storm.get_ships()`` updates on a frequent basis, it may lag slightly behind the latest available data on the NHC ATCF server, especially for newly formed storms. This function helps to mitigate this slight delay.
+        2. On rare occasions, SHIPS data files from UCAR have empty data associated with them. In these cases, a value of None is returned.
+        """
+
+        reformatted_id = f'{self.id[:-4]}{self.id[-2:]}'
+
+        # Retrieve list of SHIPS files from NHC ATCF
+        try:
+            page = requests.get('https://ftp.nhc.noaa.gov/atcf/stext/').text
+        except:
+            raise RuntimeError('Unable to fetch SHIPS data from NHC ATCF.')
+        content = page.split("\n")
+        files = []
+        for line in content:
+            if '<a href="' in line and '_ships.txt' in line:
+                filename = (line.split('<a href="')[1]).split('">')[0]
+
+                # Add entries definitely associated with this storm
+                if reformatted_id == filename.split('_ships')[0][-6:]:
+                    files.append(filename)
+
+        # Organize by date
+        sorted_files = sorted([dt.strptime(i[:8],'%y%m%d%H') for i in files])
+
+        # Fetch latest file
+        filename = f'{sorted_files[-1].strftime("%y%m%d%H")}{reformatted_id}_ships.txt'
+        content = read_url(f'https://ftp.nhc.noaa.gov/atcf/stext/{filename}', split=False, subsplit=False)
+
+        # Make sure file has content
+        if len(content) < 10:
+            warnings.warn('Improper SHIPS entry for this time. Returning a value of None.')
+            return None
+
+        # Return Ships instance
+        return Ships(content)
 
     def __get_ensembles_eps(self):
         # This function is currently not functioning. The path to retrieve EPS ensemble data is:

@@ -31,6 +31,7 @@ except ImportError:
 
 try:
     import matplotlib.lines as mlines
+    import matplotlib.patheffects as path_effects
     import matplotlib.pyplot as plt
 except ImportError:
     warnings.warn(
@@ -1175,6 +1176,318 @@ class Storm:
 
         # Return axis
         return plot_ax
+    
+    def plot_models_wind(self, forecast=None, plot_btk=False, **kwargs):
+        r"""
+        Creates a plot of operational model forecast wind speed.
+
+        Parameters
+        ----------
+        forecast : datetime.datetime, optional
+            Datetime object representing the forecast initialization. If None (default), fetches the latest forecast.
+        plot_btk : bool, optional
+            If True, Best Track will be plotted alongside operational forecast models. Default is False.
+
+        Other Parameters
+        ----------------
+        models : dict
+            Dictionary with **key** = model name (case-insensitive) and **value** = model color. Scroll below for available model names.
+
+        Returns
+        -------
+        ax
+            Instance of axes containing the plot is returned.
+
+        Notes
+        -----
+        .. note::
+            1. For years before the HMON model was available, the HMON key instead defaults to the old GFDL model.
+
+            2. For storms in the JTWC area of responsibility, the NHC key defaults to JTWC.
+
+        The following model names are available as keys in the "model" dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {'gfs':None}`` or ``models = {'GFS':None}``).
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Model Acronym
+             - Full Model Name
+           * - CMC
+             - Canadian Meteorological Centre (CMC)
+           * - GFS
+             - Global Forecast System (GFS)
+           * - UKM
+             - UK Met Office (UKMET)
+           * - ECM
+             - European Centre for Medium-range Weather Forecasts (ECMWF)
+           * - HMON
+             - Hurricanes in a Multi-scale Ocean-coupled Non-hydrostatic Model (HMON)
+           * - HWRF
+             - Hurricane Weather Research and Forecast (HWRF)
+           * - HAFSA
+             - Hurricane Analysis and Forecast System A (HAFS-A)
+           * - HAFSB
+             - Hurricane Analysis and Forecast System B (HAFS-B)
+           * - NHC
+             - National Hurricane Center (NHC)
+        """
+
+        # Dictionary mapping model names to the interpolated model key
+        dict_models = {
+            'cmc': 'CMC2',
+            'gfs': 'AVNI',
+            'ukm': 'UKX2',
+            'ecm': 'ECO2',
+            'hmon': 'HMNI',
+            'hwrf': 'HWFI',
+            'hafsa': 'HFAI',
+            'hafsb': 'HFBI',
+            'nhc': 'OFCI',
+        }
+        backup_models = {
+            'gfs': ['AVNO', 'AVNX'],
+            'ukm': ['UKM2', 'UKM'],
+            'cmc': ['CMC'],
+            'hmon': ['GFDI', 'GFDL'],
+            'nhc': ['OFCL', 'JTWC'],
+            'hwrf': ['HWRF'],
+            'hafsa': ['HFSA'],
+            'hafsb': ['HFSB'],
+        }
+
+        # Pop kwargs
+        models = kwargs.pop('models', {})
+
+        # -------------------------------------------------------------------------
+
+        # Get forecasts dict saved into storm object, if it hasn't been already
+        try:
+            self.forecast_dict
+        except:
+            self.get_operational_forecasts()
+
+        # Fetch latest forecast if None
+        if forecast is None:
+            check_keys = ['AVNI', 'OFCI', 'HWFI', 'HFAI']
+            if 'HWFI' not in self.forecast_dict.keys():
+                check_keys[2] = 'HWRF'
+            if 'HWRF' not in self.forecast_dict.keys() and 'HWRF' in check_keys:
+                check_keys.pop(check_keys.index('HWRF'))
+            if 'OFCI' not in self.forecast_dict.keys():
+                check_keys[1] = 'OFCL'
+            if 'OFCL' not in self.forecast_dict.keys():
+                check_keys[1] = 'JTWC'
+            if 'JTWC' not in self.forecast_dict.keys() and 'JTWC' in check_keys:
+                check_keys.pop(check_keys.index('JTWC'))
+            if 'AVNI' not in self.forecast_dict.keys():
+                check_keys[0] = 'AVNO'
+            if 'AVNO' not in self.forecast_dict.keys():
+                check_keys[0] = 'AVNX'
+            if 'AVNX' not in self.forecast_dict.keys() and 'AVNX' in check_keys:
+                check_keys.pop(check_keys.index('AVNX'))
+            if 'HFAI' not in self.forecast_dict.keys():
+                check_keys[3] = 'HFSA'
+            if 'HFSA' not in self.forecast_dict.keys() and 'HWRF' in check_keys:
+                check_keys.pop(check_keys.index('HFSA'))
+            if len(check_keys) == 0:
+                raise ValueError("No models are available for this storm.")
+            inits = [dt.strptime(
+                [k for k in self.forecast_dict[key]][-1], '%Y%m%d%H') for key in check_keys]
+            forecast = min(inits)
+
+        # Error check forecast time
+        if forecast < self.time[0] or forecast > self.time[-1]:
+            raise ValueError(
+                "Requested forecast is outside of the storm's duration.")
+
+        # Construct forecast dict
+        ds = {}
+        forecast_str = forecast.strftime('%Y%m%d%H')
+        input_keys = [k for k in models.keys()]
+        input_keys_lower = [k.lower() for k in models.keys()]
+        for key in dict_models.keys():
+
+            # Only proceed if model isn't not requested
+            if key in input_keys_lower:
+                idx = input_keys_lower.index(key)
+                if models[input_keys[idx]] is None:
+                    continue
+
+            # Find official key
+            official_key = dict_models[key]
+            found = False
+            if official_key not in self.forecast_dict.keys():
+                if key in backup_models.keys():
+                    for backup_key in backup_models[key]:
+                        if backup_key in self.forecast_dict.keys():
+                            official_key = backup_key
+                            found = True
+                            break
+            else:
+                found = True
+
+            # Check for 2 vs. I if needed
+            if not found or forecast_str not in self.forecast_dict[official_key].keys():
+                if '2' in official_key:
+                    official_key = dict_models[key].replace('2', 'I')
+                    if official_key not in self.forecast_dict.keys():
+                        if key in backup_models.keys():
+                            found = False
+                            for backup_key_iter in backup_models[key]:
+                                backup_key = backup_key_iter.replace('2', 'I')
+                                if backup_key in self.forecast_dict.keys():
+                                    official_key = backup_key
+                                    found = True
+                                    break
+                            if not found:
+                                continue
+                        else:
+                            continue
+                else:
+                    continue
+
+            # Append forecast data if it exists for this initialization
+            if forecast_str not in self.forecast_dict[official_key].keys():
+                continue
+            enter_key = key + ''
+            if key.lower() == 'hmon' and 'gf' in official_key.lower():
+                enter_key = 'gfdl'
+            if key.lower() == 'nhc' and 'jt' in official_key.lower():
+                enter_key = 'jtwc'
+            ds[enter_key] = copy.deepcopy(
+                self.forecast_dict[official_key][forecast_str])
+
+            # Filter out to hour 168
+            if ds[enter_key]['fhr'][-1] > 168:
+                idx = ds[enter_key]['fhr'].index(168)
+                for key in ds[enter_key].keys():
+                    if isinstance(ds[enter_key][key], list):
+                        ds[enter_key][key] = ds[enter_key][key][:idx + 1]
+
+        # Proceed if data exists
+        if len(ds) == 0:
+            raise RuntimeError(
+                "No forecasts are available for the given parameters.")
+
+        # Set default properties
+        default_model = {'nhc': 'k',
+                         'gfs': '#0000ff',
+                         'ecm': '#ff1493',
+                         'cmc': '#1e90ff',
+                         'ukm': '#00ff00',
+                         'hmon': '#ff8c00',
+                         'hwrf': '#66cdaa',
+                         'hafsa': '#C659F9',
+                         'hafsb': '#8915BB'}
+
+        # Update properties
+        for key in models.keys():
+            default_model[key] = models[key]
+
+        # Fix GFDL
+        if 'gfdl' in ds.keys():
+            default_model['gfdl'] = default_model['hmon']
+        if 'jtwc' in ds.keys():
+            default_model['jtwc'] = default_model['nhc']
+        
+        # Create figure
+        fig, ax = plt.subplots(figsize=(11,7.5), dpi=200)
+        ax.grid()
+        
+        # Derive plot extrema
+        max_fhr = max([max(ds[entry]['fhr']) for entry in ds.keys()])
+        max_wind = np.nanmax([np.nanmax(ds[entry]['vmax']) for entry in ds.keys()])
+        min_wind = np.nanmin([np.nanmin(ds[entry]['vmax']) for entry in ds.keys()])
+        
+        # Add category fills
+        for category in range(0, 6):
+            bound_upper = category_to_wind(category)
+            bound_lower = category_to_wind(category-1)
+            ax.fill_between([0, max_fhr], bound_lower, bound_upper, color=get_colors_sshws(bound_lower), alpha=0.1)
+        ax.fill_between([0, max_fhr], category_to_wind(5), 250, color=get_colors_sshws(category_to_wind(5)), alpha=0.1)
+
+        # Plot models
+        for key in ds.keys():
+            
+            # Skip if model not requested
+            if default_model[key] is None:
+                continue
+            
+            # Fix label for HAFS
+            if 'hafs' in key:
+                idx = key.index('hafs')
+                model_label = f"HAFS-{key[idx + len('hafs'):].upper()}"
+            else:
+                model_label = key.upper()
+            
+            ax.plot(ds[key]['fhr'], ds[key]['vmax'], linewidth=2.0, zorder=6,
+                    color=default_model[key], label=model_label)
+        
+        # Derive and plot Best Track
+        if plot_btk:
+            
+            # Determine range of forecast data in best track
+            idx_start = self.dict['time'].index(forecast)
+            end_date = forecast + timedelta(hours=max_fhr)
+            if end_date in self.dict['time']:
+                idx_end = self.dict['time'].index(end_date)
+            else:
+                idx_end = len(self.dict['time'])
+
+            # Plot best track line
+            vmax = self.dict['vmax'][idx_start:idx_end + 1]
+            storm_times = self.dict['time'][idx_start:idx_end + 1]
+            storm_fhr = [(i-forecast).total_seconds()/3600.0 for i in storm_times]
+            ax.plot(storm_fhr, vmax, linestyle=':', color='k', zorder=5,
+                    linewidth=2.0, label='Best Track')
+            max_wind = max(max_wind, np.nanmax(vmax))
+            min_wind = min(min_wind, np.nanmin(vmax))
+        
+        # Set plot bounds and labels
+        y_factor = (max_wind - min_wind) * 0.1
+        ax.set_xticks(np.arange(0, max_fhr+1, 24))
+        ax.set_xlim(0, max_fhr)
+        ax.set_ylim(min_wind - y_factor, max_wind + y_factor)
+        ax.set_xlabel('Forecast Hour', fontsize=12)
+        ax.set_ylabel('Sustained Wind (kt)', fontsize=12)
+        ax.tick_params(axis='both', which='major', labelsize=12)
+        ax.tick_params(axis='both', which='minor', labelsize=12)
+        
+        # Add category labels
+        for category in range(0, 6):
+            threshold = category_to_wind(category)
+            color = get_colors_sshws(threshold)
+            text_color = get_colors_sshws(threshold)
+            if category == 1:
+                text_color = get_colors_sshws(category_to_wind(2))
+            text_label = f'Category {category}' if category > 0 else 'Tropical Storm' 
+            ax.axhline(threshold, linestyle='dotted', color=color, zorder=5, alpha=0.5)
+            a = ax.text(0.015, (threshold - ax.get_ylim()[0]) / (ax.get_ylim()[1] - ax.get_ylim()[0]) + 0.02,
+                        text_label, color=text_color, alpha=0.8, clip_on=True, zorder=5, transform=ax.transAxes)
+            a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='w'),
+                                path_effects.Normal()])
+        ax.set_ylim(min_wind - y_factor, max_wind + y_factor)
+        
+        # Add legend
+        l = ax.legend(loc=1, prop={'size': 12})
+        l.set_zorder(1001)
+        
+        # Plot title
+        plot_title = f"Model Forecast Intensity for {self.name.title()}"
+        ax.set_title(plot_title, fontsize=16, loc='left', fontweight='bold')
+
+        title_str = f"Initialized {forecast.strftime('%H%M UTC %d %B %Y')}"
+        ax.set_title(title_str, fontsize=12, loc='right')
+        
+        # Add label
+        a = ax.text(0.99, 0.01, 'Plot generated by Tropycal',
+                    ha='right', va='bottom', fontsize=10, alpha=0.6, transform=ax.transAxes)
+        a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='w'),
+                            path_effects.Normal()])
+
+        # Return axis
+        return ax
 
     def plot_ensembles(self, forecast=None, fhr=None, interpolate=True, domain="dynamic", ax=None, cartopy_proj=None, save_path=None, **kwargs):
         r"""

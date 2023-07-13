@@ -962,7 +962,7 @@ class Storm:
 
             2. For storms in the JTWC area of responsibility, the NHC key defaults to JTWC.
 
-        The following model names are available as keys in the "model" dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {'gfs':None}`` or ``models = {'GFS':None}``).
+        The following model names are available as keys in the "models" dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {'gfs':None}`` or ``models = {'GFS':None}``).
 
         .. list-table:: 
            :widths: 25 75
@@ -1192,6 +1192,8 @@ class Storm:
         ----------------
         models : dict
             Dictionary with **key** = model name (case-insensitive) and **value** = model color. Scroll below for available model names.
+        prop : dict
+            Customization properties of forecast lines. Scroll below for available options.
 
         Returns
         -------
@@ -1205,7 +1207,7 @@ class Storm:
 
             2. For storms in the JTWC area of responsibility, the NHC key defaults to JTWC.
 
-        The following model names are available as keys in the "model" dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {'gfs':None}`` or ``models = {'GFS':None}``).
+        The following model names are available as keys in the "models" dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {'gfs':None}`` or ``models = {'GFS':None}``).
 
         .. list-table:: 
            :widths: 25 75
@@ -1231,6 +1233,17 @@ class Storm:
              - Hurricane Analysis and Forecast System B (HAFS-B)
            * - NHC
              - National Hurricane Center (NHC)
+
+        The following properties are available for customizing the plot, via ``prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - linewidth
+             - Line width of forecast model intensity. Default is 2.0.
         """
 
         # Dictionary mapping model names to the interpolated model key
@@ -1258,6 +1271,7 @@ class Storm:
 
         # Pop kwargs
         models = kwargs.pop('models', {})
+        prop = kwargs.pop('prop', {})
 
         # -------------------------------------------------------------------------
 
@@ -1380,26 +1394,29 @@ class Storm:
                          'hwrf': '#66cdaa',
                          'hafsa': '#C659F9',
                          'hafsb': '#8915BB'}
+        default_prop = {'linewidth': 2.0}
 
         # Update properties
         for key in models.keys():
             default_model[key] = models[key]
+        for key in prop.keys():
+            default_prop[key] = prop[key]
 
         # Fix GFDL
         if 'gfdl' in ds.keys():
             default_model['gfdl'] = default_model['hmon']
         if 'jtwc' in ds.keys():
             default_model['jtwc'] = default_model['nhc']
-        
+
         # Create figure
         fig, ax = plt.subplots(figsize=(11,7.5), dpi=200)
         ax.grid()
-        
+
         # Derive plot extrema
         max_fhr = max([max(ds[entry]['fhr']) for entry in ds.keys()])
         max_wind = np.nanmax([np.nanmax(ds[entry]['vmax']) for entry in ds.keys()])
         min_wind = np.nanmin([np.nanmin(ds[entry]['vmax']) for entry in ds.keys()])
-        
+
         # Add category fills
         for category in range(0, 6):
             bound_upper = category_to_wind(category)
@@ -1409,24 +1426,24 @@ class Storm:
 
         # Plot models
         for key in ds.keys():
-            
+
             # Skip if model not requested
             if default_model[key] is None:
                 continue
-            
+
             # Fix label for HAFS
             if 'hafs' in key:
                 idx = key.index('hafs')
                 model_label = f"HAFS-{key[idx + len('hafs'):].upper()}"
             else:
                 model_label = key.upper()
-            
-            ax.plot(ds[key]['fhr'], ds[key]['vmax'], linewidth=2.0, zorder=6,
-                    color=default_model[key], label=model_label)
-        
+
+            ax.plot(ds[key]['fhr'], ds[key]['vmax'], linewidth=default_prop['linewidth'],
+                    zorder=6, color=default_model[key], label=model_label)
+
         # Derive and plot Best Track
         if plot_btk:
-            
+
             # Determine range of forecast data in best track
             idx_start = self.dict['time'].index(forecast)
             end_date = forecast + timedelta(hours=max_fhr)
@@ -1440,10 +1457,10 @@ class Storm:
             storm_times = self.dict['time'][idx_start:idx_end + 1]
             storm_fhr = [(i-forecast).total_seconds()/3600.0 for i in storm_times]
             ax.plot(storm_fhr, vmax, linestyle=':', color='k', zorder=5,
-                    linewidth=2.0, label='Best Track')
+                    linewidth=default_prop['linewidth'], label='Best Track')
             max_wind = max(max_wind, np.nanmax(vmax))
             min_wind = min(min_wind, np.nanmin(vmax))
-        
+
         # Set plot bounds and labels
         y_factor = (max_wind - min_wind) * 0.1
         ax.set_xticks(np.arange(0, max_fhr+1, 24))
@@ -1453,7 +1470,7 @@ class Storm:
         ax.set_ylabel('Sustained Wind (kt)', fontsize=12)
         ax.tick_params(axis='both', which='major', labelsize=12)
         ax.tick_params(axis='both', which='minor', labelsize=12)
-        
+
         # Add category labels
         for category in range(0, 6):
             threshold = category_to_wind(category)
@@ -1468,20 +1485,20 @@ class Storm:
             a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='w'),
                                 path_effects.Normal()])
         ax.set_ylim(min_wind - y_factor, max_wind + y_factor)
-        
+
         # Add legend
         l = ax.legend(loc=1, prop={'size': 12})
         l.set_zorder(1001)
-        
+
         # Plot title
         plot_title = f"Model Forecast Intensity for {self.name.title()}"
         ax.set_title(plot_title, fontsize=16, loc='left', fontweight='bold')
 
         title_str = f"Initialized {forecast.strftime('%H%M UTC %d %B %Y')}"
         ax.set_title(title_str, fontsize=12, loc='right')
-        
+
         # Add label
-        a = ax.text(0.99, 0.01, 'Plot generated by Tropycal',
+        a = ax.text(0.99, 0.01, 'Plot generated using Tropycal',
                     ha='right', va='bottom', fontsize=10, alpha=0.6, transform=ax.transAxes)
         a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='w'),
                             path_effects.Normal()])

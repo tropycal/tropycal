@@ -1231,6 +1231,8 @@ class Storm:
              - Hurricane Analysis and Forecast System A (HAFS-A)
            * - HAFSB
              - Hurricane Analysis and Forecast System B (HAFS-B)
+           * - SHIPS
+             - Statistical SHIPS model
            * - NHC
              - National Hurricane Center (NHC)
 
@@ -1256,12 +1258,12 @@ class Storm:
             'hwrf': 'HWFI',
             'hafsa': 'HFAI',
             'hafsb': 'HFBI',
+            'ships': 'SHIP',
             'nhc': 'OFCI',
         }
         backup_models = {
             'gfs': ['AVNO', 'AVNX'],
             'ukm': ['UKM2', 'UKM'],
-            'cmc': ['CMC'],
             'hmon': ['GFDI', 'GFDL'],
             'nhc': ['OFCL', 'JTWC'],
             'hwrf': ['HWRF'],
@@ -1386,6 +1388,7 @@ class Storm:
 
         # Set default properties
         default_model = {'nhc': 'k',
+                         'ships': 'gray',
                          'gfs': '#0000ff',
                          'ecm': '#ff1493',
                          'cmc': '#1e90ff',

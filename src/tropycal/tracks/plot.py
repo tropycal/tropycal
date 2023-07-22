@@ -836,7 +836,8 @@ class TrackPlot(Plot):
 
             # Contour fill cone & account for dateline crossing
             if 'cone' in forecast.keys() and not forecast['cone']:
-                pass
+                self.ax.plot(cone['center_lon'], cone['center_lat'], linewidth=2.0, color='k', zorder=3,
+                             transform=ccrs.PlateCarree())
             else:
                 if self.proj.proj4_params['lon_0'] == 180.0:
                     new_lons = np.array(cone['lon2d'])

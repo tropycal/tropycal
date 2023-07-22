@@ -909,6 +909,8 @@ class TrackPlot(Plot):
 
             # Add cone coordinates to coordinate extrema
             if 'cone' in forecast.keys() and not forecast['cone']:
+                center_lon = cone['center_lon']
+                center_lat = cone['center_lat']
                 if domain == "dynamic_forecast" or max_lat is None:
                     max_lat = max(center_lat)
                     min_lat = min(center_lat)

@@ -835,8 +835,6 @@ class TrackPlot(Plot):
                                      cone_days, grid_res=prop['cone_res'])
 
             # Contour fill cone & account for dateline crossing
-            cone_lon = cone['lon']
-            cone_lat = cone['lat']
             if 'cone' in forecast.keys() and not forecast['cone']:
                 pass
             else:
@@ -926,6 +924,8 @@ class TrackPlot(Plot):
                     if min(center_lon) < min_lon:
                         min_lon = min(center_lon)
             else:
+                cone_lon = cone['lon']
+                cone_lat = cone['lat']
                 if domain == "dynamic_forecast" or max_lat is None:
                     max_lat = max(cone_lat)
                     min_lat = min(cone_lat)

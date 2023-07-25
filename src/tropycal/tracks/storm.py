@@ -1432,7 +1432,7 @@ class Storm:
         for key in ds.keys():
 
             # Skip if model not requested
-            if default_model[key] is None:
+            if default_model[key] is None or len(ds[key]['vmax']) <= 1:
                 continue
 
             # Fix label for HAFS

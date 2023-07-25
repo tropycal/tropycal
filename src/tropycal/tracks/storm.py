@@ -1258,7 +1258,7 @@ class Storm:
             'hwrf': 'HWFI',
             'hafsa': 'HFAI',
             'hafsb': 'HFBI',
-            'ships': 'SHIP',
+            'ships': 'DSHP',
             'nhc': 'OFCI',
         }
         backup_models = {
@@ -1269,6 +1269,7 @@ class Storm:
             'hwrf': ['HWRF'],
             'hafsa': ['HFSA'],
             'hafsb': ['HFSB'],
+            'ships': ['SHIP'],
         }
 
         # Pop kwargs

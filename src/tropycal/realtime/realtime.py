@@ -228,6 +228,10 @@ class Realtime():
 
         # Save current time
         self.time = dt.now()
+        
+        # Store storm forecast & TWO data for summary plots
+        self.forecasts = []
+        self.two = None
 
         # Set attributes
         self.attrs = {
@@ -902,7 +906,8 @@ class Realtime():
         """
 
         # Retrieve NHC shapefiles for development areas
-        shapefiles = get_two_current()
+        if self.two is None:
+            self.two = get_two_current()
 
         # Retrieve kwargs
         two_prop = kwargs.pop('two_prop', {})
@@ -925,21 +930,21 @@ class Realtime():
                 proj='PlateCarree', central_longitude=180.0)  # 0.0
 
         # Get realtime forecasts
-        forecasts = []
-        for key in self.storms:
-            if not self[key].invest:
-                try:
-                    forecasts.append(self.get_storm(
-                        key).get_forecast_realtime(ssl_certificate))
-                except:
-                    forecasts.append({})
-            else:
-                forecasts.append({})
-        forecasts = [entry if 'init' in entry.keys() and (dt.utcnow(
-        ) - entry['init']).total_seconds() / 3600.0 <= 12 else {} for entry in forecasts]
+        if len(self.forecasts) == 0:
+            for key in self.storms:
+                if not self[key].invest:
+                    try:
+                        self.forecasts.append(self.get_storm(
+                            key).get_forecast_realtime(ssl_certificate))
+                    except:
+                        self.forecasts.append({})
+                else:
+                    self.forecasts.append({})
+            self.forecasts = [entry if 'init' in entry.keys() and (dt.utcnow(
+            ) - entry['init']).total_seconds() / 3600.0 <= 12 else {} for entry in self.forecasts]
 
         # Plot
-        ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms], forecasts,
-                                        shapefiles, dt.utcnow(), domain, ax, save_path, two_prop, invest_prop, storm_prop, cone_prop, map_prop)
+        ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms], self.forecasts,
+                                        self.two, dt.utcnow(), domain, ax, save_path, two_prop, invest_prop, storm_prop, cone_prop, map_prop)
 
         return ax

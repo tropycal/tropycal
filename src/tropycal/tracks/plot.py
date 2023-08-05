@@ -665,7 +665,7 @@ class TrackPlot(Plot):
 
         # Set default properties
         default_prop = {'dots': True, 'fillcolor': 'category', 'linecolor': 'k',
-                        'linewidth': 1.0, 'ms': 7.5, 'cone_lw': 1.0, 'cone_alpha': 0.6, 'cone_res': 0.05}
+                        'linewidth': 1.0, 'ms': 7.5, 'cone_lw': 2.0, 'cone_alpha': 0.6, 'cone_res': 0.05}
         default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
                             'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
@@ -846,7 +846,8 @@ class TrackPlot(Plot):
                     center_lon = np.array(cone['center_lon'])
                     center_lon[center_lon < 0] = center_lon[center_lon < 0] + 360.0
                     cone['center_lon'] = center_lon
-                plot_cone(self.ax, cone, plot_center_line=True, center_linewidth=2.0, zorder=3)
+                plot_cone(self.ax, cone, plot_center_line=True, center_linewidth=prop['cone_lw'],
+                          zorder=3, alpha=prop['cone_alpha'])
 
             # Retrieve forecast dots
             iter_hr = np.array(forecast['fhr'])[

@@ -114,7 +114,7 @@ The following properties are available only for the ``tropycal.tracks.Storm.plot
    * - Property
      - Description
    * - cone_lw
-     - Line width for the cone of uncertainty. Default is 1.0.
+     - Center line width for the cone of uncertainty. Default is 2.0.
    * - cone_alpha
      - Transparency for the cone of uncertainty. Default is 0.6.
    * - cone_res

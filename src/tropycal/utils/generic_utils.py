@@ -41,6 +41,10 @@ def wind_to_category(wind_speed):
         Category corresponding to the sustained wind. 0 is tropical storm, -1 is tropical depression.
     """
 
+    # NaN handling
+    if np.isnan(wind_speed):
+        return np.nan
+
     # Category 5 hurricane
     if wind_speed >= 137:
         return 5

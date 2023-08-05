@@ -995,12 +995,17 @@ class RealtimeStorm(Storm):
             current_advisory['lon'] = self.lon[-1]
 
             # Get sustained wind speed
-            current_advisory['wind_mph'] = knots_to_mph(self.vmax[-1])
-            current_advisory['wind_kph'] = int(self.vmax[-1] * 1.852)
-            current_advisory['wind_kt'] = self.vmax[-1]
+            if np.isnan(self.vmax[-1]):
+                current_advisory['wind_mph'] = np.nan
+                current_advisory['wind_kph'] = np.nan
+                current_advisory['wind_kt'] = np.nan
+            else:
+                current_advisory['wind_mph'] = knots_to_mph(self.vmax[-1])
+                current_advisory['wind_kph'] = int(self.vmax[-1] * 1.852)
+                current_advisory['wind_kt'] = self.vmax[-1]
 
             # Get MSLP
-            current_advisory['mslp'] = int(self.mslp[-1])
+            current_advisory['mslp'] = np.nan if np.isnan(self.mslp[-1]) else int(self.mslp[-1])
 
             # Get storm category
             current_advisory['category'] = wind_to_category(

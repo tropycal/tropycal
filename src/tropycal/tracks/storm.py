@@ -785,7 +785,7 @@ class Storm:
 
         # Create cartopy projection
         if cartopy_proj is None:
-            if max(self.dict['lon']) > 140 or min(self.dict['lon']) < -140:
+            if max(self.dict['lon']) > 130 or min(self.dict['lon']) < -130:
                 self.plot_obj.create_cartopy(
                     proj='PlateCarree', central_longitude=180.0)
             else:

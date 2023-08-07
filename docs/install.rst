@@ -11,7 +11,7 @@ The primary dependencies of tropycal are as follows:
 * matplotlib >= 2.2.2
 * numpy >= 1.14.3
 * scipy >= 1.1.0
-* pandas >= 0.23.0
+* pandas >= 1.3.0
 * xarray >= 0.10.7
 * networkx >= 2.0.0
 * pyshp >= 2.1

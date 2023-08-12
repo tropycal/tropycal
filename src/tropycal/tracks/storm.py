@@ -2675,6 +2675,13 @@ class Storm:
             run_init_dt = dt.strptime(run_init, '%Y%m%d%H')
             if run_init_dt < self.dict['time'][0] - timedelta(hours=6) or run_init_dt > self.dict['time'][-1] + timedelta(hours=6):
                 continue
+            
+            # Skip erroneous lines
+            try:
+                if int(fhr) > 240:
+                    continue
+            except:
+                continue
 
             # Enter into forecast dict
             if model not in forecasts.keys():

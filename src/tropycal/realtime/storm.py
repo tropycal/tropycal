@@ -848,23 +848,32 @@ class RealtimeStorm(Storm):
                 latest_btk = self.time[-1]
 
                 # Get latest available public advisory
+                advisory_found = False
                 try:
                     content = read_url(
                         f"https://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml", subsplit=False)
+                    advisory_found = True
                 except:
-                    content = read_url(
-                        f"ftp://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml", subsplit=False)
+                    try:
+                        content = read_url(
+                            f"ftp://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml", subsplit=False)
+                        advisory_found = True
+                    except:
+                        pass
 
                 # Get UTC time of advisory
-                results = [i for i in content if 'messageDateTimeUTC' in i][0]
-                result = (results.split(">")[1]).split("<")[0]
-                latest_advisory = dt.strptime(result, '%Y%m%d %I:%M:%S %p UTC')
+                if advisory_found:
+                    results = [i for i in content if 'messageDateTimeUTC' in i][0]
+                    result = (results.split(">")[1]).split("<")[0]
+                    latest_advisory = dt.strptime(result, '%Y%m%d %I:%M:%S %p UTC')
 
-                # Check which one to use
-                if latest_btk > latest_advisory:
-                    source = 'best_track'
+                    # Check which one to use
+                    if latest_btk > latest_advisory:
+                        source = 'best_track'
+                    else:
+                        source = 'public_advisory'
                 else:
-                    source = 'public_advisory'
+                    source = 'best_track'
             else:
                 source = 'best_track'
 

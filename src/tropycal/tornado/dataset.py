@@ -57,7 +57,7 @@ class TornadoDataset():
                 if requests.get(url).status_code == 200:
                     year_found = True
                     Tors = pd.read_csv(f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv',
-                                       error_bad_lines=False, parse_dates=[['mo', 'dy', 'yr', 'time']])
+                                       on_bad_lines='skip', parse_dates=[['mo', 'dy', 'yr', 'time']])
                     print(f'--> Completed reading in tornado data for 1950-{yrlast} (%.2f seconds)' % (
                         dt.now()-timer_start).total_seconds())
                     break
@@ -66,7 +66,7 @@ class TornadoDataset():
                     "Error: No SPC tornado dataset available within the last 5 years.")
         else:
             Tors = pd.read_csv(tornado_path,
-                               error_bad_lines=False, parse_dates=[['mo', 'dy', 'yr', 'time']])
+                               on_bad_lines='skip', parse_dates=[['mo', 'dy', 'yr', 'time']])
             print(f'--> Completed reading in tornado data from local file (%.2f seconds)' %
                   (dt.now()-timer_start).total_seconds())
 

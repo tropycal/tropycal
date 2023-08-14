@@ -189,10 +189,11 @@ class TrackDataset:
                 "ibtracs_mode must be either 'wmo', 'jtwc', or 'jtwc_neumann'")
 
         # Get latest HURDATv2 files if requested
-        if basin in constants.NHC_BASINS and source == 'hurdat':
+        fetch_condition_1 = basin in constants.NHC_BASINS and source == 'hurdat'
+        if fetch_condition_1 or ibtracs_hurdat:
             condition_1 = basin == 'north_atlantic' and atlantic_url == 'fetch'
             condition_2 = basin == 'east_pacific' and pacific_url == 'fetch'
-            condition_3 = basin == 'both' and (
+            condition_3 = basin in ['both','all'] and (
                 atlantic_url == 'fetch' or pacific_url == 'fetch')
             if condition_1 or condition_2 or condition_3:
                 atlantic_url, pacific_url = find_latest_hurdat_files()

@@ -70,17 +70,10 @@ class ReconPlot(Plot):
         # Set default properties
         default_prop = {'cmap': 'category', 'levels': (np.nanmin(recon_data[varname]), np.nanmax(recon_data[varname])),
                         'sortby': varname, 'ascending': (varname != 'p_sfc'), 'linewidth': 1.5, 'ms': 7.5, 'marker': 'o', 'zorder': None}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF', 'linewidth': 0.5, 'linecolor': 'k',
-                            'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
-
-        # set default properties
-        input_prop = prop
-        input_map_prop = map_prop
 
         # --------------------------------------------------------------------------------------
 
@@ -195,8 +188,10 @@ class ReconPlot(Plot):
             bound_w, bound_e, bound_s, bound_n = self.set_projection(domain)
 
         # Determine number of lat/lon lines to use for parallels & meridians
-        if map_prop['plot_gridlines']:
-            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -315,12 +310,9 @@ class ReconPlot(Plot):
         # Set default properties
         default_prop = {'cmap': 'category', 'levels': None,
                         'left_title': '', 'right_title': 'All storms', 'pcolor': True}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
 
         # Keep record of lat/lon coordinate extrema
@@ -422,8 +414,10 @@ class ReconPlot(Plot):
             bound_w, bound_e, bound_s, bound_n = self.set_projection(domain)
 
         # Determine number of lat/lon lines to use for parallels & meridians
-        if map_prop['plot_gridlines']:
-            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -594,12 +588,15 @@ class ReconPlot(Plot):
         # Set default properties
         default_prop = {'cmap': 'category', 'levels': None,
                         'left_title': '', 'right_title': '', 'pcolor': True}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (12.5, 8.5), 'dpi': 120, 'plot_gridlines': True}
+        
+        # Change default map prop
+        if 'figsize' not in map_prop.keys():
+            map_prop['figsize'] = (12.5, 8.5)
+        if 'dpi' not in map_prop.keys():
+            map_prop['dpi'] = 120
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
 
         MULTIVAR = False
@@ -652,8 +649,10 @@ class ReconPlot(Plot):
             bound_w, bound_e, bound_s, bound_n = self.set_projection(domain)
 
         # Determine number of lat/lon lines to use for parallels & meridians
-        if map_prop['plot_gridlines']:
-            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
 #        rightarrow = u"\u2192"
 #        plt.xlabel(f'W {rightarrow} E Distance (km)')

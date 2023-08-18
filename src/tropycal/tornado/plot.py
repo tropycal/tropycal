@@ -59,17 +59,10 @@ class TornadoPlot(Plot):
         # Set default properties
         default_prop = {'plotType': 'tracks', 'PPHcolors': 'spc', 'PPHlevels': [2, 5, 10, 15, 30, 45, 60, 100],
                         'EFcolors': 'default', 'linewidth': 1.5, 'ms': 7.5}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
-
-        # set default properties
-        input_prop = prop
-        input_map_prop = map_prop
 
         # --------------------------------------------------------------------------------------
 

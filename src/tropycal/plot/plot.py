@@ -124,7 +124,7 @@ class Plot:
 
         return dynamic_map_extent(min_lon, max_lon, min_lat, max_lat)
 
-    def plot_lat_lon_lines(self, bounds, zorder=None):
+    def plot_lat_lon_lines(self, bounds, zorder=None, check_prop=False):
         r"""
         Plots parallels and meridians that are constrained by the map bounds.
 
@@ -133,6 +133,10 @@ class Plot:
         bounds : list
             List containing map bounds.
         """
+        
+        # Skip if map_prop set to not plot this
+        if check_prop and not self.map_prop['plot_gridlines']:
+            return
 
         # Suppress gridliner warnings
         warnings.filterwarnings("ignore")
@@ -237,6 +241,12 @@ class Plot:
         map_prop : dict
             Dictionary of map properties
         """
+        
+        #Set default map properties
+        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
+                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9),
+                            'dpi': 200, 'plot_gridlines': True}
+        self.map_prop = self.add_prop(map_prop, default_map_prop)
 
         # create cartopy projection, if none existing
         if self.proj is None:
@@ -245,7 +255,7 @@ class Plot:
         # create figure
         if ax is None:
             self.fig = plt.figure(
-                figsize=map_prop['figsize'], dpi=map_prop['dpi'])
+                figsize=self.map_prop['figsize'], dpi=self.map_prop['dpi'])
             self.ax = plt.axes(projection=self.proj)
         else:
             fig_numbers = [
@@ -254,12 +264,12 @@ class Plot:
                 self.fig = plt.figure(fig_numbers[-1])
             else:
                 self.fig = plt.figure(
-                    figsize=map_prop['figsize'], dpi=map_prop['dpi'])
+                    figsize=self.map_prop['figsize'], dpi=self.map_prop['dpi'])
             self.ax = ax
 
         # Attach geography to plot, lat/lon lines, etc.
         if plot_geography:
-            self.create_geography(map_prop)
+            self.create_geography(self.map_prop)
 
     def add_prop(self, input_prop, default_prop):
         r"""

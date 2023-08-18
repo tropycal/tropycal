@@ -316,12 +316,9 @@ class TrackPlot(Plot):
         # Set default properties
         default_prop = {'dots': True, 'fillcolor': 'category', 'cmap': None, 'levels': None,
                         'linecolor': 'k', 'linewidth': 1.0, 'ms': 7.5, 'plot_names': False}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
 
         # --------------------------------------------------------------------------------------
@@ -502,11 +499,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -666,12 +662,9 @@ class TrackPlot(Plot):
         # Set default properties
         default_prop = {'dots': True, 'fillcolor': 'category', 'linecolor': 'k',
                         'linewidth': 1.0, 'ms': 7.5, 'cone_lw': 2.0, 'cone_alpha': 0.6, 'cone_res': 0.05}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
 
         # --------------------------------------------------------------------------------------
@@ -961,11 +954,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -1116,8 +1108,6 @@ class TrackPlot(Plot):
         """
 
         # Set default properties
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
         default_model = {'nhc': 'k',
                          'gfs': '#0000ff',
                          'ecm': '#ff1493',
@@ -1132,8 +1122,6 @@ class TrackPlot(Plot):
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
-        model_prop = self.add_prop(models, default_model)
         self.plot_init(ax, map_prop)
 
         # Fix GFDL
@@ -1286,11 +1274,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -1311,8 +1298,6 @@ class TrackPlot(Plot):
         """
 
         # Set default properties
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
         default_prop_ensemble_members = {'plot': True, 'linewidth': 0.2,
                                          'linecolor': 'k', 'color_var': None, 'cmap': None, 'levels': None}
         default_prop_ensemble_mean = {
@@ -1325,7 +1310,6 @@ class TrackPlot(Plot):
             1] + [i for i in range(10, 101, 10)]}
 
         # Initialize plot
-        map_prop = self.add_prop(map_prop, default_map_prop)
         prop_ensemble_members = self.add_prop(
             prop_ensemble_members, default_prop_ensemble_members)
         prop_ensemble_mean = self.add_prop(
@@ -1784,11 +1768,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -1821,12 +1804,9 @@ class TrackPlot(Plot):
         # Set default properties
         default_prop = {'dots': False, 'fillcolor': 'category', 'cmap': None, 'levels': None,
                         'linecolor': 'category', 'linewidth': 1.0, 'ms': 7.5, 'plot_names': True}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
 
         # --------------------------------------------------------------------------------------
@@ -1967,11 +1947,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -2150,8 +2129,6 @@ class TrackPlot(Plot):
         default_prop = {'cmap': 'category', 'levels': None,
                         'left_title': '', 'right_title': 'All storms',
                         'plot_values': False, 'values_size': None}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
@@ -2167,11 +2144,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -2362,17 +2338,16 @@ class TrackPlot(Plot):
                               'linestyle': 'dotted', 'fillcolor': 'category', 'label_category': True, 'ms': 14}
         default_cone_prop = {'plot': True, 'linewidth': 1.5, 'linecolor': 'k', 'alpha': 0.6,
                              'days': 5, 'fillcolor': 'category', 'label_category': True, 'ms': 12}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
-        if domain == 'all':
-            default_map_prop['res'] = 'l'
+
+        # Set global grid to low resolution by default
+        if 'res' not in map_prop.keys():
+            map_prop['res'] = 'l'
 
         # Initialize plot
         two_prop = self.add_prop(two_prop, default_two_prop)
         invest_prop = self.add_prop(invest_prop, default_invest_prop)
         storm_prop = self.add_prop(storm_prop, default_storm_prop)
         cone_prop = self.add_prop(cone_prop, default_cone_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
 
         # Plot domain
@@ -2688,11 +2663,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 

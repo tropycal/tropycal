@@ -3136,12 +3136,9 @@ class TrackDataset:
 
             # Interpolate temporally if requested
             if interpolate_data:
-                try:
-                    istorm = self.data_interp[key]
-                except:
-                    istorm = interp_storm(self.data[key].copy(
-                    ), hours=1, dt_window=thresh['dt_window'], dt_align=thresh['dt_align'])
-                    self.data_interp[key] = istorm.copy()
+                istorm = interp_storm(self.data[key].copy(), hours=1,
+                                      dt_window=thresh['dt_window'], dt_align=thresh['dt_align'])
+                self.data_interp[key] = istorm.copy()
                 timeres = 1
             else:
                 istorm = self.data[key]

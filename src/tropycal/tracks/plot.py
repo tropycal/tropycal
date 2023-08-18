@@ -2216,6 +2216,7 @@ class TrackPlot(Plot):
 
         if VEC_FLAG:
             binsize = abs(xcoord[0, 0] - xcoord[0, 1])
+            norm = mcolors.Normalize(vmin=vmin, vmax=vmax)
             cbmap = self.ax.pcolor(xcoord, ycoord, vecmag[:-1, :-1], cmap=cmap, vmin=min(clevs), vmax=max(clevs),
                                    transform=ccrs.PlateCarree())
             zcoord = zcoord / vecmag * binsize

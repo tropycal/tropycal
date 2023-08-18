@@ -512,93 +512,16 @@ class TrackPlot(Plot):
                 self.ax.set_title(f"{title}", loc='left',
                                   fontsize=17, fontweight='bold')
         else:
-            # Add left title
-            type_array = np.array(storm_data['type'])
-            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
-                type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
+            # Left title
+            title_data = self.format_storm_title(storm_data)
+            self.ax.set_title(title_data['name'], loc='left', fontsize=17, fontweight='bold')
 
-            # Check if storm is an invest with a leading 9
-            add_ptc_flag = False
-            check_invest = False
-            if len(storm_data['id']) > 4 and str(storm_data['id'][2]) == "9":
-                check_invest = True
-
-            if len(storm_data['id']) == 0 and len(idx[0]) == 0:
-                idx = np.array([True for i in type_array])
-                tropical_vmax = np.array(storm_data['vmax'])
-                self.ax.set_title(
-                    f"Cyclone {storm_data['name']}", loc='left', fontsize=17, fontweight='bold')
-            elif not check_invest and (invest_bool == False or len(idx[0]) > 0):
-                tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-                # Coerce to include non-TC points if storm hasn't been designated yet
-                if len(tropical_vmax) == 0 and len(storm_data['id']) > 4:
-                    add_ptc_flag = True
-                    idx = np.where((type_array == 'LO') | (type_array == 'DB'))
-                    tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-                if all_nan(tropical_vmax):
-                    storm_type = 'Tropical Cyclone'
-                else:
-                    subtrop = classify_subtropical(
-                        np.array(storm_data['type']))
-                    peak_idx = storm_data['vmax'].index(
-                        np.nanmax(tropical_vmax))
-                    peak_basin = storm_data['wmo_basin'][peak_idx]
-                    storm_type = get_storm_classification(
-                        np.nanmax(tropical_vmax), subtrop, peak_basin)
-                    if add_ptc_flag:
-                        storm_type = "Potential Tropical Cyclone"
-                self.ax.set_title(
-                    f"{storm_type} {storm_data['name']}", loc='left', fontsize=17, fontweight='bold')
-            else:
-                # Use all indices for invests
-                idx = np.array([True for i in type_array])
-                tropical_vmax = np.array(storm_data['vmax'])
-
-                # Determine letter in front of invest
-                add_letter = 'L'
-                if storm_data['id'][0] == 'C':
-                    add_letter = 'C'
-                elif storm_data['id'][0] == 'E':
-                    add_letter = 'E'
-                elif storm_data['id'][0] == 'W':
-                    add_letter = 'W'
-                elif storm_data['id'][0] == 'I':
-                    add_letter = 'I'
-                elif storm_data['id'][0] == 'S':
-                    add_letter = 'S'
-
-                # Add title
-                self.ax.set_title(
-                    f"INVEST {storm_data['id'][2:4]}{add_letter}", loc='left', fontsize=17, fontweight='bold')
-
-            # Add right title
-            ace = storm_data['ace']
-            if add_ptc_flag:
-                ace = 0.0
-            type_array = np.array(storm_data['type'])
-
-            # Get storm extrema for display
-            mslp_key = 'mslp' if 'wmo_mslp' not in storm_data.keys() else 'wmo_mslp'
-            if all_nan(np.array(storm_data[mslp_key])[idx]):
-                min_pres = "N/A"
-            else:
-                min_pres = int(np.nan_to_num(
-                    np.nanmin(np.array(storm_data[mslp_key])[idx])))
-            if all_nan(np.array(storm_data['vmax'])[idx]):
-                max_wind = "N/A"
-            else:
-                max_wind = int(np.nan_to_num(
-                    np.nanmax(np.array(storm_data['vmax'])[idx])))
-            start_time = dt.strftime(
-                np.array(storm_data['time'])[idx][0], '%d %b %Y')
-            end_time = dt.strftime(np.array(storm_data['time'])[
-                                   idx][-1], '%d %b %Y')
+            # Right title
             endash = u"\u2013"
             dot = u"\u2022"
-            self.ax.set_title(
-                f"{start_time} {endash} {end_time}\n{max_wind} kt {dot} {min_pres} hPa {dot} {ace:.1f} ACE", loc='right', fontsize=13)
+            line1 = f"{title_data['start_time']} {endash} {title_data['end_time']}"
+            line2 = f"{title_data['vmax']} kt {dot} {title_data['mslp']} hPa {dot} {title_data['ace']:.1f} ACE"
+            self.ax.set_title(f"{line1}\n{line2}", loc='right', fontsize=13)
 
         # --------------------------------------------------------------------------------------
 

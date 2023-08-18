@@ -196,32 +196,13 @@ class ReconPlot(Plot):
         # --------------------------------------------------------------------------------------
 
         # Add left title
-        type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
-            type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
-        tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-        # Coerce to include non-TC points if storm hasn't been designated yet
-        add_ptc_flag = False
-        if len(tropical_vmax) == 0:
-            add_ptc_flag = True
-            idx = np.where((type_array == 'LO') | (type_array == 'DB'))
-        tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-        subtrop = classify_subtropical(np.array(storm_data['type']))
-        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
-        peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_classification(
-            np.nanmax(tropical_vmax), subtrop, peak_basin)
-        if add_ptc_flag == True:
-            storm_type = "Potential Tropical Cyclone"
-
+        title_data = self.format_storm_title(storm_data, calculate_extrema=False)
         dot = u"\u2022"
         try:
             vartitle = get_recon_title(*titleinput)
         except:
             vartitle = [varname]
-        self.ax.set_title(f"{storm_type} {storm_data['name']}\n" + 'Recon: ' + ' '.join(
+        self.ax.set_title(f"{title_data['name']}\n" + 'Recon: ' + ' '.join(
             vartitle), loc='left', fontsize=17, fontweight='bold')
         if mission_id != '':
             self.ax.set_title(f"Mission ID: {mission_id}\nRecon: " + ' '.join(
@@ -422,20 +403,10 @@ class ReconPlot(Plot):
         # --------------------------------------------------------------------------------------
 
         # Add left title
-        type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
-            type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
-        tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-        subtrop = classify_subtropical(np.array(storm_data['type']))
-        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
-        peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_classification(
-            np.nanmax(tropical_vmax), subtrop, peak_basin)
-
+        title_data = self.format_storm_title(storm_data, calculate_extrema=False)
         dot = u"\u2022"
         vartitle = get_recon_title(varname)
-        self.ax.set_title(f"{storm_type} {storm_data['name']}\n" + 'Recon: ' + ' '.join(
+        self.ax.set_title(f"{title_data['name']}\n" + 'Recon: ' + ' '.join(
             vartitle), loc='left', fontsize=17, fontweight='bold')
 
         # Add right title
@@ -666,22 +637,10 @@ class ReconPlot(Plot):
 
         # --------------------------------------------------------------------------------------
 
-        storm_data = storm.dict
         # Add left title
-        type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
-            type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
-        tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-        subtrop = classify_subtropical(np.array(storm_data['type']))
-        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
-        peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_classification(
-            np.nanmax(tropical_vmax), subtrop, peak_basin)
-
+        title_data = self.format_storm_title(storm.dict, calculate_extrema=False)
         vartitle = get_recon_title(varname)
-        title_left = f"{storm_type} {storm_data['name']}\n" + \
-            'Recon: ' + ' '.join(vartitle)
+        title_left = f"{title_data['name']}\nRecon: " + " ".join(vartitle)
         self.ax.set_title(title_left, loc='left',
                           fontsize=17, fontweight='bold')
 

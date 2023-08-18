@@ -434,3 +434,127 @@ class Plot:
                              transform=self.ax.transAxes, ha='right', va='bottom', zorder=10)
             a.set_path_effects([path_effects.Stroke(linewidth=5, foreground='white'),
                                 path_effects.Normal()])
+
+    def format_storm_title(self, storm_data, calculate_extrema=True):
+        r"""
+        Formats the title for a storm (e.g., Tropical Storm, Invest).
+
+        Parameters
+        ----------
+        storm_data : dict
+            Storm entry dictionary, must contain keys 'id' for storm ID and 'name' for storm name
+        calculate_extrema : bool, optional
+            If True, also calculates storm extrema. Default is False.
+
+        Returns
+        -------
+        dict
+            Dictionary containing the formatted storm title, and extrema if requested.
+        """
+
+        # Check where storm is a tropical or subtropical cyclone
+        type_array = np.array(storm_data['type'])
+        idx = np.where(np.isin(type_array, list(constants.TROPICAL_STORM_TYPES)))
+
+        # Check if storm is an invest with a leading 9
+        flag_invest = False
+        flag_ptc = False
+        if len(storm_data['id']) > 4 and str(storm_data['id'][2]) == "9":
+            flag_invest = True
+
+        # Check if storm is classified as an invest
+        invest_tag = False
+        if 'invest' in storm_data.keys() and storm_data['invest']:
+            invest_tag = True
+
+        # Case 1 - No ID is available and type is unknown
+        if len(storm_data['id']) == 0 and len(idx[0]) == 0:
+            idx = np.array([True for i in type_array])
+            storm_name = f"Cyclone {storm_data['name']}"
+
+        # Case 2 - Not an invest, but might be a potential tropical cyclone
+        elif not flag_invest and (invest_tag == False or len(idx[0]) > 0):
+            tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            # Coerce to include non-TC points if storm hasn't been designated yet
+            if len(tropical_vmax) == 0 and len(storm_data['id']) > 4:
+                flag_ptc = True
+                idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+                tropical_vmax = np.array(storm_data['vmax'])[idx]
+
+            # Case 2a: No wind data available
+            if all_nan(tropical_vmax):
+                storm_name = f"Tropical Cyclone {storm_data['name']}"
+
+            # Case 2b: Potential tropical cyclone
+            elif flag_ptc:
+                storm_name = f"Potential Tropical Cyclone {storm_data['name']}"
+
+            # Case 2c: tropical cyclone
+            else:
+                subtrop = classify_subtropical(
+                    np.array(storm_data['type']))
+                peak_idx = storm_data['vmax'].index(
+                    np.nanmax(tropical_vmax))
+                peak_basin = storm_data['wmo_basin'][peak_idx]
+                storm_type = get_storm_classification(
+                    np.nanmax(tropical_vmax), subtrop, peak_basin)
+                storm_name = f"{storm_type} {storm_data['name']}"
+
+        # Case 3 - storm is an invest
+        else:
+            idx = np.array([True for i in type_array])
+            tropical_vmax = np.array(storm_data['vmax'])
+
+            # Determine letter in front of invest
+            add_letter = 'L'
+            if storm_data['id'][0] == 'C':
+                add_letter = 'C'
+            elif storm_data['id'][0] == 'E':
+                add_letter = 'E'
+            elif storm_data['id'][0] == 'W':
+                add_letter = 'W'
+            elif storm_data['id'][0] == 'I':
+                add_letter = 'I'
+            elif storm_data['id'][0] == 'S':
+                add_letter = 'S'
+
+            # Add title
+            storm_name = f"Invest {storm_data['id'][2:4]}{add_letter}"
+
+        data = {
+            'name': storm_name,
+        }
+
+        #-----------------------------------------------------------------------
+
+        # Get storm extrema
+        if calculate_extrema:
+            ace = storm_data['ace'] if not flag_ptc else 0.0
+
+            # Get MSLP extrema
+            mslp_key = 'mslp' if 'wmo_mslp' not in storm_data.keys() else 'wmo_mslp'
+            if all_nan(np.array(storm_data[mslp_key])[idx]):
+                min_pres = "N/A"
+            else:
+                min_pres = int(np.nan_to_num(np.nanmin(np.array(storm_data[mslp_key])[idx])))
+
+            # Get wind extrema
+            if all_nan(np.array(storm_data['vmax'])[idx]):
+                max_wind = "N/A"
+            else:
+                max_wind = int(np.nan_to_num(np.nanmax(np.array(storm_data['vmax'])[idx])))
+
+            # Get start and end times
+            start_time = dt.strftime(np.array(storm_data['time'])[idx][0], '%d %b %Y')
+            end_time = dt.strftime(np.array(storm_data['time'])[idx][-1], '%d %b %Y')
+
+            data['ace'] = ace
+            data['mslp'] = str(min_pres)
+            data['vmax'] = str(max_wind)
+            data['start_time'] = start_time
+            data['end_time'] = end_time
+
+        # Return all data
+        return data
+

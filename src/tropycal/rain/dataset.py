@@ -7,7 +7,7 @@ from datetime import datetime as dt
 from scipy.interpolate import griddata
 import warnings
 
-from .plot import RainPlot
+from ..tracks import TrackPlot
 
 from ..utils import *
 
@@ -179,7 +179,7 @@ class RainDataset():
         try:
             self.plot_obj
         except:
-            self.plot_obj = RainPlot()
+            self.plot_obj = TrackPlot()
 
         # Create cartopy projection
         if cartopy_proj is not None:
@@ -191,13 +191,27 @@ class RainDataset():
             self.plot_obj.create_cartopy(
                 proj='PlateCarree', central_longitude=0.0)
 
-        # Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm, grid, levels, cmap,
-                                           domain, plot_all_dots, ax=ax,
-                                           save_path=save_path, prop=prop, map_prop=map_prop)
+        # Format args as dict
+        rain_args = {
+            'plot_grid': True,
+            'data': storm.rain,
+            'grid': grid,
+            'levels': levels,
+            'cmap': cmap,
+        }
+        
+        # Add zorder to plot
+        map_prop['zorder_ocean'] = 3
+        map_prop['zorder_lake'] = 1
+        map_prop['zorder_continent'] = 0
+        map_prop['zorder_states'] = 4
+        map_prop['zorder_countries'] = 4
+        map_prop['zorder_coastlines'] = 4
 
-        # Return axis
-        return plot_ax
+        # Plot storm
+        return self.plot_obj.plot_storms([storm.dict], domain, plot_all_dots=plot_all_dots,
+                                         ax=ax, save_path=save_path, prop=prop, map_prop=map_prop,
+                                         rain_args=rain_args)
 
     def plot_rain(self, storm, ms=7.5, mec=None, mew=0.5, minimum_threshold=1.0, levels=None, cmap=None, domain="dynamic", plot_all_dots=False, ax=None, cartopy_proj=None, save_path=None, **kwargs):
         r"""
@@ -256,7 +270,7 @@ class RainDataset():
         try:
             self.plot_obj
         except:
-            self.plot_obj = RainPlot()
+            self.plot_obj = TrackPlot()
 
         # Create cartopy projection
         if cartopy_proj is not None:
@@ -268,19 +282,27 @@ class RainDataset():
             self.plot_obj.create_cartopy(
                 proj='PlateCarree', central_longitude=0.0)
 
-        # Format plot settings
-        plot_settings = {
+        # Format args as dict
+        rain_args = {
+            'plot_grid': False,
+            'data': storm.rain,
+            'levels': levels,
+            'cmap': cmap,
             'ms': ms,
             'minimum_threshold': minimum_threshold,
             'mew': mew,
-            'mec': mec
+            'mec': mec,
         }
+        
+        # Add zorder to plot
+        map_prop['zorder_ocean'] = 2
+        map_prop['zorder_lake'] = 0.5
+        map_prop['zorder_continent'] = 0
+        map_prop['zorder_states'] = 4
+        map_prop['zorder_countries'] = 4
+        map_prop['zorder_coastlines'] = 4
 
         # Plot storm
-        plot_ax = self.plot_obj.plot_storm(storm, plot_settings, levels,
-                                           cmap, domain, plot_all_dots,
-                                           ax=ax, save_path=save_path,
-                                           prop=prop, map_prop=map_prop)
-
-        # Return axis
-        return plot_ax
+        return self.plot_obj.plot_storms([storm.dict], domain, plot_all_dots=plot_all_dots,
+                                         ax=ax, save_path=save_path, prop=prop, map_prop=map_prop,
+                                         rain_args=rain_args)

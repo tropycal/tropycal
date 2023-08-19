@@ -105,10 +105,13 @@ def plot_dot(ax, lon, lat, time, vmax, i_type, zorder, storm_data, prop, i):
     return ax, segmented_colors, extra
 
 
-def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=None):
+def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=None, autoselect_loc=False):
 
     # Linecolor category with dots
+    kwargs = {}
     if prop['fillcolor'] == 'category' and prop['dots']:
+        if autoselect_loc == False:
+            kwargs = {'loc': 1}
         ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
                            mec='k', mew=0.5, label='Non-Tropical', marker='^', color='w')
         sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
@@ -128,11 +131,13 @@ def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=No
         c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',
                            mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
         l = ax.legend(handles=[ex, sb, td, ts, c1, c2,
-                      c3, c4, c5], prop={'size': 11.5}, loc=1)
+                      c3, c4, c5], prop={'size': 11.5}, **kwargs)
         l.set_zorder(1001)
 
     # Linecolor category without dots
     elif prop['linecolor'] == 'category' and not prop['dots']:
+        if autoselect_loc == False:
+            kwargs = {'loc': 1}
         ex = mlines.Line2D([], [], linestyle='dotted',
                            label='Non-Tropical', color='k')
         td = mlines.Line2D([], [], linestyle='solid',
@@ -150,11 +155,13 @@ def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=No
         c5 = mlines.Line2D([], [], linestyle='solid',
                            label='Category 5', color=get_colors_sshws(137))
         l = ax.legend(handles=[ex, td, ts, c1, c2, c3,
-                      c4, c5], prop={'size': 11.5}, loc=1)
+                      c4, c5], prop={'size': 11.5}, **kwargs)
         l.set_zorder(1001)
 
     # Non-segmented custom colormap with dots
     elif prop['dots'] and not segmented_colors:
+        if autoselect_loc == False:
+            kwargs = {'loc': 1}
         ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',
                            mew=0.5, label='Non-Tropical', marker='^', color=prop['fillcolor'])
         sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',
@@ -163,18 +170,20 @@ def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=No
                            mew=0.5, label='Tropical', marker='o', color=prop['fillcolor'])
         handles = [ex, sb, td]
         l = ax.legend(handles=handles, fontsize=11.5,
-                      prop={'size': 11.5}, loc=1)
+                      prop={'size': 11.5}, **kwargs)
         l.set_zorder(1001)
 
     # Non-segmented custom colormap without dots
     elif not prop['dots'] and not segmented_colors:
+        if autoselect_loc == False:
+            kwargs = {'loc': 1}
         ex = mlines.Line2D([], [], linestyle='dotted',
                            label='Non-Tropical', color=prop['linecolor'])
         td = mlines.Line2D([], [], linestyle='solid',
                            label='Tropical', color=prop['linecolor'])
         handles = [ex, td]
         l = ax.legend(handles=handles, fontsize=11.5,
-                      prop={'size': 11.5}, loc=1)
+                      prop={'size': 11.5}, **kwargs)
         l.set_zorder(1001)
 
     # Custom colormap with dots
@@ -289,7 +298,7 @@ class TrackPlot(Plot):
 
         self.use_credit = True
 
-    def plot_storms(self, storms, domain="dynamic", title="TC Track Composite", plot_all_dots=False, track_labels=False, ax=None, save_path=None, prop={}, map_prop={}):
+    def plot_storms(self, storms, domain="dynamic", title="TC Track Composite", plot_all_dots=False, track_labels=False, ax=None, save_path=None, prop={}, map_prop={}, rain_args=None):
         r"""
         Creates a plot of a single or multiple storm tracks.
 
@@ -484,6 +493,64 @@ class TrackPlot(Plot):
                     self.plot_track_labels(self.ax, labels, track, k=.9)
 
         # --------------------------------------------------------------------------------------
+        
+        # Plotting rain data
+        if rain_args is not None:
+
+            # Determine levels and colormap
+            if rain_args['levels'] is None:
+                rain_args['levels'] = [1, 2, 3, 4, 6, 8, 10, 12, 16, 20]
+            if rain_args['cmap'] is None:
+                rain_args['cmap'] = plt.cm.YlGn
+            norm = mcolors.BoundaryNorm(rain_args['levels'], rain_args['cmap'].N)
+
+            # Contour fill grid if requested
+            if rain_args['plot_grid']:
+                if isinstance(rain_args['grid'], dict):
+                    grid_lat = rain_args['grid']['lat']
+                    grid_lon = rain_args['grid']['lon']
+                    grid_val = rain_args['grid']['grid']
+                else:
+                    grid_lat = rain_args['grid'].lat.values
+                    grid_lon = rain_args['grid'].lon.values
+                    grid_val = rain_args['grid'].values
+                self.ax.contourf(grid_lon, grid_lat, grid_val, rain_args['levels'],
+                                 cmap=rain_args['cmap'], norm=norm, zorder=1,
+                                 transform=ccrs.PlateCarree())
+
+            # Plot dots if requested
+            else:
+                iter_df = rain_args['data'].sort_values('Total')
+                for _, row in iter_df.iterrows():
+
+                    # Retrieve rain total and determine color
+                    rain_value = row['Total']
+                    if rain_value < rain_args['minimum_threshold']:
+                        continue
+                    color = rgb_tuple_to_str(
+                        rain_args['cmap'](norm(rain_value), bytes=True)[:-1])
+
+                    # Specify additional kwargs
+                    ms_kwargs = {}
+                    if rain_args['mec'] is not None:
+                        ms_kwargs['mec'] = rain_args['mec']
+                    if rain_args['mew'] is not None:
+                        ms_kwargs['mew'] = rain_args['mew']
+                    self.ax.plot(row['Lon'], row['Lat'], 'o', ms=rain_args['ms'], zorder=1,
+                                 color=color, transform=ccrs.PlateCarree(), **ms_kwargs)
+
+            # Produce colorbar
+            cs = plt.cm.ScalarMappable(cmap=rain_args['cmap'], norm=norm)
+            cs.set_array([])
+            cbar = add_colorbar(cs, ax=self.ax)
+
+            # Keep record of lat/lon coordinate extrema
+            max_lat = np.nanmax(rain_args['data']['Lat'].values)
+            min_lat = np.nanmin(rain_args['data']['Lat'].values)
+            max_lon = np.nanmax(rain_args['data']['Lon'].values)
+            min_lon = np.nanmin(rain_args['data']['Lon'].values)
+        
+        # --------------------------------------------------------------------------------------
 
         # Storm-centered plot domain
         if domain == "dynamic" or domain == "dynamic_tropical":
@@ -506,15 +573,23 @@ class TrackPlot(Plot):
 
         # --------------------------------------------------------------------------------------
 
+        # Add title text for rain data
+        add_title_text = ""
+        if rain_args is not None:
+            add_title_text = "\nWPC Storm Rainfall (inch)"
+            credit_text = "Rainfall data (inch) from\nWeather Prediction Center (WPC)\n\n"
+            self.ax.text(0.99, 0.01, credit_text, fontsize=9, color='k', alpha=0.7,
+                         transform=self.ax.transAxes, ha='right', va='bottom', zorder=10)
+        
         # Add left title
         if len(storms) > 1:
             if title != "":
-                self.ax.set_title(f"{title}", loc='left',
+                self.ax.set_title(f"{title}{add_title_text}", loc='left',
                                   fontsize=17, fontweight='bold')
         else:
             # Left title
             title_data = self.format_storm_title(storm_data)
-            self.ax.set_title(title_data['name'], loc='left', fontsize=17, fontweight='bold')
+            self.ax.set_title(f"{title_data['name']}{add_title_text}", loc='left', fontsize=17, fontweight='bold')
 
             # Right title
             endash = u"\u2013"
@@ -539,8 +614,11 @@ class TrackPlot(Plot):
         # --------------------------------------------------------------------------------------
 
         # Add legend
+        autoselect_loc = False
+        if rain_args is not None:
+            autoselect_loc = True
         self.ax, self.fig = add_legend(
-            self.ax, self.fig, prop, segmented_colors, levels, cmap, storm_data)
+            self.ax, self.fig, prop, segmented_colors, levels, cmap, storm_data, autoselect_loc)
 
         # -----------------------------------------------------------------------------------------
 

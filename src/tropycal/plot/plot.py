@@ -3,6 +3,7 @@ import warnings
 import pkg_resources
 
 from ..utils import *
+from .. import constants
 
 try:
     import cartopy.feature as cfeature
@@ -83,23 +84,34 @@ class Plot:
         # Add "hidden" state alpha prop
         if 'state_alpha' not in prop.keys():
             prop['state_alpha'] = 1.0
+        
+        # Get zorder kwargs
+        zorder = {}
+        for key in ['ocean', 'lake', 'continent', 'states', 'countries', 'coastlines']:
+            if f'zorder_{key}' in prop.keys():
+                zorder[key] = {'zorder': prop[f'zorder_{key}']}
+            else:
+                zorder[key] = {}
 
         # fill oceans if specified
         self.ax.set_facecolor(prop['ocean_color'])
         ocean_mask = self.ax.add_feature(cfeature.OCEAN.with_scale(
-            res), facecolor=prop['ocean_color'], edgecolor='face')
+            res), facecolor=prop['ocean_color'], edgecolor='face', **zorder['ocean'])
         lake_mask = self.ax.add_feature(cfeature.LAKES.with_scale(
-            res), facecolor=prop['ocean_color'], edgecolor='face')
+            res), facecolor=prop['ocean_color'], edgecolor='face', **zorder['lake'])
         continent_mask = self.ax.add_feature(cfeature.LAND.with_scale(
-            res), facecolor=prop['land_color'], edgecolor='face')
+            res), facecolor=prop['land_color'], edgecolor='face', **zorder['continent'])
 
         # draw geography
         states = self.ax.add_feature(cfeature.STATES.with_scale(
-            res), linewidths=prop['linewidth'], linestyle='solid', edgecolor=prop['linecolor'], alpha=prop['state_alpha'])
+            res), linewidths=prop['linewidth'], linestyle='solid', edgecolor=prop['linecolor'],
+            alpha=prop['state_alpha'], **zorder['states'])
         countries = self.ax.add_feature(cfeature.BORDERS.with_scale(
-            res), linewidths=prop['linewidth'], linestyle='solid', edgecolor=prop['linecolor'])
+            res), linewidths=prop['linewidth'], linestyle='solid', edgecolor=prop['linecolor'],
+             **zorder['countries'])
         coastlines = self.ax.add_feature(cfeature.COASTLINE.with_scale(
-            res), linewidths=prop['linewidth'], linestyle='solid', edgecolor=prop['linecolor'])
+            res), linewidths=prop['linewidth'], linestyle='solid', edgecolor=prop['linecolor'],
+             **zorder['coastlines'])
 
     def dynamic_map_extent(self, min_lon, max_lon, min_lat, max_lat):
         r"""

@@ -333,10 +333,10 @@ class TrackPlot(Plot):
         # --------------------------------------------------------------------------------------
 
         # Keep record of lat/lon coordinate extrema
-        max_lat = None
-        min_lat = None
-        max_lon = None
-        min_lon = None
+        max_lat = []
+        min_lat = []
+        max_lon = []
+        min_lon = []
 
         # Iterate through all storms provided
         for storm in storms:
@@ -385,26 +385,10 @@ class TrackPlot(Plot):
                 use_lons = np.copy(lons).tolist()
 
             # Add to coordinate extrema
-            if max_lat is None:
-                max_lat = max(use_lats)
-            else:
-                if max(use_lats) > max_lat:
-                    max_lat = max(use_lats)
-            if min_lat is None:
-                min_lat = min(use_lats)
-            else:
-                if min(use_lats) < min_lat:
-                    min_lat = min(use_lats)
-            if max_lon is None:
-                max_lon = max(use_lons)
-            else:
-                if max(use_lons) > max_lon:
-                    max_lon = max(use_lons)
-            if min_lon is None:
-                min_lon = min(use_lons)
-            else:
-                if min(use_lons) < min_lon:
-                    min_lon = min(use_lons)
+            max_lat.append(max(use_lats))
+            min_lat.append(min(use_lats))
+            max_lon.append(max(use_lons))
+            min_lon.append(min(use_lons))
 
             # Add storm label at start and end points
             if prop['plot_names']:
@@ -492,6 +476,11 @@ class TrackPlot(Plot):
                                  for t, x, y in zip(sdate, lons, lats)}
                     self.plot_track_labels(self.ax, labels, track, k=.9)
 
+        max_lat = max(max_lat)
+        min_lat = min(min_lat)
+        max_lon = max(max_lon)
+        min_lon = min(min_lon)
+        
         # --------------------------------------------------------------------------------------
         
         # Plotting rain data

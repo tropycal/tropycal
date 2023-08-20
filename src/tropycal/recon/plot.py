@@ -78,10 +78,10 @@ class ReconPlot(Plot):
         # --------------------------------------------------------------------------------------
 
         # Keep record of lat/lon coordinate extrema
-        max_lat = None
-        min_lat = None
-        max_lon = None
-        min_lon = None
+        max_lat = []
+        min_lat = []
+        max_lon = []
+        min_lon = []
 
         # Retrieve storm data
         storm_data = storm.dict
@@ -102,26 +102,10 @@ class ReconPlot(Plot):
             lons = temp_df['lon']
 
         # Add to coordinate extrema
-        if max_lat is None:
-            max_lat = max(lats)
-        else:
-            if max(lats) > max_lat:
-                max_lat = max(lats)
-        if min_lat is None:
-            min_lat = min(lats)
-        else:
-            if min(lats) < min_lat:
-                min_lat = min(lats)
-        if max_lon is None:
-            max_lon = max(lons)
-        else:
-            if max(lons) > max_lon:
-                max_lon = max(lons)
-        if min_lon is None:
-            min_lon = min(lons)
-        else:
-            if min(lons) < min_lon:
-                min_lon = min(lons)
+        max_lat.append(max(lats))
+        min_lat.append(min(lats))
+        max_lon.append(max(lons))
+        min_lon.append(min(lons))
 
         # Get colormap and level extrema
         cmap, clevs = get_cmap_levels(varname, prop['cmap'], prop['levels'])
@@ -179,7 +163,7 @@ class ReconPlot(Plot):
         if domain == "dynamic":
 
             bound_w, bound_e, bound_s, bound_n = dynamic_map_extent(
-                min_lon, max_lon, min_lat, max_lat, recon=True)
+                min(min_lon), max(max_lon), min(min_lat), max(max_lat), recon=True)
             self.ax.set_extent(
                 [bound_w, bound_e, bound_s, bound_n], crs=ccrs.PlateCarree())
 

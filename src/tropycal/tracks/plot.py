@@ -1112,6 +1112,7 @@ class TrackPlot(Plot):
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
+        model_prop = self.add_prop(models, default_model)
         self.plot_init(ax, map_prop)
 
         # Fix GFDL
@@ -1132,6 +1133,7 @@ class TrackPlot(Plot):
 
         # Plot models
         for model in forecast_dict.keys():
+            if model_prop[model] is None: continue
 
             # Fix label for HAFS
             if 'hafs' in model:

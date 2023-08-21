@@ -118,8 +118,8 @@ def find_var(request, thresh):
     if request.find('count') >= 0 or request.find('num') >= 0:
         return thresh, 'type'
 
-    if request.find('date') >= 0 or request.find('day') >= 0:
-        return thresh, 'date'
+    if request.find('time') >= 0 or request.find('day') >= 0:
+        return thresh, 'time'
 
     # Sustained wind, or change in wind speed
     if request.find('wind') >= 0 or request.find('vmax') >= 0:

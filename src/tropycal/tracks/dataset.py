@@ -189,10 +189,11 @@ class TrackDataset:
                 "ibtracs_mode must be either 'wmo', 'jtwc', or 'jtwc_neumann'")
 
         # Get latest HURDATv2 files if requested
-        if basin in constants.NHC_BASINS and source == 'hurdat':
+        fetch_condition_1 = basin in constants.NHC_BASINS and source == 'hurdat'
+        if fetch_condition_1 or ibtracs_hurdat:
             condition_1 = basin == 'north_atlantic' and atlantic_url == 'fetch'
             condition_2 = basin == 'east_pacific' and pacific_url == 'fetch'
-            condition_3 = basin == 'both' and (
+            condition_3 = basin in ['both','all'] and (
                 atlantic_url == 'fetch' or pacific_url == 'fetch')
             if condition_1 or condition_2 or condition_3:
                 atlantic_url, pacific_url = find_latest_hurdat_files()
@@ -3135,12 +3136,9 @@ class TrackDataset:
 
             # Interpolate temporally if requested
             if interpolate_data:
-                try:
-                    istorm = self.data_interp[key]
-                except:
-                    istorm = interp_storm(self.data[key].copy(
-                    ), hours=1, dt_window=thresh['dt_window'], dt_align=thresh['dt_align'])
-                    self.data_interp[key] = istorm.copy()
+                istorm = interp_storm(self.data[key].copy(), hours=1,
+                                      dt_window=thresh['dt_window'], dt_align=thresh['dt_align'])
+                self.data_interp[key] = istorm.copy()
                 timeres = 1
             else:
                 istorm = self.data[key]
@@ -3620,7 +3618,7 @@ class TrackDataset:
             grid_z = grid_z_zeros.copy()
 
         # Plot gridded field
-        plot_ax = self.plot_obj.plot_gridded(
+        plot_ax = self.plot_obj.plot_gridded_wrapper(
             grid_x, grid_y, grid_z, varname, VEC_FLAG, domain, ax=ax, prop=prop, map_prop=map_prop)
 
         # Format grid into xarray if specified

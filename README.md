@@ -3,7 +3,7 @@ Tropycal is a Python package intended to simplify the process of retrieving and 
 
 Tropycal can read in HURDAT2 and IBTrACS reanalysis data and operational National Hurricane Center (NHC) Best Track data and conform them to the same format, which can be used to perform climatological, seasonal and individual storm analyses. For each individual storm, operational NHC and model forecasts, aircraft reconnaissance data, rainfall data, and any associated tornado activity can be retrieved and plotted.
 
-The latest version of Tropycal is v1.0.2.
+The latest version of Tropycal is v1.1.
 
 ## Installation
 
@@ -38,7 +38,7 @@ python setup.py install
 - matplotlib >= 2.2.2
 - numpy >= 1.14.3
 - scipy >= 1.1.0
-- pandas >= 0.23.0
+- pandas >= 1.3.0
 - xarray >= 0.10.7
 - networkx >= 2.0.0
 - requests >= 2.22.0

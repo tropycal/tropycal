@@ -1145,8 +1145,7 @@ class TrackPlot(Plot):
 
         # Save image if specified
         if save_path is not None and isinstance(save_path, str):
-            plt.savefig(os.path.join(
-                save_path, f"{storm_data['name']}_{storm_data['year']}_track.png"), bbox_inches='tight')
+            plt.savefig(save_path, bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure
         return self.ax
@@ -1337,7 +1336,7 @@ class TrackPlot(Plot):
 
         # Save image if specified
         if save_path is not None and isinstance(save_path, str):
-            plt.savefig(os.path.join(save_path), bbox_inches='tight')
+            plt.savefig(save_path, bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure
         return self.ax
@@ -1831,7 +1830,7 @@ class TrackPlot(Plot):
 
         # Save image if specified
         if save_path is not None and isinstance(save_path, str):
-            plt.savefig(os.path.join(save_path), bbox_inches='tight')
+            plt.savefig(save_path, bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure
         return self.ax

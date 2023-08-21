@@ -21,7 +21,7 @@ except ImportError:
         "Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")
 
 from .plot import *
-from ..tracks.plot import TrackPlot
+from ..plot import Plot
 from .realtime import Mission
 
 # Import tools
@@ -1858,6 +1858,18 @@ class hdobs:
         # Retrieve the requested function, variable for computing stats, and plot title. These modify thresh if necessary.
         thresh, func = find_func(request, thresh)
         thresh, varname = find_var(request, thresh)
+        
+        # Format left title for plot
+        endash = u"\u2013"
+        dot = u"\u2022"
+        title_L = request.lower()
+        for name in ['wind', 'vmax']:
+            title_L = title_L.replace(name, 'wind (kt)')
+        for name in ['sfmr']:
+            title_L = title_L.replace(name, 'sfmr (kt)')
+        for name in ['pressure', 'mslp']:
+            title_L = title_L.replace(name, 'pressure (hPa)')
+        title_L = (title_L.title()).replace('Hpa','hPa')
 
         # ---------------------------------------------------------------------------------------------------
 
@@ -1878,7 +1890,7 @@ class hdobs:
         new_df = {
             'latbin': [],
             'lonbin': [],
-            'varname': []
+            varname: []
         }
         for g in groups:
             new_df[varname].append(func(g[1][varname].values))
@@ -1923,7 +1935,7 @@ class hdobs:
         # ---------------------------------------------------------------------------------------------------
 
         # Create instance of plot object
-        plot_obj = TrackPlot()
+        plot_obj = Plot()
 
         # Create cartopy projection using basin
         if cartopy_proj is None:
@@ -1934,7 +1946,8 @@ class hdobs:
                 plot_obj.create_cartopy(
                     proj='PlateCarree', central_longitude=0.0)
 
-        prop['title_L'], prop['title_R'] = self.storm.name, 'things'
+        prop['title_L'] = f'{self.storm.name} | {title_L}'
+        prop['title_R'] = ''
 
         if domain == "dynamic":
             domain = {

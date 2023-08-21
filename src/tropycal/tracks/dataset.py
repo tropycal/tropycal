@@ -3618,7 +3618,7 @@ class TrackDataset:
             grid_z = grid_z_zeros.copy()
 
         # Plot gridded field
-        plot_ax = self.plot_obj.plot_gridded(
+        plot_ax = self.plot_obj.plot_gridded_wrapper(
             grid_x, grid_y, grid_z, varname, VEC_FLAG, domain, ax=ax, prop=prop, map_prop=map_prop)
 
         # Format grid into xarray if specified

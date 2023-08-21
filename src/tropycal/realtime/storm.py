@@ -281,14 +281,14 @@ class RealtimeStorm(Storm):
             msg = "No realtime forecast discussion is available for this storm."
             raise RuntimeError(msg)
 
-    def get_forecast_realtime(self, ssl_certificate=True):
+    def get_forecast_realtime(self, ssl_certificate=None):
         r"""
         Retrieve a dictionary containing the latest official forecast. Available for both NHC and JTWC sources.
 
         Parameters
         ----------
-        ssl_certificate : boolean, optional
-            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
+        ssl_certificate : str, optional
+        If jtwc is set to True, and jtwc_source is set to "jtwc", use this argument to provide the path to a valid SSL certificate in case the default one is expired.
 
         Returns
         -------
@@ -435,9 +435,11 @@ class RealtimeStorm(Storm):
                 url = f"https://www.nrlmry.navy.mil/atcf_web/docs/current_storms/{self.id.lower()}.sum"
             else:
                 url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{self.id.lower()}.fst"
-            if not ssl_certificate and self.jtwc_source in ['jtwc', 'ucar']:
+            if ssl_certificate is not None and self.jtwc_source in ['jtwc', 'ucar']:
                 import ssl
-                if requests.get(url, verify=False).status_code != 200:
+                ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+                ssl_context.load_verify_locations(cafile=ssl_certificate)
+                if requests.get(url, verify=ssl_context).status_code != 200:
                     raise RuntimeError(
                         "JTWC forecast data is unavailable for this storm.")
             else:
@@ -446,10 +448,12 @@ class RealtimeStorm(Storm):
                         "JTWC forecast data is unavailable for this storm.")
 
             # Read file content
-            if not ssl_certificate and self.jtwc_source in ['jtwc', 'ucar']:
+            if ssl_certificate is not None and self.jtwc_source in ['jtwc', 'ucar']:
                 import ssl
+                ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+                ssl_context.load_verify_locations(cafile=ssl_certificate)
                 f = urllib.request.urlopen(
-                    url, context=ssl._create_unverified_context())
+                    url, context=ssl_context)
             else:
                 f = urllib.request.urlopen(url)
             content = f.read()
@@ -718,7 +722,7 @@ class RealtimeStorm(Storm):
         return self.latest_forecast
 
     def plot_forecast_realtime(self, track_labels='fhr', cone_days=5, domain="dynamic_forecast",
-                               ax=None, cartopy_proj=None, save_path=None, ssl_certificate=True, **kwargs):
+                               ax=None, cartopy_proj=None, save_path=None, ssl_certificate=None, **kwargs):
         r"""
         Plots the latest available official forecast. Available for both NHC and JTWC sources.
 
@@ -739,8 +743,8 @@ class RealtimeStorm(Storm):
 
         Other Parameters
         ----------------
-        ssl_certificate : boolean, optional
-            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
+        ssl_certificate : str, optional
+        If jtwc is set to True, and jtwc_source is set to "jtwc", use this argument to provide the path to a valid SSL certificate in case the default one is expired.
         prop : dict
             Customization properties of NHC forecast plot. Please refer to :ref:`options-prop-nhc` or scroll down below for available options.
         map_prop : dict

@@ -390,13 +390,6 @@ class TrackPlot(Plot):
             max_lon.append(max(use_lons))
             min_lon.append(min(use_lons))
 
-            # Add storm label at start and end points
-            if prop['plot_names']:
-                self.ax.text(lons[0] + 0.0, storm_data['lat'][0] + 1.0, f"{storm_data['name'].upper()} {storm_data['year']}",
-                             fontsize=9, clip_on=True, zorder=1000, alpha=0.7, ha='center', va='center', transform=ccrs.PlateCarree())
-                self.ax.text(lons[-1] + 0.0, storm_data['lat'][-1] + 1.0, f"{storm_data['name'].upper()} {storm_data['year']}",
-                             fontsize=9, clip_on=True, zorder=1000, alpha=0.7, ha='center', va='center', transform=ccrs.PlateCarree())
-
             # Iterate over storm data to plot
             levels = None
             cmap = None
@@ -559,6 +552,72 @@ class TrackPlot(Plot):
             self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
         except:
             pass
+
+        # --------------------------------------------------------------------------------------
+        
+        def adjust_label(ax, lon, lat):
+            x1, y1 = self.ax.projection.transform_point(
+                lon, lat, ccrs.PlateCarree())
+            x2, y2 = self.ax.transData.transform((x1, y1))
+            x, y = self.ax.transAxes.inverted().transform((x2, y2))
+            return x, y
+        
+        def coordinate_in_plot(x, y):
+            if x <= 0 or x >= 1:
+                return False
+            if y <= 0 or y >= 1:
+                return False
+            return True
+
+        # Add storm label at start and end points
+        if prop['plot_names']:
+            for storm in storms:
+
+                # Check for storm type, then get data for storm
+                if isinstance(storm, str):
+                    storm_data = self.data[storm]
+                elif isinstance(storm, tuple):
+                    storm = self.get_storm_id(storm[0], storm[1])
+                    storm_data = self.data[storm]
+                else:
+                    storm_data = storm
+                
+                # Adjust longitudes
+                lats = storm_data['lat']
+                lons = storm_data['lon']
+                if self.proj.proj4_params['lon_0'] == 180.0:
+                    new_lons = np.array(lons)
+                    new_lons[new_lons < 0] = new_lons[new_lons < 0] + 360.0
+                    lons = new_lons.tolist()
+                    
+                # Adjust coordinates to axes relative
+                x1, y1 = adjust_label(self.ax, lons[0], lats[0])
+                x2, y2 = adjust_label(self.ax, lons[-1], lats[-1])
+                
+                # Fix if bounds are outside of plot
+                if not coordinate_in_plot(x1, y1) and not coordinate_in_plot(x2, y2):
+                    print(storm_data['name'])
+                    x1, y1, x2, y2 = [None, None, None, None]
+                    for i_lon, i_lat in zip(lons, lats):
+                        x, y = adjust_label(self.ax, i_lon, i_lat)
+                        if not coordinate_in_plot(x, y):
+                            continue
+                        if x1 is None:
+                            x1 = x + 0
+                            y1 = y + 0
+                        x2 = x + 0
+                        y2 = y + 0
+
+                display_label = f"{storm_data['name'].upper()} {storm_data['year']}"
+                self.ax.text(x1, y1+0.015, display_label, transform=self.ax.transAxes, fontsize=9,
+                    clip_on=True, alpha=0.7, zorder=990, ha='center', va='bottom')
+                self.ax.text(x2, y2+0.015, display_label, transform=self.ax.transAxes, fontsize=9,
+                    clip_on=True, alpha=0.7, zorder=990, ha='center', va='bottom')
+                
+                """self.ax.text(lons[0] + 0.0, storm_data['lat'][0] + 1.0, f"{storm_data['name'].upper()} {storm_data['year']}",
+                             fontsize=9, clip_on=True, zorder=1000, alpha=0.7, ha='center', va='center', transform=ccrs.PlateCarree())
+                self.ax.text(lons[-1] + 0.0, storm_data['lat'][-1] + 1.0, f"{storm_data['name'].upper()} {storm_data['year']}",
+                             fontsize=9, clip_on=True, zorder=1000, alpha=0.7, ha='center', va='center', transform=ccrs.PlateCarree())"""
 
         # --------------------------------------------------------------------------------------
 

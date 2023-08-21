@@ -1,0 +1,12 @@
+Storm.plot_models_wind
+======================================
+
+.. currentmodule:: tropycal.tracks
+
+.. automethod:: Storm.plot_models_wind
+
+.. include:: tropycal.tracks.Storm.plot_models_wind
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -23,12 +23,14 @@ tropycal.tracks.Storm
          Storm.get_operational_forecasts
          Storm.get_recon
          Storm.get_ships
+         Storm.get_ships_analysis
          Storm.interp
          Storm.list_nhc_discussions
          Storm.plot
          Storm.plot_TCtors_rotated
          Storm.plot_ensembles
          Storm.plot_models
+         Storm.plot_models_wind
          Storm.plot_nhc_forecast
          Storm.plot_tors
          Storm.query_nhc_discussions

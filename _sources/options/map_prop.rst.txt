@@ -105,7 +105,7 @@ The following special options are available for ``linecolor`` or ``fillcolor``:
 plot_nhc_forecast
 -----------------
 
-The following properties are available only for the ``tropycal.tracks.Storm.plot_nhc_forecast()`` function.
+The following properties are available only for the ``tropycal.tracks.Storm.plot_nhc_forecast()`` and ``tropycal.realtime.RealtimeStorm.plot_forecast_realtime()`` functions.
 
 .. list-table:: 
    :widths: 25 75
@@ -114,9 +114,11 @@ The following properties are available only for the ``tropycal.tracks.Storm.plot
    * - Property
      - Description
    * - cone_lw
-     - Line width for the cone of uncertainty. Default is 1.0.
+     - Center line width for the cone of uncertainty. Default is 2.0.
    * - cone_alpha
      - Transparency for the cone of uncertainty. Default is 0.6.
+   * - cone_res
+     - Grid resolution for the cone of uncertainty in degrees. Default is 0.05.
 
 .. _options-prop-gridded:
 
@@ -133,6 +135,8 @@ The following properties are available only for the ``tropycal.tracks.TrackDatas
      - Description
    * - plot_values
      - Boolean for whether to plot label values for each gridpoint. Default is False.
+   * - values_size
+     - If ``plot_values`` is set to True, determines font size for labels. If none, this is automatically determined.
    * - smooth
      - Number (in units of sigma) to smooth the data using scipy's gaussian filter. Default is 0 (no smoothing).
    * - cmap

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RealtimeStorm.plot_TCtors_rotated &mdash; tropycal </title>
+  <title>RealtimeStorm.get_ships_realtime &mdash; tropycal </title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -27,8 +27,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="RealtimeStorm.plot_ensembles" href="tropycal.realtime.RealtimeStorm.plot_ensembles.html" />
-    <link rel="prev" title="RealtimeStorm.plot" href="tropycal.realtime.RealtimeStorm.plot.html" /> 
+    <link rel="next" title="RealtimeStorm.interp" href="tropycal.realtime.RealtimeStorm.interp.html" />
+    <link rel="prev" title="RealtimeStorm.get_ships_analysis" href="tropycal.realtime.RealtimeStorm.get_ships_analysis.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -77,11 +77,11 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_recon.html">RealtimeStorm.get_recon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_ships.html">RealtimeStorm.get_ships</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_ships_analysis.html">RealtimeStorm.get_ships_analysis</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.get_ships_realtime.html">RealtimeStorm.get_ships_realtime</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">RealtimeStorm.get_ships_realtime</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.interp.html">RealtimeStorm.interp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.list_nhc_discussions.html">RealtimeStorm.list_nhc_discussions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot.html">RealtimeStorm.plot</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">RealtimeStorm.plot_TCtors_rotated</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_TCtors_rotated.html">RealtimeStorm.plot_TCtors_rotated</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_ensembles.html">RealtimeStorm.plot_ensembles</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_forecast_realtime.html">RealtimeStorm.plot_forecast_realtime</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.realtime.RealtimeStorm.plot_models.html">RealtimeStorm.plot_models</a></li>
@@ -124,9 +124,9 @@
           <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
           <li class="breadcrumb-item"><a href="tropycal.realtime.html">Realtime</a></li>
           <li class="breadcrumb-item"><a href="tropycal.realtime.RealtimeStorm.html">tropycal.realtime.RealtimeStorm</a></li>
-      <li class="breadcrumb-item active">RealtimeStorm.plot_TCtors_rotated</li>
+      <li class="breadcrumb-item active">RealtimeStorm.get_ships_realtime</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/api/generated/tropycal.realtime.RealtimeStorm.plot_TCtors_rotated.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/api/generated/tropycal.realtime.RealtimeStorm.get_ships_realtime.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -134,25 +134,22 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="realtimestorm-plot-tctors-rotated">
-<h1>RealtimeStorm.plot_TCtors_rotated<a class="headerlink" href="#realtimestorm-plot-tctors-rotated" title="Permalink to this heading">¶</a></h1>
+  <section id="realtimestorm-get-ships-realtime">
+<h1>RealtimeStorm.get_ships_realtime<a class="headerlink" href="#realtimestorm-get-ships-realtime" title="Permalink to this heading">¶</a></h1>
 <dl class="py method">
-<dt class="sig sig-object py" id="tropycal.realtime.RealtimeStorm.plot_TCtors_rotated">
-<span class="sig-prename descclassname"><span class="pre">RealtimeStorm.</span></span><span class="sig-name descname"><span class="pre">plot_TCtors_rotated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dist_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.plot_TCtors_rotated" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p>
+<dt class="sig sig-object py" id="tropycal.realtime.RealtimeStorm.get_ships_realtime">
+<span class="sig-prename descclassname"><span class="pre">RealtimeStorm.</span></span><span class="sig-name descname"><span class="pre">get_ships_realtime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.get_ships_realtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_ships_realtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a Ships object containing the latest SHIPS data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dist_thresh</strong> (<em>int</em>) – Distance threshold (in kilometers) from the tropical cyclone track over which to attribute tornadoes to the TC. Default is 1000 km. Ignored if tornado data was passed into Storm from TrackDataset.</p></li>
-<li><p><strong>save_path</strong> (<em>str</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>ax</em> – Instance of axes containing the plot is returned.</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>tropycal.ships.Ships</em> – Instance of a Ships object containing the latest SHIPS data.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>The motion vector is oriented upwards (in the +y direction).</p>
+<ol class="arabic simple">
+<li><p>While the SHIPS data source used for <code class="docutils literal notranslate"><span class="pre">Storm.get_ships()</span></code> updates on a frequent basis, it may lag slightly behind the latest available data on the NHC ATCF server, especially for newly formed storms. This function helps to mitigate this slight delay.</p></li>
+<li><p>On rare occasions, SHIPS data files from UCAR have empty data associated with them. In these cases, a value of None is returned.</p></li>
+</ol>
 </dd></dl>
 
 <div style='clear:both'></div></section>
@@ -161,8 +158,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="tropycal.realtime.RealtimeStorm.plot.html" class="btn btn-neutral float-left" title="RealtimeStorm.plot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="tropycal.realtime.RealtimeStorm.plot_ensembles.html" class="btn btn-neutral float-right" title="RealtimeStorm.plot_ensembles" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tropycal.realtime.RealtimeStorm.get_ships_analysis.html" class="btn btn-neutral float-left" title="RealtimeStorm.get_ships_analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.realtime.RealtimeStorm.interp.html" class="btn btn-neutral float-right" title="RealtimeStorm.interp" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

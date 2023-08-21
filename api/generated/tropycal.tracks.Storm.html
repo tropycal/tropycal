@@ -67,12 +67,14 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_operational_forecasts.html">Storm.get_operational_forecasts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_recon.html">Storm.get_recon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_ships.html">Storm.get_ships</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_ships_analysis.html">Storm.get_ships_analysis</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.interp.html">Storm.interp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.list_nhc_discussions.html">Storm.list_nhc_discussions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot.html">Storm.plot</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_TCtors_rotated.html">Storm.plot_TCtors_rotated</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_ensembles.html">Storm.plot_ensembles</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_models.html">Storm.plot_models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_models_wind.html">Storm.plot_models_wind</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_nhc_forecast.html">Storm.plot_nhc_forecast</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_tors.html">Storm.plot_tors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.query_nhc_discussions.html">Storm.query_nhc_discussions</a></li>
@@ -210,23 +212,29 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.get_ships.html#tropycal.tracks.Storm.get_ships" title="tropycal.tracks.Storm.get_ships"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.get_ships</span></code></a>(time)</p></td>
 <td><p>Retrieves a Ships object containing SHIPS data for a requested time.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.interp.html#tropycal.tracks.Storm.interp" title="tropycal.tracks.Storm.interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.interp</span></code></a>([hours, dt_window, dt_align, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.get_ships_analysis.html#tropycal.tracks.Storm.get_ships_analysis" title="tropycal.tracks.Storm.get_ships_analysis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.get_ships_analysis</span></code></a>()</p></td>
+<td><p>Creates a custom Storm object consisting of SHIPS initialized analyses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.interp.html#tropycal.tracks.Storm.interp" title="tropycal.tracks.Storm.interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.interp</span></code></a>([hours, dt_window, dt_align, ...])</p></td>
 <td><p>Interpolate a storm temporally to a specified time resolution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.list_nhc_discussions.html#tropycal.tracks.Storm.list_nhc_discussions" title="tropycal.tracks.Storm.list_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.list_nhc_discussions</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.list_nhc_discussions.html#tropycal.tracks.Storm.list_nhc_discussions" title="tropycal.tracks.Storm.list_nhc_discussions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.list_nhc_discussions</span></code></a>()</p></td>
 <td><p>Retrieves a list of NHC forecast discussions for this storm, archived on <a class="reference external" href="https://ftp.nhc.noaa.gov/atcf/archive/">https://ftp.nhc.noaa.gov/atcf/archive/</a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot.html#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot</span></code></a>([domain, plot_all_dots, ax, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot.html#tropycal.tracks.Storm.plot" title="tropycal.tracks.Storm.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot</span></code></a>([domain, plot_all_dots, ax, ...])</p></td>
 <td><p>Creates a plot of the observed track of the storm.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_TCtors_rotated.html#tropycal.tracks.Storm.plot_TCtors_rotated" title="tropycal.tracks.Storm.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_TCtors_rotated</span></code></a>([dist_thresh, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_TCtors_rotated.html#tropycal.tracks.Storm.plot_TCtors_rotated" title="tropycal.tracks.Storm.plot_TCtors_rotated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_TCtors_rotated</span></code></a>([dist_thresh, ...])</p></td>
 <td><p>Plot tracks of tornadoes relative to the storm motion vector of the tropical cyclone.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_ensembles.html#tropycal.tracks.Storm.plot_ensembles" title="tropycal.tracks.Storm.plot_ensembles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_ensembles</span></code></a>([forecast, fhr, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_ensembles.html#tropycal.tracks.Storm.plot_ensembles" title="tropycal.tracks.Storm.plot_ensembles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_ensembles</span></code></a>([forecast, fhr, ...])</p></td>
 <td><p>Creates a plot of individual GEFS ensemble tracks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_models.html#tropycal.tracks.Storm.plot_models" title="tropycal.tracks.Storm.plot_models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_models</span></code></a>([forecast, plot_btk, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_models.html#tropycal.tracks.Storm.plot_models" title="tropycal.tracks.Storm.plot_models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_models</span></code></a>([forecast, plot_btk, ...])</p></td>
 <td><p>Creates a plot of operational model forecast tracks.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_models_wind.html#tropycal.tracks.Storm.plot_models_wind" title="tropycal.tracks.Storm.plot_models_wind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_models_wind</span></code></a>([forecast, plot_btk])</p></td>
+<td><p>Creates a plot of operational model forecast wind speed.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="tropycal.tracks.Storm.plot_nhc_forecast.html#tropycal.tracks.Storm.plot_nhc_forecast" title="tropycal.tracks.Storm.plot_nhc_forecast"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Storm.plot_nhc_forecast</span></code></a>(forecast[, ...])</p></td>
 <td><p>Creates a plot of the operational NHC forecast track along with observed track data.</p></td>

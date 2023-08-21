@@ -115,6 +115,7 @@
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">matplotlib.lines</span> <span class="k">as</span> <span class="nn">mlines</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.patheffects</span> <span class="k">as</span> <span class="nn">path_effects</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
@@ -816,12 +817,7 @@
 <span class="sd">        forecast : int or datetime.datetime</span>
 <span class="sd">            Integer representing the forecast number, or datetime object for the closest issued forecast to this time.</span>
 <span class="sd">        track_labels : str</span>
-<span class="sd">            Label forecast hours with the following methods:</span>
-
-<span class="sd">            * **&quot;&quot;** = no label</span>
-<span class="sd">            * **&quot;fhr&quot;** = forecast hour (default)</span>
-<span class="sd">            * **&quot;valid_utc&quot;** = UTC valid time</span>
-<span class="sd">            * **&quot;valid_edt&quot;** = EDT valid time</span>
+<span class="sd">            Label format for forecast dots. Scroll down to notes for available options.</span>
 <span class="sd">        cone_days : int</span>
 <span class="sd">            Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.</span>
 <span class="sd">        domain : str</span>
@@ -836,7 +832,7 @@
 <span class="sd">        Other Parameters</span>
 <span class="sd">        ----------------</span>
 <span class="sd">        prop : dict</span>
-<span class="sd">            Customization properties of NHC forecast plot. Please refer to :ref:`options-prop-nhc` for available options.</span>
+<span class="sd">            Customization properties of NHC forecast plot. Please refer to :ref:`options-prop-nhc` or scroll down below for available options.</span>
 <span class="sd">        map_prop : dict</span>
 <span class="sd">            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.</span>
 
@@ -844,6 +840,53 @@
 <span class="sd">        -------</span>
 <span class="sd">        ax</span>
 <span class="sd">            Instance of axes containing the plot is returned.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+
+<span class="sd">        The following properties are available for customizing ``track_labels``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Value</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - ``&quot;&quot;``</span>
+<span class="sd">             - No label</span>
+<span class="sd">           * - ``&quot;fhr&quot;``</span>
+<span class="sd">             - Forecast hour (e.g., 60). Default option.</span>
+<span class="sd">           * - ``&quot;fhr_wind_mph&quot;``</span>
+<span class="sd">             - Forecast hour and sustained wind in mph.</span>
+<span class="sd">           * - ``&quot;fhr_wind_kt&quot;``</span>
+<span class="sd">             - Forecast hour and sustained wind in knots.</span>
+<span class="sd">           * - ``&quot;valid_utc&quot;``</span>
+<span class="sd">             - Valid time in UTC.</span>
+<span class="sd">           * - ``&quot;valid_edt&quot;``</span>
+<span class="sd">             - Valid time in Eastern time (EDT).</span>
+<span class="sd">           * - ``&quot;valid_cdt&quot;``</span>
+<span class="sd">             - Valid time in Central time (CDT).</span>
+<span class="sd">           * - ``&quot;valid_mdt&quot;``</span>
+<span class="sd">             - Valid time in Mountain time (MDT).</span>
+<span class="sd">           * - ``&quot;valid_pdt&quot;``</span>
+<span class="sd">             - Valid time in Pacific time (PDT).</span>
+<span class="sd">           * - ``&quot;valid_hst&quot;``</span>
+<span class="sd">             - Valid time in Hawaii time (HST).</span>
+
+<span class="sd">        The following properties are available for plotting NHC forecasts, via ``prop``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Property</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - cone_lw</span>
+<span class="sd">             - Center line width for the cone of uncertainty. Default is 2.0.</span>
+<span class="sd">           * - cone_alpha</span>
+<span class="sd">             - Transparency for the cone of uncertainty. Default is 0.6.</span>
+<span class="sd">           * - cone_res</span>
+<span class="sd">             - Grid resolution for the cone of uncertainty in degrees. Default is 0.05.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Retrieve kwargs</span>
@@ -868,7 +911,7 @@
 
         <span class="c1"># Create cartopy projection</span>
         <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">140</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">140</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">130</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">130</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span>
                     <span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span> <span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1045,7 +1088,7 @@
 
 <span class="sd">            2. For storms in the JTWC area of responsibility, the NHC key defaults to JTWC.</span>
 
-<span class="sd">        The following model names are available as keys in the &quot;model&quot; dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {&#39;gfs&#39;:None}`` or ``models = {&#39;GFS&#39;:None}``).</span>
+<span class="sd">        The following model names are available as keys in the &quot;models&quot; dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {&#39;gfs&#39;:None}`` or ``models = {&#39;GFS&#39;:None}``).</span>
 
 <span class="sd">        .. list-table:: </span>
 <span class="sd">           :widths: 25 75</span>
@@ -1259,6 +1302,339 @@
 
         <span class="c1"># Return axis</span>
         <span class="k">return</span> <span class="n">plot_ax</span></div>
+    
+<div class="viewcode-block" id="Storm.plot_models_wind"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.plot_models_wind.html#tropycal.tracks.Storm.plot_models_wind">[docs]</a>    <span class="k">def</span> <span class="nf">plot_models_wind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forecast</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_btk</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a plot of operational model forecast wind speed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        forecast : datetime.datetime, optional</span>
+<span class="sd">            Datetime object representing the forecast initialization. If None (default), fetches the latest forecast.</span>
+<span class="sd">        plot_btk : bool, optional</span>
+<span class="sd">            If True, Best Track will be plotted alongside operational forecast models. Default is False.</span>
+
+<span class="sd">        Other Parameters</span>
+<span class="sd">        ----------------</span>
+<span class="sd">        models : dict</span>
+<span class="sd">            Dictionary with **key** = model name (case-insensitive) and **value** = model color. Scroll below for available model names.</span>
+<span class="sd">        prop : dict</span>
+<span class="sd">            Customization properties of forecast lines. Scroll below for available options.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ax</span>
+<span class="sd">            Instance of axes containing the plot is returned.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        .. note::</span>
+<span class="sd">            1. For years before the HMON model was available, the HMON key instead defaults to the old GFDL model.</span>
+
+<span class="sd">            2. For storms in the JTWC area of responsibility, the NHC key defaults to JTWC.</span>
+
+<span class="sd">        The following model names are available as keys in the &quot;models&quot; dict. These names are case-insensitive. To avoid plotting any of these models, set the value to None instead of a color (e.g., ``models = {&#39;gfs&#39;:None}`` or ``models = {&#39;GFS&#39;:None}``).</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Model Acronym</span>
+<span class="sd">             - Full Model Name</span>
+<span class="sd">           * - CMC</span>
+<span class="sd">             - Canadian Meteorological Centre (CMC)</span>
+<span class="sd">           * - GFS</span>
+<span class="sd">             - Global Forecast System (GFS)</span>
+<span class="sd">           * - UKM</span>
+<span class="sd">             - UK Met Office (UKMET)</span>
+<span class="sd">           * - ECM</span>
+<span class="sd">             - European Centre for Medium-range Weather Forecasts (ECMWF)</span>
+<span class="sd">           * - HMON</span>
+<span class="sd">             - Hurricanes in a Multi-scale Ocean-coupled Non-hydrostatic Model (HMON)</span>
+<span class="sd">           * - HWRF</span>
+<span class="sd">             - Hurricane Weather Research and Forecast (HWRF)</span>
+<span class="sd">           * - HAFSA</span>
+<span class="sd">             - Hurricane Analysis and Forecast System A (HAFS-A)</span>
+<span class="sd">           * - HAFSB</span>
+<span class="sd">             - Hurricane Analysis and Forecast System B (HAFS-B)</span>
+<span class="sd">           * - SHIPS</span>
+<span class="sd">             - Statistical SHIPS model</span>
+<span class="sd">           * - NHC</span>
+<span class="sd">             - National Hurricane Center (NHC)</span>
+
+<span class="sd">        The following properties are available for customizing the plot, via ``prop``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Property</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - linewidth</span>
+<span class="sd">             - Line width of forecast model intensity. Default is 2.0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Dictionary mapping model names to the interpolated model key</span>
+        <span class="n">dict_models</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;cmc&#39;</span><span class="p">:</span> <span class="s1">&#39;CMC2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;gfs&#39;</span><span class="p">:</span> <span class="s1">&#39;AVNI&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ukm&#39;</span><span class="p">:</span> <span class="s1">&#39;UKX2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ecm&#39;</span><span class="p">:</span> <span class="s1">&#39;ECO2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;hmon&#39;</span><span class="p">:</span> <span class="s1">&#39;HMNI&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;hwrf&#39;</span><span class="p">:</span> <span class="s1">&#39;HWFI&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;hafsa&#39;</span><span class="p">:</span> <span class="s1">&#39;HFAI&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;hafsb&#39;</span><span class="p">:</span> <span class="s1">&#39;HFBI&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ships&#39;</span><span class="p">:</span> <span class="s1">&#39;DSHP&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;nhc&#39;</span><span class="p">:</span> <span class="s1">&#39;OFCI&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">backup_models</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;gfs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;AVNO&#39;</span><span class="p">,</span> <span class="s1">&#39;AVNX&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;ukm&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;UKM2&#39;</span><span class="p">,</span> <span class="s1">&#39;UKM&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;hmon&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;GFDI&#39;</span><span class="p">,</span> <span class="s1">&#39;GFDL&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;nhc&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;OFCL&#39;</span><span class="p">,</span> <span class="s1">&#39;JTWC&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;hwrf&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;HWRF&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;hafsa&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;HFSA&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;hafsb&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;HFSB&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;ships&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;SHIP&#39;</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Pop kwargs</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;models&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prop&#39;</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="c1"># -------------------------------------------------------------------------</span>
+
+        <span class="c1"># Get forecasts dict saved into storm object, if it hasn&#39;t been already</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_operational_forecasts</span><span class="p">()</span>
+
+        <span class="c1"># Fetch latest forecast if None</span>
+        <span class="k">if</span> <span class="n">forecast</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">check_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;AVNI&#39;</span><span class="p">,</span> <span class="s1">&#39;OFCI&#39;</span><span class="p">,</span> <span class="s1">&#39;HWFI&#39;</span><span class="p">,</span> <span class="s1">&#39;HFAI&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s1">&#39;HWFI&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">check_keys</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;HWRF&#39;</span>
+            <span class="k">if</span> <span class="s1">&#39;HWRF&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="s1">&#39;HWRF&#39;</span> <span class="ow">in</span> <span class="n">check_keys</span><span class="p">:</span>
+                <span class="n">check_keys</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">check_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;HWRF&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="s1">&#39;OFCI&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">check_keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;OFCL&#39;</span>
+            <span class="k">if</span> <span class="s1">&#39;OFCL&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">check_keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;JTWC&#39;</span>
+            <span class="k">if</span> <span class="s1">&#39;JTWC&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="s1">&#39;JTWC&#39;</span> <span class="ow">in</span> <span class="n">check_keys</span><span class="p">:</span>
+                <span class="n">check_keys</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">check_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;JTWC&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="s1">&#39;AVNI&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">check_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;AVNO&#39;</span>
+            <span class="k">if</span> <span class="s1">&#39;AVNO&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">check_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;AVNX&#39;</span>
+            <span class="k">if</span> <span class="s1">&#39;AVNX&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="s1">&#39;AVNX&#39;</span> <span class="ow">in</span> <span class="n">check_keys</span><span class="p">:</span>
+                <span class="n">check_keys</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">check_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;AVNX&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="s1">&#39;HFAI&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">check_keys</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;HFSA&#39;</span>
+            <span class="k">if</span> <span class="s1">&#39;HFSA&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="s1">&#39;HWRF&#39;</span> <span class="ow">in</span> <span class="n">check_keys</span><span class="p">:</span>
+                <span class="n">check_keys</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">check_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;HFSA&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">check_keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No models are available for this storm.&quot;</span><span class="p">)</span>
+            <span class="n">inits</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">check_keys</span><span class="p">]</span>
+            <span class="n">forecast</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">inits</span><span class="p">)</span>
+
+        <span class="c1"># Error check forecast time</span>
+        <span class="k">if</span> <span class="n">forecast</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">forecast</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Requested forecast is outside of the storm&#39;s duration.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Construct forecast dict</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">forecast_str</span> <span class="o">=</span> <span class="n">forecast</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
+        <span class="n">input_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="n">input_keys_lower</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dict_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+            <span class="c1"># Only proceed if model isn&#39;t not requested</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">input_keys_lower</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">input_keys_lower</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">models</span><span class="p">[</span><span class="n">input_keys</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+            <span class="c1"># Find official key</span>
+            <span class="n">official_key</span> <span class="o">=</span> <span class="n">dict_models</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">official_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">backup_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">for</span> <span class="n">backup_key</span> <span class="ow">in</span> <span class="n">backup_models</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">backup_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="n">official_key</span> <span class="o">=</span> <span class="n">backup_key</span>
+                            <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># Check for 2 vs. I if needed</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span> <span class="ow">or</span> <span class="n">forecast_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">official_key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s1">&#39;2&#39;</span> <span class="ow">in</span> <span class="n">official_key</span><span class="p">:</span>
+                    <span class="n">official_key</span> <span class="o">=</span> <span class="n">dict_models</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">official_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">backup_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="k">for</span> <span class="n">backup_key_iter</span> <span class="ow">in</span> <span class="n">backup_models</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                                <span class="n">backup_key</span> <span class="o">=</span> <span class="n">backup_key_iter</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">backup_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                                    <span class="n">official_key</span> <span class="o">=</span> <span class="n">backup_key</span>
+                                    <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                                    <span class="k">break</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                                <span class="k">continue</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+            <span class="c1"># Append forecast data if it exists for this initialization</span>
+            <span class="k">if</span> <span class="n">forecast_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">official_key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="n">enter_key</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;hmon&#39;</span> <span class="ow">and</span> <span class="s1">&#39;gf&#39;</span> <span class="ow">in</span> <span class="n">official_key</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="n">enter_key</span> <span class="o">=</span> <span class="s1">&#39;gfdl&#39;</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;nhc&#39;</span> <span class="ow">and</span> <span class="s1">&#39;jt&#39;</span> <span class="ow">in</span> <span class="n">official_key</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="n">enter_key</span> <span class="o">=</span> <span class="s1">&#39;jtwc&#39;</span>
+            <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">forecast_dict</span><span class="p">[</span><span class="n">official_key</span><span class="p">][</span><span class="n">forecast_str</span><span class="p">])</span>
+
+            <span class="c1"># Filter out to hour 168</span>
+            <span class="k">if</span> <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">168</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">168</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">][</span><span class="n">key</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">enter_key</span><span class="p">][</span><span class="n">key</span><span class="p">][:</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Proceed if data exists</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;No forecasts are available for the given parameters.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Set default properties</span>
+        <span class="n">default_model</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;nhc&#39;</span><span class="p">:</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;ships&#39;</span><span class="p">:</span> <span class="s1">&#39;gray&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;gfs&#39;</span><span class="p">:</span> <span class="s1">&#39;#0000ff&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;ecm&#39;</span><span class="p">:</span> <span class="s1">&#39;#ff1493&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;cmc&#39;</span><span class="p">:</span> <span class="s1">&#39;#1e90ff&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;ukm&#39;</span><span class="p">:</span> <span class="s1">&#39;#00ff00&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;hmon&#39;</span><span class="p">:</span> <span class="s1">&#39;#ff8c00&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;hwrf&#39;</span><span class="p">:</span> <span class="s1">&#39;#66cdaa&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;hafsa&#39;</span><span class="p">:</span> <span class="s1">&#39;#C659F9&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;hafsb&#39;</span><span class="p">:</span> <span class="s1">&#39;#8915BB&#39;</span><span class="p">}</span>
+        <span class="n">default_prop</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">}</span>
+
+        <span class="c1"># Update properties</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">default_model</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">prop</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">default_prop</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="c1"># Fix GFDL</span>
+        <span class="k">if</span> <span class="s1">&#39;gfdl&#39;</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">default_model</span><span class="p">[</span><span class="s1">&#39;gfdl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">default_model</span><span class="p">[</span><span class="s1">&#39;hmon&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;jtwc&#39;</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">default_model</span><span class="p">[</span><span class="s1">&#39;jtwc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">default_model</span><span class="p">[</span><span class="s1">&#39;nhc&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Create figure</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mf">7.5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+        <span class="c1"># Derive plot extrema</span>
+        <span class="n">max_fhr</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">max</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">entry</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+        <span class="n">max_wind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">entry</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+        <span class="n">min_wind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">entry</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+
+        <span class="c1"># Add category fills</span>
+        <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+            <span class="n">bound_upper</span> <span class="o">=</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+            <span class="n">bound_lower</span> <span class="o">=</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="n">category</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_fhr</span><span class="p">],</span> <span class="n">bound_lower</span><span class="p">,</span> <span class="n">bound_upper</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">get_colors_sshws</span><span class="p">(</span><span class="n">bound_lower</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_fhr</span><span class="p">],</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="mi">250</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">get_colors_sshws</span><span class="p">(</span><span class="n">category_to_wind</span><span class="p">(</span><span class="mi">5</span><span class="p">)),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+        <span class="c1"># Plot models</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+            <span class="c1"># Skip if model not requested</span>
+            <span class="k">if</span> <span class="n">default_model</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Fix label for HAFS</span>
+            <span class="k">if</span> <span class="s1">&#39;hafs&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;hafs&#39;</span><span class="p">)</span>
+                <span class="n">model_label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;HAFS-</span><span class="si">{</span><span class="n">key</span><span class="p">[</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;hafs&#39;</span><span class="p">):]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">model_label</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;fhr&#39;</span><span class="p">],</span> <span class="n">ds</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">default_prop</span><span class="p">[</span><span class="s1">&#39;linewidth&#39;</span><span class="p">],</span>
+                    <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">default_model</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">model_label</span><span class="p">)</span>
+
+        <span class="c1"># Derive and plot Best Track</span>
+        <span class="k">if</span> <span class="n">plot_btk</span><span class="p">:</span>
+
+            <span class="c1"># Determine range of forecast data in best track</span>
+            <span class="n">idx_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">forecast</span><span class="p">)</span>
+            <span class="n">end_date</span> <span class="o">=</span> <span class="n">forecast</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">max_fhr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">end_date</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]:</span>
+                <span class="n">idx_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">end_date</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">idx_end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+
+            <span class="c1"># Plot best track line</span>
+            <span class="n">vmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">][</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">storm_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="n">idx_start</span><span class="p">:</span><span class="n">idx_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">storm_fhr</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="o">-</span><span class="n">forecast</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="o">/</span><span class="mf">3600.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">storm_times</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">storm_fhr</span><span class="p">,</span> <span class="n">vmax</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="n">default_prop</span><span class="p">[</span><span class="s1">&#39;linewidth&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Best Track&#39;</span><span class="p">)</span>
+            <span class="n">max_wind</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_wind</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">vmax</span><span class="p">))</span>
+            <span class="n">min_wind</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">min_wind</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">vmax</span><span class="p">))</span>
+
+        <span class="c1"># Set plot bounds and labels</span>
+        <span class="n">y_factor</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_wind</span> <span class="o">-</span> <span class="n">min_wind</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_fhr</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_fhr</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">min_wind</span> <span class="o">-</span> <span class="n">y_factor</span><span class="p">,</span> <span class="n">max_wind</span> <span class="o">+</span> <span class="n">y_factor</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Forecast Hour&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Sustained Wind (kt)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;minor&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+        <span class="c1"># Add category labels</span>
+        <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">category_to_wind</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">get_colors_sshws</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
+            <span class="n">text_color</span> <span class="o">=</span> <span class="n">get_colors_sshws</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">category</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">text_color</span> <span class="o">=</span> <span class="n">get_colors_sshws</span><span class="p">(</span><span class="n">category_to_wind</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+            <span class="n">text_label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">category</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;Tropical Storm&#39;</span> 
+            <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dotted&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.015</span><span class="p">,</span> <span class="p">(</span><span class="n">threshold</span> <span class="o">-</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.02</span><span class="p">,</span>
+                        <span class="n">text_label</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">text_color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">clip_on</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">set_path_effects</span><span class="p">([</span><span class="n">path_effects</span><span class="o">.</span><span class="n">Stroke</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">foreground</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">),</span>
+                                <span class="n">path_effects</span><span class="o">.</span><span class="n">Normal</span><span class="p">()])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">min_wind</span> <span class="o">-</span> <span class="n">y_factor</span><span class="p">,</span> <span class="n">max_wind</span> <span class="o">+</span> <span class="n">y_factor</span><span class="p">)</span>
+
+        <span class="c1"># Add legend</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+        <span class="n">l</span><span class="o">.</span><span class="n">set_zorder</span><span class="p">(</span><span class="mi">1001</span><span class="p">)</span>
+
+        <span class="c1"># Plot title</span>
+        <span class="n">plot_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Model Forecast Intensity for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">plot_title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+
+        <span class="n">title_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Initialized </span><span class="si">{</span><span class="n">forecast</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H%M UTC </span><span class="si">%d</span><span class="s1"> %B %Y&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title_str</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Add label</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="s1">&#39;Plot generated using Tropycal&#39;</span><span class="p">,</span>
+                    <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">set_path_effects</span><span class="p">([</span><span class="n">path_effects</span><span class="o">.</span><span class="n">Stroke</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">foreground</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">),</span>
+                            <span class="n">path_effects</span><span class="o">.</span><span class="n">Normal</span><span class="p">()])</span>
+
+        <span class="c1"># Return axis</span>
+        <span class="k">return</span> <span class="n">ax</span></div>
 
 <div class="viewcode-block" id="Storm.plot_ensembles"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.plot_ensembles.html#tropycal.tracks.Storm.plot_ensembles">[docs]</a>    <span class="k">def</span> <span class="nf">plot_ensembles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forecast</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fhr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="s2">&quot;dynamic&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cartopy_proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -2425,6 +2801,13 @@
             <span class="n">run_init_dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">run_init</span><span class="p">,</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">run_init_dt</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span> <span class="ow">or</span> <span class="n">run_init_dt</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
                 <span class="k">continue</span>
+            
+            <span class="c1"># Skip erroneous lines</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">fhr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">240</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
 
             <span class="c1"># Enter into forecast dict</span>
             <span class="k">if</span> <span class="n">model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -2986,6 +3369,97 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;SHIPS data is unavailable for the requested storm or time.&#39;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Ships</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="Storm.get_ships_analysis"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.get_ships_analysis.html#tropycal.tracks.Storm.get_ships_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">get_ships_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a custom Storm object consisting of SHIPS initialized analyses. This includes the various diagnostics SHIPS provides, such as sea surface temperatures and ocean heat content, as variables of this object.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tropycal.tracks.Storm</span>
+<span class="sd">            Custom Storm object containing SHIPS analysis data.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        1. SHIPS does not include MSLP data. As such, all MSLP data for this Storm object is set to NaN.</span>
+<span class="sd">        2. Track and intensity data are based off operational analyses, and as such may differ from the storm&#39;s HURDATv2 entry.</span>
+<span class="sd">        3. Storm type may erroneously reflect a tropical cyclone during times when the storm was extratropical, especially towards the end of its lifetime.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1"># Get SHIPS times</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_ships</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;SHIPS data is unavailable for the requested storm.&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Declare dict</span>
+        <span class="n">new_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;mslp&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;vmax&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;wmo_basin&#39;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;operational_id&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;season&#39;</span><span class="p">,</span> <span class="s1">&#39;basin&#39;</span><span class="p">,</span> <span class="s1">&#39;realtime&#39;</span><span class="p">]:</span>
+            <span class="n">new_dict</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        
+        <span class="c1"># Construct data</span>
+        <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">times</span><span class="p">:</span>
+            <span class="n">ships</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ships</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ships</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ships</span><span class="o">.</span><span class="n">lat</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ships</span><span class="o">.</span><span class="n">lon</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="k">continue</span>
+
+            <span class="c1"># Add relevant variables</span>
+            <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+            <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ships</span><span class="o">.</span><span class="n">dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;fhr&#39;</span><span class="p">,</span> <span class="s1">&#39;vmax_noland_kt&#39;</span><span class="p">,</span> <span class="s1">&#39;vmax_lgem_kt&#39;</span><span class="p">]:</span> <span class="k">continue</span>
+
+                <span class="c1"># Special handling for storm type</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;storm_type&#39;</span><span class="p">:</span>
+                    <span class="n">subtropical_flag</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">derived_type</span> <span class="o">=</span> <span class="s1">&#39;EX&#39;</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">ships</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;storm_type&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;SUBT&#39;</span><span class="p">:</span>
+                            <span class="n">subtropical_flag</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">derived_type</span> <span class="o">=</span> <span class="n">get_storm_type</span><span class="p">(</span><span class="n">ships</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;vmax_land_kt&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">subtropical_flag</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">ships</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;storm_type&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;TROP&#39;</span><span class="p">,</span> <span class="s1">&#39;SUBT&#39;</span><span class="p">]:</span>
+                            <span class="n">derived_type</span> <span class="o">=</span> <span class="s1">&#39;EX&#39;</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">derived_type</span><span class="p">)</span>
+
+                <span class="c1"># vmax handling</span>
+                <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;vmax_land_kt&#39;</span><span class="p">:</span>
+                    <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ships</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+                <span class="c1"># Normal handling</span>
+                <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_dict</span><span class="p">:</span>
+                    <span class="n">new_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ships</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ships</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+            
+            <span class="c1"># Derive ACE</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">accumulated_cyclone_energy</span><span class="p">(</span><span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;vmax&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="c1"># Derive basin</span>
+            <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_basin</span><span class="p">(</span><span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                                   <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">basin</span><span class="p">))</span>
+
+        <span class="c1"># Add other attributes</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;source_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SHIPS Analysis&#39;</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;source_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;UCAR SHIPS Archive&#39;</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;source_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;https://hurricanes.ral.ucar.edu/&#39;</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ships&#39;</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;prob_2day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;prob_7day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;risk_2day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="s1">&#39;risk_7day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;N/A&#39;</span>
+        
+        <span class="k">return</span> <span class="n">Storm</span><span class="p">(</span><span class="n">new_dict</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Storm.get_archer"><a class="viewcode-back" href="../../../api/generated/tropycal.tracks.Storm.get_archer.html#tropycal.tracks.Storm.get_archer">[docs]</a>    <span class="k">def</span> <span class="nf">get_archer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>

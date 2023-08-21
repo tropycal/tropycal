@@ -273,10 +273,11 @@
                 <span class="s2">&quot;ibtracs_mode must be either &#39;wmo&#39;, &#39;jtwc&#39;, or &#39;jtwc_neumann&#39;&quot;</span><span class="p">)</span>
 
         <span class="c1"># Get latest HURDATv2 files if requested</span>
-        <span class="k">if</span> <span class="n">basin</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">NHC_BASINS</span> <span class="ow">and</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;hurdat&#39;</span><span class="p">:</span>
+        <span class="n">fetch_condition_1</span> <span class="o">=</span> <span class="n">basin</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">NHC_BASINS</span> <span class="ow">and</span> <span class="n">source</span> <span class="o">==</span> <span class="s1">&#39;hurdat&#39;</span>
+        <span class="k">if</span> <span class="n">fetch_condition_1</span> <span class="ow">or</span> <span class="n">ibtracs_hurdat</span><span class="p">:</span>
             <span class="n">condition_1</span> <span class="o">=</span> <span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;north_atlantic&#39;</span> <span class="ow">and</span> <span class="n">atlantic_url</span> <span class="o">==</span> <span class="s1">&#39;fetch&#39;</span>
             <span class="n">condition_2</span> <span class="o">=</span> <span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;east_pacific&#39;</span> <span class="ow">and</span> <span class="n">pacific_url</span> <span class="o">==</span> <span class="s1">&#39;fetch&#39;</span>
-            <span class="n">condition_3</span> <span class="o">=</span> <span class="n">basin</span> <span class="o">==</span> <span class="s1">&#39;both&#39;</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="n">condition_3</span> <span class="o">=</span> <span class="n">basin</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;both&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="p">(</span>
                 <span class="n">atlantic_url</span> <span class="o">==</span> <span class="s1">&#39;fetch&#39;</span> <span class="ow">or</span> <span class="n">pacific_url</span> <span class="o">==</span> <span class="s1">&#39;fetch&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">condition_1</span> <span class="ow">or</span> <span class="n">condition_2</span> <span class="ow">or</span> <span class="n">condition_3</span><span class="p">:</span>
                 <span class="n">atlantic_url</span><span class="p">,</span> <span class="n">pacific_url</span> <span class="o">=</span> <span class="n">find_latest_hurdat_files</span><span class="p">()</span>
@@ -3219,12 +3220,9 @@
 
             <span class="c1"># Interpolate temporally if requested</span>
             <span class="k">if</span> <span class="n">interpolate_data</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">istorm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_interp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="n">istorm</span> <span class="o">=</span> <span class="n">interp_storm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-                    <span class="p">),</span> <span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dt_window</span><span class="o">=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dt_window&#39;</span><span class="p">],</span> <span class="n">dt_align</span><span class="o">=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dt_align&#39;</span><span class="p">])</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data_interp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">istorm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">istorm</span> <span class="o">=</span> <span class="n">interp_storm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                      <span class="n">dt_window</span><span class="o">=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dt_window&#39;</span><span class="p">],</span> <span class="n">dt_align</span><span class="o">=</span><span class="n">thresh</span><span class="p">[</span><span class="s1">&#39;dt_align&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_interp</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">istorm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                 <span class="n">timeres</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">istorm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
@@ -3704,7 +3702,7 @@
             <span class="n">grid_z</span> <span class="o">=</span> <span class="n">grid_z_zeros</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="c1"># Plot gridded field</span>
-        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_gridded</span><span class="p">(</span>
+        <span class="n">plot_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_gridded_wrapper</span><span class="p">(</span>
             <span class="n">grid_x</span><span class="p">,</span> <span class="n">grid_y</span><span class="p">,</span> <span class="n">grid_z</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">VEC_FLAG</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span> <span class="n">map_prop</span><span class="o">=</span><span class="n">map_prop</span><span class="p">)</span>
 
         <span class="c1"># Format grid into xarray if specified</span>

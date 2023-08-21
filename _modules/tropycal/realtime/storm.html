@@ -98,6 +98,7 @@
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span> <span class="nn">..recon</span> <span class="kn">import</span> <span class="n">ReconDataset</span>
+<span class="kn">from</span> <span class="nn">..ships</span> <span class="kn">import</span> <span class="n">Ships</span>
 
 
 <div class="viewcode-block" id="RealtimeStorm"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.RealtimeStorm.html#tropycal.realtime.RealtimeStorm">[docs]</a><span class="k">class</span> <span class="nc">RealtimeStorm</span><span class="p">(</span><span class="n">Storm</span><span class="p">):</span>
@@ -808,12 +809,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        track_labels : str</span>
-<span class="sd">            Label forecast hours with the following methods:</span>
-
-<span class="sd">            * **&quot;&quot;** = no label</span>
-<span class="sd">            * **&quot;fhr&quot;** = forecast hour (default)</span>
-<span class="sd">            * **&quot;valid_utc&quot;** = UTC valid time</span>
-<span class="sd">            * **&quot;valid_edt&quot;** = EDT valid time</span>
+<span class="sd">            Label format for forecast dots. Scroll down to notes for available options.</span>
 <span class="sd">        cone_days : int</span>
 <span class="sd">            Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.</span>
 <span class="sd">        domain : str</span>
@@ -830,14 +826,61 @@
 <span class="sd">        ssl_certificate : boolean, optional</span>
 <span class="sd">            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.</span>
 <span class="sd">        prop : dict</span>
-<span class="sd">            Property of storm track lines.</span>
+<span class="sd">            Customization properties of NHC forecast plot. Please refer to :ref:`options-prop-nhc` or scroll down below for available options.</span>
 <span class="sd">        map_prop : dict</span>
-<span class="sd">            Property of cartopy map.</span>
+<span class="sd">            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ax</span>
 <span class="sd">            Instance of axes containing the plot is returned.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+
+<span class="sd">        The following properties are available for customizing ``track_labels``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Value</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - ``&quot;&quot;``</span>
+<span class="sd">             - No label</span>
+<span class="sd">           * - ``&quot;fhr&quot;``</span>
+<span class="sd">             - Forecast hour (e.g., 60). Default option.</span>
+<span class="sd">           * - ``&quot;fhr_wind_mph&quot;``</span>
+<span class="sd">             - Forecast hour and sustained wind in mph.</span>
+<span class="sd">           * - ``&quot;fhr_wind_kt&quot;``</span>
+<span class="sd">             - Forecast hour and sustained wind in knots.</span>
+<span class="sd">           * - ``&quot;valid_utc&quot;``</span>
+<span class="sd">             - Valid time in UTC.</span>
+<span class="sd">           * - ``&quot;valid_edt&quot;``</span>
+<span class="sd">             - Valid time in Eastern time (EDT).</span>
+<span class="sd">           * - ``&quot;valid_cdt&quot;``</span>
+<span class="sd">             - Valid time in Central time (CDT).</span>
+<span class="sd">           * - ``&quot;valid_mdt&quot;``</span>
+<span class="sd">             - Valid time in Mountain time (MDT).</span>
+<span class="sd">           * - ``&quot;valid_pdt&quot;``</span>
+<span class="sd">             - Valid time in Pacific time (PDT).</span>
+<span class="sd">           * - ``&quot;valid_hst&quot;``</span>
+<span class="sd">             - Valid time in Hawaii time (HST).</span>
+
+<span class="sd">        The following properties are available for plotting NHC forecasts, via ``prop``.</span>
+
+<span class="sd">        .. list-table:: </span>
+<span class="sd">           :widths: 25 75</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - Property</span>
+<span class="sd">             - Description</span>
+<span class="sd">           * - cone_lw</span>
+<span class="sd">             - Center line width for the cone of uncertainty. Default is 2.0.</span>
+<span class="sd">           * - cone_alpha</span>
+<span class="sd">             - Transparency for the cone of uncertainty. Default is 0.6.</span>
+<span class="sd">           * - cone_res</span>
+<span class="sd">             - Grid resolution for the cone of uncertainty in degrees. Default is 0.05.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Retrieve kwargs</span>
@@ -857,7 +900,7 @@
 
         <span class="c1"># Create cartopy projection</span>
         <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">140</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">140</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">130</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">130</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span>
                     <span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span> <span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -931,23 +974,32 @@
                 <span class="n">latest_btk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
                 <span class="c1"># Get latest available public advisory</span>
+                <span class="n">advisory_found</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">content</span> <span class="o">=</span> <span class="n">read_url</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;https://ftp.nhc.noaa.gov/atcf/adv/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">_info.xml&quot;</span><span class="p">,</span> <span class="n">subsplit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">advisory_found</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">except</span><span class="p">:</span>
-                    <span class="n">content</span> <span class="o">=</span> <span class="n">read_url</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;ftp://ftp.nhc.noaa.gov/atcf/adv/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">_info.xml&quot;</span><span class="p">,</span> <span class="n">subsplit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">content</span> <span class="o">=</span> <span class="n">read_url</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;ftp://ftp.nhc.noaa.gov/atcf/adv/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">_info.xml&quot;</span><span class="p">,</span> <span class="n">subsplit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="n">advisory_found</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="k">pass</span>
 
                 <span class="c1"># Get UTC time of advisory</span>
-                <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span> <span class="k">if</span> <span class="s1">&#39;messageDateTimeUTC&#39;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">latest_advisory</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1"> %I:%M:%S %p UTC&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">advisory_found</span><span class="p">:</span>
+                    <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">content</span> <span class="k">if</span> <span class="s1">&#39;messageDateTimeUTC&#39;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">latest_advisory</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1"> %I:%M:%S %p UTC&#39;</span><span class="p">)</span>
 
-                <span class="c1"># Check which one to use</span>
-                <span class="k">if</span> <span class="n">latest_btk</span> <span class="o">&gt;</span> <span class="n">latest_advisory</span><span class="p">:</span>
-                    <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;best_track&#39;</span>
+                    <span class="c1"># Check which one to use</span>
+                    <span class="k">if</span> <span class="n">latest_btk</span> <span class="o">&gt;</span> <span class="n">latest_advisory</span><span class="p">:</span>
+                        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;best_track&#39;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;public_advisory&#39;</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;public_advisory&#39;</span>
+                    <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;best_track&#39;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;best_track&#39;</span>
 
@@ -1078,12 +1130,17 @@
             <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
             <span class="c1"># Get sustained wind speed</span>
-            <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_mph&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">knots_to_mph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_kph&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.852</span><span class="p">)</span>
-            <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_kt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_mph&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_kph&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_kt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_mph&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">knots_to_mph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_kph&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.852</span><span class="p">)</span>
+                <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;wind_kt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmax</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
             <span class="c1"># Get MSLP</span>
-            <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mslp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mslp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mslp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
             <span class="c1"># Get storm category</span>
             <span class="n">current_advisory</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wind_to_category</span><span class="p">(</span>
@@ -1239,6 +1296,53 @@
         <span class="p">}</span>
         <span class="n">offset</span> <span class="o">=</span> <span class="n">time_zones</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">zone</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">disco_time</span> <span class="o">=</span> <span class="n">disco_time</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">offset</span><span class="o">*-</span><span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RealtimeStorm.get_ships_realtime"><a class="viewcode-back" href="../../../api/generated/tropycal.realtime.RealtimeStorm.get_ships_realtime.html#tropycal.realtime.RealtimeStorm.get_ships_realtime">[docs]</a>    <span class="k">def</span> <span class="nf">get_ships_realtime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a Ships object containing the latest SHIPS data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tropycal.ships.Ships</span>
+<span class="sd">            Instance of a Ships object containing the latest SHIPS data.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        1. While the SHIPS data source used for ``Storm.get_ships()`` updates on a frequent basis, it may lag slightly behind the latest available data on the NHC ATCF server, especially for newly formed storms. This function helps to mitigate this slight delay.</span>
+<span class="sd">        2. On rare occasions, SHIPS data files from UCAR have empty data associated with them. In these cases, a value of None is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">reformatted_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="c1"># Retrieve list of SHIPS files from NHC ATCF</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://ftp.nhc.noaa.gov/atcf/stext/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Unable to fetch SHIPS data from NHC ATCF.&#39;</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;&lt;a href=&quot;&#39;</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">and</span> <span class="s1">&#39;_ships.txt&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&lt;a href=&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&gt;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="c1"># Add entries definitely associated with this storm</span>
+                <span class="k">if</span> <span class="n">reformatted_id</span> <span class="o">==</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_ships&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">6</span><span class="p">:]:</span>
+                    <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c1"># Organize by date</span>
+        <span class="n">sorted_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">i</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span><span class="s1">&#39;%y%m</span><span class="si">%d</span><span class="s1">%H&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">files</span><span class="p">])</span>
+
+        <span class="c1"># Fetch latest file</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sorted_files</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%y%m</span><span class="si">%d</span><span class="s2">%H&quot;</span><span class="p">)</span><span class="si">}{</span><span class="n">reformatted_id</span><span class="si">}</span><span class="s1">_ships.txt&#39;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">read_url</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;https://ftp.nhc.noaa.gov/atcf/stext/</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">subsplit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Make sure file has content</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Improper SHIPS entry for this time. Returning a value of None.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Return Ships instance</span>
+        <span class="k">return</span> <span class="n">Ships</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__get_ensembles_eps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># This function is currently not functioning. The path to retrieve EPS ensemble data is:</span>

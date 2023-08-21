@@ -210,7 +210,7 @@
 </section>
 <section id="plot-nhc-forecast">
 <span id="options-prop-nhc"></span><h3>plot_nhc_forecast<a class="headerlink" href="#plot-nhc-forecast" title="Permalink to this heading">¶</a></h3>
-<p>The following properties are available only for the <code class="docutils literal notranslate"><span class="pre">tropycal.tracks.Storm.plot_nhc_forecast()</span></code> function.</p>
+<p>The following properties are available only for the <code class="docutils literal notranslate"><span class="pre">tropycal.tracks.Storm.plot_nhc_forecast()</span></code> and <code class="docutils literal notranslate"><span class="pre">tropycal.realtime.RealtimeStorm.plot_forecast_realtime()</span></code> functions.</p>
 <table class="colwidths-given docutils align-default">
 <colgroup>
 <col style="width: 25%" />
@@ -223,10 +223,13 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>cone_lw</p></td>
-<td><p>Line width for the cone of uncertainty. Default is 1.0.</p></td>
+<td><p>Center line width for the cone of uncertainty. Default is 2.0.</p></td>
 </tr>
 <tr class="row-odd"><td><p>cone_alpha</p></td>
 <td><p>Transparency for the cone of uncertainty. Default is 0.6.</p></td>
+</tr>
+<tr class="row-even"><td><p>cone_res</p></td>
+<td><p>Grid resolution for the cone of uncertainty in degrees. Default is 0.05.</p></td>
 </tr>
 </tbody>
 </table>
@@ -248,19 +251,22 @@
 <tr class="row-even"><td><p>plot_values</p></td>
 <td><p>Boolean for whether to plot label values for each gridpoint. Default is False.</p></td>
 </tr>
-<tr class="row-odd"><td><p>smooth</p></td>
+<tr class="row-odd"><td><p>values_size</p></td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">plot_values</span></code> is set to True, determines font size for labels. If none, this is automatically determined.</p></td>
+</tr>
+<tr class="row-even"><td><p>smooth</p></td>
 <td><p>Number (in units of sigma) to smooth the data using scipy’s gaussian filter. Default is 0 (no smoothing).</p></td>
 </tr>
-<tr class="row-even"><td><p>cmap</p></td>
+<tr class="row-odd"><td><p>cmap</p></td>
 <td><p>Colormap to use for the plot. If string ‘category’ is passed (default), uses a pre-defined color scale corresponding to the Saffir-Simpson Hurricane Wind Scale.</p></td>
 </tr>
-<tr class="row-odd"><td><p>clevs</p></td>
+<tr class="row-even"><td><p>clevs</p></td>
 <td><p>Contour levels for the plot. Default is minimum and maximum values in the grid.</p></td>
 </tr>
-<tr class="row-even"><td><p>left_title</p></td>
+<tr class="row-odd"><td><p>left_title</p></td>
 <td><p>Title string for the left side of the plot. Default is the string passed via the ‘request’ keyword argument.</p></td>
 </tr>
-<tr class="row-odd"><td><p>right_title</p></td>
+<tr class="row-even"><td><p>right_title</p></td>
 <td><p>Title string for the right side of the plot. Default is ‘All storms’.</p></td>
 </tr>
 </tbody>

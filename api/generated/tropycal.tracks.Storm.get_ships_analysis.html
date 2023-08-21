@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Storm.sel &mdash; tropycal </title>
+  <title>Storm.get_ships_analysis &mdash; tropycal </title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -27,8 +27,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Storm.to_dataframe" href="tropycal.tracks.Storm.to_dataframe.html" />
-    <link rel="prev" title="Storm.search_ships" href="tropycal.tracks.Storm.search_ships.html" /> 
+    <link rel="next" title="Storm.interp" href="tropycal.tracks.Storm.interp.html" />
+    <link rel="prev" title="Storm.get_ships" href="tropycal.tracks.Storm.get_ships.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -67,7 +67,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_operational_forecasts.html">Storm.get_operational_forecasts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_recon.html">Storm.get_recon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_ships.html">Storm.get_ships</a></li>
-<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.get_ships_analysis.html">Storm.get_ships_analysis</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Storm.get_ships_analysis</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.interp.html">Storm.interp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.list_nhc_discussions.html">Storm.list_nhc_discussions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot.html">Storm.plot</a></li>
@@ -79,7 +79,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.plot_tors.html">Storm.plot_tors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.query_nhc_discussions.html">Storm.query_nhc_discussions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.search_ships.html">Storm.search_ships</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">Storm.sel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.sel.html">Storm.sel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.to_dataframe.html">Storm.to_dataframe</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.to_dict.html">Storm.to_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="tropycal.tracks.Storm.to_xarray.html">Storm.to_xarray</a></li>
@@ -118,9 +118,9 @@
           <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
           <li class="breadcrumb-item"><a href="tropycal.tracks.html">Tracks</a></li>
           <li class="breadcrumb-item"><a href="tropycal.tracks.Storm.html">tropycal.tracks.Storm</a></li>
-      <li class="breadcrumb-item active">Storm.sel</li>
+      <li class="breadcrumb-item active">Storm.get_ships_analysis</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/api/generated/tropycal.tracks.Storm.sel.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/api/generated/tropycal.tracks.Storm.get_ships_analysis.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -128,42 +128,23 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="storm-sel">
-<h1>Storm.sel<a class="headerlink" href="#storm-sel" title="Permalink to this heading">¶</a></h1>
+  <section id="storm-get-ships-analysis">
+<h1>Storm.get_ships_analysis<a class="headerlink" href="#storm-get-ships-analysis" title="Permalink to this heading">¶</a></h1>
 <dl class="py method">
-<dt class="sig sig-object py" id="tropycal.tracks.Storm.sel">
-<span class="sig-prename descclassname"><span class="pre">Storm.</span></span><span class="sig-name descname"><span class="pre">sel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mslp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dvmax_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmslp_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stormtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exact'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.sel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.tracks.Storm.sel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Subset this storm by any of its parameters and return a new storm object.</p>
+<dt class="sig sig-object py" id="tropycal.tracks.Storm.get_ships_analysis">
+<span class="sig-prename descclassname"><span class="pre">Storm.</span></span><span class="sig-name descname"><span class="pre">get_ships_analysis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/tracks/storm.html#Storm.get_ships_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.tracks.Storm.get_ships_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a custom Storm object consisting of SHIPS initialized analyses. This includes the various diagnostics SHIPS provides, such as sea surface temperatures and ocean heat content, as variables of this object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>time</strong> (<em>datetime.datetime</em><em> or </em><em>list/tuple</em><em> of </em><em>datetimes</em>) – Datetime object for single point, or list/tuple of start time and end time.
-Default is None, which returns all points</p></li>
-<li><p><strong>lat</strong> (<em>float/int</em><em> or </em><em>list/tuple</em><em> of </em><em>float/int</em>) – Float/int for single point, or list/tuple of latitude bounds (S,N).
-None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>lon</strong> (<em>float/int</em><em> or </em><em>list/tuple</em><em> of </em><em>float/int</em>) – Float/int for single point, or list/tuple of longitude bounds (W,E).
-If either lat or lon is a tuple, the other can be None for no bounds.
-If either is a tuple, the other canNOT be a float/int.</p></li>
-<li><p><strong>vmax</strong> (<em>list/tuple</em><em> of </em><em>float/int</em>) – list/tuple of vmax bounds (min,max).
-None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>mslp</strong> (<em>list/tuple</em><em> of </em><em>float/int</em>) – list/tuple of mslp bounds (min,max).
-None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>dvmax_dt</strong> (<em>list/tuple</em><em> of </em><em>float/int</em>) – list/tuple of vmax bounds (min,max). ONLY AVAILABLE AFTER INTERP.
-None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>dmslp_dt</strong> (<em>list/tuple</em><em> of </em><em>float/int</em>) – list/tuple of mslp bounds (min,max). ONLY AVAILABLE AFTER INTERP.
-None in either position of a tuple means it is boundless on that side.</p></li>
-<li><p><strong>stormtype</strong> (<em>list/tuple</em><em> of </em><em>str</em>) – list/tuple of stormtypes (options: ‘LO’,’EX’,’TD’,’SD’,’TS’,’SS’,’HU’)</p></li>
-<li><p><strong>method</strong> (<em>str</em>) – Applies for single point selection in time and lat/lon.
-‘exact’ requires a point to match exactly with the request. (default)
-‘nearest’ returns the nearest point to the request
-‘floor’ ONLY for time, returns the nearest point before the request
-‘ceil’ ONLY for time, returns the neartest point after the request</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>storm object</em> – A new storm object that satisfies the intersection of all subsetting.</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>tropycal.tracks.Storm</em> – Custom Storm object containing SHIPS analysis data.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<ol class="arabic simple">
+<li><p>SHIPS does not include MSLP data. As such, all MSLP data for this Storm object is set to NaN.</p></li>
+<li><p>Track and intensity data are based off operational analyses, and as such may differ from the storm’s HURDATv2 entry.</p></li>
+<li><p>Storm type may erroneously reflect a tropical cyclone during times when the storm was extratropical, especially towards the end of its lifetime.</p></li>
+</ol>
 </dd></dl>
 
 <div style='clear:both'></div></section>
@@ -172,8 +153,8 @@ None in either position of a tuple means it is boundless on that side.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="tropycal.tracks.Storm.search_ships.html" class="btn btn-neutral float-left" title="Storm.search_ships" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="tropycal.tracks.Storm.to_dataframe.html" class="btn btn-neutral float-right" title="Storm.to_dataframe" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tropycal.tracks.Storm.get_ships.html" class="btn btn-neutral float-left" title="Storm.get_ships" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tropycal.tracks.Storm.interp.html" class="btn btn-neutral float-right" title="Storm.interp" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

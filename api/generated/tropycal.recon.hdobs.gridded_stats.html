@@ -131,22 +131,19 @@ It will be used to define the variable (e.g. ‘wind’ –&gt; ‘vmax’) and 
 This string is also used as the plot title.</p>
 <p>Variable words to use in request:</p>
 <ul>
-<li><p><strong>wind</strong> - (kt). Sustained wind.</p></li>
+<li><p><strong>wind</strong> - (kt). Flight level wind.</p></li>
+<li><p><strong>30s wind</strong> - (kt). 30-second flight level wind.</p></li>
+<li><p><strong>10s wind</strong> - (kt). 10-second flight level wind.</p></li>
+<li><p><strong>sfmr</strong> - (kt). SFMR wind.</p></li>
 <li><p><strong>pressure</strong> - (hPa). Minimum pressure.</p></li>
-<li><p><strong>wind change</strong> - (kt/time). Must be followed by an integer value denoting the length of the time window ‘__ hours’ (e.g., “wind change in 24 hours”).</p></li>
-<li><p><strong>pressure change</strong> - (hPa/time). Must be followed by an integer value denoting the length of the time window ‘__ hours’ (e.g., “pressure change in 24 hours”).</p></li>
-<li><p><strong>storm motion</strong> - (km/hour). Can be followed a length of time window. Otherwise defaults to 24 hours.</p></li>
 </ul>
 <p>Units of all wind variables are knots and pressure variables are hPa. These are added into the title.</p>
 <p>Function words to use in request:</p>
 <ul>
 <li><p><strong>maximum</strong></p></li>
 <li><p><strong>minimum</strong></p></li>
-<li><p><strong>average</strong></p></li>
-<li><p><strong>percentile</strong> - Percentile must be preceded by an integer [0,100].</p></li>
-<li><p><strong>number</strong> - Number of storms in grid box satisfying filter thresholds.</p></li>
 </ul>
-<p>Example usage: “maximum wind change in 24 hours”, “50th percentile wind”, “number of storms”</p>
+<p>Example usage: “maximum wind”, “minimum pressure”</p>
 </p></li>
 <li><p><strong>thresh</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>Keywords in self.keys</p>
 <p>Units of all wind variables = kt, and pressure variables = hPa. These are added to the subtitle.</p>

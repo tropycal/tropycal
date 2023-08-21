@@ -1,0 +1,12 @@
+RealtimeStorm.plot_models_wind
+================================================
+
+.. currentmodule:: tropycal.realtime
+
+.. automethod:: RealtimeStorm.plot_models_wind
+
+.. include:: tropycal.realtime.RealtimeStorm.plot_models_wind
+
+.. raw:: html
+
+      <div style='clear:both'></div>

@@ -125,6 +125,10 @@
 <span class="sd">        Category corresponding to the sustained wind. 0 is tropical storm, -1 is tropical depression.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># NaN handling</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">wind_speed</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
     <span class="c1"># Category 5 hurricane</span>
     <span class="k">if</span> <span class="n">wind_speed</span> <span class="o">&gt;=</span> <span class="mi">137</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">5</span>
@@ -831,7 +835,7 @@
     <span class="k">return</span> <span class="n">cone_radii</span></div>
 
 
-<div class="viewcode-block" id="generate_nhc_cone"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.generate_nhc_cone.html#tropycal.utils.generate_nhc_cone">[docs]</a><span class="k">def</span> <span class="nf">generate_nhc_cone</span><span class="p">(</span><span class="n">forecast</span><span class="p">,</span> <span class="n">basin</span><span class="p">,</span> <span class="n">shift_lons</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cone_days</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">cone_year</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_xarray</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="generate_nhc_cone"><a class="viewcode-back" href="../../../api/generated/tropycal.utils.generate_nhc_cone.html#tropycal.utils.generate_nhc_cone">[docs]</a><span class="k">def</span> <span class="nf">generate_nhc_cone</span><span class="p">(</span><span class="n">forecast</span><span class="p">,</span> <span class="n">basin</span><span class="p">,</span> <span class="n">shift_lons</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cone_days</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">cone_year</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">grid_res</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">return_xarray</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a gridded cone of uncertainty using forecast data from NHC.</span>
 
@@ -841,12 +845,17 @@
 <span class="sd">        Dictionary containing forecast data</span>
 <span class="sd">    basin : str</span>
 <span class="sd">        Basin for cone of uncertainty radii. Please refer to :ref:`options-domain` for available basin options.</span>
+<span class="sd">    </span>
+<span class="sd">    Other Parameters</span>
+<span class="sd">    ----------------</span>
 <span class="sd">    shift_lons : bool, optional</span>
 <span class="sd">        If true, grid will be shifted to +0 to +360 degrees longitude. Default is False (-180 to +180 degrees).</span>
 <span class="sd">    cone_days : int, optional</span>
 <span class="sd">        Number of forecast days to generate the cone through. Default is 5 days.</span>
 <span class="sd">    cone_year : int, optional</span>
 <span class="sd">        Year valid for cone radii. If None, this fuction will attempt to retrieve the year from the forecast dict.</span>
+<span class="sd">    grid_res : int or float, optional</span>
+<span class="sd">        Horizontal resolution of the cone of uncertainty grid in degrees. Default is 0.05 degrees.</span>
 <span class="sd">    return_xarray : bool, optional</span>
 <span class="sd">        If True, returns output as an xarray Dataset. Default is False, returning output as a dictionary.</span>
 
@@ -903,10 +912,9 @@
         <span class="k">return</span> <span class="n">array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">array</span> <span class="o">-</span> <span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()]</span>
 
     <span class="c1"># Function for adding a radius surrounding a point</span>
-    <span class="k">def</span> <span class="nf">add_radius</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">vlat</span><span class="p">,</span> <span class="n">vlon</span><span class="p">,</span> <span class="n">rad</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_radius</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span> <span class="n">lons</span><span class="p">,</span> <span class="n">vlat</span><span class="p">,</span> <span class="n">vlon</span><span class="p">,</span> <span class="n">rad</span><span class="p">,</span> <span class="n">grid_res</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
 
         <span class="c1"># construct new array expanding slightly over rad from lat/lon center</span>
-        <span class="n">grid_res</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># 1 degree is approx 111 km</span>
         <span class="n">grid_fac</span> <span class="o">=</span> <span class="p">(</span><span class="n">rad</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="mf">111.0</span>
 
         <span class="c1"># Make grid surrounding position coordinate &amp; radius of circle</span>
@@ -1030,8 +1038,8 @@
         <span class="n">n</span><span class="p">,</span> <span class="n">fhr</span><span class="p">,</span> <span class="n">interp_fhr</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">temp_arr</span><span class="p">)</span>
 
     <span class="c1"># Initialize 0.05 degree grid</span>
-    <span class="n">gridlats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">interp_lat</span><span class="p">)</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">interp_lat</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
-    <span class="n">gridlons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">interp_lon</span><span class="p">)</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">interp_lon</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">gridlats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">interp_lat</span><span class="p">)</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">interp_lat</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">,</span> <span class="n">grid_res</span><span class="p">)</span>
+    <span class="n">gridlons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">interp_lon</span><span class="p">)</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">interp_lon</span><span class="p">)</span><span class="o">+</span><span class="mi">7</span><span class="p">,</span> <span class="n">grid_res</span><span class="p">)</span>
     <span class="n">gridlons2d</span><span class="p">,</span> <span class="n">gridlats2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">gridlons</span><span class="p">,</span> <span class="n">gridlats</span><span class="p">)</span>
 
     <span class="c1"># Iterate through fhr, calculate cone &amp; add into grid</span>
@@ -1039,7 +1047,7 @@
     <span class="n">griddata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">gridlats2d</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">ilat</span><span class="p">,</span> <span class="n">ilon</span><span class="p">,</span> <span class="n">irad</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">interp_lat</span><span class="p">,</span> <span class="n">interp_lon</span><span class="p">,</span> <span class="n">interp_rad</span><span class="p">)):</span>
         <span class="n">temp_grid</span><span class="p">,</span> <span class="n">small_coords</span> <span class="o">=</span> <span class="n">add_radius</span><span class="p">(</span>
-            <span class="n">gridlats</span><span class="p">,</span> <span class="n">gridlons</span><span class="p">,</span> <span class="n">ilat</span><span class="p">,</span> <span class="n">ilon</span><span class="p">,</span> <span class="n">irad</span><span class="p">)</span>
+            <span class="n">gridlats</span><span class="p">,</span> <span class="n">gridlons</span><span class="p">,</span> <span class="n">ilat</span><span class="p">,</span> <span class="n">ilon</span><span class="p">,</span> <span class="n">irad</span><span class="p">,</span> <span class="n">grid_res</span><span class="o">=</span><span class="n">grid_res</span><span class="p">)</span>
         <span class="n">plug_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">griddata</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         <span class="n">plug_grid</span> <span class="o">=</span> <span class="n">plug_array</span><span class="p">(</span><span class="n">temp_grid</span><span class="p">,</span> <span class="n">plug_grid</span><span class="p">,</span>
                                <span class="n">small_coords</span><span class="p">,</span> <span class="n">large_coords</span><span class="p">)</span>

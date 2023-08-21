@@ -105,7 +105,7 @@
         <span class="s2">&quot;Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.&quot;</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">.plot</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">..tracks.plot</span> <span class="kn">import</span> <span class="n">TrackPlot</span>
+<span class="kn">from</span> <span class="nn">..plot</span> <span class="kn">import</span> <span class="n">Plot</span>
 <span class="kn">from</span> <span class="nn">.realtime</span> <span class="kn">import</span> <span class="n">Mission</span>
 
 <span class="c1"># Import tools</span>
@@ -1870,23 +1870,20 @@
 
 <span class="sd">            Variable words to use in request:</span>
 
-<span class="sd">            * **wind** - (kt). Sustained wind.</span>
+<span class="sd">            * **wind** - (kt). Flight level wind.</span>
+<span class="sd">            * **30s wind** - (kt). 30-second flight level wind.</span>
+<span class="sd">            * **10s wind** - (kt). 10-second flight level wind.</span>
+<span class="sd">            * **sfmr** - (kt). SFMR wind.</span>
 <span class="sd">            * **pressure** - (hPa). Minimum pressure.</span>
-<span class="sd">            * **wind change** - (kt/time). Must be followed by an integer value denoting the length of the time window &#39;__ hours&#39; (e.g., &quot;wind change in 24 hours&quot;).</span>
-<span class="sd">            * **pressure change** - (hPa/time). Must be followed by an integer value denoting the length of the time window &#39;__ hours&#39; (e.g., &quot;pressure change in 24 hours&quot;).</span>
-<span class="sd">            * **storm motion** - (km/hour). Can be followed a length of time window. Otherwise defaults to 24 hours.</span>
-
+<span class="sd">            </span>
 <span class="sd">            Units of all wind variables are knots and pressure variables are hPa. These are added into the title.</span>
 
 <span class="sd">            Function words to use in request:</span>
 
 <span class="sd">            * **maximum**</span>
 <span class="sd">            * **minimum**</span>
-<span class="sd">            * **average** </span>
-<span class="sd">            * **percentile** - Percentile must be preceded by an integer [0,100].</span>
-<span class="sd">            * **number** - Number of storms in grid box satisfying filter thresholds.</span>
 
-<span class="sd">            Example usage: &quot;maximum wind change in 24 hours&quot;, &quot;50th percentile wind&quot;, &quot;number of storms&quot;</span>
+<span class="sd">            Example usage: &quot;maximum wind&quot;, &quot;minimum pressure&quot;</span>
 
 <span class="sd">        thresh : dict, optional</span>
 <span class="sd">            Keywords in self.keys</span>
@@ -1942,6 +1939,18 @@
         <span class="c1"># Retrieve the requested function, variable for computing stats, and plot title. These modify thresh if necessary.</span>
         <span class="n">thresh</span><span class="p">,</span> <span class="n">func</span> <span class="o">=</span> <span class="n">find_func</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span>
         <span class="n">thresh</span><span class="p">,</span> <span class="n">varname</span> <span class="o">=</span> <span class="n">find_var</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span>
+        
+        <span class="c1"># Format left title for plot</span>
+        <span class="n">endash</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="se">\u2013</span><span class="s2">&quot;</span>
+        <span class="n">dot</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="se">\u2022</span><span class="s2">&quot;</span>
+        <span class="n">title_L</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;wind&#39;</span><span class="p">,</span> <span class="s1">&#39;vmax&#39;</span><span class="p">]:</span>
+            <span class="n">title_L</span> <span class="o">=</span> <span class="n">title_L</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;wind (kt)&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;sfmr&#39;</span><span class="p">]:</span>
+            <span class="n">title_L</span> <span class="o">=</span> <span class="n">title_L</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;sfmr (kt)&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="s1">&#39;mslp&#39;</span><span class="p">]:</span>
+            <span class="n">title_L</span> <span class="o">=</span> <span class="n">title_L</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;pressure (hPa)&#39;</span><span class="p">)</span>
+        <span class="n">title_L</span> <span class="o">=</span> <span class="p">(</span><span class="n">title_L</span><span class="o">.</span><span class="n">title</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Hpa&#39;</span><span class="p">,</span><span class="s1">&#39;hPa&#39;</span><span class="p">)</span>
 
         <span class="c1"># ---------------------------------------------------------------------------------------------------</span>
 
@@ -1962,7 +1971,7 @@
         <span class="n">new_df</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;latbin&#39;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s1">&#39;lonbin&#39;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s1">&#39;varname&#39;</span><span class="p">:</span> <span class="p">[]</span>
+            <span class="n">varname</span><span class="p">:</span> <span class="p">[]</span>
         <span class="p">}</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
             <span class="n">new_df</span><span class="p">[</span><span class="n">varname</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">varname</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
@@ -2007,7 +2016,7 @@
         <span class="c1"># ---------------------------------------------------------------------------------------------------</span>
 
         <span class="c1"># Create instance of plot object</span>
-        <span class="n">plot_obj</span> <span class="o">=</span> <span class="n">TrackPlot</span><span class="p">()</span>
+        <span class="n">plot_obj</span> <span class="o">=</span> <span class="n">Plot</span><span class="p">()</span>
 
         <span class="c1"># Create cartopy projection using basin</span>
         <span class="k">if</span> <span class="n">cartopy_proj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2018,7 +2027,8 @@
                 <span class="n">plot_obj</span><span class="o">.</span><span class="n">create_cartopy</span><span class="p">(</span>
                     <span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span> <span class="n">central_longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
 
-        <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;title_L&#39;</span><span class="p">],</span> <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;title_R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;things&#39;</span>
+        <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;title_L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">storm</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="n">title_L</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">prop</span><span class="p">[</span><span class="s1">&#39;title_R&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
         <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="s2">&quot;dynamic&quot;</span><span class="p">:</span>
             <span class="n">domain</span> <span class="o">=</span> <span class="p">{</span>

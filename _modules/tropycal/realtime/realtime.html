@@ -221,62 +221,22 @@
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--&gt; Starting to read in current storm data&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Read in best track data</span>
+        <span class="c1"># Read in best track data from NHC</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__read_btk</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">jtwc_source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ucar&#39;</span><span class="p">,</span> <span class="s1">&#39;noaa&#39;</span><span class="p">,</span> <span class="s1">&#39;jtwc&#39;</span><span class="p">]:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">jtwc_source</span><span class="se">\&quot;</span><span class="s2"> must be either </span><span class="se">\&quot;</span><span class="s2">ucar</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">noaa</span><span class="se">\&quot;</span><span class="s2">, or </span><span class="se">\&quot;</span><span class="s2">jtwc</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__filter_best_track</span><span class="p">()</span>
+        
+        <span class="c1"># Read in best track data from JTWC</span>
         <span class="k">if</span> <span class="n">jtwc</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">jtwc_source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ucar&#39;</span><span class="p">,</span> <span class="s1">&#39;noaa&#39;</span><span class="p">,</span> <span class="s1">&#39;jtwc&#39;</span><span class="p">]:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">jtwc_source</span><span class="se">\&quot;</span><span class="s2"> must be either </span><span class="se">\&quot;</span><span class="s2">ucar</span><span class="se">\&quot;</span><span class="s2">, </span><span class="se">\&quot;</span><span class="s2">noaa</span><span class="se">\&quot;</span><span class="s2">, or </span><span class="se">\&quot;</span><span class="s2">jtwc</span><span class="se">\&quot;</span><span class="s2">.&quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__read_btk_jtwc</span><span class="p">(</span><span class="n">jtwc_source</span><span class="p">,</span> <span class="n">ssl_certificate</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__filter_best_track</span><span class="p">()</span>
 
         <span class="c1"># Determine time elapsed</span>
         <span class="n">time_elapsed</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
         <span class="n">tsec</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">time_elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">(),</span> <span class="mi">2</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--&gt; Completed reading in current storm data (</span><span class="si">{</span><span class="n">tsec</span><span class="si">}</span><span class="s2"> seconds)&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Remove storms that haven&#39;t been active in 18 hours</span>
-        <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
-
-            <span class="c1"># Filter for storm duration</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># Get last time</span>
-            <span class="n">last_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">current_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
-
-            <span class="c1"># Get time difference</span>
-            <span class="n">hours_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_time</span> <span class="o">-</span> <span class="n">last_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span>
-            <span class="k">if</span> <span class="n">hours_diff</span> <span class="o">&gt;=</span> <span class="mf">15.0</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">hours_diff</span> <span class="o">&gt;=</span> <span class="mf">9.0</span><span class="p">):</span>
-                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">hours_diff</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">48.0</span><span class="p">:</span>
-                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-
-        <span class="c1"># Remove invests that have been classified as TCs</span>
-        <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
-
-            <span class="c1"># Only keep invests</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]:</span>
-                    <span class="k">continue</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># Iterate through all storms</span>
-            <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">for</span> <span class="n">key_storm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]:</span>
-                    <span class="k">continue</span>
-
-                <span class="c1"># Check for overlap in lons</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
-                    <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
-
-            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
         <span class="c1"># For each storm remaining, create a Storm object</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -312,6 +272,10 @@
 
         <span class="c1"># Save current time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        
+        <span class="c1"># Store storm forecast &amp; TWO data for summary plots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forecasts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">two</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Set attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
@@ -320,6 +284,55 @@
             <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span>
         <span class="p">}</span>
 
+    <span class="k">def</span> <span class="nf">__filter_best_track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters all Best Track entries that haven&#39;t been active in 18 hours, or reclassified from invests to tropical cyclones.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1"># Remove storms that haven&#39;t been active in 18 hours</span>
+        <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
+
+            <span class="c1"># Filter for storm duration</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Get last time</span>
+            <span class="n">last_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">current_time</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+
+            <span class="c1"># Get time difference</span>
+            <span class="n">hours_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_time</span> <span class="o">-</span> <span class="n">last_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span>
+            <span class="k">if</span> <span class="n">hours_diff</span> <span class="o">&gt;=</span> <span class="mf">12.0</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">hours_diff</span> <span class="o">&gt;=</span> <span class="mf">9.0</span><span class="p">):</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">hours_diff</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">48.0</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="c1"># Remove invests that have been classified as TCs</span>
+        <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
+
+            <span class="c1"># Only keep invests</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Iterate through all storms</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">key_storm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;invest&#39;</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Check for overlap in lons</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key_storm</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    
     <span class="k">def</span> <span class="nf">__read_btk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads in best track data into the Dataset object.</span>
@@ -530,7 +543,7 @@
 
         <span class="c1"># Get relevant filenames from directory</span>
         <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;b[isw][ohp][012349][0123456789]</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">.dat&#39;</span>
+        <span class="n">search_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;b[iswec][ohp][012349][0123456789]</span><span class="si">{</span><span class="n">current_year</span><span class="si">}</span><span class="s1">.dat&#39;</span>
 
         <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">search_pattern</span><span class="p">)</span>
         <span class="n">filelist</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
@@ -572,17 +585,18 @@
             <span class="c1"># Get file ID</span>
             <span class="n">stormid</span> <span class="o">=</span> <span class="p">((</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.dat&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
 
+            <span class="k">if</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">,</span><span class="s1">&#39;C&#39;</span><span class="p">]:</span>
+                <span class="c1"># Skip East &amp; Central Pacific invests</span>
+                <span class="k">if</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;9&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="c1"># Skip storms that already exist in NHC ATCF</span>
+                <span class="k">if</span> <span class="n">stormid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">continue</span>
+
             <span class="c1"># Check for invest status</span>
             <span class="n">invest_bool</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
                 <span class="n">invest_bool</span> <span class="o">=</span> <span class="kc">True</span>
-
-            <span class="c1"># Determine basin based on where storm developed</span>
-            <span class="n">add_basin</span> <span class="o">=</span> <span class="s1">&#39;west_pacific&#39;</span>
-            <span class="k">if</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span>
-                <span class="n">add_basin</span> <span class="o">=</span> <span class="s1">&#39;north_indian&#39;</span>
-            <span class="k">elif</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span>
-                <span class="n">add_basin</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
             <span class="c1"># add empty entry into dict</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
@@ -591,7 +605,7 @@
                 <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]),</span>
                 <span class="s1">&#39;season&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">stormid</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]),</span>
-                <span class="s1">&#39;basin&#39;</span><span class="p">:</span> <span class="n">add_basin</span><span class="p">,</span>
+                <span class="s1">&#39;basin&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;source_info&#39;</span><span class="p">:</span> <span class="s1">&#39;Joint Typhoon Warning Center&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;realtime&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
                 <span class="s1">&#39;invest&#39;</span><span class="p">:</span> <span class="n">invest_bool</span><span class="p">,</span>
@@ -651,6 +665,14 @@
                 <span class="c1"># Ensure obs aren&#39;t being repeated</span>
                 <span class="k">if</span> <span class="n">time</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">]:</span>
                     <span class="k">continue</span>
+                
+                <span class="c1"># Clear data before this time if it&#39;s another storm</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">time_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">86400</span>
+                    <span class="k">if</span> <span class="n">time_diff</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;extra_obs&#39;</span><span class="p">,</span> <span class="s1">&#39;special&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;vmax&#39;</span><span class="p">,</span> <span class="s1">&#39;mslp&#39;</span><span class="p">,</span> <span class="s1">&#39;wmo_basin&#39;</span><span class="p">]:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;ace&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
                 <span class="c1"># Get latitude into number</span>
                 <span class="k">if</span> <span class="s2">&quot;N&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">]:</span>
@@ -668,10 +690,24 @@
                     <span class="n">btk_lon_temp</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">btk_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">btk_lon_temp</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-                <span class="c1"># Determine basin if unknown</span>
-                <span class="k">if</span> <span class="n">add_basin</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-                    <span class="n">add_basin</span> <span class="o">=</span> <span class="n">get_basin</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">,</span> <span class="n">btk_lon</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;basin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">add_basin</span>
+                <span class="c1"># Determine storm origin basin</span>
+                <span class="n">origin_basin</span> <span class="o">=</span> <span class="s1">&#39;west_pacific&#39;</span>
+                <span class="k">if</span> <span class="n">stormid</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;IO&#39;</span><span class="p">:</span>
+                    <span class="n">origin_basin</span> <span class="o">=</span> <span class="s1">&#39;north_indian&#39;</span>
+                <span class="k">elif</span> <span class="n">stormid</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;EP&#39;</span><span class="p">,</span><span class="s1">&#39;CP&#39;</span><span class="p">]:</span>
+                    <span class="n">origin_basin</span> <span class="o">=</span> <span class="s1">&#39;east_pacific&#39;</span>
+                <span class="k">elif</span> <span class="n">stormid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span>
+                    <span class="n">origin_basin</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                
+                <span class="c1"># Determine current storm basin</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">current_basin</span> <span class="o">=</span> <span class="n">get_basin</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">,</span> <span class="n">btk_lon</span><span class="p">,</span> <span class="n">origin_basin</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">current_basin</span> <span class="o">=</span> <span class="n">get_basin</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">,</span> <span class="n">btk_lon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                
+                <span class="c1"># Set storm basin to current location</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_basin</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;basin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_basin</span>
 
                 <span class="c1"># Get other relevant variables</span>
                 <span class="n">btk_wind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span>
@@ -699,10 +735,6 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btk_lon</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;vmax&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;mslp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btk_mslp</span><span class="p">)</span>
-
-                <span class="c1"># Add basin</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stormid</span><span class="p">][</span><span class="s1">&#39;wmo_basin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">get_basin</span><span class="p">(</span><span class="n">btk_lat</span><span class="p">,</span> <span class="n">btk_lon</span><span class="p">,</span> <span class="n">add_basin</span><span class="p">))</span>
 
                 <span class="c1"># Calculate ACE &amp; append to storm total</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">btk_wind</span><span class="p">):</span>
@@ -986,7 +1018,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Retrieve NHC shapefiles for development areas</span>
-        <span class="n">shapefiles</span> <span class="o">=</span> <span class="n">get_two_current</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">two</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">two</span> <span class="o">=</span> <span class="n">get_two_current</span><span class="p">()</span>
 
         <span class="c1"># Retrieve kwargs</span>
         <span class="n">two_prop</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;two_prop&#39;</span><span class="p">,</span> <span class="p">{})</span>
@@ -1009,22 +1042,22 @@
                 <span class="n">proj</span><span class="o">=</span><span class="s1">&#39;PlateCarree&#39;</span><span class="p">,</span> <span class="n">central_longitude</span><span class="o">=</span><span class="mf">180.0</span><span class="p">)</span>  <span class="c1"># 0.0</span>
 
         <span class="c1"># Get realtime forecasts</span>
-        <span class="n">forecasts</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">invest</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_storm</span><span class="p">(</span>
-                        <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">get_forecast_realtime</span><span class="p">(</span><span class="n">ssl_certificate</span><span class="p">))</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
-        <span class="n">forecasts</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span> <span class="k">if</span> <span class="s1">&#39;init&#39;</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(</span>
-        <span class="p">)</span> <span class="o">-</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;init&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span> <span class="o">&lt;=</span> <span class="mi">12</span> <span class="k">else</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">forecasts</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forecasts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">invest</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_storm</span><span class="p">(</span>
+                            <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">get_forecast_realtime</span><span class="p">(</span><span class="n">ssl_certificate</span><span class="p">))</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forecasts</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span> <span class="k">if</span> <span class="s1">&#39;init&#39;</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(</span>
+            <span class="p">)</span> <span class="o">-</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;init&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span> <span class="o">&lt;=</span> <span class="mi">12</span> <span class="k">else</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecasts</span><span class="p">]</span>
 
         <span class="c1"># Plot</span>
-        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_summary</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">get_storm</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">],</span> <span class="n">forecasts</span><span class="p">,</span>
-                                        <span class="n">shapefiles</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span> <span class="n">domain</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">two_prop</span><span class="p">,</span> <span class="n">invest_prop</span><span class="p">,</span> <span class="n">storm_prop</span><span class="p">,</span> <span class="n">cone_prop</span><span class="p">,</span> <span class="n">map_prop</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_obj</span><span class="o">.</span><span class="n">plot_summary</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">get_storm</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">storms</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">forecasts</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">two</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span> <span class="n">domain</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">save_path</span><span class="p">,</span> <span class="n">two_prop</span><span class="p">,</span> <span class="n">invest_prop</span><span class="p">,</span> <span class="n">storm_prop</span><span class="p">,</span> <span class="n">cone_prop</span><span class="p">,</span> <span class="n">map_prop</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ax</span></div></div>
 </pre></div>

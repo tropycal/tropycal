@@ -581,6 +581,14 @@ class Realtime():
                 # Ensure obs aren't being repeated
                 if time in self.data[stormid]['time']:
                     continue
+                
+                # Clear data before this time if it's another storm
+                if len(self.data[stormid]['time']) >= 1:
+                    time_diff = (time - self.data[stormid]['time'][-1]).total_seconds() / 86400
+                    if time_diff > 30:
+                        for val in ['time', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin']:
+                            self.data[stormid][val] = []
+                        self.data[stormid]['ace'] = 0.0
 
                 # Get latitude into number
                 if "N" in line[6]:

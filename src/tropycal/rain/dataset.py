@@ -7,7 +7,7 @@ from datetime import datetime as dt
 from scipy.interpolate import griddata
 import warnings
 
-from ..tracks import TrackPlot
+from ..tracks.plot import TrackPlot
 
 from ..utils import *
 

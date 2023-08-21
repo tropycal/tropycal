@@ -220,7 +220,7 @@ class Realtime():
 
             # Get time difference
             hours_diff = (current_time - last_time).total_seconds() / 3600.0
-            if hours_diff >= 15.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
+            if hours_diff >= 12.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
                 del self.data[key]
             if hours_diff <= -48.0:
                 del self.data[key]

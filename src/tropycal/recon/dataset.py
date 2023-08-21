@@ -1786,23 +1786,20 @@ class hdobs:
 
             Variable words to use in request:
 
-            * **wind** - (kt). Sustained wind.
+            * **wind** - (kt). Flight level wind.
+            * **30s wind** - (kt). 30-second flight level wind.
+            * **10s wind** - (kt). 10-second flight level wind.
+            * **sfmr** - (kt). SFMR wind.
             * **pressure** - (hPa). Minimum pressure.
-            * **wind change** - (kt/time). Must be followed by an integer value denoting the length of the time window '__ hours' (e.g., "wind change in 24 hours").
-            * **pressure change** - (hPa/time). Must be followed by an integer value denoting the length of the time window '__ hours' (e.g., "pressure change in 24 hours").
-            * **storm motion** - (km/hour). Can be followed a length of time window. Otherwise defaults to 24 hours.
-
+            
             Units of all wind variables are knots and pressure variables are hPa. These are added into the title.
 
             Function words to use in request:
 
             * **maximum**
             * **minimum**
-            * **average** 
-            * **percentile** - Percentile must be preceded by an integer [0,100].
-            * **number** - Number of storms in grid box satisfying filter thresholds.
 
-            Example usage: "maximum wind change in 24 hours", "50th percentile wind", "number of storms"
+            Example usage: "maximum wind", "minimum pressure"
 
         thresh : dict, optional
             Keywords in self.keys

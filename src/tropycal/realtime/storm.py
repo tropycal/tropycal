@@ -725,12 +725,7 @@ class RealtimeStorm(Storm):
         Parameters
         ----------
         track_labels : str
-            Label forecast hours with the following methods:
-
-            * **""** = no label
-            * **"fhr"** = forecast hour (default)
-            * **"valid_utc"** = UTC valid time
-            * **"valid_edt"** = EDT valid time
+            Label format for forecast dots. Scroll down to notes for available options.
         cone_days : int
             Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.
         domain : str
@@ -747,14 +742,61 @@ class RealtimeStorm(Storm):
         ssl_certificate : boolean, optional
             If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
         prop : dict
-            Property of storm track lines.
+            Customization properties of NHC forecast plot. Please refer to :ref:`options-prop-nhc` or scroll down below for available options.
         map_prop : dict
-            Property of cartopy map.
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
 
         Returns
         -------
         ax
             Instance of axes containing the plot is returned.
+
+        Notes
+        -----
+
+        The following properties are available for customizing ``track_labels``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Value
+             - Description
+           * - ``""``
+             - No label
+           * - ``"fhr"``
+             - Forecast hour (e.g., 60). Default option.
+           * - ``"fhr_wind_mph"``
+             - Forecast hour and sustained wind in mph.
+           * - ``"fhr_wind_kt"``
+             - Forecast hour and sustained wind in knots.
+           * - ``"valid_utc"``
+             - Valid time in UTC.
+           * - ``"valid_edt"``
+             - Valid time in Eastern time (EDT).
+           * - ``"valid_cdt"``
+             - Valid time in Central time (CDT).
+           * - ``"valid_mdt"``
+             - Valid time in Mountain time (MDT).
+           * - ``"valid_pdt"``
+             - Valid time in Pacific time (PDT).
+           * - ``"valid_hst"``
+             - Valid time in Hawaii time (HST).
+
+        The following properties are available for plotting NHC forecasts, via ``prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - cone_lw
+             - Center line width for the cone of uncertainty. Default is 2.0.
+           * - cone_alpha
+             - Transparency for the cone of uncertainty. Default is 0.6.
+           * - cone_res
+             - Grid resolution for the cone of uncertainty in degrees. Default is 0.05.
         """
 
         # Retrieve kwargs

@@ -135,6 +135,8 @@ The following properties are available only for the ``tropycal.tracks.TrackDatas
      - Description
    * - plot_values
      - Boolean for whether to plot label values for each gridpoint. Default is False.
+   * - values_size
+     - If ``plot_values`` is set to True, determines font size for labels. If none, this is automatically determined.
    * - smooth
      - Number (in units of sigma) to smooth the data using scipy's gaussian filter. Default is 0 (no smoothing).
    * - cmap

@@ -714,6 +714,7 @@ class TrackPlot(Plot):
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
         self.plot_init(ax, map_prop)
+        time_zone_warning = ''
 
         # --------------------------------------------------------------------------------------
 
@@ -929,8 +930,25 @@ class TrackPlot(Plot):
                              ms=prop['ms'] * 1.3, transform=ccrs.PlateCarree(), zorder=use_zorder)
 
             # Label forecast dots
-            if track_labels in ['fhr', 'valid_utc', 'valid_edt', 'fhr_wind_kt', 'fhr_wind_mph']:
-                valid_dates = [forecast['init'] +
+            time_zones = {
+                'ADT': -3,
+                'AST': -4,
+                'EDT': -4,
+                'EST': -5,
+                'CDT': -5,
+                'CST': -6,
+                'MDT': -6,
+                'MST': -7,
+                'PDT': -7,
+                'PST': -8,
+                'HDT': -9,
+                'HST': -10
+            }
+            available_labels = ['fhr', 'fhr_wind_kt', 'fhr_wind_mph', 'valid_utc']
+            available_labels += [f'valid_{i.lower()}' for i in time_zones.keys()]
+            track_labels = track_labels.lower()
+            if track_labels in available_labels:
+                valid_times = [forecast['init'] +
                                timedelta(hours=int(i)) for i in iter_hr]
                 if track_labels == 'fhr':
                     labels = [str(i) for i in iter_hr]
@@ -940,13 +958,14 @@ class TrackPlot(Plot):
                 if track_labels == 'fhr_wind_mph':
                     labels = [f"Hour {iter_hr[i]}\n{knots_to_mph(fcst_vmax[i])} mph" for i in range(
                         len(iter_hr))]
-                if track_labels == 'valid_edt':
-                    labels = [str(int(i.strftime('%I'))) + ' ' + i.strftime('%p %a')
-                              for i in [j - timedelta(hours=4) for j in valid_dates]]
-                    edt_warning = True
+                if track_labels[:6] == 'valid_' and track_labels[6:].upper() in time_zones:
+                    adjust = time_zones.get(track_labels[6:].upper())
+                    labels = [f"{int(i.strftime('%I'))} {i.strftime('%p %a')}"
+                              for i in [j + timedelta(hours=adjust) for j in valid_times]]
+                    time_zone_warning = track_labels[6:].upper()
                 if track_labels == 'valid_utc':
                     labels = [
-                        f"{i.strftime('%H UTC')}\n{str(i.month)}/{str(i.day)}" for i in valid_dates]
+                        f"{i.strftime('%H UTC')}\n{str(i.month)}/{str(i.day)}" for i in valid_times]
                 self.plot_nhc_labels(
                     self.ax, fcst_lon, fcst_lat, labels, k=1.2)
 
@@ -1124,12 +1143,9 @@ class TrackPlot(Plot):
                            c1, c2, c3, c4, c5], prop={'size': 11.5})
 
         # Add forecast label warning
-        try:
-            if edt_warning:
-                warning_text = "All times displayed are in EDT\n\n"
-            else:
-                warning_text = ""
-        except:
+        if time_zone_warning != '':
+                warning_text = f"All times displayed are in {time_zone_warning}\n\n"
+        else:
             warning_text = ""
         try:
             warning_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n"

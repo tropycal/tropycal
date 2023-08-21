@@ -137,62 +137,22 @@ class Realtime():
         start_time = dt.now()
         print("--> Starting to read in current storm data")
 
-        # Read in best track data
+        # Read in best track data from NHC
         self.__read_btk()
-        if jtwc_source not in ['ucar', 'noaa', 'jtwc']:
-            msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
-            raise ValueError(msg)
+        self.__filter_best_track()
+        
+        # Read in best track data from JTWC
         if jtwc:
+            if jtwc_source not in ['ucar', 'noaa', 'jtwc']:
+                msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
+                raise ValueError(msg)
             self.__read_btk_jtwc(jtwc_source, ssl_certificate)
+            self.__filter_best_track()
 
         # Determine time elapsed
         time_elapsed = dt.now() - start_time
         tsec = str(round(time_elapsed.total_seconds(), 2))
         print(f"--> Completed reading in current storm data ({tsec} seconds)")
-
-        # Remove storms that haven't been active in 18 hours
-        all_keys = [k for k in self.data.keys()]
-        for key in all_keys:
-
-            # Filter for storm duration
-            if len(self.data[key]['time']) == 0:
-                del self.data[key]
-                continue
-
-            # Get last time
-            last_time = self.data[key]['time'][-1]
-            current_time = dt.utcnow()
-
-            # Get time difference
-            hours_diff = (current_time - last_time).total_seconds() / 3600.0
-            if hours_diff >= 15.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
-                del self.data[key]
-            if hours_diff <= -48.0:
-                del self.data[key]
-
-        # Remove invests that have been classified as TCs
-        all_keys = [k for k in self.data.keys()]
-        for key in all_keys:
-
-            # Only keep invests
-            try:
-                if not self.data[key]['invest']:
-                    continue
-            except:
-                continue
-
-            # Iterate through all storms
-            match = False
-            for key_storm in self.data.keys():
-                if self.data[key_storm]['invest']:
-                    continue
-
-                # Check for overlap in lons
-                if self.data[key_storm]['lon'][0] == self.data[key]['lon'][0] and self.data[key_storm]['time'][0] == self.data[key]['time'][0]:
-                    match = True
-
-            if match:
-                del self.data[key]
 
         # For each storm remaining, create a Storm object
         if len(self.data) > 0:
@@ -228,6 +188,10 @@ class Realtime():
 
         # Save current time
         self.time = dt.now()
+        
+        # Store storm forecast & TWO data for summary plots
+        self.forecasts = []
+        self.two = None
 
         # Set attributes
         self.attrs = {
@@ -236,6 +200,55 @@ class Realtime():
             'time': self.time
         }
 
+    def __filter_best_track(self):
+        r"""
+        Filters all Best Track entries that haven't been active in 18 hours, or reclassified from invests to tropical cyclones.
+        """
+        
+        # Remove storms that haven't been active in 18 hours
+        all_keys = [k for k in self.data.keys()]
+        for key in all_keys:
+
+            # Filter for storm duration
+            if len(self.data[key]['time']) == 0:
+                del self.data[key]
+                continue
+
+            # Get last time
+            last_time = self.data[key]['time'][-1]
+            current_time = dt.utcnow()
+
+            # Get time difference
+            hours_diff = (current_time - last_time).total_seconds() / 3600.0
+            if hours_diff >= 12.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
+                del self.data[key]
+            if hours_diff <= -48.0:
+                del self.data[key]
+
+        # Remove invests that have been classified as TCs
+        all_keys = [k for k in self.data.keys()]
+        for key in all_keys:
+
+            # Only keep invests
+            try:
+                if not self.data[key]['invest']:
+                    continue
+            except:
+                continue
+
+            # Iterate through all storms
+            match = False
+            for key_storm in self.data.keys():
+                if self.data[key_storm]['invest']:
+                    continue
+
+                # Check for overlap in lons
+                if self.data[key_storm]['lon'][0] == self.data[key]['lon'][0] and self.data[key_storm]['time'][0] == self.data[key]['time'][0]:
+                    match = True
+
+            if match:
+                del self.data[key]
+    
     def __read_btk(self):
         r"""
         Reads in best track data into the Dataset object.
@@ -446,7 +459,7 @@ class Realtime():
 
         # Get relevant filenames from directory
         files = []
-        search_pattern = f'b[isw][ohp][012349][0123456789]{current_year}.dat'
+        search_pattern = f'b[iswec][ohp][012349][0123456789]{current_year}.dat'
 
         pattern = re.compile(search_pattern)
         filelist = pattern.findall(string)
@@ -488,17 +501,18 @@ class Realtime():
             # Get file ID
             stormid = ((file.split(".dat")[0])[1:]).upper()
 
+            if stormid[0] in ['E','C']:
+                # Skip East & Central Pacific invests
+                if stormid[2] == '9':
+                    continue
+                # Skip storms that already exist in NHC ATCF
+                if stormid in self.data.keys():
+                    continue
+
             # Check for invest status
             invest_bool = False
             if int(stormid[2]) == 9:
                 invest_bool = True
-
-            # Determine basin based on where storm developed
-            add_basin = 'west_pacific'
-            if stormid[0] == 'I':
-                add_basin = 'north_indian'
-            elif stormid[0] == 'S':
-                add_basin = ''
 
             # add empty entry into dict
             self.data[stormid] = {
@@ -507,7 +521,7 @@ class Realtime():
                 'name': '',
                 'year': int(stormid[4:8]),
                 'season': int(stormid[4:8]),
-                'basin': add_basin,
+                'basin': '',
                 'source_info': 'Joint Typhoon Warning Center',
                 'realtime': True,
                 'invest': invest_bool,
@@ -567,6 +581,14 @@ class Realtime():
                 # Ensure obs aren't being repeated
                 if time in self.data[stormid]['time']:
                     continue
+                
+                # Clear data before this time if it's another storm
+                if len(self.data[stormid]['time']) >= 1:
+                    time_diff = (time - self.data[stormid]['time'][-1]).total_seconds() / 86400
+                    if time_diff > 30:
+                        for val in ['time', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin']:
+                            self.data[stormid][val] = []
+                        self.data[stormid]['ace'] = 0.0
 
                 # Get latitude into number
                 if "N" in line[6]:
@@ -584,10 +606,24 @@ class Realtime():
                     btk_lon_temp = line[7].split("E")[0]
                     btk_lon = np.round(float(btk_lon_temp) * 0.1, 1)
 
-                # Determine basin if unknown
-                if add_basin == '':
-                    add_basin = get_basin(btk_lat, btk_lon)
-                    self.data[stormid]['basin'] = add_basin
+                # Determine storm origin basin
+                origin_basin = 'west_pacific'
+                if stormid[:2] == 'IO':
+                    origin_basin = 'north_indian'
+                elif stormid[:2] in ['EP','CP']:
+                    origin_basin = 'east_pacific'
+                elif stormid[0] == 'S':
+                    origin_basin = ''
+                
+                # Determine current storm basin
+                if len(self.data[stormid]['wmo_basin']) == 0:
+                    current_basin = get_basin(btk_lat, btk_lon, origin_basin)
+                else:
+                    current_basin = get_basin(btk_lat, btk_lon, self.data[stormid]['wmo_basin'][-1])
+                
+                # Set storm basin to current location
+                self.data[stormid]['wmo_basin'].append(current_basin)
+                self.data[stormid]['basin'] = current_basin
 
                 # Get other relevant variables
                 btk_wind = int(line[8])
@@ -615,10 +651,6 @@ class Realtime():
                 self.data[stormid]['lon'].append(btk_lon)
                 self.data[stormid]['vmax'].append(btk_wind)
                 self.data[stormid]['mslp'].append(btk_mslp)
-
-                # Add basin
-                self.data[stormid]['wmo_basin'].append(
-                    get_basin(btk_lat, btk_lon, add_basin))
 
                 # Calculate ACE & append to storm total
                 if not np.isnan(btk_wind):
@@ -902,7 +934,8 @@ class Realtime():
         """
 
         # Retrieve NHC shapefiles for development areas
-        shapefiles = get_two_current()
+        if self.two is None:
+            self.two = get_two_current()
 
         # Retrieve kwargs
         two_prop = kwargs.pop('two_prop', {})
@@ -925,21 +958,21 @@ class Realtime():
                 proj='PlateCarree', central_longitude=180.0)  # 0.0
 
         # Get realtime forecasts
-        forecasts = []
-        for key in self.storms:
-            if not self[key].invest:
-                try:
-                    forecasts.append(self.get_storm(
-                        key).get_forecast_realtime(ssl_certificate))
-                except:
-                    forecasts.append({})
-            else:
-                forecasts.append({})
-        forecasts = [entry if 'init' in entry.keys() and (dt.utcnow(
-        ) - entry['init']).total_seconds() / 3600.0 <= 12 else {} for entry in forecasts]
+        if len(self.forecasts) == 0:
+            for key in self.storms:
+                if not self[key].invest:
+                    try:
+                        self.forecasts.append(self.get_storm(
+                            key).get_forecast_realtime(ssl_certificate))
+                    except:
+                        self.forecasts.append({})
+                else:
+                    self.forecasts.append({})
+            self.forecasts = [entry if 'init' in entry.keys() and (dt.utcnow(
+            ) - entry['init']).total_seconds() / 3600.0 <= 12 else {} for entry in self.forecasts]
 
         # Plot
-        ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms], forecasts,
-                                        shapefiles, dt.utcnow(), domain, ax, save_path, two_prop, invest_prop, storm_prop, cone_prop, map_prop)
+        ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms], self.forecasts,
+                                        self.two, dt.utcnow(), domain, ax, save_path, two_prop, invest_prop, storm_prop, cone_prop, map_prop)
 
         return ax

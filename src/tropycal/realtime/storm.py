@@ -14,6 +14,7 @@ from ..tracks.plot import TrackPlot
 from ..utils import *
 from .. import constants
 from ..recon import ReconDataset
+from ..ships import Ships
 
 
 class RealtimeStorm(Storm):
@@ -724,12 +725,7 @@ class RealtimeStorm(Storm):
         Parameters
         ----------
         track_labels : str
-            Label forecast hours with the following methods:
-
-            * **""** = no label
-            * **"fhr"** = forecast hour (default)
-            * **"valid_utc"** = UTC valid time
-            * **"valid_edt"** = EDT valid time
+            Label format for forecast dots. Scroll down to notes for available options.
         cone_days : int
             Number of days to plot the forecast cone. Default is 5 days. Can select 2, 3, 4 or 5 days.
         domain : str
@@ -746,14 +742,61 @@ class RealtimeStorm(Storm):
         ssl_certificate : boolean, optional
             If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
         prop : dict
-            Property of storm track lines.
+            Customization properties of NHC forecast plot. Please refer to :ref:`options-prop-nhc` or scroll down below for available options.
         map_prop : dict
-            Property of cartopy map.
+            Customization properties of Cartopy map. Please refer to :ref:`options-map-prop` for available options.
 
         Returns
         -------
         ax
             Instance of axes containing the plot is returned.
+
+        Notes
+        -----
+
+        The following properties are available for customizing ``track_labels``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Value
+             - Description
+           * - ``""``
+             - No label
+           * - ``"fhr"``
+             - Forecast hour (e.g., 60). Default option.
+           * - ``"fhr_wind_mph"``
+             - Forecast hour and sustained wind in mph.
+           * - ``"fhr_wind_kt"``
+             - Forecast hour and sustained wind in knots.
+           * - ``"valid_utc"``
+             - Valid time in UTC.
+           * - ``"valid_edt"``
+             - Valid time in Eastern time (EDT).
+           * - ``"valid_cdt"``
+             - Valid time in Central time (CDT).
+           * - ``"valid_mdt"``
+             - Valid time in Mountain time (MDT).
+           * - ``"valid_pdt"``
+             - Valid time in Pacific time (PDT).
+           * - ``"valid_hst"``
+             - Valid time in Hawaii time (HST).
+
+        The following properties are available for plotting NHC forecasts, via ``prop``.
+
+        .. list-table:: 
+           :widths: 25 75
+           :header-rows: 1
+
+           * - Property
+             - Description
+           * - cone_lw
+             - Center line width for the cone of uncertainty. Default is 2.0.
+           * - cone_alpha
+             - Transparency for the cone of uncertainty. Default is 0.6.
+           * - cone_res
+             - Grid resolution for the cone of uncertainty in degrees. Default is 0.05.
         """
 
         # Retrieve kwargs
@@ -773,7 +816,7 @@ class RealtimeStorm(Storm):
 
         # Create cartopy projection
         if cartopy_proj is None:
-            if max(self.dict['lon']) > 140 or min(self.dict['lon']) < -140:
+            if max(self.dict['lon']) > 130 or min(self.dict['lon']) < -130:
                 self.plot_obj.create_cartopy(
                     proj='PlateCarree', central_longitude=180.0)
             else:
@@ -847,23 +890,32 @@ class RealtimeStorm(Storm):
                 latest_btk = self.time[-1]
 
                 # Get latest available public advisory
+                advisory_found = False
                 try:
                     content = read_url(
                         f"https://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml", subsplit=False)
+                    advisory_found = True
                 except:
-                    content = read_url(
-                        f"ftp://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml", subsplit=False)
+                    try:
+                        content = read_url(
+                            f"ftp://ftp.nhc.noaa.gov/atcf/adv/{self.id.lower()}_info.xml", subsplit=False)
+                        advisory_found = True
+                    except:
+                        pass
 
                 # Get UTC time of advisory
-                results = [i for i in content if 'messageDateTimeUTC' in i][0]
-                result = (results.split(">")[1]).split("<")[0]
-                latest_advisory = dt.strptime(result, '%Y%m%d %I:%M:%S %p UTC')
+                if advisory_found:
+                    results = [i for i in content if 'messageDateTimeUTC' in i][0]
+                    result = (results.split(">")[1]).split("<")[0]
+                    latest_advisory = dt.strptime(result, '%Y%m%d %I:%M:%S %p UTC')
 
-                # Check which one to use
-                if latest_btk > latest_advisory:
-                    source = 'best_track'
+                    # Check which one to use
+                    if latest_btk > latest_advisory:
+                        source = 'best_track'
+                    else:
+                        source = 'public_advisory'
                 else:
-                    source = 'public_advisory'
+                    source = 'best_track'
             else:
                 source = 'best_track'
 
@@ -994,12 +1046,17 @@ class RealtimeStorm(Storm):
             current_advisory['lon'] = self.lon[-1]
 
             # Get sustained wind speed
-            current_advisory['wind_mph'] = knots_to_mph(self.vmax[-1])
-            current_advisory['wind_kph'] = int(self.vmax[-1] * 1.852)
-            current_advisory['wind_kt'] = self.vmax[-1]
+            if np.isnan(self.vmax[-1]):
+                current_advisory['wind_mph'] = np.nan
+                current_advisory['wind_kph'] = np.nan
+                current_advisory['wind_kt'] = np.nan
+            else:
+                current_advisory['wind_mph'] = knots_to_mph(self.vmax[-1])
+                current_advisory['wind_kph'] = int(self.vmax[-1] * 1.852)
+                current_advisory['wind_kt'] = self.vmax[-1]
 
             # Get MSLP
-            current_advisory['mslp'] = int(self.mslp[-1])
+            current_advisory['mslp'] = np.nan if np.isnan(self.mslp[-1]) else int(self.mslp[-1])
 
             # Get storm category
             current_advisory['category'] = wind_to_category(
@@ -1155,6 +1212,53 @@ class RealtimeStorm(Storm):
         }
         offset = time_zones.get(zone, 0)
         disco_time = disco_time + timedelta(hours=offset*-1)
+
+    def get_ships_realtime(self):
+        r"""
+        Retrieves a Ships object containing the latest SHIPS data.
+
+        Returns
+        -------
+        tropycal.ships.Ships
+            Instance of a Ships object containing the latest SHIPS data.
+
+        Notes
+        -----
+        1. While the SHIPS data source used for ``Storm.get_ships()`` updates on a frequent basis, it may lag slightly behind the latest available data on the NHC ATCF server, especially for newly formed storms. This function helps to mitigate this slight delay.
+        2. On rare occasions, SHIPS data files from UCAR have empty data associated with them. In these cases, a value of None is returned.
+        """
+
+        reformatted_id = f'{self.id[:-4]}{self.id[-2:]}'
+
+        # Retrieve list of SHIPS files from NHC ATCF
+        try:
+            page = requests.get('https://ftp.nhc.noaa.gov/atcf/stext/').text
+        except:
+            raise RuntimeError('Unable to fetch SHIPS data from NHC ATCF.')
+        content = page.split("\n")
+        files = []
+        for line in content:
+            if '<a href="' in line and '_ships.txt' in line:
+                filename = (line.split('<a href="')[1]).split('">')[0]
+
+                # Add entries definitely associated with this storm
+                if reformatted_id == filename.split('_ships')[0][-6:]:
+                    files.append(filename)
+
+        # Organize by date
+        sorted_files = sorted([dt.strptime(i[:8],'%y%m%d%H') for i in files])
+
+        # Fetch latest file
+        filename = f'{sorted_files[-1].strftime("%y%m%d%H")}{reformatted_id}_ships.txt'
+        content = read_url(f'https://ftp.nhc.noaa.gov/atcf/stext/{filename}', split=False, subsplit=False)
+
+        # Make sure file has content
+        if len(content) < 10:
+            warnings.warn('Improper SHIPS entry for this time. Returning a value of None.')
+            return None
+
+        # Return Ships instance
+        return Ships(content)
 
     def __get_ensembles_eps(self):
         # This function is currently not functioning. The path to retrieve EPS ensemble data is:

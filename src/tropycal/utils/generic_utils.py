@@ -41,6 +41,10 @@ def wind_to_category(wind_speed):
         Category corresponding to the sustained wind. 0 is tropical storm, -1 is tropical depression.
     """
 
+    # NaN handling
+    if np.isnan(wind_speed):
+        return np.nan
+
     # Category 5 hurricane
     if wind_speed >= 137:
         return 5
@@ -747,7 +751,7 @@ def nhc_cone_radii(year, basin, forecast_hour=None):
     return cone_radii
 
 
-def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=None, return_xarray=False):
+def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=None, grid_res=0.05, return_xarray=False):
     r"""
     Generates a gridded cone of uncertainty using forecast data from NHC.
 
@@ -757,12 +761,17 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
         Dictionary containing forecast data
     basin : str
         Basin for cone of uncertainty radii. Please refer to :ref:`options-domain` for available basin options.
+    
+    Other Parameters
+    ----------------
     shift_lons : bool, optional
         If true, grid will be shifted to +0 to +360 degrees longitude. Default is False (-180 to +180 degrees).
     cone_days : int, optional
         Number of forecast days to generate the cone through. Default is 5 days.
     cone_year : int, optional
         Year valid for cone radii. If None, this fuction will attempt to retrieve the year from the forecast dict.
+    grid_res : int or float, optional
+        Horizontal resolution of the cone of uncertainty grid in degrees. Default is 0.05 degrees.
     return_xarray : bool, optional
         If True, returns output as an xarray Dataset. Default is False, returning output as a dictionary.
 
@@ -819,10 +828,9 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
         return array[np.abs(array - val).argmin()]
 
     # Function for adding a radius surrounding a point
-    def add_radius(lats, lons, vlat, vlon, rad):
+    def add_radius(lats, lons, vlat, vlon, rad, grid_res=0.05):
 
         # construct new array expanding slightly over rad from lat/lon center
-        grid_res = 0.05  # 1 degree is approx 111 km
         grid_fac = (rad*4)/111.0
 
         # Make grid surrounding position coordinate & radius of circle
@@ -946,8 +954,8 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
         n, fhr, interp_fhr), axis=0, arr=temp_arr)
 
     # Initialize 0.05 degree grid
-    gridlats = np.arange(min(interp_lat)-7, max(interp_lat)+7, 0.05)
-    gridlons = np.arange(min(interp_lon)-7, max(interp_lon)+7, 0.05)
+    gridlats = np.arange(min(interp_lat)-7, max(interp_lat)+7, grid_res)
+    gridlons = np.arange(min(interp_lon)-7, max(interp_lon)+7, grid_res)
     gridlons2d, gridlats2d = np.meshgrid(gridlons, gridlats)
 
     # Iterate through fhr, calculate cone & add into grid
@@ -955,7 +963,7 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
     griddata = np.zeros((gridlats2d.shape))
     for i, (ilat, ilon, irad) in enumerate(zip(interp_lat, interp_lon, interp_rad)):
         temp_grid, small_coords = add_radius(
-            gridlats, gridlons, ilat, ilon, irad)
+            gridlats, gridlons, ilat, ilon, irad, grid_res=grid_res)
         plug_grid = np.zeros((griddata.shape))
         plug_grid = plug_array(temp_grid, plug_grid,
                                small_coords, large_coords)

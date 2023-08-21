@@ -70,25 +70,18 @@ class ReconPlot(Plot):
         # Set default properties
         default_prop = {'cmap': 'category', 'levels': (np.nanmin(recon_data[varname]), np.nanmax(recon_data[varname])),
                         'sortby': varname, 'ascending': (varname != 'p_sfc'), 'linewidth': 1.5, 'ms': 7.5, 'marker': 'o', 'zorder': None}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF', 'linewidth': 0.5, 'linecolor': 'k',
-                            'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
-
-        # set default properties
-        input_prop = prop
-        input_map_prop = map_prop
 
         # --------------------------------------------------------------------------------------
 
         # Keep record of lat/lon coordinate extrema
-        max_lat = None
-        min_lat = None
-        max_lon = None
-        min_lon = None
+        max_lat = []
+        min_lat = []
+        max_lon = []
+        min_lon = []
 
         # Retrieve storm data
         storm_data = storm.dict
@@ -109,26 +102,10 @@ class ReconPlot(Plot):
             lons = temp_df['lon']
 
         # Add to coordinate extrema
-        if max_lat is None:
-            max_lat = max(lats)
-        else:
-            if max(lats) > max_lat:
-                max_lat = max(lats)
-        if min_lat is None:
-            min_lat = min(lats)
-        else:
-            if min(lats) < min_lat:
-                min_lat = min(lats)
-        if max_lon is None:
-            max_lon = max(lons)
-        else:
-            if max(lons) > max_lon:
-                max_lon = max(lons)
-        if min_lon is None:
-            min_lon = min(lons)
-        else:
-            if min(lons) < min_lon:
-                min_lon = min(lons)
+        max_lat.append(max(lats))
+        min_lat.append(min(lats))
+        max_lon.append(max(lons))
+        min_lon.append(min(lons))
 
         # Get colormap and level extrema
         cmap, clevs = get_cmap_levels(varname, prop['cmap'], prop['levels'])
@@ -186,7 +163,7 @@ class ReconPlot(Plot):
         if domain == "dynamic":
 
             bound_w, bound_e, bound_s, bound_n = dynamic_map_extent(
-                min_lon, max_lon, min_lat, max_lat, recon=True)
+                min(min_lon), max(max_lon), min(min_lat), max(max_lat), recon=True)
             self.ax.set_extent(
                 [bound_w, bound_e, bound_s, bound_n], crs=ccrs.PlateCarree())
 
@@ -195,38 +172,21 @@ class ReconPlot(Plot):
             bound_w, bound_e, bound_s, bound_n = self.set_projection(domain)
 
         # Determine number of lat/lon lines to use for parallels & meridians
-        if map_prop['plot_gridlines']:
-            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
         # Add left title
-        type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
-            type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
-        tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-        # Coerce to include non-TC points if storm hasn't been designated yet
-        add_ptc_flag = False
-        if len(tropical_vmax) == 0:
-            add_ptc_flag = True
-            idx = np.where((type_array == 'LO') | (type_array == 'DB'))
-        tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-        subtrop = classify_subtropical(np.array(storm_data['type']))
-        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
-        peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_classification(
-            np.nanmax(tropical_vmax), subtrop, peak_basin)
-        if add_ptc_flag == True:
-            storm_type = "Potential Tropical Cyclone"
-
+        title_data = self.format_storm_title(storm_data, calculate_extrema=False)
         dot = u"\u2022"
         try:
             vartitle = get_recon_title(*titleinput)
         except:
             vartitle = [varname]
-        self.ax.set_title(f"{storm_type} {storm_data['name']}\n" + 'Recon: ' + ' '.join(
+        self.ax.set_title(f"{title_data['name']}\n" + 'Recon: ' + ' '.join(
             vartitle), loc='left', fontsize=17, fontweight='bold')
         if mission_id != '':
             self.ax.set_title(f"Mission ID: {mission_id}\nRecon: " + ' '.join(
@@ -315,12 +275,9 @@ class ReconPlot(Plot):
         # Set default properties
         default_prop = {'cmap': 'category', 'levels': None,
                         'left_title': '', 'right_title': 'All storms', 'pcolor': True}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
 
         # Keep record of lat/lon coordinate extrema
@@ -422,26 +379,18 @@ class ReconPlot(Plot):
             bound_w, bound_e, bound_s, bound_n = self.set_projection(domain)
 
         # Determine number of lat/lon lines to use for parallels & meridians
-        if map_prop['plot_gridlines']:
-            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
         # Add left title
-        type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
-            type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
-        tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-        subtrop = classify_subtropical(np.array(storm_data['type']))
-        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
-        peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_classification(
-            np.nanmax(tropical_vmax), subtrop, peak_basin)
-
+        title_data = self.format_storm_title(storm_data, calculate_extrema=False)
         dot = u"\u2022"
         vartitle = get_recon_title(varname)
-        self.ax.set_title(f"{storm_type} {storm_data['name']}\n" + 'Recon: ' + ' '.join(
+        self.ax.set_title(f"{title_data['name']}\n" + 'Recon: ' + ' '.join(
             vartitle), loc='left', fontsize=17, fontweight='bold')
 
         # Add right title
@@ -594,12 +543,15 @@ class ReconPlot(Plot):
         # Set default properties
         default_prop = {'cmap': 'category', 'levels': None,
                         'left_title': '', 'right_title': '', 'pcolor': True}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (12.5, 8.5), 'dpi': 120, 'plot_gridlines': True}
+        
+        # Change default map prop
+        if 'figsize' not in map_prop.keys():
+            map_prop['figsize'] = (12.5, 8.5)
+        if 'dpi' not in map_prop.keys():
+            map_prop['dpi'] = 120
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
 
         MULTIVAR = False
@@ -652,8 +604,10 @@ class ReconPlot(Plot):
             bound_w, bound_e, bound_s, bound_n = self.set_projection(domain)
 
         # Determine number of lat/lon lines to use for parallels & meridians
-        if map_prop['plot_gridlines']:
-            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
 #        rightarrow = u"\u2192"
 #        plt.xlabel(f'W {rightarrow} E Distance (km)')
@@ -667,22 +621,10 @@ class ReconPlot(Plot):
 
         # --------------------------------------------------------------------------------------
 
-        storm_data = storm.dict
         # Add left title
-        type_array = np.array(storm_data['type'])
-        idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
-            type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
-        tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-        subtrop = classify_subtropical(np.array(storm_data['type']))
-        peak_idx = storm_data['vmax'].index(np.nanmax(tropical_vmax))
-        peak_basin = storm_data['wmo_basin'][peak_idx]
-        storm_type = get_storm_classification(
-            np.nanmax(tropical_vmax), subtrop, peak_basin)
-
+        title_data = self.format_storm_title(storm.dict, calculate_extrema=False)
         vartitle = get_recon_title(varname)
-        title_left = f"{storm_type} {storm_data['name']}\n" + \
-            'Recon: ' + ' '.join(vartitle)
+        title_left = f"{title_data['name']}\nRecon: " + " ".join(vartitle)
         self.ax.set_title(title_left, loc='left',
                           fontsize=17, fontweight='bold')
 

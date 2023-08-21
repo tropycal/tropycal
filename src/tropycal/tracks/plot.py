@@ -105,10 +105,13 @@ def plot_dot(ax, lon, lat, time, vmax, i_type, zorder, storm_data, prop, i):
     return ax, segmented_colors, extra
 
 
-def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=None):
+def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=None, autoselect_loc=False):
 
     # Linecolor category with dots
+    kwargs = {}
     if prop['fillcolor'] == 'category' and prop['dots']:
+        if autoselect_loc == False:
+            kwargs = {'loc': 1}
         ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
                            mec='k', mew=0.5, label='Non-Tropical', marker='^', color='w')
         sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'],
@@ -128,11 +131,13 @@ def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=No
         c5 = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',
                            mew=0.5, label='Category 5', marker='o', color=get_colors_sshws(137))
         l = ax.legend(handles=[ex, sb, td, ts, c1, c2,
-                      c3, c4, c5], prop={'size': 11.5}, loc=1)
+                      c3, c4, c5], prop={'size': 11.5}, **kwargs)
         l.set_zorder(1001)
 
     # Linecolor category without dots
     elif prop['linecolor'] == 'category' and not prop['dots']:
+        if autoselect_loc == False:
+            kwargs = {'loc': 1}
         ex = mlines.Line2D([], [], linestyle='dotted',
                            label='Non-Tropical', color='k')
         td = mlines.Line2D([], [], linestyle='solid',
@@ -150,11 +155,13 @@ def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=No
         c5 = mlines.Line2D([], [], linestyle='solid',
                            label='Category 5', color=get_colors_sshws(137))
         l = ax.legend(handles=[ex, td, ts, c1, c2, c3,
-                      c4, c5], prop={'size': 11.5}, loc=1)
+                      c4, c5], prop={'size': 11.5}, **kwargs)
         l.set_zorder(1001)
 
     # Non-segmented custom colormap with dots
     elif prop['dots'] and not segmented_colors:
+        if autoselect_loc == False:
+            kwargs = {'loc': 1}
         ex = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',
                            mew=0.5, label='Non-Tropical', marker='^', color=prop['fillcolor'])
         sb = mlines.Line2D([], [], linestyle='None', ms=prop['ms'], mec='k',
@@ -163,18 +170,20 @@ def add_legend(ax, fig, prop, segmented_colors, levels=None, cmap=None, storm=No
                            mew=0.5, label='Tropical', marker='o', color=prop['fillcolor'])
         handles = [ex, sb, td]
         l = ax.legend(handles=handles, fontsize=11.5,
-                      prop={'size': 11.5}, loc=1)
+                      prop={'size': 11.5}, **kwargs)
         l.set_zorder(1001)
 
     # Non-segmented custom colormap without dots
     elif not prop['dots'] and not segmented_colors:
+        if autoselect_loc == False:
+            kwargs = {'loc': 1}
         ex = mlines.Line2D([], [], linestyle='dotted',
                            label='Non-Tropical', color=prop['linecolor'])
         td = mlines.Line2D([], [], linestyle='solid',
                            label='Tropical', color=prop['linecolor'])
         handles = [ex, td]
         l = ax.legend(handles=handles, fontsize=11.5,
-                      prop={'size': 11.5}, loc=1)
+                      prop={'size': 11.5}, **kwargs)
         l.set_zorder(1001)
 
     # Custom colormap with dots
@@ -289,7 +298,7 @@ class TrackPlot(Plot):
 
         self.use_credit = True
 
-    def plot_storms(self, storms, domain="dynamic", title="TC Track Composite", plot_all_dots=False, track_labels=False, ax=None, save_path=None, prop={}, map_prop={}):
+    def plot_storms(self, storms, domain="dynamic", title="TC Track Composite", plot_all_dots=False, track_labels=False, ax=None, save_path=None, prop={}, map_prop={}, rain_args=None):
         r"""
         Creates a plot of a single or multiple storm tracks.
 
@@ -316,21 +325,18 @@ class TrackPlot(Plot):
         # Set default properties
         default_prop = {'dots': True, 'fillcolor': 'category', 'cmap': None, 'levels': None,
                         'linecolor': 'k', 'linewidth': 1.0, 'ms': 7.5, 'plot_names': False}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
 
         # --------------------------------------------------------------------------------------
 
         # Keep record of lat/lon coordinate extrema
-        max_lat = None
-        min_lat = None
-        max_lon = None
-        min_lon = None
+        max_lat = []
+        min_lat = []
+        max_lon = []
+        min_lon = []
 
         # Iterate through all storms provided
         for storm in storms:
@@ -379,33 +385,10 @@ class TrackPlot(Plot):
                 use_lons = np.copy(lons).tolist()
 
             # Add to coordinate extrema
-            if max_lat is None:
-                max_lat = max(use_lats)
-            else:
-                if max(use_lats) > max_lat:
-                    max_lat = max(use_lats)
-            if min_lat is None:
-                min_lat = min(use_lats)
-            else:
-                if min(use_lats) < min_lat:
-                    min_lat = min(use_lats)
-            if max_lon is None:
-                max_lon = max(use_lons)
-            else:
-                if max(use_lons) > max_lon:
-                    max_lon = max(use_lons)
-            if min_lon is None:
-                min_lon = min(use_lons)
-            else:
-                if min(use_lons) < min_lon:
-                    min_lon = min(use_lons)
-
-            # Add storm label at start and end points
-            if prop['plot_names']:
-                self.ax.text(lons[0] + 0.0, storm_data['lat'][0] + 1.0, f"{storm_data['name'].upper()} {storm_data['year']}",
-                             fontsize=9, clip_on=True, zorder=1000, alpha=0.7, ha='center', va='center', transform=ccrs.PlateCarree())
-                self.ax.text(lons[-1] + 0.0, storm_data['lat'][-1] + 1.0, f"{storm_data['name'].upper()} {storm_data['year']}",
-                             fontsize=9, clip_on=True, zorder=1000, alpha=0.7, ha='center', va='center', transform=ccrs.PlateCarree())
+            max_lat.append(max(use_lats))
+            min_lat.append(min(use_lats))
+            max_lon.append(max(use_lons))
+            min_lon.append(min(use_lons))
 
             # Iterate over storm data to plot
             levels = None
@@ -486,6 +469,69 @@ class TrackPlot(Plot):
                                  for t, x, y in zip(sdate, lons, lats)}
                     self.plot_track_labels(self.ax, labels, track, k=.9)
 
+        max_lat = max(max_lat)
+        min_lat = min(min_lat)
+        max_lon = max(max_lon)
+        min_lon = min(min_lon)
+        
+        # --------------------------------------------------------------------------------------
+        
+        # Plotting rain data
+        if rain_args is not None:
+
+            # Determine levels and colormap
+            if rain_args['levels'] is None:
+                rain_args['levels'] = [1, 2, 3, 4, 6, 8, 10, 12, 16, 20]
+            if rain_args['cmap'] is None:
+                rain_args['cmap'] = plt.cm.YlGn
+            norm = mcolors.BoundaryNorm(rain_args['levels'], rain_args['cmap'].N)
+
+            # Contour fill grid if requested
+            if rain_args['plot_grid']:
+                if isinstance(rain_args['grid'], dict):
+                    grid_lat = rain_args['grid']['lat']
+                    grid_lon = rain_args['grid']['lon']
+                    grid_val = rain_args['grid']['grid']
+                else:
+                    grid_lat = rain_args['grid'].lat.values
+                    grid_lon = rain_args['grid'].lon.values
+                    grid_val = rain_args['grid'].values
+                self.ax.contourf(grid_lon, grid_lat, grid_val, rain_args['levels'],
+                                 cmap=rain_args['cmap'], norm=norm, zorder=1,
+                                 transform=ccrs.PlateCarree())
+
+            # Plot dots if requested
+            else:
+                iter_df = rain_args['data'].sort_values('Total')
+                for _, row in iter_df.iterrows():
+
+                    # Retrieve rain total and determine color
+                    rain_value = row['Total']
+                    if rain_value < rain_args['minimum_threshold']:
+                        continue
+                    color = rgb_tuple_to_str(
+                        rain_args['cmap'](norm(rain_value), bytes=True)[:-1])
+
+                    # Specify additional kwargs
+                    ms_kwargs = {}
+                    if rain_args['mec'] is not None:
+                        ms_kwargs['mec'] = rain_args['mec']
+                    if rain_args['mew'] is not None:
+                        ms_kwargs['mew'] = rain_args['mew']
+                    self.ax.plot(row['Lon'], row['Lat'], 'o', ms=rain_args['ms'], zorder=1,
+                                 color=color, transform=ccrs.PlateCarree(), **ms_kwargs)
+
+            # Produce colorbar
+            cs = plt.cm.ScalarMappable(cmap=rain_args['cmap'], norm=norm)
+            cs.set_array([])
+            cbar = add_colorbar(cs, ax=self.ax)
+
+            # Keep record of lat/lon coordinate extrema
+            max_lat = np.nanmax(rain_args['data']['Lat'].values)
+            min_lat = np.nanmin(rain_args['data']['Lat'].values)
+            max_lon = np.nanmax(rain_args['data']['Lon'].values)
+            min_lon = np.nanmin(rain_args['data']['Lon'].values)
+        
         # --------------------------------------------------------------------------------------
 
         # Storm-centered plot domain
@@ -502,107 +548,102 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
+
+        # --------------------------------------------------------------------------------------
+        
+        def adjust_label(ax, lon, lat):
+            x1, y1 = self.ax.projection.transform_point(
+                lon, lat, ccrs.PlateCarree())
+            x2, y2 = self.ax.transData.transform((x1, y1))
+            x, y = self.ax.transAxes.inverted().transform((x2, y2))
+            return x, y
+        
+        def coordinate_in_plot(x, y):
+            if x <= 0 or x >= 1:
+                return False
+            if y <= 0 or y >= 1:
+                return False
+            return True
+
+        # Add storm label at start and end points
+        if prop['plot_names']:
+            for storm in storms:
+
+                # Check for storm type, then get data for storm
+                if isinstance(storm, str):
+                    storm_data = self.data[storm]
+                elif isinstance(storm, tuple):
+                    storm = self.get_storm_id(storm[0], storm[1])
+                    storm_data = self.data[storm]
+                else:
+                    storm_data = storm
+                
+                # Adjust longitudes
+                lats = storm_data['lat']
+                lons = storm_data['lon']
+                if self.proj.proj4_params['lon_0'] == 180.0:
+                    new_lons = np.array(lons)
+                    new_lons[new_lons < 0] = new_lons[new_lons < 0] + 360.0
+                    lons = new_lons.tolist()
+                    
+                # Adjust coordinates to axes relative
+                x1, y1 = adjust_label(self.ax, lons[0], lats[0])
+                x2, y2 = adjust_label(self.ax, lons[-1], lats[-1])
+                
+                # Fix if bounds are outside of plot
+                if not coordinate_in_plot(x1, y1) and not coordinate_in_plot(x2, y2):
+                    x1, y1, x2, y2 = [None, None, None, None]
+                    for i_lon, i_lat in zip(lons, lats):
+                        x, y = adjust_label(self.ax, i_lon, i_lat)
+                        if not coordinate_in_plot(x, y):
+                            continue
+                        if x1 is None:
+                            x1 = x + 0
+                            y1 = y + 0
+                        x2 = x + 0
+                        y2 = y + 0
+
+                display_label = f"{storm_data['name'].upper()} {storm_data['year']}"
+                self.ax.text(x1, y1+0.015, display_label, transform=self.ax.transAxes, fontsize=9,
+                    clip_on=True, alpha=0.7, zorder=990, ha='center', va='bottom')
+                self.ax.text(x2, y2+0.015, display_label, transform=self.ax.transAxes, fontsize=9,
+                    clip_on=True, alpha=0.7, zorder=990, ha='center', va='bottom')
+                
+                """self.ax.text(lons[0] + 0.0, storm_data['lat'][0] + 1.0, f"{storm_data['name'].upper()} {storm_data['year']}",
+                             fontsize=9, clip_on=True, zorder=1000, alpha=0.7, ha='center', va='center', transform=ccrs.PlateCarree())
+                self.ax.text(lons[-1] + 0.0, storm_data['lat'][-1] + 1.0, f"{storm_data['name'].upper()} {storm_data['year']}",
+                             fontsize=9, clip_on=True, zorder=1000, alpha=0.7, ha='center', va='center', transform=ccrs.PlateCarree())"""
 
         # --------------------------------------------------------------------------------------
 
+        # Add title text for rain data
+        add_title_text = ""
+        if rain_args is not None:
+            add_title_text = "\nWPC Storm Rainfall (inch)"
+            credit_text = "Rainfall data (inch) from\nWeather Prediction Center (WPC)\n\n"
+            self.ax.text(0.99, 0.01, credit_text, fontsize=9, color='k', alpha=0.7,
+                         transform=self.ax.transAxes, ha='right', va='bottom', zorder=10)
+        
         # Add left title
         if len(storms) > 1:
             if title != "":
-                self.ax.set_title(f"{title}", loc='left',
+                self.ax.set_title(f"{title}{add_title_text}", loc='left',
                                   fontsize=17, fontweight='bold')
         else:
-            # Add left title
-            type_array = np.array(storm_data['type'])
-            idx = np.where((type_array == 'SD') | (type_array == 'SS') | (type_array == 'TD') | (
-                type_array == 'TS') | (type_array == 'HU') | (type_array == 'TY') | (type_array == 'ST'))
+            # Left title
+            title_data = self.format_storm_title(storm_data)
+            self.ax.set_title(f"{title_data['name']}{add_title_text}", loc='left', fontsize=17, fontweight='bold')
 
-            # Check if storm is an invest with a leading 9
-            add_ptc_flag = False
-            check_invest = False
-            if len(storm_data['id']) > 4 and str(storm_data['id'][2]) == "9":
-                check_invest = True
-
-            if len(storm_data['id']) == 0 and len(idx[0]) == 0:
-                idx = np.array([True for i in type_array])
-                tropical_vmax = np.array(storm_data['vmax'])
-                self.ax.set_title(
-                    f"Cyclone {storm_data['name']}", loc='left', fontsize=17, fontweight='bold')
-            elif not check_invest and (invest_bool == False or len(idx[0]) > 0):
-                tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-                # Coerce to include non-TC points if storm hasn't been designated yet
-                if len(tropical_vmax) == 0 and len(storm_data['id']) > 4:
-                    add_ptc_flag = True
-                    idx = np.where((type_array == 'LO') | (type_array == 'DB'))
-                    tropical_vmax = np.array(storm_data['vmax'])[idx]
-
-                if all_nan(tropical_vmax):
-                    storm_type = 'Tropical Cyclone'
-                else:
-                    subtrop = classify_subtropical(
-                        np.array(storm_data['type']))
-                    peak_idx = storm_data['vmax'].index(
-                        np.nanmax(tropical_vmax))
-                    peak_basin = storm_data['wmo_basin'][peak_idx]
-                    storm_type = get_storm_classification(
-                        np.nanmax(tropical_vmax), subtrop, peak_basin)
-                    if add_ptc_flag:
-                        storm_type = "Potential Tropical Cyclone"
-                self.ax.set_title(
-                    f"{storm_type} {storm_data['name']}", loc='left', fontsize=17, fontweight='bold')
-            else:
-                # Use all indices for invests
-                idx = np.array([True for i in type_array])
-                tropical_vmax = np.array(storm_data['vmax'])
-
-                # Determine letter in front of invest
-                add_letter = 'L'
-                if storm_data['id'][0] == 'C':
-                    add_letter = 'C'
-                elif storm_data['id'][0] == 'E':
-                    add_letter = 'E'
-                elif storm_data['id'][0] == 'W':
-                    add_letter = 'W'
-                elif storm_data['id'][0] == 'I':
-                    add_letter = 'I'
-                elif storm_data['id'][0] == 'S':
-                    add_letter = 'S'
-
-                # Add title
-                self.ax.set_title(
-                    f"INVEST {storm_data['id'][2:4]}{add_letter}", loc='left', fontsize=17, fontweight='bold')
-
-            # Add right title
-            ace = storm_data['ace']
-            if add_ptc_flag:
-                ace = 0.0
-            type_array = np.array(storm_data['type'])
-
-            # Get storm extrema for display
-            mslp_key = 'mslp' if 'wmo_mslp' not in storm_data.keys() else 'wmo_mslp'
-            if all_nan(np.array(storm_data[mslp_key])[idx]):
-                min_pres = "N/A"
-            else:
-                min_pres = int(np.nan_to_num(
-                    np.nanmin(np.array(storm_data[mslp_key])[idx])))
-            if all_nan(np.array(storm_data['vmax'])[idx]):
-                max_wind = "N/A"
-            else:
-                max_wind = int(np.nan_to_num(
-                    np.nanmax(np.array(storm_data['vmax'])[idx])))
-            start_time = dt.strftime(
-                np.array(storm_data['time'])[idx][0], '%d %b %Y')
-            end_time = dt.strftime(np.array(storm_data['time'])[
-                                   idx][-1], '%d %b %Y')
+            # Right title
             endash = u"\u2013"
             dot = u"\u2022"
-            self.ax.set_title(
-                f"{start_time} {endash} {end_time}\n{max_wind} kt {dot} {min_pres} hPa {dot} {ace:.1f} ACE", loc='right', fontsize=13)
+            line1 = f"{title_data['start_time']} {endash} {title_data['end_time']}"
+            line2 = f"{title_data['vmax']} kt {dot} {title_data['mslp']} hPa {dot} {title_data['ace']:.1f} ACE"
+            self.ax.set_title(f"{line1}\n{line2}", loc='right', fontsize=13)
 
         # --------------------------------------------------------------------------------------
 
@@ -620,8 +661,11 @@ class TrackPlot(Plot):
         # --------------------------------------------------------------------------------------
 
         # Add legend
+        autoselect_loc = False
+        if rain_args is not None:
+            autoselect_loc = True
         self.ax, self.fig = add_legend(
-            self.ax, self.fig, prop, segmented_colors, levels, cmap, storm_data)
+            self.ax, self.fig, prop, segmented_colors, levels, cmap, storm_data, autoselect_loc)
 
         # -----------------------------------------------------------------------------------------
 
@@ -665,14 +709,12 @@ class TrackPlot(Plot):
 
         # Set default properties
         default_prop = {'dots': True, 'fillcolor': 'category', 'linecolor': 'k',
-                        'linewidth': 1.0, 'ms': 7.5, 'cone_lw': 1.0, 'cone_alpha': 0.6}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
+                        'linewidth': 1.0, 'ms': 7.5, 'cone_lw': 2.0, 'cone_alpha': 0.6, 'cone_res': 0.05}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
+        time_zone_warning = ''
 
         # --------------------------------------------------------------------------------------
 
@@ -773,13 +815,17 @@ class TrackPlot(Plot):
                 if prop['linecolor'] == 'category':
                     type6 = np.array(styp)
                     for i in (np.arange(len(lats[1:])) + 1):
-                        ltype = 'solid'
+                        line_type = 'solid'
                         if type6[i] not in constants.TROPICAL_STORM_TYPES:
-                            ltype = 'dotted'
-                        self.ax.plot([lons[i - 1], lons[i]], [lats[i - 1], lats[i]],
-                                     '-', color=get_colors_sshws(np.nan_to_num(vmax[i])), linewidth=prop['linewidth'], linestyle=ltype,
-                                     transform=ccrs.PlateCarree(),
-                                     path_effects=[path_effects.Stroke(linewidth=prop['linewidth'] * 1.25, foreground='k'), path_effects.Normal()])
+                            line_type = 'dotted'
+                        add_effect = [path_effects.Stroke(linewidth=prop['linewidth'] * 1.25, foreground='k'),
+                                      path_effects.Normal()]
+                        self.ax.plot([lons[i - 1], lons[i]], [lats[i - 1], lats[i]], '-',
+                                     color = get_colors_sshws(np.nan_to_num(vmax[i])),
+                                     linewidth = prop['linewidth'],
+                                     linestyle = line_type,
+                                     transform = ccrs.PlateCarree(),
+                                     path_effects = add_effect)
                 else:
                     self.ax.plot(
                         lons, lats, '-', color=prop['linecolor'], linewidth=prop['linewidth'], transform=ccrs.PlateCarree())
@@ -827,13 +873,13 @@ class TrackPlot(Plot):
             dateline = False
             if self.proj.proj4_params['lon_0'] == 180.0:
                 dateline = True
-            cone = generate_nhc_cone(forecast, forecast['basin'], dateline, cone_days)
+            cone = generate_nhc_cone(forecast,forecast['basin'], dateline,
+                                     cone_days, grid_res=prop['cone_res'])
 
             # Contour fill cone & account for dateline crossing
-            cone_lon = cone['lon']
-            cone_lat = cone['lat']
             if 'cone' in forecast.keys() and not forecast['cone']:
-                pass
+                self.ax.plot(cone['center_lon'], cone['center_lat'], linewidth=2.0, color='k', zorder=3,
+                             transform=ccrs.PlateCarree())
             else:
                 if self.proj.proj4_params['lon_0'] == 180.0:
                     new_lons = np.array(cone['lon2d'])
@@ -842,7 +888,8 @@ class TrackPlot(Plot):
                     center_lon = np.array(cone['center_lon'])
                     center_lon[center_lon < 0] = center_lon[center_lon < 0] + 360.0
                     cone['center_lon'] = center_lon
-                plot_cone(self.ax, cone, plot_center_line=True, center_linewidth=2.0, zorder=3)
+                plot_cone(self.ax, cone, plot_center_line=True, center_linewidth=prop['cone_lw'],
+                          zorder=3, alpha=prop['cone_alpha'])
 
             # Retrieve forecast dots
             iter_hr = np.array(forecast['fhr'])[
@@ -883,8 +930,25 @@ class TrackPlot(Plot):
                              ms=prop['ms'] * 1.3, transform=ccrs.PlateCarree(), zorder=use_zorder)
 
             # Label forecast dots
-            if track_labels in ['fhr', 'valid_utc', 'valid_edt', 'fhr_wind_kt', 'fhr_wind_mph']:
-                valid_dates = [forecast['init'] +
+            time_zones = {
+                'ADT': -3,
+                'AST': -4,
+                'EDT': -4,
+                'EST': -5,
+                'CDT': -5,
+                'CST': -6,
+                'MDT': -6,
+                'MST': -7,
+                'PDT': -7,
+                'PST': -8,
+                'HDT': -9,
+                'HST': -10
+            }
+            available_labels = ['fhr', 'fhr_wind_kt', 'fhr_wind_mph', 'valid_utc']
+            available_labels += [f'valid_{i.lower()}' for i in time_zones.keys()]
+            track_labels = track_labels.lower()
+            if track_labels in available_labels:
+                valid_times = [forecast['init'] +
                                timedelta(hours=int(i)) for i in iter_hr]
                 if track_labels == 'fhr':
                     labels = [str(i) for i in iter_hr]
@@ -894,18 +958,21 @@ class TrackPlot(Plot):
                 if track_labels == 'fhr_wind_mph':
                     labels = [f"Hour {iter_hr[i]}\n{knots_to_mph(fcst_vmax[i])} mph" for i in range(
                         len(iter_hr))]
-                if track_labels == 'valid_edt':
-                    labels = [str(int(i.strftime('%I'))) + ' ' + i.strftime('%p %a')
-                              for i in [j - timedelta(hours=4) for j in valid_dates]]
-                    edt_warning = True
+                if track_labels[:6] == 'valid_' and track_labels[6:].upper() in time_zones:
+                    adjust = time_zones.get(track_labels[6:].upper())
+                    labels = [f"{int(i.strftime('%I'))} {i.strftime('%p %a')}"
+                              for i in [j + timedelta(hours=adjust) for j in valid_times]]
+                    time_zone_warning = track_labels[6:].upper()
                 if track_labels == 'valid_utc':
                     labels = [
-                        f"{i.strftime('%H UTC')}\n{str(i.month)}/{str(i.day)}" for i in valid_dates]
+                        f"{i.strftime('%H UTC')}\n{str(i.month)}/{str(i.day)}" for i in valid_times]
                 self.plot_nhc_labels(
                     self.ax, fcst_lon, fcst_lat, labels, k=1.2)
 
             # Add cone coordinates to coordinate extrema
             if 'cone' in forecast.keys() and not forecast['cone']:
+                center_lon = cone['center_lon']
+                center_lat = cone['center_lat']
                 if domain == "dynamic_forecast" or max_lat is None:
                     max_lat = max(center_lat)
                     min_lat = min(center_lat)
@@ -921,6 +988,8 @@ class TrackPlot(Plot):
                     if min(center_lon) < min_lon:
                         min_lon = min(center_lon)
             else:
+                cone_lon = cone['lon']
+                cone_lat = cone['lat']
                 if domain == "dynamic_forecast" or max_lat is None:
                     max_lat = max(cone_lat)
                     min_lat = min(cone_lat)
@@ -952,11 +1021,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -1075,12 +1143,9 @@ class TrackPlot(Plot):
                            c1, c2, c3, c4, c5], prop={'size': 11.5})
 
         # Add forecast label warning
-        try:
-            if edt_warning:
-                warning_text = "All times displayed are in EDT\n\n"
-            else:
-                warning_text = ""
-        except:
+        if time_zone_warning != '':
+                warning_text = f"All times displayed are in {time_zone_warning}\n\n"
+        else:
             warning_text = ""
         try:
             warning_text += f"The cone of uncertainty in this product was generated internally using {cone['year']} official\nNHC cone radii. This cone differs slightly from the official NHC cone.\n\n"
@@ -1095,8 +1160,7 @@ class TrackPlot(Plot):
 
         # Save image if specified
         if save_path is not None and isinstance(save_path, str):
-            plt.savefig(os.path.join(
-                save_path, f"{storm_data['name']}_{storm_data['year']}_track.png"), bbox_inches='tight')
+            plt.savefig(save_path, bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure
         return self.ax
@@ -1107,8 +1171,6 @@ class TrackPlot(Plot):
         """
 
         # Set default properties
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
         default_model = {'nhc': 'k',
                          'gfs': '#0000ff',
                          'ecm': '#ff1493',
@@ -1123,7 +1185,6 @@ class TrackPlot(Plot):
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         model_prop = self.add_prop(models, default_model)
         self.plot_init(ax, map_prop)
 
@@ -1145,6 +1206,7 @@ class TrackPlot(Plot):
 
         # Plot models
         for model in forecast_dict.keys():
+            if model_prop[model] is None: continue
 
             # Fix label for HAFS
             if 'hafs' in model:
@@ -1277,11 +1339,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -1290,7 +1351,7 @@ class TrackPlot(Plot):
 
         # Save image if specified
         if save_path is not None and isinstance(save_path, str):
-            plt.savefig(os.path.join(save_path), bbox_inches='tight')
+            plt.savefig(save_path, bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure
         return self.ax
@@ -1302,8 +1363,6 @@ class TrackPlot(Plot):
         """
 
         # Set default properties
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
         default_prop_ensemble_members = {'plot': True, 'linewidth': 0.2,
                                          'linecolor': 'k', 'color_var': None, 'cmap': None, 'levels': None}
         default_prop_ensemble_mean = {
@@ -1316,7 +1375,6 @@ class TrackPlot(Plot):
             1] + [i for i in range(10, 101, 10)]}
 
         # Initialize plot
-        map_prop = self.add_prop(map_prop, default_map_prop)
         prop_ensemble_members = self.add_prop(
             prop_ensemble_members, default_prop_ensemble_members)
         prop_ensemble_mean = self.add_prop(
@@ -1775,11 +1833,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -1788,7 +1845,7 @@ class TrackPlot(Plot):
 
         # Save image if specified
         if save_path is not None and isinstance(save_path, str):
-            plt.savefig(os.path.join(save_path), bbox_inches='tight')
+            plt.savefig(save_path, bbox_inches='tight')
 
         # Return axis if specified, otherwise display figure
         return self.ax
@@ -1812,12 +1869,9 @@ class TrackPlot(Plot):
         # Set default properties
         default_prop = {'dots': False, 'fillcolor': 'category', 'cmap': None, 'levels': None,
                         'linecolor': 'category', 'linewidth': 1.0, 'ms': 7.5, 'plot_names': True}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
 
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
 
         # --------------------------------------------------------------------------------------
@@ -1958,11 +2012,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 
@@ -2114,230 +2167,8 @@ class TrackPlot(Plot):
                                              color='k'),
                              transform=ccrs.PlateCarree(), clip_on=True)
 
-    def plot_gridded(self, xcoord, ycoord, zcoord, varname='type', VEC_FLAG=False, domain="north_atlantic", ax=None, prop={}, map_prop={}):
-        r"""
-        Creates a plot of a single storm track.
-
-        Parameters
-        ----------
-        storm : str, tuple or dict
-            Requested storm. Can be either string of storm ID (e.g., "AL052019"), tuple with storm name and year (e.g., ("Matthew",2016)), or a dict entry.
-        domain : str
-            Domain for the plot. Default is TrackDataset basin. Can be one of the following:
-            "north_atlantic" - North Atlantic Ocean basin
-            "pacific" - East/Central Pacific Ocean basin
-            "lonW/lonE/latS/latN" - Custom plot domain
-        plot_all_dots : bool
-            Whether to plot dots for all observations along the track. If false, dots will be plotted every 6 hours. Default is false.
-        ax : axes
-            Instance of axes to plot on. If none, one will be generated. Default is none.
-        prop : dict
-            Property of storm track lines.
-        map_prop : dict
-            Property of cartopy map.
-        """
-
-        # Set default properties
-        default_prop = {'cmap': 'category', 'levels': None,
-                        'left_title': '', 'right_title': 'All storms',
-                        'plot_values': False, 'values_size': None}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
-
-        # Initialize plot
-        prop = self.add_prop(prop, default_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
-        self.plot_init(ax, map_prop)
-
-        # Determine if contour levels are automatically generated
-        auto_levels = True if prop['levels'] is None or prop['levels'] == [
-        ] else False
-
-        # Plot domain
-        bound_w, bound_e, bound_s, bound_n = self.set_projection(domain)
-
-        # Plot parallels and meridians
-        # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
-
-        # --------------------------------------------------------------------------------------
-
-        if VEC_FLAG:
-            vecmag = np.hypot(*zcoord)
-            if prop['levels'] is None:
-                prop['levels'] = (np.nanmin(vecmag), np.nanmax(vecmag))
-        elif prop['levels'] is None:
-            prop['levels'] = (np.nanmin(zcoord), np.nanmax(zcoord))
-        cmap, clevs = get_cmap_levels(varname, prop['cmap'], prop['levels'])
-
-        # Generate contourf levels
-        if len(clevs) == 2:
-            y0 = min(clevs)
-            y1 = max(clevs)
-            dy = (y1 - y0) / 8
-            scalemag = int(np.log(dy) / np.log(10))
-            dy_scaled = dy * 10**-scalemag
-            dc = min([1, 2, 5, 10], key=lambda x: abs(x - dy_scaled))
-            c0 = np.ceil(y0 / dc * 10**-scalemag) * dc * 10**scalemag
-            c1 = np.floor(y1 / dc * 10**-scalemag) * dc * 10**scalemag
-            clevs = np.arange(c0, c1 + dc, dc)
-
-        if varname == 'vmax' and prop['cmap'] == 'category':
-            vmin = min(clevs)
-            vmax = max(clevs)
-        else:
-            vmin = min(prop['levels'])
-            vmax = max(prop['levels'])
-
-        # For difference/change plots with automatically generated contour levels, ensure that 0 is in the middle
-        if auto_levels:
-            if varname in ['dvmax_dt', 'dmslp_dt'] or '\n' in prop['title_R']:
-                max_val = np.max([np.abs(vmin), vmax])
-                vmin = np.round(max_val * -1.0, 2)
-                vmax = np.round(max_val * 1.0, 2)
-                clevs = [vmin, np.round(vmin * 0.5, 2),
-                         0, np.round(vmax * 0.5, 2), vmax]
-
-        if len(xcoord.shape) and len(ycoord.shape) == 1:
-            xcoord, ycoord = np.meshgrid(xcoord, ycoord)
-
-        if VEC_FLAG:
-            binsize = abs(xcoord[0, 0] - xcoord[0, 1])
-            cbmap = self.ax.pcolor(xcoord, ycoord, vecmag[:-1, :-1], cmap=cmap, vmin=min(clevs), vmax=max(clevs),
-                                   transform=ccrs.PlateCarree())
-            zcoord = zcoord / vecmag * binsize
-            x_center = (xcoord[:-1, :-1] + xcoord[1:, 1:]) * .5
-            y_center = (ycoord[:-1, :-1] + ycoord[1:, 1:]) * .5
-            u = zcoord[0][:-1, :-1]
-            v = zcoord[1][:-1, :-1]
-            if not prop['plot_values']:
-                self.ax.quiver(x_center, y_center, u, v, color='w', alpha=0.6, transform=ccrs.PlateCarree(),
-                               pivot='mid', width=.001 * binsize, headwidth=3.5, headlength=4.5, headaxislength=4)
-            zcoord = vecmag
-
-        else:
-            print('--> Generating plot')
-            # if varname=='date' and prop['smooth'] is not None:
-            #    zcoord[np.isnan(zcoord)]=0
-            #    zcoord=gfilt(zcoord,sigma=prop['smooth'])
-            #    zcoord[zcoord<min(clevs)]=np.nan
-
-            if prop['cmap'] == 'category' and varname == 'vmax':
-                norm = mcolors.BoundaryNorm(clevs, cmap.N)
-                cbmap = self.ax.pcolor(xcoord, ycoord, zcoord[:-1, :-1], cmap=cmap, norm=norm,
-                                       transform=ccrs.PlateCarree())
-            else:
-                norm = mcolors.Normalize(vmin=vmin, vmax=vmax)
-                cbmap = self.ax.pcolor(xcoord, ycoord, zcoord[:-1, :-1], cmap=cmap, norm=norm,
-                                       transform=ccrs.PlateCarree())
-        if prop['plot_values']:
-            binsize = abs(xcoord[0, 0] - xcoord[0, 1])
-            x_center = (xcoord[:-1, :-1] + xcoord[1:, 1:]) * .5
-            y_center = (ycoord[:-1, :-1] + ycoord[1:, 1:]) * .5
-            xs = x_center.flatten(order='C')
-            ys = y_center.flatten(order='C')
-            zs = zcoord[:-1, :-1].flatten(order='C')
-            if prop['values_size'] is None:
-                fs = binsize * 4
-            else:
-                fs = prop['values_size']
-            for xtext, ytext, ztext in zip(xs, ys, zs):
-                if not np.isnan(ztext) and xtext % 360 > bound_w % 360 and xtext % 360 < bound_e % 360 and\
-                        ytext > bound_s and ytext < bound_n:
-                    square_color = cmap(norm(ztext))
-                    square_brightness = np.mean(
-                        square_color[:3]) * square_color[3]
-                    text_color = 'k' if square_brightness > 0.5 else 'w'
-                    self.ax.text(xtext, ytext, ztext.astype(int), ha='center', va='center', fontsize=fs,
-                                 color=text_color, alpha=0.8, transform=ccrs.PlateCarree(), zorder=2)
-
-        # --------------------------------------------------------------------------------------
-
-        # Phantom legend
-        handles = []
-        for _ in range(10):
-            handles.append(mlines.Line2D(
-                [], [], linestyle='-', label='', lw=0))
-        l = self.ax.legend(handles=handles, loc='upper left',
-                           fancybox=True, framealpha=0, fontsize=11.5)
-        plt.draw()
-
-        # Get the bbox
-        try:
-            bb = l.legendPatch.get_bbox().inverse_transformed(self.fig.transFigure)
-        except:
-            bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
-        bb_ax = self.ax.get_position()
-
-        # Define colorbar axis
-        cax = self.fig.add_axes(
-            [bb.x0 + 1.2 * bb.width, bb.y0 - .05 * bb.height, 0.015, bb.height])
-#        cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
-        cbar = self.fig.colorbar(cbmap, cax=cax, orientation='vertical',
-                                 ticks=clevs)
-
-        """
-        if len(prop['levels'])>2:
-            cax.yaxis.set_ticks(np.linspace(min(clevs),max(clevs),len(clevs)))
-            cax.yaxis.set_ticks(np.linspace(0,1,len(clevs)))
-            cax.yaxis.set_ticklabels(clevs)
-        else:
-            cax.yaxis.set_ticks(clevs)
-        """
-        cax.tick_params(labelsize=11.5)
-        cax.yaxis.set_ticks_position('left')
-
-        rect_offset = 0.0
-        if prop['cmap'] == 'category' and varname == 'vmax':
-            cax.yaxis.set_ticks(np.linspace(
-                min(clevs), max(clevs), len(clevs)))
-            cax.yaxis.set_ticklabels(clevs)
-            cax2 = cax.twinx()
-            cax2.yaxis.set_ticks_position('right')
-            cax2.yaxis.set_ticks((np.linspace(0, 1, len(clevs))[
-                                 :-1] + np.linspace(0, 1, len(clevs))[1:]) * .5)
-            cax2.set_yticklabels(
-                ['TD', 'TS', 'Cat-1', 'Cat-2', 'Cat-3', 'Cat-4', 'Cat-5'], fontsize=11.5)
-            cax2.tick_params('both', length=0, width=0, which='major')
-            cax.yaxis.set_ticks_position('left')
-
-            rect_offset = 0.7
-        if varname == 'date':
-            cax.set_yticklabels(
-                [f'{mdates.num2date(i):%b %-d}' for i in clevs], fontsize=11.5)
-
-        rectangle = mpatches.Rectangle((bb.x0, bb.y0 - 0.1 * bb.height), (2 + rect_offset) * bb.width, 1.1 * bb.height,
-                                       fc='w', edgecolor='0.8', alpha=0.8,
-                                       transform=self.fig.transFigure, zorder=3)
-        self.ax.add_patch(rectangle)
-
-        # --------------------------------------------------------------------------------------
-
-        # Add left title
-        try:
-            self.ax.set_title(prop['title_L'], loc='left',
-                              fontsize=17, fontweight='bold')
-        except:
-            pass
-
-        # Add right title
-        try:
-            self.ax.set_title(prop['title_R'], loc='right', fontsize=15)
-        except:
-            pass
-
-        # --------------------------------------------------------------------------------------
-
-        # Add plot credit
-        text = self.plot_credit()
-        self.add_credit(text)
-
-        # Return axis if specified, otherwise display figure
-        return self.ax
+    def plot_gridded_wrapper(self, *args, **kwargs):
+        return self.plot_gridded(*args, **kwargs)
 
     def plot_summary(self, storms, forecasts, shapefiles, valid_date, domain, ax=None, save_path=None, two_prop={}, invest_prop={}, storm_prop={}, cone_prop={}, map_prop={}):
         r"""
@@ -2352,17 +2183,16 @@ class TrackPlot(Plot):
                               'linestyle': 'dotted', 'fillcolor': 'category', 'label_category': True, 'ms': 14}
         default_cone_prop = {'plot': True, 'linewidth': 1.5, 'linecolor': 'k', 'alpha': 0.6,
                              'days': 5, 'fillcolor': 'category', 'label_category': True, 'ms': 12}
-        default_map_prop = {'res': 'm', 'land_color': '#FBF5EA', 'ocean_color': '#EDFBFF',
-                            'linewidth': 0.5, 'linecolor': 'k', 'figsize': (14, 9), 'dpi': 200, 'plot_gridlines': True}
-        if domain == 'all':
-            default_map_prop['res'] = 'l'
+
+        # Set global grid to low resolution by default
+        if 'res' not in map_prop.keys():
+            map_prop['res'] = 'l'
 
         # Initialize plot
         two_prop = self.add_prop(two_prop, default_two_prop)
         invest_prop = self.add_prop(invest_prop, default_invest_prop)
         storm_prop = self.add_prop(storm_prop, default_storm_prop)
         cone_prop = self.add_prop(cone_prop, default_cone_prop)
-        map_prop = self.add_prop(map_prop, default_map_prop)
         self.plot_init(ax, map_prop)
 
         # Plot domain
@@ -2678,11 +2508,10 @@ class TrackPlot(Plot):
 
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
-        if map_prop['plot_gridlines']:
-            try:
-                self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n])
-            except:
-                pass
+        try:
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+        except:
+            pass
 
         # --------------------------------------------------------------------------------------
 

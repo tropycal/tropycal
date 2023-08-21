@@ -596,7 +596,6 @@ class TrackPlot(Plot):
                 
                 # Fix if bounds are outside of plot
                 if not coordinate_in_plot(x1, y1) and not coordinate_in_plot(x2, y2):
-                    print(storm_data['name'])
                     x1, y1, x2, y2 = [None, None, None, None]
                     for i_lon, i_lat in zip(lons, lats):
                         x, y = adjust_label(self.ax, i_lon, i_lat)

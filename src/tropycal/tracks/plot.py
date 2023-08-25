@@ -2176,7 +2176,7 @@ class TrackPlot(Plot):
         """
 
         # Set default properties
-        default_two_prop = {'plot': True, 'fontsize': 12, 'days': 7, 'ms': 15}
+        default_two_prop = {'plot': True, 'fontsize': 12, 'days': 7, 'ms': 15, 'label_name': True}
         default_invest_prop = {'plot': True, 'fontsize': 12,
                                'linewidth': 0.8, 'linecolor': 'k', 'linestyle': 'dotted', 'ms': 14}
         default_storm_prop = {'plot': True, 'fontsize': 12, 'linewidth': 0.8, 'linecolor': 'k',
@@ -2319,6 +2319,16 @@ class TrackPlot(Plot):
                         text = prob_5day
                     self.ax.plot(lon, lat, 'X', ms=two_prop['ms'], color=color, mec='k', mew=1.5 * (
                         two_prop['ms'] / 15.0), transform=ccrs.PlateCarree(), zorder=20)
+                    
+                    # Add storm/invest name if applicable
+                    if two_prop['label_name']:
+                        results = {}
+                        for storm_idx, storm in enumerate(storms):
+                            if storm.realtime and storm.prob_2day != 'N/A':
+                                dist = great_circle((storm.lat[-1], storm.lon[-1]), (lat, lon)).kilometers
+                                results[dist] = storm.name.title()
+                        if len(results) > 0 and min(results.keys()) < 400:
+                            text = f'{results[min(results.keys())]}\n{text}'
 
                     # Transform coordinates for label
                     x1, y1 = self.ax.projection.transform_point(

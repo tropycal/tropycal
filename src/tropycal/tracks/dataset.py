@@ -4434,8 +4434,6 @@ class TrackDataset:
              - Font size for text label. Default is 12.
            * - ms
              - Marker size for area location, if applicable. Default is 15.
-           * - label_name
-             - Label invest or storm name, if applicable. Default is True.
 
         The following properties are available for plotting storms, via ``storm_prop``.
 

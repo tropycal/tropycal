@@ -1116,7 +1116,7 @@ class Storm:
                 raise ValueError("No models are available for this storm.")
             inits = [dt.strptime(
                 [k for k in self.forecast_dict[key]][-1], '%Y%m%d%H') for key in check_keys]
-            forecast = min(inits)
+            forecast = max(inits)
 
         # Error check forecast time
         if forecast < self.time[0] or forecast > self.time[-1]:

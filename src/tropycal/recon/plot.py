@@ -135,8 +135,20 @@ class ReconPlot(Plot):
                 by=prop['sortby'], ascending=prop['ascending']).reset_index(drop=True)
             if radlim is not None:
                 dataSort = dataSort.loc[dataSort['distance'] <= radlim]
-            cbmap = plt.scatter(dataSort['lon'], dataSort['lat'], c=dataSort[varname],
-                                cmap=cmap, vmin=vmin, vmax=vmax, s=prop['ms'], marker=prop['marker'], zorder=prop['zorder'])
+            if prop['cmap'] in ['category', 'category_recon']:
+                if prop['cmap'] == 'category':
+                    colors = [get_colors_sshws(i) for i in dataSort[varname]]
+                else:
+                    colors = [get_colors_sshws_recon(i) for i in dataSort[varname]]
+                cbmap = plt.scatter(dataSort['lon'], dataSort['lat'], c=colors,
+                                    s=prop['ms'], marker=prop['marker'], zorder=prop['zorder'])
+                norm = mlib.colors.Normalize(vmin=vmin, vmax=vmax)
+                cbmap = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+                cbmap.set_array([])
+            else:
+                cbmap = plt.scatter(dataSort['lon'], dataSort['lat'], c=dataSort[varname],
+                                    cmap=cmap, vmin=vmin, vmax=vmax, s=prop['ms'],
+                                    marker=prop['marker'], zorder=prop['zorder'])
 
         # Plot latest point if from a Mission object
         if mission:

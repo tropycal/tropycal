@@ -1462,7 +1462,7 @@ class hdobs:
         ax = plt.subplot()
 
         # Plot surface category colors individually, necessitating normalizing colormap
-        if varname in ['vmax', 'sfmr', 'wspd', 'fl_to_sfc'] and prop['cmap'] in ['category', 'category_recon']:
+        if varname in ['vmax', 'sfmr', 'wspd', 'pkwnd', 'fl_to_sfc'] and prop['cmap'] in ['category', 'category_recon']:
             norm = mcolors.BoundaryNorm(clevs, cmap.N)
             cf = ax.contourf(radius, time, gfilt1d(vardata, sigma=3, axis=1),
                              levels=clevs, cmap=cmap, norm=norm)

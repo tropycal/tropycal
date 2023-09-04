@@ -329,6 +329,7 @@ class TrackPlot(Plot):
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
         self.plot_init(ax, map_prop)
+        gridline_args = {}
 
         # --------------------------------------------------------------------------------------
 
@@ -485,6 +486,7 @@ class TrackPlot(Plot):
             if rain_args['cmap'] is None:
                 rain_args['cmap'] = plt.cm.YlGn
             norm = mcolors.BoundaryNorm(rain_args['levels'], rain_args['cmap'].N)
+            gridline_args = {'zorder': 10}
 
             # Contour fill grid if requested
             if rain_args['plot_grid']:
@@ -549,7 +551,7 @@ class TrackPlot(Plot):
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
         try:
-            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True, **gridline_args)
         except:
             pass
 

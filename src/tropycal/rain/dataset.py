@@ -70,7 +70,8 @@ class RainDataset():
         # Remove NaN entries
         df_storm = df_storm.loc[~np.isnan(df_storm['Lat']) & ~np.isnan(
             df_storm['Lon']) & ~np.isnan(df_storm['Total'])]
-        df_storm = df_storm.loc[(df_storm['Lat'] != 0) & (df_storm['Lon'] != 0)]
+        df_storm = df_storm.loc[(df_storm['Lat'] > 0) & (df_storm['Lat'] < 90)]
+        df_storm = df_storm.loc[(df_storm['Lon'] > -180) & (df_storm['Lon'] < 0)]
 
         # Check if data is empty
         if len(df_storm) == 0:

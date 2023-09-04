@@ -513,6 +513,7 @@ class PseudoStorm():
     def __init__(self):
 
         self.dict = {
+            'id': '',
             'type': ['TS'],
             'vmax': [50],
             'wmo_basin': 'north_atlantic',

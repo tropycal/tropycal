@@ -123,11 +123,22 @@ class ReconPlot(Plot):
             dataSort = dataSort.dropna(subset=[prop['sortby']])
             if radlim is not None:
                 dataSort = dataSort.loc[dataSort['distance'] <= radlim]
-            norm = mlib.colors.Normalize(vmin=vmin, vmax=vmax)
-            colors = cmap(norm(dataSort[prop['sortby']].values))
-            colors = [tuple(i) for i in colors]
-            qv = plt.barbs(dataSort['lon'], dataSort['lat'],
-                           *uv_from_wdir(dataSort[prop['sortby']], dataSort['wdir']), color=colors, length=5, linewidth=0.5)
+            if prop['cmap'] in ['category', 'category_recon']:
+                if prop['cmap'] == 'category':
+                    colors = [get_colors_sshws(i) for i in dataSort[varname]]
+                else:
+                    colors = [get_colors_sshws_recon(i) for i in dataSort[varname]]
+                norm = mlib.colors.Normalize(vmin=vmin, vmax=vmax)
+                qv = plt.barbs(dataSort['lon'], dataSort['lat'],
+                               *uv_from_wdir(dataSort[prop['sortby']], dataSort['wdir']),
+                               color=colors, length=5, linewidth=0.5)
+            else:
+                norm = mlib.colors.Normalize(vmin=vmin, vmax=vmax)
+                colors = cmap(norm(dataSort[prop['sortby']].values))
+                colors = [tuple(i) for i in colors]
+                qv = plt.barbs(dataSort['lon'], dataSort['lat'],
+                               *uv_from_wdir(dataSort[prop['sortby']], dataSort['wdir']),
+                               color=colors, length=5, linewidth=0.5)
             cbmap = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
             cbmap.set_array([])
 

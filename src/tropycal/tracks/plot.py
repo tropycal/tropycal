@@ -524,7 +524,7 @@ class TrackPlot(Plot):
             # Produce colorbar
             cs = plt.cm.ScalarMappable(cmap=rain_args['cmap'], norm=norm)
             cs.set_array([])
-            cbar = add_colorbar(cs, ax=self.ax)
+            cbar = add_colorbar(cs, levels=rain_args['levels'], ax=self.ax)
 
             # Keep record of lat/lon coordinate extrema
             max_lat = np.nanmax(rain_args['data']['Lat'].values)

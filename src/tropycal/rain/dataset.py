@@ -168,6 +168,9 @@ class RainDataset():
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        prop = kwargs.pop('prop', {})
+        map_prop = kwargs.pop('map_prop', {})
 
         # Check if Storm object contains rainfall data
         try:

@@ -120,6 +120,7 @@ class ReconPlot(Plot):
         if barbs:
             dataSort = recon_data.sort_values(
                 by=prop['sortby']).reset_index(drop=True)
+            dataSort = dataSort.dropna(subset=[prop['sortby']])
             if radlim is not None:
                 dataSort = dataSort.loc[dataSort['distance'] <= radlim]
             norm = mlib.colors.Normalize(vmin=vmin, vmax=vmax)
@@ -133,6 +134,7 @@ class ReconPlot(Plot):
         if scatter:
             dataSort = recon_data.sort_values(
                 by=prop['sortby'], ascending=prop['ascending']).reset_index(drop=True)
+            dataSort = dataSort.dropna(subset=[prop['sortby']])
             if radlim is not None:
                 dataSort = dataSort.loc[dataSort['distance'] <= radlim]
             if prop['cmap'] in ['category', 'category_recon']:
@@ -212,15 +214,30 @@ class ReconPlot(Plot):
 
         # --------------------------------------------------------------------------------------
 
-        # Add legend
+        # Set default legend location
+        legend_loc = 'upper left'
+        
+        # Determine if need to move to lower left
+        def transform_to_axes(ax, lon, lat):
+            x1, y1 = ax.projection.transform_point(
+                lon, lat, ccrs.PlateCarree())
+            x2, y2 = ax.transData.transform((x1, y1))
+            x, y = ax.transAxes.inverted().transform((x2, y2))
+            return x, y
+        x_y_pairs = [transform_to_axes(
+            self.ax, dataSort['lon'].values[i],
+            dataSort['lat'].values[i]) for i in range(len(dataSort['lat']))]
+        count_upper_left = sum([1 if i[0] < 0.18 and i[1] > 0.65 else 0 for i in x_y_pairs]) / len(x_y_pairs)
+        count_lower_left = sum([1 if i[0] < 0.18 and i[1] < 0.45 else 0 for i in x_y_pairs]) / len(x_y_pairs)
+        if count_upper_left > 0.05 and count_upper_left > count_lower_left:
+            legend_loc = 'lower left'
 
         # Phantom legend
         handles = []
         for _ in range(10):
             handles.append(mlines.Line2D(
                 [], [], linestyle='-', label='', lw=0))
-        l = self.ax.legend(handles=handles, loc='upper left',
-                           fancybox=True, framealpha=0, fontsize=11.5)
+        l = self.ax.legend(loc=legend_loc, handles=handles, fancybox=True, framealpha=0, fontsize=11.5)
         plt.draw()
 
         # Get the bbox
@@ -230,12 +247,36 @@ class ReconPlot(Plot):
             bb = l.legendPatch.get_bbox().transformed(self.fig.transFigure.inverted())
         bb_ax = self.ax.get_position()
 
+        # Determine legend offset
+        rect_offset = 0.0
+        if prop['cmap'] in ['category', 'category_recon'] and varname in ['sfmr', 'wspd', 'pkwnd']:
+            rect_offset = 0.7                
+        
+        # Determine how to adjust legend
+        if legend_loc == 'upper left':
+            bbox_x = bb.x0 + bb.width
+            bbox_y = bb.y0 - .05 * bb.height
+            bbox_width = 0.015
+            bbox_height = bb.height
+            
+            rect_x = bb.x0
+            rect_y = bb.y0 - 0.1 * bb.height
+            rect_width = (1.8 + rect_offset) * bb.width
+            rect_height = 1.1 * bb.height
+        elif legend_loc == 'lower left':
+            bbox_x = bb.x0 + bb.width
+            bbox_y = bb.y0 + .05 * bb.height
+            bbox_width = 0.015
+            bbox_height = bb.height
+            
+            rect_x = bb.x0
+            rect_y = bb.y0
+            rect_width = (1.8 + rect_offset) * bb.width
+            rect_height = 1.1 * bb.height
+
         # Define colorbar axis
-        cax = self.fig.add_axes(
-            [bb.x0 + bb.width, bb.y0 - .05 * bb.height, 0.015, bb.height])
-#        cbmap = mlib.cm.ScalarMappable(norm=norm, cmap=cmap)
-        cbar = self.fig.colorbar(cbmap, cax=cax, orientation='vertical',
-                                 ticks=clevs)
+        cax = self.fig.add_axes([bbox_x, bbox_y, bbox_width, bbox_height])
+        cbar = self.fig.colorbar(cbmap, cax=cax, orientation='vertical',ticks=clevs)
 
         if len(prop['levels']) > 2:
             cax.yaxis.set_ticks(np.linspace(
@@ -246,15 +287,13 @@ class ReconPlot(Plot):
         cax.tick_params(labelsize=11.5)
         cax.yaxis.set_ticks_position('left')
 
-        rect_offset = 0.0
         if prop['cmap'] in ['category', 'category_recon'] and varname in ['sfmr', 'wspd', 'pkwnd']:
             cax.yaxis.set_ticks(np.linspace(
                 min(clevs), max(clevs), len(clevs)))
             cax.yaxis.set_ticklabels(clevs)
             cax2 = cax.twinx()
             cax2.yaxis.set_ticks_position('right')
-            cax2.yaxis.set_ticks((np.linspace(0, 1, len(clevs))[
-                                 :-1] + np.linspace(0, 1, len(clevs))[1:]) * .5)
+            cax2.yaxis.set_ticks((np.linspace(0, 1, len(clevs))[:-1] + np.linspace(0, 1, len(clevs))[1:]) * .5)
             if prop['cmap'] == 'category':
                 cax2.set_yticklabels(
                     ['TD', 'TS', 'Cat-1', 'Cat-2', 'Cat-3', 'Cat-4', 'Cat-5'], fontsize=11.5)
@@ -264,9 +303,7 @@ class ReconPlot(Plot):
             cax2.tick_params('both', length=0, width=0, which='major')
             cax.yaxis.set_ticks_position('left')
 
-            rect_offset = 0.7
-
-        rectangle = mpatches.Rectangle((bb.x0, bb.y0 - 0.1 * bb.height), (1.8 + rect_offset) * bb.width, 1.1 * bb.height,
+        rectangle = mpatches.Rectangle((rect_x, rect_y), rect_width, rect_height,
                                        fc='w', edgecolor='0.8', alpha=0.8,
                                        transform=self.fig.transFigure, zorder=2)
         self.ax.add_patch(rectangle)

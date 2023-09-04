@@ -131,7 +131,7 @@ class RainDataset():
                 'lon': grid_lon
             }
 
-    def plot_rain_grid(self, storm, grid, levels=None, cmap=None, domain="dynamic", plot_all_dots=False, ax=None, cartopy_proj=None, save_path=None, prop={}, map_prop={}):
+    def plot_rain_grid(self, storm, grid, levels=None, cmap=None, domain="dynamic", plot_all_dots=False, ax=None, cartopy_proj=None, save_path=None, **kwargs):
         r"""
         Creates a plot of a storm track and its associated rainfall (gridded).
 

@@ -30,7 +30,7 @@ Tropycal is supported for Python >= 3.6. For examples on how to use Tropycal in 
 Latest Version
 ==============
 
-The latest version of Tropycal as of 21 August 2023 is v1.2. This documentation is valid for the latest version of Tropycal.
+The latest version of Tropycal as of 7 September 2023 is v1.2.1. This documentation is valid for the latest version of Tropycal.
 
 Indices and tables
 ==================

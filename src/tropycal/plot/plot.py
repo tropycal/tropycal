@@ -110,9 +110,10 @@ class Plot:
             res), facecolor=prop['land_color'], edgecolor='face', **zorder['continent'])
 
         # draw geography
-        states = self.ax.add_feature(cfeature.STATES.with_scale(
-            res), linewidths=prop['linewidth'], linestyle='solid', edgecolor=prop['linecolor'],
-            alpha=prop['state_alpha'], **zorder['states'])
+        if prop['state_alpha'] > 0:
+            states = self.ax.add_feature(cfeature.STATES.with_scale(
+                res), linewidths=prop['linewidth'], linestyle='solid', edgecolor=prop['linecolor'],
+                alpha=prop['state_alpha'], **zorder['states'])
         countries = self.ax.add_feature(cfeature.BORDERS.with_scale(
             res), linewidths=prop['linewidth'], linestyle='solid', edgecolor=prop['linecolor'],
              **zorder['countries'])

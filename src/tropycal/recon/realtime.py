@@ -513,6 +513,7 @@ class PseudoStorm():
     def __init__(self):
 
         self.dict = {
+            'id': '',
             'type': ['TS'],
             'vmax': [50],
             'wmo_basin': 'north_atlantic',
@@ -956,10 +957,6 @@ class Mission():
 
         # Create figure
         fig, ax = plt.subplots(figsize=(9, 6), dpi=200)
-        if twin_ax:
-            ax.grid(axis='x')
-        else:
-            ax.grid()
 
         # Plot line
         line1 = ax.plot(df['time'], df[varname], color=left_prop['color'],
@@ -1026,6 +1023,12 @@ class Mission():
                     max_val = 10
                 ax.set_ylim(min_val, max_val)
                 ax2.set_ylim(min_val, max_val)
+        
+        # Add gridline
+        if twin_ax and not same_unit:
+            ax.grid(axis='x')
+        else:
+            ax.grid()
 
         # Add titles
         title_string = f"\nRecon Aircraft HDOBs\nMission ID: {self.mission_id}"

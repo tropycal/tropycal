@@ -1462,7 +1462,7 @@ class hdobs:
         ax = plt.subplot()
 
         # Plot surface category colors individually, necessitating normalizing colormap
-        if varname in ['vmax', 'sfmr', 'wspd', 'fl_to_sfc'] and prop['cmap'] in ['category', 'category_recon']:
+        if varname in ['vmax', 'sfmr', 'wspd', 'pkwnd', 'fl_to_sfc'] and prop['cmap'] in ['category', 'category_recon']:
             norm = mcolors.BoundaryNorm(clevs, cmap.N)
             cf = ax.contourf(radius, time, gfilt1d(vardata, sigma=3, axis=1),
                              levels=clevs, cmap=cmap, norm=norm)
@@ -2703,28 +2703,28 @@ class vdms:
             raise RuntimeError("Recon data is not available prior to 1989.")
 
         timestr = [f'{t:%Y%m%d}' for t in self.storm.dict['time']]
-
-        # Retrieve list of files in URL and filter by storm dates
-        page = requests.get(archive_url).text
-        content = page.split("\n")
-        files = []
-        for line in content:
-            if ".txt" in line:
-                files.append(
-                    ((line.split('txt">')[1]).split("</a>")[0]).split("."))
-        del content
-        if self.format == 1:
-            files = sorted([i for i in files if i[1][:8]
-                           in timestr], key=lambda x: x[1])
-            linksub = [archive_url + '.'.join(l) for l in files]
-        elif self.format == 2:
-            files = [f[0] for f in files]
-            linksub = [archive_url +
-                       l for l in files if storm.name.upper() in l]
-
         self.data = []
 
+        # Download data if not provided
         if data is None:
+            
+            # Retrieve list of files in URL and filter by storm dates
+            page = requests.get(archive_url).text
+            content = page.split("\n")
+            files = []
+            for line in content:
+                if ".txt" in line:
+                    files.append(
+                        ((line.split('txt">')[1]).split("</a>")[0]).split("."))
+            del content
+            if self.format == 1:
+                files = sorted([i for i in files if i[1][:8]
+                               in timestr], key=lambda x: x[1])
+                linksub = [archive_url + '.'.join(l) for l in files]
+            elif self.format == 2:
+                files = [f[0] for f in files]
+                linksub = [archive_url +
+                           l for l in files if storm.name.upper() in l]
 
             urllib3.disable_warnings()
             http = urllib3.PoolManager()

@@ -814,7 +814,7 @@ def date_diff(a, b):
     return c
 
 
-def add_colorbar(mappable=None, location='right', size="2.5%", pad='1%', fig=None, ax=None, **kwargs):
+def add_colorbar(mappable=None, location='right', size="2.5%", pad='1%', levels=None, fig=None, ax=None, **kwargs):
     """
     Uses the axes_grid toolkit to add a colorbar to the parent axis and rescale its size to match
     that of the parent axis. This is adapted from Basemap's original ``colorbar()`` method.
@@ -868,7 +868,10 @@ def add_colorbar(mappable=None, location='right', size="2.5%", pad='1%', fig=Non
 
     # Create colorbar
     fig.add_axes(ax_cb)
-    cb = plt.colorbar(mappable, orientation=orientation, cax=ax_cb, **kwargs)
+    if levels is None or len(levels) > 20:
+        cb = plt.colorbar(mappable, orientation=orientation, cax=ax_cb, **kwargs)
+    else:
+        cb = plt.colorbar(mappable, orientation=orientation, cax=ax_cb, ticks=levels, **kwargs)
 
     # Reset parent axis as the current axis
     fig.sca(ax)

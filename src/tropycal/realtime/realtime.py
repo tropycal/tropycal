@@ -39,8 +39,8 @@ class Realtime():
         Flag determining whether to read JTWC data in. If True, specify the JTWC data source using "jtwc_source". Default is False.
     jtwc_source : str, optional
         If jtwc is set to True, this specifies the JTWC data source to read from. Available options are "noaa", "ucar" or "jtwc". Default is "jtwc". Read the notes for more details.
-    ssl_certificate : boolean, optional
-        If jtwc is set to True, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
+    ssl_certificate : str, optional
+        If jtwc is set to True, and jtwc_source is set to "jtwc", use this argument to provide the path to a valid SSL certificate in case the default one is expired.
 
     Returns
     -------
@@ -57,7 +57,7 @@ class Realtime():
 
     .. warning::
 
-        JTWC's SSL certificate appears to have expired sometime in early 2022. If using JTWC data with the ``jtwc=True`` argument, this will result in Realtime functionality crashing by default. To avoid this, add a ``ssl_certificate=False`` argument to both creating an instance of Realtime and to any method that retrieves JTWC forecast.
+        JTWC's SSL certificate appears to have expired sometime in early 2022. If using JTWC data with the ``jtwc=True`` argument, this will result in Realtime functionality crashing by default. To avoid this, use the ``ssl_certificate`` argument to provide a SSL ceritifcate file, both when creating an instance of Realtime and to any method that retrieves JTWC forecast.
 
         Affected functions include ``Realtime.plot_summary()``, ``RealtimeStorm.get_forecast_realtime()``, and ``RealtimeStorm.plot_forecast_realtime()``.
 
@@ -125,7 +125,7 @@ class Realtime():
     def __getitem__(self, key):
         return self.__dict__[key]
 
-    def __init__(self, jtwc=False, jtwc_source='ucar', ssl_certificate=True):
+    def __init__(self, jtwc=False, jtwc_source='ucar', ssl_certificate=None):
 
         # Define empty dict to store track data in
         self.data = {}
@@ -450,9 +450,11 @@ class Realtime():
             url = f'https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/'
         if source == 'ucar':
             url = f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/'
-        if not ssl_certificate and source in ['jtwc', 'noaa']:
+        if ssl_certificate is not None and source in ['jtwc', 'noaa']:
+            ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+            ssl_context.load_verify_locations(cafile=ssl_certificate)
             urlpath = urllib.request.urlopen(
-                url, context=ssl._create_unverified_context())
+                url, context=ssl_context)
         else:
             urlpath = urllib.request.urlopen(url)
         string = urlpath.read().decode('utf-8')
@@ -478,9 +480,11 @@ class Realtime():
 
         if source in ['jtwc', 'ucar', 'noaa']:
             try:
-                if not ssl_certificate and source in ['jtwc', 'noaa']:
+                if ssl_certificate is not None and source in ['jtwc', 'noaa']:
+                    ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+                    ssl_context.load_verify_locations(cafile=ssl_certificate)
                     urlpath_nextyear = urllib.request.urlopen(url.replace(str(current_year), str(
-                        current_year+1)), context=ssl._create_unverified_context())
+                        current_year+1)), context=ssl_context)
                     string_nextyear = urlpath_nextyear.read().decode('utf-8')
                 else:
                     urlpath_nextyear = urllib.request.urlopen(
@@ -555,9 +559,11 @@ class Realtime():
             if f"{current_year+1}.dat" in url:
                 url = url.replace(str(current_year), str(current_year+1))
 
-            if not ssl_certificate and source in ['jtwc', 'noaa']:
+            if ssl_certificate is not None and source in ['jtwc', 'noaa']:
+                ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+                ssl_context.load_verify_locations(cafile=ssl_certificate)
                 f = urllib.request.urlopen(
-                    url, context=ssl._create_unverified_context())
+                    url, context=ssl_context)
                 content = f.read()
                 content = content.decode("utf-8")
                 content = content.split("\n")
@@ -808,7 +814,7 @@ class Realtime():
         # Return RealtimeStorm object
         return self[storm]
 
-    def plot_summary(self, domain='all', ax=None, cartopy_proj=None, save_path=None, ssl_certificate=True, **kwargs):
+    def plot_summary(self, domain='all', ax=None, cartopy_proj=None, save_path=None, ssl_certificate=None, **kwargs):
         r"""
         Plot a summary map of ongoing tropical cyclone and potential development activity.
 
@@ -822,8 +828,8 @@ class Realtime():
             Instance of a cartopy projection to use. If none, one will be generated. Default is none.
         save_path : str, optional
             Relative or full path of directory to save the image in. If none, image will not be saved.
-        ssl_certificate : boolean, optional
-            If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False *ONLY* if True causes an SSL certification error.
+        ssl_certificate : str, optional
+        If jtwc is set to True, and jtwc_source is set to "jtwc", use this argument to provide the path to a valid SSL certificate in case the default one is expired.
 
         Other Parameters
         ----------------
@@ -862,6 +868,8 @@ class Realtime():
              - Font size for text label. Default is 12.
            * - ms
              - Marker size for area location, if applicable. Default is 15.
+           * - label_name
+             - Label invest or storm name, if applicable. Default is True.
 
         The following properties are available for plotting invests, via ``invest_prop``.
 

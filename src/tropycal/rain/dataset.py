@@ -70,6 +70,8 @@ class RainDataset():
         # Remove NaN entries
         df_storm = df_storm.loc[~np.isnan(df_storm['Lat']) & ~np.isnan(
             df_storm['Lon']) & ~np.isnan(df_storm['Total'])]
+        df_storm = df_storm.loc[(df_storm['Lat'] > 0) & (df_storm['Lat'] < 90)]
+        df_storm = df_storm.loc[(df_storm['Lon'] > -180) & (df_storm['Lon'] < 0)]
 
         # Check if data is empty
         if len(df_storm) == 0:
@@ -131,7 +133,7 @@ class RainDataset():
                 'lon': grid_lon
             }
 
-    def plot_rain_grid(self, storm, grid, levels=None, cmap=None, domain="dynamic", plot_all_dots=False, ax=None, cartopy_proj=None, save_path=None, prop={}, map_prop={}):
+    def plot_rain_grid(self, storm, grid, levels=None, cmap=None, domain="dynamic", plot_all_dots=False, ax=None, cartopy_proj=None, save_path=None, **kwargs):
         r"""
         Creates a plot of a storm track and its associated rainfall (gridded).
 
@@ -168,6 +170,9 @@ class RainDataset():
         ax
             Instance of axes containing the plot is returned.
         """
+        
+        prop = kwargs.pop('prop', {})
+        map_prop = kwargs.pop('map_prop', {})
 
         # Check if Storm object contains rainfall data
         try:

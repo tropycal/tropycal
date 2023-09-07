@@ -286,7 +286,7 @@ def get_cmap_levels(varname, colormap, levels, linear=False):
     if colormap in ['category', 'category_recon']:
 
         # Ensure variable contains some element of surface wind
-        if varname in ['vmax', 'sfmr', 'wspd', 'fl_to_sfc']:
+        if varname in ['vmax', 'sfmr', 'wspd', 'pkwnd', 'fl_to_sfc']:
 
             # Generate contour levels
             levels = [category_to_wind(c) for c in range(-1, 6)]+[200]
@@ -304,8 +304,7 @@ def get_cmap_levels(varname, colormap, levels, linear=False):
                 else:
                     levels = [category_to_wind(
                         c) for c in range(-1, 1)]+[50]+[category_to_wind(c) for c in range(1, 6)]+[200]
-                    colors = [get_colors_sshws_recon(
-                        lev) for lev in levels[:-1]]
+                    colors = [get_colors_sshws_recon(lev) for lev in levels[:-1]]
                 cmap = mcolors.ListedColormap(colors)
 
         # Otherwise, default to plasma colormap

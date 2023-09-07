@@ -40,6 +40,11 @@ class interpRecon:
             self.radlim = 200  # km
         else:
             self.radlim = radlim
+        
+        # Filter out flagged observations
+        def filter_flag(flags, search_varname):
+            return search_varname not in flags
+        self.dfRecon = self.dfRecon[(self.dfRecon['flag']).apply(filter_flag, args=(varname,))]
 
     def interpPol(self):
         r"""

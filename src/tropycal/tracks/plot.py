@@ -329,6 +329,7 @@ class TrackPlot(Plot):
         # Initialize plot
         prop = self.add_prop(prop, default_prop)
         self.plot_init(ax, map_prop)
+        gridline_args = {}
 
         # --------------------------------------------------------------------------------------
 
@@ -485,6 +486,7 @@ class TrackPlot(Plot):
             if rain_args['cmap'] is None:
                 rain_args['cmap'] = plt.cm.YlGn
             norm = mcolors.BoundaryNorm(rain_args['levels'], rain_args['cmap'].N)
+            gridline_args = {'zorder': 10}
 
             # Contour fill grid if requested
             if rain_args['plot_grid']:
@@ -524,7 +526,7 @@ class TrackPlot(Plot):
             # Produce colorbar
             cs = plt.cm.ScalarMappable(cmap=rain_args['cmap'], norm=norm)
             cs.set_array([])
-            cbar = add_colorbar(cs, ax=self.ax)
+            cbar = add_colorbar(cs, levels=rain_args['levels'], ax=self.ax)
 
             # Keep record of lat/lon coordinate extrema
             max_lat = np.nanmax(rain_args['data']['Lat'].values)
@@ -549,7 +551,7 @@ class TrackPlot(Plot):
         # Plot parallels and meridians
         # This is currently not supported for all cartopy projections.
         try:
-            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True)
+            self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True, **gridline_args)
         except:
             pass
 
@@ -2176,7 +2178,7 @@ class TrackPlot(Plot):
         """
 
         # Set default properties
-        default_two_prop = {'plot': True, 'fontsize': 12, 'days': 7, 'ms': 15}
+        default_two_prop = {'plot': True, 'fontsize': 12, 'days': 7, 'ms': 15, 'label_name': True}
         default_invest_prop = {'plot': True, 'fontsize': 12,
                                'linewidth': 0.8, 'linecolor': 'k', 'linestyle': 'dotted', 'ms': 14}
         default_storm_prop = {'plot': True, 'fontsize': 12, 'linewidth': 0.8, 'linecolor': 'k',
@@ -2319,6 +2321,16 @@ class TrackPlot(Plot):
                         text = prob_5day
                     self.ax.plot(lon, lat, 'X', ms=two_prop['ms'], color=color, mec='k', mew=1.5 * (
                         two_prop['ms'] / 15.0), transform=ccrs.PlateCarree(), zorder=20)
+                    
+                    # Add storm/invest name if applicable
+                    if two_prop['label_name']:
+                        results = {}
+                        for storm_idx, storm in enumerate(storms):
+                            if storm.realtime and storm.prob_2day != 'N/A':
+                                dist = great_circle((storm.lat[-1], storm.lon[-1]), (lat, lon)).kilometers
+                                results[dist] = storm.name.title()
+                        if len(results) > 0 and min(results.keys()) < 400:
+                            text = f'{results[min(results.keys())]}\n{text}'
 
                     # Transform coordinates for label
                     x1, y1 = self.ax.projection.transform_point(

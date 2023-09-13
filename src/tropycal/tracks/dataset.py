@@ -2175,6 +2175,7 @@ class TrackDataset:
                 storm_date = np.array(storm_data['time'])
                 storm_type = np.array(storm_data['type'])
                 storm_vmax = np.array(storm_data['vmax'])
+                storm_basin = np.array(storm_data['wmo_basin'])
 
                 # Subset to remove obs not useful for calculation
                 idx1 = ((storm_type == 'SS') | (storm_type == 'TS') | (
@@ -2185,6 +2186,11 @@ class TrackDataset:
                 idx4 = storm_date_y == year
                 if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
                     idx4[idx4 == False] = True
+                if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
+                    idx4[idx4 == False] = True
+                if self.basin not in ['all', 'both']:
+                    check_test = storm_basin == self.basin
+                    idx4 = (idx4) & (storm_basin == self.basin)
                 storm_date = storm_date[(idx1) & (idx2) & (idx3) & (idx4)]
                 storm_type = storm_type[(idx1) & (idx2) & (idx3) & (idx4)]
                 storm_vmax = storm_vmax[(idx1) & (idx2) & (idx3) & (idx4)]

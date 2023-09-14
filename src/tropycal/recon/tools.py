@@ -45,6 +45,9 @@ class interpRecon:
         def filter_flag(flags, search_varname):
             return search_varname not in flags
         self.dfRecon = self.dfRecon[(self.dfRecon['flag']).apply(filter_flag, args=(varname,))]
+        
+        # Filter out observations above 500mb, as these functions are low-level targeted
+        self.dfRecon = self.dfRecon[self.dfRecon['plane_p'] > 500]
 
     def interpPol(self):
         r"""

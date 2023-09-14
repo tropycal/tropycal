@@ -1304,7 +1304,8 @@ class hdobs:
         # Return plot
         return ax
 
-    def plot_points(self, varname='wspd', domain="dynamic", radlim=None, barbs=False, ax=None, cartopy_proj=None, **kwargs):
+    def plot_points(self, varname='wspd', domain="dynamic", radlim=None, barbs=False,
+                    min_pressure=100, max_pressure=1030, ax=None, cartopy_proj=None, **kwargs):
         r"""
         Creates a plot of recon data points.
 
@@ -1323,6 +1324,10 @@ class hdobs:
             Radius (in km) away from storm center to include points. If none (default), all points are plotted.
         barbs : bool
             If True, plots wind barbs. If False (default), plots dots.
+        min_pressure : int
+            Minimum pressure level in hPa to filter data. Default is 100 hPa.
+        max_pressure : int
+            Maximum pressure level in hPa to filter data. Default is 1030 hPa.
         ax : axes
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs
@@ -1369,7 +1374,8 @@ class hdobs:
 
         # Plot recon
         plot_ax = self.plot_obj.plot_points(
-            self.storm, dfRecon, domain, varname=varname, radlim=radlim, barbs=barbs, ax=ax, prop=prop, map_prop=map_prop)
+            self.storm, dfRecon, domain, varname=varname, radlim=radlim,
+            barbs=barbs, min_pressure=min_pressure, ax=ax, prop=prop, map_prop=map_prop)
 
         # Return axis
         return plot_ax

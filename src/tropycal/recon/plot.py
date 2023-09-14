@@ -35,8 +35,9 @@ class ReconPlot(Plot):
 
         self.use_credit = True
 
-    def plot_points(self, storm, recon_data, domain="dynamic", varname='wspd', radlim=None, barbs=False, scatter=False,
-                    ax=None, return_domain=False, prop={}, map_prop={}, mission=False, vdms=[], mission_id=''):
+    def plot_points(self, storm, recon_data, domain="dynamic", varname='wspd', radlim=None,
+                    barbs=False, scatter=False, min_pressure=100, max_pressure=1030, ax=None,
+                    return_domain=False, prop={}, map_prop={}, mission=False, vdms=[], mission_id=''):
         r"""
         Creates a plot of recon data points
 
@@ -77,6 +78,20 @@ class ReconPlot(Plot):
 
         # --------------------------------------------------------------------------------------
 
+        # Check recon_data type
+        if isinstance(recon_data, pd.core.frame.DataFrame):
+            pass
+        else:
+            raise RuntimeError("Error: recon_data must be dataframe")
+
+        # Filter data by radius and pressure levels
+        if radlim is not None:
+            recon_data = recon_data.loc[recon_data['distance'] <= radlim]
+        if min_pressure is not None:
+            recon_data = recon_data[recon_data['plane_p'] > min_pressure]
+        if max_pressure is not None:
+            recon_data = recon_data[recon_data['plane_p'] < max_pressure]
+
         # Keep record of lat/lon coordinate extrema
         max_lat = []
         min_lat = []
@@ -85,12 +100,6 @@ class ReconPlot(Plot):
 
         # Retrieve storm data
         storm_data = storm.dict
-
-        # Check recon_data type
-        if isinstance(recon_data, pd.core.frame.DataFrame):
-            pass
-        else:
-            raise RuntimeError("Error: recon_data must be dataframe")
 
         # Retrieve storm data
         if radlim is None:
@@ -118,11 +127,8 @@ class ReconPlot(Plot):
 
         # Plot recon data as specified
         if barbs:
-            dataSort = recon_data.sort_values(
-                by=prop['sortby']).reset_index(drop=True)
+            dataSort = recon_data.sort_values(by=prop['sortby']).reset_index(drop=True)
             dataSort = dataSort.dropna(subset=[prop['sortby']])
-            if radlim is not None:
-                dataSort = dataSort.loc[dataSort['distance'] <= radlim]
             if prop['cmap'] in ['category', 'category_recon']:
                 if prop['cmap'] == 'category':
                     colors = [get_colors_sshws(i) for i in dataSort[varname]]
@@ -146,8 +152,6 @@ class ReconPlot(Plot):
             dataSort = recon_data.sort_values(
                 by=prop['sortby'], ascending=prop['ascending']).reset_index(drop=True)
             dataSort = dataSort.dropna(subset=[prop['sortby']])
-            if radlim is not None:
-                dataSort = dataSort.loc[dataSort['distance'] <= radlim]
             if prop['cmap'] in ['category', 'category_recon']:
                 if prop['cmap'] == 'category':
                     colors = [get_colors_sshws(i) for i in dataSort[varname]]
@@ -240,7 +244,7 @@ class ReconPlot(Plot):
             dataSort['lat'].values[i]) for i in range(len(dataSort['lat']))]
         count_upper_left = sum([1 if i[0] < 0.18 and i[1] > 0.65 else 0 for i in x_y_pairs]) / len(x_y_pairs)
         count_lower_left = sum([1 if i[0] < 0.18 and i[1] < 0.45 else 0 for i in x_y_pairs]) / len(x_y_pairs)
-        if count_upper_left > 0.05 and count_upper_left > count_lower_left:
+        if count_upper_left > count_lower_left:
             legend_loc = 'lower left'
 
         # Phantom legend

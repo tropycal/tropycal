@@ -4050,10 +4050,9 @@ class TrackDataset:
         for key in self.keys:
             if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year:
                 continue
-            storm_data = [[great_circle(point, (self.data_interp[key]['lat'][i], self.data_interp[key]['lon'][i])).kilometers, self.data_interp[key]['vmax'][i], self.data_interp[key]['mslp'][i],
+            storm_data = [[great_circle(point, (self.data_interp[key]['lat'][i], self.data_interp[key]['lon'][i])).kilometers * unit_factor, self.data_interp[key]['vmax'][i], self.data_interp[key]['mslp'][i],
                            self.data_interp[key]['time'][i]] for i in range(len(self.data_interp[key]['lat'])) if self.data_interp[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
-            storm_data = [i for i in storm_data if i[0]
-                          <= radius * unit_factor]
+            storm_data = [i for i in storm_data if i[0] <= radius]
             storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0], '%m/%d').replace(
                 year=i[3].year) and i[3] <= (dt.strptime(date_range[1], '%m/%d') + timedelta(hours=23)).replace(year=i[3].year)]
             if len(storm_data) == 0:
@@ -4234,7 +4233,7 @@ class TrackDataset:
         import cartopy.geodesic as geodesic
         unit_factor = 1.0 if units == 'km' else 0.621371
         circle_points = geodesic.Geodesic().circle(
-            lon=point[1], lat=point[0], radius=radius * 1000 * unit_factor, n_samples=360, endpoint=False)
+            lon=point[1], lat=point[0], radius=(radius / unit_factor) * 1000, n_samples=360, endpoint=False)
         domain = kwargs.pop('domain', None)
         if domain is None:
             lons = [i[0] for i in circle_points]

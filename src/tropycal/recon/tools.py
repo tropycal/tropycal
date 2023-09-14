@@ -16,6 +16,10 @@ def uv_from_wdir(wspd, wdir):
     v = wspd * np.sin(theta)
     return u, v
 
+# Function for finding nearest value in an array
+def find_nearest_index(array, val):
+    return np.abs(array - val).argmin()
+
 # ------------------------------------------------------------------------------
 # TOOLS FOR RECON INTERPOLATION
 # ------------------------------------------------------------------------------
@@ -27,13 +31,14 @@ class interpRecon:
     Interpolates storm-centered data by time and space.
     """
 
-    def __init__(self, dfRecon, varname, radlim=None, window=6, align='center'):
+    def __init__(self, dfRecon, varname, radlim=None, window=6, align='center', missing_window=24):
 
         # Retrieve dataframe containing recon data, and variable to be interpolated
         self.dfRecon = dfRecon
         self.varname = varname
         self.window = window
         self.align = align
+        self.missing_window = missing_window
 
         # Specify outer radius cutoff in kilometer
         if radlim is None:
@@ -41,13 +46,13 @@ class interpRecon:
         else:
             self.radlim = radlim
         
-        # Filter out flagged observations
         def filter_flag(flags, search_varname):
+            if flags is None: return True
             return search_varname not in flags
         self.dfRecon = self.dfRecon[(self.dfRecon['flag']).apply(filter_flag, args=(varname,))]
         
         # Filter out observations above 500mb, as these functions are low-level targeted
-        self.dfRecon = self.dfRecon[self.dfRecon['plane_p'] > 500]
+        self.dfRecon = self.dfRecon[(self.dfRecon['plane_p'] > 475) | np.isnan(self.dfRecon['plane_p'])]
 
     def interpPol(self):
         r"""
@@ -191,20 +196,46 @@ class interpRecon:
         reconArray = np.array([i for i in spaceInterpData.values()])
 
         # Interpolate over every half hour
+        if len(trackTimes) == 0:
+            raise RuntimeError('Not enough data to create a hovmoller.')
         newTimes = np.arange(mdates.date2num(
             trackTimes[0]), mdates.date2num(trackTimes[-1]) + 1e-3, 1 / 48)
         oldTimes = mdates.date2num(np.array(list(spaceInterpData.keys())))
-        # print(len(oldTimes),reconArray.shape)
         reconTimeInterp = np.apply_along_axis(lambda x: np.interp(newTimes, oldTimes, x),
                                               axis=0, arr=reconArray)
         time_elapsed = dt.now() - start_time
         tsec = str(round(time_elapsed.total_seconds(), 2))
         print(f"--> Completed interpolation ({tsec} seconds)")
 
-        # Output RMW and hovmoller data and store as an attribute in the object
-        self.rmw = grid_rho[0, np.nanargmax(reconTimeInterp, axis=1)]
-        self.Hovmoller = {'time': mdates.num2date(
-            newTimes), 'radius': grid_rho[0, :], 'hovmoller': reconTimeInterp}
+        # Remove observations within missing window
+        for idx, iter_time in enumerate(oldTimes):
+            if idx == 0:
+                continue
+            if (oldTimes[idx]-oldTimes[idx-1]) * 24.0 >= self.missing_window:
+                start_missing_idx = find_nearest_index(newTimes, oldTimes[idx-1])
+                end_missing_idx = find_nearest_index(newTimes, oldTimes[idx])
+                reconTimeInterp[start_missing_idx:end_missing_idx+1] = np.nan
+
+        # Clip data bounds to match NaNs
+        data_rows = np.any(~np.isnan(reconTimeInterp), axis=1)
+        data_idx = np.where(data_rows)[0]
+        if data_idx.size > 0:
+            reconTimeInterp = reconTimeInterp[data_idx[0]:data_idx[-1]+1]
+            newTimes = newTimes[data_idx[0]:data_idx[-1]+1]
+
+        # Derive RMW from hovmoller data
+        all_nan_rows = np.all(np.isnan(reconTimeInterp), axis=1)
+        self.rmw = np.empty(reconTimeInterp.shape[0])
+        self.rmw.fill(np.nan)
+        self.rmw[~all_nan_rows] = grid_rho[0, np.nanargmax(reconTimeInterp[~all_nan_rows], axis=1)]
+
+        # Return hovmoller data
+        self.Hovmoller = {
+            'time': mdates.num2date(newTimes),
+            'radius': grid_rho[0, :],
+            'hovmoller': reconTimeInterp,
+            'rmw': self.rmw
+        }
         return self.Hovmoller
 
     def interpMaps(self, target_track, interval=0.5, stat_vars=None):

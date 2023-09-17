@@ -120,6 +120,11 @@ class Plot:
         coastlines = self.ax.add_feature(cfeature.COASTLINE.with_scale(
             res), linewidths=prop['linewidth'], linestyle='solid', edgecolor=prop['linecolor'],
              **zorder['coastlines'])
+        
+        # Clean zorder kwargs
+        for key in ['ocean', 'lake', 'continent', 'states', 'countries', 'coastlines']:
+            if f'zorder_{key}' in prop.keys():
+                del prop[f'zorder_{key}']
 
     def dynamic_map_extent(self, min_lon, max_lon, min_lat, max_lat):
         r"""

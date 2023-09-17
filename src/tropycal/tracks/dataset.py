@@ -1824,54 +1824,49 @@ class TrackDataset:
             year_timestep_ace = np.zeros((year_dates.shape))
             year_genesis = []
 
+            # Pre-calculate certain variables for efficiency
+            southern_hemisphere_check = self.basin in constants.SOUTH_HEMISPHERE_BASINS
+            named_tropical_storm_types = list(constants.NAMED_TROPICAL_STORM_TYPES)
+            standard_hours = list(constants.STANDARD_HOURS)
+
             # Get list of storms for this year
             for storm in storm_ids:
 
                 # Get HURDAT data for this storm
-                storm_data = self.data[storm]
-                storm_date_y = np.array([int(i.strftime('%Y'))
-                                        for i in storm_data['time']])
-                storm_date_h = np.array([i.strftime('%H%M')
-                                        for i in storm_data['time']])
-                storm_date_m = [i.strftime('%m%d') for i in storm_data['time']]
-                storm_date = np.array(storm_data['time'])
-                storm_type = np.array(storm_data['type'])
-                storm_vmax = np.array(storm_data['vmax'])
-                storm_basin = np.array(storm_data['wmo_basin'])
+                storm_time = np.array(self.data[storm]['time'])
+                storm_time_h = [i.strftime('%H%M') for i in self.data[storm]['time']]
+                storm_type = np.array(self.data[storm]['type'])
+                storm_vmax = np.array(self.data[storm]['vmax'])
+                storm_basin = np.array(self.data[storm]['wmo_basin'])
 
-                # Subset to remove obs not useful for ace
-                idx1 = ((storm_type == 'SS') | (storm_type == 'TS') | (
-                    storm_type == 'HU') | (storm_type == 'TY') | (storm_type == 'ST'))
-                idx2 = ~np.isnan(storm_vmax)
-                idx3 = ((storm_date_h == '0000') | (storm_date_h == '0600') | (
-                    storm_date_h == '1200') | (storm_date_h == '1800'))
-                idx4 = storm_date_y == year
-                if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
-                    idx4[idx4 == False] = True
-                if self.basin not in ['all', 'both']:
-                    idx4 = (idx4) & (storm_basin == self.basin)
-                storm_date = storm_date[(idx1) & (idx2) & (idx3) & (idx4)]
-                storm_type = storm_type[(idx1) & (idx2) & (idx3) & (idx4)]
-                storm_vmax = storm_vmax[(idx1) & (idx2) & (idx3) & (idx4)]
-                if len(storm_vmax) == 0:
-                    continue  # Continue if doesn't apply to this storm
-                storm_ace = accumulated_cyclone_energy(storm_vmax)
+                # Apply checks for this storm
+                year_check = np.array([int(i.year) for i in self.data[storm]['time']]) == year
+                hour_check = np.isin(np.array(storm_time_h), standard_hours)
+                type_check = np.isin(storm_type, named_tropical_storm_types)
+                vmax_check = ~np.isnan(storm_vmax)
+                basin_check = (self.basin == 'all' or self.basin == 'both') or (storm_basin == self.basin)
+                if southern_hemisphere_check:
+                    year_check[year_check == False] = True
+                total_mask = type_check & vmax_check & hour_check & year_check & basin_check
+                if len(storm_vmax[total_mask]) == 0:
+                    continue
+                storm_time = storm_time[total_mask]
 
                 # Account for storms on february 29th by pushing them forward 1 day
-                if '0229' in storm_date_m:
-                    storm_date_temp = []
-                    for idate in storm_date:
-                        dt_date = pd.to_datetime(idate)
-                        if dt_date.strftime('%m%d') == '0229' or dt_date.strftime('%m') == '03':
-                            dt_date += timedelta(hours=24)
-                        storm_date_temp.append(dt_date)
-                    storm_date = storm_date_temp
+                storm_time_m = [i.strftime('%m%d') for i in storm_time]
+                if '0229' in storm_time_m:
+                    storm_time_temp = []
+                    for i_time in storm_time:
+                        dt_time = pd.to_datetime(i_time)
+                        if dt_time.strftime('%m%d') == '0229' or dt_time.strftime('%m') == '03':
+                            dt_time += timedelta(hours=24)
+                        storm_time_temp.append(dt_time)
+                    storm_time = storm_time_temp
 
                 # Append ACE to cumulative sum
-                idx = np.nonzero(np.in1d(year_dates, storm_date))
-                year_timestep_ace[idx] += storm_ace
-                year_genesis.append(
-                    np.where(year_dates == storm_date[0])[0][0])
+                idx = np.nonzero(np.isin(year_dates, storm_time))
+                year_timestep_ace[idx] += accumulated_cyclone_energy(storm_vmax[total_mask])
+                year_genesis.append(np.where(year_dates == storm_time[0])[0][0])
 
             # Calculate cumulative sum of year
             if rolling_sum == 0:

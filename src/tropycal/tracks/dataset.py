@@ -1748,7 +1748,7 @@ class TrackDataset:
                     self.__retrieve_season(i_year, basin)
             return return_season
 
-    def ace_climo(self, plot_year=None, compare_years=None, climo_bounds=None, month_range=None, rolling_sum=0, return_dict=False, save_path=None):
+    def ace_climo(self, plot_year=None, compare_years=None, climo_bounds=None, maximum_bounds=None, month_range=None, rolling_sum=0, return_dict=False, save_path=None):
         r"""
         Creates and plots a climatology of accumulated cyclone energy (ACE).
 
@@ -1760,6 +1760,8 @@ class TrackDataset:
             Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).
         climo_bounds : tuple
             Start and end years to compute the climatology over. Default is from 1950 to last year.
+        maximum_bounds : tuple
+            If provided, record maxima are calculated for years within this tuple range, provided that climo_bounds is a subset of this maximum_bounds. If not provided (default), record maxima are calculated from climo_bounds.
         month_range : tuple
             Start and end months to plot (e.g., ``(5,10)``). Default is peak hurricane season by basin.
         rolling_sum : int
@@ -1784,13 +1786,23 @@ class TrackDataset:
 
         if climo_bounds is None:
             climo_bounds = (1950, dt.now().year - 1)
+        if maximum_bounds is None:
+            maximum_bounds = climo_bounds
+        else:
+            if maximum_bounds[0] > climo_bounds[0]:
+                maximum_bounds[0] = climo_bounds[0]
+            if maximum_bounds[1] < climo_bounds[1]:
+                maximum_bounds[1] = climo_bounds[1]
 
         # Create empty dict
         ace = {}
+        ace_maximum = []
 
         # Iterate over every year of HURDAT available
         end_year = self.data[self.keys[-1]]['year']
         years = [yr for yr in range(
+            1851, cur_year + 1) if (min(maximum_bounds) <= yr <= max(maximum_bounds)) or yr == plot_year]
+        use_years = [yr for yr in range(
             1851, cur_year + 1) if (min(climo_bounds) <= yr <= max(climo_bounds)) or yr == plot_year]
         for year in years:
 
@@ -1874,20 +1886,26 @@ class TrackDataset:
                 year_genesis = np.array(year_genesis)
 
                 # Attach to dict
-                ace[str(year)] = {}
-                ace[str(year)]['time'] = year_dates
-                ace[str(year)]['ace'] = year_cumulative_ace
-                ace[str(year)]['genesis_index'] = year_genesis
+                ace_maximum.append(year_cumulative_ace)
+                if year in use_years:
+                    ace[str(year)] = {
+                        'time': year_dates,
+                        'ace': year_cumulative_ace,
+                        'genesis_index': year_genesis
+                    }
             else:
                 year_cumulative_ace = np.sum(rolling_window(
                     year_timestep_ace, rolling_sum * 4), axis=1)
                 year_genesis = np.array(year_genesis) - ((rolling_sum * 4) - 1)
 
                 # Attach to dict
-                ace[str(year)] = {}
-                ace[str(year)]['time'] = year_dates[((rolling_sum * 4) - 1):]
-                ace[str(year)]['ace'] = year_cumulative_ace
-                ace[str(year)]['genesis_index'] = year_genesis
+                ace_maximum.append(year_cumulative_ace)
+                if year in use_years:
+                    ace[str(year)] = {
+                        'time': year_dates[((rolling_sum * 4) - 1):],
+                        'ace': year_cumulative_ace,
+                        'genesis_index': year_genesis,
+                    }
 
         # ------------------------------------------------------------------------------------------
 
@@ -1915,15 +1933,18 @@ class TrackDataset:
             julian_months = [7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6]
 
         # Construct percentile arrays
-        all_ace = np.ones((len(years), len(julian))) * np.nan
+        all_ace = np.ones((len(use_years), len(julian))) * np.nan
         for year in range(min(climo_bounds), max(climo_bounds) + 1):
-            all_ace[years.index(year)] = ace[str(year)]['ace']
-        pmin, p10, p25, p40, p60, p75, p90, pmax = np.nanpercentile(
-            all_ace, [0, 10, 25, 40, 60, 75, 90, 100], axis=0)
+            all_ace[use_years.index(year)] = ace[str(year)]['ace']
+        pmin, p10, p25, p40, p60, p75, p90 = np.nanpercentile(
+            all_ace, [0, 10, 25, 40, 60, 75, 90], axis=0)
 
         # Return if not plotting
         if return_dict:
             return ace
+
+        # Construct maximum ACE
+        ace_maximum = np.nanmax(np.array(ace_maximum),axis=0)
 
         # ------------------------------------------------------------------------------------------
 
@@ -2043,8 +2064,8 @@ class TrackDataset:
         # Plot all climatological values
         pmin_masked = np.array(pmin)
         pmin_masked = np.ma.masked_where(pmin_masked == 0, pmin_masked)
-        ax.plot(julian_x, pmax, '--', color='r', zorder=2,
-                label=f'Max ({np.max(pmax):.1f})')
+        ax.plot(julian_x, ace_maximum, '--', color='r', zorder=2,
+                label=f'Max ({np.max(ace_maximum):.1f})')
         ax.plot(julian_x, pmin_masked, '--', color='b',
                 zorder=2, label=f'Min ({np.max(pmin):.1f})')
         ax.fill_between(julian_x, p10, p90, color='#60CE56',
@@ -2060,7 +2081,10 @@ class TrackDataset:
 
         credit_text = plot_credit()
         add_credit(ax, credit_text)
-        ax.text(0.99, 0.99, f'Climatology from {climo_bounds[0]}{endash}{climo_bounds[-1]}', fontsize=9, color='k', alpha=0.7,
+        climo_text = f'Climatology from {climo_bounds[0]}{endash}{climo_bounds[-1]}'
+        if maximum_bounds != climo_bounds:
+            climo_text = f'Maxima from {maximum_bounds[0]}{endash}{maximum_bounds[-1]} | {climo_text}'
+        ax.text(0.99, 0.99, climo_text, fontsize=9, color='k', alpha=0.7,
                 transform=ax.transAxes, ha='right', va='top', zorder=10)
 
         # Show/save plot and close

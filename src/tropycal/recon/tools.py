@@ -827,6 +827,13 @@ def decode_hdob_2006(content, strdate, mission_row=3):
     data['wspd'] = [np.nan if i > 300 else i for i in data['wspd']]
     data['pkwnd'] = [np.nan if i > 300 else i for i in data['pkwnd']]
 
+    # Fix coordinates for 1991 backwards
+    if int(strdate[4:]) <= 1991:
+        data['lat'] = [np.nan if check_error(i[1]) else 90.0-round((float(i[1][:-2]) + float(i[1][-2:]) / 60), 2)
+                       for i in items[3:]]
+        data['lon'] = [np.nan if check_error(i[2]) else round((float(i[2][:-2]) + float(i[2][-2:]) / 60), 2) * -1
+                       for i in items[3:]]
+
     # Ignore entries with lat/lon of 0
     orig_lat = np.copy(data['lat'])
     orig_lon = np.copy(data['lon'])

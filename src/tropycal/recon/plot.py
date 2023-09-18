@@ -88,9 +88,9 @@ class ReconPlot(Plot):
         if radlim is not None:
             recon_data = recon_data.loc[recon_data['distance'] <= radlim]
         if min_pressure is not None:
-            recon_data = recon_data[recon_data['plane_p'] > min_pressure]
+            recon_data = recon_data[(recon_data['plane_p'] > min_pressure) | (np.isnan(recon_data['plane_p']))]
         if max_pressure is not None:
-            recon_data = recon_data[recon_data['plane_p'] < max_pressure]
+            recon_data = recon_data[(recon_data['plane_p'] < max_pressure) | (np.isnan(recon_data['plane_p']))]
 
         # Keep record of lat/lon coordinate extrema
         max_lat = []

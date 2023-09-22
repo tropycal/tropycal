@@ -504,7 +504,7 @@ class Plot:
             # Coerce to include non-TC points if storm hasn't been designated yet
             if len(tropical_vmax) == 0 and len(storm_data['id']) > 4:
                 flag_ptc = True
-                idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+                idx = np.where((type_array == 'LO') | (type_array == 'DB') | (type_array == 'EX'))
                 tropical_vmax = np.array(storm_data['vmax'])[idx]
 
             # Case 2a: No wind data available

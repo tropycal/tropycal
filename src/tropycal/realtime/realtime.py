@@ -460,14 +460,14 @@ class Realtime():
         string = urlpath.read().decode('utf-8')
 
         # Get relevant filenames from directory
-        files = []
+        files_temp = []
         search_pattern = f'b[iswec][ohp][012349][0123456789]{current_year}.dat'
 
         pattern = re.compile(search_pattern)
         filelist = pattern.findall(string)
         for filename in filelist:
-            if filename not in files:
-                files.append(filename)
+            if filename not in files_temp:
+                files_temp.append(filename)
 
         # Search for following year (for SH storms)
         search_pattern = f'b[isw][ohp][012349][0123456789]{current_year+1}.dat'
@@ -475,9 +475,22 @@ class Realtime():
         pattern = re.compile(search_pattern)
         filelist = pattern.findall(string)
         for filename in filelist:
-            if filename not in files:
-                files.append(filename)
+            if filename not in files_temp:
+                files_temp.append(filename)
 
+        # Filter storms for JTWC ATCF for efficiency
+        if source == 'jtwc':
+            files = []
+            lines = string.split("\n")
+            for line in lines:
+                for file in files_temp:
+                    if file in line:
+                        valid_time = dt.strptime(line[95:112],'%d-%b-%Y %H:%M')
+                        if (dt.now()-valid_time).total_seconds()/3600 < 48:
+                            files.append(file)
+        else:
+            files = files_temp
+        
         if source in ['jtwc', 'ucar', 'noaa']:
             try:
                 if ssl_certificate is not None and source in ['jtwc', 'noaa']:

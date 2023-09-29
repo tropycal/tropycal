@@ -1736,7 +1736,7 @@ def category_label_to_wind(category):
         return category_to_wind(5)
 
 
-def dynamic_map_extent(min_lon, max_lon, min_lat, max_lat, recon=False):
+def dynamic_map_extent(min_lon, max_lon, min_lat, max_lat, ratio=1.45, recon=False, adjust_zoom=True):
     r"""
     Sets up a dynamic map extent with an aspect ratio of 3:2 given latitude and longitude bounds.
 
@@ -1750,8 +1750,12 @@ def dynamic_map_extent(min_lon, max_lon, min_lat, max_lat, recon=False):
         Minimum latitude bound.
     max_lat : float
         Maximum latitude bound.
-    recon : bool
+    ratio : float, optional
+        Ratio of map width to height. Default is 1.45.
+    recon : bool, optional
         Zoom in plots closer for recon plots.
+    adjust_zoom : bool, optional
+        If True (default), optimally adjusts map zoom based on coordinate ranges.
 
     Returns:
     --------
@@ -1774,7 +1778,7 @@ def dynamic_map_extent(min_lon, max_lon, min_lat, max_lat, recon=False):
         bound_s = bound_s - 0.6
 
     # Function for fixing map ratio
-    def fix_map_ratio(bound_w, bound_e, bound_n, bound_s, nthres=1.45):
+    def fix_map_ratio(bound_w, bound_e, bound_n, bound_s, nthres):
         xrng = abs(bound_w-bound_e)
         yrng = abs(bound_n-bound_s)
         diff = float(xrng) / float(yrng)
@@ -1792,32 +1796,28 @@ def dynamic_map_extent(min_lon, max_lon, min_lat, max_lat, recon=False):
 
     # First round of fixing ratio
     bound_w, bound_e, bound_n, bound_s = fix_map_ratio(
-        bound_w, bound_e, bound_n, bound_s, 1.45)
+        bound_w, bound_e, bound_n, bound_s, ratio)
 
     # Adjust map width depending on extent of storm
     xrng = abs(bound_e-bound_w)
     yrng = abs(bound_n-bound_s)
-    factor = 0.1
-    if min(xrng, yrng) < 15.0:
-        factor = 0.2
-    if min(xrng, yrng) < 12.0:
-        factor = 0.4
-    if min(xrng, yrng) < 10.0:
-        factor = 0.6
-    if min(xrng, yrng) < 8.0:
-        factor = 0.75
-    if min(xrng, yrng) < 6.0:
-        factor = 0.9
-    if recon:
-        factor = factor * 0.3
-    bound_w = bound_w-(xrng*factor)
-    bound_e = bound_e+(xrng*factor)
-    bound_s = bound_s-(yrng*factor)
-    bound_n = bound_n+(yrng*factor)
+    
+    # Linearly interpolate zoom factor
+    if adjust_zoom:
+        orig_factor = [0.1,0.1,0.2,0.4,0.6,0.75,0.9,0.9]
+        orig_range = [5000,16,13.5,11,9,7,5.5,-1]
+        f = interp.interp1d(orig_range,orig_factor)
+        factor = f(min(xrng,yrng))
+        if recon:
+            factor = factor * 0.3
+        bound_w = bound_w-(xrng*factor)
+        bound_e = bound_e+(xrng*factor)
+        bound_s = bound_s-(yrng*factor)
+        bound_n = bound_n+(yrng*factor)
 
-    # Second round of fixing ratio
-    bound_w, bound_e, bound_n, bound_s = fix_map_ratio(
-        bound_w, bound_e, bound_n, bound_s, 1.45)
+        # Second round of fixing ratio
+        bound_w, bound_e, bound_n, bound_s = fix_map_ratio(
+            bound_w, bound_e, bound_n, bound_s, ratio)
 
     # Return map bounds
     return bound_w, bound_e, bound_s, bound_n

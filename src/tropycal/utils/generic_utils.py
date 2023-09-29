@@ -387,6 +387,10 @@ def get_basin(lat, lon, source_basin=""):
                     return "north_atlantic"
                 else:
                     return "east_pacific"
+            elif lon < 240:
+                return "east_pacific"
+            elif lon > 300:
+                return "north_atlantic"
             else:
                 msg = "Cannot determine whether storm is in North Atlantic or East Pacific basins."
                 raise RuntimeError(msg)

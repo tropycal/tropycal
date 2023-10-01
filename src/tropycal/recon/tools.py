@@ -287,7 +287,7 @@ class interpRecon:
         # If target_track > 1 (tuple or list of times), then retrieve multiple center pass times and center around the window
         if isinstance(target_track['time'], (tuple, list, np.ndarray)):
             centerTimes = tmpRecon[tmpRecon['iscenter'] == 1]['time']
-            spaceInterpTimes = [t for t in centerTimes]
+            spaceInterpTimes = sorted(list(set([t for t in centerTimes])))
             trackTimes = [t for t in target_track['time'] if min(
                 spaceInterpTimes) - window / 2 < t < max(spaceInterpTimes) + window / 2]
         # Otherwise, just use a single time

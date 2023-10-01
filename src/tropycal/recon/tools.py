@@ -5,6 +5,7 @@ from scipy.ndimage import gaussian_filter as gfilt
 from scipy.interpolate import griddata, interp1d
 import matplotlib.dates as mdates
 import copy
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from ..utils import classify_subtropical, get_storm_classification
 
@@ -54,7 +55,7 @@ class interpRecon:
         # Filter out observations above 475mb, as these functions are low-level targeted
         self.dfRecon = self.dfRecon[(self.dfRecon['plane_p'] > 475) | np.isnan(self.dfRecon['plane_p'])]
 
-    def interpPol(self):
+    def interpPol(self, filter_outer_obs=False):
         r"""
         Interpolates storm-centered recon data into a polar grid, and outputs the radius grid, azimuth grid and interpolated variable.
         """
@@ -78,14 +79,36 @@ class interpRecon:
         pol_path_wrap = [cart2pol(*p, offset=-2 * np.pi) for p in path] + pol_path +\
             [cart2pol(*p, offset=2 * np.pi) for p in path]
         data_wrap = np.concatenate([data] * 3)
+        
+        # Determine whether to filter outer obs
+        ignore_rho = [self.radlim]
+        if filter_outer_obs:
+
+            # Convert Cartesian to polar coordinates
+            rho_points = np.array([i[0] for i in pol_path_wrap])
+            phi_points = np.array([i[1] for i in pol_path_wrap])
+
+            # Define the range of iter_rho values
+            rho_range = np.arange(100, self.radlim + .1, .5)
+
+            # Identify rho values to ignore based on the condition
+            ignore_rho = [
+                iter_rho for iter_rho in rho_range
+                if (
+                    max(np.diff(np.sort(phi_points[(rho_points < iter_rho + 5) & (rho_points > iter_rho - 5)])))
+                    > np.pi * 0.9
+                )
+            ]
+            if len(ignore_rho) == 0:
+                ignore_rho = [self.radlim]
 
         # Creates a grid of rho (radius) and phi (azimuth)
         grid_rho, grid_phi = np.meshgrid(
-            np.arange(0, self.radlim + .1, .5), np.linspace(-np.pi, np.pi, 181))
+            np.arange(0, min(self.radlim,min(ignore_rho)) + .1, .5), np.linspace(-np.pi, np.pi, 181))
 
         # Interpolates storm-centered point data in polar coordinates onto a gridded polar coordinate field
-        grid_z_pol = griddata(pol_path_wrap, data_wrap,
-                              (grid_rho, grid_phi), method='linear')
+        grid_z_pol = griddata(
+            pol_path_wrap, data_wrap, (grid_rho, grid_phi), method='linear')
 
         try:
             # Calculate radius of maximum wind (RMW)
@@ -102,13 +125,13 @@ class interpRecon:
         # Return fields
         return grid_rho, grid_phi, grid_z_pol
 
-    def interpCart(self):
+    def interpCart(self, filter_outer_obs=False):
         r"""
         Interpolates polar storm-centered gridded fields into cartesian coordinates
         """
 
         # Interpolate storm-centered recon data into gridded polar grid (rho, phi and gridded data)
-        grid_rho, grid_phi, grid_z_pol = self.interpPol()
+        grid_rho, grid_phi, grid_z_pol = self.interpPol(filter_outer_obs)
 
         # Calculate RMW
         rmw = grid_rho[0, np.nanargmax(np.mean(grid_z_pol, axis=0))]
@@ -117,7 +140,12 @@ class interpRecon:
         grid_z_pol_wrap = np.concatenate([grid_z_pol] * 3)
 
         # Radially smooth based on RMW - more smoothing farther out from RMW
-        grid_z_pol_final = np.array([gfilt(grid_z_pol_wrap, (6, 3 + abs(r - rmw) / 10))[:, i]
+        #grid_z_pol_final = np.array([gfilt(grid_z_pol_wrap, (6, 3 + abs(r - rmw) / 10))[:, i]
+        #                             for i, r in enumerate(grid_rho[0, :])]).T[len(grid_phi):2 * len(grid_phi)]
+        orig_factor = [2,2,3,5,9,15,15]
+        orig_range = [0,3,20,50,100,200,2000]
+        f = interp1d(orig_range,orig_factor)
+        grid_z_pol_final = np.array([gfilt(grid_z_pol_wrap, (6, f(r) + abs(r - rmw) / 14))[:, i]
                                      for i, r in enumerate(grid_rho[0, :])]).T[len(grid_phi):2 * len(grid_phi)]
 
         # Function for interpolating polar cartesian to coordinates
@@ -238,7 +266,7 @@ class interpRecon:
         }
         return self.Hovmoller
 
-    def interpMaps(self, target_track, interval=0.5, stat_vars=None):
+    def interpMaps(self, target_track, filter_outer_obs=False, interval=0.5, stat_vars=None):
         r"""
         1. Can just output a single map (interpolated to lat/lon grid and projected onto the Cartopy map
         2. If target_track is longer than 1, outputs multiple maps to a directory
@@ -282,7 +310,7 @@ class interpRecon:
             print(time)
             self.dfRecon = tmpRecon[(
                 tmpRecon['time'] > time - window / 2) & (tmpRecon['time'] <= time + window / 2)]
-            grid_x, grid_y, grid_z = self.interpCart()
+            grid_x, grid_y, grid_z = self.interpCart(filter_outer_obs)
             spaceInterpData[time] = grid_z
             if stat_vars is not None:
                 for name in stat_vars.keys():
@@ -630,6 +658,70 @@ def time_series_plot(varname):
     full_name = full_names.get(varname, '')
 
     return {'color': color, 'name': name, 'full_name': full_name}
+
+def add_colorbar(mappable=None, location='right', size="2.5%", pad='1%', levels=None, fig=None, ax=None, **kwargs):
+    """
+    Uses the axes_grid toolkit to add a colorbar to the parent axis and rescale its size to match
+    that of the parent axis. This is adapted from Basemap's original ``colorbar()`` method.
+
+    Parameters
+    ----------
+    mappable
+        The image mappable to which the colorbar applies. If none specified, matplotlib.pyplot.gci() is
+        used to retrieve the latest mappable.
+    location
+        Location in which to place the colorbar ('right','left','top','bottom'). Default is right.
+    size
+        Size of the colorbar. Default is 3%.
+    pad
+        Pad of colorbar from axis. Default is 1%.
+    ax
+        Axes instance to associated the colorbar with. If none provided, or if no
+        axis is associated with the instance of Map, then plt.gca() is used.
+    """
+
+    # Get current mappable if none is specified
+    if fig is None or mappable is None:
+        import matplotlib.pyplot as plt
+    if fig is None:
+        fig = plt.gcf()
+
+    if mappable is None:
+        mappable = plt.gci()
+
+    # Create axis to insert colorbar in
+    divider = make_axes_locatable(ax)
+
+    if location == "left":
+        orientation = 'vertical'
+        ax_cb = divider.new_horizontal(
+            size, pad, pack_start=True, axes_class=plt.Axes)
+    elif location == "right":
+        orientation = 'vertical'
+        ax_cb = divider.new_horizontal(
+            size, pad, pack_start=False, axes_class=plt.Axes)
+    elif location == "bottom":
+        orientation = 'horizontal'
+        ax_cb = divider.new_vertical(
+            size, pad, pack_start=True, axes_class=plt.Axes)
+    elif location == "top":
+        orientation = 'horizontal'
+        ax_cb = divider.new_vertical(
+            size, pad, pack_start=False, axes_class=plt.Axes)
+    else:
+        raise ValueError('Improper location entered')
+
+    # Create colorbar
+    fig.add_axes(ax_cb)
+    if levels is None or len(levels) > 20:
+        cb = plt.colorbar(mappable, orientation=orientation, cax=ax_cb, **kwargs)
+    else:
+        cb = plt.colorbar(mappable, orientation=orientation, cax=ax_cb, ticks=levels, **kwargs)
+
+    # Reset parent axis as the current axis
+    fig.sca(ax)
+    return cb
+
 
 # =======================================================================================================
 # Decoding HDOBs

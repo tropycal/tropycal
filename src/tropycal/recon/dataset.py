@@ -1516,7 +1516,7 @@ class hdobs:
         # Return axis
         return ax
 
-    def plot_maps(self, time=None, varname='wspd', recon_stats=None, domain="dynamic",
+    def plot_maps(self, time=None, varname='wspd', recon_stats=None, filter_outer_obs=False, domain="dynamic",
                   window=6, align='center', radlim=None, ax=None, cartopy_proj=None, save_dir=None, **kwargs):
         r"""
         Creates maps of interpolated recon data. 
@@ -1532,6 +1532,8 @@ class hdobs:
             * **"wspd"** = 30-second flight level wind (default)
             * **"pkwnd"** = 10-second flight level wind
             * **"p_sfc"** = extrapolated surface pressure
+        filter_outer_obs : bool
+            If True, filters outer observations to avoid interpolating radii with only a single data point. Default is False.
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         radlim : int, optional
@@ -1580,10 +1582,6 @@ class hdobs:
         if track_dict is None:
             track_dict = self.storm.dict
 
-            # Error check for time dimension name
-            if 'time' not in track_dict.keys():
-                track_dict['time'] = track_dict['time']
-
         if ONE_MAP:
             f = interp1d(mdates.date2num(
                 track_dict['time']), track_dict['lon'], fill_value='extrapolate')
@@ -1605,12 +1603,12 @@ class hdobs:
             for v in varname:
                 iRecon = interpRecon(dfRecon, v, radlim,
                                      window=window, align=align)
-                tmpMaps = iRecon.interpMaps(track_dict)
+                tmpMaps = iRecon.interpMaps(track_dict, filter_outer_obs)
                 Maps.append(tmpMaps)
         else:
-            iRecon = interpRecon(dfRecon, varname, radlim,
+            iRecon = interpRecon(dfRecon, varname, radlim, 
                                  window=window, align=align)
-            Maps = iRecon.interpMaps(track_dict)
+            Maps = iRecon.interpMaps(track_dict, filter_outer_obs)
 
         # titlename,units = get_recon_title(varname)
 
@@ -1706,7 +1704,7 @@ class hdobs:
 
             # Plot recon
             plot_ax = self.plot_obj.plot_maps(
-                self.storm, Maps, varname, recon_stats, domain, ax, prop=prop, map_prop=map_prop)
+                self.storm, Maps, varname, recon_stats, iRecon.radlim, domain, ax, prop=prop, map_prop=map_prop)
 
             # Return axis
             return plot_ax

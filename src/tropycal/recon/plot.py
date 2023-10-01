@@ -13,6 +13,7 @@ from ..utils import *
 
 try:
     from cartopy import crs as ccrs
+    from cartopy.geodesic import Geodesic
 except ImportError:
     warnings.warn(
         "Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
@@ -587,7 +588,7 @@ class ReconPlot(Plot):
         return self.ax
         plt.close()
 
-    def plot_maps(self, storm, Maps_dict, varname, recon_stats=None,
+    def plot_maps(self, storm, Maps_dict, varname, recon_stats=None, radlim=200,
                   domain='dynamic', ax=None, return_domain=False, prop={}, map_prop={}):
         r"""
         Creates a plot of storm-centered recon data interpolated to a grid
@@ -626,6 +627,7 @@ class ReconPlot(Plot):
             Maps_dict = Maps_dict[0]
             MULTIVAR = True
 
+        # Convert data to cartesian grid
         grid_res = 1 * 1e3  # m
         clon = Maps_dict['center_lon']
         clat = Maps_dict['center_lat']
@@ -640,10 +642,8 @@ class ReconPlot(Plot):
         lons = out[:, :, 0]
         lats = out[:, :, 1]
 
-        # mlib.rcParams.update({'font.size': 16})
-
+        # Contour fill variable
         cmap, clevs = get_cmap_levels(varname, prop['cmap'], prop['levels'])
-
         norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
         cbmap = self.ax.contourf(lons, lats, Maps_dict['maps'],
                                  cmap=cmap, norm=norm, levels=clevs, transform=ccrs.PlateCarree())
@@ -658,8 +658,16 @@ class ReconPlot(Plot):
         # Storm-centered plot domain
         if domain == "dynamic":
 
-            bound_w, bound_e, bound_s, bound_n = np.amin(
-                lons) - .1, np.amax(lons) + .1, np.amin(lats) - .1, np.amax(lats) + .1
+            # Get radius surrounding center
+            center_point = (clat, clon)
+            circle_points = Geodesic().circle(
+                lon=clon,lat=clat,radius=(radlim+50)*1000,n_samples=360,endpoint=True)
+            circle_lons = list(np.array([i[0] for i in circle_points]))
+            circle_lats = list(np.array([i[1] for i in circle_points]))
+            
+            bound_w, bound_e, bound_s, bound_n = dynamic_map_extent(
+                np.amin(circle_lons), np.amax(circle_lons),
+                np.amin(circle_lats), np.amax(circle_lats), ratio=1.1, adjust_zoom=False)
             self.ax.set_extent(
                 [bound_w, bound_e, bound_s, bound_n], crs=ccrs.PlateCarree())
 
@@ -679,9 +687,8 @@ class ReconPlot(Plot):
 #        plt.axis([-radlim,radlim,-radlim,radlim])
 #        plt.axis('equal')
 
-        cbar = self.fig.colorbar(cbmap, orientation='vertical',
-                                 ticks=clevs)
-#        cbar.set_label('wind (kt)')
+        cbar = add_colorbar(cbmap, ax=self.ax, ticks=clevs)
+        #cbar = self.fig.colorbar(cbmap, orientation='vertical', ticks=clevs)
 
         # --------------------------------------------------------------------------------------
 

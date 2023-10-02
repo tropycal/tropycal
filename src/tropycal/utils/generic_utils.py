@@ -8,7 +8,7 @@ Public utility functions should be added to documentation in the '/docs/_templat
 import shapely.geometry as sgeom
 import math
 import numpy as np
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 import requests
 import urllib
 import warnings
@@ -1828,6 +1828,23 @@ def dynamic_map_extent(min_lon, max_lon, min_lat, max_lat, ratio=1.45, recon=Fal
 
 
 def read_url(url, split=True, subsplit=True):
+    r"""
+    Read a URL's content and return the output.
+
+    Parameters
+    ----------
+    url : str
+        URL path to be read.
+    split : bool, optional
+        Whether to split content by line. Default is True.
+    subsplit: bool, optional
+        Whether to split each line by comma. Default is True.
+
+    Returns
+    -------
+    str
+        Returns content of requested URL.
+    """
 
     f = urllib.request.urlopen(url)
     content = f.read()
@@ -1840,6 +1857,48 @@ def read_url(url, split=True, subsplit=True):
 
     return content
 
+def round_time_down(time, minute_increment):
+    r"""
+    Round a datetime object down to the nearest provided increment.
+
+    Parameters
+    ----------
+    time : datetime.datetime
+        Datetime object to be rounded down.
+    minute_increment : int or float
+        Minutes to round down by.
+
+    Returns
+    -------
+    datetime.datetime
+        Time rounded down by the requested increment.
+    """
+
+    total_minutes = time.hour * 60 + time.minute
+    rounded_minutes = total_minutes - (total_minutes % minute_increment)
+    return time - timedelta(minutes=(total_minutes - rounded_minutes))
+
+def round_time_up(time, minute_increment):
+    r"""
+    Round a datetime object up to the nearest provided increment.
+
+    Parameters
+    ----------
+    time : datetime.datetime
+        Datetime object to be rounded up.
+    minute_increment : int or float
+        Minutes to round up by.
+
+    Returns
+    -------
+    datetime.datetime
+        Time rounded down by the requested increment.
+    """
+
+    remainder = time.minute % minute_increment
+    if remainder:
+        time += timedelta(minutes=minute_increment - remainder)
+    return time.replace(second=0, microsecond=0)
 
 class Distance:
 

@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from datetime import datetime as dt, timedelta
+from datetime import datetime as dt, timedelta, timezone
 import pandas as pd
 import requests
 import pickle
@@ -1516,8 +1516,9 @@ class hdobs:
         # Return axis
         return ax
 
-    def plot_maps(self, time=None, varname='wspd', recon_stats=None, filter_outer_obs=False, domain="dynamic",
-                  window=6, align='center', radlim=None, ax=None, cartopy_proj=None, save_dir=None, **kwargs):
+    def plot_maps(self, time=None, varname='wspd', recon_stats=None, filter_outer_obs=False,
+                  output_interval=30, domain="dynamic", window=6, align='center', radlim=None,
+                  ax=None, cartopy_proj=None, save_dir=None, **kwargs):
         r"""
         Creates maps of interpolated recon data. 
 
@@ -1532,9 +1533,11 @@ class hdobs:
             * **"wspd"** = 30-second flight level wind (default)
             * **"pkwnd"** = 10-second flight level wind
             * **"p_sfc"** = extrapolated surface pressure
-        filter_outer_obs : bool
+        filter_outer_obs : bool, optional
             If True, filters outer observations to avoid interpolating radii with only a single data point. Default is False.
-        domain : str
+        output_interval : int or float, optional
+            Time interval in minutes between each interpolated image. Can be between 10 and 60 minutes. Default is 30 minutes.
+        domain : str, optional
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         radlim : int, optional
             Radius from storm center, in kilometers, to plot. Default is 200 km.
@@ -1564,17 +1567,59 @@ class hdobs:
         map_prop = kwargs.pop('map_prop', {})
         track_dict = kwargs.pop('track_dict', None)
 
+        # Check output interval
+        if output_interval < 10:
+            output_interval = 10
+        elif output_interval > 60:
+            output_interval = 60
+
         # Get plot data
         ONE_MAP = False
         if time is None:
             dfRecon = self.data
-        elif isinstance(time, (tuple, list)):
-            dfRecon = self.sel(time=time).data
-        elif isinstance(time, dt):
-            dfRecon = self.sel(
-                time=(time - timedelta(hours=6), time + timedelta(hours=6))).data
-            ONE_MAP = True
+            center_passes = sorted(list(set([t for t in self.data[self.data['iscenter'] == 1]['time']])))
+            time = (center_passes[0], center_passes[-1])
 
+        elif isinstance(time, (tuple, list, dt)):
+            
+            # Coerce time to tuple
+            subset_time = copy.deepcopy(time)
+            if isinstance(time, dt):
+                subset_time = (time, time)
+                ONE_MAP = True
+            
+            # Get unique list of center passes
+            center_passes = sorted(list(set([t for t in self.data[self.data['iscenter'] == 1]['time']])))
+            
+            # Find appropriate start time
+            diff_time_start = [(t-subset_time[0]).total_seconds()/3600 for t in center_passes]
+            start_indices = [i for i, val in enumerate(diff_time_start) if val <= window / -2.0]
+            if len(start_indices) == 0:
+                start_time = center_passes[0]
+            else:
+                start_time = center_passes[start_indices[-1]]
+            
+            # Find appropriate end time
+            diff_time_end = [(t-subset_time[-1]).total_seconds()/3600 for t in center_passes]
+            end_indices = [i for i, val in enumerate(diff_time_end) if val >= window / 2.0]
+            if len(end_indices) == 0:
+                end_time = center_passes[-1]
+            else:
+                end_time = center_passes[end_indices[0]]
+
+            # Check requested time is valid
+            window_dt = timedelta(hours=window / 2.0)
+            if subset_time[0] < (start_time - window_dt) or subset_time[-1] > (end_time + window_dt):
+                raise ValueError("Recon data is unavailable for the requested time.")
+
+            # Subset recon data temporally
+            subset_time = (start_time - timedelta(hours=window / 2.0),
+                           end_time + timedelta(hours=window / 2.0))
+            dfRecon = self.sel(time=subset_time).data
+            
+            # Create list of desired center passes for interpolation
+            center_passes = [t for t in center_passes if start_time <= t <= end_time]
+        
         MULTIVAR = False
         if isinstance(varname, (tuple, list)):
             MULTIVAR = True
@@ -1582,132 +1627,95 @@ class hdobs:
         if track_dict is None:
             track_dict = self.storm.dict
 
-        if ONE_MAP:
-            f = interp1d(mdates.date2num(
-                track_dict['time']), track_dict['lon'], fill_value='extrapolate')
-            clon = f(mdates.date2num(time))
-            f = interp1d(mdates.date2num(
-                track_dict['time']), track_dict['lat'], fill_value='extrapolate')
-            clat = f(mdates.date2num(time))
-
-            # clon = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lon'])
-            # clat = np.interp(mdates.date2num(recon_select),mdates.date2num(track_dict['time']),track_dict['lat'])
-            track_dict = {
-                'time': time,
-                'lon': clon,
-                'lat': clat
-            }
-
         if MULTIVAR:
             Maps = []
             for v in varname:
                 iRecon = interpRecon(dfRecon, v, radlim,
                                      window=window, align=align)
-                tmpMaps = iRecon.interpMaps(track_dict, filter_outer_obs)
+                tmpMaps = iRecon.interpMaps(track_dict, filter_outer_obs, interval=output_interval / 60,
+                                            center_passes=center_passes)
                 Maps.append(tmpMaps)
         else:
             iRecon = interpRecon(dfRecon, varname, radlim, 
                                  window=window, align=align)
-            Maps = iRecon.interpMaps(track_dict, filter_outer_obs)
+            Maps = iRecon.interpMaps(track_dict, filter_outer_obs, interval=output_interval / 60,
+                                     center_passes=center_passes)
 
         # titlename,units = get_recon_title(varname)
-
         if 'levels' not in prop.keys() or 'levels' in prop.keys() and prop['levels'] is None:
             prop['levels'] = np.arange(np.floor(np.nanmin(Maps['maps']) / 10) * 10,
                                        np.ceil(np.nanmax(Maps['maps']) / 10) * 10 + 1, 10)
 
-        if not ONE_MAP:
-
-            if save_dir is True:
-                save_dir = f'{self.storm}{self.year}_maps'
-            try:
+        if save_dir is True:
+            save_dir = f'{self.storm}{self.year}_maps'
+        try:
+            if not os.path.isdir(save_dir):
                 os.system(f'mkdir {save_dir}')
-            except:
-                pass
+        except:
+            pass
 
-            if MULTIVAR:
-                Maps2 = Maps[1]
-                Maps = Maps[0]
+        if MULTIVAR:
+            Maps2 = Maps[1]
+            Maps = Maps[0]
 
-                print(np.nanmax(Maps['maps']), np.nanmin(Maps2['maps']))
+            print(np.nanmax(Maps['maps']), np.nanmin(Maps2['maps']))
 
-            figs = []
-            for i, t in enumerate(Maps['time']):
-                Maps_sub = {
-                    'time': t,
-                    'grid_x': Maps['grid_x'],
-                    'grid_y': Maps['grid_y'],
-                    'maps': Maps['maps'][i],
-                    'center_lon': Maps['center_lon'][i],
-                    'center_lat': Maps['center_lat'][i],
-                    'stats': Maps['stats']
-                }
+        figs = []
+        if not isinstance(Maps['time'],list):
+            Maps['time'] = [Maps['time']]
+        if ONE_MAP:
+            time_diff = [abs(time.replace(tzinfo=timezone.utc)-t) for t in Maps['time']]
+            min_index = time_diff.index(min(time_diff))
+        for i, t in enumerate(Maps['time']):
+            
+            # Only plot map for desired time(s)
+            if ONE_MAP:
+                if i != time_diff.index(min(time_diff)):
+                    continue
+            elif t < time[0].replace(tzinfo=timezone.utc) or t > time[-1].replace(tzinfo=timezone.utc):
+                    continue
 
-                # Create instance of plot object
-                self.plot_obj = ReconPlot()
+            # Create map data dict
+            Maps_sub = {
+                'time': t,
+                'grid_x': Maps['grid_x'],
+                'grid_y': Maps['grid_y'],
+                'maps': Maps['maps'][i],
+                'center_lon': Maps['center_lon'][i],
+                'center_lat': Maps['center_lat'][i],
+                'stats': Maps['stats']
+            }
 
-                # Create cartopy projection
-                self.plot_obj.create_cartopy(
-                    proj='PlateCarree', central_longitude=0.0)
-                cartopy_proj = self.plot_obj.proj
-
-                # Maintain the same lat / lon dimensions for all dynamic maps
-                # Determined by the dynamic domain from the first map
-                if i > 0 and domain == 'dynamic':
-                    d1 = {
-                        'n': Maps_sub['center_lat'] + dlat,
-                        's': Maps_sub['center_lat'] - dlat,
-                        'e': Maps_sub['center_lon'] + dlon,
-                        'w': Maps_sub['center_lon'] - dlon
-                    }
-                else:
-                    d1 = domain
-
-                # Plot recon
-
-                if MULTIVAR:
-                    Maps_sub1 = dict(Maps_sub)
-                    Maps_sub2 = dict(Maps_sub)
-                    Maps_sub = [Maps_sub1, Maps_sub2]
-                    Maps_sub[1]['maps'] = Maps2['maps'][i]
-
-                    print(np.nanmax(Maps_sub[0]['maps']),
-                          np.nanmin(Maps_sub[1]['maps']))
-
-                plot_ax, d0 = self.plot_obj.plot_maps(self.storm, Maps_sub, varname, recon_stats,
-                                                      domain=d1, ax=ax, return_domain=True, prop=prop, map_prop=map_prop)
-
-                # Get domain dimensions from the first map
-                if i == 0:
-                    dlat = .5 * (d0['n'] - d0['s'])
-                    dlon = .5 * (d0['e'] - d0['w'])
-
-                figs.append(plot_ax)
-
-                if save_dir is not None:
-                    plt.savefig(
-                        f'{save_dir}/{t.strftime("%Y%m%d%H%M")}.png', bbox_inches='tight')
-                plt.close()
-
-            if save_dir is None:
-                return figs
-
-        else:
             # Create instance of plot object
             self.plot_obj = ReconPlot()
 
             # Create cartopy projection
-            if cartopy_proj is None:
-                self.plot_obj.create_cartopy(
-                    proj='PlateCarree', central_longitude=0.0)
-                cartopy_proj = self.plot_obj.proj
+            self.plot_obj.create_cartopy(
+                proj='PlateCarree', central_longitude=0.0)
+            cartopy_proj = self.plot_obj.proj
 
-            # Plot recon
-            plot_ax = self.plot_obj.plot_maps(
-                self.storm, Maps, varname, recon_stats, iRecon.radlim, domain, ax, prop=prop, map_prop=map_prop)
+            # Modified setting if plotting multiple variables
+            if MULTIVAR:
+                Maps_sub1 = dict(Maps_sub)
+                Maps_sub2 = dict(Maps_sub)
+                Maps_sub = [Maps_sub1, Maps_sub2]
+                Maps_sub[1]['maps'] = Maps2['maps'][i]
 
-            # Return axis
-            return plot_ax
+            # Create plot of interpolated recon data
+            plot_ax, d0 = self.plot_obj.plot_maps(
+                self.storm, Maps_sub, varname, recon_stats, domain=domain,
+                ax=ax, return_domain=True, prop=prop, map_prop=map_prop)
+            figs.append(plot_ax)
+
+            if save_dir is not None and not ONE_MAP:
+                plt.savefig(
+                    f'{save_dir}/{t.strftime("%Y%m%d%H%M")}.png', bbox_inches='tight')
+            if ONE_MAP:
+                return plot_ax
+            plt.close()
+
+        if save_dir is None and not ONE_MAP:
+            return figs
 
     def plot_swath(self, varname='wspd', domain="dynamic", ax=None, cartopy_proj=None, **kwargs):
         r"""

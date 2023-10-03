@@ -7,7 +7,7 @@ import matplotlib.dates as mdates
 import copy
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from ..utils import classify_subtropical, get_storm_classification
+from ..utils import classify_subtropical, get_storm_classification, round_time_down, round_time_up
 
 
 def uv_from_wdir(wspd, wdir):
@@ -266,7 +266,7 @@ class interpRecon:
         }
         return self.Hovmoller
 
-    def interpMaps(self, target_track, filter_outer_obs=False, interval=0.5, stat_vars=None):
+    def interpMaps(self, target_track, filter_outer_obs=False, center_passes=None, interval=0.5, stat_vars=None):
         r"""
         1. Can just output a single map (interpolated to lat/lon grid and projected onto the Cartopy map
         2. If target_track is longer than 1, outputs multiple maps to a directory
@@ -275,25 +275,22 @@ class interpRecon:
         window = self.window
         align = self.align
 
-        # Store the dataframe containing recon data
+        # Store a copy of the dataframe containing recon data
         tmpRecon = self.dfRecon.copy()
-        # Sets window as a timedelta object
+        
+        # Convert window to a timedelta object
         window = timedelta(seconds=int(window * 3600))
 
-        # Error check for time dimension name
-        if 'time' not in target_track.keys():
-            target_track['time'] = target_track['date']
-
-        # If target_track > 1 (tuple or list of times), then retrieve multiple center pass times and center around the window
-        if isinstance(target_track['time'], (tuple, list, np.ndarray)):
+        # Retrieve center passes to spatially interpolate data for
+        if center_passes is None:
             centerTimes = tmpRecon[tmpRecon['iscenter'] == 1]['time']
             spaceInterpTimes = sorted(list(set([t for t in centerTimes])))
-            trackTimes = [t for t in target_track['time'] if min(
-                spaceInterpTimes) - window / 2 < t < max(spaceInterpTimes) + window / 2]
-        # Otherwise, just use a single time
         else:
-            spaceInterpTimes = list([target_track['time']])
-            trackTimes = spaceInterpTimes.copy()
+            spaceInterpTimes = center_passes
+
+        # Start and end times for temporal interpolation
+        trackTimes = [round_time_down(spaceInterpTimes[0] - window / 2, 60*interval),
+                      round_time_up(spaceInterpTimes[-1] + window / 2, 60*interval)]
 
         # Experimental - add recon statistics (e.g., wind, MSLP) to plot
         # **** CHECK BACK ON THIS ****
@@ -301,15 +298,16 @@ class interpRecon:
         recon_stats = None
         if stat_vars is not None:
             recon_stats = {name: [] for name in stat_vars.keys()}
+
         # Iterate through all data surrounding a center pass given the window previously specified, and create a polar
         # grid for each
         start_time = dt.now()
         print("--> Starting interpolation")
-
-        for time in spaceInterpTimes:
-            print(time)
-            self.dfRecon = tmpRecon[(
-                tmpRecon['time'] > time - window / 2) & (tmpRecon['time'] <= time + window / 2)]
+        for i, time in enumerate(spaceInterpTimes):
+            percent_complete = (i / len(spaceInterpTimes)) * 100.0
+            print(f'\rStatus... {percent_complete:.0f}% complete', end='', flush=True)
+            self.dfRecon = tmpRecon[(tmpRecon['time'] > time - window / 2) &
+                                    (tmpRecon['time'] <= time + window / 2)]
             grid_x, grid_y, grid_z = self.interpCart(filter_outer_obs)
             spaceInterpData[time] = grid_z
             if stat_vars is not None:
@@ -318,6 +316,8 @@ class interpRecon:
                         stat_vars[name](self.dfRecon[name]))
 
         # Sets dfRecon back to original full data
+        print(f'\rStatus... 100% complete', end='', flush=True)
+        print("")
         self.dfRecon = tmpRecon
         reconArray = np.array([i for i in spaceInterpData.values()])
 
@@ -328,11 +328,17 @@ class interpRecon:
             oldTimes = mdates.date2num(np.array(list(spaceInterpData.keys())))
             reconTimeInterp = np.apply_along_axis(lambda x: np.interp(newTimes, oldTimes, x),
                                                   axis=0, arr=reconArray)
-            # Get centered lat and lon by interpolating from target_track dictionary (whether archer or HURDAT)
-            clon = np.interp(newTimes, mdates.date2num(
-                target_track['time']), target_track['lon'])
-            clat = np.interp(newTimes, mdates.date2num(
-                target_track['time']), target_track['lat'])
+
+            # Get centered lat and lon by interpolating from target_track dictionary
+            interp_kind = 'quadratic'
+            if len(newTimes) == 2:
+                interp_kind = 'linear'
+            clon = interp1d(
+                mdates.date2num(target_track['time']), target_track['lon'], 
+                fill_value='extrapolate', kind=interp_kind)(newTimes)
+            clat = interp1d(
+                mdates.date2num(target_track['time']), target_track['lat'], 
+                fill_value='extrapolate', kind=interp_kind)(newTimes)
         else:
             newTimes = mdates.date2num(trackTimes)[0]
             reconTimeInterp = reconArray[0]
@@ -350,9 +356,27 @@ class interpRecon:
         tsec = str(round(time_elapsed.total_seconds(), 2))
         print(f"--> Completed interpolation ({tsec} seconds)")
 
+        # Make sure interpolated times don't drift off interval
+        original_times = list(mdates.num2date(newTimes))
+        fixed_times = [original_times[0]]
+        expected_delta = timedelta(minutes=60*interval)
+        for i in range(1, len(original_times)):
+            expected_time = fixed_times[i-1] + expected_delta
+            if original_times[i].minute != expected_time.minute:
+                fixed_times.append(expected_time)
+            else:
+                fixed_times.append(original_times[i])
+
         # Create dict of map data (interpolation time, x & y grids, 'maps' (3D grid of field, time/x/y), and return
-        self.Maps = {'time': mdates.num2date(newTimes), 'grid_x': grid_x, 'grid_y': grid_y, 'maps': reconTimeInterp,
-                     'center_lon': clon, 'center_lat': clat, 'stats': recon_stats}
+        self.Maps = {
+            'time': fixed_times,
+            'grid_x': grid_x,
+            'grid_y': grid_y,
+            'maps': reconTimeInterp,
+            'center_lon': clon,
+            'center_lat': clat,
+            'stats': recon_stats
+        }
         return self.Maps
 
     @staticmethod

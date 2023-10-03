@@ -1737,12 +1737,15 @@ class hdobs:
         if save_dir is None and not ONE_MAP:
             return figs
 
-    def plot_swath(self, varname='wspd', domain="dynamic", ax=None, cartopy_proj=None, **kwargs):
+    def plot_swath(self, time=None, varname='wspd', filter_outer_obs=True, missing_window=24,
+                   domain="dynamic", ax=None, cartopy_proj=None, **kwargs):
         r"""
         Creates a map plot of a swath of interpolated recon data.
 
         Parameters
         ----------
+        time : list or tuple, optional
+            List or tuple of datetime objects containing the start and end times to create the swath between. If None (default), all times will be computed for the swath.
         varname : str
             Variable to plot. Can be one of the following keys in dataframe:
 
@@ -1751,6 +1754,10 @@ class hdobs:
             * **"pkwnd"** = 10-second flight level wind
             * **"p_sfc"** = extrapolated surface pressure
 
+        filter_outer_obs : bool, optional
+            If True, filters outer observations to avoid interpolating radii with only a single data point. Default is True.
+        missing_window : int, optional
+            Minimum window of hours to remove if data is missing. Default is 24 hours.
         domain : str
             Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes
@@ -1776,20 +1783,61 @@ class hdobs:
         track_dict = kwargs.pop('track_dict', None)
         swathfunc = kwargs.pop('swathfunc', None)
 
-        # Get plot data
-        dfRecon = self.data
+        # Get unique list of center passes, filtered temporally
+        center_passes = sorted(list(set([t for t in self.data[self.data['iscenter'] == 1]['time']])))
+        if (center_passes[1]-center_passes[0]).total_seconds()/3600 >= missing_window:
+            center_passes = center_passes[1:]
+        if (center_passes[-1]-center_passes[-2]).total_seconds()/3600 >= missing_window:
+            center_passes = center_passes[:-1]
 
+        # Subset data temporally
+        window = 6
+        if time is None:
+            dfRecon = self.data
+        elif isinstance(time, (tuple, list)):
+
+            # Find appropriate start time
+            diff_time_start = [(t-time[0]).total_seconds()/3600 for t in center_passes]
+            start_indices = [i for i, val in enumerate(diff_time_start) if val <= window / -2.0]
+            if len(start_indices) == 0:
+                start_time = center_passes[0]
+            else:
+                start_time = center_passes[start_indices[-1]]
+            
+            # Find appropriate end time
+            diff_time_end = [(t-time[-1]).total_seconds()/3600 for t in center_passes]
+            end_indices = [i for i, val in enumerate(diff_time_end) if val >= window / 2.0]
+            if len(end_indices) == 0:
+                end_time = center_passes[-1]
+            else:
+                end_time = center_passes[end_indices[0]]
+
+            # Check requested time is valid
+            window_dt = timedelta(hours=window / 2.0)
+            if time[0] < (start_time - window_dt) or time[-1] > (end_time + window_dt):
+                raise ValueError("Recon data is unavailable for the requested time.")
+
+            # Subset recon data temporally
+            time = (start_time - timedelta(hours=window / 2.0),
+                    end_time + timedelta(hours=window / 2.0))
+            dfRecon = self.sel(time=time).data
+
+            # Create list of desired center passes for interpolation
+            center_passes = [t for t in center_passes if start_time <= t <= end_time]
+
+        # Get plot data
         if track_dict is None:
             track_dict = self.storm.dict
-
         if swathfunc is None:
             if varname == 'p_sfc':
                 swathfunc = np.min
             else:
                 swathfunc = np.max
 
+        # Perform spatial interpolation
         iRecon = interpRecon(dfRecon, varname)
-        Maps = iRecon.interpMaps(track_dict, interval=.2)
+        Maps = iRecon.interpMaps(track_dict, filter_outer_obs,
+                                 interval=0.1, center_passes=center_passes)
 
         # Create instance of plot object
         self.plot_obj = ReconPlot()
@@ -1802,7 +1850,8 @@ class hdobs:
 
         # Plot recon
         plot_ax = self.plot_obj.plot_swath(
-            self.storm, Maps, varname, swathfunc, track_dict, domain, ax, prop=prop, map_prop=map_prop)
+            self.storm, Maps, varname, swathfunc, track_dict, center_passes,
+            missing_window, domain, ax, prop=prop, map_prop=map_prop)
 
         # Return axis
         return plot_ax

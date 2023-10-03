@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import warnings
-from datetime import datetime as dt
+from datetime import datetime as dt, timezone
 from scipy.ndimage import gaussian_filter as gfilt
 import copy
 
@@ -334,8 +334,8 @@ class ReconPlot(Plot):
         else:
             return self.ax
 
-    def plot_swath(self, storm, Maps, varname, swathfunc, track_dict,
-                   domain="dynamic", ax=None, prop={}, map_prop={}):
+    def plot_swath(self, storm, Maps, varname, swathfunc, track_dict, center_passes,
+                   missing_window, domain="dynamic", ax=None, prop={}, map_prop={}):
 
         # Set default properties
         default_prop = {'cmap': 'category', 'levels': None,
@@ -345,12 +345,6 @@ class ReconPlot(Plot):
         prop = self.add_prop(prop, default_prop)
         self.plot_init(ax, map_prop)
 
-        # Keep record of lat/lon coordinate extrema
-        max_lat = None
-        min_lat = None
-        max_lon = None
-        min_lon = None
-
         # Retrieve recon data
         lats = Maps['center_lat']
         lons = Maps['center_lon']
@@ -358,28 +352,11 @@ class ReconPlot(Plot):
         # Retrieve storm data
         storm_data = storm.dict
 
-        # Add to coordinate extrema
-        if max_lat is None:
-            max_lat = max(lats) + 2.5
-        else:
-            if max(lats) > max_lat:
-                max_lat = max(lats)
-        if min_lat is None:
-            min_lat = min(lats) - 2.5
-        else:
-            if min(lats) < min_lat:
-                min_lat = min(lats)
-        if max_lon is None:
-            max_lon = max(lons) + 2.5
-        else:
-            if max(lons) > max_lon:
-                max_lon = max(lons)
-        if min_lon is None:
-            min_lon = min(lons) - 2.5
-        else:
-            if min(lons) < min_lon:
-                min_lon = min(lons)
-
+        # Find coordinate extrema
+        max_lat = max(lats) + 2
+        min_lat = min(lats) - 2
+        max_lon = max(lons) + 2
+        min_lon = min(lons) - 2
         bound_w, bound_e, bound_s, bound_n = self.dynamic_map_extent(
             min_lon, max_lon, min_lat, max_lat)
 
@@ -408,7 +385,22 @@ class ReconPlot(Plot):
             e[d.mask] = np.nan
             return e
 
-        for t, (x_center, y_center, var) in enumerate(zip(cx, cy, Maps['maps'])):
+        print('--> Combining data into swath')
+        for t, (x_center, y_center, var, time) in enumerate(zip(cx, cy, Maps['maps'], Maps['time'])):
+            percent_complete = (t / len(cx)) * 100.0
+            print(f'\rStatus... {percent_complete:.0f}% complete', end='', flush=True)
+
+            # Skip times where window is greater than missing window
+            nearest_pass = max([k for k in center_passes if k.replace(tzinfo=timezone.utc) < time], default=None)
+            if nearest_pass:
+                idx = center_passes.index(nearest_pass)
+                if idx == len(center_passes) - 1:
+                    continue
+                if (center_passes[idx+1]-center_passes[idx]).total_seconds()/3600 >= missing_window:
+                    continue
+            else:
+                continue
+
             x_fromc = x_center + Maps['grid_x'] * 1e3
             y_fromc = y_center + Maps['grid_y'] * 1e3
             inrecon = np.where((xmgrid >= np.min(x_fromc)) & (xmgrid <= np.max(x_fromc)) &
@@ -417,6 +409,9 @@ class ReconPlot(Plot):
                              (y_fromc >= np.min(ymgrid)) & (y_fromc <= np.max(ymgrid)))
             aggregate_grid[inrecon] = nanfunc(
                 swathfunc, aggregate_grid[inrecon], var[inmap])
+        print(f'\rStatus... 100% complete', end='', flush=True)
+        print('')
+        print('--> Saving map')
 
         if prop['levels'] is None:
             prop['levels'] = (np.nanmin(aggregate_grid),

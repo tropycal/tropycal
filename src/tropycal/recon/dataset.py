@@ -1517,8 +1517,8 @@ class hdobs:
         return ax
 
     def plot_maps(self, time=None, varname='wspd', recon_stats=None, filter_outer_obs=False,
-                  output_interval=30, domain="dynamic", window=6, align='center', radlim=None,
-                  ax=None, cartopy_proj=None, save_dir=None, **kwargs):
+                  output_interval=30, window=6, align='center', missing_window=24, radlim=None,
+                  domain="dynamic", ax=None, cartopy_proj=None, save_dir=None, **kwargs):
         r"""
         Creates maps of interpolated recon data. 
 
@@ -1537,14 +1537,16 @@ class hdobs:
             If True, filters outer observations to avoid interpolating radii with only a single data point. Default is False.
         output_interval : int or float, optional
             Time interval in minutes between each interpolated image. Can be between 10 and 60 minutes. Default is 30 minutes.
-        domain : str, optional
-            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
-        radlim : int, optional
-            Radius from storm center, in kilometers, to plot. Default is 200 km.
         window : int, optional
             Window of hours to interpolate between observations. Default is 6 hours.
         align : str, optional
             Alignment of window. Default is 'center'.
+        missing_window : int, optional
+            Minimum window of hours to remove if data is missing. Default is 24 hours.
+        radlim : int, optional
+            Radius from storm center, in kilometers, to plot. Default is 200 km.
+        domain : str, optional
+            Domain for the plot. Default is "dynamic". Please refer to :ref:`options-domain` for available domain options.
         ax : axes, optional
             Instance of axes to plot on. If none, one will be generated. Default is none.
         cartopy_proj : ccrs, optional
@@ -1573,11 +1575,17 @@ class hdobs:
         elif output_interval > 60:
             output_interval = 60
 
+        # Get unique list of center passes, filtered temporally
+        center_passes = sorted(list(set([t for t in self.data[self.data['iscenter'] == 1]['time']])))
+        if (center_passes[1]-center_passes[0]).total_seconds()/3600 >= missing_window:
+            center_passes = center_passes[1:]
+        if (center_passes[-1]-center_passes[-2]).total_seconds()/3600 >= missing_window:
+            center_passes = center_passes[:-1]
+
         # Get plot data
         ONE_MAP = False
         if time is None:
             dfRecon = self.data
-            center_passes = sorted(list(set([t for t in self.data[self.data['iscenter'] == 1]['time']])))
             time = (center_passes[0], center_passes[-1])
 
         elif isinstance(time, (tuple, list, dt)):
@@ -1587,9 +1595,6 @@ class hdobs:
             if isinstance(time, dt):
                 subset_time = (time, time)
                 ONE_MAP = True
-            
-            # Get unique list of center passes
-            center_passes = sorted(list(set([t for t in self.data[self.data['iscenter'] == 1]['time']])))
             
             # Find appropriate start time
             diff_time_start = [(t-subset_time[0]).total_seconds()/3600 for t in center_passes]
@@ -1616,17 +1621,20 @@ class hdobs:
             subset_time = (start_time - timedelta(hours=window / 2.0),
                            end_time + timedelta(hours=window / 2.0))
             dfRecon = self.sel(time=subset_time).data
-            
+
             # Create list of desired center passes for interpolation
             center_passes = [t for t in center_passes if start_time <= t <= end_time]
-        
+
+        # Fetch storm track data
+        if track_dict is None:
+            track_dict = self.storm.dict
+
+        # Determine if plotting one or multiple variable(s)
         MULTIVAR = False
         if isinstance(varname, (tuple, list)):
             MULTIVAR = True
 
-        if track_dict is None:
-            track_dict = self.storm.dict
-
+        # Perform spatial interpolation
         if MULTIVAR:
             Maps = []
             for v in varname:
@@ -1641,11 +1649,12 @@ class hdobs:
             Maps = iRecon.interpMaps(track_dict, filter_outer_obs, interval=output_interval / 60,
                                      center_passes=center_passes)
 
-        # titlename,units = get_recon_title(varname)
+        # Generate contour level data automatically if not provided by user
         if 'levels' not in prop.keys() or 'levels' in prop.keys() and prop['levels'] is None:
             prop['levels'] = np.arange(np.floor(np.nanmin(Maps['maps']) / 10) * 10,
                                        np.ceil(np.nanmax(Maps['maps']) / 10) * 10 + 1, 10)
 
+        # Create output image directory, if requested and possible
         if save_dir is True:
             save_dir = f'{self.storm}{self.year}_maps'
         try:
@@ -1654,18 +1663,18 @@ class hdobs:
         except:
             pass
 
+        # Prepare variables for temporal interpolation
         if MULTIVAR:
             Maps2 = Maps[1]
             Maps = Maps[0]
-
-            print(np.nanmax(Maps['maps']), np.nanmin(Maps2['maps']))
-
         figs = []
         if not isinstance(Maps['time'],list):
             Maps['time'] = [Maps['time']]
         if ONE_MAP:
             time_diff = [abs(time.replace(tzinfo=timezone.utc)-t) for t in Maps['time']]
             min_index = time_diff.index(min(time_diff))
+
+        # Perform temporal interpolation
         for i, t in enumerate(Maps['time']):
             
             # Only plot map for desired time(s)
@@ -1674,6 +1683,17 @@ class hdobs:
                     continue
             elif t < time[0].replace(tzinfo=timezone.utc) or t > time[-1].replace(tzinfo=timezone.utc):
                     continue
+            
+            # Skip maps where window is greater than missing window
+            nearest_pass = max([k for k in center_passes if k.replace(tzinfo=timezone.utc) < t], default=None)
+            if nearest_pass:
+                idx = center_passes.index(nearest_pass)
+                if idx == len(center_passes) - 1:
+                    continue
+                if (center_passes[idx+1]-center_passes[idx]).total_seconds()/3600 >= missing_window:
+                    continue
+            else:
+                continue
 
             # Create map data dict
             Maps_sub = {

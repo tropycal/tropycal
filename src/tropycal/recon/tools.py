@@ -92,13 +92,16 @@ class interpRecon:
             rho_range = np.arange(100, self.radlim + .1, .5)
 
             # Identify rho values to ignore based on the condition
-            ignore_rho = [
-                iter_rho for iter_rho in rho_range
-                if (
-                    max(np.diff(np.sort(phi_points[(rho_points < iter_rho + 5) & (rho_points > iter_rho - 5)])))
-                    > np.pi * 0.9
-                )
-            ]
+            try:
+                ignore_rho = [
+                    iter_rho for iter_rho in rho_range
+                    if (
+                        max(np.diff(np.sort(phi_points[(rho_points < iter_rho + 5) & (rho_points > iter_rho - 5)])))
+                        > np.pi * 0.9
+                    )
+                ]
+            except:
+                ignore_rho = []
             if len(ignore_rho) == 0:
                 ignore_rho = [self.radlim]
 

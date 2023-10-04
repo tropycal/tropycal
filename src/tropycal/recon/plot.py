@@ -513,6 +513,8 @@ class ReconPlot(Plot):
         # Add plot credit
         text = self.plot_credit()
         self.add_credit(text)
+        
+        return self.ax
 
     def plot_polar(self, dfRecon, track_dict, time=None, reconInterp=None, radlim=150, ax=None, prop={}):
         r"""

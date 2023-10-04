@@ -1577,9 +1577,11 @@ class hdobs:
 
         # Get unique list of center passes, filtered temporally
         center_passes = sorted(list(set([t for t in self.data[self.data['iscenter'] == 1]['time']])))
-        if (center_passes[1]-center_passes[0]).total_seconds()/3600 >= missing_window:
+        if len(center_passes) == 0:
+            raise RuntimeError("Not enough data to interpolate")
+        if len(center_passes) > 1 and (center_passes[1]-center_passes[0]).total_seconds()/3600 >= missing_window:
             center_passes = center_passes[1:]
-        if (center_passes[-1]-center_passes[-2]).total_seconds()/3600 >= missing_window:
+        if len(center_passes) > 1 and (center_passes[-1]-center_passes[-2]).total_seconds()/3600 >= missing_window:
             center_passes = center_passes[:-1]
 
         # Get plot data
@@ -1785,8 +1787,12 @@ class hdobs:
 
         # Get unique list of center passes, filtered temporally
         center_passes = sorted(list(set([t for t in self.data[self.data['iscenter'] == 1]['time']])))
+        if len(center_passes) < 2:
+            raise RuntimeError("Not enough data to interpolate")
         if (center_passes[1]-center_passes[0]).total_seconds()/3600 >= missing_window:
             center_passes = center_passes[1:]
+        if len(center_passes) < 2:
+            raise RuntimeError("Not enough data to interpolate")
         if (center_passes[-1]-center_passes[-2]).total_seconds()/3600 >= missing_window:
             center_passes = center_passes[:-1]
 

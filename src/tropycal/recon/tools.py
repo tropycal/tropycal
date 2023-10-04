@@ -311,7 +311,10 @@ class interpRecon:
             print(f'\rStatus... {percent_complete:.0f}% complete', end='', flush=True)
             self.dfRecon = tmpRecon[(tmpRecon['time'] > time - window / 2) &
                                     (tmpRecon['time'] <= time + window / 2)]
-            grid_x, grid_y, grid_z = self.interpCart(filter_outer_obs)
+            try:
+                grid_x, grid_y, grid_z = self.interpCart(filter_outer_obs)
+            except:
+                continue
             spaceInterpData[time] = grid_z
             if stat_vars is not None:
                 for name in stat_vars.keys():

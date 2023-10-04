@@ -241,7 +241,8 @@ class Storm:
         Parameters
         ----------
         time : datetime.datetime or list/tuple of datetimes
-            Datetime object for single point, or list/tuple of start time and end time.
+            Datetime object for single point, a list/tuple of start time and end time,
+            or a list of times (length>2) to match.
             Default is None, which returns all points
         lat : float/int or list/tuple of float/int
             Float/int for single point, or list/tuple of latitude bounds (S,N).

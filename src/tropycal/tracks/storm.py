@@ -324,6 +324,13 @@ class Storm:
                 msg = f'no points between {time}. Use different time bounds.'
                 raise ValueError(msg)
 
+        elif isinstance(time, (tuple, list)) and len(time) > 2:
+            idx = [i for i, t in enumerate(NEW_STORM.time) if t in time]
+
+            if len(idx) == 0:
+                msg = f'Storm has no points matching specified times.'
+                raise ValueError(msg)
+
         else:
             msg = 'time must be of type datetime.datetime, tuple/list, or None.'
             raise TypeError(msg)

@@ -11,3 +11,4 @@ docs/_api/generated/
 .eggs/
 build/
 dist/
+.ipynb_checkpoints/*

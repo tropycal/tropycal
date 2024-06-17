@@ -1273,6 +1273,8 @@ class Storm:
              - Hurricane Analysis and Forecast System A (HAFS-A)
            * - HAFSB
              - Hurricane Analysis and Forecast System B (HAFS-B)
+           * - COAMPS
+             - Specialized version of the Navy's model (COAMPS-TC)
            * - SHIPS
              - Statistical SHIPS model
            * - NHC
@@ -1301,6 +1303,7 @@ class Storm:
             'hafsa': 'HFAI',
             'hafsb': 'HFBI',
             'ships': 'DSHP',
+            'coamps': 'CTCX',
             'nhc': 'OFCI',
         }
         backup_models = {
@@ -1439,7 +1442,8 @@ class Storm:
                          'hmon': '#ff8c00',
                          'hwrf': '#66cdaa',
                          'hafsa': '#C659F9',
-                         'hafsb': '#8915BB'}
+                         'hafsb': '#8915BB',
+                         'coamps': '#419B0E'}
         default_prop = {'linewidth': 2.0}
 
         # Update properties

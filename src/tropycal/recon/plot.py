@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import warnings
-from datetime import datetime as dt
+from datetime import datetime as dt, timezone
 from scipy.ndimage import gaussian_filter as gfilt
 import copy
 
@@ -13,6 +13,7 @@ from ..utils import *
 
 try:
     from cartopy import crs as ccrs
+    from cartopy.geodesic import Geodesic
 except ImportError:
     warnings.warn(
         "Warning: Cartopy is not installed in your python environment. Plotting functions will not work.")
@@ -35,8 +36,9 @@ class ReconPlot(Plot):
 
         self.use_credit = True
 
-    def plot_points(self, storm, recon_data, domain="dynamic", varname='wspd', radlim=None, barbs=False, scatter=False,
-                    ax=None, return_domain=False, prop={}, map_prop={}, mission=False, vdms=[], mission_id=''):
+    def plot_points(self, storm, recon_data, domain="dynamic", varname='wspd', radlim=None,
+                    barbs=False, scatter=False, min_pressure=100, max_pressure=1030, ax=None,
+                    return_domain=False, prop={}, map_prop={}, mission=False, vdms=[], mission_id=''):
         r"""
         Creates a plot of recon data points
 
@@ -77,6 +79,20 @@ class ReconPlot(Plot):
 
         # --------------------------------------------------------------------------------------
 
+        # Check recon_data type
+        if isinstance(recon_data, pd.core.frame.DataFrame):
+            pass
+        else:
+            raise RuntimeError("Error: recon_data must be dataframe")
+
+        # Filter data by radius and pressure levels
+        if radlim is not None:
+            recon_data = recon_data.loc[recon_data['distance'] <= radlim]
+        if min_pressure is not None:
+            recon_data = recon_data[(recon_data['plane_p'] > min_pressure) | (np.isnan(recon_data['plane_p']))]
+        if max_pressure is not None:
+            recon_data = recon_data[(recon_data['plane_p'] < max_pressure) | (np.isnan(recon_data['plane_p']))]
+
         # Keep record of lat/lon coordinate extrema
         max_lat = []
         min_lat = []
@@ -85,12 +101,6 @@ class ReconPlot(Plot):
 
         # Retrieve storm data
         storm_data = storm.dict
-
-        # Check recon_data type
-        if isinstance(recon_data, pd.core.frame.DataFrame):
-            pass
-        else:
-            raise RuntimeError("Error: recon_data must be dataframe")
 
         # Retrieve storm data
         if radlim is None:
@@ -118,11 +128,8 @@ class ReconPlot(Plot):
 
         # Plot recon data as specified
         if barbs:
-            dataSort = recon_data.sort_values(
-                by=prop['sortby']).reset_index(drop=True)
+            dataSort = recon_data.sort_values(by=prop['sortby']).reset_index(drop=True)
             dataSort = dataSort.dropna(subset=[prop['sortby']])
-            if radlim is not None:
-                dataSort = dataSort.loc[dataSort['distance'] <= radlim]
             if prop['cmap'] in ['category', 'category_recon']:
                 if prop['cmap'] == 'category':
                     colors = [get_colors_sshws(i) for i in dataSort[varname]]
@@ -146,8 +153,6 @@ class ReconPlot(Plot):
             dataSort = recon_data.sort_values(
                 by=prop['sortby'], ascending=prop['ascending']).reset_index(drop=True)
             dataSort = dataSort.dropna(subset=[prop['sortby']])
-            if radlim is not None:
-                dataSort = dataSort.loc[dataSort['distance'] <= radlim]
             if prop['cmap'] in ['category', 'category_recon']:
                 if prop['cmap'] == 'category':
                     colors = [get_colors_sshws(i) for i in dataSort[varname]]
@@ -240,7 +245,7 @@ class ReconPlot(Plot):
             dataSort['lat'].values[i]) for i in range(len(dataSort['lat']))]
         count_upper_left = sum([1 if i[0] < 0.18 and i[1] > 0.65 else 0 for i in x_y_pairs]) / len(x_y_pairs)
         count_lower_left = sum([1 if i[0] < 0.18 and i[1] < 0.45 else 0 for i in x_y_pairs]) / len(x_y_pairs)
-        if count_upper_left > 0.05 and count_upper_left > count_lower_left:
+        if count_upper_left > count_lower_left:
             legend_loc = 'lower left'
 
         # Phantom legend
@@ -329,8 +334,8 @@ class ReconPlot(Plot):
         else:
             return self.ax
 
-    def plot_swath(self, storm, Maps, varname, swathfunc, track_dict,
-                   domain="dynamic", ax=None, prop={}, map_prop={}):
+    def plot_swath(self, storm, Maps, varname, swathfunc, track_dict, center_passes,
+                   missing_window, domain="dynamic", ax=None, prop={}, map_prop={}):
 
         # Set default properties
         default_prop = {'cmap': 'category', 'levels': None,
@@ -340,12 +345,6 @@ class ReconPlot(Plot):
         prop = self.add_prop(prop, default_prop)
         self.plot_init(ax, map_prop)
 
-        # Keep record of lat/lon coordinate extrema
-        max_lat = None
-        min_lat = None
-        max_lon = None
-        min_lon = None
-
         # Retrieve recon data
         lats = Maps['center_lat']
         lons = Maps['center_lon']
@@ -353,28 +352,11 @@ class ReconPlot(Plot):
         # Retrieve storm data
         storm_data = storm.dict
 
-        # Add to coordinate extrema
-        if max_lat is None:
-            max_lat = max(lats) + 2.5
-        else:
-            if max(lats) > max_lat:
-                max_lat = max(lats)
-        if min_lat is None:
-            min_lat = min(lats) - 2.5
-        else:
-            if min(lats) < min_lat:
-                min_lat = min(lats)
-        if max_lon is None:
-            max_lon = max(lons) + 2.5
-        else:
-            if max(lons) > max_lon:
-                max_lon = max(lons)
-        if min_lon is None:
-            min_lon = min(lons) - 2.5
-        else:
-            if min(lons) < min_lon:
-                min_lon = min(lons)
-
+        # Find coordinate extrema
+        max_lat = max(lats) + 2
+        min_lat = min(lats) - 2
+        max_lon = max(lons) + 2
+        min_lon = min(lons) - 2
         bound_w, bound_e, bound_s, bound_n = self.dynamic_map_extent(
             min_lon, max_lon, min_lat, max_lat)
 
@@ -403,7 +385,22 @@ class ReconPlot(Plot):
             e[d.mask] = np.nan
             return e
 
-        for t, (x_center, y_center, var) in enumerate(zip(cx, cy, Maps['maps'])):
+        print('--> Combining data into swath')
+        for t, (x_center, y_center, var, time) in enumerate(zip(cx, cy, Maps['maps'], Maps['time'])):
+            percent_complete = (t / len(cx)) * 100.0
+            print(f'\rStatus... {percent_complete:.0f}% complete', end='', flush=True)
+
+            # Skip times where window is greater than missing window
+            nearest_pass = max([k for k in center_passes if k.replace(tzinfo=timezone.utc) < time], default=None)
+            if nearest_pass:
+                idx = center_passes.index(nearest_pass)
+                if idx == len(center_passes) - 1:
+                    continue
+                if (center_passes[idx+1]-center_passes[idx]).total_seconds()/3600 >= missing_window:
+                    continue
+            else:
+                continue
+
             x_fromc = x_center + Maps['grid_x'] * 1e3
             y_fromc = y_center + Maps['grid_y'] * 1e3
             inrecon = np.where((xmgrid >= np.min(x_fromc)) & (xmgrid <= np.max(x_fromc)) &
@@ -412,6 +409,9 @@ class ReconPlot(Plot):
                              (y_fromc >= np.min(ymgrid)) & (y_fromc <= np.max(ymgrid)))
             aggregate_grid[inrecon] = nanfunc(
                 swathfunc, aggregate_grid[inrecon], var[inmap])
+        print(f'\rStatus... 100% complete', end='', flush=True)
+        print('')
+        print('--> Saving map')
 
         if prop['levels'] is None:
             prop['levels'] = (np.nanmin(aggregate_grid),
@@ -513,6 +513,8 @@ class ReconPlot(Plot):
         # Add plot credit
         text = self.plot_credit()
         self.add_credit(text)
+        
+        return self.ax
 
     def plot_polar(self, dfRecon, track_dict, time=None, reconInterp=None, radlim=150, ax=None, prop={}):
         r"""
@@ -583,7 +585,7 @@ class ReconPlot(Plot):
         return self.ax
         plt.close()
 
-    def plot_maps(self, storm, Maps_dict, varname, recon_stats=None,
+    def plot_maps(self, storm, Maps_dict, varname, recon_stats=None, radlim=200,
                   domain='dynamic', ax=None, return_domain=False, prop={}, map_prop={}):
         r"""
         Creates a plot of storm-centered recon data interpolated to a grid
@@ -622,6 +624,7 @@ class ReconPlot(Plot):
             Maps_dict = Maps_dict[0]
             MULTIVAR = True
 
+        # Convert data to cartesian grid
         grid_res = 1 * 1e3  # m
         clon = Maps_dict['center_lon']
         clat = Maps_dict['center_lat']
@@ -636,10 +639,8 @@ class ReconPlot(Plot):
         lons = out[:, :, 0]
         lats = out[:, :, 1]
 
-        # mlib.rcParams.update({'font.size': 16})
-
+        # Contour fill variable
         cmap, clevs = get_cmap_levels(varname, prop['cmap'], prop['levels'])
-
         norm = mlib.colors.BoundaryNorm(clevs, cmap.N)
         cbmap = self.ax.contourf(lons, lats, Maps_dict['maps'],
                                  cmap=cmap, norm=norm, levels=clevs, transform=ccrs.PlateCarree())
@@ -654,8 +655,16 @@ class ReconPlot(Plot):
         # Storm-centered plot domain
         if domain == "dynamic":
 
-            bound_w, bound_e, bound_s, bound_n = np.amin(
-                lons) - .1, np.amax(lons) + .1, np.amin(lats) - .1, np.amax(lats) + .1
+            # Get radius surrounding center
+            center_point = (clat, clon)
+            circle_points = Geodesic().circle(
+                lon=clon,lat=clat,radius=(radlim+50)*1000,n_samples=360,endpoint=True)
+            circle_lons = list(np.array([i[0] for i in circle_points]))
+            circle_lats = list(np.array([i[1] for i in circle_points]))
+            
+            bound_w, bound_e, bound_s, bound_n = dynamic_map_extent(
+                np.amin(circle_lons), np.amax(circle_lons),
+                np.amin(circle_lats), np.amax(circle_lats), ratio=1.1, adjust_zoom=False)
             self.ax.set_extent(
                 [bound_w, bound_e, bound_s, bound_n], crs=ccrs.PlateCarree())
 
@@ -675,9 +684,8 @@ class ReconPlot(Plot):
 #        plt.axis([-radlim,radlim,-radlim,radlim])
 #        plt.axis('equal')
 
-        cbar = self.fig.colorbar(cbmap, orientation='vertical',
-                                 ticks=clevs)
-#        cbar.set_label('wind (kt)')
+        cbar = add_colorbar(cbmap, ax=self.ax, ticks=clevs)
+        #cbar = self.fig.colorbar(cbmap, orientation='vertical', ticks=clevs)
 
         # --------------------------------------------------------------------------------------
 

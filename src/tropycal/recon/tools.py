@@ -5,8 +5,9 @@ from scipy.ndimage import gaussian_filter as gfilt
 from scipy.interpolate import griddata, interp1d
 import matplotlib.dates as mdates
 import copy
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from ..utils import classify_subtropical, get_storm_classification
+from ..utils import classify_subtropical, get_storm_classification, round_time_down, round_time_up
 
 
 def uv_from_wdir(wspd, wdir):
@@ -15,6 +16,10 @@ def uv_from_wdir(wspd, wdir):
     u = wspd * np.cos(theta)
     v = wspd * np.sin(theta)
     return u, v
+
+# Function for finding nearest value in an array
+def find_nearest_index(array, val):
+    return np.abs(array - val).argmin()
 
 # ------------------------------------------------------------------------------
 # TOOLS FOR RECON INTERPOLATION
@@ -27,13 +32,14 @@ class interpRecon:
     Interpolates storm-centered data by time and space.
     """
 
-    def __init__(self, dfRecon, varname, radlim=None, window=6, align='center'):
+    def __init__(self, dfRecon, varname, radlim=None, window=6, align='center', missing_window=24):
 
         # Retrieve dataframe containing recon data, and variable to be interpolated
         self.dfRecon = dfRecon
         self.varname = varname
         self.window = window
         self.align = align
+        self.missing_window = missing_window
 
         # Specify outer radius cutoff in kilometer
         if radlim is None:
@@ -41,12 +47,15 @@ class interpRecon:
         else:
             self.radlim = radlim
         
-        # Filter out flagged observations
         def filter_flag(flags, search_varname):
+            if flags is None: return True
             return search_varname not in flags
         self.dfRecon = self.dfRecon[(self.dfRecon['flag']).apply(filter_flag, args=(varname,))]
+        
+        # Filter out observations above 475mb, as these functions are low-level targeted
+        self.dfRecon = self.dfRecon[(self.dfRecon['plane_p'] > 475) | np.isnan(self.dfRecon['plane_p'])]
 
-    def interpPol(self):
+    def interpPol(self, filter_outer_obs=False):
         r"""
         Interpolates storm-centered recon data into a polar grid, and outputs the radius grid, azimuth grid and interpolated variable.
         """
@@ -70,14 +79,39 @@ class interpRecon:
         pol_path_wrap = [cart2pol(*p, offset=-2 * np.pi) for p in path] + pol_path +\
             [cart2pol(*p, offset=2 * np.pi) for p in path]
         data_wrap = np.concatenate([data] * 3)
+        
+        # Determine whether to filter outer obs
+        ignore_rho = [self.radlim]
+        if filter_outer_obs:
+
+            # Convert Cartesian to polar coordinates
+            rho_points = np.array([i[0] for i in pol_path_wrap])
+            phi_points = np.array([i[1] for i in pol_path_wrap])
+
+            # Define the range of iter_rho values
+            rho_range = np.arange(100, self.radlim + .1, .5)
+
+            # Identify rho values to ignore based on the condition
+            try:
+                ignore_rho = [
+                    iter_rho for iter_rho in rho_range
+                    if (
+                        max(np.diff(np.sort(phi_points[(rho_points < iter_rho + 5) & (rho_points > iter_rho - 5)])))
+                        > np.pi * 0.9
+                    )
+                ]
+            except:
+                ignore_rho = []
+            if len(ignore_rho) == 0:
+                ignore_rho = [self.radlim]
 
         # Creates a grid of rho (radius) and phi (azimuth)
         grid_rho, grid_phi = np.meshgrid(
-            np.arange(0, self.radlim + .1, .5), np.linspace(-np.pi, np.pi, 181))
+            np.arange(0, min(self.radlim,min(ignore_rho)) + .1, .5), np.linspace(-np.pi, np.pi, 181))
 
         # Interpolates storm-centered point data in polar coordinates onto a gridded polar coordinate field
-        grid_z_pol = griddata(pol_path_wrap, data_wrap,
-                              (grid_rho, grid_phi), method='linear')
+        grid_z_pol = griddata(
+            pol_path_wrap, data_wrap, (grid_rho, grid_phi), method='linear')
 
         try:
             # Calculate radius of maximum wind (RMW)
@@ -94,13 +128,13 @@ class interpRecon:
         # Return fields
         return grid_rho, grid_phi, grid_z_pol
 
-    def interpCart(self):
+    def interpCart(self, filter_outer_obs=False):
         r"""
         Interpolates polar storm-centered gridded fields into cartesian coordinates
         """
 
         # Interpolate storm-centered recon data into gridded polar grid (rho, phi and gridded data)
-        grid_rho, grid_phi, grid_z_pol = self.interpPol()
+        grid_rho, grid_phi, grid_z_pol = self.interpPol(filter_outer_obs)
 
         # Calculate RMW
         rmw = grid_rho[0, np.nanargmax(np.mean(grid_z_pol, axis=0))]
@@ -109,7 +143,12 @@ class interpRecon:
         grid_z_pol_wrap = np.concatenate([grid_z_pol] * 3)
 
         # Radially smooth based on RMW - more smoothing farther out from RMW
-        grid_z_pol_final = np.array([gfilt(grid_z_pol_wrap, (6, 3 + abs(r - rmw) / 10))[:, i]
+        #grid_z_pol_final = np.array([gfilt(grid_z_pol_wrap, (6, 3 + abs(r - rmw) / 10))[:, i]
+        #                             for i, r in enumerate(grid_rho[0, :])]).T[len(grid_phi):2 * len(grid_phi)]
+        orig_factor = [2,2,3,5,9,15,15]
+        orig_range = [0,3,20,50,100,200,2000]
+        f = interp1d(orig_range,orig_factor)
+        grid_z_pol_final = np.array([gfilt(grid_z_pol_wrap, (6, f(r) + abs(r - rmw) / 14))[:, i]
                                      for i, r in enumerate(grid_rho[0, :])]).T[len(grid_phi):2 * len(grid_phi)]
 
         # Function for interpolating polar cartesian to coordinates
@@ -188,23 +227,49 @@ class interpRecon:
         reconArray = np.array([i for i in spaceInterpData.values()])
 
         # Interpolate over every half hour
+        if len(trackTimes) == 0:
+            raise RuntimeError('Not enough data to create a hovmoller.')
         newTimes = np.arange(mdates.date2num(
             trackTimes[0]), mdates.date2num(trackTimes[-1]) + 1e-3, 1 / 48)
         oldTimes = mdates.date2num(np.array(list(spaceInterpData.keys())))
-        # print(len(oldTimes),reconArray.shape)
         reconTimeInterp = np.apply_along_axis(lambda x: np.interp(newTimes, oldTimes, x),
                                               axis=0, arr=reconArray)
         time_elapsed = dt.now() - start_time
         tsec = str(round(time_elapsed.total_seconds(), 2))
         print(f"--> Completed interpolation ({tsec} seconds)")
 
-        # Output RMW and hovmoller data and store as an attribute in the object
-        self.rmw = grid_rho[0, np.nanargmax(reconTimeInterp, axis=1)]
-        self.Hovmoller = {'time': mdates.num2date(
-            newTimes), 'radius': grid_rho[0, :], 'hovmoller': reconTimeInterp}
+        # Remove observations within missing window
+        for idx, iter_time in enumerate(oldTimes):
+            if idx == 0:
+                continue
+            if (oldTimes[idx]-oldTimes[idx-1]) * 24.0 >= self.missing_window:
+                start_missing_idx = find_nearest_index(newTimes, oldTimes[idx-1])
+                end_missing_idx = find_nearest_index(newTimes, oldTimes[idx])
+                reconTimeInterp[start_missing_idx:end_missing_idx+1] = np.nan
+
+        # Clip data bounds to match NaNs
+        data_rows = np.any(~np.isnan(reconTimeInterp), axis=1)
+        data_idx = np.where(data_rows)[0]
+        if data_idx.size > 0:
+            reconTimeInterp = reconTimeInterp[data_idx[0]:data_idx[-1]+1]
+            newTimes = newTimes[data_idx[0]:data_idx[-1]+1]
+
+        # Derive RMW from hovmoller data
+        all_nan_rows = np.all(np.isnan(reconTimeInterp), axis=1)
+        self.rmw = np.empty(reconTimeInterp.shape[0])
+        self.rmw.fill(np.nan)
+        self.rmw[~all_nan_rows] = grid_rho[0, np.nanargmax(reconTimeInterp[~all_nan_rows], axis=1)]
+
+        # Return hovmoller data
+        self.Hovmoller = {
+            'time': mdates.num2date(newTimes),
+            'radius': grid_rho[0, :],
+            'hovmoller': reconTimeInterp,
+            'rmw': self.rmw
+        }
         return self.Hovmoller
 
-    def interpMaps(self, target_track, interval=0.5, stat_vars=None):
+    def interpMaps(self, target_track, filter_outer_obs=False, center_passes=None, interval=0.5, stat_vars=None):
         r"""
         1. Can just output a single map (interpolated to lat/lon grid and projected onto the Cartopy map
         2. If target_track is longer than 1, outputs multiple maps to a directory
@@ -213,25 +278,22 @@ class interpRecon:
         window = self.window
         align = self.align
 
-        # Store the dataframe containing recon data
+        # Store a copy of the dataframe containing recon data
         tmpRecon = self.dfRecon.copy()
-        # Sets window as a timedelta object
+        
+        # Convert window to a timedelta object
         window = timedelta(seconds=int(window * 3600))
 
-        # Error check for time dimension name
-        if 'time' not in target_track.keys():
-            target_track['time'] = target_track['date']
-
-        # If target_track > 1 (tuple or list of times), then retrieve multiple center pass times and center around the window
-        if isinstance(target_track['time'], (tuple, list, np.ndarray)):
+        # Retrieve center passes to spatially interpolate data for
+        if center_passes is None:
             centerTimes = tmpRecon[tmpRecon['iscenter'] == 1]['time']
-            spaceInterpTimes = [t for t in centerTimes]
-            trackTimes = [t for t in target_track['time'] if min(
-                spaceInterpTimes) - window / 2 < t < max(spaceInterpTimes) + window / 2]
-        # Otherwise, just use a single time
+            spaceInterpTimes = sorted(list(set([t for t in centerTimes])))
         else:
-            spaceInterpTimes = list([target_track['time']])
-            trackTimes = spaceInterpTimes.copy()
+            spaceInterpTimes = center_passes
+
+        # Start and end times for temporal interpolation
+        trackTimes = [round_time_down(spaceInterpTimes[0] - window / 2, 60*interval),
+                      round_time_up(spaceInterpTimes[-1] + window / 2, 60*interval)]
 
         # Experimental - add recon statistics (e.g., wind, MSLP) to plot
         # **** CHECK BACK ON THIS ****
@@ -239,16 +301,20 @@ class interpRecon:
         recon_stats = None
         if stat_vars is not None:
             recon_stats = {name: [] for name in stat_vars.keys()}
+
         # Iterate through all data surrounding a center pass given the window previously specified, and create a polar
         # grid for each
         start_time = dt.now()
         print("--> Starting interpolation")
-
-        for time in spaceInterpTimes:
-            print(time)
-            self.dfRecon = tmpRecon[(
-                tmpRecon['time'] > time - window / 2) & (tmpRecon['time'] <= time + window / 2)]
-            grid_x, grid_y, grid_z = self.interpCart()
+        for i, time in enumerate(spaceInterpTimes):
+            percent_complete = (i / len(spaceInterpTimes)) * 100.0
+            print(f'\rStatus... {percent_complete:.0f}% complete', end='', flush=True)
+            self.dfRecon = tmpRecon[(tmpRecon['time'] > time - window / 2) &
+                                    (tmpRecon['time'] <= time + window / 2)]
+            try:
+                grid_x, grid_y, grid_z = self.interpCart(filter_outer_obs)
+            except:
+                continue
             spaceInterpData[time] = grid_z
             if stat_vars is not None:
                 for name in stat_vars.keys():
@@ -256,6 +322,8 @@ class interpRecon:
                         stat_vars[name](self.dfRecon[name]))
 
         # Sets dfRecon back to original full data
+        print(f'\rStatus... 100% complete', end='', flush=True)
+        print("")
         self.dfRecon = tmpRecon
         reconArray = np.array([i for i in spaceInterpData.values()])
 
@@ -266,11 +334,17 @@ class interpRecon:
             oldTimes = mdates.date2num(np.array(list(spaceInterpData.keys())))
             reconTimeInterp = np.apply_along_axis(lambda x: np.interp(newTimes, oldTimes, x),
                                                   axis=0, arr=reconArray)
-            # Get centered lat and lon by interpolating from target_track dictionary (whether archer or HURDAT)
-            clon = np.interp(newTimes, mdates.date2num(
-                target_track['time']), target_track['lon'])
-            clat = np.interp(newTimes, mdates.date2num(
-                target_track['time']), target_track['lat'])
+
+            # Get centered lat and lon by interpolating from target_track dictionary
+            interp_kind = 'quadratic'
+            if len(newTimes) == 2:
+                interp_kind = 'linear'
+            clon = interp1d(
+                mdates.date2num(target_track['time']), target_track['lon'], 
+                fill_value='extrapolate', kind=interp_kind)(newTimes)
+            clat = interp1d(
+                mdates.date2num(target_track['time']), target_track['lat'], 
+                fill_value='extrapolate', kind=interp_kind)(newTimes)
         else:
             newTimes = mdates.date2num(trackTimes)[0]
             reconTimeInterp = reconArray[0]
@@ -288,9 +362,27 @@ class interpRecon:
         tsec = str(round(time_elapsed.total_seconds(), 2))
         print(f"--> Completed interpolation ({tsec} seconds)")
 
+        # Make sure interpolated times don't drift off interval
+        original_times = list(mdates.num2date(newTimes))
+        fixed_times = [original_times[0]]
+        expected_delta = timedelta(minutes=60*interval)
+        for i in range(1, len(original_times)):
+            expected_time = fixed_times[i-1] + expected_delta
+            if original_times[i].minute != expected_time.minute:
+                fixed_times.append(expected_time)
+            else:
+                fixed_times.append(original_times[i])
+
         # Create dict of map data (interpolation time, x & y grids, 'maps' (3D grid of field, time/x/y), and return
-        self.Maps = {'time': mdates.num2date(newTimes), 'grid_x': grid_x, 'grid_y': grid_y, 'maps': reconTimeInterp,
-                     'center_lon': clon, 'center_lat': clat, 'stats': recon_stats}
+        self.Maps = {
+            'time': fixed_times,
+            'grid_x': grid_x,
+            'grid_y': grid_y,
+            'maps': reconTimeInterp,
+            'center_lon': clon,
+            'center_lat': clat,
+            'stats': recon_stats
+        }
         return self.Maps
 
     @staticmethod
@@ -597,6 +689,70 @@ def time_series_plot(varname):
 
     return {'color': color, 'name': name, 'full_name': full_name}
 
+def add_colorbar(mappable=None, location='right', size="2.5%", pad='1%', levels=None, fig=None, ax=None, **kwargs):
+    """
+    Uses the axes_grid toolkit to add a colorbar to the parent axis and rescale its size to match
+    that of the parent axis. This is adapted from Basemap's original ``colorbar()`` method.
+
+    Parameters
+    ----------
+    mappable
+        The image mappable to which the colorbar applies. If none specified, matplotlib.pyplot.gci() is
+        used to retrieve the latest mappable.
+    location
+        Location in which to place the colorbar ('right','left','top','bottom'). Default is right.
+    size
+        Size of the colorbar. Default is 3%.
+    pad
+        Pad of colorbar from axis. Default is 1%.
+    ax
+        Axes instance to associated the colorbar with. If none provided, or if no
+        axis is associated with the instance of Map, then plt.gca() is used.
+    """
+
+    # Get current mappable if none is specified
+    if fig is None or mappable is None:
+        import matplotlib.pyplot as plt
+    if fig is None:
+        fig = plt.gcf()
+
+    if mappable is None:
+        mappable = plt.gci()
+
+    # Create axis to insert colorbar in
+    divider = make_axes_locatable(ax)
+
+    if location == "left":
+        orientation = 'vertical'
+        ax_cb = divider.new_horizontal(
+            size, pad, pack_start=True, axes_class=plt.Axes)
+    elif location == "right":
+        orientation = 'vertical'
+        ax_cb = divider.new_horizontal(
+            size, pad, pack_start=False, axes_class=plt.Axes)
+    elif location == "bottom":
+        orientation = 'horizontal'
+        ax_cb = divider.new_vertical(
+            size, pad, pack_start=True, axes_class=plt.Axes)
+    elif location == "top":
+        orientation = 'horizontal'
+        ax_cb = divider.new_vertical(
+            size, pad, pack_start=False, axes_class=plt.Axes)
+    else:
+        raise ValueError('Improper location entered')
+
+    # Create colorbar
+    fig.add_axes(ax_cb)
+    if levels is None or len(levels) > 20:
+        cb = plt.colorbar(mappable, orientation=orientation, cax=ax_cb, **kwargs)
+    else:
+        cb = plt.colorbar(mappable, orientation=orientation, cax=ax_cb, ticks=levels, **kwargs)
+
+    # Reset parent axis as the current axis
+    fig.sca(ax)
+    return cb
+
+
 # =======================================================================================================
 # Decoding HDOBs
 # =======================================================================================================
@@ -792,6 +948,13 @@ def decode_hdob_2006(content, strdate, mission_row=3):
     # Fix erroneous data
     data['wspd'] = [np.nan if i > 300 else i for i in data['wspd']]
     data['pkwnd'] = [np.nan if i > 300 else i for i in data['pkwnd']]
+
+    # Fix coordinates for 1991 backwards
+    if int(strdate[4:]) <= 1991:
+        data['lat'] = [np.nan if check_error(i[1]) else 90.0-round((float(i[1][:-2]) + float(i[1][-2:]) / 60), 2)
+                       for i in items[3:]]
+        data['lon'] = [np.nan if check_error(i[2]) else round((float(i[2][:-2]) + float(i[2][-2:]) / 60), 2) * -1
+                       for i in items[3:]]
 
     # Ignore entries with lat/lon of 0
     orig_lat = np.copy(data['lat'])

@@ -120,6 +120,11 @@ class Plot:
         coastlines = self.ax.add_feature(cfeature.COASTLINE.with_scale(
             res), linewidths=prop['linewidth'], linestyle='solid', edgecolor=prop['linecolor'],
              **zorder['coastlines'])
+        
+        # Clean zorder kwargs
+        for key in ['ocean', 'lake', 'continent', 'states', 'countries', 'coastlines']:
+            if f'zorder_{key}' in prop.keys():
+                del prop[f'zorder_{key}']
 
     def dynamic_map_extent(self, min_lon, max_lon, min_lat, max_lat):
         r"""
@@ -499,7 +504,7 @@ class Plot:
             # Coerce to include non-TC points if storm hasn't been designated yet
             if len(tropical_vmax) == 0 and len(storm_data['id']) > 4:
                 flag_ptc = True
-                idx = np.where((type_array == 'LO') | (type_array == 'DB'))
+                idx = np.where((type_array == 'LO') | (type_array == 'DB') | (type_array == 'EX'))
                 tropical_vmax = np.array(storm_data['vmax'])[idx]
 
             # Case 2a: No wind data available

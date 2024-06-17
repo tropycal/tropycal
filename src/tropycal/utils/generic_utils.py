@@ -8,7 +8,7 @@ Public utility functions should be added to documentation in the '/docs/_templat
 import shapely.geometry as sgeom
 import math
 import numpy as np
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 import requests
 import urllib
 import warnings
@@ -387,6 +387,10 @@ def get_basin(lat, lon, source_basin=""):
                     return "north_atlantic"
                 else:
                     return "east_pacific"
+            elif lon < 240:
+                return "east_pacific"
+            elif lon > 300:
+                return "north_atlantic"
             else:
                 msg = "Cannot determine whether storm is in North Atlantic or East Pacific basins."
                 raise RuntimeError(msg)
@@ -1736,7 +1740,7 @@ def category_label_to_wind(category):
         return category_to_wind(5)
 
 
-def dynamic_map_extent(min_lon, max_lon, min_lat, max_lat, recon=False):
+def dynamic_map_extent(min_lon, max_lon, min_lat, max_lat, ratio=1.45, recon=False, adjust_zoom=True):
     r"""
     Sets up a dynamic map extent with an aspect ratio of 3:2 given latitude and longitude bounds.
 
@@ -1750,8 +1754,12 @@ def dynamic_map_extent(min_lon, max_lon, min_lat, max_lat, recon=False):
         Minimum latitude bound.
     max_lat : float
         Maximum latitude bound.
-    recon : bool
+    ratio : float, optional
+        Ratio of map width to height. Default is 1.45.
+    recon : bool, optional
         Zoom in plots closer for recon plots.
+    adjust_zoom : bool, optional
+        If True (default), optimally adjusts map zoom based on coordinate ranges.
 
     Returns:
     --------
@@ -1774,7 +1782,7 @@ def dynamic_map_extent(min_lon, max_lon, min_lat, max_lat, recon=False):
         bound_s = bound_s - 0.6
 
     # Function for fixing map ratio
-    def fix_map_ratio(bound_w, bound_e, bound_n, bound_s, nthres=1.45):
+    def fix_map_ratio(bound_w, bound_e, bound_n, bound_s, nthres):
         xrng = abs(bound_w-bound_e)
         yrng = abs(bound_n-bound_s)
         diff = float(xrng) / float(yrng)
@@ -1792,38 +1800,51 @@ def dynamic_map_extent(min_lon, max_lon, min_lat, max_lat, recon=False):
 
     # First round of fixing ratio
     bound_w, bound_e, bound_n, bound_s = fix_map_ratio(
-        bound_w, bound_e, bound_n, bound_s, 1.45)
+        bound_w, bound_e, bound_n, bound_s, ratio)
 
     # Adjust map width depending on extent of storm
     xrng = abs(bound_e-bound_w)
     yrng = abs(bound_n-bound_s)
-    factor = 0.1
-    if min(xrng, yrng) < 15.0:
-        factor = 0.2
-    if min(xrng, yrng) < 12.0:
-        factor = 0.4
-    if min(xrng, yrng) < 10.0:
-        factor = 0.6
-    if min(xrng, yrng) < 8.0:
-        factor = 0.75
-    if min(xrng, yrng) < 6.0:
-        factor = 0.9
-    if recon:
-        factor = factor * 0.3
-    bound_w = bound_w-(xrng*factor)
-    bound_e = bound_e+(xrng*factor)
-    bound_s = bound_s-(yrng*factor)
-    bound_n = bound_n+(yrng*factor)
+    
+    # Linearly interpolate zoom factor
+    if adjust_zoom:
+        orig_factor = [0.1,0.1,0.2,0.4,0.6,0.75,0.9,0.9]
+        orig_range = [5000,16,13.5,11,9,7,5.5,-1]
+        f = interp.interp1d(orig_range,orig_factor)
+        factor = f(min(xrng,yrng))
+        if recon:
+            factor = factor * 0.3
+        bound_w = bound_w-(xrng*factor)
+        bound_e = bound_e+(xrng*factor)
+        bound_s = bound_s-(yrng*factor)
+        bound_n = bound_n+(yrng*factor)
 
-    # Second round of fixing ratio
-    bound_w, bound_e, bound_n, bound_s = fix_map_ratio(
-        bound_w, bound_e, bound_n, bound_s, 1.45)
+        # Second round of fixing ratio
+        bound_w, bound_e, bound_n, bound_s = fix_map_ratio(
+            bound_w, bound_e, bound_n, bound_s, ratio)
 
     # Return map bounds
     return bound_w, bound_e, bound_s, bound_n
 
 
 def read_url(url, split=True, subsplit=True):
+    r"""
+    Read a URL's content and return the output.
+
+    Parameters
+    ----------
+    url : str
+        URL path to be read.
+    split : bool, optional
+        Whether to split content by line. Default is True.
+    subsplit: bool, optional
+        Whether to split each line by comma. Default is True.
+
+    Returns
+    -------
+    str
+        Returns content of requested URL.
+    """
 
     f = urllib.request.urlopen(url)
     content = f.read()
@@ -1836,6 +1857,48 @@ def read_url(url, split=True, subsplit=True):
 
     return content
 
+def round_time_down(time, minute_increment):
+    r"""
+    Round a datetime object down to the nearest provided increment.
+
+    Parameters
+    ----------
+    time : datetime.datetime
+        Datetime object to be rounded down.
+    minute_increment : int or float
+        Minutes to round down by.
+
+    Returns
+    -------
+    datetime.datetime
+        Time rounded down by the requested increment.
+    """
+
+    total_minutes = time.hour * 60 + time.minute
+    rounded_minutes = total_minutes - (total_minutes % minute_increment)
+    return time - timedelta(minutes=(total_minutes - rounded_minutes))
+
+def round_time_up(time, minute_increment):
+    r"""
+    Round a datetime object up to the nearest provided increment.
+
+    Parameters
+    ----------
+    time : datetime.datetime
+        Datetime object to be rounded up.
+    minute_increment : int or float
+        Minutes to round up by.
+
+    Returns
+    -------
+    datetime.datetime
+        Time rounded down by the requested increment.
+    """
+
+    remainder = time.minute % minute_increment
+    if remainder:
+        time += timedelta(minutes=minute_increment - remainder)
+    return time.replace(second=0, microsecond=0)
 
 class Distance:
 

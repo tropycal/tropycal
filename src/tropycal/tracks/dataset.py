@@ -794,6 +794,10 @@ class TrackDataset:
             if storm_id == 'WP391996':
                 name = 'UNNAMED'
 
+            # Skip entry for WP371996 and WP391996 for Indian basin files
+            if self.basin == 'north_indian' and storm_id in ['WP371996', 'WP391996']:
+                continue
+
             # Add storm to list of keys
             if self.ibtracs_mode == 'wmo' and ibtracs_id not in self.data.keys():
 
@@ -1748,7 +1752,7 @@ class TrackDataset:
                     self.__retrieve_season(i_year, basin)
             return return_season
 
-    def ace_climo(self, plot_year=None, compare_years=None, climo_bounds=None, month_range=None, rolling_sum=0, return_dict=False, save_path=None):
+    def ace_climo(self, plot_year=None, compare_years=None, climo_bounds=None, maximum_bounds=None, month_range=None, rolling_sum=0, return_dict=False, save_path=None):
         r"""
         Creates and plots a climatology of accumulated cyclone energy (ACE).
 
@@ -1760,6 +1764,8 @@ class TrackDataset:
             Seasons to compare against. Can be either a single season (int), or a range or list of seasons (list).
         climo_bounds : tuple
             Start and end years to compute the climatology over. Default is from 1950 to last year.
+        maximum_bounds : tuple
+            If provided, record maxima are calculated for years within this tuple range, provided that climo_bounds is a subset of this maximum_bounds. If not provided (default), record maxima are calculated from climo_bounds.
         month_range : tuple
             Start and end months to plot (e.g., ``(5,10)``). Default is peak hurricane season by basin.
         rolling_sum : int
@@ -1784,13 +1790,23 @@ class TrackDataset:
 
         if climo_bounds is None:
             climo_bounds = (1950, dt.now().year - 1)
+        if maximum_bounds is None:
+            maximum_bounds = climo_bounds
+        else:
+            if maximum_bounds[0] > climo_bounds[0]:
+                maximum_bounds[0] = climo_bounds[0]
+            if maximum_bounds[1] < climo_bounds[1]:
+                maximum_bounds[1] = climo_bounds[1]
 
         # Create empty dict
         ace = {}
+        ace_maximum = []
 
         # Iterate over every year of HURDAT available
         end_year = self.data[self.keys[-1]]['year']
         years = [yr for yr in range(
+            1851, cur_year + 1) if (min(maximum_bounds) <= yr <= max(maximum_bounds)) or yr == plot_year]
+        use_years = [yr for yr in range(
             1851, cur_year + 1) if (min(climo_bounds) <= yr <= max(climo_bounds)) or yr == plot_year]
         for year in years:
 
@@ -1824,54 +1840,49 @@ class TrackDataset:
             year_timestep_ace = np.zeros((year_dates.shape))
             year_genesis = []
 
+            # Pre-calculate certain variables for efficiency
+            southern_hemisphere_check = self.basin in constants.SOUTH_HEMISPHERE_BASINS
+            named_tropical_storm_types = list(constants.NAMED_TROPICAL_STORM_TYPES)
+            standard_hours = list(constants.STANDARD_HOURS)
+
             # Get list of storms for this year
             for storm in storm_ids:
 
                 # Get HURDAT data for this storm
-                storm_data = self.data[storm]
-                storm_date_y = np.array([int(i.strftime('%Y'))
-                                        for i in storm_data['time']])
-                storm_date_h = np.array([i.strftime('%H%M')
-                                        for i in storm_data['time']])
-                storm_date_m = [i.strftime('%m%d') for i in storm_data['time']]
-                storm_date = np.array(storm_data['time'])
-                storm_type = np.array(storm_data['type'])
-                storm_vmax = np.array(storm_data['vmax'])
-                storm_basin = np.array(storm_data['wmo_basin'])
+                storm_time = np.array(self.data[storm]['time'])
+                storm_time_h = [i.strftime('%H%M') for i in self.data[storm]['time']]
+                storm_type = np.array(self.data[storm]['type'])
+                storm_vmax = np.array(self.data[storm]['vmax'])
+                storm_basin = np.array(self.data[storm]['wmo_basin'])
 
-                # Subset to remove obs not useful for ace
-                idx1 = ((storm_type == 'SS') | (storm_type == 'TS') | (
-                    storm_type == 'HU') | (storm_type == 'TY') | (storm_type == 'ST'))
-                idx2 = ~np.isnan(storm_vmax)
-                idx3 = ((storm_date_h == '0000') | (storm_date_h == '0600') | (
-                    storm_date_h == '1200') | (storm_date_h == '1800'))
-                idx4 = storm_date_y == year
-                if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
-                    idx4[idx4 == False] = True
-                if self.basin not in ['all', 'both']:
-                    idx4 = (idx4) & (storm_basin == self.basin)
-                storm_date = storm_date[(idx1) & (idx2) & (idx3) & (idx4)]
-                storm_type = storm_type[(idx1) & (idx2) & (idx3) & (idx4)]
-                storm_vmax = storm_vmax[(idx1) & (idx2) & (idx3) & (idx4)]
-                if len(storm_vmax) == 0:
-                    continue  # Continue if doesn't apply to this storm
-                storm_ace = accumulated_cyclone_energy(storm_vmax)
+                # Apply checks for this storm
+                year_check = np.array([int(i.year) for i in self.data[storm]['time']]) == year
+                hour_check = np.isin(np.array(storm_time_h), standard_hours)
+                type_check = np.isin(storm_type, named_tropical_storm_types)
+                vmax_check = ~np.isnan(storm_vmax)
+                basin_check = (self.basin == 'all' or self.basin == 'both') or (storm_basin == self.basin)
+                if southern_hemisphere_check:
+                    year_check[year_check == False] = True
+                total_mask = type_check & vmax_check & hour_check & year_check & basin_check
+                if len(storm_vmax[total_mask]) == 0:
+                    continue
+                storm_time = storm_time[total_mask]
 
                 # Account for storms on february 29th by pushing them forward 1 day
-                if '0229' in storm_date_m:
-                    storm_date_temp = []
-                    for idate in storm_date:
-                        dt_date = pd.to_datetime(idate)
-                        if dt_date.strftime('%m%d') == '0229' or dt_date.strftime('%m') == '03':
-                            dt_date += timedelta(hours=24)
-                        storm_date_temp.append(dt_date)
-                    storm_date = storm_date_temp
+                storm_time_m = [i.strftime('%m%d') for i in storm_time]
+                if '0229' in storm_time_m:
+                    storm_time_temp = []
+                    for i_time in storm_time:
+                        dt_time = pd.to_datetime(i_time)
+                        if dt_time.strftime('%m%d') == '0229' or dt_time.strftime('%m') == '03':
+                            dt_time += timedelta(hours=24)
+                        storm_time_temp.append(dt_time)
+                    storm_time = storm_time_temp
 
                 # Append ACE to cumulative sum
-                idx = np.nonzero(np.in1d(year_dates, storm_date))
-                year_timestep_ace[idx] += storm_ace
-                year_genesis.append(
-                    np.where(year_dates == storm_date[0])[0][0])
+                idx = np.nonzero(np.isin(year_dates, storm_time))
+                year_timestep_ace[idx] += accumulated_cyclone_energy(storm_vmax[total_mask])
+                year_genesis.append(np.where(year_dates == storm_time[0])[0][0])
 
             # Calculate cumulative sum of year
             if rolling_sum == 0:
@@ -1879,20 +1890,26 @@ class TrackDataset:
                 year_genesis = np.array(year_genesis)
 
                 # Attach to dict
-                ace[str(year)] = {}
-                ace[str(year)]['time'] = year_dates
-                ace[str(year)]['ace'] = year_cumulative_ace
-                ace[str(year)]['genesis_index'] = year_genesis
+                ace_maximum.append(year_cumulative_ace)
+                if year in use_years:
+                    ace[str(year)] = {
+                        'time': year_dates,
+                        'ace': year_cumulative_ace,
+                        'genesis_index': year_genesis
+                    }
             else:
                 year_cumulative_ace = np.sum(rolling_window(
                     year_timestep_ace, rolling_sum * 4), axis=1)
                 year_genesis = np.array(year_genesis) - ((rolling_sum * 4) - 1)
 
                 # Attach to dict
-                ace[str(year)] = {}
-                ace[str(year)]['time'] = year_dates[((rolling_sum * 4) - 1):]
-                ace[str(year)]['ace'] = year_cumulative_ace
-                ace[str(year)]['genesis_index'] = year_genesis
+                ace_maximum.append(year_cumulative_ace)
+                if year in use_years:
+                    ace[str(year)] = {
+                        'time': year_dates[((rolling_sum * 4) - 1):],
+                        'ace': year_cumulative_ace,
+                        'genesis_index': year_genesis,
+                    }
 
         # ------------------------------------------------------------------------------------------
 
@@ -1920,15 +1937,18 @@ class TrackDataset:
             julian_months = [7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6]
 
         # Construct percentile arrays
-        all_ace = np.ones((len(years), len(julian))) * np.nan
+        all_ace = np.ones((len(use_years), len(julian))) * np.nan
         for year in range(min(climo_bounds), max(climo_bounds) + 1):
-            all_ace[years.index(year)] = ace[str(year)]['ace']
-        pmin, p10, p25, p40, p60, p75, p90, pmax = np.nanpercentile(
-            all_ace, [0, 10, 25, 40, 60, 75, 90, 100], axis=0)
+            all_ace[use_years.index(year)] = ace[str(year)]['ace']
+        pmin, p10, p25, p40, p60, p75, p90 = np.nanpercentile(
+            all_ace, [0, 10, 25, 40, 60, 75, 90], axis=0)
 
         # Return if not plotting
         if return_dict:
             return ace
+
+        # Construct maximum ACE
+        ace_maximum = np.nanmax(np.array(ace_maximum),axis=0)
 
         # ------------------------------------------------------------------------------------------
 
@@ -2048,8 +2068,8 @@ class TrackDataset:
         # Plot all climatological values
         pmin_masked = np.array(pmin)
         pmin_masked = np.ma.masked_where(pmin_masked == 0, pmin_masked)
-        ax.plot(julian_x, pmax, '--', color='r', zorder=2,
-                label=f'Max ({np.max(pmax):.1f})')
+        ax.plot(julian_x, ace_maximum, '--', color='r', zorder=2,
+                label=f'Max ({np.max(ace_maximum):.1f})')
         ax.plot(julian_x, pmin_masked, '--', color='b',
                 zorder=2, label=f'Min ({np.max(pmin):.1f})')
         ax.fill_between(julian_x, p10, p90, color='#60CE56',
@@ -2065,7 +2085,10 @@ class TrackDataset:
 
         credit_text = plot_credit()
         add_credit(ax, credit_text)
-        ax.text(0.99, 0.99, f'Climatology from {climo_bounds[0]}{endash}{climo_bounds[-1]}', fontsize=9, color='k', alpha=0.7,
+        climo_text = f'Climatology from {climo_bounds[0]}{endash}{climo_bounds[-1]}'
+        if maximum_bounds != climo_bounds:
+            climo_text = f'Maxima from {maximum_bounds[0]}{endash}{maximum_bounds[-1]} | {climo_text}'
+        ax.text(0.99, 0.99, climo_text, fontsize=9, color='k', alpha=0.7,
                 transform=ax.transAxes, ha='right', va='top', zorder=10)
 
         # Show/save plot and close
@@ -2175,6 +2198,7 @@ class TrackDataset:
                 storm_date = np.array(storm_data['time'])
                 storm_type = np.array(storm_data['type'])
                 storm_vmax = np.array(storm_data['vmax'])
+                storm_basin = np.array(storm_data['wmo_basin'])
 
                 # Subset to remove obs not useful for calculation
                 idx1 = ((storm_type == 'SS') | (storm_type == 'TS') | (
@@ -2185,6 +2209,11 @@ class TrackDataset:
                 idx4 = storm_date_y == year
                 if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
                     idx4[idx4 == False] = True
+                if self.basin in constants.SOUTH_HEMISPHERE_BASINS:
+                    idx4[idx4 == False] = True
+                if self.basin not in ['all', 'both']:
+                    check_test = storm_basin == self.basin
+                    idx4 = (idx4) & (storm_basin == self.basin)
                 storm_date = storm_date[(idx1) & (idx2) & (idx3) & (idx4)]
                 storm_type = storm_type[(idx1) & (idx2) & (idx3) & (idx4)]
                 storm_vmax = storm_vmax[(idx1) & (idx2) & (idx3) & (idx4)]
@@ -3540,6 +3569,8 @@ class TrackDataset:
             else:
                 self.plot_obj.create_cartopy(
                     proj='PlateCarree', central_longitude=0.0)
+        else:
+            self.plot_obj.proj = cartopy_proj
 
         # Format left title for plot
         endash = u"\u2013"
@@ -4044,10 +4075,9 @@ class TrackDataset:
         for key in self.keys:
             if self.data[key]['year'] > end_year or self.data[key]['year'] < start_year:
                 continue
-            storm_data = [[great_circle(point, (self.data_interp[key]['lat'][i], self.data_interp[key]['lon'][i])).kilometers, self.data_interp[key]['vmax'][i], self.data_interp[key]['mslp'][i],
+            storm_data = [[great_circle(point, (self.data_interp[key]['lat'][i], self.data_interp[key]['lon'][i])).kilometers * unit_factor, self.data_interp[key]['vmax'][i], self.data_interp[key]['mslp'][i],
                            self.data_interp[key]['time'][i]] for i in range(len(self.data_interp[key]['lat'])) if self.data_interp[key]['type'][i] in constants.TROPICAL_STORM_TYPES or non_tropical == True]
-            storm_data = [i for i in storm_data if i[0]
-                          <= radius * unit_factor]
+            storm_data = [i for i in storm_data if i[0] <= radius]
             storm_data = [i for i in storm_data if i[3] >= dt.strptime(date_range[0], '%m/%d').replace(
                 year=i[3].year) and i[3] <= (dt.strptime(date_range[1], '%m/%d') + timedelta(hours=23)).replace(year=i[3].year)]
             if len(storm_data) == 0:
@@ -4228,7 +4258,7 @@ class TrackDataset:
         import cartopy.geodesic as geodesic
         unit_factor = 1.0 if units == 'km' else 0.621371
         circle_points = geodesic.Geodesic().circle(
-            lon=point[1], lat=point[0], radius=radius * 1000 * unit_factor, n_samples=360, endpoint=False)
+            lon=point[1], lat=point[0], radius=(radius / unit_factor) * 1000, n_samples=360, endpoint=False)
         domain = kwargs.pop('domain', None)
         if domain is None:
             lons = [i[0] for i in circle_points]

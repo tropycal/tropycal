@@ -794,6 +794,10 @@ class TrackDataset:
             if storm_id == 'WP391996':
                 name = 'UNNAMED'
 
+            # Skip entry for WP371996 and WP391996 for Indian basin files
+            if self.basin == 'north_indian' and storm_id in ['WP371996', 'WP391996']:
+                continue
+
             # Add storm to list of keys
             if self.ibtracs_mode == 'wmo' and ibtracs_id not in self.data.keys():
 

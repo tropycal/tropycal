@@ -3569,6 +3569,8 @@ class TrackDataset:
             else:
                 self.plot_obj.create_cartopy(
                     proj='PlateCarree', central_longitude=0.0)
+        else:
+            self.plot_obj.proj = cartopy_proj
 
         # Format left title for plot
         endash = u"\u2013"

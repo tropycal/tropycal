@@ -112,7 +112,7 @@
 <h1>Realtime.plot_summary<a class="headerlink" href="#realtime-plot-summary" title="Permalink to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="tropycal.realtime.Realtime.plot_summary">
-<span class="sig-prename descclassname"><span class="pre">Realtime.</span></span><span class="sig-name descname"><span class="pre">plot_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cartopy_proj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssl_certificate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime.plot_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.realtime.Realtime.plot_summary" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Realtime.</span></span><span class="sig-name descname"><span class="pre">plot_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cartopy_proj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssl_certificate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/realtime.html#Realtime.plot_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.realtime.Realtime.plot_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot a summary map of ongoing tropical cyclone and potential development activity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -121,7 +121,10 @@
 <li><p><strong>ax</strong> (<em>axes</em><em>, </em><em>optional</em>) – Instance of axes to plot on. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>cartopy_proj</strong> (<em>ccrs</em><em>, </em><em>optional</em>) – Instance of a cartopy projection to use. If none, one will be generated. Default is none.</p></li>
 <li><p><strong>save_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Relative or full path of directory to save the image in. If none, image will not be saved.</p></li>
-<li><p><strong>ssl_certificate</strong> (<em>boolean</em><em>, </em><em>optional</em>) – If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False <em>ONLY</em> if True causes an SSL certification error.</p></li>
+<li><p><strong>ssl_certificate</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>True</strong> (<em>If jtwc is set to</em>) – </p></li>
+<li><p><strong>&quot;jtwc&quot;</strong> (<em>and jtwc_source is set to</em>) – </p></li>
+<li><p><strong>expired.</strong> (<em>use this argument to provide the path to a valid SSL certificate in case the default one is</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Other Parameters</dt>
@@ -161,6 +164,9 @@
 </tr>
 <tr class="row-odd"><td><p>ms</p></td>
 <td><p>Marker size for area location, if applicable. Default is 15.</p></td>
+</tr>
+<tr class="row-even"><td><p>label_name</p></td>
+<td><p>Label invest or storm name, if applicable. Default is True.</p></td>
 </tr>
 </tbody>
 </table>

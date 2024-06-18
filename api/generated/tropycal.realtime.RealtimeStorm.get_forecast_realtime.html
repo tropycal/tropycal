@@ -138,11 +138,16 @@
 <h1>RealtimeStorm.get_forecast_realtime<a class="headerlink" href="#realtimestorm-get-forecast-realtime" title="Permalink to this heading">¶</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="tropycal.realtime.RealtimeStorm.get_forecast_realtime">
-<span class="sig-prename descclassname"><span class="pre">RealtimeStorm.</span></span><span class="sig-name descname"><span class="pre">get_forecast_realtime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ssl_certificate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.get_forecast_realtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_forecast_realtime" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">RealtimeStorm.</span></span><span class="sig-name descname"><span class="pre">get_forecast_realtime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ssl_certificate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/tropycal/realtime/storm.html#RealtimeStorm.get_forecast_realtime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tropycal.realtime.RealtimeStorm.get_forecast_realtime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve a dictionary containing the latest official forecast. Available for both NHC and JTWC sources.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ssl_certificate</strong> (<em>boolean</em><em>, </em><em>optional</em>) – If a JTWC forecast, this determines whether to disable SSL certificate when retrieving data from JTWC. Default is True. Use False <em>ONLY</em> if True causes an SSL certification error.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ssl_certificate</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>True</strong> (<em>If jtwc is set to</em>) – </p></li>
+<li><p><strong>&quot;jtwc&quot;</strong> (<em>and jtwc_source is set to</em>) – </p></li>
+<li><p><strong>expired.</strong> (<em>use this argument to provide the path to a valid SSL certificate in case the default one is</em>) – </p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><em>dict</em> – Dictionary containing the latest official forecast.</p>

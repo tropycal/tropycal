@@ -7,24 +7,22 @@ import xarray as xr
 import datetime as dt
 import tropycal.tracks as tracks
 
-def read_storm():
-    """For functions involving non-internet related functionality, use this function"""
-    
-    #Read sample subset of HURDATv2 dataset, and retrieve sample storm data
+def read_hurdat():
+    # Read sample subset of HURDATv2 dataset, and retrieve sample storm data
     test_data_dir = os.path.join(os.path.dirname(__file__), '../data')
     filepath = os.path.join(test_data_dir, 'sample_hurdat.txt')
-    basin = tracks.TrackDataset('north_atlantic', atlantic_url=filepath)
+    return tracks.TrackDataset('north_atlantic', atlantic_url=filepath)
+
+def read_storm():
+    """For functions involving non-internet related functionality, use this function"""
+    basin = read_hurdat()
     
     #Retrieve Hurricane Sam
     return basin.get_storm(('sam',2021))
 
 def read_short_storm():
     """For functions involving fetching data online, use this function to speed up testing"""
-    
-    #Read sample subset of HURDATv2 dataset, and retrieve sample storm data
-    test_data_dir = os.path.join(os.path.dirname(__file__), '../data')
-    filepath = os.path.join(test_data_dir, 'sample_hurdat.txt')
-    basin = tracks.TrackDataset('north_atlantic', atlantic_url=filepath)
+    basin = read_hurdat()
     
     #Retrieve a short-lived storm
     return basin.get_storm(('colin',2022))
@@ -89,6 +87,26 @@ def test_sel():
     #Check new storm is correct
     assert max(new_storm.lat) <= 30
     assert min(new_storm.lat) >= 20
+
+def test_sel_by_list_of_times():
+    # Get two storms with overlapping times but that don't match due to extra points
+    basin = read_hurdat()
+    storm1 = basin.get_storm(("Fred", 2021))
+    storm2 = basin.get_storm(("Grace", 2021))
+
+    matching_times = [t for t in storm1.time if t in storm2.time]
+
+    # Using sel with start and end times means the resulting times don't match
+    storm1_matching = storm1.sel(time=[matching_times[0], matching_times[-1]])
+    storm2_matching = storm1.sel(time=[matching_times[0], matching_times[-1]])
+    assert not (storm1_matching.time == len(storm2_matching.time)).all()
+
+    # Use sel with list of times and show the times match
+    storm1_matching = storm1.sel(time=matching_times)
+    storm2_matching = storm1.sel(time=matching_times)
+    assert (storm1_matching.time == storm2_matching.time).all()
+
+
 
 def test_to_dataframe():
     """Test storm can be converted to a pandas DataFrame"""

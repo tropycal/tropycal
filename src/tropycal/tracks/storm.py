@@ -241,7 +241,8 @@ class Storm:
         Parameters
         ----------
         time : datetime.datetime or list/tuple of datetimes
-            Datetime object for single point, or list/tuple of start time and end time.
+            Datetime object for single point, a list/tuple of start time and end time,
+            or a list of times (length>2) to match.
             Default is None, which returns all points
         lat : float/int or list/tuple of float/int
             Float/int for single point, or list/tuple of latitude bounds (S,N).
@@ -322,6 +323,13 @@ class Storm:
             idx = np.where((tmptimes >= time0) & (tmptimes <= time1))[0]
             if len(idx) == 0:
                 msg = f'no points between {time}. Use different time bounds.'
+                raise ValueError(msg)
+
+        elif isinstance(time, (tuple, list)) and len(time) > 2:
+            idx = [i for i, t in enumerate(NEW_STORM.time) if t in time]
+
+            if len(idx) == 0:
+                msg = f'Storm has no points matching specified times.'
                 raise ValueError(msg)
 
         else:

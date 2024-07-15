@@ -1838,6 +1838,8 @@ async def _fetch(url, load_timeout, verify_ssl=True, ssl_context=None):
         timeout = aiohttp.ClientTimeout(total=load_timeout)
         async with session.get(url, timeout=timeout) as response:
             result = await response.text()
+            if response.status != 200:
+                raise ValueError(f"Error: Unable to read URL {url} {response}")
     return result
 
 
@@ -1867,6 +1869,7 @@ async def read_url(url, split=True, subsplit=True, load_timeout=None, verify_ssl
         content = await _fetch(url, load_timeout, verify_ssl=verify_ssl, ssl_context=ssl_context)
     except asyncio.TimeoutError as ex:
         raise ValueError(f"Error: Timeout reached for {url} {ex}")
+
     if split:
         content = content.split("\n")
     if subsplit:

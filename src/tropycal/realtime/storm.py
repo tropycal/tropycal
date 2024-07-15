@@ -281,7 +281,7 @@ class RealtimeStorm(Storm):
             msg = "No realtime forecast discussion is available for this storm."
             raise RuntimeError(msg)
 
-    async def get_forecast_realtime(self, load_timeout=None, ssl_certificate=None):
+    async def get_forecast_realtime(self, load_timeout=None, verify_ssl=None, ssl_certificate=None):
         r"""
         Retrieve a dictionary containing the latest official forecast. Available for both NHC and JTWC sources.
 
@@ -312,7 +312,7 @@ class RealtimeStorm(Storm):
             # Get forecast for this storm
             for base_url in ["https://ftp.nhc.noaa.gov/atcf/fst/", "ftp://ftp.nhc.noaa.gov/atcf/fst/"]:
                 try:
-                    content = await read_url(f"{base_url}{self.id.lower()}.fst", load_timeout=load_timeout)
+                    content = await read_url(f"{base_url}{self.id.lower()}.fst", load_timeout=load_timeout, verify_ssl=verify_ssl)
                 except Exception as ex:
                     continue
             if content is None:
@@ -433,30 +433,19 @@ class RealtimeStorm(Storm):
                 url = f"https://www.nrlmry.navy.mil/atcf_web/docs/current_storms/{self.id.lower()}.sum"
             else:
                 url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{self.id.lower()}.fst"
-            if ssl_certificate is not None and self.jtwc_source in ['jtwc', 'ucar']:
-                import ssl
-                ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-                ssl_context.load_verify_locations(cafile=ssl_certificate)
-                if requests.get(url, verify=ssl_context).status_code != 200:
-                    raise RuntimeError(
-                        "JTWC forecast data is unavailable for this storm.")
-            else:
-                if requests.get(url).status_code != 200:
-                    raise RuntimeError(
-                        "JTWC forecast data is unavailable for this storm.")
 
-            # Read file content
+            ssl_context = None
             if ssl_certificate is not None and self.jtwc_source in ['jtwc', 'ucar']:
                 import ssl
                 ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
                 ssl_context.load_verify_locations(cafile=ssl_certificate)
-                f = urllib.request.urlopen(url, context=ssl_context, timeout=load_timeout)
-                content = f.read()
-                content = content.decode("utf-8")
-                content = content.split("\n")
-                f.close()
-            else:
-                content = await read_url(url, load_timeout=load_timeout)
+
+            try:
+                content = await read_url(url,
+                                         subsplit=False,
+                                         load_timeout=load_timeout, verify_ssl=verify_ssl, ssl_context=ssl_context)
+            except Exception as ex:
+                raise RuntimeError(f"JTWC forecast data is unavailable for this storm: {ex}")
 
             # Find starting index
             start_idx = 0
@@ -828,8 +817,7 @@ class RealtimeStorm(Storm):
         try:
             nhc_forecasts = (self.latest_forecast).copy()
         except:
-            nhc_forecasts = self.get_forecast_realtime(
-                ssl_certificate=ssl_certificate)
+            nhc_forecasts = self.get_forecast_realtime(ssl_certificate=ssl_certificate)
 
         # Add other info to forecast dict
         nhc_forecasts['advisory_num'] = -1

@@ -146,17 +146,23 @@ class Realtime():
         start_time = dt.now()
         print("--> Starting to read in current storm data")
 
-        # Read in best track data from NHC
-        await self.__read_btk()
-        self.__filter_best_track()
-        # Read in best track data from JTWC
-        if self.jtwc:
-            if self.jtwc_source not in ['ucar', 'noaa', 'jtwc']:
-                msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
-                raise ValueError(msg)
-            await self.__read_btk_jtwc(self.jtwc_source)
+        try:
+            # Read in best track data from NHC
+            await self.__read_btk()
             self.__filter_best_track()
-            print(f"--> Completed reading in JTWC best track data {self.data}")
+            # Read in best track data from JTWC
+            if self.jtwc:
+                if self.jtwc_source not in ['ucar', 'noaa', 'jtwc']:
+                    msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
+                    raise ValueError(msg)
+                await self.__read_btk_jtwc(self.jtwc_source)
+                self.__filter_best_track()
+                print(f"--> Completed reading in JTWC best track data {self.data}")
+        except Exception as e:
+            print(f"--> Error reading in current storm data: {e}")
+            self.storms = []
+            del self.data
+            return
 
         # Determine time elapsed
         time_elapsed = dt.now() - start_time
@@ -190,7 +196,6 @@ class Realtime():
             self.storms = [k for k in self.data.keys()]
             del self.data
         else:
-
             # Create an empty list signaling no active storms
             self.storms = []
             del self.data
@@ -971,7 +976,8 @@ class Realtime():
             for key in self.storms:
                 if not self[key].invest:
                     try:
-                        self.forecasts.append(await self.get_storm(key).get_forecast_realtime(ssl_certificate))
+                        self.forecasts.append(await self.get_storm(key).get_forecast_realtime(
+                            load_timeout=self.load_timeout, verify_ssl=self.verify_ssl, ssl_certificate=ssl_certificate))
                     except:
                         self.forecasts.append({})
                 else:

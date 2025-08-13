@@ -41,6 +41,8 @@ class Realtime():
         If jtwc is set to True, this specifies the JTWC data source to read from. Available options are "noaa", "ucar" or "jtwc". Default is "jtwc". Read the notes for more details.
     ssl_certificate : str, optional
         If jtwc is set to True, and jtwc_source is set to "jtwc", use this argument to provide the path to a valid SSL certificate in case the default one is expired.
+    alt_data : dict, optional
+        Optionally provide a properly formatted user-created dictionary of multiple storm entries, instead of relying on the default data source.
 
     Returns
     -------
@@ -125,7 +127,7 @@ class Realtime():
     def __getitem__(self, key):
         return self.__dict__[key]
 
-    def __init__(self, jtwc=False, jtwc_source='ucar', ssl_certificate=None):
+    def __init__(self, jtwc=False, jtwc_source='ucar', ssl_certificate=None, alt_data=None):
 
         # Define empty dict to store track data in
         self.data = {}
@@ -137,8 +139,11 @@ class Realtime():
         start_time = dt.now()
         print("--> Starting to read in current storm data")
 
-        # Read in best track data from NHC
-        self.__read_btk()
+        # Read in best track data from NHC, or from alt source if specified
+        if alt_data is None:
+            self.__read_btk()
+        else:
+            self.data = alt_data
         self.__filter_best_track()
         
         # Read in best track data from JTWC
@@ -313,6 +318,7 @@ class Realtime():
             }
             self.data[stormid]['source'] = 'hurdat'
             self.data[stormid]['jtwc_source'] = 'N/A'
+            self.data[stormid]['prior_ids'] = None
 
             # add empty lists
             for val in ['time', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin']:
@@ -400,6 +406,19 @@ class Realtime():
                         origin_basin = 'north_atlantic'
                 self.data[stormid]['wmo_basin'].append(
                     get_basin(btk_lat, btk_lon, origin_basin))
+
+                # Get prior ID if available here
+                try:
+                    for idx_line,i_line in enumerate(line):
+                        if 'SPAWNINVEST' in i_line and (line[idx_line+1].split('to')[1]).upper() != stormid.upper():
+                            self.data[stormid]['prior_ids'] = (line[idx_line+1].split('to')[1]).upper()
+                        if 'TRANSITIONED' in i_line:
+                            check_id = (line[idx_line+1].split('to')[0]).upper()
+                            check_id = f'{check_id[:2]}9{check_id[3:]}'
+                            if check_id != stormid.upper() and self.data[stormid]['prior_ids'] is None:
+                                self.data[stormid]['prior_ids'] = check_id
+                except:
+                    pass
 
                 # Calculate ACE & append to storm total
                 if not np.isnan(btk_wind):

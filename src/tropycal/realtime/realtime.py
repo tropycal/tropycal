@@ -318,7 +318,7 @@ class Realtime():
             }
             self.data[stormid]['source'] = 'hurdat'
             self.data[stormid]['jtwc_source'] = 'N/A'
-            self.data[stormid]['prior_ids'] = None
+            self.data[stormid]['prior_id'] = None
 
             # add empty lists
             for val in ['time', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin']:
@@ -411,12 +411,12 @@ class Realtime():
                 try:
                     for idx_line,i_line in enumerate(line):
                         if 'SPAWNINVEST' in i_line and (line[idx_line+1].split('to')[1]).upper() != stormid.upper():
-                            self.data[stormid]['prior_ids'] = (line[idx_line+1].split('to')[1]).upper()
+                            self.data[stormid]['prior_id'] = (line[idx_line+1].split('to')[1]).upper()
                         if 'TRANSITIONED' in i_line:
                             check_id = (line[idx_line+1].split('to')[0]).upper()
                             check_id = f'{check_id[:2]}9{check_id[3:]}'
-                            if check_id != stormid.upper() and self.data[stormid]['prior_ids'] is None:
-                                self.data[stormid]['prior_ids'] = check_id
+                            if check_id != stormid.upper() and self.data[stormid]['prior_id'] is None:
+                                self.data[stormid]['prior_id'] = check_id
                 except:
                     pass
 

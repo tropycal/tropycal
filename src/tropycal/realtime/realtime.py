@@ -142,16 +142,17 @@ class Realtime():
         # Read in best track data from NHC, or from alt source if specified
         if alt_data is None:
             self.__read_btk()
+            self.__filter_best_track()
+            
+            # Read in best track data from JTWC
+            if jtwc:
+                if jtwc_source not in ['ucar', 'noaa', 'jtwc']:
+                    msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
+                    raise ValueError(msg)
+                self.__read_btk_jtwc(jtwc_source, ssl_certificate)
+                self.__filter_best_track()
         else:
             self.data = alt_data
-        self.__filter_best_track()
-        
-        # Read in best track data from JTWC
-        if jtwc:
-            if jtwc_source not in ['ucar', 'noaa', 'jtwc']:
-                msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
-                raise ValueError(msg)
-            self.__read_btk_jtwc(jtwc_source, ssl_certificate)
             self.__filter_best_track()
 
         # Determine time elapsed

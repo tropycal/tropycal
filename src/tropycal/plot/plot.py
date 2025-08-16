@@ -236,8 +236,8 @@ class Plot:
             try:
                 if zorder is not None:
                     gl1.set(zorder=zorder)
-                except:
-                    pass
+            except:
+                pass
 
             gl.xlocator = mticker.FixedLocator(meridians2)
             gl.ylocator = mticker.FixedLocator(parallels)
@@ -265,8 +265,8 @@ class Plot:
             try:
                 if zorder is not None:
                     gl.set(zorder=zorder)
-                except:
-                    pass
+            except:
+                pass
 
             gl.xlocator = mticker.FixedLocator(meridians)
             gl.ylocator = mticker.FixedLocator(parallels)

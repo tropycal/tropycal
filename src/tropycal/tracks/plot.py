@@ -327,6 +327,7 @@ class TrackPlot(Plot):
                         'linecolor': 'k', 'linewidth': 1.0, 'ms': 7.5, 'plot_names': False}
 
         # Initialize plot
+        print('DEBUG ... initializing plot')
         prop = self.add_prop(prop, default_prop)
         self.plot_init(ax, map_prop)
         gridline_args = {}
@@ -343,6 +344,7 @@ class TrackPlot(Plot):
         for storm in storms:
 
             # Check for storm type, then get data for storm
+            print('DEBUG ... getting storm data')
             if isinstance(storm, str):
                 storm_data = self.data[storm]
             elif isinstance(storm, tuple):
@@ -362,6 +364,7 @@ class TrackPlot(Plot):
             sdate = storm_data['time']
 
             # Account for cases crossing dateline
+            print('DEBUG ... create data bounds')
             if self.proj.proj4_params['lon_0'] == 180.0:
                 new_lons = np.array(lons)
                 new_lons[new_lons < 0] = new_lons[new_lons < 0] + 360.0
@@ -392,9 +395,11 @@ class TrackPlot(Plot):
             min_lon.append(min(use_lons))
 
             # Iterate over storm data to plot
+            print('DEBUG ... plotting individual dots')
             levels = None
             cmap = None
             for i, (i_lat, i_lon, i_vmax, i_mslp, i_time, i_type) in enumerate(zip(storm_data['lat'], lons, storm_data['vmax'], storm_data['mslp'], storm_data['time'], storm_data['type'])):
+                print(f'DEBUG ... plotting at time {i_time}')
 
                 # Determine line color, with SSHWS scale used as default
                 if prop['linecolor'] == 'category':
@@ -537,6 +542,7 @@ class TrackPlot(Plot):
         # --------------------------------------------------------------------------------------
 
         # Storm-centered plot domain
+        print('DEBUG ... setting map projection')
         if domain == "dynamic" or domain == "dynamic_tropical":
 
             bound_w, bound_e, bound_s, bound_n = self.dynamic_map_extent(
@@ -549,6 +555,7 @@ class TrackPlot(Plot):
             bound_w, bound_e, bound_s, bound_n = self.set_projection(domain)
 
         # Plot parallels and meridians
+        print('DEBUG ... plotting lat/lon lines')
         # This is currently not supported for all cartopy projections.
         try:
             self.plot_lat_lon_lines([bound_w, bound_e, bound_s, bound_n], check_prop=True, **gridline_args)
@@ -556,7 +563,8 @@ class TrackPlot(Plot):
             pass
 
         # --------------------------------------------------------------------------------------
-        
+
+        print('DEBUG ... finalizing plot')
         def adjust_label(ax, lon, lat):
             x1, y1 = self.ax.projection.transform_point(
                 lon, lat, ccrs.PlateCarree())
@@ -672,6 +680,7 @@ class TrackPlot(Plot):
         # -----------------------------------------------------------------------------------------
 
         # Save image if specified
+        print('DEBUG ... returning plot')
         if save_path is not None and isinstance(save_path, str):
             plt.savefig(save_path, bbox_inches='tight')
 

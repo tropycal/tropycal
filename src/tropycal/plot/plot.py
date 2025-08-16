@@ -214,7 +214,7 @@ class Plot:
                 rdown(-90.0, rthres), 90.0+rthres, rthres)
 
             # First call with no labels but gridlines plotted
-            gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, xlocs=all_meridians,
+            gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, xlocs=np.sort(meridians2),
                                     ylocs=parallels, linewidth=1.0, color='k', alpha=0.5, linestyle='dotted', **add_kwargs)
             # Second call with labels but no gridlines
             try:
@@ -231,6 +231,13 @@ class Plot:
             except:
                 gl.top_labels = False
                 gl.right_labels = False
+
+            # New zorder functionality
+            try:
+                if zorder is not None:
+                    gl1.set(zorder=zorder)
+            except:
+                pass
 
             gl.xlocator = mticker.FixedLocator(meridians2)
             gl.ylocator = mticker.FixedLocator(parallels)

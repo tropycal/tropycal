@@ -215,7 +215,7 @@ class Plot:
 
             # First call with no labels but gridlines plotted
             gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, xlocs=all_meridians,
-                                    ylocs=all_parallels, linewidth=1.0, color='k', alpha=0.5, linestyle='dotted', **add_kwargs)
+                                    ylocs=parallels, linewidth=1.0, color='k', alpha=0.5, linestyle='dotted', **add_kwargs)
             # Second call with labels but no gridlines
             try:
                 gl = self.ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=["bottom", "left"], xlocs=meridians,

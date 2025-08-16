@@ -232,13 +232,6 @@ class Plot:
                 gl.top_labels = False
                 gl.right_labels = False
 
-            # New zorder functionality
-            try:
-                if zorder is not None:
-                    gl1.set(zorder=zorder)
-            except:
-                pass
-
             gl.xlocator = mticker.FixedLocator(meridians2)
             gl.ylocator = mticker.FixedLocator(parallels)
             gl.xformatter = LONGITUDE_FORMATTER

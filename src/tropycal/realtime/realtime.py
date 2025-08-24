@@ -233,27 +233,38 @@ class Realtime():
 
         # Remove invests that have been classified as TCs
         all_keys = [k for k in self.data.keys()]
+        self.removed_keys = {}
         for key in all_keys:
 
             # Only keep invests
-            try:
-                if not self.data[key]['invest']:
-                    continue
-            except:
+            if key[2] != '9':
                 continue
 
             # Iterate through all storms
             match = False
+            match_id = None
             for key_storm in self.data.keys():
-                if self.data[key_storm]['invest']:
+                if key_storm[2] == '9':
                     continue
 
                 # Check for overlap in lons
-                if self.data[key_storm]['lon'][0] == self.data[key]['lon'][0] and self.data[key_storm]['time'][0] == self.data[key]['time'][0]:
-                    match = True
+                for i_lon, i_lat, i_time in zip(self.data[key_storm]['lon'], self.data[key_storm]['lat'], self.data[key_storm]['time']):
+                    if i_time in self.data[key]['time']:
+                        idx = self.data[key]['time'].index(i_time)
+                        if i_lon == self.data[key]['lon'][idx] and i_lat == self.data[key]['lat'][idx]:
+                            match = True
+                            match_id = key_storm
+                            print(f'orig id: {key}, checking {key_storm}, orig ({i_lat},{i_lon}), checking ({self.data[key]["lat"][idx]},{self.data[key]["lon"][idx]})')
+                            break
 
             if match:
+                self.removed_keys[match_id] = key
                 del self.data[key]
+
+        # Assign prior ID to storms that it might be missing
+        for key in self.data.keys():
+            if self.data[key]['prior_id'] is None and key in self.removed_keys.keys():
+                self.data[key]['prior_id'] = self.removed_keys[key]
     
     def __read_btk(self):
         r"""

@@ -254,7 +254,6 @@ class Realtime():
                         if i_lon == self.data[key]['lon'][idx] and i_lat == self.data[key]['lat'][idx]:
                             match = True
                             match_id = key_storm
-                            print(f'orig id: {key}, checking {key_storm}, orig ({i_lat},{i_lon}), checking ({self.data[key]["lat"][idx]},{self.data[key]["lon"][idx]})')
                             break
 
             if match:

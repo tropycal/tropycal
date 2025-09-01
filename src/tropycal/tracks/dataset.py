@@ -596,7 +596,7 @@ class TrackDataset:
 
             # retrieve list of storms for that year from the archive
             path_season = urllib.request.urlopen(
-                f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{iyear}/')
+                f'https://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{iyear}/')
             string = path_season.read().decode('utf-8')
             nums = "[0123456789]"
             search_pattern = f'bal[0123]{nums}{iyear}.dat'
@@ -635,7 +635,7 @@ class TrackDataset:
             else:
                 url = f"https://ftp.nhc.noaa.gov/atcf/btk/{file}"
             if int(stormid[4:8]) in archive_years:
-                url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{int(stormid[4:8])}/b{stormid.lower()}.dat"
+                url = f"https://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{int(stormid[4:8])}/b{stormid.lower()}.dat"
             content = read_url(url)
 
             # iterate through file lines

@@ -43,6 +43,8 @@ class Realtime():
         If jtwc is set to True, and jtwc_source is set to "jtwc", use this argument to provide the path to a valid SSL certificate in case the default one is expired.
     alt_data : dict, optional
         Optionally provide a properly formatted user-created dictionary of multiple storm entries, instead of relying on the default data source.
+    hour_window : int, optional
+        Hour window from the current time beyond which to exclude storms. Default is 12 hours.
 
     Returns
     -------
@@ -127,7 +129,7 @@ class Realtime():
     def __getitem__(self, key):
         return self.__dict__[key]
 
-    def __init__(self, jtwc=False, jtwc_source='ucar', ssl_certificate=None, alt_data=None):
+    def __init__(self, jtwc=False, jtwc_source='ucar', ssl_certificate=None, alt_data=None, hour_window=12):
 
         # Define empty dict to store track data in
         self.data = {}
@@ -142,7 +144,7 @@ class Realtime():
         # Read in best track data from NHC, or from alt source if specified
         if alt_data is None:
             self.__read_btk()
-            self.__filter_best_track()
+            self.__filter_best_track(hour_window=hour_window)
             
             # Read in best track data from JTWC
             if jtwc:
@@ -150,10 +152,10 @@ class Realtime():
                     msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
                     raise ValueError(msg)
                 self.__read_btk_jtwc(jtwc_source, ssl_certificate)
-                self.__filter_best_track()
+                self.__filter_best_track(hour_window=hour_window)
         else:
             self.data = alt_data
-            self.__filter_best_track()
+            self.__filter_best_track(hour_window=hour_window)
 
         # Determine time elapsed
         time_elapsed = dt.now() - start_time
@@ -206,7 +208,7 @@ class Realtime():
             'time': self.time
         }
 
-    def __filter_best_track(self):
+    def __filter_best_track(self, hour_window):
         r"""
         Filters all Best Track entries that haven't been active in 18 hours, or reclassified from invests to tropical cyclones.
         """
@@ -226,7 +228,7 @@ class Realtime():
 
             # Get time difference
             hours_diff = (current_time - last_time).total_seconds() / 3600.0
-            if hours_diff >= 12.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
+            if hours_diff >= hour_window:
                 del self.data[key]
             if hours_diff <= -48.0:
                 del self.data[key]

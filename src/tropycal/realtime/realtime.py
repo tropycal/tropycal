@@ -577,6 +577,7 @@ class Realtime():
             }
             self.data[stormid]['source'] = 'jtwc'
             self.data[stormid]['jtwc_source'] = source
+            self.data[stormid]['prior_id'] = None
 
             # Add source info
             self.data[stormid]['source_method'] = "JTWC ATCF"

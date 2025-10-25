@@ -452,18 +452,24 @@ class RealtimeRecon():
                 url = 'https://www.nhc.noaa.gov/text/URPN15-USAF.shtml'
 
         # Read URL content and get DataFrame
-        content = read_url(url, subsplit=False)
+        content = utils.read_url(url, subsplit=False)
         hdob_content = []
         found = False
         for line in content:
-            if line == '<pre>':
+            if '<pre>' in line:
                 found = True
+                try:
+                    line_split = line.split('<pre>')[1]
+                    if line_split != '':
+                        hdob_content.append(line_split)
+                except:
+                    pass
                 continue
             if found:
                 if line == '':
                     continue
                 hdob_content.append(line)
-            if line == '</pre>':
+            if '</pre>' in line:
                 break
         df = decode_hdob('\n'.join(hdob_content), mission_row=2)
 

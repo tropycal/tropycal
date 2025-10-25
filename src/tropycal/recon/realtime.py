@@ -452,7 +452,7 @@ class RealtimeRecon():
                 url = 'https://www.nhc.noaa.gov/text/URPN15-USAF.shtml'
 
         # Read URL content and get DataFrame
-        content = utils.read_url(url, subsplit=False)
+        content = read_url(url, subsplit=False)
         hdob_content = []
         found = False
         for line in content:
@@ -490,6 +490,10 @@ class RealtimeRecon():
         max_wspd = np.nanmax(array) if not all_nan(array) else np.nan
 
         array = [val for i, val in enumerate(
+            df['pkwnd']) if 'pkwnd' not in df['flag'].values[i]]
+        max_pkwnd = np.nanmax(array) if not all_nan(array) else np.nan
+
+        array = [val for i, val in enumerate(
             df['temp']) if 'temp' not in df['flag'].values[i]]
         max_temp = np.nanmax(array) if not all_nan(array) else np.nan
 
@@ -502,6 +506,7 @@ class RealtimeRecon():
             'min_mslp': min_p_sfc,
             'max_sfmr': max_sfmr,
             'max_wspd': max_wspd,
+            'max_pkwnd': max_pkwnd,
             'max_temp': max_temp,
             'max_dwpt': max_dwpt,
             'start_time': pd.to_datetime(df['time'].values[0]),

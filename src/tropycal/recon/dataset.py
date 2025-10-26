@@ -1495,10 +1495,16 @@ class hdobs:
 
         # Format y-label ticks and labels as dates
         ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d %H'))
-        for tick in ax.xaxis.get_major_ticks():
-            tick.label.set_fontsize(14)
-        for tick in ax.yaxis.get_major_ticks():
-            tick.label.set_fontsize(14)
+        try:
+            for tick in ax.xaxis.get_major_ticks():
+                tick.label.set_fontsize(14)
+            for tick in ax.yaxis.get_major_ticks():
+                tick.label.set_fontsize(14)
+        except:
+            for tick in ax.xaxis.get_major_ticks():
+                tick.label1.set_fontsize(14)
+            for tick in ax.yaxis.get_major_ticks():
+                tick.label1.set_fontsize(14)
 
         # Set axes labels
         ax.set_ylabel('UTC Time (MM-DD HH)', fontsize=15)

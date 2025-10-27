@@ -1545,7 +1545,7 @@ class hdobs:
         filter_outer_obs : bool, optional
             If True, filters outer observations to avoid interpolating radii with only a single data point. Default is False.
         output_interval : int or float, optional
-            Time interval in minutes between each interpolated image. Can be between 10 and 60 minutes. Default is 30 minutes.
+            Time interval in minutes between each interpolated image. Can be between 4 and 60 minutes. Default is 30 minutes.
         window : int, optional
             Window of hours to interpolate between observations. Default is 6 hours.
         align : str, optional
@@ -1579,8 +1579,8 @@ class hdobs:
         track_dict = kwargs.pop('track_dict', None)
 
         # Check output interval
-        if output_interval < 10:
-            output_interval = 10
+        if output_interval < 4:
+            output_interval = 4
         elif output_interval > 60:
             output_interval = 60
 

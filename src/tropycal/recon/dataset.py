@@ -1527,7 +1527,7 @@ class hdobs:
 
     def plot_maps(self, time=None, varname='wspd', recon_stats=None, filter_outer_obs=False,
                   output_interval=30, window=6, align='center', missing_window=24, radlim=None,
-                  domain="dynamic", ax=None, cartopy_proj=None, save_dir=None, **kwargs):
+                  domain="dynamic", ax=None, cartopy_proj=None, save_dir=None, return_data=False, **kwargs):
         r"""
         Creates maps of interpolated recon data. 
 
@@ -1684,6 +1684,9 @@ class hdobs:
         if ONE_MAP:
             time_diff = [abs(time.replace(tzinfo=timezone.utc)-t) for t in Maps['time']]
             min_index = time_diff.index(min(time_diff))
+
+        if return_data:
+            return Maps
 
         # Perform temporal interpolation
         for i, t in enumerate(Maps['time']):

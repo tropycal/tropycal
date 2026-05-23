@@ -1,6 +1,5 @@
 import numpy as np
 import warnings
-import pkg_resources
 from datetime import datetime as dt, timedelta
 
 from ..utils import *

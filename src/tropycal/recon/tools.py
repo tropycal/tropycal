@@ -1066,7 +1066,7 @@ def decode_hdob(content, mission_row=3):
     # QC p_sfc
     if any(abs(np.gradient(data['p_sfc'], np.array(data['time']).astype('datetime64[s]').astype(float))) > 1):
         data['p_sfc'] = [np.nan] * len(data['p_sfc'])
-        data['flag'] = [d.append('p_sfc') for d in data['flag']]
+        data['flag'] = [d + ['p_sfc'] for d in data['flag']]
 
     # Identify mission number and ID
     content_split = content.split("\n")

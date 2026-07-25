@@ -852,7 +852,7 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
 
         a = np.sin(dlat/2) * np.sin(dlat/2) + np.cos(np.radians(lats)) * \
             np.cos(np.radians(vlat)) * np.sin(dlon/2) * np.sin(dlon/2)
-        c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a))
+        c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1-a))
         dist = (r_earth * c)/1000.0
         dist = dist * 0.621371  # to miles
         dist = dist * 0.868976  # to nautical miles
@@ -1562,7 +1562,7 @@ def calc_distance(lats2d, lons2d, lat, lon):
     dlat = np.subtract(np.radians(lats2d), np.radians(lat))
     dlon = np.subtract(np.radians(lons2d), np.radians(lon))
     a = np.sin(dlat/2) * np.sin(dlat/2) + np.cos(np.radians(lats2d)) * np.cos(np.radians(lat)) * np.sin(dlon/2) * np.sin(dlon/2)
-    c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a))
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1-a))
     dist = (r_earth * c)/1000.0
 
     return return_arr, dist
@@ -1602,7 +1602,7 @@ def add_radius(lats2d, lons2d, lat, lon, rad):
     dlon = np.subtract(np.radians(lons2d), np.radians(lon))
 
     a = np.sin(dlat*0.5) * np.sin(dlat*0.5) + np.cos(np.radians(lats2d)) * np.cos(np.radians(lat)) * np.sin(dlon*0.5) * np.sin(dlon*0.5)
-    c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a))
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1-a))
     dist = (r_earth * c) * 0.001
 
     # Mask out values less than radius

@@ -95,14 +95,18 @@ def test_climatology():
     
     #Create a climatology
     output = basin.climatology()
+
+    #Climatology dates are anchored to the current year, so compute the
+    #expected dates from the same anchor to keep this test year-agnostic
+    anchor = dt.datetime(dt.datetime.now().year - 1, 12, 31)
     expected_output = {
         'all_storms': 21.0,
         'named_storms': 21.0,
         'hurricanes': 7.0,
         'major_hurricanes': 4.0,
         'ace': 145.3,
-        'start_time': dt.datetime(2023, 5, 22, 4, 48),
-        'end_time': dt.datetime(2023, 11, 7, 4, 48),
+        'start_time': anchor + dt.timedelta(days=142.2),
+        'end_time': anchor + dt.timedelta(days=311.2),
     }
     assert output == expected_output
 

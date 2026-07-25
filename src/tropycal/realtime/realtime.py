@@ -557,7 +557,7 @@ class Realtime():
             if source == 'ucar':
                 self.data[stormid][
                     'source_method'] = "UCAR's Tropical Cyclone Guidance Project (TCGP)"
-                self.data[stormid]['source_url'] = f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/'
+                self.data[stormid]['source_url'] = f'https://hurricanes.ral.ucar.edu/repository/data/bdecks_open/'
 
             # add empty lists
             for val in ['time', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin']:
@@ -569,7 +569,7 @@ class Realtime():
             if source == 'noaa':
                 url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{file}"
             if source == 'ucar':
-                url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/{file}"
+                url = f"https://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{current_year}/{file}"
             if f"{current_year+1}.dat" in url:
                 url = url.replace(str(current_year), str(current_year+1))
 

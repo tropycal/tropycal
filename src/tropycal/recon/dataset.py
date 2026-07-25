@@ -2797,7 +2797,7 @@ class vdms:
         elif storm.year >= 1989:
             self.format = 2
             self.source = "UCAR's Tropical Cyclone Guidance Project (TCGP)"
-            archive_url = f'http://hurricanes.ral.ucar.edu/structure/vortex/vdm_data/{self.storm.year}/'
+            archive_url = f'https://hurricanes.ral.ucar.edu/structure/vortex/vdm_data/{self.storm.year}/'
         else:
             raise RuntimeError("Recon data is not available prior to 1989.")
 

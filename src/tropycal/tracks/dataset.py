@@ -178,7 +178,7 @@ class TrackDataset:
         atlantic_url = kwargs.pop('atlantic_url', 'fetch')
         pacific_url = kwargs.pop('pacific_url', 'fetch')
         ibtracs_url = kwargs.pop(
-            'ibtracs_url', 'https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv')
+            'ibtracs_url', 'https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r01/access/csv/ibtracs.(basin).list.v04r01.csv')
         ibtracs_mode = kwargs.pop('ibtracs_mode', 'jtwc')
         catarina = kwargs.pop('catarina', False)
         ibtracs_hurdat = kwargs.pop('ibtracs_hurdat', False)

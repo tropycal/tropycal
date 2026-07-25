@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from datetime import datetime as dt, timedelta
+from datetime import datetime as dt, timedelta, timezone
 import requests
 import re
 import urllib
@@ -800,11 +800,11 @@ def make_var_label(x, storm_dict):
 
 def date_diff(a, b):
     if isinstance(a, np.datetime64):
-        a = dt.utcfromtimestamp(
-            (a - np.datetime64('1970-01-01T00:00:00Z')) / np.timedelta64(1, 's'))
+        a = dt.fromtimestamp(
+            (a - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's'), tz=timezone.utc).replace(tzinfo=None)
     if isinstance(b, np.datetime64):
-        b = dt.utcfromtimestamp(
-            (b - np.datetime64('1970-01-01T00:00:00Z')) / np.timedelta64(1, 's'))
+        b = dt.fromtimestamp(
+            (b - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's'), tz=timezone.utc).replace(tzinfo=None)
     c = a.replace(year=2000) - b.replace(year=2000)
     if c < timedelta(0):
         try:

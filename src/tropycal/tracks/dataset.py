@@ -178,7 +178,7 @@ class TrackDataset:
         atlantic_url = kwargs.pop('atlantic_url', 'fetch')
         pacific_url = kwargs.pop('pacific_url', 'fetch')
         ibtracs_url = kwargs.pop(
-            'ibtracs_url', 'https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.(basin).list.v04r00.csv')
+            'ibtracs_url', 'https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r01/access/csv/ibtracs.(basin).list.v04r01.csv')
         ibtracs_mode = kwargs.pop('ibtracs_mode', 'jtwc')
         catarina = kwargs.pop('catarina', False)
         ibtracs_hurdat = kwargs.pop('ibtracs_hurdat', False)
@@ -596,7 +596,7 @@ class TrackDataset:
 
             # retrieve list of storms for that year from the archive
             path_season = urllib.request.urlopen(
-                f'http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{iyear}/')
+                f'https://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{iyear}/')
             string = path_season.read().decode('utf-8')
             nums = "[0123456789]"
             search_pattern = f'bal[0123]{nums}{iyear}.dat'
@@ -635,7 +635,7 @@ class TrackDataset:
             else:
                 url = f"https://ftp.nhc.noaa.gov/atcf/btk/{file}"
             if int(stormid[4:8]) in archive_years:
-                url = f"http://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{int(stormid[4:8])}/b{stormid.lower()}.dat"
+                url = f"https://hurricanes.ral.ucar.edu/repository/data/bdecks_open/{int(stormid[4:8])}/b{stormid.lower()}.dat"
             content = read_url(url)
 
             # iterate through file lines
@@ -2234,7 +2234,7 @@ class TrackDataset:
                     storm_date = storm_date_temp
 
                 # Append storm days to cumulative sum
-                idx = np.nonzero(np.in1d(year_dates, storm_date))
+                idx = np.nonzero(np.isin(year_dates, storm_date))
                 cumulative['ts'][idx] += duration_thres(storm_vmax, 34.0)
                 cumulative['c1'][idx] += duration_thres(storm_vmax, 64.0)
                 cumulative['c2'][idx] += duration_thres(storm_vmax, 83.0)
@@ -3204,7 +3204,7 @@ class TrackDataset:
                     if interpolate_data:
                         points['dvmax_dt'].append(istorm['dvmax_dt'][i])
                         points['acie'].append(
-                            [0, istorm['dvmax_dt'][i]**2 * 1e-4 * timeres / 6][istorm['dvmax_dt'][i] > 0])
+                            istorm['dvmax_dt'][i]**2 * 1e-4 * timeres / 6 if istorm['dvmax_dt'][i] > 0 else 0)
                         points['dmslp_dt'].append(istorm['dmslp_dt'][i])
                         points['dx_dt'].append(istorm['dx_dt'][i])
                         points['dy_dt'].append(istorm['dy_dt'][i])
@@ -3777,7 +3777,7 @@ class TrackDataset:
             for storm in storms[1:]:
                 storm_df = self.data_tors[storm]
                 storm_df['storm_id'] = [storm] * len(storm_df)
-                stormTors = stormTors.append(storm_df)
+                stormTors = pd.concat([stormTors, storm_df])
 
         # Create figure for plotting
         plt.figure(figsize=(9, 9), dpi=150)

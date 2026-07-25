@@ -6,6 +6,7 @@ import requests
 import pickle
 import copy
 import urllib3
+import warnings
 
 from scipy.interpolate import interp1d
 from scipy.ndimage import gaussian_filter1d as gfilt1d
@@ -512,6 +513,19 @@ class ReconDataset:
         return ax
 
 
+def _mission_name_check(storm):
+    r"""Return the mission name suffix matching a storm's operational ID.
+
+    Recon mission names encode the operational storm number and basin letter
+    (e.g. "02A"). Storms added in post-analysis (e.g. AL022006, AL202011)
+    have an empty operational ID, so no missions can be attributed to them;
+    None is returned in that case.
+    """
+    if len(storm.operational_id) >= 4:
+        return storm.operational_id[2:4] + storm.operational_id[0]
+    return None
+
+
 class hdobs:
 
     r"""
@@ -749,8 +763,8 @@ class hdobs:
 
                 # Check for mission name to storm match by format
                 if self.format != 6:
-                    check = missionname[2:5] == self.storm.operational_id[2:4] + \
-                        self.storm.operational_id[0]
+                    name_check = _mission_name_check(self.storm)
+                    check = name_check is not None and missionname[2:5] == name_check
                 else:
                     check = True
 
@@ -1495,10 +1509,8 @@ class hdobs:
 
         # Format y-label ticks and labels as dates
         ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d %H'))
-        for tick in ax.xaxis.get_major_ticks():
-            tick.label.set_fontsize(14)
-        for tick in ax.yaxis.get_major_ticks():
-            tick.label.set_fontsize(14)
+        ax.tick_params(axis='x', labelsize=14)
+        ax.tick_params(axis='y', labelsize=14)
 
         # Set axes labels
         ax.set_ylabel('UTC Time (MM-DD HH)', fontsize=15)
@@ -1521,7 +1533,7 @@ class hdobs:
 
     def plot_maps(self, time=None, varname='wspd', recon_stats=None, filter_outer_obs=False,
                   output_interval=30, window=6, align='center', missing_window=24, radlim=None,
-                  domain="dynamic", ax=None, cartopy_proj=None, save_dir=None, **kwargs):
+                  domain="dynamic", ax=None, cartopy_proj=None, save_dir=None, return_data=False, **kwargs):
         r"""
         Creates maps of interpolated recon data. 
 
@@ -1539,7 +1551,7 @@ class hdobs:
         filter_outer_obs : bool, optional
             If True, filters outer observations to avoid interpolating radii with only a single data point. Default is False.
         output_interval : int or float, optional
-            Time interval in minutes between each interpolated image. Can be between 10 and 60 minutes. Default is 30 minutes.
+            Time interval in minutes between each interpolated image. Can be between 4 and 60 minutes. Default is 30 minutes.
         window : int, optional
             Window of hours to interpolate between observations. Default is 6 hours.
         align : str, optional
@@ -1573,8 +1585,8 @@ class hdobs:
         track_dict = kwargs.pop('track_dict', None)
 
         # Check output interval
-        if output_interval < 10:
-            output_interval = 10
+        if output_interval < 4:
+            output_interval = 4
         elif output_interval > 60:
             output_interval = 60
 
@@ -1678,6 +1690,9 @@ class hdobs:
         if ONE_MAP:
             time_diff = [abs(time.replace(tzinfo=timezone.utc)-t) for t in Maps['time']]
             min_index = time_diff.index(min(time_diff))
+
+        if return_data:
+            return Maps
 
         # Perform temporal interpolation
         for i, t in enumerate(Maps['time']):
@@ -2261,7 +2276,8 @@ class dropsondes:
                         continue
 
                     testkeys = ('TOPtime', 'lat', 'lon')
-                    if missionname[2:5] == self.storm.operational_id[2:4] + self.storm.operational_id[0]:
+                    name_check = _mission_name_check(self.storm)
+                    if name_check is not None and missionname[2:5] == name_check:
                         filecount += 1
                         if self.data is None:
                             self.data = [copy.copy(tmp)]
@@ -2798,7 +2814,7 @@ class vdms:
         elif storm.year >= 1989:
             self.format = 2
             self.source = "UCAR's Tropical Cyclone Guidance Project (TCGP)"
-            archive_url = f'http://hurricanes.ral.ucar.edu/structure/vortex/vdm_data/{self.storm.year}/'
+            archive_url = f'https://hurricanes.ral.ucar.edu/structure/vortex/vdm_data/{self.storm.year}/'
         else:
             raise RuntimeError("Recon data is not available prior to 1989.")
 
@@ -2848,7 +2864,8 @@ class vdms:
                         continue
 
                     testkeys = ('time', 'lat', 'lon')
-                    if missionname[2:5] == self.storm.operational_id[2:4] + self.storm.operational_id[0]:
+                    name_check = _mission_name_check(self.storm)
+                    if name_check is not None and missionname[2:5] == name_check:
                         if self.data is None:
                             self.data = [copy.copy(tmp)]
                             filecount += 1

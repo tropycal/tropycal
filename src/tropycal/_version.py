@@ -8,5 +8,11 @@ def get_version():
         return get_version(root='..', relative_to=__file__,
                            version_scheme='post-release', local_scheme='dirty-tag')
     except (ImportError, LookupError):
-        from pkg_resources import get_distribution
-        return get_distribution(__package__).version
+        try:
+            from importlib.metadata import version, PackageNotFoundError
+        except ImportError:  # Python < 3.8
+            from importlib_metadata import version, PackageNotFoundError
+        try:
+            return version(__package__ or 'tropycal')
+        except PackageNotFoundError:
+            return 'unknown'

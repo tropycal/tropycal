@@ -29,6 +29,7 @@ SOUTH_HEMISPHERE_BASINS = frozenset(['south_atlantic','south_indian','australia'
 #NHC Cone Radii, in nautical miles
 #Source: https://www.nhc.noaa.gov/verification/verify3.shtml
 CONE_SIZE_ATL = {
+    2026: [16,25,39,49,62,77,95,134,200],
     2025: [16,26,39,52,67,83,100,142,213],
     2024: [16,26,41,55,70,88,102,151,220],
     2023: [16,26,39,53,67,81,99,145,205],
@@ -50,6 +51,7 @@ CONE_SIZE_ATL = {
 }
 
 CONE_SIZE_PAC = {
+    2026: [16,25,37,48,56,66,78,106,138],
     2025: [16,26,38,50,59,71,83,113,146],
     2024: [16,26,39,53,65,76,92,119,152],
     2023: [16,25,38,51,63,78,86,110,137],

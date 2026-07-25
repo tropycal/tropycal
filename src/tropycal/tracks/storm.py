@@ -3230,7 +3230,7 @@ class Storm:
         reformatted_id = f'{self.id[:-4]}{self.id[-2:]}'
 
         # Format URL from RAL and retrieve file list
-        url = f'http://hurricanes.ral.ucar.edu/realtime/plots/{basin_name}/{self.year}/{self.id.lower()}/stext/'
+        url = f'https://hurricanes.ral.ucar.edu/realtime/plots/{basin_name}/{self.year}/{self.id.lower()}/stext/'
         try:
             page = requests.get(url).text
         except:
@@ -3283,7 +3283,7 @@ class Storm:
             'north_indian':'northindian'
         }
         basin_name = basin_dict.get(self.basin,'southernhemisphere')
-        url = f'http://hurricanes.ral.ucar.edu/realtime/plots/{basin_name}/{self.year}/{self.id.lower()}/stext/'
+        url = f'https://hurricanes.ral.ucar.edu/realtime/plots/{basin_name}/{self.year}/{self.id.lower()}/stext/'
         url += f'{time.strftime("%y%m%d%H")}{self.id[:-4]}{self.id[-2:]}_ships.txt'
 
         # Fetch SHIPS content

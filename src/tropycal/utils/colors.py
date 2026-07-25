@@ -8,6 +8,7 @@ import matplotlib as mlib
 import warnings
 
 from .generic_utils import *
+from .._compat import get_cmap as _get_cmap
 
 # ===========================================================================================================
 # Public utilities
@@ -146,7 +147,7 @@ def get_colors_ef(colormap='default'):
     # Matplotlib colormap
     if isinstance(colormap, str) and colormap != 'default':
         try:
-            cmap = mlib.cm.get_cmap(colormap)
+            cmap = _get_cmap(colormap)
             norm = mlib.colors.Normalize(vmin=0, vmax=5)
             colors = cmap(norm([0, 1, 2, 3, 4, 5]))
         except:
@@ -215,7 +216,7 @@ def get_colors_pph(plot_type, colormap, levels=None):
 
         # Matplotlib colormap
         if isinstance(colormap, str):
-            cmap = mlib.cm.get_cmap(colormap)
+            cmap = _get_cmap(colormap)
             norm = mlib.colors.Normalize(vmin=0, vmax=len(levels)-2)
             colors = cmap(norm(np.arange(len(levels))))
 
@@ -318,7 +319,7 @@ def get_cmap_levels(varname, colormap, levels, linear=False):
 
         # Matplotlib colormap name
         if isinstance(colormap, str):
-            cmap = mlib.cm.get_cmap(colormap)
+            cmap = _get_cmap(colormap)
 
         # User defined list of colors
         elif isinstance(colormap, list):
@@ -334,7 +335,7 @@ def get_cmap_levels(varname, colormap, levels, linear=False):
 
         # Default to plasma
         else:
-            cmap = mlib.cm.get_cmap('plasma')
+            cmap = _get_cmap('plasma')
 
         # Normalize colors relative to levels
         norm = mlib.colors.Normalize(vmin=0, vmax=len(levels)-1)

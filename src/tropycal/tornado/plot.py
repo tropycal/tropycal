@@ -202,6 +202,7 @@ class TornadoPlot(Plot):
                 [bb.width + 3*bb.x0 - 2*bb_ax.x0, bb.y0, 0.015, bb.height])
             cbar = self.fig.colorbar(cbmap, cax=cax, orientation='vertical')
             iticks = round(len(clevs)/len(cbar.ax.get_yticks()))
+            cbar.set_ticks([clevs[i] for i in range(0, len(clevs), iticks)])
             cbar.ax.set_yticklabels([round(clevs[i], 1) for i in range(
                 0, len(clevs), iticks)], fontsize=11.5, color='k')
 

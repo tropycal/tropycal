@@ -10,6 +10,7 @@ from ..plot import Plot
 # Import tools
 from .tools import *
 from ..utils import *
+from .._compat import get_cmap as _get_cmap
 
 try:
     from cartopy import crs as ccrs
@@ -913,9 +914,9 @@ def plot_skewt(dict_list, storm_name_title):
                              ['' if np.isnan(i) else f'{deg2dir(j)} at {int(i)} kt' for i, j in zip(dfmand['wspd'], dfmand['wdir'])]]).T
         colLabels = ['Pressure', 'Height', 'Temp', 'RH', 'Wind']
 
-        cmap_rh = mlib.cm.get_cmap('BrBG')
-        cmap_temp = mlib.cm.get_cmap('RdBu_r')
-        cmap_wind = mlib.cm.get_cmap('Purples')
+        cmap_rh = _get_cmap('BrBG')
+        cmap_temp = _get_cmap('RdBu_r')
+        cmap_wind = _get_cmap('Purples')
 
         colors = [['w', 'w', cellcolor(cmap_temp(t / 120 + .5), t),
                    cellcolor(cmap_rh(r / 100), r),

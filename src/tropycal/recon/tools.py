@@ -1066,7 +1066,7 @@ def decode_hdob(content, mission_row=3):
     # QC p_sfc
     if any(abs(np.gradient(data['p_sfc'], np.array(data['time']).astype('datetime64[s]').astype(float))) > 1):
         data['p_sfc'] = [np.nan] * len(data['p_sfc'])
-        data['flag'] = [d.append('p_sfc') for d in data['flag']]
+        data['flag'] = [d + ['p_sfc'] for d in data['flag']]
 
     # Identify mission number and ID
     content_split = content.split("\n")
@@ -1637,8 +1637,8 @@ def decode_dropsonde(content, date):
             return anew
         df = pd.concat([standard, sigtemp, sigwind], ignore_index=True,
                        sort=False).sort_values('pres', ascending=False)
-        data['levels'] = pd.DataFrame(np.vstack(df.groupby('pres', sort=False)
-                                                .apply(lambda gp: _justify(gp.to_numpy()))), columns=df.columns)
+        data['levels'] = pd.DataFrame(np.vstack([_justify(gp.to_numpy()) for _, gp in df.groupby(
+            'pres', sort=False)]), columns=df.columns)
 
         data['top'] = np.nanmin(data['levels']['pres'])
 

@@ -852,7 +852,7 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
 
         a = np.sin(dlat/2) * np.sin(dlat/2) + np.cos(np.radians(lats)) * \
             np.cos(np.radians(vlat)) * np.sin(dlon/2) * np.sin(dlon/2)
-        c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a))
+        c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1-a))
         dist = (r_earth * c)/1000.0
         dist = dist * 0.621371  # to miles
         dist = dist * 0.868976  # to nautical miles
@@ -952,7 +952,7 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
     if flag_12 == 1:
         interp_fhr += (subtract_by*6.0)
         cone_climo_fhrs = cone_climo_fhrs[1:]
-    idxs = np.nonzero(np.in1d(np.array(fhr), np.array(cone_climo_hr)))
+    idxs = np.nonzero(np.isin(np.array(fhr), np.array(cone_climo_hr)))
     temp_arr = np.array(cone_size)[idxs]
     interp_rad = np.apply_along_axis(lambda n: temporal_interpolation(
         n, fhr, interp_fhr), axis=0, arr=temp_arr)
@@ -1148,7 +1148,7 @@ def create_storm_dict(filepath, storm_name, storm_id, delimiter=',', time_format
     Reading it into the parser returns the following dict:
 
     >>> from tropycal import utils
-    >>> storm_dict = utils.create_storm_dict(filename='data.txt', storm_name='Test', storm_id='AL502021')
+    >>> storm_dict = utils.create_storm_dict(filepath='data.txt', storm_name='Test', storm_id='AL502021')
     >>> print(storm_dict)
     {'id': 'AL502021',
      'operational_id': 'AL502021',
@@ -1293,8 +1293,11 @@ def create_storm_dict(filepath, storm_name, storm_id, delimiter=',', time_format
             data['time'].append(enter_date)
             data['lat'].append(float(lineArray[header.get('lat')[1]]))
             data['lon'].append(float(lineArray[header.get('lon')[1]]))
-            data['vmax'].append(float(lineArray[header.get('vmax')[1]]))
-            data['mslp'].append(float(lineArray[header.get('mslp')[1]]))
+            for element in ['vmax','mslp']:
+                if lineArray[header.get(element)[1]].lower() in ['n/a','nan']:
+                    data[element].append(np.nan)
+                else:
+                    data[element].append(float(lineArray[header.get(element)[1]]))
 
             # Derive storm type if needed
             if 'type' in header.keys():
@@ -1305,7 +1308,8 @@ def create_storm_dict(filepath, storm_name, storm_id, delimiter=',', time_format
 
             # Derive ACE
             if data['time'][-1].strftime('%H%M') in constants.STANDARD_HOURS and data['type'][-1] in constants.NAMED_TROPICAL_STORM_TYPES:
-                data['ace'] += accumulated_cyclone_energy(data['vmax'][-1])
+                if ~np.isnan(data['vmax'][-1]):
+                    data['ace'] += accumulated_cyclone_energy(data['vmax'][-1])
 
             # Derive basin
             if len(data['wmo_basin']) == 0:
@@ -1562,7 +1566,7 @@ def calc_distance(lats2d, lons2d, lat, lon):
     dlat = np.subtract(np.radians(lats2d), np.radians(lat))
     dlon = np.subtract(np.radians(lons2d), np.radians(lon))
     a = np.sin(dlat/2) * np.sin(dlat/2) + np.cos(np.radians(lats2d)) * np.cos(np.radians(lat)) * np.sin(dlon/2) * np.sin(dlon/2)
-    c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a))
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1-a))
     dist = (r_earth * c)/1000.0
 
     return return_arr, dist
@@ -1602,7 +1606,7 @@ def add_radius(lats2d, lons2d, lat, lon, rad):
     dlon = np.subtract(np.radians(lons2d), np.radians(lon))
 
     a = np.sin(dlat*0.5) * np.sin(dlat*0.5) + np.cos(np.radians(lats2d)) * np.cos(np.radians(lat)) * np.sin(dlon*0.5) * np.sin(dlon*0.5)
-    c = 2 * np.arctan(np.sqrt(a), np.sqrt(1-a))
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1-a))
     dist = (r_earth * c) * 0.001
 
     # Mask out values less than radius

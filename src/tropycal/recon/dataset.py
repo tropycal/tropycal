@@ -513,6 +513,19 @@ class ReconDataset:
         return ax
 
 
+def _mission_name_check(storm):
+    r"""Return the mission name suffix matching a storm's operational ID.
+
+    Recon mission names encode the operational storm number and basin letter
+    (e.g. "02A"). Storms added in post-analysis (e.g. AL022006, AL202011)
+    have an empty operational ID, so no missions can be attributed to them;
+    None is returned in that case.
+    """
+    if len(storm.operational_id) >= 4:
+        return storm.operational_id[2:4] + storm.operational_id[0]
+    return None
+
+
 class hdobs:
 
     r"""
@@ -750,8 +763,8 @@ class hdobs:
 
                 # Check for mission name to storm match by format
                 if self.format != 6:
-                    check = missionname[2:5] == self.storm.operational_id[2:4] + \
-                        self.storm.operational_id[0]
+                    name_check = _mission_name_check(self.storm)
+                    check = name_check is not None and missionname[2:5] == name_check
                 else:
                     check = True
 
@@ -2260,7 +2273,8 @@ class dropsondes:
                         continue
 
                     testkeys = ('TOPtime', 'lat', 'lon')
-                    if missionname[2:5] == self.storm.operational_id[2:4] + self.storm.operational_id[0]:
+                    name_check = _mission_name_check(self.storm)
+                    if name_check is not None and missionname[2:5] == name_check:
                         filecount += 1
                         if self.data is None:
                             self.data = [copy.copy(tmp)]
@@ -2847,7 +2861,8 @@ class vdms:
                         continue
 
                     testkeys = ('time', 'lat', 'lon')
-                    if missionname[2:5] == self.storm.operational_id[2:4] + self.storm.operational_id[0]:
+                    name_check = _mission_name_check(self.storm)
+                    if name_check is not None and missionname[2:5] == name_check:
                         if self.data is None:
                             self.data = [copy.copy(tmp)]
                             filecount += 1

@@ -1,6 +1,5 @@
 import numpy as np
 import warnings
-import pkg_resources
 from datetime import datetime as dt, timedelta
 
 from ..utils import *
@@ -21,6 +20,8 @@ try:
     import matplotlib.ticker as mticker
     import matplotlib.lines as mlines
     import matplotlib.patches as mpatches
+    import matplotlib.colors as mcolors
+    import matplotlib.dates as mdates
 except:
     warnings.warn(
         "Warning: Matplotlib is not installed in your python environment. Plotting functions will not work.")

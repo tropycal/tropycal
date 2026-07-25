@@ -6,6 +6,7 @@ import requests
 import pickle
 import copy
 import urllib3
+import warnings
 
 from scipy.interpolate import interp1d
 from scipy.ndimage import gaussian_filter1d as gfilt1d
@@ -1495,10 +1496,8 @@ class hdobs:
 
         # Format y-label ticks and labels as dates
         ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d %H'))
-        for tick in ax.xaxis.get_major_ticks():
-            tick.label.set_fontsize(14)
-        for tick in ax.yaxis.get_major_ticks():
-            tick.label.set_fontsize(14)
+        ax.tick_params(axis='x', labelsize=14)
+        ax.tick_params(axis='y', labelsize=14)
 
         # Set axes labels
         ax.set_ylabel('UTC Time (MM-DD HH)', fontsize=15)

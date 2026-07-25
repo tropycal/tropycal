@@ -6,6 +6,7 @@ import numpy as np
 import urllib
 import warnings
 from datetime import datetime as dt, timedelta
+from .._compat import utcnow as _utcnow
 
 try:
     import shapefile
@@ -216,7 +217,7 @@ class Realtime():
 
             # Get last time
             last_time = self.data[key]['time'][-1]
-            current_time = dt.utcnow()
+            current_time = _utcnow()
 
             # Get time difference
             hours_diff = (current_time - last_time).total_seconds() / 3600.0
@@ -430,7 +431,7 @@ class Realtime():
             # Check if storm is still tropical, if not an invest.
             # Re-designate as an invest if has not been a TC for over 18 hours.
             if any(type in self.data[stormid]['type'] for type in constants.TROPICAL_STORM_TYPES):
-                current_time = dt.utcnow()
+                current_time = _utcnow()
                 hour_diff = (current_time -
                              last_tropical_time).total_seconds() / 3600
                 if hour_diff > 18:
@@ -989,11 +990,11 @@ class Realtime():
                         self.forecasts.append({})
                 else:
                     self.forecasts.append({})
-            self.forecasts = [entry if 'init' in entry.keys() and (dt.utcnow(
+            self.forecasts = [entry if 'init' in entry.keys() and (_utcnow(
             ) - entry['init']).total_seconds() / 3600.0 <= 12 else {} for entry in self.forecasts]
 
         # Plot
         ax = self.plot_obj.plot_summary([self.get_storm(key) for key in self.storms], self.forecasts,
-                                        self.two, dt.utcnow(), domain, ax, save_path, two_prop, invest_prop, storm_prop, cone_prop, map_prop)
+                                        self.two, _utcnow(), domain, ax, save_path, two_prop, invest_prop, storm_prop, cone_prop, map_prop)
 
         return ax

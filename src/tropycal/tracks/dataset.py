@@ -2234,7 +2234,7 @@ class TrackDataset:
                     storm_date = storm_date_temp
 
                 # Append storm days to cumulative sum
-                idx = np.nonzero(np.in1d(year_dates, storm_date))
+                idx = np.nonzero(np.isin(year_dates, storm_date))
                 cumulative['ts'][idx] += duration_thres(storm_vmax, 34.0)
                 cumulative['c1'][idx] += duration_thres(storm_vmax, 64.0)
                 cumulative['c2'][idx] += duration_thres(storm_vmax, 83.0)
@@ -3777,7 +3777,7 @@ class TrackDataset:
             for storm in storms[1:]:
                 storm_df = self.data_tors[storm]
                 storm_df['storm_id'] = [storm] * len(storm_df)
-                stormTors = stormTors.append(storm_df)
+                stormTors = pd.concat([stormTors, storm_df])
 
         # Create figure for plotting
         plt.figure(figsize=(9, 9), dpi=150)

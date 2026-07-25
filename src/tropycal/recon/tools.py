@@ -1637,8 +1637,8 @@ def decode_dropsonde(content, date):
             return anew
         df = pd.concat([standard, sigtemp, sigwind], ignore_index=True,
                        sort=False).sort_values('pres', ascending=False)
-        data['levels'] = pd.DataFrame(np.vstack(df.groupby('pres', sort=False)
-                                                .apply(lambda gp: _justify(gp.to_numpy()))), columns=df.columns)
+        data['levels'] = pd.DataFrame(np.vstack([_justify(gp.to_numpy()) for _, gp in df.groupby(
+            'pres', sort=False)]), columns=df.columns)
 
         data['top'] = np.nanmin(data['levels']['pres'])
 

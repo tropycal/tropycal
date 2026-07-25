@@ -18,6 +18,21 @@ from .tools import *
 from ..utils import *
 
 
+def _read_tornadoes_csv(path):
+    r"""Read the SPC tornado CSV, combining the date/time columns.
+
+    Combining columns via a nested-list ``parse_dates`` was deprecated in
+    pandas 2.0 and removed in pandas 3.0, so the combined 'mo_dy_yr_time'
+    column is constructed explicitly here.
+    """
+    tors = pd.read_csv(path, on_bad_lines='skip')
+    tors.insert(0, 'mo_dy_yr_time', pd.to_datetime(
+        tors['yr'].astype(str) + '-' + tors['mo'].astype(str).str.zfill(2) + '-' +
+        tors['dy'].astype(str).str.zfill(2) + ' ' + tors['time'].astype(str),
+        format='%Y-%m-%d %H:%M:%S'))
+    return tors.drop(columns=['mo', 'dy', 'yr', 'time'])
+
+
 class TornadoDataset():
 
     r"""
@@ -56,8 +71,8 @@ class TornadoDataset():
                 url = f"https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv"
                 if requests.get(url).status_code == 200:
                     year_found = True
-                    Tors = pd.read_csv(f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv',
-                                       on_bad_lines='skip', parse_dates=[['mo', 'dy', 'yr', 'time']])
+                    Tors = _read_tornadoes_csv(
+                        f'https://www.spc.noaa.gov/wcm/data/1950-{yrlast}_actual_tornadoes.csv')
                     print(f'--> Completed reading in tornado data for 1950-{yrlast} (%.2f seconds)' % (
                         dt.now()-timer_start).total_seconds())
                     break
@@ -65,8 +80,7 @@ class TornadoDataset():
                 raise RuntimeError(
                     "Error: No SPC tornado dataset available within the last 5 years.")
         else:
-            Tors = pd.read_csv(tornado_path,
-                               on_bad_lines='skip', parse_dates=[['mo', 'dy', 'yr', 'time']])
+            Tors = _read_tornadoes_csv(tornado_path)
             print(f'--> Completed reading in tornado data from local file (%.2f seconds)' %
                   (dt.now()-timer_start).total_seconds())
 
@@ -152,6 +166,10 @@ class TornadoDataset():
         pandas.DataFrame
             StormTors modified to include motion relative coordinates.
         """
+
+        # Copy to avoid mutating a filtered slice of the original DataFrame
+        # (SettingWithCopyWarning; silently fails under pandas Copy-on-Write)
+        stormTors = stormTors.copy()
 
         # Check to make sure there's enough tornadoes
         if len(stormTors) == 0:

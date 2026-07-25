@@ -2,6 +2,7 @@ import urllib3
 import requests
 import pandas as pd
 from datetime import datetime as dt, timedelta
+from .._compat import utcnow as _utcnow
 import matplotlib.pyplot as plt
 
 from .plot import *
@@ -77,14 +78,14 @@ class RealtimeRecon():
 
         # Set URLs for reading data
         self.urls = {
-            'hdobs': f'https://www.nhc.noaa.gov/archive/recon/{dt.utcnow().year}/AHONT1/',
-            'dropsondes': f'https://www.nhc.noaa.gov/archive/recon/{dt.utcnow().year}/REPNT3/',
-            'vdms': f'https://www.nhc.noaa.gov/archive/recon/{dt.utcnow().year}/REPNT2/'
+            'hdobs': f'https://www.nhc.noaa.gov/archive/recon/{_utcnow().year}/AHONT1/',
+            'dropsondes': f'https://www.nhc.noaa.gov/archive/recon/{_utcnow().year}/REPNT3/',
+            'vdms': f'https://www.nhc.noaa.gov/archive/recon/{_utcnow().year}/REPNT2/'
         }
 
         # Start time set by hour window
-        start_time_request = dt.utcnow() - timedelta(hours=hours)
-        start_time = dt.utcnow() - timedelta(hours=hours + 12)
+        start_time_request = _utcnow() - timedelta(hours=hours)
+        start_time = _utcnow() - timedelta(hours=hours + 12)
         self.start_time_request = start_time_request
 
         # Retrieve list of files in URL and filter by storm dates
@@ -211,7 +212,7 @@ class RealtimeRecon():
         timer_start = dt.now()
 
         # Start time set by hour window
-        start_time = dt.utcnow() - timedelta(hours=24)
+        start_time = _utcnow() - timedelta(hours=24)
         if start_time < self.start_time_request:
             start_time = self.start_time_request
 
@@ -298,7 +299,7 @@ class RealtimeRecon():
         for key in keys:
             end_time = pd.to_datetime(
                 self.missions[key]['hdobs']['time'].values[-1])
-            start_time_request = dt.utcnow() - timedelta(hours=self.hours)
+            start_time_request = _utcnow() - timedelta(hours=self.hours)
             if end_time < start_time_request:
                 del self.missions[key]
 
@@ -367,7 +368,7 @@ class RealtimeRecon():
         data = {}
         for mission_id in self.missions.keys():
             sub_df = self.missions[mission_id]['hdobs'].tail(20)
-            if pd.to_datetime(sub_df['time'].values[-1]) < dt.utcnow() - timedelta(hours=1):
+            if pd.to_datetime(sub_df['time'].values[-1]) < _utcnow() - timedelta(hours=1):
                 continue
 
             # Parse data

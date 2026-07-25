@@ -33,6 +33,9 @@ def getPPH(dfTors, method='daily', res=10):
     interval = int(80/res)
     disk = circle_filter(interval)
 
+    # Copy to avoid mutating a filtered slice of the original DataFrame
+    # (SettingWithCopyWarning; silently fails under pandas Copy-on-Write)
+    dfTors = dfTors.copy()
     dfTors['SPC_time'] = dfTors['UTC_time'] - timedelta(hours=12)
     dfTors = dfTors.set_index(['SPC_time'])
     groups = dfTors.groupby(pd.Grouper(freq="D"))

@@ -952,7 +952,7 @@ def generate_nhc_cone(forecast, basin, shift_lons=False, cone_days=5, cone_year=
     if flag_12 == 1:
         interp_fhr += (subtract_by*6.0)
         cone_climo_fhrs = cone_climo_fhrs[1:]
-    idxs = np.nonzero(np.in1d(np.array(fhr), np.array(cone_climo_hr)))
+    idxs = np.nonzero(np.isin(np.array(fhr), np.array(cone_climo_hr)))
     temp_arr = np.array(cone_size)[idxs]
     interp_rad = np.apply_along_axis(lambda n: temporal_interpolation(
         n, fhr, interp_fhr), axis=0, arr=temp_arr)

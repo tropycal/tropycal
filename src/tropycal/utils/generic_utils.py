@@ -1294,7 +1294,7 @@ def create_storm_dict(filepath, storm_name, storm_id, delimiter=',', time_format
             data['lat'].append(float(lineArray[header.get('lat')[1]]))
             data['lon'].append(float(lineArray[header.get('lon')[1]]))
             for element in ['vmax','mslp']:
-                if lineArray[header.get('vmax')[1]].lower() in ['n/a','nan']:
+                if lineArray[header.get(element)[1]].lower() in ['n/a','nan']:
                     data[element].append(np.nan)
                 else:
                     data[element].append(float(lineArray[header.get(element)[1]]))

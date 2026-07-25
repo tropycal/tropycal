@@ -215,11 +215,15 @@ class Plot:
                 rdown(-90.0, rthres), 90.0+rthres, rthres)
 
             # First call with no labels but gridlines plotted
-            gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, xlocs=all_meridians,
-                                    ylocs=all_parallels, linewidth=1.0, color='k', alpha=0.5, linestyle='dotted', **add_kwargs)
+            gl1 = self.ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, xlocs=np.sort(meridians2),
+                                    ylocs=parallels, linewidth=1.0, color='k', alpha=0.5, linestyle='dotted', **add_kwargs)
             # Second call with labels but no gridlines
-            gl = self.ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, xlocs=meridians,
-                                   ylocs=parallels, linewidth=0.0, color='k', alpha=0.0, linestyle='dotted', **add_kwargs)
+            try:
+                gl = self.ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=["bottom", "left"], xlocs=meridians,
+                                       ylocs=parallels, linewidth=0.0, color='k', alpha=0.0, linestyle='dotted', **add_kwargs)
+            except:
+                gl = self.ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, xlocs=meridians,
+                                       ylocs=parallels, linewidth=0.0, color='k', alpha=0.0, linestyle='dotted', **add_kwargs)
 
             # this syntax is deprecated in newer functions of cartopy
             try:
@@ -228,6 +232,13 @@ class Plot:
             except:
                 gl.top_labels = False
                 gl.right_labels = False
+
+            # New zorder functionality
+            try:
+                if zorder is not None:
+                    gl1.set(zorder=zorder)
+            except:
+                pass
 
             gl.xlocator = mticker.FixedLocator(meridians2)
             gl.ylocator = mticker.FixedLocator(parallels)
@@ -236,8 +247,12 @@ class Plot:
 
         else:
             # Add meridians and parallels
-            gl = self.ax.gridlines(crs=ccrs.PlateCarree(
-            ), draw_labels=True, linewidth=1.0, color='k', alpha=0.5, linestyle='dotted', **add_kwargs)
+            try:
+                gl = self.ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=["bottom", "left"], linewidth=1.0,
+                                       color='k', alpha=0.5, linestyle='dotted', **add_kwargs)
+            except:
+                gl = self.ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1.0,
+                                       color='k', alpha=0.5, linestyle='dotted', **add_kwargs)
 
             # this syntax is deprecated in newer functions of cartopy
             try:
@@ -246,6 +261,13 @@ class Plot:
             except:
                 gl.top_labels = False
                 gl.right_labels = False
+
+            # New zorder functionality
+            try:
+                if zorder is not None:
+                    gl.set(zorder=zorder)
+            except:
+                pass
 
             gl.xlocator = mticker.FixedLocator(meridians)
             gl.ylocator = mticker.FixedLocator(parallels)

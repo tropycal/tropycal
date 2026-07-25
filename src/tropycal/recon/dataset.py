@@ -1533,7 +1533,7 @@ class hdobs:
 
     def plot_maps(self, time=None, varname='wspd', recon_stats=None, filter_outer_obs=False,
                   output_interval=30, window=6, align='center', missing_window=24, radlim=None,
-                  domain="dynamic", ax=None, cartopy_proj=None, save_dir=None, **kwargs):
+                  domain="dynamic", ax=None, cartopy_proj=None, save_dir=None, return_data=False, **kwargs):
         r"""
         Creates maps of interpolated recon data. 
 
@@ -1551,7 +1551,7 @@ class hdobs:
         filter_outer_obs : bool, optional
             If True, filters outer observations to avoid interpolating radii with only a single data point. Default is False.
         output_interval : int or float, optional
-            Time interval in minutes between each interpolated image. Can be between 10 and 60 minutes. Default is 30 minutes.
+            Time interval in minutes between each interpolated image. Can be between 4 and 60 minutes. Default is 30 minutes.
         window : int, optional
             Window of hours to interpolate between observations. Default is 6 hours.
         align : str, optional
@@ -1585,8 +1585,8 @@ class hdobs:
         track_dict = kwargs.pop('track_dict', None)
 
         # Check output interval
-        if output_interval < 10:
-            output_interval = 10
+        if output_interval < 4:
+            output_interval = 4
         elif output_interval > 60:
             output_interval = 60
 
@@ -1690,6 +1690,9 @@ class hdobs:
         if ONE_MAP:
             time_diff = [abs(time.replace(tzinfo=timezone.utc)-t) for t in Maps['time']]
             min_index = time_diff.index(min(time_diff))
+
+        if return_data:
+            return Maps
 
         # Perform temporal interpolation
         for i, t in enumerate(Maps['time']):

@@ -457,14 +457,20 @@ class RealtimeRecon():
         hdob_content = []
         found = False
         for line in content:
-            if line == '<pre>':
+            if '<pre>' in line:
                 found = True
+                try:
+                    line_split = line.split('<pre>')[1]
+                    if line_split != '':
+                        hdob_content.append(line_split)
+                except:
+                    pass
                 continue
             if found:
                 if line == '':
                     continue
                 hdob_content.append(line)
-            if line == '</pre>':
+            if '</pre>' in line:
                 break
         df = decode_hdob('\n'.join(hdob_content), mission_row=2)
 
@@ -485,6 +491,10 @@ class RealtimeRecon():
         max_wspd = np.nanmax(array) if not all_nan(array) else np.nan
 
         array = [val for i, val in enumerate(
+            df['pkwnd']) if 'pkwnd' not in df['flag'].values[i]]
+        max_pkwnd = np.nanmax(array) if not all_nan(array) else np.nan
+
+        array = [val for i, val in enumerate(
             df['temp']) if 'temp' not in df['flag'].values[i]]
         max_temp = np.nanmax(array) if not all_nan(array) else np.nan
 
@@ -497,6 +507,7 @@ class RealtimeRecon():
             'min_mslp': min_p_sfc,
             'max_sfmr': max_sfmr,
             'max_wspd': max_wspd,
+            'max_pkwnd': max_pkwnd,
             'max_temp': max_temp,
             'max_dwpt': max_dwpt,
             'start_time': pd.to_datetime(df['time'].values[0]),

@@ -42,6 +42,10 @@ class Realtime():
         If jtwc is set to True, this specifies the JTWC data source to read from. Available options are "noaa", "ucar" or "jtwc". Default is "jtwc". Read the notes for more details.
     ssl_certificate : str, optional
         If jtwc is set to True, and jtwc_source is set to "jtwc", use this argument to provide the path to a valid SSL certificate in case the default one is expired.
+    alt_data : dict, optional
+        Optionally provide a properly formatted user-created dictionary of multiple storm entries, instead of relying on the default data source.
+    hour_window : int, optional
+        Hour window from the current time beyond which to exclude storms. Default is 12 hours.
 
     Returns
     -------
@@ -126,7 +130,7 @@ class Realtime():
     def __getitem__(self, key):
         return self.__dict__[key]
 
-    def __init__(self, jtwc=False, jtwc_source='ucar', ssl_certificate=None):
+    def __init__(self, jtwc=False, jtwc_source='ucar', ssl_certificate=None, alt_data=None, hour_window=12):
 
         # Define empty dict to store track data in
         self.data = {}
@@ -138,17 +142,21 @@ class Realtime():
         start_time = dt.now()
         print("--> Starting to read in current storm data")
 
-        # Read in best track data from NHC
-        self.__read_btk()
-        self.__filter_best_track()
-        
-        # Read in best track data from JTWC
-        if jtwc:
-            if jtwc_source not in ['ucar', 'noaa', 'jtwc']:
-                msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
-                raise ValueError(msg)
-            self.__read_btk_jtwc(jtwc_source, ssl_certificate)
-            self.__filter_best_track()
+        # Read in best track data from NHC, or from alt source if specified
+        if alt_data is None:
+            self.__read_btk()
+            self.__filter_best_track(hour_window=hour_window)
+            
+            # Read in best track data from JTWC
+            if jtwc:
+                if jtwc_source not in ['ucar', 'noaa', 'jtwc']:
+                    msg = "\"jtwc_source\" must be either \"ucar\", \"noaa\", or \"jtwc\"."
+                    raise ValueError(msg)
+                self.__read_btk_jtwc(jtwc_source, ssl_certificate)
+                self.__filter_best_track(hour_window=hour_window)
+        else:
+            self.data = alt_data
+            self.__filter_best_track(hour_window=hour_window)
 
         # Determine time elapsed
         time_elapsed = dt.now() - start_time
@@ -201,7 +209,7 @@ class Realtime():
             'time': self.time
         }
 
-    def __filter_best_track(self):
+    def __filter_best_track(self, hour_window):
         r"""
         Filters all Best Track entries that haven't been active in 18 hours, or reclassified from invests to tropical cyclones.
         """
@@ -221,34 +229,44 @@ class Realtime():
 
             # Get time difference
             hours_diff = (current_time - last_time).total_seconds() / 3600.0
-            if hours_diff >= 12.0 or (self.data[key]['invest'] and hours_diff >= 9.0):
+            if hours_diff >= hour_window:
                 del self.data[key]
             if hours_diff <= -48.0:
                 del self.data[key]
 
         # Remove invests that have been classified as TCs
         all_keys = [k for k in self.data.keys()]
+        self.removed_keys = {}
         for key in all_keys:
 
             # Only keep invests
-            try:
-                if not self.data[key]['invest']:
-                    continue
-            except:
+            if key[2] != '9':
                 continue
 
             # Iterate through all storms
             match = False
+            match_id = None
             for key_storm in self.data.keys():
-                if self.data[key_storm]['invest']:
+                if key_storm[2] == '9':
                     continue
 
                 # Check for overlap in lons
-                if self.data[key_storm]['lon'][0] == self.data[key]['lon'][0] and self.data[key_storm]['time'][0] == self.data[key]['time'][0]:
-                    match = True
+                for i_lon, i_lat, i_time in zip(self.data[key_storm]['lon'], self.data[key_storm]['lat'], self.data[key_storm]['time']):
+                    if i_time in self.data[key]['time']:
+                        idx = self.data[key]['time'].index(i_time)
+                        if i_lon == self.data[key]['lon'][idx] and i_lat == self.data[key]['lat'][idx]:
+                            match = True
+                            match_id = key_storm
+                            break
 
             if match:
+                self.removed_keys[match_id] = key
                 del self.data[key]
+
+        # Assign prior ID to storms that it might be missing
+        for key in self.data.keys():
+            if self.data[key]['prior_id'] is None and key in self.removed_keys.keys():
+                self.data[key]['prior_id'] = self.removed_keys[key]
     
     def __read_btk(self):
         r"""
@@ -314,6 +332,7 @@ class Realtime():
             }
             self.data[stormid]['source'] = 'hurdat'
             self.data[stormid]['jtwc_source'] = 'N/A'
+            self.data[stormid]['prior_id'] = None
 
             # add empty lists
             for val in ['time', 'extra_obs', 'special', 'type', 'lat', 'lon', 'vmax', 'mslp', 'wmo_basin']:
@@ -401,6 +420,19 @@ class Realtime():
                         origin_basin = 'north_atlantic'
                 self.data[stormid]['wmo_basin'].append(
                     get_basin(btk_lat, btk_lon, origin_basin))
+
+                # Get prior ID if available here
+                try:
+                    for idx_line,i_line in enumerate(line):
+                        if 'SPAWNINVEST' in i_line and (line[idx_line+1].split('to')[1]).upper() != stormid.upper():
+                            self.data[stormid]['prior_id'] = (line[idx_line+1].split('to')[1]).upper()
+                        if 'TRANSITIONED' in i_line:
+                            check_id = (line[idx_line+1].split('to')[0]).upper()
+                            check_id = f'{check_id[:2]}9{check_id[3:]}'
+                            if check_id != stormid.upper() and self.data[stormid]['prior_id'] is None:
+                                self.data[stormid]['prior_id'] = check_id
+                except:
+                    pass
 
                 # Calculate ACE & append to storm total
                 if not np.isnan(btk_wind):
@@ -546,6 +578,7 @@ class Realtime():
             }
             self.data[stormid]['source'] = 'jtwc'
             self.data[stormid]['jtwc_source'] = source
+            self.data[stormid]['prior_id'] = None
 
             # Add source info
             self.data[stormid]['source_method'] = "JTWC ATCF"

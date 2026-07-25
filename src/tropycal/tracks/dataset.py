@@ -3204,7 +3204,7 @@ class TrackDataset:
                     if interpolate_data:
                         points['dvmax_dt'].append(istorm['dvmax_dt'][i])
                         points['acie'].append(
-                            [0, istorm['dvmax_dt'][i]**2 * 1e-4 * timeres / 6][istorm['dvmax_dt'][i] > 0])
+                            istorm['dvmax_dt'][i]**2 * 1e-4 * timeres / 6 if istorm['dvmax_dt'][i] > 0 else 0)
                         points['dmslp_dt'].append(istorm['dmslp_dt'][i])
                         points['dx_dt'].append(istorm['dx_dt'][i])
                         points['dy_dt'].append(istorm['dy_dt'][i])

@@ -764,6 +764,18 @@ class TrackDataset:
         # Initialize empty dict for neumann data
         neumann = {}
 
+        # Resolve Neumann reanalysis column indices by header name, as the
+        # IBTrACS column layout varies between versions (e.g., v04r01 moved
+        # the NEUMANN_* columns). Fall back to the pre-v04r01 positions if
+        # the header row is unavailable.
+        neumann_idx = list(range(141, 146))
+        if self.neumann:
+            header = content[0]
+            neumann_cols = ['NEUMANN_LAT', 'NEUMANN_LON',
+                            'NEUMANN_CLASS', 'NEUMANN_WIND', 'NEUMANN_PRES']
+            if all(col in header for col in neumann_cols):
+                neumann_idx = [header.index(col) for col in neumann_cols]
+
         # ibtracs ID to jtwc ID mapping
         map_duplicate_id = {}
         map_all_id = {}
@@ -907,9 +919,9 @@ class TrackDataset:
                             self.data['IO022018']['name'] = 'MEKUNU'
 
             # Get neumann data for storms containing it
-            if self.neumann:
-                neumann_lat, neumann_lon, neumann_type, neumann_vmax, neumann_mslp = line[
-                    141:146]
+            if self.neumann and max(neumann_idx) < len(line):
+                neumann_lat, neumann_lon, neumann_type, neumann_vmax, neumann_mslp = [
+                    line[i] for i in neumann_idx]
                 if neumann_lat != "" and neumann_lon != "":
 
                     # Add storm to list of keys
@@ -988,7 +1000,7 @@ class TrackDataset:
             else:
                 if lat == "" or lon == "":
                     continue
-                if usa_agency == "" and track_type != "PROVISIONAL":
+                if usa_agency == "" and not track_type.endswith("PROVISIONAL"):
                     continue
 
             # map JTWC to ibtracs ID (for neumann replacement)

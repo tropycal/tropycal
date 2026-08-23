@@ -436,10 +436,7 @@ class RealtimeStorm(Storm):
             else:
                 url = f"https://www.ssd.noaa.gov/PS/TROP/DATA/ATCF/JTWC/{self.id.lower()}.fst"
             if ssl_certificate is not None and self.jtwc_source in ['jtwc', 'ucar']:
-                import ssl
-                ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-                ssl_context.load_verify_locations(cafile=ssl_certificate)
-                if requests.get(url, verify=ssl_context).status_code != 200:
+                if requests.get(url, verify=ssl_certificate).status_code != 200:
                     raise RuntimeError(
                         "JTWC forecast data is unavailable for this storm.")
             else:

@@ -434,17 +434,27 @@ class TrackDataset:
                     else:
                         continue
 
-                # Parse into format to be entered into dict
-                if "N" in lat:
-                    lat = round(float(lat.split("N")[0]), 1)
-                elif "S" in lat:
-                    lat = round(float(lat.split("S")[0]), 1) * -1.0
-                if "W" in lon:
-                    lon = round(float(lon.split("W")[0]), 1) * -1.0
-                elif "E" in lon:
-                    lon = round(float(lon.split("E")[0]), 1)
-                vmax = int(vmax)
-                mslp = int(mslp)
+                # Parse into format to be entered into dict. Skip malformed
+                # entries in the raw file (e.g., a lat/lon missing its
+                # hemisphere letter, or a missing comma shifting the fields)
+                # rather than aborting the entire read.
+                try:
+                    if "N" in lat:
+                        lat = round(float(lat.split("N")[0]), 1)
+                    elif "S" in lat:
+                        lat = round(float(lat.split("S")[0]), 1) * -1.0
+                    else:
+                        raise ValueError(f"Malformed latitude: {lat}")
+                    if "W" in lon:
+                        lon = round(float(lon.split("W")[0]), 1) * -1.0
+                    elif "E" in lon:
+                        lon = round(float(lon.split("E")[0]), 1)
+                    else:
+                        raise ValueError(f"Malformed longitude: {lon}")
+                    vmax = int(vmax)
+                    mslp = int(mslp)
+                except ValueError:
+                    continue
 
                 # Fix longitude for Atlantic storms east of the prime meridian
                 if add_basin == 'north_atlantic' and lon < -180:

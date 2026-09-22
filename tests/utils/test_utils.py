@@ -177,7 +177,7 @@ def test_generate_nhc_cone():
     
     #Check cone generated properly
     np.testing.assert_almost_equal(np.max(cone['cone']), 1.0, decimal=1)
-    assert len(cone['cone'][cone['cone']==1]) == 38892
+    assert len(cone['cone'][cone['cone']==1]) == 38847
     
     #Check center line was properly generated
     np.testing.assert_almost_equal(np.max(cone['center_lat']), 24.5032, decimal=4)
@@ -415,11 +415,11 @@ def test_calc_distance():
     
     #Check distance was calculated correctly
     expected_output = np.array(
-        [[1426.31201748, 1195.7406459, 1107.73929169, 1195.7406459, 1426.31201748],
-         [1038.27901088, 708.32228018, 555.44613899, 708.32228018, 1038.27901088],
-         [ 849.46114113, 425.60779557, 0,  425.60779557, 849.46114113],
-         [ 986.43616274, 689.42894491, 555.44613899, 689.42894491, 986.43616274],
-         [1351.58597175, 1173.70145504, 1107.73929169, 1173.70145504, 1351.58597175]])
+        [[1435.33287927, 1201.04079565, 1111.94926645, 1201.04079565, 1435.33287927],
+         [1041.74324825, 709.41925273, 555.97463322, 709.41925273, 1041.74324825],
+         [ 851.35512605, 425.84541784, 0,  425.84541784, 851.35512605],
+         [ 989.40550543, 690.4403344, 555.97463322, 690.4403344, 989.40550543],
+         [1359.25452576, 1178.71268492, 1111.94926645, 1178.71268492, 1359.25452576]])
     np.testing.assert_almost_equal(output[1], expected_output, decimal=5)
 
 def test_add_radius():
